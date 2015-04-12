@@ -482,7 +482,10 @@ decorators
       }
     ;
 
-//funcdef: [decorators] 'def' NAME parameters ':' suite
+//decorated: decorators (classdef | funcdef)
+//XXX: refactor to use decorated. Hopefully this will elimated the predicate in compound_stmt.
+
+//funcdef: 'def' NAME parameters ['->' test] ':' suite
 funcdef
 @init {
     stmt stype = null;
@@ -491,7 +494,7 @@ funcdef
 @after {
     $funcdef.tree = stype;
 }
-    : decorators? DEF name_or_print parameters COLON suite[false]
+    : decorators? DEF name_or_print parameters (ARROW test[null])? COLON suite[false]
     {
         Token t = $DEF;
         if ($decorators.start != null) {
@@ -1086,7 +1089,9 @@ assert_stmt
       }
     ;
 
-//compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | funcdef | classdef
+//compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef
+//XXX: refactor to use decorated like:
+//compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated
 compound_stmt
     : if_stmt
     | while_stmt
@@ -2317,6 +2322,8 @@ RIGHTSHIFTEQUAL    : '>>=' ;
 DOUBLESTAREQUAL    : '**=' ;
 
 DOUBLESLASHEQUAL    : '//=' ;
+
+ARROW : '->' ;
 
 DOT : '.' ;
 
