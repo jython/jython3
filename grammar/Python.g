@@ -505,13 +505,13 @@ funcdef
     }
     ;
 
-//parameters: '(' [varargslist] ')'
+//parameters: '(' [typedargslist] ')'
 parameters
     returns [arguments args]
     : LPAREN
-      (varargslist
+      (typedargslist
         {
-              $args = $varargslist.args;
+              $args = $typedargslist.args;
         }
       |
         {
@@ -527,20 +527,80 @@ defparameter
 @after {
    $defparameter.tree = $etype;
 }
-    : fpdef[expr_contextType.Param] (ASSIGN test[expr_contextType.Load])?
+    : vfpdef[expr_contextType.Param] (ASSIGN test[expr_contextType.Load])?
       {
-          $etype = actions.castExpr($fpdef.tree);
+          $etype = actions.castExpr($vfpdef.tree);
           if ($ASSIGN != null) {
               defaults.add($test.tree);
           } else if (!defaults.isEmpty()) {
-              throw new ParseException("non-default argument follows default argument", $fpdef.tree);
+              throw new ParseException("non-default argument follows default argument", $vfpdef.tree);
           }
       }
     ;
 
-//varargslist: ((fpdef ['=' test] ',')*
+//typedargslist: ((tfpdef ['=' test] ',')*
 //              ('*' NAME [',' '**' NAME] | '**' NAME) |
-//              fpdef ['=' test] (',' fpdef ['=' test])* [','])
+//              tfpdef ['=' test] (',' tfpdef ['=' test])* [','])
+typedargslist
+    returns [arguments args]
+@init {
+    List defaults = new ArrayList();
+}
+    : d+=defparameter[defaults] (options {greedy=true;}:COMMA d+=defparameter[defaults])*
+      (COMMA
+          (STAR starargs=NAME (COMMA DOUBLESTAR kwargs=NAME)?
+          | DOUBLESTAR kwargs=NAME
+          )?
+      )?
+      {
+          $args = actions.makeArgumentsType($typedargslist.start, $d, $starargs, $kwargs, defaults);
+      }
+    | STAR starargs=NAME (COMMA DOUBLESTAR kwargs=NAME)?
+      {
+          $args = actions.makeArgumentsType($typedargslist.start, $d, $starargs, $kwargs, defaults);
+      }
+    | DOUBLESTAR kwargs=NAME
+      {
+          $args = actions.makeArgumentsType($typedargslist.start, $d, null, $kwargs, defaults);
+      }
+    ;
+
+//tfpdef: NAME | '(' fplist ')'
+tfpdef[expr_contextType ctype]
+@init {
+    expr etype = null;
+}
+@after {
+    if (etype != null) {
+        $tfpdef.tree = etype;
+    }
+    actions.checkAssign(actions.castExpr($tfpdef.tree));
+}
+    : NAME
+      {
+          etype = new Name($NAME, $NAME.text, ctype);
+      }
+    | (LPAREN tfpdef[null] COMMA) => LPAREN fplist RPAREN
+      {
+          etype = new Tuple($fplist.start, actions.castExprs($fplist.etypes), expr_contextType.Store);
+      }
+    | LPAREN! fplist RPAREN!
+    ;
+
+//fplist: tfpdef (',' tfpdef)* [',']
+fplist
+    returns [List etypes]
+    : f+=tfpdef[expr_contextType.Store]
+      (options {greedy=true;}:COMMA f+=tfpdef[expr_contextType.Store])* (COMMA)?
+      {
+          $etypes = $f;
+      }
+    ;
+
+
+//varargslist: ((vfpdef ['=' test] ',')*
+//              ('*' NAME [',' '**' NAME] | '**' NAME) |
+//              vfpdef ['=' test] (',' vfpdef ['=' test])* [','])
 varargslist
     returns [arguments args]
 @init {
@@ -565,36 +625,26 @@ varargslist
       }
     ;
 
-//fpdef: NAME | '(' fplist ')'
-fpdef[expr_contextType ctype]
+//vfpdef: NAME | '(' fplist ')'
+vfpdef[expr_contextType ctype]
 @init {
     expr etype = null;
 }
 @after {
     if (etype != null) {
-        $fpdef.tree = etype;
+        $vfpdef.tree = etype;
     }
-    actions.checkAssign(actions.castExpr($fpdef.tree));
+    actions.checkAssign(actions.castExpr($vfpdef.tree));
 }
     : NAME
       {
           etype = new Name($NAME, $NAME.text, ctype);
       }
-    | (LPAREN fpdef[null] COMMA) => LPAREN fplist RPAREN
+    | (LPAREN vfpdef[null] COMMA) => LPAREN fplist RPAREN
       {
           etype = new Tuple($fplist.start, actions.castExprs($fplist.etypes), expr_contextType.Store);
       }
     | LPAREN! fplist RPAREN!
-    ;
-
-//fplist: fpdef (',' fpdef)* [',']
-fplist
-    returns [List etypes]
-    : f+=fpdef[expr_contextType.Store]
-      (options {greedy=true;}:COMMA f+=fpdef[expr_contextType.Store])* (COMMA)?
-      {
-          $etypes = $f;
-      }
     ;
 
 //stmt: simple_stmt | compound_stmt
