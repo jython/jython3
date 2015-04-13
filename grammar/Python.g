@@ -485,6 +485,7 @@ decorators
 //decorated: decorators (classdef | funcdef)
 //XXX: refactor to use decorated. Hopefully this will elimated the predicate in compound_stmt.
 
+//FIXME implement -> AST support.
 //funcdef: 'def' NAME parameters ['->' test] ':' suite
 funcdef
 @init {
@@ -2194,17 +2195,36 @@ comp_if[List gens, List ifs]
       }
     ;
 
-//yield_expr: 'yield' [testlist]
+//yield_expr: 'yield' [yield_arg]
 yield_expr
     returns [expr etype]
 @after {
     //needed for y2+=yield_expr
     $yield_expr.tree = $etype;
 }
-    : YIELD testlist[expr_contextType.Load]?
+    : YIELD yield_arg?
       {
-          $etype = new Yield($YIELD, actions.castExpr($testlist.tree));
+          $etype = new Yield($YIELD, actions.castExpr($yield_arg.tree));
       }
+    ;
+
+//yield_arg: 'from' test | testlist
+yield_arg
+    returns [expr etype]
+@init {
+    expr etype = null;
+}
+@after {
+    if (etype != null) {
+        $yield_arg.tree = etype;
+    }
+}
+    : FROM test[expr_contextType.Load] {
+        //FIXME: implement yield from.
+    }
+    | testlist[expr_contextType.Load] {
+        etype = actions.castExpr($testlist.tree);
+    }
     ;
 
 //START OF LEXER RULES
