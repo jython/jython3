@@ -522,10 +522,27 @@ parameters
     ;
 
 //not in CPython's Grammar file
-defparameter
+tdefparameter
     [List defaults] returns [expr etype]
 @after {
-   $defparameter.tree = $etype;
+   $tdefparameter.tree = $etype;
+}
+    : tfpdef[expr_contextType.Param] (ASSIGN test[expr_contextType.Load])?
+      {
+          $etype = actions.castExpr($tfpdef.tree);
+          if ($ASSIGN != null) {
+              defaults.add($test.tree);
+          } else if (!defaults.isEmpty()) {
+              throw new ParseException("non-default argument follows default argument", $tfpdef.tree);
+          }
+      }
+    ;
+
+//not in CPython's Grammar file
+vdefparameter
+    [List defaults] returns [expr etype]
+@after {
+   $vdefparameter.tree = $etype;
 }
     : vfpdef[expr_contextType.Param] (ASSIGN test[expr_contextType.Load])?
       {
@@ -538,6 +555,7 @@ defparameter
       }
     ;
 
+
 //typedargslist: ((tfpdef ['=' test] ',')*
 //              ('*' NAME [',' '**' NAME] | '**' NAME) |
 //              tfpdef ['=' test] (',' tfpdef ['=' test])* [','])
@@ -546,7 +564,7 @@ typedargslist
 @init {
     List defaults = new ArrayList();
 }
-    : d+=defparameter[defaults] (options {greedy=true;}:COMMA d+=defparameter[defaults])*
+    : d+=tdefparameter[defaults] (options {greedy=true;}:COMMA d+=tdefparameter[defaults])*
       (COMMA
           (STAR starargs=NAME (COMMA DOUBLESTAR kwargs=NAME)?
           | DOUBLESTAR kwargs=NAME
@@ -565,7 +583,8 @@ typedargslist
       }
     ;
 
-//tfpdef: NAME | '(' fplist ')'
+//tfpdef: NAME [':' test]
+//FIXME: remove fplist
 tfpdef[expr_contextType ctype]
 @init {
     expr etype = null;
@@ -576,7 +595,7 @@ tfpdef[expr_contextType ctype]
     }
     actions.checkAssign(actions.castExpr($tfpdef.tree));
 }
-    : NAME
+    : NAME (COLON test[null])?
       {
           etype = new Name($NAME, $NAME.text, ctype);
       }
@@ -587,11 +606,11 @@ tfpdef[expr_contextType ctype]
     | LPAREN! fplist RPAREN!
     ;
 
-//fplist: tfpdef (',' tfpdef)* [',']
+//fplist: vfpdef (',' vfpdef)* [',']
 fplist
     returns [List etypes]
-    : f+=tfpdef[expr_contextType.Store]
-      (options {greedy=true;}:COMMA f+=tfpdef[expr_contextType.Store])* (COMMA)?
+    : f+=vfpdef[expr_contextType.Store]
+      (options {greedy=true;}:COMMA f+=vfpdef[expr_contextType.Store])* (COMMA)?
       {
           $etypes = $f;
       }
@@ -606,7 +625,7 @@ varargslist
 @init {
     List defaults = new ArrayList();
 }
-    : d+=defparameter[defaults] (options {greedy=true;}:COMMA d+=defparameter[defaults])*
+    : d+=vdefparameter[defaults] (options {greedy=true;}:COMMA d+=vdefparameter[defaults])*
       (COMMA
           (STAR starargs=NAME (COMMA DOUBLESTAR kwargs=NAME)?
           | DOUBLESTAR kwargs=NAME
