@@ -84,15 +84,15 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
         <property name="PY_RELEASE_LEVEL_SNAPSHOT" value="170"/> <!-- 0xAA -->
 
         <!-- The current version info -->
-        <property name="jython.version" value="2.7rc2+"/>
-        <property name="jython.version.noplus" value="2.7rc2"/>
-        <property name="jython.major_version" value="2"/>
-        <property name="jython.minor_version" value="7"/>
+        <property name="jython.version" value="3.5.0a1+"/>
+        <property name="jython.version.noplus" value="3.5.0a1"/>
+        <property name="jython.major_version" value="3"/>
+        <property name="jython.minor_version" value="5"/>
         <property name="jython.micro_version" value="0"/>
-        <property name="jython.release_level" value="${PY_RELEASE_LEVEL_GAMMA}"/>
+        <property name="jython.release_level" value="${PY_RELEASE_LEVEL_ALPHA}"/>
         <!-- Usually zero, only used for alpha, beta and candidate versions
              where it must be greater than zero. -->
-        <property name="jython.release_serial" value="2"/>
+        <property name="jython.release_serial" value="1"/>
         <property name="jython.java.version" value="1.7"/>
 
         <condition property="do.snapshot.build">
@@ -124,7 +124,7 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
         <property name="test.source.dir" value="${jython.base.dir}/tests/java" />
         <property name="test.shell.dir" value="${jython.base.dir}/tests/shell" />
         <property name="templates.dir" value="${source.dir}/templates" />
-        <property name="python.lib" value="${jython.base.dir}/lib-python/2.7" />
+        <property name="python.lib" value="${jython.base.dir}/lib-python/3.5" />
         <property name="bugtests.dir" value="${jython.base.dir}/bugtests" />
         <property name="templates.lazy" value="true" />
         <property name="extlibs.dir" value="${jython.base.dir}/extlibs" />
@@ -822,7 +822,7 @@ The readme text for the next release will be like:
     <target name="copy-cpythonlib">
         <copy todir="${dist.dir}/Lib">
             <fileset dir="${python.lib}" excludes="**/*.pyc, **/*.pyo" includesfile="${jython.base.dir}/CPythonLib.includes">
-                <!-- The include file gets all of lib-python/2.7's test directory, but we only want the ones from Jython's Lib.   -->
+                <!-- The include file gets all of lib-python/3.5's test directory, but we only want the ones from Jython's Lib.   -->
                 <present present="srconly" targetdir="${jython.base.dir}/Lib"/>
             </fileset>
         </copy>
