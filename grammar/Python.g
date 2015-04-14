@@ -170,7 +170,7 @@ import java.util.ListIterator;
 
     //Use to switch between python2 and python3 semantics.
     //true is python3, false is python2.
-    private boolean python3 = false;
+    private boolean python3 = true;
 
     private boolean printFunction = python3;
     private boolean unicodeLiterals = python3;
