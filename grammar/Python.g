@@ -168,8 +168,12 @@ import java.util.ListIterator;
 
     private String encoding;
 
-    private boolean printFunction = false;
-    private boolean unicodeLiterals = false;
+    //Use to switch between python2 and python3 semantics.
+    //true is python3, false is python2.
+    private boolean python3 = false;
+
+    private boolean printFunction = python3;
+    private boolean unicodeLiterals = python3;
 
     public void setErrorHandler(ErrorHandler eh) {
         this.errorHandler = eh;
