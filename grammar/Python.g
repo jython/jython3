@@ -125,6 +125,7 @@ import org.python.antlr.ast.ListComp;
 import org.python.antlr.ast.Lambda;
 import org.python.antlr.ast.Module;
 import org.python.antlr.ast.Name;
+import org.python.antlr.ast.Nonlocal;
 import org.python.antlr.ast.Num;
 import org.python.antlr.ast.operatorType;
 import org.python.antlr.ast.Pass;
@@ -439,6 +440,7 @@ attr
     | IN
     | IS
     | LAMBDA
+    | NONLOCAL
     | NOT
     | OR
     | ORELSE
@@ -694,14 +696,16 @@ simple_stmt
       }
     ;
 
-//small_stmt: (expr_stmt | print_stmt  | del_stmt | pass_stmt | flow_stmt |
-//             import_stmt | global_stmt | exec_stmt | assert_stmt)
+//small_stmt: (expr_stmt | del_stmt | pass_stmt | flow_stmt |
+//             import_stmt | global_stmt | nonlocal_stmt | assert_stmt)
+//XXX: remove print, exec when 3.x Lib works.
 small_stmt : expr_stmt
            | del_stmt
            | pass_stmt
            | flow_stmt
            | import_stmt
            | global_stmt
+           | nonlocal_stmt
            | exec_stmt
            | assert_stmt
            | {!printFunction}? => print_stmt
@@ -1135,6 +1139,21 @@ global_stmt
           stype = new Global($GLOBAL, actions.makeNames($n), actions.makeNameNodes($n));
       }
     ;
+
+//nonlocal_stmt: 'nonlocal' NAME (',' NAME)*
+nonlocal_stmt
+@init {
+    stmt stype = null;
+}
+@after {
+   $nonlocal_stmt.tree = stype;
+}
+    : NONLOCAL n+=NAME (COMMA n+=NAME)*
+      {
+          stype = new Nonlocal($NONLOCAL, actions.makeNames($n), actions.makeNameNodes($n));
+      }
+    ;
+
 
 //exec_stmt: 'exec' expr ['in' test [',' test]]
 exec_stmt
@@ -2327,6 +2346,7 @@ IMPORT    : 'import' ;
 IN        : 'in' ;
 IS        : 'is' ;
 LAMBDA    : 'lambda' ;
+NONLOCAL  : 'nonlocal' ;
 ORELSE    : 'else' ;
 PASS      : 'pass'  ;
 PRINT     : 'print' ;

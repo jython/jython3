@@ -25,6 +25,7 @@ public interface VisitorIF<R> {
     public R visitImportFrom(ImportFrom node) throws Exception;
     public R visitExec(Exec node) throws Exception;
     public R visitGlobal(Global node) throws Exception;
+    public R visitNonlocal(Nonlocal node) throws Exception;
     public R visitExpr(Expr node) throws Exception;
     public R visitPass(Pass node) throws Exception;
     public R visitBreak(Break node) throws Exception;

@@ -813,6 +813,21 @@ indexer_support = {"Attribute": """    // Support for indexer below
     // End indexer support
 """,
 
+"Nonlocal": """    // Support for indexer below
+
+    private java.util.List<Name> nameNodes;
+    public java.util.List<Name> getInternalNameNodes() {
+        return nameNodes;
+    }
+    public Nonlocal(Token token, java.util.List<String> names, java.util.List<Name> nameNodes) {
+        super(token);
+        this.names = names;
+        this.nameNodes = nameNodes;
+    }
+    // End indexer support
+""",
+
+
 "ImportFrom": """    // Support for indexer below
 
     private java.util.List<Name> moduleNames;
