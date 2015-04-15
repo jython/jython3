@@ -41,6 +41,7 @@ public interface VisitorIF<R> {
     public R visitDictComp(DictComp node) throws Exception;
     public R visitGeneratorExp(GeneratorExp node) throws Exception;
     public R visitYield(Yield node) throws Exception;
+    public R visitYieldFrom(YieldFrom node) throws Exception;
     public R visitCompare(Compare node) throws Exception;
     public R visitCall(Call node) throws Exception;
     public R visitRepr(Repr node) throws Exception;

@@ -259,6 +259,12 @@ public abstract class VisitorBase<R> implements VisitorIF<R> {
         return ret;
     }
 
+    public R visitYieldFrom(YieldFrom node) throws Exception {
+        R ret = unhandled_node(node);
+        traverse(node);
+        return ret;
+    }
+
     public R visitCompare(Compare node) throws Exception {
         R ret = unhandled_node(node);
         traverse(node);

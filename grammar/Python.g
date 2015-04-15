@@ -145,6 +145,7 @@ import org.python.antlr.ast.UnaryOp;
 import org.python.antlr.ast.While;
 import org.python.antlr.ast.With;
 import org.python.antlr.ast.Yield;
+import org.python.antlr.ast.YieldFrom;
 import org.python.antlr.base.excepthandler;
 import org.python.antlr.base.expr;
 import org.python.antlr.base.mod;
@@ -2277,13 +2278,17 @@ yield_expr
 }
     : YIELD yield_arg?
       {
-          $etype = new Yield($YIELD, actions.castExpr($yield_arg.tree));
+          if (!$yield_arg.isYieldFrom) {
+              $etype = new Yield($YIELD, actions.castExpr($yield_arg.tree));
+          } else {
+              $etype = new YieldFrom($YIELD, actions.castExpr($yield_arg.tree));
+          }
       }
     ;
 
 //yield_arg: 'from' test | testlist
 yield_arg
-    returns [expr etype]
+    returns [expr etype, boolean isYieldFrom]
 @init {
     expr etype = null;
 }
@@ -2293,10 +2298,12 @@ yield_arg
     }
 }
     : FROM test[expr_contextType.Load] {
-        //FIXME: implement yield from.
+        etype = actions.castExpr($test.tree);
+        $isYieldFrom = true;
     }
     | testlist[expr_contextType.Load] {
         etype = actions.castExpr($testlist.tree);
+        $isYieldFrom = false;
     }
     ;
 

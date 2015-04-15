@@ -708,7 +708,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         return null;
     }
-
+ 
     private void stackProduce() {
         stackProduce(p(PyObject.class));
     }
