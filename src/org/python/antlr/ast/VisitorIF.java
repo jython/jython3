@@ -50,6 +50,7 @@ public interface VisitorIF<R> {
     public R visitStr(Str node) throws Exception;
     public R visitAttribute(Attribute node) throws Exception;
     public R visitSubscript(Subscript node) throws Exception;
+    public R visitStarred(Starred node) throws Exception;
     public R visitName(Name node) throws Exception;
     public R visitList(List node) throws Exception;
     public R visitTuple(Tuple node) throws Exception;

@@ -136,6 +136,7 @@ import org.python.antlr.ast.Return;
 import org.python.antlr.ast.Set;
 import org.python.antlr.ast.SetComp;
 import org.python.antlr.ast.Slice;
+import org.python.antlr.ast.Starred;
 import org.python.antlr.ast.Str;
 import org.python.antlr.ast.Subscript;
 import org.python.antlr.ast.TryExcept;
@@ -711,8 +712,19 @@ small_stmt : expr_stmt
            | {!printFunction}? => print_stmt
            ;
 
-//expr_stmt: testlist (augassign (yield_expr|testlist) |
-//                     ('=' (yield_expr|testlist))*)
+//star_expr: '*' expr
+star_expr
+    [expr_contextType ctype] returns [expr etype]
+@after {
+    $star_expr.tree = $etype;
+}
+    : STAR expr[ctype] {
+        $etype = new Starred($STAR, actions.castExpr($expr.tree), ctype);
+    }
+    ;
+
+//expr_stmt: testlist_star_expr (augassign (yield_expr|testlist) |
+//                     ('=' (yield_expr|testlist_star_expr))*)
 expr_stmt
 @init {
     stmt stype = null;
@@ -722,23 +734,23 @@ expr_stmt
         $expr_stmt.tree = stype;
     }
 }
-    : ((testlist[null] augassign) => lhs=testlist[expr_contextType.AugStore]
+    : ((testlist_star_expr[null] augassign) => lhs=testlist_star_expr[expr_contextType.AugStore]
         ( (aay=augassign y1=yield_expr
            {
                actions.checkAugAssign(actions.castExpr($lhs.tree));
                stype = new AugAssign($lhs.tree, actions.castExpr($lhs.tree), $aay.op, actions.castExpr($y1.etype));
            }
           )
-        | (aat=augassign rhs=testlist[expr_contextType.Load]
+        | (aat=augassign rhs=testlist_star_expr[expr_contextType.Load]
            {
                actions.checkAugAssign(actions.castExpr($lhs.tree));
                stype = new AugAssign($lhs.tree, actions.castExpr($lhs.tree), $aat.op, actions.castExpr($rhs.tree));
            }
           )
         )
-    | (testlist[null] ASSIGN) => lhs=testlist[expr_contextType.Store]
+    | (testlist_star_expr[null] ASSIGN) => lhs=testlist_star_expr[expr_contextType.Store]
         (
-        | ((at=ASSIGN t+=testlist[expr_contextType.Store])+
+        | ((at=ASSIGN t+=testlist_star_expr[expr_contextType.Store])+
             {
                 stype = new Assign($lhs.tree, actions.makeAssignTargets(
                     actions.castExpr($lhs.tree), $t), actions.makeAssignValue($t));
@@ -751,11 +763,38 @@ expr_stmt
             }
           )
         )
-    | lhs=testlist[expr_contextType.Load]
+    | lhs=testlist_star_expr[expr_contextType.Load]
       {
           stype = new Expr($lhs.start, actions.castExpr($lhs.tree));
       }
     )
+    ;
+
+//testlist_star_expr: (test|star_expr) (',' (test|star_expr))* [',']
+testlist_star_expr[expr_contextType ctype]
+@init {
+    expr etype = null;
+}
+@after {
+    if (etype != null) {
+        $testlist_star_expr.tree = etype;
+    }
+}
+
+    : ((test[null] | star_expr[null]) COMMA)
+    => 
+     (t+=test_or_star_expr[ctype]) (options {greedy=true;}:COMMA (t+=test_or_star_expr[ctype]))* (COMMA)?
+      {
+          etype = new Tuple($testlist_star_expr.start, actions.castExprs($t), ctype);
+      }
+    | (test[ctype]
+    | star_expr[ctype])
+    ;
+
+//not in CPython's Grammar file
+test_or_star_expr[expr_contextType ctype]
+    : test[ctype]
+    | star_expr[ctype]
     ;
 
 //augassign: ('+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' |
