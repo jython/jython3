@@ -1,11 +1,12 @@
 /* Generated file, do not modify.  See jython/src/templates/gderived.py. */
-package org.python.core;
+package org.python.antlr.op;
 
 import java.io.Serializable;
+import org.python.core.*;
 import org.python.core.finalization.FinalizeTrigger;
 import org.python.core.finalization.FinalizablePyObjectDerived;
 
-public class PyObjectDerived extends PyObject implements Slotted,FinalizablePyObjectDerived,TraverseprocDerived {
+public class MatMultDerived extends MatMult implements Slotted,FinalizablePyObjectDerived,TraverseprocDerived {
 
     public PyObject getSlot(int index) {
         return slots[index];
@@ -72,7 +73,7 @@ public class PyObjectDerived extends PyObject implements Slotted,FinalizablePyOb
         dict=new PyStringMap();
     }
 
-    public PyObjectDerived(PyType subtype) {
+    public MatMultDerived(PyType subtype) {
         super(subtype);
         slots=new PyObject[subtype.getNumSlots()];
         dict=subtype.instDict();
@@ -275,30 +276,6 @@ public class PyObjectDerived extends PyObject implements Slotted,FinalizablePyOb
             return res;
         }
         return super.__rmul__(other);
-    }
-
-    public PyObject __matmul__(PyObject other) {
-        PyType self_type=getType();
-        PyObject impl=self_type.lookup("__matmul__");
-        if (impl!=null) {
-            PyObject res=impl.__get__(this,self_type).__call__(other);
-            if (res==Py.NotImplemented)
-                return null;
-            return res;
-        }
-        return super.__matmul__(other);
-    }
-
-    public PyObject __rmatmul__(PyObject other) {
-        PyType self_type=getType();
-        PyObject impl=self_type.lookup("__rmatmul__");
-        if (impl!=null) {
-            PyObject res=impl.__get__(this,self_type).__call__(other);
-            if (res==Py.NotImplemented)
-                return null;
-            return res;
-        }
-        return super.__rmatmul__(other);
     }
 
     public PyObject __div__(PyObject other) {
@@ -671,18 +648,6 @@ public class PyObjectDerived extends PyObject implements Slotted,FinalizablePyOb
             return res;
         }
         return super.__imul__(other);
-    }
-
-    public PyObject __imatmul__(PyObject other) {
-        PyType self_type=getType();
-        PyObject impl=self_type.lookup("__imatmul__");
-        if (impl!=null) {
-            PyObject res=impl.__get__(this,self_type).__call__(other);
-            if (res==Py.NotImplemented)
-                return null;
-            return res;
-        }
-        return super.__imatmul__(other);
     }
 
     public PyObject __idiv__(PyObject other) {

@@ -139,6 +139,7 @@ op_Lt.derived:org.python.antlr.op.LtDerived
 op_LtE.derived:org.python.antlr.op.LtEDerived
 op_Mod.derived:org.python.antlr.op.ModDerived
 op_Mult.derived:org.python.antlr.op.MultDerived
+op_MatMult.derived:org.python.antlr.op.MatMultDerived
 op_Not.derived:org.python.antlr.op.NotDerived
 op_NotEq.derived:org.python.antlr.op.NotEqDerived
 op_NotIn.derived:org.python.antlr.op.NotInDerived

@@ -124,22 +124,24 @@ public class AstAdapters {
                 case 3:
                     return operatorType.Mult;
                 case 4:
-                    return operatorType.Div;
+                    return operatorType.MatMult;
                 case 5:
-                    return operatorType.Mod;
+                    return operatorType.Div;
                 case 6:
-                    return operatorType.Pow;
+                    return operatorType.Mod;
                 case 7:
-                    return operatorType.LShift;
+                    return operatorType.Pow;
                 case 8:
-                    return operatorType.RShift;
+                    return operatorType.LShift;
                 case 9:
-                    return operatorType.BitOr;
+                    return operatorType.RShift;
                 case 10:
-                    return operatorType.BitXor;
+                    return operatorType.BitOr;
                 case 11:
-                    return operatorType.BitAnd;
+                    return operatorType.BitXor;
                 case 12:
+                    return operatorType.BitAnd;
+                case 13:
                     return operatorType.FloorDiv;
                 default:
                     return operatorType.UNDEFINED;
@@ -156,6 +158,8 @@ public class AstAdapters {
                 return new Sub();
             case Mult:
                 return new Mult();
+            case MatMult:
+                return new MatMult();
             case Div:
                 return new Div();
             case Mod:

@@ -43,7 +43,7 @@ public void Pow___init__(PyObject[] args, String[] keywords) {}
     }
 
     final PyObject Pow___int__() {
-        return Py.newInteger(6);
+        return Py.newInteger(7);
     }
 
 }

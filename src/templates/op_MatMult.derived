@@ -1,0 +1,4 @@
+base_class: MatMult
+want_dict: true
+ctr
+incl: object

@@ -2401,6 +2401,117 @@ public class PyObject implements Serializable {
         }
         return this._basic_mul(o2);
     }
+/////////////////////////////////////////////////
+
+    /**
+     * Equivalent to the standard Python __matmul__ method.
+     * @param     other the object to perform this binary operation with
+     *            (the right-hand operand).
+     * @return    the result of the matmul, or null if this operation
+     *            is not defined
+     **/
+    public PyObject __matmul__(PyObject other) {
+        return null;
+    }
+
+    /**
+     * Equivalent to the standard Python __rmatmul__ method.
+     * @param     other the object to perform this binary operation with
+     *            (the left-hand operand).
+     * @return    the result of the matmul, or null if this operation
+     *            is not defined.
+     **/
+    public PyObject __rmatmul__(PyObject other) {
+        return null;
+    }
+
+    /**
+     * Equivalent to the standard Python __imatmul__ method.
+     * @param     other the object to perform this binary operation with
+     *            (the right-hand operand).
+     * @return    the result of the imatmul, or null if this operation
+     *            is not defined.
+     **/
+    public PyObject __imatmul__(PyObject other) {
+        return null;
+    }
+
+    /**
+      * Implements the Python expression <code>this * o2</code>.
+      * @param     o2 the object to perform this binary operation with.
+      * @return    the result of the matmul.
+      * @exception Py.TypeError if this operation can't be performed
+      *            with these operands.
+      **/
+    public final PyObject _matmul(PyObject o2) {
+        PyType t1=this.getType();
+        PyType t2=o2.getType();
+        if (t1==t2||t1.builtin&&t2.builtin) {
+            return this._basic_matmul(o2);
+        }
+        return _binop_rule(t1,o2,t2,"__matmul__","__rmatmul__","@");
+    }
+
+    /**
+     * Implements the Python expression <code>this @ o2</code>
+     * when this and o2 have the same type or are builtin types.
+     * @param     o2 the object to perform this binary operation with.
+     * @return    the result of the matmul.
+     * @exception Py.TypeError if this operation can't be performed
+     *            with these operands.
+     **/
+    final PyObject _basic_matmul(PyObject o2) {
+        PyObject x=__matmul__(o2);
+        if (x!=null) {
+            return x;
+        }
+        x=o2.__rmatmul__(this);
+        if (x!=null) {
+            return x;
+        }
+        throw Py.TypeError(_unsupportedop("@",o2));
+    }
+
+    /**
+      * Implements the Python expression <code>this @= o2</code>.
+      * @param     o2 the object to perform this inplace binary
+      *            operation with.
+      * @return    the result of the imatmul.
+      * @exception Py.TypeError if this operation can't be performed
+      *            with these operands.
+      **/
+    public final PyObject _imatmul(PyObject o2) {
+        PyType t1=this.getType();
+        PyType t2=o2.getType();
+        if (t1==t2||t1.builtin&&t2.builtin) {
+            return this._basic_imatmul(o2);
+        }
+        PyObject impl=t1.lookup("__imatmul__");
+        if (impl!=null) {
+            PyObject res=impl.__get__(this,t1).__call__(o2);
+            if (res!=Py.NotImplemented) {
+                return res;
+            }
+        }
+        return _binop_rule(t1,o2,t2,"__matmul__","__rmatmul__","@");
+    }
+
+    /**
+     * Implements the Python expression <code>this @= o2</code>
+     * when this and o2 have the same type or are builtin types.
+     * @param     o2 the object to perform this inplace binary
+     *            operation with.
+     * @return    the result of the imatmul.
+     * @exception Py.TypeError if this operation can't be performed
+     *            with these operands.
+     **/
+    final PyObject _basic_imatmul(PyObject o2) {
+        PyObject x=__imatmul__(o2);
+        if (x!=null) {
+            return x;
+        }
+        return this._basic_matmul(o2);
+    }
 
     /**
      * Equivalent to the standard Python __div__ method

@@ -43,7 +43,7 @@ public void LShift___init__(PyObject[] args, String[] keywords) {}
     }
 
     final PyObject LShift___int__() {
-        return Py.newInteger(7);
+        return Py.newInteger(8);
     }
 
 }

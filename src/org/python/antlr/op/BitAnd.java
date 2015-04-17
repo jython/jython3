@@ -43,7 +43,7 @@ public void BitAnd___init__(PyObject[] args, String[] keywords) {}
     }
 
     final PyObject BitAnd___int__() {
-        return Py.newInteger(11);
+        return Py.newInteger(12);
     }
 
 }

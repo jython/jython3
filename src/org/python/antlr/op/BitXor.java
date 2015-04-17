@@ -43,7 +43,7 @@ public void BitXor___init__(PyObject[] args, String[] keywords) {}
     }
 
     final PyObject BitXor___int__() {
-        return Py.newInteger(10);
+        return Py.newInteger(11);
     }
 
 }

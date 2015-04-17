@@ -43,7 +43,7 @@ public void FloorDiv___init__(PyObject[] args, String[] keywords) {}
     }
 
     final PyObject FloorDiv___int__() {
-        return Py.newInteger(12);
+        return Py.newInteger(13);
     }
 
 }

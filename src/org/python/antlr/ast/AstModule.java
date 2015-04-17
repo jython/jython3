@@ -99,6 +99,7 @@ public class AstModule implements ClassDictInit {
         dict.__setitem__("Add", Add.TYPE);
         dict.__setitem__("Sub", Sub.TYPE);
         dict.__setitem__("Mult", Mult.TYPE);
+        dict.__setitem__("MatMult", MatMult.TYPE);
         dict.__setitem__("Div", Div.TYPE);
         dict.__setitem__("FloorDiv", FloorDiv.TYPE);
         dict.__setitem__("Mod", Mod.TYPE);

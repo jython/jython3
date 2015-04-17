@@ -16,6 +16,7 @@ unary1: __dir__
 binary: __add__ __radd__ \
   __sub__ __rsub__ \
   __mul__ __rmul__ \
+  __matmul__ __rmatmul__ \
   __div__ __rdiv__ \
   __floordiv__ __rfloordiv__ \
   __truediv__ __rtruediv__ \
@@ -32,6 +33,7 @@ binary: __add__ __radd__ \
 ibinary: __iadd__ \
   __isub__ \
   __imul__ \
+  __imatmul__ \
   __idiv__ \
   __ifloordiv__ \
   __itruediv__ \

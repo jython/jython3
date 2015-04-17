@@ -43,7 +43,7 @@ public void Div___init__(PyObject[] args, String[] keywords) {}
     }
 
     final PyObject Div___int__() {
-        return Py.newInteger(4);
+        return Py.newInteger(5);
     }
 
 }

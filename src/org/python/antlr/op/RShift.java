@@ -43,7 +43,7 @@ public void RShift___init__(PyObject[] args, String[] keywords) {}
     }
 
     final PyObject RShift___int__() {
-        return Py.newInteger(8);
+        return Py.newInteger(9);
     }
 
 }

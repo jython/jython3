@@ -14,20 +14,20 @@ import org.python.expose.ExposedNew;
 import org.python.expose.ExposedSet;
 import org.python.expose.ExposedType;
 
-@ExposedType(name = "_ast.BitOr", base = operator.class)
-public class BitOr extends PythonTree {
-    public static final PyType TYPE = PyType.fromClass(BitOr.class);
+@ExposedType(name = "_ast.MatMult", base = operator.class)
+public class MatMult extends PythonTree {
+    public static final PyType TYPE = PyType.fromClass(MatMult.class);
 
-public BitOr() {
+public MatMult() {
 }
 
-public BitOr(PyType subType) {
+public MatMult(PyType subType) {
     super(subType);
 }
 
 @ExposedNew
 @ExposedMethod
-public void BitOr___init__(PyObject[] args, String[] keywords) {}
+public void MatMult___init__(PyObject[] args, String[] keywords) {}
 
     private final static PyString[] fields = new PyString[0];
     @ExposedGet(name = "_fields")
@@ -39,11 +39,11 @@ public void BitOr___init__(PyObject[] args, String[] keywords) {}
 
     @ExposedMethod
     public PyObject __int__() {
-        return BitOr___int__();
+        return MatMult___int__();
     }
 
-    final PyObject BitOr___int__() {
-        return Py.newInteger(10);
+    final PyObject MatMult___int__() {
+        return Py.newInteger(4);
     }
 
 }

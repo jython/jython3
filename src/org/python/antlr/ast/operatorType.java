@@ -8,6 +8,7 @@ public enum operatorType {
     Add,
     Sub,
     Mult,
+    MatMult,
     Div,
     Mod,
     Pow,

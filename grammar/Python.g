@@ -173,7 +173,7 @@ import java.util.ListIterator;
 
     //Use to switch between python2 and python3 semantics.
     //true is python3, false is python2.
-    private boolean python3 = true;
+    private boolean python3 = false;
 
     private boolean printFunction = python3;
     private boolean unicodeLiterals = python3;
@@ -812,6 +812,10 @@ augassign
     | STAREQUAL
         {
             $op = operatorType.Mult;
+        }
+    | ATEQUAL
+        {
+            $op = operatorType.MatMult;
         }
     | SLASHEQUAL
         {
@@ -1731,7 +1735,7 @@ arith_op
       }
     ;
 
-//term: factor (('*'|'/'|'%'|'//') factor)*
+//term: factor (('*'|'@'|'/'|'%'|'//') factor)*
 term
     returns [Token lparen = null]
 @init {
@@ -1765,6 +1769,10 @@ term_op
     : STAR
       {
           $op = operatorType.Mult;
+      }
+    | AT
+      {
+          $op = operatorType.MatMult;
       }
     | SLASH
       {
@@ -2461,6 +2469,8 @@ MINUSEQUAL    : '-=' ;
 DOUBLESTAR    : '**' ;
 
 STAREQUAL    : '*=' ;
+
+ATEQUAL     : '@=' ;
 
 DOUBLESLASH    : '//' ;
 

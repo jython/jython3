@@ -1595,6 +1595,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             case Mult:
                 name = "_mul";
                 break;
+            case MatMult:
+                name = "_matmul";
+                break;
             case Div:
                 name = "_div";
                 break;
@@ -1675,6 +1678,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
                 break;
             case Mult:
                 name = "_imul";
+                break;
+            case MatMult:
+                name = "_imatmul";
                 break;
             case Div:
                 name = "_idiv";

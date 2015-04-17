@@ -626,6 +626,7 @@ import org.python.modules.gc;
  *   LtE                             - no refs, extends PythonTree<br>
  *   Mod                             - no refs, extends PythonTree<br>
  *   Mult                            - no refs, extends PythonTree<br>
+ *   MatMult                         - no refs, extends PythonTree<br>
  *   Not                             - no refs, extends PythonTree<br>
  *   NotEq                           - no refs, extends PythonTree<br>
  *   NotIn                           - no refs, extends PythonTree<br>

@@ -43,7 +43,7 @@ public void Mod___init__(PyObject[] args, String[] keywords) {}
     }
 
     final PyObject Mod___int__() {
-        return Py.newInteger(5);
+        return Py.newInteger(6);
     }
 
 }

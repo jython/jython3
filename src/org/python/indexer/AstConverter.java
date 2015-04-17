@@ -134,6 +134,8 @@ public class AstConverter extends Visitor {
                     return "-";
                 case Mult:
                     return "*";
+                case MatMult:
+                    return "@";
                 case Div:
                     return "/";
                 case Mod:
