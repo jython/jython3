@@ -1,0 +1,21 @@
+--- lib-python/2.7/test/test_logging.py	2015-04-18 05:34:44.591111202 +0300
++++ Lib/test/test_logging.py	2015-04-18 05:34:31.843089859 +0300
+@@ -923,6 +923,8 @@
+         self.tcpserver.finished.wait(2.0)
+         return self.tcpserver.log_output
+ 
++    @unittest.skipIf(os.name=='java' and os._name=='nt', 
++        'Blocks test completion on Jython Windows.')
+     def test_output(self):
+         # The log message sent to the SocketHandler is properly received.
+         logger = logging.getLogger("tcp")
+@@ -1877,7 +1879,8 @@
+ 
+ class HandlerTest(BaseTest):
+ 
+-    @unittest.skipIf(os.name == 'nt', 'WatchedFileHandler not appropriate for Windows.')
++    @unittest.skipIf(os.name == 'nt' or (os.name == 'java' and os._name == 'nt'),
++                     'WatchedFileHandler not appropriate for Windows.')
+     @unittest.skipUnless(threading, 'Threading required for this test.')
+     def test_race(self):
+         # Issue #14632 refers.

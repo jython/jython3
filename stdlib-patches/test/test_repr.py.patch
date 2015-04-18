@@ -1,0 +1,12 @@
+--- lib-python/2.7/test/test_repr.py	2015-04-18 05:34:44.639111282 +0300
++++ Lib/test/test_repr.py	2015-04-18 05:34:31.855089880 +0300
+@@ -249,7 +249,8 @@
+         from areallylongpackageandmodulenametotestreprtruncation.areallylongpackageandmodulenametotestreprtruncation import areallylongpackageandmodulenametotestreprtruncation
+         eq(repr(areallylongpackageandmodulenametotestreprtruncation),
+            "<module '%s' from '%s'>" % (areallylongpackageandmodulenametotestreprtruncation.__name__, areallylongpackageandmodulenametotestreprtruncation.__file__))
+-        eq(repr(sys), "<module 'sys' (built-in)>")
++        # XXX: Jython sys module is not a real module
++        #eq(repr(sys), "<module 'sys' (built-in)>")
+ 
+     def test_type(self):
+         eq = self.assertEqual

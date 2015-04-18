@@ -1,0 +1,90 @@
+--- lib-python/2.7/test/test_memoryio.py	2015-04-18 05:34:44.599111215 +0300
++++ Lib/test/test_memoryio.py	2015-04-18 05:34:31.847089867 +0300
+@@ -398,6 +398,13 @@
+ 
+     UnsupportedOperation = pyio.UnsupportedOperation
+ 
++    # When Jython tries to use UnsupportedOperation as _pyio defines it, it runs
++    # into a problem with multiple inheritance and the slots array: issue 1996.
++    # Override the affected test version just so we can skip it visibly.
++    @unittest.skipIf(support.is_jython, "FIXME: Jython issue 1996")
++    def test_detach(self):
++        pass
++
+     @staticmethod
+     def buftype(s):
+         return s.encode("ascii")
+@@ -588,6 +595,13 @@
+     UnsupportedOperation = pyio.UnsupportedOperation
+     EOF = ""
+ 
++    # When Jython tries to use UnsupportedOperation as _pyio defines it, it runs
++    # into a problem with multiple inheritance and the slots array: issue 1996.
++    # Override the affected test version just so we can skip it visibly.
++    @unittest.skipIf(support.is_jython, "FIXME: Jython issue 1996")
++    def test_detach(self):
++        pass
++
+ 
+ class PyStringIOPickleTest(TextIOTestMixin, unittest.TestCase):
+     """Test if pickle restores properly the internal state of StringIO.
+@@ -611,6 +625,9 @@
+         "array.array() does not have the new buffer API"
+     )(PyBytesIOTest.test_bytes_array)
+ 
++    # Re-instate test_detach skipped by Jython in PyBytesIOTest
++    if support.is_jython: # FIXME: Jython issue 1996
++        test_detach = MemoryTestMixin.test_detach
+ 
+     def test_getstate(self):
+         memio = self.ioclass()
+@@ -655,6 +672,15 @@
+ 
+     # XXX: For the Python version of io.StringIO, this is highly
+     # dependent on the encoding used for the underlying buffer.
++
++    # Re-instate test_detach skipped by Jython in PyBytesIOTest
++    if support.is_jython: # FIXME: Jython issue 1996
++        test_detach = MemoryTestMixin.test_detach
++
++    # This test checks that tell() results are consistent with the length of
++    # text written, but this is not documented in the API: only that seek()
++    # accept what tell() returns.
++    @unittest.skipIf(support.is_jython, "Exact value of tell() is CPython specific")
+     def test_widechar(self):
+         buf = self.buftype("\U0002030a\U00020347")
+         memio = self.ioclass(buf)
+@@ -667,6 +693,33 @@
+         self.assertEqual(memio.tell(), len(buf) * 2)
+         self.assertEqual(memio.getvalue(), buf + buf)
+ 
++    # This test checks that seek() accepts what tell() returns, without requiring
++    # that tell() return a particular absolute value. Conceived for Jython, but
++    # probably universal.
++    def test_widechar_seek(self):
++        buf = self.buftype("\U0002030aX\u00ca\U00020347\u05d1Y\u0628Z")
++        memio = self.ioclass(buf)
++        self.assertEqual(memio.getvalue(), buf)
++
++        # For each character in buf, read it back from memio and its tell value
++        chars = list(buf)
++        tells = list()
++        for ch in chars :
++            tells.append(memio.tell())
++            self.assertEqual(memio.read(1), ch)
++
++        # For each character in buf, seek to it and check it's there
++        chpos = zip(chars, tells)
++        chpos.reverse()
++        for ch, pos in chpos:
++            memio.seek(pos)
++            self.assertEqual(memio.read(1), ch)
++
++        # Check write after seek to end
++        memio.seek(0, 2)
++        self.assertEqual(memio.write(buf), len(buf))
++        self.assertEqual(memio.getvalue(), buf + buf)
++
+     def test_getstate(self):
+         memio = self.ioclass()
+         state = memio.__getstate__()

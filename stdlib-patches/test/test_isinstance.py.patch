@@ -1,0 +1,11 @@
+--- lib-python/2.7/test/test_isinstance.py	2015-04-18 05:34:44.583111189 +0300
++++ Lib/test/test_isinstance.py	2015-04-18 05:34:31.843089859 +0300
+@@ -260,7 +260,7 @@
+     # Make sure that calling isinstance with a deeply nested tuple for its
+     # argument will raise RuntimeError eventually.
+     tuple_arg = (compare_to,)
+-    for cnt in xrange(sys.getrecursionlimit()+5):
++    while True:
+         tuple_arg = (tuple_arg,)
+         fxn(arg, tuple_arg)
+ 

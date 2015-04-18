@@ -1,0 +1,23 @@
+--- lib-python/2.7/SimpleHTTPServer.py	2015-04-18 05:34:44.475111008 +0300
++++ Lib/SimpleHTTPServer.py	2015-04-18 05:34:31.751089705 +0300
+@@ -90,7 +90,7 @@
+             return None
+         self.send_response(200)
+         self.send_header("Content-type", ctype)
+-        fs = os.fstat(f.fileno())
++        fs = os.fstat(f.fileno()) if hasattr(os, 'fstat') else os.stat(path)
+         self.send_header("Content-Length", str(fs[6]))
+         self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
+         self.end_headers()
+@@ -132,8 +132,9 @@
+         length = f.tell()
+         f.seek(0)
+         self.send_response(200)
+-        encoding = sys.getfilesystemencoding()
+-        self.send_header("Content-type", "text/html; charset=%s" % encoding)
++        if not sys.platform.startswith("java"):
++            encoding = sys.getfilesystemencoding()
++            self.send_header("Content-type", "text/html; charset=%s" % encoding)
+         self.send_header("Content-Length", str(length))
+         self.end_headers()
+         return f

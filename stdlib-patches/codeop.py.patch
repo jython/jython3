@@ -1,0 +1,119 @@
+--- lib-python/2.7/codeop.py	2015-04-18 05:34:44.519111082 +0300
++++ Lib/codeop.py	2015-04-18 05:34:31.755089713 +0300
+@@ -1,10 +1,10 @@
+ r"""Utilities to compile possibly incomplete Python source code.
+ 
+ This module provides two interfaces, broadly similar to the builtin
+-function compile(), which take program text, a filename and a 'mode'
++function compile(), that take progam text, a filename and a 'mode'
+ and:
+ 
+-- Return code object if the command is complete and valid
++- Return a code object if the command is complete and valid
+ - Return None if the command is incomplete
+ - Raise SyntaxError, ValueError or OverflowError if the command is a
+   syntax error (OverflowError and ValueError can be produced by
+@@ -56,51 +56,14 @@
+     but with 'memory' in the sense described above.
+ """
+ 
+-import __future__
++# import internals, not guaranteed interface
++from org.python.core import Py,CompilerFlags,CompileMode
++from org.python.core.CompilerFlags import PyCF_DONT_IMPLY_DEDENT
+ 
+-_features = [getattr(__future__, fname)
+-             for fname in __future__.all_feature_names]
++# public interface
+ 
+ __all__ = ["compile_command", "Compile", "CommandCompiler"]
+ 
+-PyCF_DONT_IMPLY_DEDENT = 0x200          # Matches pythonrun.h
+-
+-def _maybe_compile(compiler, source, filename, symbol):
+-    # Check for source consisting of only blank lines and comments
+-    for line in source.split("\n"):
+-        line = line.strip()
+-        if line and line[0] != '#':
+-            break               # Leave it alone
+-    else:
+-        if symbol != "eval":
+-            source = "pass"     # Replace it with a 'pass' statement
+-
+-    err = err1 = err2 = None
+-    code = code1 = code2 = None
+-
+-    try:
+-        code = compiler(source, filename, symbol)
+-    except SyntaxError, err:
+-        pass
+-
+-    try:
+-        code1 = compiler(source + "\n", filename, symbol)
+-    except SyntaxError, err1:
+-        pass
+-
+-    try:
+-        code2 = compiler(source + "\n\n", filename, symbol)
+-    except SyntaxError, err2:
+-        pass
+-
+-    if code:
+-        return code
+-    if not code1 and repr(err1) == repr(err2):
+-        raise SyntaxError, err1
+-
+-def _compile(source, filename, symbol):
+-    return compile(source, filename, symbol, PyCF_DONT_IMPLY_DEDENT)
+-
+ def compile_command(source, filename="<input>", symbol="single"):
+     r"""Compile a command and determine whether it is incomplete.
+ 
+@@ -119,7 +82,10 @@
+       syntax error (OverflowError and ValueError can be produced by
+       malformed literals).
+     """
+-    return _maybe_compile(_compile, source, filename, symbol)
++    if symbol not in ['single','eval']:
++        raise ValueError,"symbol arg must be either single or eval"
++    symbol = CompileMode.getMode(symbol)
++    return Py.compile_command_flags(source,filename,symbol,Py.getCompilerFlags(),0)
+ 
+ class Compile:
+     """Instances of this class behave much like the built-in compile
+@@ -127,14 +93,11 @@
+     statement, it "remembers" and compiles all subsequent program texts
+     with the statement in force."""
+     def __init__(self):
+-        self.flags = PyCF_DONT_IMPLY_DEDENT
++        self._cflags = CompilerFlags()
+ 
+     def __call__(self, source, filename, symbol):
+-        codeob = compile(source, filename, symbol, self.flags, 1)
+-        for feature in _features:
+-            if codeob.co_flags & feature.compiler_flag:
+-                self.flags |= feature.compiler_flag
+-        return codeob
++        symbol = CompileMode.getMode(symbol)
++        return Py.compile_flags(source, filename, symbol, self._cflags)
+ 
+ class CommandCompiler:
+     """Instances of this class have __call__ methods identical in
+@@ -144,7 +107,7 @@
+     with the statement in force."""
+ 
+     def __init__(self,):
+-        self.compiler = Compile()
++        self._cflags = CompilerFlags()
+ 
+     def __call__(self, source, filename="<input>", symbol="single"):
+         r"""Compile a command and determine whether it is incomplete.
+@@ -165,4 +128,7 @@
+           syntax error (OverflowError and ValueError can be produced by
+           malformed literals).
+         """
+-        return _maybe_compile(self.compiler, source, filename, symbol)
++        if symbol not in ['single','eval']:
++            raise ValueError,"symbol arg must be either single or eval"
++        symbol = CompileMode.getMode(symbol)
++        return Py.compile_command_flags(source,filename,symbol,self._cflags,0)

@@ -1,0 +1,151 @@
+--- lib-python/2.7/test/test_warnings.py	2015-04-18 05:34:44.719111417 +0300
++++ Lib/test/test_warnings.py	2015-04-18 05:34:31.875089913 +0300
+@@ -15,6 +15,9 @@
+ py_warnings = test_support.import_fresh_module('warnings', blocked=['_warnings'])
+ c_warnings = test_support.import_fresh_module('warnings', fresh=['_warnings'])
+ 
++warning_tests_py = os.path.splitext(warning_tests.__file__)[0]
++warning_tests_py = warning_tests_py.replace('$py', '') + '.py'
++
+ @contextmanager
+ def warnings_state(module):
+     """Use a specific warnings implementation in warning_tests."""
+@@ -186,6 +189,7 @@
+             self.assertEqual(str(w[-1].message), text)
+             self.assertTrue(w[-1].category is UserWarning)
+ 
++@unittest.skipIf(test_support.is_jython, "No _warnings impl yet")
+ class CFilterTests(BaseTest, FilterTests):
+     module = c_warnings
+ 
+@@ -348,6 +352,7 @@
+             self.module.warn(BadStrWarning())
+ 
+ 
++@unittest.skipIf(test_support.is_jython, "No _warnings impl yet")
+ class CWarnTests(BaseTest, WarnTests):
+     module = c_warnings
+ 
+@@ -355,7 +360,9 @@
+     # test_support.import_fresh_module utility function
+     def test_accelerated(self):
+         self.assertFalse(original_warnings is self.module)
+-        self.assertFalse(hasattr(self.module.warn, 'func_code'))
++        # Currently in Jython, _warnings is a Python module
++        if not test_support.is_jython:
++            self.assertFalse(hasattr(self.module.warn, 'func_code'))
+ 
+ class PyWarnTests(BaseTest, WarnTests):
+     module = py_warnings
+@@ -398,6 +405,7 @@
+         self.assertFalse(out.strip())
+         self.assertNotIn(b'RuntimeWarning', err)
+ 
++@unittest.skipIf(test_support.is_jython, "No _warnings impl yet")
+ class CWCmdLineTests(BaseTest, WCmdLineTests):
+     module = c_warnings
+ 
+@@ -405,6 +413,7 @@
+     module = py_warnings
+ 
+ 
++@unittest.skipIf(test_support.is_jython, "No _warnings impl yet")
+ class _WarningsTests(BaseTest):
+ 
+     """Tests specific to the _warnings module."""
+@@ -519,7 +528,7 @@
+         self.assertEqual(result.count('\n'), 2,
+                              "Too many newlines in %r" % result)
+         first_line, second_line = result.split('\n', 1)
+-        expected_file = os.path.splitext(warning_tests.__file__)[0] + '.py'
++        expected_file = warning_tests_py
+         first_line_parts = first_line.rsplit(':', 3)
+         path, line, warning_class, message = first_line_parts
+         line = int(line)
+@@ -551,14 +560,15 @@
+     def test_formatwarning(self):
+         message = "msg"
+         category = Warning
+-        file_name = os.path.splitext(warning_tests.__file__)[0] + '.py'
++        file_name = warning_tests_py
+         line_num = 3
+         file_line = linecache.getline(file_name, line_num).strip()
+         format = "%s:%s: %s: %s\n  %s\n"
+         expect = format % (file_name, line_num, category.__name__, message,
+                             file_line)
+-        self.assertEqual(expect, self.module.formatwarning(message,
+-                                                category, file_name, line_num))
++        result = self.module.formatwarning(
++            message, category, file_name, line_num)
++        self.assertEqual(expect, result)
+         # Test the 'line' argument.
+         file_line += " for the win!"
+         expect = format % (file_name, line_num, category.__name__, message,
+@@ -567,7 +577,7 @@
+                                     category, file_name, line_num, file_line))
+ 
+     def test_showwarning(self):
+-        file_name = os.path.splitext(warning_tests.__file__)[0] + '.py'
++        file_name = warning_tests_py
+         line_num = 3
+         expected_file_line = linecache.getline(file_name, line_num).strip()
+         message = 'msg'
+@@ -587,6 +597,7 @@
+                                 file_object, expected_file_line)
+         self.assertEqual(expect, file_object.getvalue())
+ 
++@unittest.skipIf(test_support.is_jython, "No _warnings impl yet")
+ class CWarningsDisplayTests(BaseTest, WarningsDisplayTests):
+     module = c_warnings
+ 
+@@ -697,6 +708,7 @@
+                 wmod.warn("foo")
+ 
+ 
++@unittest.skipIf(test_support.is_jython, "No _warnings impl yet")
+ class CCatchWarningTests(CatchWarningTests):
+     module = c_warnings
+ 
+@@ -736,6 +748,7 @@
+                 "['ignore::UnicodeWarning', 'ignore::DeprecationWarning']")
+         self.assertEqual(p.wait(), 0)
+ 
++@unittest.skipIf(test_support.is_jython, "No _warnings impl yet")
+ class CEnvironmentVariableTests(EnvironmentVariableTests):
+     module = c_warnings
+ 
+@@ -745,16 +758,24 @@
+ 
+ def test_main():
+     py_warnings.onceregistry.clear()
+-    c_warnings.onceregistry.clear()
+-    test_support.run_unittest(CFilterTests, PyFilterTests,
+-                                CWarnTests, PyWarnTests,
+-                                CWCmdLineTests, PyWCmdLineTests,
+-                                _WarningsTests,
+-                                CWarningsDisplayTests, PyWarningsDisplayTests,
+-                                CCatchWarningTests, PyCatchWarningTests,
+-                                CEnvironmentVariableTests,
+-                                PyEnvironmentVariableTests
+-                             )
++    # No _warnings in _jython yet.
++    if not test_support.is_jython:
++        c_warnings.onceregistry.clear()
++    test_support.run_unittest(
++        CFilterTests,
++        PyFilterTests,
++        CWarnTests,
++        PyWarnTests,
++        CWCmdLineTests,
++        PyWCmdLineTests,
++        _WarningsTests,
++        CWarningsDisplayTests,
++        PyWarningsDisplayTests,
++        CCatchWarningTests,
++        PyCatchWarningTests,
++        CEnvironmentVariableTests,
++        PyEnvironmentVariableTests,
++    )
+ 
+ 
+ if __name__ == "__main__":

@@ -1,0 +1,10 @@
+--- lib-python/2.7/test/test_abc.py	2015-04-18 05:34:44.871111672 +0300
++++ Lib/test/test_abc.py	2015-04-18 05:34:31.815089812 +0300
+@@ -208,6 +208,7 @@
+         C()
+         self.assertEqual(B.counter, 1)
+ 
++    @test_support.cpython_only
+     def test_cache_leak(self):
+         # See issue #2521.
+         class A(object):

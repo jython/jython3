@@ -1,0 +1,286 @@
+--- lib-python/2.7/test/test_io.py	2015-04-18 05:34:44.583111189 +0300
++++ Lib/test/test_io.py	2015-04-18 05:34:31.839089854 +0300
+@@ -39,8 +39,9 @@
+ import contextlib
+ 
+ import codecs
+-import io  # C implementation of io
+-import _pyio as pyio # Python implementation of io
++import io               # subject of test
++import _io              # compiled implementation of io
++import _pyio as pyio    # Python implementation of io
+ try:
+     import threading
+ except ImportError:
+@@ -392,9 +393,17 @@
+         # On Windows and Mac OSX this test comsumes large resources; It takes
+         # a long time to build the >2GB file and takes >2GB of disk space
+         # therefore the resource must be enabled to run this test.
+-        if sys.platform[:3] == 'win' or sys.platform == 'darwin':
+-            if not support.is_resource_enabled("largefile"):
+-                print("\nTesting large file ops skipped on %s." % sys.platform,
++        if not support.is_resource_enabled("largefile"):
++            skip_platform = None
++            # Cases in which to skip this test
++            if sys.platform[:3] == 'win' or sys.platform == 'darwin':
++                skip_platform = sys.platform;
++            elif sys.platform[:4] == "java":
++                # Jython cases in which to skip this test
++                if os._name == "nt":
++                    skip_platform = 'Jython + ' + os._name;
++            if skip_platform:
++                print("\nTesting large file ops skipped on %s." % skip_platform,
+                       file=sys.stderr)
+                 print("It requires %d bytes and a long time." % self.LARGE,
+                       file=sys.stderr)
+@@ -432,6 +441,7 @@
+         with self.open(support.TESTFN, "a") as f:
+             self.assertTrue(f.tell() > 0)
+ 
++    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
+     def test_destructor(self):
+         record = []
+         class MyFileIO(self.FileIO):
+@@ -487,15 +497,19 @@
+         support.gc_collect()
+         self.assertEqual(record, [1, 2, 3])
+ 
++    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
+     def test_IOBase_destructor(self):
+         self._check_base_destructor(self.IOBase)
+ 
++    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
+     def test_RawIOBase_destructor(self):
+         self._check_base_destructor(self.RawIOBase)
+ 
++    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
+     def test_BufferedIOBase_destructor(self):
+         self._check_base_destructor(self.BufferedIOBase)
+ 
++    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
+     def test_TextIOBase_destructor(self):
+         self._check_base_destructor(self.TextIOBase)
+ 
+@@ -539,6 +553,7 @@
+             file = self.open(f.fileno(), "r", closefd=False)
+             self.assertEqual(file.buffer.raw.closefd, False)
+ 
++    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
+     def test_garbage_collection(self):
+         # FileIO objects are collected, and collecting them flushes
+         # all data to disk.
+@@ -611,6 +626,7 @@
+ 
+ class CIOTest(IOTest):
+ 
++    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
+     def test_IOBase_finalize(self):
+         # Issue #12149: segmentation fault on _PyIOBase_finalize when both a
+         # class which inherits IOBase and an object of this class are caught
+@@ -634,6 +650,23 @@
+         "len(array.array) returns number of elements rather than bytelength"
+     )(IOTest.test_array_writes)
+ 
++    # When Jython tries to use UnsupportedOperation as _pyio defines it, it runs
++    # into a problem with multiple inheritance and the slots array: issue 1996.
++    # Override the affected test version just so we can skip it visibly.
++    @unittest.skipIf(support.is_jython, "FIXME: Jython issue 1996")
++    def test_invalid_operations(self):
++        pass
++
++    # Jython does not use integer file descriptors but an object instead.
++    # Unfortunately, _pyio.open checks that it is an int.
++    # Override the affected test versions just so we can skip them visibly.
++    @unittest.skipIf(support.is_jython, "Jython does not use integer file descriptors")
++    def test_closefd_attr(self):
++        pass
++    @unittest.skipIf(support.is_jython, "Jython does not use integer file descriptors")
++    def test_read_closed(self):
++        pass
++
+ 
+ class CommonBufferedTests:
+     # Tests common to BufferedReader, BufferedWriter and BufferedRandom
+@@ -662,6 +695,7 @@
+         self.assertRaises(ValueError, bufio.seek, 0, -1)
+         self.assertRaises(ValueError, bufio.seek, 0, 3)
+ 
++    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
+     def test_override_destructor(self):
+         tp = self.tp
+         record = []
+@@ -986,13 +1020,18 @@
+         self.assertRaises(ValueError, bufio.__init__, rawio, buffer_size=-1)
+         self.assertRaises(ValueError, bufio.read)
+ 
++    @support.cpython_only
+     def test_misbehaved_io_read(self):
+         rawio = self.MisbehavedRawIO((b"abc", b"d", b"efg"))
+         bufio = self.tp(rawio)
+         # _pyio.BufferedReader seems to implement reading different, so that
+         # checking this is not so easy.
++        # Jython adds: not raised in _jyio.py stand-in. Maybe in eventual Java version.
++        # CPython raises "raw readinto() returned invalid length" here:
++        # http://hg.python.org/cpython/file/8527427914a2/Modules/_io/bufferedio.c#l1298
+         self.assertRaises(IOError, bufio.read, 10)
+ 
++    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
+     def test_garbage_collection(self):
+         # C BufferedReader objects are collected.
+         # The Python version has __del__, so it ends into gc.garbage instead
+@@ -1004,6 +1043,8 @@
+         support.gc_collect()
+         self.assertTrue(wr() is None, wr)
+ 
++    @unittest.skipIf(support.is_jython, "FIXME: in the Java version with ArgParser")
++    # When implemented in Python, the error message is about __init__, even on CPython
+     def test_args_error(self):
+         # Issue #17275
+         with self.assertRaisesRegexp(TypeError, "BufferedReader"):
+@@ -1172,6 +1213,7 @@
+         self.assertRaises(TypeError, bufio.writelines, [1, 2, 3])
+         self.assertRaises(TypeError, bufio.writelines, None)
+ 
++    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
+     def test_destructor(self):
+         writer = self.MockRawIO()
+         bufio = self.tp(writer, 8)
+@@ -1287,6 +1329,7 @@
+         self.assertRaises(ValueError, bufio.__init__, rawio, buffer_size=-1)
+         self.assertRaises(ValueError, bufio.write, b"def")
+ 
++    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
+     def test_garbage_collection(self):
+         # C BufferedWriter objects are collected, and collecting them flushes
+         # all data to disk.
+@@ -1302,6 +1345,8 @@
+         with self.open(support.TESTFN, "rb") as f:
+             self.assertEqual(f.read(), b"123xxx")
+ 
++    @unittest.skipIf(support.is_jython, "FIXME: in the Java version with ArgParser")
++    # When implemented in Python, the error message is about __init__, even on CPython
+     def test_args_error(self):
+         # Issue #17275
+         with self.assertRaisesRegexp(TypeError, "BufferedWriter"):
+@@ -1435,6 +1480,13 @@
+ class PyBufferedRWPairTest(BufferedRWPairTest):
+     tp = pyio.BufferedRWPair
+ 
++    # When Jython tries to use UnsupportedOperation as _pyio defines it, it runs
++    # into a problem with multiple inheritance and the slots array: issue 1996.
++    # Override the affected test version just so we can skip it visibly.
++    @unittest.skipIf(support.is_jython, "FIXME: Jython issue 1996")
++    def test_detach(self):
++        pass
++
+ 
+ class BufferedRandomTest(BufferedReaderTest, BufferedWriterTest):
+     read_mode = "rb+"
+@@ -1676,6 +1728,8 @@
+         CBufferedReaderTest.test_garbage_collection(self)
+         CBufferedWriterTest.test_garbage_collection(self)
+ 
++    @unittest.skipIf(support.is_jython, "FIXME: in the Java version with ArgParser")
++    # When implemented in Python, the error message is about __init__, even on CPython
+     def test_args_error(self):
+         # Issue #17275
+         with self.assertRaisesRegexp(TypeError, "BufferedRandom"):
+@@ -2019,6 +2073,7 @@
+             self.assertEqual(buf.closed, False)
+             self.assertEqual(buf.getvalue(), expected)
+ 
++    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
+     def test_destructor(self):
+         l = []
+         base = self.BytesIO
+@@ -2033,6 +2088,7 @@
+         support.gc_collect()
+         self.assertEqual([b"abc"], l)
+ 
++    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
+     def test_override_destructor(self):
+         record = []
+         class MyTextIO(self.TextIOWrapper):
+@@ -2452,7 +2508,9 @@
+         with self.maybeRaises(TypeError):
+             t.readline()
+         t = self.TextIOWrapper(NonbytesStream('a'))
+-        self.assertEqual(t.read(), u'a')
++        with self.maybeRaises(TypeError):
++            # Jython difference: also detect the error in
++            t.read()
+ 
+     def test_illegal_decoder(self):
+         # Issue #17106
+@@ -2474,14 +2532,18 @@
+ class CTextIOWrapperTest(TextIOWrapperTest):
+ 
+     def test_initialization(self):
+-        r = self.BytesIO(b"\xc3\xa9\n\n")
++        # Use ascii material so decoding does not raise ValueError
++        r = self.BytesIO(b"red\nherring\n")
+         b = self.BufferedReader(r, 1000)
+         t = self.TextIOWrapper(b)
++        # Jython note: Invalid __init__ calls also leave t unreadable (in C
++        # implementation but not pure python _pyio).
+         self.assertRaises(TypeError, t.__init__, b, newline=42)
+-        self.assertRaises(ValueError, t.read)
++        self.assertRaises(ValueError, t.read)   # Check t unreadable
+         self.assertRaises(ValueError, t.__init__, b, newline='xyzzy')
+-        self.assertRaises(ValueError, t.read)
++        self.assertRaises(ValueError, t.read)   # Check t unreadable
+ 
++    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
+     def test_garbage_collection(self):
+         # C TextIOWrapper objects are collected, and collecting them flushes
+         # all data to disk.
+@@ -2498,6 +2560,7 @@
+         with self.open(support.TESTFN, "rb") as f:
+             self.assertEqual(f.read(), b"456def")
+ 
++    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
+     def test_rwpair_cleared_before_textio(self):
+         # Issue 13070: TextIOWrapper's finalization would crash when called
+         # after the reference to the underlying BufferedRWPair's writer got
+@@ -2676,8 +2739,8 @@
+         self.assertEqual(g.raw.mode, "wb")
+         self.assertEqual(g.name,     f.fileno())
+         self.assertEqual(g.raw.name, f.fileno())
+-        f.close()
+-        g.close()
++        g.close()   # Jython difference: close g first (which may flush) ...
++        f.close()   # Jython difference: then close f, which closes the fd
+ 
+     def test_io_after_close(self):
+         for kwargs in [
+@@ -2722,6 +2785,7 @@
+             self.assertRaises(ValueError, f.writelines, [])
+             self.assertRaises(ValueError, next, f)
+ 
++    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
+     def test_blockingioerror(self):
+         # Various BlockingIOError issues
+         self.assertRaises(TypeError, self.BlockingIOError)
+@@ -2842,7 +2906,22 @@
+ class PyMiscIOTest(MiscIOTest):
+     io = pyio
+ 
++    # When Jython tries to use UnsupportedOperation as _pyio defines it, it runs
++    # into a problem with multiple inheritance and the slots array: issue 1996.
++    # Override the affected test version just so we can skip it visibly.
++    @unittest.skipIf(support.is_jython, "FIXME: Jython issue 1996")
++    def test_io_after_close(self):
++        pass
++
++    # Jython does not use integer file descriptors but an object instead.
++    # Unfortunately, _pyio.open checks that it is an int.
++    # Override the affected test version just so we can skip it visibly.
++    @unittest.skipIf(support.is_jython, "Jython does not use integer file descriptors")
++    def test_attributes(self):
++        pass
++
+ 
++@unittest.skipIf(support.is_jython, "Jython does not support os.pipe()")
+ @unittest.skipIf(os.name == 'nt', 'POSIX signals required for this test.')
+ class SignalsTest(unittest.TestCase):
+ 

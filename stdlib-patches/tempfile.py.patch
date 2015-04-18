@@ -1,0 +1,67 @@
+--- lib-python/2.7/tempfile.py	2015-04-18 05:34:44.611111236 +0300
++++ Lib/tempfile.py	2015-04-18 05:34:31.807089799 +0300
+@@ -123,7 +123,12 @@
+ 
+     @property
+     def rng(self):
+-        cur_pid = _os.getpid()
++        if _os.sys.platform.startswith("java"):
++            #A JVM run cannot determine or change its pid so dummy this.
++            cur_pid = 1
++        else:
++            cur_pid = _os.getpid()
++        
+         if cur_pid != getattr(self, '_rng_pid', None):
+             self._rng = _Random()
+             self._rng_pid = cur_pid
+@@ -156,11 +161,17 @@
+         dirname = _os.getenv(envname)
+         if dirname: dirlist.append(dirname)
+ 
++    # Real name of OS
++    if _os.name != 'java':
++        os_name = _os.name
++    else:
++        os_name = _os._name
++
+     # Failing that, try OS-specific locations.
+-    if _os.name == 'riscos':
++    if os_name == 'riscos':
+         dirname = _os.getenv('Wimp$ScrapDir')
+         if dirname: dirlist.append(dirname)
+-    elif _os.name == 'nt':
++    elif os_name == 'nt':
+         dirlist.extend([ r'c:\temp', r'c:\tmp', r'\temp', r'\tmp' ])
+     else:
+         dirlist.extend([ '/tmp', '/var/tmp', '/usr/tmp' ])
+@@ -188,7 +199,7 @@
+ 
+     for dir in dirlist:
+         if dir != _os.curdir:
+-            dir = _os.path.normcase(_os.path.abspath(dir))
++            dir = _os.path.abspath(dir) # See CPython Issue 14255
+         # Try only a few names per directory.
+         for seq in xrange(100):
+             name = namer.next()
+@@ -550,6 +561,10 @@
+     def closed(self):
+         return self._file.closed
+ 
++    @property
++    def encoding(self): # Jython not CPython
++        return self._file.encoding
++
+     def fileno(self):
+         self.rollover()
+         return self._file.fileno()
+@@ -574,6 +589,10 @@
+         except AttributeError:
+             return None
+ 
++    @property
++    def newlines(self): # Jython not CPython
++        return self._file.newlines
++
+     def next(self):
+         return self._file.next
+ 

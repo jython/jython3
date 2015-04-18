@@ -1,0 +1,81 @@
+--- lib-python/2.7/test/test_ssl.py	2015-04-18 05:34:44.659111317 +0300
++++ Lib/test/test_ssl.py	2015-04-18 05:34:31.863089894 +0300
+@@ -99,6 +99,7 @@
+         self.assertRaises(TypeError, ssl.RAND_egd, 'foo', 1)
+         ssl.RAND_add("this is a random string", 75.0)
+ 
++    @unittest.skipIf(test_support.is_jython, "Jython uses BouncyCastle")
+     def test_parse_cert(self):
+         # note that this uses an 'unofficial' function in _ssl.c,
+         # provided solely for this test, to exercise the certificate
+@@ -163,7 +164,8 @@
+                         (s, t))
+ 
+     def test_ciphers(self):
+-        if not test_support.is_resource_enabled('network'):
++        if not test_support.is_resource_enabled('network') or test_support.is_jython:
++            # see note on Jython support in test_main()
+             return
+         remote = ("svn.python.org", 443)
+         with test_support.transient_internet(remote[0]):
+@@ -180,7 +182,6 @@
+             with self.assertRaisesRegexp(ssl.SSLError, "No cipher can be selected"):
+                 s.connect(remote)
+ 
+-    @test_support.cpython_only
+     def test_refcycle(self):
+         # Issue #7943: an SSL object doesn't create reference cycles with
+         # itself.
+@@ -188,6 +189,7 @@
+         ss = ssl.wrap_socket(s)
+         wr = weakref.ref(ss)
+         del ss
++        test_support.gc_collect()  # Usual Jython requirement
+         self.assertEqual(wr(), None)
+ 
+     def test_wrapped_unconnected(self):
+@@ -208,13 +210,13 @@
+ 
+     def test_connect(self):
+         with test_support.transient_internet("svn.python.org"):
+-            s = ssl.wrap_socket(socket.socket(socket.AF_INET),
+-                                cert_reqs=ssl.CERT_NONE)
+-            s.connect(("svn.python.org", 443))
+-            c = s.getpeercert()
+-            if c:
+-                self.fail("Peer cert %s shouldn't be here!")
+-            s.close()
++            # s = ssl.wrap_socket(socket.socket(socket.AF_INET),
++            #                     cert_reqs=ssl.CERT_NONE)
++            # s.connect(("svn.python.org", 443))
++            # c = s.getpeercert()
++            # if c:
++            #     self.fail("Peer cert %s shouldn't be here!")
++            # s.close()
+ 
+             # this should fail because we have no verification certs
+             s = ssl.wrap_socket(socket.socket(socket.AF_INET),
+@@ -1376,10 +1378,12 @@
+ 
+     tests = [BasicTests, BasicSocketTests]
+ 
+-    if test_support.is_resource_enabled('network'):
++    if test_support.is_resource_enabled('network') and not test_support.is_jython:
++        # These tests need to be updated since they rely on CERT_NONE
++        # and in certain cases unavailable network resources
+         tests.append(NetworkedTests)
+ 
+-    if _have_threads:
++    if _have_threads and not test_support.is_jython:
+         thread_info = test_support.threading_setup()
+         if thread_info and test_support.is_resource_enabled('network'):
+             tests.append(ThreadedTests)
+@@ -1387,7 +1391,7 @@
+     try:
+         test_support.run_unittest(*tests)
+     finally:
+-        if _have_threads:
++        if _have_threads and not test_support.is_jython:
+             test_support.threading_cleanup(*thread_info)
+ 
+ if __name__ == "__main__":

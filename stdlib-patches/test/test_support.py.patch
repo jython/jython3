@@ -1,0 +1,441 @@
+--- lib-python/2.7/test/test_support.py	2015-04-18 05:34:44.667111329 +0300
++++ Lib/test/test_support.py	2015-04-18 05:34:31.867089899 +0300
+@@ -19,13 +19,19 @@
+ import re
+ import time
+ import struct
+-import _testcapi
+ import sysconfig
++
++try:
++    import _testcapi
++except ImportError:
++    _testcapi = None
++
+ try:
+     import thread
+ except ImportError:
+     thread = None
+ 
++
+ __all__ = ["Error", "TestFailed", "ResourceDenied", "import_module",
+            "verbose", "use_resources", "max_memuse", "record_original_stdout",
+            "get_original_stdout", "unload", "unlink", "rmtree", "forget",
+@@ -52,7 +58,7 @@
+     """Test skipped because it requested a disallowed resource.
+ 
+     This is raised when a test calls requires() for a resource that
+-    has not been enabled.  It is used to distinguish between expected
++    has not be enabled.  It is used to distinguish between expected
+     and unexpected skips.
+     """
+ 
+@@ -161,6 +167,7 @@
+ 
+ verbose = 1              # Flag set to 0 by regrtest.py
+ use_resources = None     # Flag set to [] by regrtest.py
++junit_xml_dir = None     # Option set by regrtest.py
+ max_memuse = 0           # Disable bigmem tests (they will still be run with
+                          # small sizes, to make sure they work.)
+ real_max_memuse = 0
+@@ -182,7 +189,7 @@
+     except KeyError:
+         pass
+ 
+-if sys.platform.startswith("win"):
++if sys.platform.startswith("win") or (os.name == "java" and os._name == "nt"):
+     def _waitfor(func, pathname, waitall=False):
+         # Peform the operation
+         func(pathname)
+@@ -213,6 +220,7 @@
+             # Increase the timeout and try again
+             time.sleep(timeout)
+             timeout *= 2
++        print "Still cannot delete", pathname
+         warnings.warn('tests may fail, delete still pending for ' + pathname,
+                       RuntimeWarning, stacklevel=4)
+ 
+@@ -283,7 +291,7 @@
+     possibility of False being returned occurs when regrtest.py is executing."""
+     # see if the caller's module is __main__ - if so, treat as if
+     # the resource was set
+-    if sys._getframe(1).f_globals.get("__name__") == "__main__":
++    if sys._getframe().f_back.f_globals.get("__name__") == "__main__":
+         return
+     if not is_resource_enabled(resource):
+         if msg is None:
+@@ -366,7 +374,21 @@
+     on Windows), it will be set on the socket.  This will prevent anyone else
+     from bind()'ing to our host/port for the duration of the test.
+     """
+-    if sock.family == socket.AF_INET and sock.type == socket.SOCK_STREAM:
++    if is_jython:
++        # Late binding of the jython socket implementation to a
++        # ServerSocketChannel or SocketChannel means that it's not possible to
++        # get the port until a call to connect() or listen(). Hence why a new
++        # socket is created and listen() is called on it.
++        tempsock = socket.socket(sock.family, sock.type)
++        tempsock.bind((host, 0))
++        tempsock.listen(1)
++        port = tempsock.getsockname()[1]
++        tempsock.close()
++        del tempsock
++        sock.bind((host, port))
++        return port
++
++    elif sock.family == socket.AF_INET and sock.type == socket.SOCK_STREAM:
+         if hasattr(socket, 'SO_REUSEADDR'):
+             if sock.getsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR) == 1:
+                 raise TestFailed("tests should never set the SO_REUSEADDR "   \
+@@ -407,6 +429,24 @@
+     have_unicode = False
+ 
+ is_jython = sys.platform.startswith('java')
++if is_jython:
++    def make_jar_classloader(jar):
++        import os
++        from java.net import URL, URLClassLoader
++
++        url = URL('jar:file:%s!/' % jar)
++        if os._name == 'nt':
++            # URLJarFiles keep a cached open file handle to the jar even
++            # after this ClassLoader is GC'ed, disallowing Windows tests
++            # from removing the jar file from disk when finished with it
++            conn = url.openConnection()
++            if conn.getDefaultUseCaches():
++                # XXX: Globally turn off jar caching: this stupid
++                # instance method actually toggles a static flag. Need a
++                # better fix
++                conn.setDefaultUseCaches(False)
++
++        return URLClassLoader([url])
+ 
+ # Filename used for testing
+ if os.name == 'java':
+@@ -429,35 +469,52 @@
+             # 2 latin characters.
+             TESTFN_UNICODE = unicode("@test-\xe0\xf2", "latin-1")
+         TESTFN_ENCODING = sys.getfilesystemencoding()
+-        # TESTFN_UNENCODABLE is a filename that should *not* be
++        # TESTFN_UNICODE_UNENCODEABLE is a filename that should *not* be
+         # able to be encoded by *either* the default or filesystem encoding.
+         # This test really only makes sense on Windows NT platforms
+         # which have special Unicode support in posixmodule.
+         if (not hasattr(sys, "getwindowsversion") or
+                 sys.getwindowsversion()[3] < 2): #  0=win32s or 1=9x/ME
+-            TESTFN_UNENCODABLE = None
++            TESTFN_UNICODE_UNENCODEABLE = None
+         else:
+             # Japanese characters (I think - from bug 846133)
+-            TESTFN_UNENCODABLE = eval('u"@test-\u5171\u6709\u3055\u308c\u308b"')
++            TESTFN_UNICODE_UNENCODEABLE = eval('u"@test-\u5171\u6709\u3055\u308c\u308b"')
+             try:
+                 # XXX - Note - should be using TESTFN_ENCODING here - but for
+                 # Windows, "mbcs" currently always operates as if in
+                 # errors=ignore' mode - hence we get '?' characters rather than
+                 # the exception.  'Latin1' operates as we expect - ie, fails.
+                 # See [ 850997 ] mbcs encoding ignores errors
+-                TESTFN_UNENCODABLE.encode("Latin1")
++                TESTFN_UNICODE_UNENCODEABLE.encode("Latin1")
+             except UnicodeEncodeError:
+                 pass
+             else:
+                 print \
+                 'WARNING: The filename %r CAN be encoded by the filesystem.  ' \
+                 'Unicode filename tests may not be effective' \
+-                % TESTFN_UNENCODABLE
++                % TESTFN_UNICODE_UNENCODEABLE
+ 
++# Make sure we can write to TESTFN, try in /tmp if we can't
++fp = None
++try:
++    fp = open(TESTFN, 'w+')
++except IOError:
++    TMP_TESTFN = os.path.join('/tmp', TESTFN)
++    try:
++        fp = open(TMP_TESTFN, 'w+')
++        TESTFN = TMP_TESTFN
++        del TMP_TESTFN
++    except IOError:
++        print ('WARNING: tests will fail, unable to write to: %s or %s' %
++                (TESTFN, TMP_TESTFN))
++if fp is not None:
++    fp.close()
++    unlink(TESTFN)
++del fp
+ 
+ # Disambiguate TESTFN for parallel testing, while letting it remain a valid
+ # module name.
+-TESTFN = "{}_{}_tmp".format(TESTFN, os.getpid())
++TESTFN = "{}_{}_tmp".format(TESTFN, "1") #XXX "1" is a dummy for os.getpid()
+ 
+ # Save the initial cwd
+ SAVEDCWD = os.getcwd()
+@@ -472,7 +529,8 @@
+     the CWD, an error is raised.  If it's True, only a warning is raised
+     and the original CWD is used.
+     """
+-    if have_unicode and isinstance(name, unicode):
++    if have_unicode and isinstance(name, unicode) and not is_jython:
++        # Jython supports unicode paths
+         try:
+             name = name.encode(sys.getfilesystemencoding() or 'ascii')
+         except UnicodeEncodeError:
+@@ -498,6 +556,7 @@
+             rmtree(name)
+ 
+ 
++
+ def findfile(file, here=__file__, subdir=None):
+     """Try to find a file on sys.path and the working directory.  If it is not
+     found the argument passed to the function is returned (this does not
+@@ -513,6 +572,30 @@
+         if os.path.exists(fn): return fn
+     return file
+ 
++def verify(condition, reason='test failed'):
++    """Verify that condition is true. If not, raise TestFailed.
++
++       The optional argument reason can be given to provide
++       a better error text.
++    """
++
++    if not condition:
++        raise TestFailed(reason)
++
++def vereq(a, b):
++    """Raise TestFailed if a == b is false.
++
++    This is better than verify(a == b) because, in case of failure, the
++    error message incorporates repr(a) and repr(b) so you can see the
++    inputs.
++
++    Note that "not (a == b)" isn't necessarily the same as "a != b"; the
++    former is tested.
++    """
++
++    if not (a == b):
++        raise TestFailed("%r == %r" % (a, b))
++
+ def sortdict(dict):
+     "Like repr(dict), but in sorted order."
+     items = dict.items()
+@@ -534,8 +617,12 @@
+         unlink(TESTFN)
+ 
+ def check_syntax_error(testcase, statement):
+-    testcase.assertRaises(SyntaxError, compile, statement,
+-                          '<test string>', 'exec')
++    try:
++        compile(statement, '<test string>', 'exec')
++    except SyntaxError:
++        pass
++    else:
++        testcase.fail('Missing SyntaxError: "%s"' % statement)
+ 
+ def open_urlresource(url, check=None):
+     import urlparse, urllib2
+@@ -697,7 +784,7 @@
+     Use like this:
+ 
+         with CleanImport("foo"):
+-            importlib.import_module("foo") # new reference
++            __import__("foo") # new reference
+     """
+ 
+     def __init__(self, *module_names):
+@@ -767,31 +854,6 @@
+         os.environ = self._environ
+ 
+ 
+-class DirsOnSysPath(object):
+-    """Context manager to temporarily add directories to sys.path.
+-
+-    This makes a copy of sys.path, appends any directories given
+-    as positional arguments, then reverts sys.path to the copied
+-    settings when the context ends.
+-
+-    Note that *all* sys.path modifications in the body of the
+-    context manager, including replacement of the object,
+-    will be reverted at the end of the block.
+-    """
+-
+-    def __init__(self, *paths):
+-        self.original_value = sys.path[:]
+-        self.original_object = sys.path
+-        sys.path.extend(paths)
+-
+-    def __enter__(self):
+-        return self
+-
+-    def __exit__(self, *ignore_exc):
+-        sys.path = self.original_object
+-        sys.path[:] = self.original_value
+-
+-
+ class TransientResource(object):
+ 
+     """Raise ResourceDenied if an exception is raised while the context manager
+@@ -884,10 +946,17 @@
+         socket.setdefaulttimeout(old_timeout)
+ 
+ 
++
+ @contextlib.contextmanager
+ def captured_output(stream_name):
+-    """Return a context manager used by captured_stdout and captured_stdin
+-    that temporarily replaces the sys stream *stream_name* with a StringIO."""
++    """Run the 'with' statement body using a StringIO object in place of a
++    specific attribute on the sys module.
++    Example use (with 'stream_name=stdout')::
++
++       with captured_stdout() as s:
++           print "hello"
++       assert s.getvalue() == "hello"
++    """
+     import StringIO
+     orig_stdout = getattr(sys, stream_name)
+     setattr(sys, stream_name, StringIO.StringIO())
+@@ -897,12 +966,6 @@
+         setattr(sys, stream_name, orig_stdout)
+ 
+ def captured_stdout():
+-    """Capture the output of sys.stdout:
+-
+-       with captured_stdout() as s:
+-           print "hello"
+-       self.assertEqual(s.getvalue(), "hello")
+-    """
+     return captured_output("stdout")
+ 
+ def captured_stderr():
+@@ -946,7 +1009,8 @@
+ def check_sizeof(test, o, size):
+     result = sys.getsizeof(o)
+     # add GC header size
+-    if ((type(o) == type) and (o.__flags__ & _TPFLAGS_HEAPTYPE) or\
++    if (_testcapi and\
++        (type(o) == type) and (o.__flags__ & _TPFLAGS_HEAPTYPE) or\
+         ((type(o) != type) and (type(o).__flags__ & _TPFLAGS_HAVE_GC))):
+         size += _testcapi.SIZEOF_PYGC_HEAD
+     msg = 'wrong size for %s: got %d, expected %d' \
+@@ -1044,7 +1108,7 @@
+                 # to make sure they work. We still want to avoid using
+                 # too much memory, though, but we do that noisily.
+                 maxsize = 5147
+-                self.assertFalse(maxsize * memuse + overhead > 20 * _1M)
++                self.failIf(maxsize * memuse + overhead > 20 * _1M)
+             else:
+                 maxsize = int((max_memuse - overhead) / memuse)
+                 if maxsize < minsize:
+@@ -1104,6 +1168,7 @@
+         test(result)
+         return result
+ 
++
+ def _id(obj):
+     return obj
+ 
+@@ -1154,9 +1219,31 @@
+ 
+ 
+ 
++
+ def _run_suite(suite):
+     """Run tests from a unittest.TestSuite-derived class."""
+-    if verbose:
++    if not junit_xml_dir:
++        # Splitting tests apart slightly changes the handling of the
++        # TestFailed message
++        return _run_suite(suite, testclass)
++
++    failed = False
++    for test in suite:
++        suite = unittest.TestSuite()
++        suite.addTest(test)
++        try:
++            _run_suite(suite, testclass)
++        except TestFailed, e:
++            if not failed:
++                failed = e
++    if failed:
++        raise failed
++
++def _run_suite(suite, testclass=None):
++    if junit_xml_dir:
++        from junit_xml import JUnitXMLTestRunner
++        runner = JUnitXMLTestRunner(junit_xml_dir)
++    elif verbose:
+         runner = unittest.TextTestRunner(sys.stdout, verbosity=2)
+     else:
+         runner = BasicTestRunner()
+@@ -1236,31 +1323,19 @@
+ #=======================================================================
+ # Threading support to prevent reporting refleaks when running regrtest.py -R
+ 
+-# NOTE: we use thread._count() rather than threading.enumerate() (or the
+-# moral equivalent thereof) because a threading.Thread object is still alive
+-# until its __bootstrap() method has returned, even after it has been
+-# unregistered from the threading module.
+-# thread._count(), on the other hand, only gets decremented *after* the
+-# __bootstrap() method has returned, which gives us reliable reference counts
+-# at the end of a test run.
+-
+ def threading_setup():
+-    if thread:
+-        return thread._count(),
+-    else:
+-        return 1,
++    import threading
++    return len(threading._active), 0
+ 
+-def threading_cleanup(nb_threads):
+-    if not thread:
+-        return
++def threading_cleanup(num_active, num_limbo):
++    import threading
++    import time
+ 
+     _MAX_COUNT = 10
+-    for count in range(_MAX_COUNT):
+-        n = thread._count()
+-        if n == nb_threads:
+-            break
++    count = 0
++    while len(threading._active) != num_active and count < _MAX_COUNT:
++        count += 1
+         time.sleep(0.1)
+-    # XXX print a warning in case of failure?
+ 
+ def reap_threads(func):
+     """Use this function when threads are being used.  This will
+@@ -1370,3 +1445,29 @@
+     """
+     stderr = re.sub(br"\[\d+ refs\]\r?\n?$", b"", stderr).strip()
+     return stderr
++
++def retry(exceptions, tries=6, delay=3, backoff=1.2):
++    # modified from https://wiki.python.org/moin/PythonDecoratorLibrary#Retry
++    def deco_retry(f):
++
++        def wrapper(*args, **kwds):
++            mtries, mdelay = tries, delay
++            while mtries > 1:
++                try:
++                    return f(*args, **kwds)
++                except exceptions as e:
++                    if verbose:
++                        print "Got %s, retrying in %.2f seconds..." % (str(e), mdelay)
++                    # FIXME resource cleanup continues to be an issue
++                    # in terms of tests we use from CPython. This only
++                    # represents a bandaid - useful as it might be -
++                    # and it should be revisited.
++                    gc_collect()
++                    time.sleep(mdelay)
++                    mtries -= 1
++                    mdelay *= backoff
++            return f(*args, **kwds)
++
++        return wrapper
++
++    return deco_retry

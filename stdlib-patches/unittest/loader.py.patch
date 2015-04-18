@@ -1,0 +1,11 @@
+--- lib-python/2.7/unittest/loader.py	2015-04-18 05:34:44.807111564 +0300
++++ Lib/unittest/loader.py	2015-04-18 05:34:31.883089926 +0300
+@@ -255,6 +255,8 @@
+                 else:
+                     mod_file = os.path.abspath(getattr(module, '__file__', full_path))
+                     realpath = os.path.splitext(mod_file)[0]
++                    if realpath.lower().endswith('$py'):  # This is needed for $py.class
++                        realpath = realpath[:-3]
+                     fullpath_noext = os.path.splitext(full_path)[0]
+                     if realpath.lower() != fullpath_noext.lower():
+                         module_dir = os.path.dirname(realpath)

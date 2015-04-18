@@ -1,0 +1,11 @@
+--- lib-python/2.7/logging/__init__.py	2015-04-18 05:34:44.659111317 +0300
++++ Lib/logging/__init__.py	2015-04-18 05:34:31.787089766 +0300
+@@ -66,6 +66,8 @@
+     _srcfile = "logging%s__init__%s" % (os.sep, __file__[-4:])
+ elif __file__[-4:].lower() in ['.pyc', '.pyo']:
+     _srcfile = __file__[:-4] + '.py'
++elif __file__.endswith('$py.class'):
++    _srcfile = __file__[:-9] + '.py'
+ else:
+     _srcfile = __file__
+ _srcfile = os.path.normcase(_srcfile)

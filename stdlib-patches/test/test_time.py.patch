@@ -1,0 +1,96 @@
+--- lib-python/2.7/test/test_time.py	2015-04-18 05:34:44.679111350 +0300
++++ Lib/test/test_time.py	2015-04-18 05:34:31.871089907 +0300
+@@ -1,7 +1,6 @@
+ from test import test_support
+ import time
+ import unittest
+-import sys
+ 
+ 
+ class TimeTestCase(unittest.TestCase):
+@@ -9,6 +8,10 @@
+     def setUp(self):
+         self.t = time.time()
+ 
++    def test_missing_module_attribute(self):
++        self.assertEqual(time.clock.__module__, 'time')
++        self.assertEqual(time.time.__module__, 'time')
++
+     def test_data_attributes(self):
+         time.altzone
+         time.daylight
+@@ -38,20 +41,15 @@
+             except ValueError:
+                 self.fail('conversion specifier: %r failed.' % format)
+ 
+-        # Issue #10762: Guard against invalid/non-supported format string
+-        # so that Python don't crash (Windows crashes when the format string
+-        # input to [w]strftime is not kosher.
+-        if sys.platform.startswith('win'):
+-            with self.assertRaises(ValueError):
+-                time.strftime('%f')
+-
+     def test_strftime_bounds_checking(self):
+         # Make sure that strftime() checks the bounds of the various parts
+         #of the time tuple (0 is valid for *all* values).
+ 
+-        # Check year [1900, max(int)]
+-        self.assertRaises(ValueError, time.strftime, '',
+-                            (1899, 1, 1, 0, 0, 0, 0, 1, -1))
++        # XXX: Jython supports more dates than CPython
++        if not test_support.is_jython:
++            # Check year [1900, max(int)]
++            self.assertRaises(ValueError, time.strftime, '',
++                              (1899, 1, 1, 0, 0, 0, 0, 1, -1))
+         if time.accept2dyear:
+             self.assertRaises(ValueError, time.strftime, '',
+                                 (-1, 1, 1, 0, 0, 0, 0, 1, -1))
+@@ -100,13 +98,19 @@
+         # Make sure that using all zeros uses the proper default values.
+         # No test for daylight savings since strftime() does not change output
+         # based on its value.
+-        expected = "2000 01 01 00 00 00 1 001"
++        if not test_support.is_jython:
++            expected = "2000 01 01 00 00 00 1 001"
++        else:
++            # XXX: Jython doesn't support the "two digits years" hack (turned
++            #      on/off by time.accept2dyears), so year 0 means exactly that
++            #      and it is not converted to 2000.
++            expected = "0000 01 01 00 00 00 1 001"
+         result = time.strftime("%Y %m %d %H %M %S %w %j", (0,)*9)
+         self.assertEqual(expected, result)
+ 
+     def test_strptime(self):
+         # Should be able to go round-trip from strftime to strptime without
+-        # raising an exception.
++        # throwing an exception.
+         tt = time.gmtime(self.t)
+         for directive in ('a', 'A', 'b', 'B', 'c', 'd', 'H', 'I',
+                           'j', 'm', 'M', 'p', 'S',
+@@ -119,6 +123,12 @@
+                 self.fail("conversion specifier %r failed with '%s' input." %
+                           (format, strf_output))
+ 
++    def test_strptime_empty(self):
++        try:
++            time.strptime('', '')
++        except ValueError:
++            self.fail('strptime failed on empty args.')
++
+     def test_asctime(self):
+         time.asctime(time.gmtime(self.t))
+         self.assertRaises(TypeError, time.asctime, 0)
+@@ -184,12 +194,7 @@
+             environ['TZ'] = victoria
+             time.tzset()
+             self.assertNotEqual(time.gmtime(xmas2002), time.localtime(xmas2002))
+-
+-            # Issue #11886: Australian Eastern Standard Time (UTC+10) is called
+-            # "EST" (as Eastern Standard Time, UTC-5) instead of "AEST" on some
+-            # operating systems (e.g. FreeBSD), which is wrong. See for example
+-            # this bug: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=93810
+-            self.assertIn(time.tzname[0], ('AEST' 'EST'), time.tzname[0])
++            self.assertTrue(time.tzname[0] == 'AEST', str(time.tzname[0]))
+             self.assertTrue(time.tzname[1] == 'AEDT', str(time.tzname[1]))
+             self.assertEqual(len(time.tzname), 2)
+             self.assertEqual(time.daylight, 1)

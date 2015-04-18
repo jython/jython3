@@ -1,0 +1,37 @@
+--- lib-python/2.7/email/test/test_email.py	2015-04-18 05:34:44.739111450 +0300
++++ Lib/email/test/test_email.py	2015-04-18 05:34:31.779089753 +0300
+@@ -34,7 +34,7 @@
+ 
+ from test.test_support import findfile, run_unittest
+ from email.test import __file__ as landmark
+-
++from test.test_support import is_jython
+ 
+ NL = '\n'
+ EMPTYSTRING = ''
+@@ -2977,14 +2977,17 @@
+         # Try the convert argument, where input codec != output codec
+         c = Charset('euc-jp')
+         # With apologies to Tokio Kikuchi ;)
+-        try:
+-            eq('\x1b$B5FCO;~IW\x1b(B',
+-               c.body_encode('\xb5\xc6\xc3\xcf\xbb\xfe\xc9\xd7'))
+-            eq('\xb5\xc6\xc3\xcf\xbb\xfe\xc9\xd7',
+-               c.body_encode('\xb5\xc6\xc3\xcf\xbb\xfe\xc9\xd7', False))
+-        except LookupError:
+-            # We probably don't have the Japanese codecs installed
+-            pass
++        if not is_jython:
++            # TODO Jython with its Java-based codecs does not
++            # currently support trailing bytes in CJK texts
++            try:
++                eq('\x1b$B5FCO;~IW\x1b(B',
++                   c.body_encode('\xb5\xc6\xc3\xcf\xbb\xfe\xc9\xd7'))
++                eq('\xb5\xc6\xc3\xcf\xbb\xfe\xc9\xd7',
++                   c.body_encode('\xb5\xc6\xc3\xcf\xbb\xfe\xc9\xd7', False))
++            except LookupError:
++                # We probably don't have the Japanese codecs installed
++                pass
+         # Testing SF bug #625509, which we have to fake, since there are no
+         # built-in encodings where the header encoding is QP but the body
+         # encoding is not.

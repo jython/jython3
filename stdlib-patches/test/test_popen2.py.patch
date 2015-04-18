@@ -1,0 +1,35 @@
+--- lib-python/2.7/test/test_popen2.py	2015-04-18 05:34:44.627111263 +0300
++++ Lib/test/test_popen2.py	2015-04-18 05:34:31.855089880 +0300
+@@ -12,7 +12,7 @@
+ import unittest
+ import popen2
+ 
+-from test.test_support import run_unittest, reap_children
++from test.test_support import run_unittest, reap_children, is_jython
+ 
+ if sys.platform[:4] == 'beos' or sys.platform[:6] == 'atheos':
+     #  Locks get messed up or something.  Generally we're supposed
+@@ -32,7 +32,7 @@
+ 
+ class Popen2Test(unittest.TestCase):
+     cmd = "cat"
+-    if os.name == "nt":
++    if os.name == "nt" or (os.name == "java" and os._name == "nt"):
+         cmd = "more"
+     teststr = "ab cd\n"
+     # "more" doesn't act the same way across Windows flavors,
+@@ -59,6 +59,14 @@
+         self.assertFalse(subprocess._active, "subprocess._active not empty")
+         reap_children()
+ 
++    @classmethod
++    def tearDownClass(cls):
++        if is_jython:
++            # GC is not immediate, so if Popen.__del__ may be delayed.
++            # Try to force Popen.__del__ within scope of test.
++            from test_weakref import extra_collect
++            extra_collect()
++
+     def validate_output(self, teststr, expected_out, r, w, e=None):
+         w.write(teststr)
+         w.close()

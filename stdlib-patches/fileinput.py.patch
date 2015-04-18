@@ -1,0 +1,13 @@
+--- lib-python/2.7/fileinput.py	2015-04-18 05:34:44.471111002 +0300
++++ Lib/fileinput.py	2015-04-18 05:34:31.783089759 +0300
+@@ -323,7 +323,9 @@
+                     self._file = open(self._backupfilename, self._mode)
+                     try:
+                         perm = os.fstat(self._file.fileno()).st_mode
+-                    except OSError:
++                    except (AttributeError, OSError):
++                        # AttributeError occurs in Jython, where there's no
++                        # os.fstat.
+                         self._output = open(self._filename, "w")
+                     else:
+                         fd = os.open(self._filename,

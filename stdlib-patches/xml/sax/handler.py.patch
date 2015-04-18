@@ -1,0 +1,23 @@
+--- lib-python/2.7/xml/sax/handler.py	2015-04-18 05:34:44.851111638 +0300
++++ Lib/xml/sax/handler.py	2015-04-18 05:34:31.887089934 +0300
+@@ -6,7 +6,7 @@
+ Many of these classes are empty and are included only as documentation
+ of the interfaces.
+ 
+-$Id$
++$Id: handler.py,v 1.5 2002/02/14 08:09:36 loewis Exp $
+ """
+ 
+ version = '2.0beta'
+@@ -177,7 +177,10 @@
+         chunk, or they may split it into several chunks; however, all
+         of the characters in any single event must come from the same
+         external entity, so that the Locator provides useful
+-        information."""
++        information.
++
++        The application must not attempt to read from the array
++        outside of the specified range."""
+ 
+     def processingInstruction(self, target, data):
+         """Receive notification of a processing instruction.

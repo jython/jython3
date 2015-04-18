@@ -1,0 +1,61 @@
+--- lib-python/2.7/test/test_import.py	2015-04-18 05:34:44.579111183 +0300
++++ Lib/test/test_import.py	2015-04-18 05:34:31.839089854 +0300
+@@ -292,10 +292,22 @@
+         self.assertIs(y, test.test_support, y.__name__)
+ 
+     def test_import_initless_directory_warning(self):
+-        with check_warnings(('', ImportWarning)):
+-            # Just a random non-package directory we always expect to be
+-            # somewhere in sys.path...
+-            self.assertRaises(ImportError, __import__, "site-packages")
++        # NOTE: to test this, we have to remove Jython's JavaImporter
++        # (bound to the string '__classpath__', which of course
++        # supports such directories as possible Java packages.
++        # 
++        # For Jython 3.x we really need to rethink what it does, since
++        # it repeatedly causes questions on Jython forums, but too
++        # late to change for 2.7, except perhaps by some option.
++        classpath_entry = sys.path.index('__classpath__')
++        del sys.path[classpath_entry]
++        try:
++            with check_warnings(('', ImportWarning)):
++                # Just a random non-package directory we always expect to be
++                # somewhere in sys.path...
++                self.assertRaises(ImportError, __import__, "site-packages")
++        finally:
++            sys.path.insert(classpath_entry, '__classpath__')
+ 
+     def test_import_by_filename(self):
+         path = os.path.abspath(TESTFN)
+@@ -333,7 +345,10 @@
+         sys.path.insert(0, os.curdir)
+         try:
+             source = TESTFN + ".py"
+-            compiled = source + ('c' if __debug__ else 'o')
++            if is_jython:
++                compiled = TESTFN + "$py.class"
++            else:
++                compiled = source + ('c' if __debug__ else 'o')
+             with open(source, 'w') as f:
+                 pass
+             try:
+@@ -409,7 +424,10 @@
+ """
+     dir_name = os.path.abspath(TESTFN)
+     file_name = os.path.join(dir_name, module_name) + os.extsep + "py"
+-    compiled_name = file_name + ("c" if __debug__ else "o")
++    if is_jython:
++        compiled_name = os.path.join(dir_name, module_name) + "$py.class"
++    else:
++        compiled_name = file_name + ("c" if __debug__ else "o")
+ 
+     def setUp(self):
+         self.sys_path = sys.path[:]
+@@ -461,6 +479,7 @@
+         self.assertEqual(mod.code_filename, target)
+         self.assertEqual(mod.func_filename, target)
+ 
++    @unittest.skipIf(is_jython, "Jython does not support compilation to Python bytecode (yet)")
+     def test_foreign_code(self):
+         py_compile.compile(self.file_name)
+         with open(self.compiled_name, "rb") as f:

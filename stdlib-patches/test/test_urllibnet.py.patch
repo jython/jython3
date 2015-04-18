@@ -1,0 +1,24 @@
+--- lib-python/2.7/test/test_urllibnet.py	2015-04-18 05:34:44.695111377 +0300
++++ Lib/test/test_urllibnet.py	2015-04-18 05:34:31.875089913 +0300
+@@ -94,7 +94,12 @@
+ 
+     def test_geturl(self):
+         # Make sure same URL as opened is returned by geturl.
+-        URL = "http://www.python.org/"
++        #
++        # This test has been changed from what's currently in our
++        # lib-python/2.7 for Jython due to recent updates at the
++        # python.org to use https; other tests can take advantate of
++        # URL redirection
++        URL = "https://www.python.org/"
+         open_url = self.urlopen(URL)
+         try:
+             gotten_url = open_url.geturl()
+@@ -112,6 +117,7 @@
+             open_url.close()
+         self.assertEqual(code, 404)
+ 
++    @unittest.skipIf(test_support.is_jython, "Sockets cannot be used as file descriptors")
+     def test_fileno(self):
+         if (sys.platform in ('win32',) or
+                 not hasattr(os, 'fdopen')):

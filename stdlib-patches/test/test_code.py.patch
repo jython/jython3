@@ -1,0 +1,117 @@
+--- lib-python/2.7/test/test_code.py	2015-04-18 05:34:44.483111021 +0300
++++ Lib/test/test_code.py	2015-04-18 05:34:31.823089826 +0300
+@@ -1,3 +1,8 @@
++#For Jython, removed co_names, co_consts since these are implementation details
++# that may never get implemented, and removed flags since there are implementation
++# differences that may never line up.  Still failing on one test for varnames
++# because I think it is possible that the order of varnames might be useful (in
++# order declared) and Jython doesn't quite get that right.
+ """This module includes tests of the code object representation.
+ 
+ >>> def f(x):
+@@ -9,24 +14,18 @@
+ >>> dump(f.func_code)
+ name: f
+ argcount: 1
+-names: ()
+ varnames: ('x', 'g')
+ cellvars: ('x',)
+ freevars: ()
+ nlocals: 2
+-flags: 3
+-consts: ('None', '<code object g>')
+ 
+ >>> dump(f(4).func_code)
+ name: g
+ argcount: 1
+-names: ()
+ varnames: ('y',)
+ cellvars: ()
+ freevars: ('x',)
+ nlocals: 1
+-flags: 19
+-consts: ('None',)
+ 
+ >>> def h(x, y):
+ ...     a = x + y
+@@ -37,13 +36,10 @@
+ >>> dump(h.func_code)
+ name: h
+ argcount: 2
+-names: ()
+ varnames: ('x', 'y', 'a', 'b', 'c')
+ cellvars: ()
+ freevars: ()
+ nlocals: 5
+-flags: 67
+-consts: ('None',)
+ 
+ >>> def attrs(obj):
+ ...     print obj.attr1
+@@ -53,13 +49,10 @@
+ >>> dump(attrs.func_code)
+ name: attrs
+ argcount: 1
+-names: ('attr1', 'attr2', 'attr3')
+ varnames: ('obj',)
+ cellvars: ()
+ freevars: ()
+ nlocals: 1
+-flags: 67
+-consts: ('None',)
+ 
+ >>> def optimize_away():
+ ...     'doc string'
+@@ -70,20 +63,20 @@
+ >>> dump(optimize_away.func_code)
+ name: optimize_away
+ argcount: 0
+-names: ()
+ varnames: ()
+ cellvars: ()
+ freevars: ()
+ nlocals: 0
+-flags: 67
+-consts: ("'doc string'", 'None')
+ 
+ """
+ 
+ import unittest
+ import weakref
+-import _testcapi
+-
++from test import test_support
++try:
++    import _testcapi
++except ImportError:
++    _testcapi = None
+ 
+ def consts(t):
+     """Yield a doctest-safe sequence of object reprs."""
+@@ -96,14 +89,14 @@
+ 
+ def dump(co):
+     """Print out a text representation of a code object."""
+-    for attr in ["name", "argcount", "names", "varnames", "cellvars",
+-                 "freevars", "nlocals", "flags"]:
++    for attr in ["name", "argcount", "varnames", "cellvars",
++                 "freevars", "nlocals"]:
+         print "%s: %s" % (attr, getattr(co, "co_" + attr))
+-    print "consts:", tuple(consts(co.co_consts))
+ 
+ 
+ class CodeTest(unittest.TestCase):
+ 
++    @unittest.skipIf(_testcapi is None, "No _testcapi present")
+     def test_newempty(self):
+         co = _testcapi.code_newempty("filename", "funcname", 15)
+         self.assertEqual(co.co_filename, "filename")
+@@ -113,6 +106,8 @@
+ 
+ class CodeWeakRefTest(unittest.TestCase):
+ 
++    @unittest.skipIf(test_support.is_jython,
++                     "weakrefs are not deterministic in Jython")
+     def test_basic(self):
+         # Create a code object in a clean environment so that we know we have
+         # the only reference to it left.

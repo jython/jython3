@@ -1,0 +1,20 @@
+--- lib-python/2.7/zipfile.py	2015-04-18 05:34:44.855111644 +0300
++++ Lib/zipfile.py	2015-04-18 05:34:31.887089934 +0300
+@@ -7,6 +7,8 @@
+ import re
+ import string
+ 
++_is_jython = os.name == "java"
++
+ try:
+     import zlib # We may need its compression method
+     crc32 = zlib.crc32
+@@ -1423,7 +1425,7 @@
+         /python/lib/string, return (/python/lib/string.pyc, string).
+         """
+         file_py  = pathname + ".py"
+-        file_pyc = pathname + ".pyc"
++        file_pyc = pathname + (".pyc" if not _is_jython else "$py.class")
+         file_pyo = pathname + ".pyo"
+         if os.path.isfile(file_pyo) and \
+                             os.stat(file_pyo).st_mtime >= os.stat(file_py).st_mtime:

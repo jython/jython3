@@ -1,0 +1,98 @@
+--- lib-python/2.7/test/test_str.py	2015-04-18 05:34:44.659111317 +0300
++++ Lib/test/test_str.py	2015-04-18 05:34:31.863089894 +0300
+@@ -35,18 +35,6 @@
+         string_tests.MixinStrUnicodeUserStringTest.test_formatting(self)
+         self.assertRaises(OverflowError, '%c'.__mod__, 0x1234)
+ 
+-    @test_support.cpython_only
+-    def test_formatting_huge_precision(self):
+-        from _testcapi import INT_MAX
+-        format_string = "%.{}f".format(INT_MAX + 1)
+-        with self.assertRaises(ValueError):
+-            result = format_string % 2.34
+-
+-    def test_formatting_huge_width(self):
+-        format_string = "%{}f".format(sys.maxsize + 1)
+-        with self.assertRaises(ValueError):
+-            result = format_string % 2.34
+-
+     def test_conversion(self):
+         # Make sure __str__() behaves properly
+         class Foo0:
+@@ -311,13 +299,15 @@
+             self.assertEqual('{0:^10s}'.format(E('data')), ' E(data)  ')
+             self.assertEqual('{0:>15s}'.format(G('data')), ' string is data')
+ 
+-        self.assertEqual("{0:date: %Y-%m-%d}".format(I(year=2007,
+-                                                       month=8,
+-                                                       day=27)),
+-                         "date: 2007-08-27")
++        #FIXME: not supported in Jython yet:
++        if not test_support.is_jython:
++            self.assertEqual("{0:date: %Y-%m-%d}".format(I(year=2007,
++                                                           month=8,
++                                                           day=27)),
++                             "date: 2007-08-27")
+ 
+-        # test deriving from a builtin type and overriding __format__
+-        self.assertEqual("{0}".format(J(10)), "20")
++            # test deriving from a builtin type and overriding __format__
++            self.assertEqual("{0}".format(J(10)), "20")
+ 
+ 
+         # string format specifiers
+@@ -383,21 +373,6 @@
+         self.assertRaises(ValueError, format, "", "-")
+         self.assertRaises(ValueError, "{0:=s}".format, '')
+ 
+-    def test_format_huge_precision(self):
+-        format_string = ".{}f".format(sys.maxsize + 1)
+-        with self.assertRaises(ValueError):
+-            result = format(2.34, format_string)
+-
+-    def test_format_huge_width(self):
+-        format_string = "{}f".format(sys.maxsize + 1)
+-        with self.assertRaises(ValueError):
+-            result = format(2.34, format_string)
+-
+-    def test_format_huge_item_number(self):
+-        format_string = "{{{}:.6f}}".format(sys.maxsize + 1)
+-        with self.assertRaises(ValueError):
+-            result = format_string.format(2.34)
+-
+     def test_format_auto_numbering(self):
+         class C:
+             def __init__(self, x=100):
+@@ -441,18 +416,20 @@
+         self.assertEqual('Andr\202 x'.decode('ascii', 'replace'),
+                          'Andr\202 x'.decode(encoding='ascii', errors='replace'))
+ 
+-    def test_startswith_endswith_errors(self):
+-        with self.assertRaises(UnicodeDecodeError):
+-            '\xff'.startswith(u'x')
+-        with self.assertRaises(UnicodeDecodeError):
+-            '\xff'.endswith(u'x')
+-        for meth in ('foo'.startswith, 'foo'.endswith):
+-            with self.assertRaises(TypeError) as cm:
+-                meth(['f'])
+-            exc = str(cm.exception)
+-            self.assertIn('unicode', exc)
+-            self.assertIn('str', exc)
+-            self.assertIn('tuple', exc)
++    #FIXME: not working in Jython.
++    if not test_support.is_jython:
++        def test_startswith_endswith_errors(self):
++            with self.assertRaises(UnicodeDecodeError):
++                '\xff'.startswith(u'x')
++            with self.assertRaises(UnicodeDecodeError):
++                '\xff'.endswith(u'x')
++            for meth in ('foo'.startswith, 'foo'.endswith):
++                with self.assertRaises(TypeError) as cm:
++                    meth(['f'])
++                exc = str(cm.exception)
++                self.assertIn('unicode', exc)
++                self.assertIn('str', exc)
++                self.assertIn('tuple', exc)
+ 
+ def test_main():
+     test_support.run_unittest(StrTest)

@@ -1,0 +1,195 @@
+--- lib-python/2.7/test/test_importhooks.py	2015-04-18 05:34:44.579111183 +0300
++++ Lib/test/test_importhooks.py	2015-04-18 05:34:31.839089854 +0300
+@@ -12,25 +12,17 @@
+     return __file__
+ """
+ 
+-absimp = "import sub\n"
+-relimp = "from . import sub\n"
+-deeprelimp = "from .... import sub\n"
+-futimp = "from __future__ import absolute_import\n"
+-
+-reload_src = test_src+"""\
+-reloaded = True
+-"""
+-
+ test_co = compile(test_src, "<???>", "exec")
+-reload_co = compile(reload_src, "<???>", "exec")
++test_path = "!!!_test_!!!"
+ 
+-test2_oldabs_co = compile(absimp + test_src, "<???>", "exec")
+-test2_newabs_co = compile(futimp + absimp + test_src, "<???>", "exec")
+-test2_newrel_co = compile(relimp + test_src, "<???>", "exec")
+-test2_deeprel_co = compile(deeprelimp + test_src, "<???>", "exec")
+-test2_futrel_co = compile(futimp + relimp + test_src, "<???>", "exec")
+ 
+-test_path = "!!!_test_!!!"
++class ImportTracker:
++    """Importer that only tracks attempted imports."""
++    def __init__(self):
++        self.imports = []
++    def find_module(self, fullname, path=None):
++        self.imports.append(fullname)
++        return None
+ 
+ 
+ class TestImporter:
+@@ -39,14 +31,7 @@
+         "hooktestmodule": (False, test_co),
+         "hooktestpackage": (True, test_co),
+         "hooktestpackage.sub": (True, test_co),
+-        "hooktestpackage.sub.subber": (True, test_co),
+-        "hooktestpackage.oldabs": (False, test2_oldabs_co),
+-        "hooktestpackage.newabs": (False, test2_newabs_co),
+-        "hooktestpackage.newrel": (False, test2_newrel_co),
+-        "hooktestpackage.sub.subber.subest": (True, test2_deeprel_co),
+-        "hooktestpackage.futrel": (False, test2_futrel_co),
+-        "sub": (False, test_co),
+-        "reloadmodule": (False, test_co),
++        "hooktestpackage.sub.subber": (False, test_co),
+     }
+ 
+     def __init__(self, path=test_path):
+@@ -67,7 +52,8 @@
+ 
+     def load_module(self, fullname):
+         ispkg, code = self.modules[fullname]
+-        mod = sys.modules.setdefault(fullname,imp.new_module(fullname))
++        mod = imp.new_module(fullname)
++        sys.modules[fullname] = mod
+         mod.__file__ = "<%s>" % self.__class__.__name__
+         mod.__loader__ = self
+         if ispkg:
+@@ -90,7 +76,9 @@
+     can be sure the modules you specified can't be imported, even
+     if it's a builtin."""
+     def __init__(self, *namestoblock):
+-        self.namestoblock = dict.fromkeys(namestoblock)
++        #self.namestoblock = dict.fromkeys(namestoblock)
++        self.namestoblock = {}
++        [self.namestoblock.__setitem__(x, None) for x in namestoblock]
+     def find_module(self, fullname, path=None):
+         if fullname in self.namestoblock:
+             return self
+@@ -120,7 +108,6 @@
+             return None
+         return ImpLoader(file, filename, stuff)
+ 
+-
+ class ImpLoader:
+ 
+     def __init__(self, file, filename, stuff):
+@@ -143,15 +130,17 @@
+         self.meta_path = sys.meta_path[:]
+         self.path_hooks = sys.path_hooks[:]
+         sys.path_importer_cache.clear()
+-        self.modules_before = sys.modules.copy()
++        self.tracker = ImportTracker()
++        sys.meta_path.insert(0, self.tracker)
+ 
+     def tearDown(self):
+         sys.path[:] = self.path
+         sys.meta_path[:] = self.meta_path
+         sys.path_hooks[:] = self.path_hooks
+         sys.path_importer_cache.clear()
+-        sys.modules.clear()
+-        sys.modules.update(self.modules_before)
++        for fullname in self.tracker.imports:
++            if fullname in sys.modules:
++                del sys.modules[fullname]
+ 
+ 
+ class ImportHooksTestCase(ImportHooksBaseTestCase):
+@@ -175,46 +164,6 @@
+             self.assertEqual(hooktestpackage.sub.__loader__, importer)
+             self.assertEqual(hooktestpackage.sub.subber.__loader__, importer)
+ 
+-        TestImporter.modules['reloadmodule'] = (False, test_co)
+-        import reloadmodule
+-        self.assertFalse(hasattr(reloadmodule,'reloaded'))
+-
+-        TestImporter.modules['reloadmodule'] = (False, reload_co)
+-        imp.reload(reloadmodule)
+-        self.assertTrue(hasattr(reloadmodule,'reloaded'))
+-
+-        import hooktestpackage.oldabs
+-        self.assertEqual(hooktestpackage.oldabs.get_name(),
+-                         "hooktestpackage.oldabs")
+-        self.assertEqual(hooktestpackage.oldabs.sub,
+-                         hooktestpackage.sub)
+-
+-        import hooktestpackage.newrel
+-        self.assertEqual(hooktestpackage.newrel.get_name(),
+-                         "hooktestpackage.newrel")
+-        self.assertEqual(hooktestpackage.newrel.sub,
+-                         hooktestpackage.sub)
+-
+-        import hooktestpackage.sub.subber.subest as subest
+-        self.assertEqual(subest.get_name(),
+-                         "hooktestpackage.sub.subber.subest")
+-        self.assertEqual(subest.sub,
+-                         hooktestpackage.sub)
+-
+-        import hooktestpackage.futrel
+-        self.assertEqual(hooktestpackage.futrel.get_name(),
+-                         "hooktestpackage.futrel")
+-        self.assertEqual(hooktestpackage.futrel.sub,
+-                         hooktestpackage.sub)
+-
+-        import sub
+-        self.assertEqual(sub.get_name(), "sub")
+-
+-        import hooktestpackage.newabs
+-        self.assertEqual(hooktestpackage.newabs.get_name(),
+-                         "hooktestpackage.newabs")
+-        self.assertEqual(hooktestpackage.newabs.sub, sub)
+-
+     def testMetaPath(self):
+         i = MetaImporter()
+         sys.meta_path.append(i)
+@@ -227,26 +176,36 @@
+ 
+     def testBlocker(self):
+         mname = "exceptions"  # an arbitrary harmless builtin module
+-        test_support.unload(mname)
++        if mname in sys.modules:
++            del sys.modules[mname]
+         sys.meta_path.append(ImportBlocker(mname))
+-        self.assertRaises(ImportError, __import__, mname)
++        try:
++            __import__(mname)
++        except ImportError:
++            pass
++        else:
++            self.fail("'%s' was not supposed to be importable" % mname)
+ 
+-    def testImpWrapper(self):
++    def doTestImpWrapper(self, globals_func=globals, locals_func=locals):
+         i = ImpWrapper()
+         sys.meta_path.append(i)
+         sys.path_hooks.append(ImpWrapper)
+-        mnames = ("colorsys", "urlparse", "distutils.core", "compiler.misc")
++        #mnames = ("colorsys", "urlparse", "distutils.core", "compiler.misc")
++        mnames = ("colorsys", "urlparse", "distutils.core")
+         for mname in mnames:
+             parent = mname.split(".")[0]
+             for n in sys.modules.keys():
+                 if n.startswith(parent):
+                     del sys.modules[n]
+-        with test_support.check_warnings(("The compiler package is deprecated "
+-                                          "and removed", DeprecationWarning)):
+-            for mname in mnames:
+-                m = __import__(mname, globals(), locals(), ["__dummy__"])
+-                m.__loader__  # to make sure we actually handled the import
++        for mname in mnames:
++            m = __import__(mname, globals_func(), locals_func(), ["__dummy__"])
++            m.__loader__  # to make sure we actually handled the import
++
++    def testImpWrapper(self):
++        self.doTestImpWrapper()
+ 
++    def testImpWrapperNoContext(self):
++        self.doTestImpWrapper(lambda: None, lambda: None)
+ 
+ def test_main():
+     test_support.run_unittest(ImportHooksTestCase)

@@ -1,0 +1,21 @@
+--- lib-python/2.7/timeit.py	2015-04-18 05:34:44.799111550 +0300
++++ Lib/timeit.py	2015-04-18 05:34:31.879089920 +0300
+@@ -190,12 +190,13 @@
+         else:
+             it = [None] * number
+         gcold = gc.isenabled()
+-        gc.disable()
+         try:
+-            timing = self.inner(it, self.timer)
+-        finally:
+-            if gcold:
+-                gc.enable()
++            gc.disable()
++        except NotImplementedError:
++            pass # ignore on platforms like Jython
++        timing = self.inner(it, self.timer)
++        if gcold:
++            gc.enable()
+         return timing
+ 
+     def repeat(self, repeat=default_repeat, number=default_number):

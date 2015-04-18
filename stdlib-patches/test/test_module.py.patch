@@ -1,0 +1,33 @@
+--- lib-python/2.7/test/test_module.py	2015-04-18 05:34:44.603111223 +0300
++++ Lib/test/test_module.py	2015-04-18 05:34:31.847089867 +0300
+@@ -2,8 +2,8 @@
+ import unittest
+ from test.test_support import run_unittest, gc_collect
+ 
+-import sys
+-ModuleType = type(sys)
++import StringIO  # Jython: sub this for sys, given the special status of PySystemState
++ModuleType = type(StringIO)
+ 
+ class ModuleTests(unittest.TestCase):
+     def test_uninitialized(self):
+@@ -11,7 +11,9 @@
+         # and __doc__ is None
+         foo = ModuleType.__new__(ModuleType)
+         self.assertTrue(foo.__dict__ is None)
+-        self.assertRaises(SystemError, dir, foo)
++        # CPython raises SystemError, but this is more consistent
++        # and doesn't seem worth special casing for dir() here
++        self.assertRaises(TypeError, dir, foo)
+         try:
+             s = foo.__name__
+             self.fail("__name__ = %s" % repr(s))
+@@ -55,7 +57,7 @@
+               {"__name__": "foo", "__doc__": "foodoc", "bar": 42})
+         self.assertTrue(foo.__dict__ is d)
+ 
+-    @unittest.expectedFailure
++    # @unittest.expectedFailure - works fine on Jython!
+     def test_dont_clear_dict(self):
+         # See issue 7140.
+         def f():

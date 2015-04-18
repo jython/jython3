@@ -1,0 +1,11 @@
+--- lib-python/2.7/test/test_pprint.py	2015-04-18 05:34:44.627111263 +0300
++++ Lib/test/test_pprint.py	2015-04-18 05:34:31.855089880 +0300
+@@ -204,6 +204,8 @@
+  others.should.not.be: like.this}"""
+         self.assertEqual(DottedPrettyPrinter().pformat(o), exp)
+ 
++    @unittest.skipIf(test.test_support.is_jython,
++                     "XXX: depends on set repr order")
+     def test_set_reprs(self):
+         self.assertEqual(pprint.pformat(set()), 'set()')
+         self.assertEqual(pprint.pformat(set(range(3))), 'set([0, 1, 2])')

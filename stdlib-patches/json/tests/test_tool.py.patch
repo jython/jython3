@@ -1,0 +1,22 @@
+--- lib-python/2.7/json/tests/test_tool.py	2015-04-18 05:34:44.539111115 +0300
++++ Lib/json/tests/test_tool.py	2015-04-18 05:34:31.787089766 +0300
+@@ -37,6 +37,7 @@
+     ]
+     """)
+ 
++    @unittest.skipIf(test_support.is_jython, "Revisit when http://bugs.jython.org/issue695383 is fixed")
+     def test_stdin_stdout(self):
+         proc = subprocess.Popen(
+                 (sys.executable, '-m', 'json.tool'),
+@@ -52,6 +53,11 @@
+             fp.write(self.data)
+         return infile
+ 
++    # This is a problem orthogonal to json support, even for usage of
++    # this tool. Instead it seems to be a problem in simply testing
++    # it. TODO fix this underlying issue that's been outstanding for a
++    # while in Jython.
++    @unittest.skipIf(test_support.is_jython, "Revisit when http://bugs.jython.org/issue695383 is fixed")
+     def test_infile_stdout(self):
+         infile = self._create_infile()
+         rc, out, err = assert_python_ok('-m', 'json.tool', infile)

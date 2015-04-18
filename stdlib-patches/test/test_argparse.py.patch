@@ -1,0 +1,244 @@
+--- lib-python/2.7/test/test_argparse.py	2015-04-18 05:34:44.875111678 +0300
++++ Lib/test/test_argparse.py	2015-04-18 05:34:31.815089812 +0300
+@@ -1374,7 +1374,6 @@
+         ('X @hello', NS(a=None, x='X', y=['hello world!'])),
+         ('-a B @recursive Y Z', NS(a='A', x='hello world!', y=['Y', 'Z'])),
+         ('X @recursive Z -a B', NS(a='B', x='X', y=['hello world!', 'Z'])),
+-        (["-a", "", "X", "Y"], NS(a='', x='X', y=['Y'])),
+     ]
+ 
+ 
+@@ -1467,22 +1466,6 @@
+         ('readonly', NS(x=None, spam=RFile('readonly'))),
+     ]
+ 
+-class TestFileTypeDefaults(TempDirMixin, ParserTestCase):
+-    """Test that a file is not created unless the default is needed"""
+-    def setUp(self):
+-        super(TestFileTypeDefaults, self).setUp()
+-        file = open(os.path.join(self.temp_dir, 'good'), 'w')
+-        file.write('good')
+-        file.close()
+-
+-    argument_signatures = [
+-        Sig('-c', type=argparse.FileType('r'), default='no-file.txt'),
+-    ]
+-    # should provoke no such file error
+-    failures = ['']
+-    # should not provoke error because default file is created
+-    successes = [('-c good', NS(c=RFile('good')))]
+-
+ 
+ class TestFileTypeRB(TempDirMixin, ParserTestCase):
+     """Test the FileType option/argument type for reading files"""
+@@ -1780,14 +1763,6 @@
+         parser2.add_argument('-y', choices='123', help='y help')
+         parser2.add_argument('z', type=complex, nargs='*', help='z help')
+ 
+-        # add third sub-parser
+-        parser3_kwargs = dict(description='3 description')
+-        if subparser_help:
+-            parser3_kwargs['help'] = '3 help'
+-        parser3 = subparsers.add_parser('3', **parser3_kwargs)
+-        parser3.add_argument('t', type=int, help='t help')
+-        parser3.add_argument('u', nargs='...', help='u help')
+-
+         # return the main parser
+         return parser
+ 
+@@ -1817,10 +1792,6 @@
+             self.parser.parse_args('--foo 0.125 1 c'.split()),
+             NS(foo=True, bar=0.125, w=None, x='c'),
+         )
+-        self.assertEqual(
+-            self.parser.parse_args('-1.5 3 11 -- a --foo 7 -- b'.split()),
+-            NS(foo=False, bar=-1.5, t=11, u=['a', '--foo', '7', '--', 'b']),
+-        )
+ 
+     def test_parse_known_args(self):
+         self.assertEqual(
+@@ -1855,15 +1826,15 @@
+ 
+     def test_help(self):
+         self.assertEqual(self.parser.format_usage(),
+-                         'usage: PROG [-h] [--foo] bar {1,2,3} ...\n')
++                         'usage: PROG [-h] [--foo] bar {1,2} ...\n')
+         self.assertEqual(self.parser.format_help(), textwrap.dedent('''\
+-            usage: PROG [-h] [--foo] bar {1,2,3} ...
++            usage: PROG [-h] [--foo] bar {1,2} ...
+ 
+             main description
+ 
+             positional arguments:
+               bar         bar help
+-              {1,2,3}     command help
++              {1,2}       command help
+ 
+             optional arguments:
+               -h, --help  show this help message and exit
+@@ -1874,15 +1845,15 @@
+         # Make sure - is still used for help if it is a non-first prefix char
+         parser = self._get_parser(prefix_chars='+:-')
+         self.assertEqual(parser.format_usage(),
+-                         'usage: PROG [-h] [++foo] bar {1,2,3} ...\n')
++                         'usage: PROG [-h] [++foo] bar {1,2} ...\n')
+         self.assertEqual(parser.format_help(), textwrap.dedent('''\
+-            usage: PROG [-h] [++foo] bar {1,2,3} ...
++            usage: PROG [-h] [++foo] bar {1,2} ...
+ 
+             main description
+ 
+             positional arguments:
+               bar         bar help
+-              {1,2,3}     command help
++              {1,2}       command help
+ 
+             optional arguments:
+               -h, --help  show this help message and exit
+@@ -1893,15 +1864,15 @@
+     def test_help_alternate_prefix_chars(self):
+         parser = self._get_parser(prefix_chars='+:/')
+         self.assertEqual(parser.format_usage(),
+-                         'usage: PROG [+h] [++foo] bar {1,2,3} ...\n')
++                         'usage: PROG [+h] [++foo] bar {1,2} ...\n')
+         self.assertEqual(parser.format_help(), textwrap.dedent('''\
+-            usage: PROG [+h] [++foo] bar {1,2,3} ...
++            usage: PROG [+h] [++foo] bar {1,2} ...
+ 
+             main description
+ 
+             positional arguments:
+               bar         bar help
+-              {1,2,3}     command help
++              {1,2}       command help
+ 
+             optional arguments:
+               +h, ++help  show this help message and exit
+@@ -1910,19 +1881,18 @@
+ 
+     def test_parser_command_help(self):
+         self.assertEqual(self.command_help_parser.format_usage(),
+-                         'usage: PROG [-h] [--foo] bar {1,2,3} ...\n')
++                         'usage: PROG [-h] [--foo] bar {1,2} ...\n')
+         self.assertEqual(self.command_help_parser.format_help(),
+                          textwrap.dedent('''\
+-            usage: PROG [-h] [--foo] bar {1,2,3} ...
++            usage: PROG [-h] [--foo] bar {1,2} ...
+ 
+             main description
+ 
+             positional arguments:
+               bar         bar help
+-              {1,2,3}     command help
++              {1,2}       command help
+                 1         1 help
+                 2         2 help
+-                3         3 help
+ 
+             optional arguments:
+               -h, --help  show this help message and exit
+@@ -4405,6 +4375,8 @@
+ 
+     def _test_module_encoding(self, path):
+         path, _ = os.path.splitext(path)
++        if path.endswith(r'$py'):
++            path = path[:-3]
+         path += ".py"
+         with codecs.open(path, 'r', 'utf8') as f:
+             f.read()
+@@ -4448,95 +4420,12 @@
+         else:
+             self.fail()
+ 
+-# ================================================
+-# Check that the type function is called only once
+-# ================================================
+-
+-class TestTypeFunctionCallOnlyOnce(TestCase):
+-
+-    def test_type_function_call_only_once(self):
+-        def spam(string_to_convert):
+-            self.assertEqual(string_to_convert, 'spam!')
+-            return 'foo_converted'
+-
+-        parser = argparse.ArgumentParser()
+-        parser.add_argument('--foo', type=spam, default='bar')
+-        args = parser.parse_args('--foo spam!'.split())
+-        self.assertEqual(NS(foo='foo_converted'), args)
+-
+-# ==================================================================
+-# Check semantics regarding the default argument and type conversion
+-# ==================================================================
+-
+-class TestTypeFunctionCalledOnDefault(TestCase):
+-
+-    def test_type_function_call_with_non_string_default(self):
+-        def spam(int_to_convert):
+-            self.assertEqual(int_to_convert, 0)
+-            return 'foo_converted'
+-
+-        parser = argparse.ArgumentParser()
+-        parser.add_argument('--foo', type=spam, default=0)
+-        args = parser.parse_args([])
+-        # foo should *not* be converted because its default is not a string.
+-        self.assertEqual(NS(foo=0), args)
+-
+-    def test_type_function_call_with_string_default(self):
+-        def spam(int_to_convert):
+-            return 'foo_converted'
+-
+-        parser = argparse.ArgumentParser()
+-        parser.add_argument('--foo', type=spam, default='0')
+-        args = parser.parse_args([])
+-        # foo is converted because its default is a string.
+-        self.assertEqual(NS(foo='foo_converted'), args)
+-
+-    def test_no_double_type_conversion_of_default(self):
+-        def extend(str_to_convert):
+-            return str_to_convert + '*'
+-
+-        parser = argparse.ArgumentParser()
+-        parser.add_argument('--test', type=extend, default='*')
+-        args = parser.parse_args([])
+-        # The test argument will be two stars, one coming from the default
+-        # value and one coming from the type conversion being called exactly
+-        # once.
+-        self.assertEqual(NS(test='**'), args)
+-
+-    def test_issue_15906(self):
+-        # Issue #15906: When action='append', type=str, default=[] are
+-        # providing, the dest value was the string representation "[]" when it
+-        # should have been an empty list.
+-        parser = argparse.ArgumentParser()
+-        parser.add_argument('--test', dest='test', type=str,
+-                            default=[], action='append')
+-        args = parser.parse_args([])
+-        self.assertEqual(args.test, [])
+-
+ # ======================
+ # parse_known_args tests
+ # ======================
+ 
+ class TestParseKnownArgs(TestCase):
+ 
+-    def test_arguments_tuple(self):
+-        parser = argparse.ArgumentParser()
+-        parser.parse_args(())
+-
+-    def test_arguments_list(self):
+-        parser = argparse.ArgumentParser()
+-        parser.parse_args([])
+-
+-    def test_arguments_tuple_positional(self):
+-        parser = argparse.ArgumentParser()
+-        parser.add_argument('x')
+-        parser.parse_args(('x',))
+-
+-    def test_arguments_list_positional(self):
+-        parser = argparse.ArgumentParser()
+-        parser.add_argument('x')
+-        parser.parse_args(['x'])
+-
+     def test_optionals(self):
+         parser = argparse.ArgumentParser()
+         parser.add_argument('--foo')

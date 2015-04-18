@@ -1,0 +1,38 @@
+--- lib-python/2.7/xml/sax/xmlreader.py	2015-04-18 05:34:44.851111638 +0300
++++ Lib/xml/sax/xmlreader.py	2015-04-18 05:34:31.887089934 +0300
+@@ -68,7 +68,7 @@
+ 
+         SAX parsers are not required to provide localization for errors
+         and warnings; if they cannot support the requested locale,
+-        however, they must raise a SAX exception. Applications may
++        however, they must throw a SAX exception. Applications may
+         request a locale change in the middle of a parse."""
+         raise SAXNotSupportedException("Locale support not implemented")
+ 
+@@ -294,12 +294,12 @@
+         return self._attrs[name]
+ 
+     def getNameByQName(self, name):
+-        if not name in self._attrs:
++        if not self._attrs.has_key(name):
+             raise KeyError, name
+         return name
+ 
+     def getQNameByName(self, name):
+-        if not name in self._attrs:
++        if not self._attrs.has_key(name):
+             raise KeyError, name
+         return name
+ 
+@@ -319,10 +319,7 @@
+         return self._attrs.keys()
+ 
+     def has_key(self, name):
+-        return name in self._attrs
+-
+-    def __contains__(self, name):
+-        return name in self._attrs
++        return self._attrs.has_key(name)
+ 
+     def get(self, name, alternative=None):
+         return self._attrs.get(name, alternative)

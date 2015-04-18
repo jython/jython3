@@ -1,0 +1,72 @@
+--- lib-python/2.7/site.py	2015-04-18 05:34:44.583111189 +0300
++++ Lib/site.py	2015-04-18 05:34:31.795089780 +0300
+@@ -58,11 +58,29 @@
+ 
+ """
+ 
++# these first two imports will always be available if we got this far,
++# since they are implemented in Java
++import __builtin__
+ import sys
++
++# but the remaining imports may fail, if so, this is because
++# python.home is incorrect; see the diagnosis in Py.importSiteIfSelected
+ import os
+-import __builtin__
+ import traceback
+ 
++_is_jython = sys.platform.startswith("java")
++if _is_jython:
++    _ModuleType = type(os)
++    # Follow what Python 3.4 has done, http://bugs.python.org/issue5845
++    # FIXME add tab-as-indent support if preceding is whitespace
++    try:
++        import readline
++    except ImportError:
++        pass
++    else:
++        import rlcompleter
++        readline.parse_and_bind("tab: complete")
++
+ # Prefixes for site-packages; add additional prefixes like /usr/local here
+ PREFIXES = [sys.prefix, sys.exec_prefix]
+ # Enable per user site-packages directory
+@@ -78,6 +96,9 @@
+ 
+ def makepath(*paths):
+     dir = os.path.join(*paths)
++    if _is_jython and (dir == '__classpath__' or
++                       dir.startswith('__pyclasspath__')):
++            return dir, dir
+     try:
+         dir = os.path.abspath(dir)
+     except OSError:
+@@ -88,12 +109,13 @@
+ def abs__file__():
+     """Set all module' __file__ attribute to an absolute path"""
+     for m in sys.modules.values():
+-        if hasattr(m, '__loader__'):
+-            continue   # don't mess with a PEP 302-supplied __file__
+-        try:
+-            m.__file__ = os.path.abspath(m.__file__)
+-        except (AttributeError, OSError):
+-            pass
++        if hasattr(m, '__loader__') or (
++            _is_jython and not isinstance(m, _ModuleType)):
++                continue   # don't mess with a PEP 302-supplied __file__
++        f = getattr(m, '__file__', None)
++        if f is None:
++            continue
++        m.__file__ = os.path.abspath(f)
+ 
+ 
+ def removeduppaths():
+@@ -297,7 +319,7 @@
+             continue
+         seen.add(prefix)
+ 
+-        if sys.platform in ('os2emx', 'riscos'):
++        if sys.platform in ('os2emx', 'riscos') or _is_jython:
+             sitepackages.append(os.path.join(prefix, "Lib", "site-packages"))
+         elif os.sep == '/':
+             sitepackages.append(os.path.join(prefix, "lib",

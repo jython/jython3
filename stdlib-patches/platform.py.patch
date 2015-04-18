@@ -1,0 +1,95 @@
+--- lib-python/2.7/platform.py	2015-04-18 05:34:44.547111128 +0300
++++ Lib/platform.py	2015-04-18 05:34:31.791089772 +0300
+@@ -116,6 +116,9 @@
+ import sys,string,os,re
+ 
+ ### Globals & Constants
++if sys.platform.startswith("java"):
++    from java.lang import System
++    from org.python.core.Py import newString
+ 
+ # Determine the platform's /dev/null device
+ try:
+@@ -774,6 +777,7 @@
+     return release,versioninfo,machine
+ 
+ def _mac_ver_xml():
++    return None  # Jython patch
+     fn = '/System/Library/CoreServices/SystemVersion.plist'
+     if not os.path.exists(fn):
+         return None
+@@ -821,12 +825,11 @@
+ 
+ def _java_getprop(name,default):
+ 
+-    from java.lang import System
+     try:
+         value = System.getProperty(name)
+         if value is None:
+             return default
+-        return value
++        return newString(value)
+     except AttributeError:
+         return default
+ 
+@@ -856,9 +859,9 @@
+     vm_release = _java_getprop('java.vm.version', vm_release)
+     vminfo = vm_name, vm_release, vm_vendor
+     os_name, os_version, os_arch = osinfo
+-    os_arch = _java_getprop('java.os.arch', os_arch)
+-    os_name = _java_getprop('java.os.name', os_name)
+-    os_version = _java_getprop('java.os.version', os_version)
++    os_arch = _java_getprop('os.arch', os_arch)
++    os_name = _java_getprop('os.name', os_name)
++    os_version = _java_getprop('os.version', os_version)
+     osinfo = os_name, os_version, os_arch
+ 
+     return release, vendor, vminfo, osinfo
+@@ -1001,7 +1004,8 @@
+ 
+     """ Interface to the system's uname command.
+     """
+-    if sys.platform in ('dos','win32','win16','os2'):
++    if sys.platform in ('dos','win32','win16','os2') or \
++       (sys.platform.startswith('java') and os._name == 'nt'):
+         # XXX Others too ?
+         return default
+     try:
+@@ -1365,6 +1369,9 @@
+     '\(#?([^,]+),\s*([\w ]+),\s*([\w :]+)\)\s*'
+     '\[([^\]]+)\]?')
+ 
++_jython_sys_version_parser = re.compile(
++    r'([\d\.]+)')
++
+ _ironpython_sys_version_parser = re.compile(
+     r'IronPython\s*'
+     '([\d\.]+)'
+@@ -1417,19 +1424,25 @@
+                 'failed to parse IronPython sys.version: %s' %
+                 repr(sys_version))
+         version, alt_version, compiler = match.groups()
++        branch = ''
++        revision = ''
+         buildno = ''
+         builddate = ''
+ 
+     elif sys.platform[:4] == 'java':
+         # Jython
+         name = 'Jython'
+-        match = _sys_version_parser.match(sys_version)
++        match = _jython_sys_version_parser.match(sys_version)
+         if match is None:
+             raise ValueError(
+                 'failed to parse Jython sys.version: %s' %
+                 repr(sys_version))
+-        version, buildno, builddate, buildtime, _ = match.groups()
++        version, = match.groups()
++        branch = ''
++        revision = ''
+         compiler = sys.platform
++        buildno = ''
++        builddate = ''
+ 
+     elif "PyPy" in sys_version:
+         # PyPy

@@ -1,0 +1,27 @@
+--- lib-python/2.7/test/test_imaplib.py	2015-04-18 05:34:44.575111175 +0300
++++ Lib/test/test_imaplib.py	2015-04-18 05:34:31.839089854 +0300
+@@ -10,7 +10,7 @@
+ import SocketServer
+ import time
+ 
+-from test_support import reap_threads, verbose, transient_internet
++from test.test_support import reap_threads, verbose, transient_internet, is_jython
+ import unittest
+ 
+ try:
+@@ -42,6 +42,7 @@
+             newsocket, fromaddr = self.socket.accept()
+             connstream = ssl.wrap_socket(newsocket,
+                                          server_side=True,
++                                         ca_certs=CERTFILE,
+                                          certfile=CERTFILE)
+             return connstream, fromaddr
+ 
+@@ -171,6 +172,7 @@
+     imap_class = imaplib.IMAP4
+ 
+ 
++@unittest.skipIf(is_jython, "imaplib does not support passing in ca_certs; verifiable certs are necessary on Jython")
+ @unittest.skipUnless(ssl, "SSL not available")
+ class ThreadedNetworkedTestsSSL(BaseThreadedNetworkedTests):
+ 

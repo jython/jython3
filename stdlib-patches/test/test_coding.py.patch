@@ -1,0 +1,31 @@
+--- lib-python/2.7/test/test_coding.py	2015-04-18 05:34:44.491111035 +0300
++++ Lib/test/test_coding.py	2015-04-18 05:34:31.823089826 +0300
+@@ -1,5 +1,5 @@
+-
+-import test.test_support, unittest
++from test import test_support
++import unittest
+ import os
+ 
+ class CodingTest(unittest.TestCase):
+@@ -25,13 +25,16 @@
+         input = u"# coding: ascii\n\N{SNOWMAN}".encode('utf-8')
+         with self.assertRaises(SyntaxError) as c:
+             compile(input, "<string>", "exec")
+-        expected = "'ascii' codec can't decode byte 0xe2 in position 16: " \
+-                   "ordinal not in range(128)"
+-        self.assertTrue(c.exception.args[0].startswith(expected))
++        
++        #XXX: really exceptions should not be testing the message content.
++        if not test_support.is_jython:
++            expected = "'ascii' codec can't decode byte 0xe2 in position 16: " \
++                       "ordinal not in range(128)"
++            self.assertTrue(c.exception.args[0].startswith(expected))
+ 
+ 
+ def test_main():
+-    test.test_support.run_unittest(CodingTest)
++    test_support.run_unittest(CodingTest)
+ 
+ if __name__ == "__main__":
+     test_main()

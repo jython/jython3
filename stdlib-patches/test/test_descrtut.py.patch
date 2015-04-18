@@ -1,0 +1,35 @@
+--- lib-python/2.7/test/test_descrtut.py	2015-04-18 05:34:44.515111075 +0300
++++ Lib/test/test_descrtut.py	2015-04-18 05:34:31.831089839 +0300
+@@ -73,7 +73,7 @@
+     >>> exec "x = 3; print x" in a
+     3
+     >>> print sorted(a.keys())
+-    [1, 2, '__builtins__', 'x']
++    [1, 2, 'x']
+     >>> print a['x']
+     3
+     >>>
+@@ -182,6 +182,7 @@
+      '__delitem__',
+      '__delslice__',
+      '__doc__',
++     '__ensure_finalizer__',
+      '__eq__',
+      '__format__',
+      '__ge__',
+@@ -200,6 +201,7 @@
+      '__mul__',
+      '__ne__',
+      '__new__',
++     '__radd__',
+      '__reduce__',
+      '__reduce_ex__',
+      '__repr__',
+@@ -208,7 +210,6 @@
+      '__setattr__',
+      '__setitem__',
+      '__setslice__',
+-     '__sizeof__',
+      '__str__',
+      '__subclasshook__',
+      'append',

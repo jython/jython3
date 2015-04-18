@@ -1,0 +1,9 @@
+--- lib-python/2.7/test/bad_coding2.py	2015-04-18 05:34:44.615111242 +0300
++++ Lib/test/bad_coding2.py	2015-04-18 05:34:31.807089799 +0300
+@@ -1,2 +1,5 @@
+-﻿#coding: utf8
++﻿#coding: uft8
+ print '我'
++
++#Changed for Jython because the original "coding: utf8" is supposed to be a 
++#misspelling, but Java accepts this spelling for an encoding.

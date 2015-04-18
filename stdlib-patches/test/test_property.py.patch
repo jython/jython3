@@ -1,0 +1,30 @@
+--- lib-python/2.7/test/test_property.py	2015-04-18 05:34:44.631111269 +0300
++++ Lib/test/test_property.py	2015-04-18 05:34:31.855089880 +0300
+@@ -146,7 +146,8 @@
+                 def spam(self):
+                     """Trying to copy this docstring will raise an exception"""
+                     return 1
+-        except AttributeError:
++        #This raises a TypeError in Jython.
++        except (AttributeError, TypeError):
+             pass
+         else:
+             raise Exception("AttributeError not raised")
+@@ -163,7 +164,7 @@
+             Foo.spam.__doc__,
+             "spam wrapped in property subclass")
+ 
+-    @unittest.skipIf(sys.flags.optimize >= 2,
++    @unittest.skipIf(sys.flags.optimize <= 2,
+                      "Docstrings are omitted with -O2 and above")
+     def test_property_setter_copies_getter_docstring(self):
+         class Foo(object):
+@@ -196,7 +197,7 @@
+             FooSub.spam.__doc__,
+             "spam wrapped in property subclass")
+ 
+-    @unittest.skipIf(sys.flags.optimize >= 2,
++    @unittest.skipIf(sys.flags.optimize <= 2,
+                      "Docstrings are omitted with -O2 and above")
+     def test_property_new_getter_new_docstring(self):
+ 

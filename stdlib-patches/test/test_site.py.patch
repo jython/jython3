@@ -1,0 +1,65 @@
+--- lib-python/2.7/test/test_site.py	2015-04-18 05:34:44.651111303 +0300
++++ Lib/test/test_site.py	2015-04-18 05:34:31.859089886 +0300
+@@ -6,7 +6,7 @@
+ """
+ import unittest
+ from test.test_support import run_unittest, TESTFN, EnvironmentVarGuard
+-from test.test_support import captured_output
++from test.test_support import captured_output, is_jython
+ import __builtin__
+ import os
+ import sys
+@@ -134,6 +134,8 @@
+         self.assertRegexpMatches(err_out.getvalue(), 'Traceback')
+         self.assertRegexpMatches(err_out.getvalue(), 'ImportError')
+ 
++    @unittest.skipIf(is_jython, "Jython does not raise an error for file "
++                      "paths containing null characters")
+     @unittest.skipIf(sys.platform == "win32", "Windows does not raise an "
+                       "error for file paths containing null characters")
+     def test_addpackage_import_bad_pth_file(self):
+@@ -180,19 +182,22 @@
+             env=env)
+         self.assertEqual(rc, 0)
+ 
+-        env = os.environ.copy()
+-        env["PYTHONNOUSERSITE"] = "1"
+-        rc = subprocess.call([sys.executable, '-c',
+-            'import sys; sys.exit(%r in sys.path)' % usersite],
+-            env=env)
+-        self.assertEqual(rc, 0)
+-
+-        env = os.environ.copy()
+-        env["PYTHONUSERBASE"] = "/tmp"
+-        rc = subprocess.call([sys.executable, '-c',
+-            'import sys, site; sys.exit(site.USER_BASE.startswith("/tmp"))'],
+-            env=env)
+-        self.assertEqual(rc, 1)
++        # XXX: These names are not supported. We may decide to support them as
++        # JYTHONNOUSERSITE and JYTHONUSERBASE in the future.
++        if not is_jython:
++            env = os.environ.copy()
++            env["PYTHONNOUSERSITE"] = "1"
++            rc = subprocess.call([sys.executable, '-c',
++                'import sys; sys.exit(%r in sys.path)' % usersite],
++                env=env)
++            self.assertEqual(rc, 0)
++
++            env = os.environ.copy()
++            env["PYTHONUSERBASE"] = "/tmp"
++            rc = subprocess.call([sys.executable, '-c',
++                'import sys, site; sys.exit(site.USER_BASE.startswith("/tmp"))'],
++                env=env)
++            self.assertEqual(rc, 1)
+ 
+     def test_getuserbase(self):
+         site.USER_BASE = None
+@@ -224,7 +229,7 @@
+         site.PREFIXES = ['xoxo']
+         dirs = site.getsitepackages()
+ 
+-        if sys.platform in ('os2emx', 'riscos'):
++        if sys.platform in ('os2emx', 'riscos') or is_jython:
+             self.assertEqual(len(dirs), 1)
+             wanted = os.path.join('xoxo', 'Lib', 'site-packages')
+             self.assertEqual(dirs[0], wanted)

@@ -1,0 +1,20 @@
+--- lib-python/2.7/distutils/file_util.py	2015-04-18 05:34:44.655111309 +0300
++++ Lib/distutils/file_util.py	2015-04-18 05:34:31.771089740 +0300
+@@ -3,7 +3,7 @@
+ Utility functions for operating on single files.
+ """
+ 
+-__revision__ = "$Id$"
++__revision__ = "$Id: file_util.py 86238 2010-11-06 04:06:18Z eric.araujo $"
+ 
+ import os
+ from distutils.errors import DistutilsFileError
+@@ -153,7 +153,7 @@
+             # before chmod() (at least under NT).
+             if preserve_times:
+                 os.utime(dst, (st[ST_ATIME], st[ST_MTIME]))
+-            if preserve_mode:
++            if preserve_mode and hasattr(os, 'chmod'):
+                 os.chmod(dst, S_IMODE(st[ST_MODE]))
+ 
+     return (dst, 1)

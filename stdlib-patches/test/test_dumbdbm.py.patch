@@ -1,0 +1,38 @@
+--- lib-python/2.7/test/test_dumbdbm.py	2015-04-18 05:34:44.535111109 +0300
++++ Lib/test/test_dumbdbm.py	2015-04-18 05:34:31.831089839 +0300
+@@ -51,7 +51,13 @@
+             os.umask(old_umask)
+ 
+         expected_mode = 0635
+-        if os.name != 'posix':
++        is_posix = True
++        if os.name == 'java':
++            if os._name != 'posix':
++                is_posix = False
++        elif os.name != 'posix':
++            is_posix = False
++        if not is_posix:
+             # Windows only supports setting the read-only attribute.
+             # This shouldn't fail, but doesn't work like Unix either.
+             expected_mode = 0666
+@@ -107,13 +113,18 @@
+         f.close()
+ 
+         # Mangle the file by adding \r before each newline
+-        data = open(_fname + '.dir').read()
++        fp = open(_fname + '.dir', 'r+')
++        data = fp.read()
+         data = data.replace('\n', '\r\n')
+-        open(_fname + '.dir', 'wb').write(data)
++        fp.seek(0)
++        fp.truncate()
++        fp.write(data)
++        fp.close()
+ 
+         f = dumbdbm.open(_fname)
+         self.assertEqual(f['1'], 'hello')
+         self.assertEqual(f['2'], 'hello2')
++        f.close()
+ 
+ 
+     def read_helper(self, f):

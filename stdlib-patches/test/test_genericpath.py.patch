@@ -1,0 +1,13 @@
+--- lib-python/2.7/test/test_genericpath.py	2015-04-18 05:34:44.563111156 +0300
++++ Lib/test/test_genericpath.py	2015-04-18 05:34:31.835089846 +0300
+@@ -240,8 +240,8 @@
+                 for path in (u'', u'fuu', u'f\xf9\xf9', u'/fuu', u'U:\\'):
+                     self.assertIsInstance(abspath(path), unicode)
+ 
+-    @unittest.skipIf(sys.platform == 'darwin',
+-        "Mac OS X denies the creation of a directory with an invalid utf8 name")
++    @unittest.skipIf(sys.platform == 'darwin' or test_support.is_jython,
++        "Both Mac OS X and Java deny the creation of a directory with an invalid utf8 name")
+     def test_nonascii_abspath(self):
+         # Test non-ASCII, non-UTF8 bytes in the path.
+         with test_support.temp_cwd('\xe7w\xf0'):

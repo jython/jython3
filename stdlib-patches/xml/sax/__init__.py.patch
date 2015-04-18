@@ -1,0 +1,59 @@
+--- lib-python/2.7/xml/sax/__init__.py	2015-04-18 05:34:44.851111638 +0300
++++ Lib/xml/sax/__init__.py	2015-04-18 05:34:31.887089934 +0300
+@@ -16,7 +16,8 @@
+ xmlreader -- Base classes and constants which define the SAX 2 API for
+              the parsers used with SAX for Python.
+ 
+-expatreader -- Driver that allows use of the Expat parser with SAX.
++drivers2 -- Contains the driver for that wraps a Java sax implementation in python
++            objects.
+ """
+ 
+ from xmlreader import InputSource
+@@ -51,15 +52,15 @@
+ # this is the parser list used by the make_parser function if no
+ # alternatives are given as parameters to the function
+ 
+-default_parser_list = ["xml.sax.expatreader"]
++default_parser_list = ["xml.sax.drivers2.drv_javasax"]
+ 
+ # tell modulefinder that importing sax potentially imports expatreader
+ _false = 0
+ if _false:
+-    import xml.sax.expatreader
++    import xml.sax.drivers2.drv_javasax
+ 
+ import os, sys
+-if "PY_SAX_PARSER" in os.environ:
++if os.environ.has_key("PY_SAX_PARSER"):
+     default_parser_list = os.environ["PY_SAX_PARSER"].split(",")
+ del os
+ 
+@@ -81,7 +82,7 @@
+             return _create_parser(parser_name)
+         except ImportError,e:
+             import sys
+-            if parser_name in sys.modules:
++            if sys.modules.has_key(parser_name):
+                 # The parser module was found, but importing it
+                 # failed unexpectedly, pass this exception through
+                 raise
+@@ -94,15 +95,8 @@
+ 
+ # --- Internal utility methods used by make_parser
+ 
+-if sys.platform[ : 4] == "java":
+-    def _create_parser(parser_name):
+-        from org.python.core import imp
+-        drv_module = imp.importName(parser_name, 0, globals())
+-        return drv_module.create_parser()
+-
+-else:
+-    def _create_parser(parser_name):
+-        drv_module = __import__(parser_name,{},{},['create_parser'])
+-        return drv_module.create_parser()
++def _create_parser(parser_name):
++    drv_module = __import__(parser_name,{},{},['create_parser'])
++    return drv_module.create_parser()
+ 
+ del sys

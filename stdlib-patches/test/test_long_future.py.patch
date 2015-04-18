@@ -1,0 +1,19 @@
+--- lib-python/2.7/test/test_long_future.py	2015-04-18 05:34:44.595111210 +0300
++++ Lib/test/test_long_future.py	2015-04-18 05:34:31.847089867 +0300
+@@ -7,7 +7,7 @@
+ import random
+ import math
+ import unittest
+-from test.test_support import run_unittest
++from test.test_support import run_unittest, cpython_only
+ 
+ # decorator for skipping tests on non-IEEE 754 platforms
+ requires_IEEE_754 = unittest.skipUnless(
+@@ -121,6 +121,7 @@
+         self.assertEqual(expected, got, "Incorrectly rounded division {}/{}: "
+                          "expected {}, got {}".format(a, b, expected, got))
+ 
++    @cpython_only
+     @requires_IEEE_754
+     def test_correctly_rounded_true_division(self):
+         # more stringent tests than those above, checking that the

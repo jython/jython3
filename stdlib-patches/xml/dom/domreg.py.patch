@@ -1,0 +1,20 @@
+--- lib-python/2.7/xml/dom/domreg.py	2015-04-18 05:34:44.839111617 +0300
++++ Lib/xml/dom/domreg.py	2015-04-18 05:34:31.883089926 +0300
+@@ -57,7 +57,7 @@
+         return mod.getDOMImplementation()
+     elif name:
+         return registered[name]()
+-    elif "PYTHON_DOM" in os.environ:
++    elif os.environ.has_key("PYTHON_DOM"):
+         return getDOMImplementation(name = os.environ["PYTHON_DOM"])
+ 
+     # User did not specify a name, try implementations in arbitrary
+@@ -87,7 +87,7 @@
+     while i < length:
+         feature = parts[i]
+         if feature[0] in "0123456789":
+-            raise ValueError, "bad feature name: %r" % (feature,)
++            raise ValueError, "bad feature name: " + `feature`
+         i = i + 1
+         version = None
+         if i < length:

@@ -1,0 +1,29 @@
+--- lib-python/2.7/_abcoll.py	2015-04-18 05:34:44.483111021 +0300
++++ Lib/_abcoll.py	2015-04-18 05:34:31.751089705 +0300
+@@ -19,6 +19,7 @@
+            "Sequence", "MutableSequence",
+            ]
+ 
++
+ ### ONE-TRICK PONIES ###
+ 
+ def _hasattr(C, attr):
+@@ -599,3 +600,18 @@
+         return self
+ 
+ MutableSequence.register(list)
++
++if sys.platform.startswith("java"):
++    from org.python.core import PyFastSequenceIter
++    # the only name conflict is with Set, but be consistent
++    from java.util import List as JList, Map as JMap, Set as JSet
++
++    MutableSequence.register(JList)
++    MutableMapping.register(JMap)
++    MutableSet.register(JSet)
++    Iterator.register(PyFastSequenceIter)
++    
++    del PyFastSequenceIter
++    del JList
++    del JMap
++    del JSet

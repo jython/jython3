@@ -1,0 +1,20 @@
+--- lib-python/2.7/BaseHTTPServer.py	2015-04-18 05:34:44.471111002 +0300
++++ Lib/BaseHTTPServer.py	2015-04-18 05:34:31.751089705 +0300
+@@ -106,6 +106,17 @@
+     def server_bind(self):
+         """Override server_bind to store the server name."""
+         SocketServer.TCPServer.server_bind(self)
++        try:
++            host, port = self.socket.getsockname()[:2]
++            self.server_name = socket.getfqdn(host)
++            self.server_port = port
++        except socket.error:
++            pass
++
++    def server_activate(self):
++        SocketServer.TCPServer.server_activate(self)
++        # Adding a second call to getsockname() because of this issue
++        # http://wiki.python.org/jython/NewSocketModule#Deferredsocketcreationonjython
+         host, port = self.socket.getsockname()[:2]
+         self.server_name = socket.getfqdn(host)
+         self.server_port = port

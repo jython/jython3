@@ -1,0 +1,1019 @@
+--- lib-python/2.7/subprocess.py	2015-04-18 05:34:44.603111223 +0300
++++ Lib/subprocess.py	2015-04-18 05:34:31.799089785 +0300
+@@ -390,13 +390,12 @@
+ 
+ import sys
+ mswindows = (sys.platform == "win32")
++jython = sys.platform.startswith("java")
+ 
+ import os
+ import types
+ import traceback
+-import gc
+ import signal
+-import errno
+ 
+ # Exception classes used by this module.
+ class CalledProcessError(Exception):
+@@ -425,10 +424,25 @@
+         wShowWindow = 0
+     class pywintypes:
+         error = IOError
++elif jython:
++    import errno
++    import threading
++    import java.io.File
++    import java.io.IOException
++    import java.lang.IllegalArgumentException
++    import java.lang.IllegalThreadStateException
++    import java.lang.ProcessBuilder
++    import java.lang.System
++    import java.lang.Thread
++    import java.nio.ByteBuffer
++    import org.python.core.io.RawIOBase
++    import org.python.core.io.StreamIO
+ else:
+     import select
+     _has_poll = hasattr(select, 'poll')
++    import errno
+     import fcntl
++    import gc
+     import pickle
+ 
+     # When select or poll has indicated that the file is writable,
+@@ -441,15 +455,8 @@
+            "check_output", "CalledProcessError"]
+ 
+ if mswindows:
+-    from _subprocess import (CREATE_NEW_CONSOLE, CREATE_NEW_PROCESS_GROUP,
+-                             STD_INPUT_HANDLE, STD_OUTPUT_HANDLE,
+-                             STD_ERROR_HANDLE, SW_HIDE,
+-                             STARTF_USESTDHANDLES, STARTF_USESHOWWINDOW)
+-
+-    __all__.extend(["CREATE_NEW_CONSOLE", "CREATE_NEW_PROCESS_GROUP",
+-                    "STD_INPUT_HANDLE", "STD_OUTPUT_HANDLE",
+-                    "STD_ERROR_HANDLE", "SW_HIDE",
+-                    "STARTF_USESTDHANDLES", "STARTF_USESHOWWINDOW"])
++    from _subprocess import CREATE_NEW_CONSOLE, CREATE_NEW_PROCESS_GROUP
++    __all__.extend(["CREATE_NEW_CONSOLE", "CREATE_NEW_PROCESS_GROUP"])
+ try:
+     MAXFD = os.sysconf("SC_OPEN_MAX")
+ except:
+@@ -460,7 +467,7 @@
+ def _cleanup():
+     for inst in _active[:]:
+         res = inst._internal_poll(_deadstate=sys.maxint)
+-        if res is not None:
++        if res is not None and res >= 0:
+             try:
+                 _active.remove(inst)
+             except ValueError:
+@@ -476,7 +483,7 @@
+     while True:
+         try:
+             return func(*args)
+-        except (OSError, IOError) as e:
++        except OSError, e:
+             if e.errno == errno.EINTR:
+                 continue
+             raise
+@@ -615,6 +622,151 @@
+     return ''.join(result)
+ 
+ 
++if jython:
++    # Parse command line arguments for Windows
++    _win_oses = ['nt']
++
++    _cmdline2listimpl = None
++    _escape_args = None
++    _shell_command = None
++
++    def _cmdline2list(cmdline):
++        """Build an argv list from a Microsoft shell style cmdline str
++
++        The reverse of list2cmdline that follows the same MS C runtime
++        rules.
++
++        Java's ProcessBuilder takes a List<String> cmdline that's joined
++        with a list2cmdline-like routine for Windows CreateProcess
++        (which takes a String cmdline). This process ruins String
++        cmdlines from the user with escapes or quotes. To avoid this we
++        first parse these cmdlines into an argv.
++
++        Runtime.exec(String) is too naive and useless for this case.
++        """
++        whitespace = ' \t'
++        # count of preceding '\'
++        bs_count = 0
++        in_quotes = False
++        arg = []
++        argv = []
++
++        for ch in cmdline:
++            if ch in whitespace and not in_quotes:
++                if arg:
++                    # finalize arg and reset
++                    argv.append(''.join(arg))
++                    arg = []
++                bs_count = 0
++            elif ch == '\\':
++                arg.append(ch)
++                bs_count += 1
++            elif ch == '"':
++                if not bs_count % 2:
++                    # Even number of '\' followed by a '"'. Place one
++                    # '\' for every pair and treat '"' as a delimiter
++                    if bs_count:
++                        del arg[-(bs_count / 2):]
++                    in_quotes = not in_quotes
++                else:
++                    # Odd number of '\' followed by a '"'. Place one '\'
++                    # for every pair and treat '"' as an escape sequence
++                    # by the remaining '\'
++                    del arg[-(bs_count / 2 + 1):]
++                    arg.append(ch)
++                bs_count = 0
++            else:
++                # regular char
++                arg.append(ch)
++                bs_count = 0
++
++        # A single trailing '"' delimiter yields an empty arg
++        if arg or in_quotes:
++            argv.append(''.join(arg))
++
++        return argv
++
++    def _setup_platform():
++        """Setup the shell command and the command line argument escape
++        function depending on the underlying platform
++        """
++        global _cmdline2listimpl, _escape_args, _shell_command
++
++        if os._name in _win_oses:
++            _cmdline2listimpl = _cmdline2list
++            _escape_args = lambda args: [list2cmdline([arg]) for arg in args]
++        else:
++            _cmdline2listimpl = lambda args: [args]
++            _escape_args = lambda args: args
++
++        for shell_command in os._get_shell_commands():
++            executable = shell_command[0]
++            if not os.path.isabs(executable):
++                import distutils.spawn
++                executable = distutils.spawn.find_executable(executable)
++            if not executable or not os.path.exists(executable):
++                continue
++            shell_command[0] = executable
++            _shell_command = shell_command
++            return
++
++        if not _shell_command:
++            import warnings
++            warnings.warn('Unable to determine _shell_command for '
++                          'underlying os: %s' % os._name, RuntimeWarning, 3)
++    _setup_platform()
++
++
++    class _CouplerThread(java.lang.Thread):
++
++        """Couples a reader and writer RawIOBase.
++
++        Streams data from the reader's read_func (a RawIOBase readinto
++        method) to the writer's write_func (a RawIOBase write method) in
++        a separate thread. Optionally calls close_func when finished
++        streaming or an exception occurs.
++
++        This thread will fail safe when interrupted by Java's
++        Thread.interrupt.
++        """
++
++        # analagous to PC_PIPE_BUF, which is typically 512 or 4096
++        bufsize = 4096
++
++        def __init__(self, name, read_func, write_func, close_func=None):
++            self.read_func = read_func
++            self.write_func = write_func
++            self.close_func = close_func
++            self.setName('%s-%s (%s)' % (self.__class__.__name__, id(self),
++                                         name))
++            self.setDaemon(True)
++
++        def run(self):
++            buf = java.nio.ByteBuffer.allocate(self.bufsize)
++            while True:
++                try:
++                    count = self.read_func(buf)
++                    if count < 1:
++                        if self.close_func:
++                            self.close_func()
++                        break
++                    buf.flip()
++                    self.write_func(buf)
++                    buf.flip()
++                except IOError, ioe:
++                    if self.close_func:
++                        try:
++                            self.close_func()
++                        except:
++                            pass
++                    # XXX: hack, should really be a
++                    # ClosedByInterruptError(IOError) exception
++                    if str(ioe) == \
++                            'java.nio.channels.ClosedByInterruptException':
++                        return
++                    raise
++
++
+ class Popen(object):
+     def __init__(self, args, bufsize=0, executable=None,
+                  stdin=None, stdout=None, stderr=None,
+@@ -644,6 +796,10 @@
+             if creationflags != 0:
+                 raise ValueError("creationflags is only supported on Windows "
+                                  "platforms")
++        if jython:
++            if preexec_fn is not None:
++                raise ValueError("preexec_fn is not supported on the Jython "
++                                 "platform")
+ 
+         self.stdin = None
+         self.stdout = None
+@@ -671,33 +827,13 @@
+          c2pread, c2pwrite,
+          errread, errwrite) = self._get_handles(stdin, stdout, stderr)
+ 
+-        try:
+-            self._execute_child(args, executable, preexec_fn, close_fds,
+-                                cwd, env, universal_newlines,
+-                                startupinfo, creationflags, shell,
+-                                p2cread, p2cwrite,
+-                                c2pread, c2pwrite,
+-                                errread, errwrite)
+-        except Exception:
+-            # Preserve original exception in case os.close raises.
+-            exc_type, exc_value, exc_trace = sys.exc_info()
+-
+-            to_close = []
+-            # Only close the pipes we created.
+-            if stdin == PIPE:
+-                to_close.extend((p2cread, p2cwrite))
+-            if stdout == PIPE:
+-                to_close.extend((c2pread, c2pwrite))
+-            if stderr == PIPE:
+-                to_close.extend((errread, errwrite))
+-
+-            for fd in to_close:
+-                try:
+-                    os.close(fd)
+-                except EnvironmentError:
+-                    pass
+-
+-            raise exc_type, exc_value, exc_trace
++        self._execute_child(args, executable, preexec_fn, close_fds,
++                            cwd, env, universal_newlines,
++                            startupinfo, creationflags, shell,
++                            p2cread, p2cwrite,
++                            c2pread, c2pwrite,
++                            errread, errwrite,
++                            stdin, stdout, stderr)
+ 
+         if mswindows:
+             if p2cwrite is not None:
+@@ -707,6 +843,61 @@
+             if errread is not None:
+                 errread = msvcrt.open_osfhandle(errread.Detach(), 0)
+ 
++        if jython:
++            self._stdin_thread = None
++            self._stdout_thread = None
++            self._stderr_thread = None
++
++            # 'ct' is for _CouplerThread
++            proc = self._process
++            ct2cwrite = org.python.core.io.StreamIO(proc.getOutputStream(),
++                                                    True)
++            c2ctread = org.python.core.io.StreamIO(proc.getInputStream(), True)
++            cterrread = org.python.core.io.StreamIO(proc.getErrorStream(),
++                                                    True)
++
++            # Use the java.lang.Process streams for PIPE, otherwise
++            # direct the desired file to/from the java.lang.Process
++            # streams in a separate thread
++            if p2cwrite == PIPE:
++                p2cwrite = ct2cwrite
++            else:
++                if p2cread is None:
++                    # Coupling stdin is not supported: there's no way to
++                    # cleanly interrupt it if it blocks the
++                    # _CouplerThread forever (we can Thread.interrupt()
++                    # its _CouplerThread but that closes stdin's
++                    # Channel)
++                    pass
++                else:
++                    self._stdin_thread = self._coupler_thread('stdin',
++                                                              p2cread.readinto,
++                                                              ct2cwrite.write,
++                                                              ct2cwrite.close)
++                    self._stdin_thread.start()
++
++            if c2pread == PIPE:
++                c2pread = c2ctread
++            else:
++                if c2pwrite is None:
++                    c2pwrite = org.python.core.io.StreamIO(
++                        java.lang.System.out, False)
++                self._stdout_thread = self._coupler_thread('stdout',
++                                                           c2ctread.readinto,
++                                                           c2pwrite.write)
++                self._stdout_thread.start()
++
++            if errread == PIPE:
++                errread = cterrread
++            elif not self._stderr_is_stdout(errwrite, c2pwrite):
++                if errwrite is None:
++                    errwrite = org.python.core.io.StreamIO(
++                        java.lang.System.err, False)
++                self._stderr_thread = self._coupler_thread('stderr',
++                                                           cterrread.readinto,
++                                                           errwrite.write)
++                self._stderr_thread.start()
++
+         if p2cwrite is not None:
+             self.stdin = os.fdopen(p2cwrite, 'wb', bufsize)
+         if c2pread is not None:
+@@ -728,10 +919,7 @@
+ 
+ 
+     def __del__(self, _maxint=sys.maxint, _active=_active):
+-        # If __init__ hasn't had a chance to execute (e.g. if it
+-        # was passed an undeclared keyword argument), we don't
+-        # have a _child_created attribute at all.
+-        if not getattr(self, '_child_created', False):
++        if not self._child_created:
+             # We didn't get to successfully create a child process.
+             return
+         # In case the child hasn't been waited on, check if it's done.
+@@ -757,17 +945,13 @@
+             stderr = None
+             if self.stdin:
+                 if input:
+-                    try:
+-                        self.stdin.write(input)
+-                    except IOError as e:
+-                        if e.errno != errno.EPIPE and e.errno != errno.EINVAL:
+-                            raise
++                    self.stdin.write(input)
+                 self.stdin.close()
+             elif self.stdout:
+-                stdout = _eintr_retry_call(self.stdout.read)
++                stdout = self.stdout.read()
+                 self.stdout.close()
+             elif self.stderr:
+-                stderr = _eintr_retry_call(self.stderr.read)
++                stderr = self.stderr.read()
+                 self.stderr.close()
+             self.wait()
+             return (stdout, stderr)
+@@ -779,6 +963,61 @@
+         return self._internal_poll()
+ 
+ 
++    if mswindows or jython:
++        #
++        # Windows and Jython shared methods
++        #
++        def _readerthread(self, fh, buffer):
++            buffer.append(fh.read())
++
++
++        def _communicate(self, input):
++            stdout = None # Return
++            stderr = None # Return
++
++            if self.stdout:
++                stdout = []
++                stdout_thread = threading.Thread(target=self._readerthread,
++                                                 args=(self.stdout, stdout))
++                stdout_thread.setDaemon(True)
++                stdout_thread.start()
++            if self.stderr:
++                stderr = []
++                stderr_thread = threading.Thread(target=self._readerthread,
++                                                 args=(self.stderr, stderr))
++                stderr_thread.setDaemon(True)
++                stderr_thread.start()
++
++            if self.stdin:
++                if input is not None:
++                    self.stdin.write(input)
++                self.stdin.close()
++
++            if self.stdout:
++                stdout_thread.join()
++            if self.stderr:
++                stderr_thread.join()
++
++            # All data exchanged.  Translate lists into strings.
++            if stdout is not None:
++                stdout = stdout[0]
++            if stderr is not None:
++                stderr = stderr[0]
++
++            # Translate newlines, if requested.  We cannot let the file
++            # object do the translation: It is based on stdio, which is
++            # impossible to combine with select (unless forcing no
++            # buffering).
++            if self.universal_newlines and hasattr(file, 'newlines'):
++                if stdout:
++                    stdout = self._translate_newlines(stdout)
++                if stderr:
++                    stderr = self._translate_newlines(stderr)
++
++            self.wait()
++            return (stdout, stderr)
++
++
+     if mswindows:
+         #
+         # Windows methods
+@@ -918,7 +1157,7 @@
+             except pywintypes.error, e:
+                 # Translate pywintypes.error to WindowsError, which is
+                 # a subclass of OSError.  FIXME: We should really
+-                # translate errno using _sys_errlist (or similar), but
++                # translate errno using _sys_errlist (or simliar), but
+                 # how can this be done from Python?
+                 raise WindowsError(*e.args)
+             finally:
+@@ -967,89 +1206,255 @@
+                 self.returncode = _subprocess.GetExitCodeProcess(self._handle)
+             return self.returncode
+ 
++    elif jython:
++        #
++        # Jython methods
++        #
++        def _get_handles(self, stdin, stdout, stderr):
++            """Construct and return tuple with IO objects:
++            p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite
++            """
++            p2cread, p2cwrite = None, None
++            c2pread, c2pwrite = None, None
++            errread, errwrite = None, None
+ 
+-        def _readerthread(self, fh, buffer):
+-            buffer.append(fh.read())
++            if stdin is None:
++                pass
++            elif stdin == PIPE:
++                p2cwrite = PIPE
++            elif isinstance(stdin, org.python.core.io.RawIOBase):
++                p2cread = stdin
++            else:
++                # Assuming file-like object
++                p2cread = stdin.fileno()
+ 
++            if stdout is None:
++                pass
++            elif stdout == PIPE:
++                c2pread = PIPE
++            elif isinstance(stdout, org.python.core.io.RawIOBase):
++                c2pwrite = stdout
++            else:
++                # Assuming file-like object
++                c2pwrite = stdout.fileno()
+ 
+-        def _communicate(self, input):
+-            stdout = None # Return
+-            stderr = None # Return
++            if stderr is None:
++                pass
++            elif stderr == PIPE:
++                errread = PIPE
++            elif (stderr == STDOUT or
++                  isinstance(stderr, org.python.core.io.RawIOBase)):
++                errwrite = stderr
++            else:
++                # Assuming file-like object
++                errwrite = stderr.fileno()
+ 
+-            if self.stdout:
+-                stdout = []
+-                stdout_thread = threading.Thread(target=self._readerthread,
+-                                                 args=(self.stdout, stdout))
+-                stdout_thread.setDaemon(True)
+-                stdout_thread.start()
+-            if self.stderr:
+-                stderr = []
+-                stderr_thread = threading.Thread(target=self._readerthread,
+-                                                 args=(self.stderr, stderr))
+-                stderr_thread.setDaemon(True)
+-                stderr_thread.start()
++            return (p2cread, p2cwrite,
++                    c2pread, c2pwrite,
++                    errread, errwrite)
+ 
+-            if self.stdin:
+-                if input is not None:
+-                    try:
+-                        self.stdin.write(input)
+-                    except IOError as e:
+-                        if e.errno != errno.EPIPE:
+-                            raise
+-                self.stdin.close()
+ 
+-            if self.stdout:
+-                stdout_thread.join()
+-            if self.stderr:
+-                stderr_thread.join()
++        def _stderr_is_stdout(self, errwrite, c2pwrite):
++            """Determine if the subprocess' stderr should be redirected
++            to stdout
++            """
++            return (errwrite == STDOUT or c2pwrite not in (None, PIPE) and
++                    c2pwrite is errwrite)
+ 
+-            # All data exchanged.  Translate lists into strings.
+-            if stdout is not None:
+-                stdout = stdout[0]
+-            if stderr is not None:
+-                stderr = stderr[0]
+ 
+-            # Translate newlines, if requested.  We cannot let the file
+-            # object do the translation: It is based on stdio, which is
+-            # impossible to combine with select (unless forcing no
+-            # buffering).
+-            if self.universal_newlines and hasattr(file, 'newlines'):
+-                if stdout:
+-                    stdout = self._translate_newlines(stdout)
+-                if stderr:
+-                    stderr = self._translate_newlines(stderr)
++        def _coupler_thread(self, *args, **kwargs):
++            """Return a _CouplerThread"""
++            return _CouplerThread(*args, **kwargs)
+ 
+-            self.wait()
+-            return (stdout, stderr)
+ 
+-        def send_signal(self, sig):
+-            """Send a signal to the process
++        def _setup_env(self, env, builder_env):
++            """Carefully merge env with ProcessBuilder's only
++            overwriting key/values that differ
++
++            System.getenv (Map<String, String>) may be backed by
++            <byte[], byte[]> on UNIX platforms where these are really
++            bytes. ProcessBuilder's env inherits its contents and will
++            maintain those byte values (which may be butchered as
++            Strings) for the subprocess if they haven't been modified.
+             """
+-            if sig == signal.SIGTERM:
+-                self.terminate()
+-            elif sig == signal.CTRL_C_EVENT:
+-                os.kill(self.pid, signal.CTRL_C_EVENT)
+-            elif sig == signal.CTRL_BREAK_EVENT:
+-                os.kill(self.pid, signal.CTRL_BREAK_EVENT)
++            # Determine what's safe to merge
++            merge_env = dict((key, value) for key, value in env.iteritems()
++                             if key not in builder_env or
++                             builder_env.get(key) != value)
++
++            # Prune anything not in env
++            entries = builder_env.entrySet().iterator()
++            for entry in entries:
++                if entry.getKey() not in env:
++                    entries.remove()
++
++            builder_env.putAll(merge_env)
++
++
++        def _execute_child(self, args, executable, preexec_fn, close_fds,
++                           cwd, env, universal_newlines,
++                           startupinfo, creationflags, shell,
++                           p2cread, p2cwrite,
++                           c2pread, c2pwrite,
++                           errread, errwrite,
++                           stdin, stdout, stderr):
++            """Execute program (Java version)"""
++
++            if isinstance(args, types.StringTypes):
++                args = _cmdline2listimpl(args)
++            else:
++                args = list(args)
++                # NOTE: CPython posix (execv) will str() any unicode
++                # args first, maybe we should do the same on
++                # posix. Windows passes unicode through, however
++                if any(not isinstance(arg, (str, unicode)) for arg in args):
++                    raise TypeError('args must contain only strings')
++            args = _escape_args(args)
++
++            if shell:
++                args = _shell_command + args
++
++            if executable is not None:
++                args[0] = executable
++
++            builder = java.lang.ProcessBuilder(args)
++
++            if stdin is None:
++                builder.redirectInput(java.lang.ProcessBuilder.Redirect.INHERIT)
++            if stdout is None:
++                builder.redirectOutput(java.lang.ProcessBuilder.Redirect.INHERIT)
++            if stderr is None:
++                builder.redirectError(java.lang.ProcessBuilder.Redirect.INHERIT)
++
++            # os.environ may be inherited for compatibility with CPython
++            self._setup_env(dict(os.environ if env is None else env),
++                            builder.environment())
++
++            if cwd is None:
++                cwd = os.getcwd()
++            elif not os.path.exists(cwd):
++                raise OSError(errno.ENOENT, os.strerror(errno.ENOENT), cwd)
++            elif not os.path.isdir(cwd):
++                raise OSError(errno.ENOTDIR, os.strerror(errno.ENOTDIR), cwd)
++            builder.directory(java.io.File(cwd))
++
++            # Let Java manage redirection of stderr to stdout (it's more
++            # accurate at doing so than _CouplerThreads). We redirect
++            # not only when stderr is marked as STDOUT, but also when
++            # c2pwrite is errwrite
++            if self._stderr_is_stdout(errwrite, c2pwrite):
++                builder.redirectErrorStream(True)
++
++            try:
++                self._process = builder.start()
++            except (java.io.IOException,
++                    java.lang.IllegalArgumentException), e:
++                raise OSError(e.getMessage() or e)
++            self.pid = self._get_pid()
++            self._child_created = True
++
++
++        # Getting pid based on http://stackoverflow.com/questions/4750470
++
++        def _get_private_field(self, object, field_name):
++            try:
++                field = object.getClass().getDeclaredField(field_name)
++                field.setAccessible(True)
++            except (java.lang.NoSuchFieldException,
++                    java.lang.SecurityException):
++                return None
+             else:
+-                raise ValueError("Unsupported signal: {}".format(sig))
++                return field
++
++        if os._name not in _win_oses:
++
++            def _get_pid(self, pid_field='pid'):
++                field = self._get_private_field(self._process, pid_field)
++                if field is None:
++                    return None
++                return field.getInt(self._process)
++
++        else:
++
++            import ctypes
++            _handle_to_pid = ctypes.cdll.kernel32.GetProcessId
++            _handle_to_pid.argtypes = (ctypes.c_long,)
++
++            def _get_pid(self, handle_field='handle'):
++                field = self._get_private_field(self._process, handle_field)
++                if field is None:
++                    return None
++                return self._handle_to_pid(field.getLong(self._process))
++
++
++        def poll(self, _deadstate=None):
++            """Check if child process has terminated.  Returns returncode
++            attribute."""
++            if self.returncode is None:
++                try:
++                    self.returncode = self._process.exitValue()
++                except java.lang.IllegalThreadStateException:
++                    pass
++            return self.returncode
++
++        def _internal_poll(self, _deadstate=None):
++            """Check if child process has terminated.  Returns returncode
++            attribute. Called by __del__."""
++            if self.returncode is None:
++                try:
++                    self.returncode = self._process.exitValue()
++                except java.lang.IllegalThreadStateException:
++                    # The child process is not ready to return status, so None os still right.
++                    pass
++                except (java.io.IOException, AttributeError) as e:
++                    # Child has exited but returncode lost?
++                    self.returncode = _deadstate
++            return self.returncode
++
++        def wait(self):
++            """Wait for child process to terminate.  Returns returncode
++            attribute."""
++            if self.returncode is None:
++                self.returncode = self._process.waitFor()
++                for coupler in (self._stdout_thread, self._stderr_thread):
++                    if coupler:
++                        coupler.join()
++                if self._stdin_thread:
++                    # The stdin thread may be blocked forever, forcibly
++                    # stop it
++                    self._stdin_thread.interrupt()
++            return self.returncode
+ 
+         def terminate(self):
+             """Terminates the process
+             """
+-            try:
+-                _subprocess.TerminateProcess(self._handle, 1)
+-            except OSError as e:
+-                # ERROR_ACCESS_DENIED (winerror 5) is received when the
+-                # process already died.
+-                if e.winerror != 5:
+-                    raise
+-                rc = _subprocess.GetExitCodeProcess(self._handle)
+-                if rc == _subprocess.STILL_ACTIVE:
+-                    raise
+-                self.returncode = rc
++            self._process.destroy()
++
++        if os._name not in _win_oses:
++
++            def kill(self):
++                if hasattr(self._process, 'destroyForcibly'):
++                    self._process.destroyForcibly()
++                else:
++                    self.send_signal(signal.SIGKILL)
++
++            def send_signal(self, sig):
++                """Send a signal to the process
++                """
++                os.kill(self.pid, sig)
++
++        else:
++
++            kill = terminate
++
++            def send_signal(self, sig):
++                """Send a signal to the process
++                """
++                if sig == signal.SIGTERM:
++                    self.terminate()
++                else:
++                    raise ValueError("Unsupported signal: {}".format(sig))
+ 
+-        kill = terminate
+ 
+     else:
+         #
+@@ -1066,7 +1471,7 @@
+             if stdin is None:
+                 pass
+             elif stdin == PIPE:
+-                p2cread, p2cwrite = self.pipe_cloexec()
++                p2cread, p2cwrite = os.pipe()
+             elif isinstance(stdin, int):
+                 p2cread = stdin
+             else:
+@@ -1076,7 +1481,7 @@
+             if stdout is None:
+                 pass
+             elif stdout == PIPE:
+-                c2pread, c2pwrite = self.pipe_cloexec()
++                c2pread, c2pwrite = os.pipe()
+             elif isinstance(stdout, int):
+                 c2pwrite = stdout
+             else:
+@@ -1086,7 +1491,7 @@
+             if stderr is None:
+                 pass
+             elif stderr == PIPE:
+-                errread, errwrite = self.pipe_cloexec()
++                errread, errwrite = os.pipe()
+             elif stderr == STDOUT:
+                 errwrite = c2pwrite
+             elif isinstance(stderr, int):
+@@ -1113,18 +1518,6 @@
+                 fcntl.fcntl(fd, fcntl.F_SETFD, old & ~cloexec_flag)
+ 
+ 
+-        def pipe_cloexec(self):
+-            """Create a pipe with FDs set CLOEXEC."""
+-            # Pipes' FDs are set CLOEXEC by default because we don't want them
+-            # to be inherited by other subprocesses: the CLOEXEC flag is removed
+-            # from the child's FDs by _dup2(), between fork() and exec().
+-            # This is not atomic: we would need the pipe2() syscall for that.
+-            r, w = os.pipe()
+-            self._set_cloexec_flag(r)
+-            self._set_cloexec_flag(w)
+-            return r, w
+-
+-
+         def _close_fds(self, but):
+             if hasattr(os, 'closerange'):
+                 os.closerange(3, but)
+@@ -1163,9 +1556,11 @@
+             # For transferring possible exec failure from child to parent
+             # The first char specifies the exception type: 0 means
+             # OSError, 1 means some other error.
+-            errpipe_read, errpipe_write = self.pipe_cloexec()
++            errpipe_read, errpipe_write = os.pipe()
+             try:
+                 try:
++                    self._set_cloexec_flag(errpipe_write)
++
+                     gc_was_enabled = gc.isenabled()
+                     # Disable gc to avoid bug where gc -> file_dealloc ->
+                     # write to stderr -> hang.  http://bugs.python.org/issue1336
+@@ -1189,14 +1584,6 @@
+                                 os.close(errread)
+                             os.close(errpipe_read)
+ 
+-                            # When duping fds, if there arises a situation
+-                            # where one of the fds is either 0, 1 or 2, it
+-                            # is possible that it is overwritten (#12607).
+-                            if c2pwrite == 0:
+-                                c2pwrite = os.dup(c2pwrite)
+-                            if errwrite == 0 or errwrite == 1:
+-                                errwrite = os.dup(errwrite)
+-
+                             # Dup fds for child
+                             def _dup2(a, b):
+                                 # dup2() removes the CLOEXEC flag but
+@@ -1274,6 +1661,9 @@
+                     if e.errno != errno.ECHILD:
+                         raise
+                 child_exception = pickle.loads(data)
++                for fd in (p2cwrite, c2pread, errread):
++                    if fd is not None:
++                        os.close(fd)
+                 raise child_exception
+ 
+ 
+@@ -1292,7 +1682,7 @@
+ 
+ 
+         def _internal_poll(self, _deadstate=None, _waitpid=os.waitpid,
+-                _WNOHANG=os.WNOHANG, _os_error=os.error, _ECHILD=errno.ECHILD):
++                _WNOHANG=os.WNOHANG, _os_error=os.error):
+             """Check if child process has terminated.  Returns returncode
+             attribute.
+ 
+@@ -1305,23 +1695,16 @@
+                     pid, sts = _waitpid(self.pid, _WNOHANG)
+                     if pid == self.pid:
+                         self._handle_exitstatus(sts)
+-                except _os_error as e:
++                except _os_error:
+                     if _deadstate is not None:
+                         self.returncode = _deadstate
+-                    if e.errno == _ECHILD:
+-                        # This happens if SIGCLD is set to be ignored or
+-                        # waiting for child processes has otherwise been
+-                        # disabled for our process.  This child is dead, we
+-                        # can't get the status.
+-                        # http://bugs.python.org/issue15756
+-                        self.returncode = 0
+             return self.returncode
+ 
+ 
+         def wait(self):
+             """Wait for child process to terminate.  Returns returncode
+             attribute."""
+-            while self.returncode is None:
++            if self.returncode is None:
+                 try:
+                     pid, sts = _eintr_retry_call(os.waitpid, self.pid, 0)
+                 except OSError as e:
+@@ -1330,12 +1713,8 @@
+                     # This happens if SIGCLD is set to be ignored or waiting
+                     # for child processes has otherwise been disabled for our
+                     # process.  This child is dead, we can't get the status.
+-                    pid = self.pid
+                     sts = 0
+-                # Check the pid and loop as waitpid has been known to return
+-                # 0 even without WNOHANG in odd situations.  issue14396.
+-                if pid == self.pid:
+-                    self._handle_exitstatus(sts)
++                self._handle_exitstatus(sts)
+             return self.returncode
+ 
+ 
+@@ -1411,16 +1790,9 @@
+                 for fd, mode in ready:
+                     if mode & select.POLLOUT:
+                         chunk = input[input_offset : input_offset + _PIPE_BUF]
+-                        try:
+-                            input_offset += os.write(fd, chunk)
+-                        except OSError as e:
+-                            if e.errno == errno.EPIPE:
+-                                close_unregister_and_remove(fd)
+-                            else:
+-                                raise
+-                        else:
+-                            if input_offset >= len(input):
+-                                close_unregister_and_remove(fd)
++                        input_offset += os.write(fd, chunk)
++                        if input_offset >= len(input):
++                            close_unregister_and_remove(fd)
+                     elif mode & select_POLLIN_POLLPRI:
+                         data = os.read(fd, 4096)
+                         if not data:
+@@ -1459,19 +1831,11 @@
+ 
+                 if self.stdin in wlist:
+                     chunk = input[input_offset : input_offset + _PIPE_BUF]
+-                    try:
+-                        bytes_written = os.write(self.stdin.fileno(), chunk)
+-                    except OSError as e:
+-                        if e.errno == errno.EPIPE:
+-                            self.stdin.close()
+-                            write_set.remove(self.stdin)
+-                        else:
+-                            raise
+-                    else:
+-                        input_offset += bytes_written
+-                        if input_offset >= len(input):
+-                            self.stdin.close()
+-                            write_set.remove(self.stdin)
++                    bytes_written = os.write(self.stdin.fileno(), chunk)
++                    input_offset += bytes_written
++                    if input_offset >= len(input):
++                        self.stdin.close()
++                        write_set.remove(self.stdin)
+ 
+                 if self.stdout in rlist:
+                     data = os.read(self.stdout.fileno(), 1024)
+@@ -1506,6 +1870,29 @@
+             self.send_signal(signal.SIGKILL)
+ 
+ 
++# we need some functionality from subprocess given brokenness for ProcessBuilder,
++# but need to avoid recursive imports
++
++def _os_system(command):
++    """system(command) -> exit_status
++
++    Execute the command (a string) in a subshell."""
++    args = _cmdline2listimpl(command)
++    args = _escape_args(args)
++    args = _shell_command + args
++    cwd = os.getcwd()
++    builder = java.lang.ProcessBuilder(args)
++    builder.directory(java.io.File(cwd))
++    builder.redirectInput(java.lang.ProcessBuilder.Redirect.INHERIT)
++    builder.redirectOutput(java.lang.ProcessBuilder.Redirect.INHERIT)
++    builder.redirectError(java.lang.ProcessBuilder.Redirect.INHERIT)
++    try:
++        return builder.start().waitFor()
++    except (java.io.IOException,
++            java.lang.IllegalArgumentException), e:
++        raise OSError(e.getMessage() or e)
++
++
+ def _demo_posix():
+     #
+     # Example 1: Simple redirection: Get process list
+@@ -1564,8 +1951,39 @@
+     p.wait()
+ 
+ 
++def _demo_jython():
++    #
++    # Example 1: Return the number of processors on this machine
++    #
++    print "Running a jython subprocess to return the number of processors..."
++    p = Popen([sys.executable, "-c",
++               ('import sys;'
++                'from java.lang import Runtime;'
++                'sys.exit(Runtime.getRuntime().availableProcessors())')])
++    print p.wait()
++
++    #
++    # Example 2: Connecting several subprocesses
++    #
++    print "Connecting two jython subprocesses..."
++    p1 = Popen([sys.executable, "-c",
++                ('import os;'
++                 'print os.environ["foo"]')], env=dict(foo='bar'),
++               stdout=PIPE)
++    p2 = Popen([sys.executable, "-c",
++                ('import os, sys;'
++                 'their_foo = sys.stdin.read().strip();'
++                 'my_foo = os.environ["foo"];'
++                 'msg = "Their env\'s foo: %r, My env\'s foo: %r";'
++                 'print msg % (their_foo, my_foo)')],
++               env=dict(foo='baz'), stdin=p1.stdout, stdout=PIPE)
++    print p2.communicate()[0]
++
++
+ if __name__ == "__main__":
+     if mswindows:
+         _demo_windows()
++    elif jython:
++        _demo_jython()
+     else:
+         _demo_posix()

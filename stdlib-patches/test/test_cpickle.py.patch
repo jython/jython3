@@ -1,0 +1,95 @@
+--- lib-python/2.7/test/test_cpickle.py	2015-04-18 05:34:44.503111056 +0300
++++ Lib/test/test_cpickle.py	2015-04-18 05:34:31.827089833 +0300
+@@ -1,9 +1,7 @@
+-import cPickle, unittest
++import cPickle
++import unittest
+ from cStringIO import StringIO
+-from test.pickletester import (AbstractPickleTests,
+-                               AbstractPickleModuleTests,
+-                               AbstractPicklerUnpicklerObjectTests,
+-                               BigmemPickleTests)
++from test.pickletester import AbstractPickleTests, AbstractPickleModuleTests
+ from test import test_support
+ 
+ class cPickleTests(AbstractPickleTests, AbstractPickleModuleTests):
+@@ -67,11 +65,6 @@
+                           AbstractPickleTests.test_recursive_list,
+                           self)
+ 
+-    def test_recursive_tuple(self):
+-        self.assertRaises(ValueError,
+-                          AbstractPickleTests.test_recursive_tuple,
+-                          self)
+-
+     def test_recursive_inst(self):
+         self.assertRaises(ValueError,
+                           AbstractPickleTests.test_recursive_inst,
+@@ -98,55 +91,22 @@
+         b = self.loads(self.dumps(a))
+         self.assertEqual(a, b)
+ 
+-class cPicklePicklerUnpicklerObjectTests(AbstractPicklerUnpicklerObjectTests):
+-
+-    pickler_class = cPickle.Pickler
+-    unpickler_class = cPickle.Unpickler
+-
+-class cPickleBigmemPickleTests(BigmemPickleTests):
+-
+-    def dumps(self, arg, proto=0, fast=0):
+-        # Ignore fast
+-        return cPickle.dumps(arg, proto)
+-
+-    def loads(self, buf):
+-        # Ignore fast
+-        return cPickle.loads(buf)
+-
+-
+-class Node(object):
+-    pass
+-
+-class cPickleDeepRecursive(unittest.TestCase):
+-    def test_issue2702(self):
+-        # This should raise a RecursionLimit but in some
+-        # platforms (FreeBSD, win32) sometimes raises KeyError instead,
+-        # or just silently terminates the interpreter (=crashes).
+-        nodes = [Node() for i in range(500)]
+-        for n in nodes:
+-            n.connections = list(nodes)
+-            n.connections.remove(n)
+-        self.assertRaises((AttributeError, RuntimeError), cPickle.dumps, n)
+-
+-    def test_issue3179(self):
+-        # Safe test, because I broke this case when fixing the
+-        # behaviour for the previous test.
+-        res=[]
+-        for x in range(1,2000):
+-            res.append(dict(doc=x, similar=[]))
+-        cPickle.dumps(res)
+-
+-
+ def test_main():
+-    test_support.run_unittest(
++    tests = [
+         cPickleTests,
+         cPicklePicklerTests,
+         cPickleListPicklerTests,
+-        cPickleFastPicklerTests,
+-        cPickleDeepRecursive,
+-        cPicklePicklerUnpicklerObjectTests,
+-        cPickleBigmemPickleTests,
+-    )
++        cPickleFastPicklerTests
++    ]
++    if test_support.is_jython:
++        # XXX: Jython doesn't support list based picklers
++        tests.remove(cPickleListPicklerTests)
++        # XXX: These don't cause exceptions on Jython
++        del cPickleFastPicklerTests.test_recursive_list
++        del cPickleFastPicklerTests.test_recursive_inst
++        del cPickleFastPicklerTests.test_recursive_dict
++        del cPickleFastPicklerTests.test_recursive_multi
++    test_support.run_unittest(*tests)
+ 
+ if __name__ == "__main__":
+     test_main()

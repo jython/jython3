@@ -1,0 +1,118 @@
+--- lib-python/2.7/test/test_xmlrpc.py	2015-04-18 05:34:44.743111457 +0300
++++ Lib/test/test_xmlrpc.py	2015-04-18 05:34:31.879089920 +0300
+@@ -1,5 +1,6 @@
+ import base64
+ import datetime
++import gc
+ import sys
+ import time
+ import unittest
+@@ -25,6 +26,10 @@
+ else:
+     have_unicode = True
+ 
++if test_support.is_jython:
++    import _socket
++    _socket._NUM_THREADS = 5
++
+ alist = [{'astring': 'foo@bar.baz.spam',
+           'afloat': 7283.43,
+           'anint': 2**20,
+@@ -145,6 +150,7 @@
+                          xmlrpclib.loads(strg)[0][0])
+         self.assertRaises(TypeError, xmlrpclib.dumps, (arg1,))
+ 
++    @unittest.skipIf(test_support.is_jython, "FIXME: #1875 not working in Jython")
+     def test_default_encoding_issues(self):
+         # SF bug #1115989: wrong decoding in '_stringify'
+         utf8 = """<?xml version='1.0' encoding='iso-8859-1'?>
+@@ -298,6 +304,15 @@
+             s.setblocking(True)
+             return s, port
+ 
++        def handle_error(self, request, client_address):
++            # test_partial_post causes a close error (as might be
++            # expected), apparently because the timing is different
++            # between CPython and Jython. So ignore so that the
++            # default SocketServer.handle_error logging does not cause
++            # issues in unexpected text output in the overall
++            # regrtest.
++            pass
++
+     if not requestHandler:
+         requestHandler = SimpleXMLRPCServer.SimpleXMLRPCRequestHandler
+     serv = MyXMLRPCServer(("localhost", 0), requestHandler,
+@@ -305,6 +320,7 @@
+     try:
+         serv.socket.settimeout(3)
+         serv.server_bind()
++        serv.server_activate()
+         global ADDR, PORT, URL
+         ADDR, PORT = serv.socket.getsockname()
+         #connect to IP address directly.  This avoids socket.create_connection()
+@@ -312,7 +328,6 @@
+         #causes slowdown e.g. on vista which supports AF_INET6.  The server listens
+         #on AF_INET only.
+         URL = "http://%s:%d"%(ADDR, PORT)
+-        serv.server_activate()
+         serv.register_introspection_functions()
+         serv.register_multicall_functions()
+         serv.register_function(pow)
+@@ -364,6 +379,7 @@
+     serv.socket.settimeout(3)
+     serv.server_bind()
+     try:
++        serv.server_activate()
+         global ADDR, PORT, URL
+         ADDR, PORT = serv.socket.getsockname()
+         #connect to IP address directly.  This avoids socket.create_connection()
+@@ -371,7 +387,6 @@
+         #causes slowdown e.g. on vista which supports AF_INET6.  The server listens
+         #on AF_INET only.
+         URL = "http://%s:%d"%(ADDR, PORT)
+-        serv.server_activate()
+         paths = ["/foo", "/foo/bar"]
+         for path in paths:
+             d = serv.add_dispatcher(path, SimpleXMLRPCServer.SimpleXMLRPCDispatcher())
+@@ -427,7 +442,9 @@
+         self.evt = threading.Event()
+         # start server thread to handle requests
+         serv_args = (self.evt, self.request_count, self.requestHandler)
+-        threading.Thread(target=self.threadFunc, args=serv_args).start()
++        t = threading.Thread(target=self.threadFunc, args=serv_args)
++        t.setDaemon(True)
++        t.start()
+ 
+         # wait for the server to be ready
+         self.evt.wait(10)
+@@ -440,6 +457,10 @@
+         # disable traceback reporting
+         SimpleXMLRPCServer.SimpleXMLRPCServer._send_traceback_header = False
+ 
++        # force finalization for tests that rely on deterministic
++        # destruction because of ref counting on CPython
++        gc.collect()
++
+ # NOTE: The tests in SimpleServerTestCase will ignore failures caused by
+ # "temporarily unavailable" exceptions raised in SimpleXMLRPCServer.  This
+ # condition occurs infrequently on some platforms, frequently on others, and
+@@ -593,7 +614,10 @@
+         # Check that a partial POST doesn't make the server loop: issue #14001.
+         conn = httplib.HTTPConnection(ADDR, PORT)
+         conn.request('POST', '/RPC2 HTTP/1.0\r\nContent-Length: 100\r\n\r\nbye')
+-        conn.close()
++        try:
++            conn.close()
++        except Exception, e:
++            print "Got this exception", type(e), e
+ 
+ class MultiPathServerTestCase(BaseServerTestCase):
+     threadFunc = staticmethod(http_multi_server)
+@@ -874,7 +898,6 @@
+             self.assertEqual(status, '400')
+             self.assertEqual(message, 'Bad Request')
+ 
+-
+     def test_cgi_xmlrpc_response(self):
+         data = """<?xml version='1.0'?>
+         <methodCall>

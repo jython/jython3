@@ -1,0 +1,18 @@
+--- lib-python/2.7/tarfile.py	2015-04-18 05:34:44.607111229 +0300
++++ Lib/tarfile.py	2015-04-18 05:34:31.807089799 +0300
+@@ -1718,13 +1718,10 @@
+         except (ImportError, AttributeError):
+             raise CompressionError("gzip module is not available")
+ 
+-        if fileobj is None:
+-            fileobj = bltn_open(name, mode + "b")
++        fileobj = gzip.GzipFile(name, mode, compresslevel, fileobj)
+ 
+         try:
+-            t = cls.taropen(name, mode,
+-                gzip.GzipFile(name, mode, compresslevel, fileobj),
+-                **kwargs)
++            t = cls.taropen(name, mode, fileobj, **kwargs)
+         except IOError:
+             raise ReadError("not a gzip file")
+         t._extfileobj = False

@@ -1,0 +1,19 @@
+--- lib-python/2.7/test/test_decimal.py	2015-04-18 05:34:44.511111069 +0300
++++ Lib/test/test_decimal.py	2015-04-18 05:34:31.827089833 +0300
+@@ -31,7 +31,7 @@
+ import unittest
+ from decimal import *
+ import numbers
+-from test.test_support import (run_unittest, run_doctest,
++from test.test_support import (run_unittest, run_doctest, is_jython,
+                                is_resource_enabled, check_py3k_warnings)
+ import random
+ try:
+@@ -686,6 +686,7 @@
+ 
+ class DecimalFormatTest(unittest.TestCase):
+     '''Unit tests for the format function.'''
++
+     def test_formatting(self):
+         # triples giving a format, a Decimal, and the expected result
+         test_values = [

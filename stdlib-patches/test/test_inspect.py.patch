@@ -1,0 +1,82 @@
+--- lib-python/2.7/test/test_inspect.py	2015-04-18 05:34:44.579111183 +0300
++++ Lib/test/test_inspect.py	2015-04-18 05:34:31.839089854 +0300
+@@ -8,7 +8,7 @@
+ from UserList import UserList
+ from UserDict import UserDict
+ 
+-from test.test_support import run_unittest, check_py3k_warnings
++from test.test_support import run_unittest, check_py3k_warnings, is_jython
+ 
+ with check_py3k_warnings(
+         ("tuple parameter unpacking has been removed", SyntaxWarning),
+@@ -16,7 +16,7 @@
+     from test import inspect_fodder as mod
+     from test import inspect_fodder2 as mod2
+ 
+-# C module for test_findsource_binary
++# C module for test_findsource_binary, but note it's not C for Jython :)
+ import unicodedata
+ 
+ # Functions tested in this suite:
+@@ -32,6 +32,8 @@
+ modfile = mod.__file__
+ if modfile.endswith(('c', 'o')):
+     modfile = modfile[:-1]
++elif modfile.endswith('$py.class'):
++    modfile = modfile[:-9] + '.py'
+ 
+ import __builtin__
+ 
+@@ -73,7 +75,7 @@
+ 
+ 
+     def test_excluding_predicates(self):
+-        self.istest(inspect.isbuiltin, 'sys.exit')
++        #self.istest(inspect.isbuiltin, 'sys.exit')  # Not valid for Jython
+         self.istest(inspect.isbuiltin, '[].append')
+         self.istest(inspect.iscode, 'mod.spam.func_code')
+         self.istest(inspect.isframe, 'tb.tb_frame')
+@@ -92,7 +94,9 @@
+         else:
+             self.assertFalse(inspect.isgetsetdescriptor(type(tb.tb_frame).f_locals))
+         if hasattr(types, 'MemberDescriptorType'):
+-            self.istest(inspect.ismemberdescriptor, 'datetime.timedelta.days')
++            # Not valid for Jython
++            # self.istest(inspect.ismemberdescriptor, 'datetime.timedelta.days')
++            pass
+         else:
+             self.assertFalse(inspect.ismemberdescriptor(datetime.timedelta.days))
+ 
+@@ -389,12 +393,13 @@
+ 
+     @unittest.skipIf(
+         not hasattr(unicodedata, '__file__') or
+-            unicodedata.__file__[-4:] in (".pyc", ".pyo"),
++            unicodedata.__file__[-4:] in (".pyc", ".pyo") or unicodedata.__file__.endswith('$py.class'),
+         "unicodedata is not an external binary module")
+     def test_findsource_binary(self):
+         self.assertRaises(IOError, inspect.getsource, unicodedata)
+         self.assertRaises(IOError, inspect.findsource, unicodedata)
+ 
++    @unittest.skipIf(is_jython, "Not working")
+     def test_findsource_code_in_linecache(self):
+         lines = ["x=1"]
+         co = compile(lines[0], "_dynamically_created_file", "exec")
+@@ -628,8 +633,15 @@
+ 
+ class TestGetcallargsFunctions(unittest.TestCase):
+ 
+-    # tuple parameters are named '.1', '.2', etc.
+-    is_tuplename = re.compile(r'^\.\d+$').match
++    # It's possible to get both the tuple parameters AND the unpacked
++    # parameters by using locals(). However, they are named
++    # differently in CPython and Jython:
++    #
++    # * For CPython, such tuple parameters are named '.1', '.2', etc.
++    # * For Jython, they are actually the formal parameter, eg '(d, (e, f))'
++    #
++    # In both cases, we ignore in testing - they are in fact unpacked
++    is_tuplename = re.compile(r'(?:^\.\d+$)|(?:^\()').match
+ 
+     def assertEqualCallArgs(self, func, call_params_string, locs=None):
+         locs = dict(locs or {}, func=func)

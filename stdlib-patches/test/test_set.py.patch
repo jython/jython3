@@ -1,0 +1,59 @@
+--- lib-python/2.7/test/test_set.py	2015-04-18 05:34:44.647111296 +0300
++++ Lib/test/test_set.py	2015-04-18 05:34:31.859089886 +0300
+@@ -3,6 +3,7 @@
+ from test import test_support
+ import gc
+ import weakref
++from test_weakref import extra_collect
+ import operator
+ import copy
+ import pickle
+@@ -309,6 +310,7 @@
+             fo.close()
+             test_support.unlink(test_support.TESTFN)
+ 
++    @unittest.skipIf(test_support.is_jython, "Not meaningful for Jython")
+     def test_do_not_rehash_dict_keys(self):
+         n = 10
+         d = dict.fromkeys(map(HashCountingInt, xrange(n)))
+@@ -559,6 +561,7 @@
+         p = weakref.proxy(s)
+         self.assertEqual(str(p), str(s))
+         s = None
++        extra_collect() # jython
+         self.assertRaises(ReferenceError, str, p)
+ 
+     # C API test only available in a debug build
+@@ -635,6 +638,7 @@
+         f = self.thetype('abcdcda')
+         self.assertEqual(hash(f), hash(f))
+ 
++    @unittest.skipIf(test_support.is_jython, "tied to CPython's hash implementation")
+     def test_hash_effectiveness(self):
+         n = 13
+         hashvalues = set()
+@@ -780,10 +784,12 @@
+     def test_iteration(self):
+         for v in self.set:
+             self.assertIn(v, self.values)
+-        setiter = iter(self.set)
+-        # note: __length_hint__ is an internal undocumented API,
+-        # don't rely on it in your own programs
+-        self.assertEqual(setiter.__length_hint__(), len(self.set))
++        # XXX: jython does not use length_hint
++        if not test_support.is_jython:
++            setiter = iter(self.set)
++            # note: __length_hint__ is an internal undocumented API,
++            # don't rely on it in your own programs
++            self.assertEqual(setiter.__length_hint__(), len(self.set))
+ 
+     def test_pickling(self):
+         p = pickle.dumps(self.set)
+@@ -911,6 +917,7 @@
+         set('abc')
+         set(gooditer())
+ 
++    @unittest.skipIf(test_support.is_jython, "Jython provides stronger support for concurrent updates")
+     def test_changingSizeWhileIterating(self):
+         s = set([1,2,3])
+         try:

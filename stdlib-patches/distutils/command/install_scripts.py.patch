@@ -1,0 +1,20 @@
+--- lib-python/2.7/distutils/command/install_scripts.py	2015-04-18 05:34:44.627111263 +0300
++++ Lib/distutils/command/install_scripts.py	2015-04-18 05:34:31.767089732 +0300
+@@ -5,7 +5,7 @@
+ 
+ # contributed by Bastian Kleineidam
+ 
+-__revision__ = "$Id$"
++__revision__ = "$Id: install_scripts.py 68943 2009-01-25 22:09:10Z tarek.ziade $"
+ 
+ import os
+ from distutils.core import Command
+@@ -44,7 +44,7 @@
+         if not self.skip_build:
+             self.run_command('build_scripts')
+         self.outfiles = self.copy_tree(self.build_dir, self.install_dir)
+-        if os.name == 'posix':
++        if hasattr(os, 'chmod'):
+             # Set the executable bits (owner, group, and world) on
+             # all the scripts we just installed.
+             for file in self.get_outputs():

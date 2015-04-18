@@ -1,0 +1,18 @@
+--- lib-python/2.7/test/test_mhlib.py	2015-04-18 05:34:44.599111215 +0300
++++ Lib/test/test_mhlib.py	2015-04-18 05:34:31.847089867 +0300
+@@ -7,13 +7,13 @@
+ ###      mhlib.  It should.
+ 
+ import unittest
+-from test.test_support import run_unittest, TESTFN, import_module
++from test.test_support import is_jython, run_unittest, TESTFN, import_module
+ import os, StringIO
+ import sys
+ mhlib = import_module('mhlib', deprecated=True)
+ 
+ if (sys.platform.startswith("win") or sys.platform=="riscos" or
+-      sys.platform.startswith("atheos")):
++      sys.platform.startswith("atheos") or (is_jython and os._name != 'posix')):
+     # mhlib.updateline() renames a file to the name of a file that already
+     # exists.  That causes a reasonable OS <wink> to complain in test_sequence
+     # here, like the "OSError: [Errno 17] File exists" raised on Windows.

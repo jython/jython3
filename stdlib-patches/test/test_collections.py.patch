@@ -1,0 +1,89 @@
+--- lib-python/2.7/test/test_collections.py	2015-04-18 05:34:44.495111042 +0300
++++ Lib/test/test_collections.py	2015-04-18 05:34:31.823089826 +0300
+@@ -143,22 +143,24 @@
+         names = list(set(''.join([random.choice(string.ascii_letters)
+                                   for j in range(10)]) for i in range(n)))
+         n = len(names)
+-        Big = namedtuple('Big', names)
+-        b = Big(*range(n))
+-        self.assertEqual(b, tuple(range(n)))
+-        self.assertEqual(Big._make(range(n)), tuple(range(n)))
+-        for pos, name in enumerate(names):
+-            self.assertEqual(getattr(b, name), pos)
+-        repr(b)                                 # make sure repr() doesn't blow-up
+-        d = b._asdict()
+-        d_expected = dict(zip(names, range(n)))
+-        self.assertEqual(d, d_expected)
+-        b2 = b._replace(**dict([(names[1], 999),(names[-5], 42)]))
+-        b2_expected = range(n)
+-        b2_expected[1] = 999
+-        b2_expected[-5] = 42
+-        self.assertEqual(b2, tuple(b2_expected))
+-        self.assertEqual(b._fields, tuple(names))
++        #XXX: currently Jython's classfile limits are exceeded by Big tests.
++        if not test_support.is_jython:
++            Big = namedtuple('Big', names)
++            b = Big(*range(n))
++            self.assertEqual(b, tuple(range(n)))
++            self.assertEqual(Big._make(range(n)), tuple(range(n)))
++            for pos, name in enumerate(names):
++                self.assertEqual(getattr(b, name), pos)
++            repr(b)                                 # make sure repr() doesn't blow-up
++            d = b._asdict()
++            d_expected = dict(zip(names, range(n)))
++            self.assertEqual(d, d_expected)
++            b2 = b._replace(**dict([(names[1], 999),(names[-5], 42)]))
++            b2_expected = range(n)
++            b2_expected[1] = 999
++            b2_expected[-5] = 42
++            self.assertEqual(b2, tuple(b2_expected))
++            self.assertEqual(b._fields, tuple(names))
+ 
+     def test_pickle(self):
+         p = TestNT(x=10, y=20, z=30)
+@@ -240,9 +242,12 @@
+         self.assertTrue(issubclass(C, abc))
+         # old-style class
+         class C: pass
+-        setattr(C, name, stub)
+-        self.assertIsInstance(C(), abc)
+-        self.assertTrue(issubclass(C, abc))
++
++        # XXX: not working in Jython old style classes. Do we care?
++        if not test_support.is_jython:
++            setattr(C, name, stub)
++            self.assertIsInstance(C(), abc)
++            self.assertTrue(issubclass(C, abc))
+ 
+         # new-style class
+         C = type('C', (object,), {'__hash__': None})
+@@ -307,7 +312,8 @@
+         class H(Hashable):
+             def __hash__(self):
+                 return super(H, self).__hash__()
+-            __eq__ = Hashable.__eq__ # Silence Py3k warning
++            #XXX: Do we need this to work for Jython?
++            #__eq__ = Hashable.__eq__ # Silence Py3k warning
+         self.assertEqual(hash(H()), 0)
+         self.assertFalse(issubclass(int, H))
+         self.validate_abstract_methods(Hashable, '__hash__')
+@@ -511,7 +517,6 @@
+         self.assertEqual(set(s), set('cd'))
+ 
+     def test_issue_4920(self):
+-        # MutableSet.pop() method did not work
+         class MySet(collections.MutableSet):
+             __slots__=['__s']
+             def __init__(self,items=None):
+@@ -534,8 +539,9 @@
+                 return result
+             def __repr__(self):
+                 return "MySet(%s)" % repr(list(self))
+-        s = MySet([5,43,2,1])
+-        self.assertEqual(s.pop(), 1)
++        values = [5,43,2,1]
++        s = MySet(values)
++        self.assertIn(s.pop(), values)
+ 
+     def test_issue8750(self):
+         empty = WithSet()

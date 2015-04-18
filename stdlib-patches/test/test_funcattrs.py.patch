@@ -1,0 +1,19 @@
+--- lib-python/2.7/test/test_funcattrs.py	2015-04-18 05:34:44.555111142 +0300
++++ Lib/test/test_funcattrs.py	2015-04-18 05:34:31.835089846 +0300
+@@ -317,8 +317,14 @@
+         self.assertEqual(self.b.func_doc, docstr)
+         self.assertEqual(self.f.a.__doc__, docstr)
+         self.assertEqual(self.fi.a.__doc__, docstr)
+-        self.cannot_set_attr(self.f.a, "__doc__", docstr, AttributeError)
+-        self.cannot_set_attr(self.fi.a, "__doc__", docstr, AttributeError)
++        # Jython is more uniform in its attribute model than CPython.
++        # Unfortunately we have more tests depending on such attempted
++        # settings of read-only attributes resulting in a TypeError
++        # than an AttributeError. But fixing this seems pointless for
++        # now, deferring to Jython 3.x. See
++        # http://bugs.python.org/issue1687163
++        self.cannot_set_attr(self.f.a, "__doc__", docstr, TypeError)
++        self.cannot_set_attr(self.fi.a, "__doc__", docstr, TypeError)
+ 
+     def test_delete_docstring(self):
+         self.b.__doc__ = "The docstring"

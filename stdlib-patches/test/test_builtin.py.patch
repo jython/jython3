@@ -1,0 +1,48 @@
+--- lib-python/2.7/test/test_builtin.py	2015-04-18 05:34:44.471111002 +0300
++++ Lib/test/test_builtin.py	2015-04-18 05:34:31.819089820 +0300
+@@ -3,7 +3,7 @@
+ import platform
+ import unittest
+ from test.test_support import fcmp, have_unicode, TESTFN, unlink, \
+-                              run_unittest, check_py3k_warnings
++                              run_unittest, check_py3k_warnings, is_jython
+ import warnings
+ from operator import neg
+ 
+@@ -220,11 +220,17 @@
+         b = []; b.append(b)
+         from UserList import UserList
+         c = UserList(); c.append(c)
+-        self.assertRaises(RuntimeError, cmp, a, b)
+-        self.assertRaises(RuntimeError, cmp, b, c)
+-        self.assertRaises(RuntimeError, cmp, c, a)
+-        self.assertRaises(RuntimeError, cmp, a, c)
+-       # okay, now break the cycles
++        if is_jython:
++            self.assertEqual(cmp(a, b), 0)
++            self.assertEqual(cmp(b, c), 0)
++            self.assertEqual(cmp(c, a), 0)
++            self.assertEqual(cmp(a, c), 0)
++        else:
++            self.assertRaises(RuntimeError, cmp, a, b)
++            self.assertRaises(RuntimeError, cmp, b, c)
++            self.assertRaises(RuntimeError, cmp, c, a)
++            self.assertRaises(RuntimeError, cmp, a, c)
++        # okay, now break the cycles
+         a.pop(); b.pop(); c.pop()
+         self.assertRaises(TypeError, cmp)
+ 
+@@ -397,7 +403,12 @@
+         self.assertEqual(eval('dir()', g, m), list('xyz'))
+         self.assertEqual(eval('globals()', g, m), g)
+         self.assertEqual(eval('locals()', g, m), m)
+-        self.assertRaises(TypeError, eval, 'a', m)
++        if is_jython:
++            # Jython allows any mapping to work, including ones that
++            # are read only as in the case of M
++            self.assertEqual(eval('a', m), 12)
++        else:
++            self.assertRaises(TypeError, eval, 'a', m)
+         class A:
+             "Non-mapping"
+             pass

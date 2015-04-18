@@ -1,0 +1,49 @@
+--- lib-python/2.7/test/test_thread.py	2015-04-18 05:34:44.675111343 +0300
++++ Lib/test/test_thread.py	2015-04-18 05:34:31.867089899 +0300
+@@ -104,6 +104,8 @@
+ 
+             thread.stack_size(0)
+ 
++    @unittest.skipIf(test_support.is_jython,
++                     "This seems cpython internal, so skip for Jython")
+     def test__count(self):
+         # Test the _count() function.
+         orig = thread._count()
+@@ -130,29 +132,6 @@
+             time.sleep(0.01)
+         self.assertEqual(thread._count(), orig)
+ 
+-    def test_save_exception_state_on_error(self):
+-        # See issue #14474
+-        def task():
+-            started.release()
+-            raise SyntaxError
+-        def mywrite(self, *args):
+-            try:
+-                raise ValueError
+-            except ValueError:
+-                pass
+-            real_write(self, *args)
+-        c = thread._count()
+-        started = thread.allocate_lock()
+-        with test_support.captured_output("stderr") as stderr:
+-            real_write = stderr.write
+-            stderr.write = mywrite
+-            started.acquire()
+-            thread.start_new_thread(task, ())
+-            started.acquire()
+-            while thread._count() > c:
+-                time.sleep(0.01)
+-        self.assertIn("Traceback", stderr.getvalue())
+-
+ 
+ class Barrier:
+     def __init__(self, num_threads):
+@@ -224,6 +203,7 @@
+     def setUp(self):
+         self.read_fd, self.write_fd = os.pipe()
+ 
++    @unittest.skipIf(test_support.is_jython, "Jython does not support os.fork")
+     @unittest.skipIf(sys.platform.startswith('win'),
+                      "This test is only appropriate for POSIX-like systems.")
+     @test_support.reap_threads

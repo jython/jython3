@@ -1,0 +1,16 @@
+--- lib-python/2.7/json/tests/test_recursion.py	2015-04-18 05:34:44.539111115 +0300
++++ Lib/json/tests/test_recursion.py	2015-04-18 05:34:31.783089759 +0300
+@@ -100,8 +100,12 @@
+                 """If check_circular is False, this will keep adding another list."""
+                 return [o]
+ 
+-        with self.assertRaises(RuntimeError):
++        # NB: Jython interacts with overflows differently than CPython;
++        # given that the default function normally raises a ValueError upon
++        # an overflow, this seems reasonable.
++        with self.assertRaises(Exception) as cm:
+             EndlessJSONEncoder(check_circular=False).encode(5j)
++        self.assertIn(type(cm.exception), [RuntimeError, ValueError])
+ 
+ 
+ class TestPyRecursion(TestRecursion, PyTest): pass

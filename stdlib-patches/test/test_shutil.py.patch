@@ -1,0 +1,102 @@
+--- lib-python/2.7/test/test_shutil.py	2015-04-18 05:34:44.651111303 +0300
++++ Lib/test/test_shutil.py	2015-04-18 05:34:31.859089886 +0300
+@@ -7,7 +7,6 @@
+ import stat
+ import os
+ import os.path
+-import errno
+ from os.path import splitdrive
+ from distutils.spawn import find_executable, spawn
+ from shutil import (_make_tarball, _make_zipfile, make_archive,
+@@ -80,8 +79,11 @@
+ 
+     # See bug #1071513 for why we don't run this on cygwin
+     # and bug #1076467 for why we don't run this as root.
++    # XXX: Fails on Jython because Java resets the S_IREAD permission
++    # when removing the file
+     if (hasattr(os, 'chmod') and sys.platform[:6] != 'cygwin'
+-        and not (hasattr(os, 'geteuid') and os.geteuid() == 0)):
++        and not (hasattr(os, 'geteuid') and os.geteuid() == 0)
++        and (not test_support.is_jython or os._name != 'nt')):
+         def test_on_error(self):
+             self.errorState = 0
+             os.mkdir(TESTFN)
+@@ -340,35 +342,6 @@
+                 shutil.rmtree(TESTFN, ignore_errors=True)
+                 shutil.rmtree(TESTFN2, ignore_errors=True)
+ 
+-    @unittest.skipUnless(hasattr(os, 'chflags') and
+-                         hasattr(errno, 'EOPNOTSUPP') and
+-                         hasattr(errno, 'ENOTSUP'),
+-                         "requires os.chflags, EOPNOTSUPP & ENOTSUP")
+-    def test_copystat_handles_harmless_chflags_errors(self):
+-        tmpdir = self.mkdtemp()
+-        file1 = os.path.join(tmpdir, 'file1')
+-        file2 = os.path.join(tmpdir, 'file2')
+-        self.write_file(file1, 'xxx')
+-        self.write_file(file2, 'xxx')
+-
+-        def make_chflags_raiser(err):
+-            ex = OSError()
+-
+-            def _chflags_raiser(path, flags):
+-                ex.errno = err
+-                raise ex
+-            return _chflags_raiser
+-        old_chflags = os.chflags
+-        try:
+-            for err in errno.EOPNOTSUPP, errno.ENOTSUP:
+-                os.chflags = make_chflags_raiser(err)
+-                shutil.copystat(file1, file2)
+-            # assert others errors break it
+-            os.chflags = make_chflags_raiser(errno.EOPNOTSUPP + errno.ENOTSUP)
+-            self.assertRaises(OSError, shutil.copystat, file1, file2)
+-        finally:
+-            os.chflags = old_chflags
+-
+     @unittest.skipUnless(zlib, "requires zlib")
+     def test_make_tarball(self):
+         # creating something to tar
+@@ -379,8 +352,6 @@
+         self.write_file([tmpdir, 'sub', 'file3'], 'xxx')
+ 
+         tmpdir2 = self.mkdtemp()
+-        # force shutil to create the directory
+-        os.rmdir(tmpdir2)
+         unittest.skipUnless(splitdrive(tmpdir)[0] == splitdrive(tmpdir2)[0],
+                             "source and target should be on same drive")
+ 
+@@ -496,8 +467,6 @@
+         self.write_file([tmpdir, 'file2'], 'xxx')
+ 
+         tmpdir2 = self.mkdtemp()
+-        # force shutil to create the directory
+-        os.rmdir(tmpdir2)
+         base_name = os.path.join(tmpdir2, 'archive')
+         _make_zipfile(base_name, tmpdir)
+ 
+@@ -839,24 +808,6 @@
+         self.assertTrue(srcfile._exited_with[0] is None)
+         self.assertTrue(srcfile._raised)
+ 
+-    def test_move_dir_caseinsensitive(self):
+-        # Renames a folder to the same name
+-        # but a different case.
+-
+-        self.src_dir = tempfile.mkdtemp()
+-        dst_dir = os.path.join(
+-                os.path.dirname(self.src_dir),
+-                os.path.basename(self.src_dir).upper())
+-        self.assertNotEqual(self.src_dir, dst_dir)
+-
+-        try:
+-            shutil.move(self.src_dir, dst_dir)
+-            self.assertTrue(os.path.isdir(dst_dir))
+-        finally:
+-            if os.path.exists(dst_dir):
+-                os.rmdir(dst_dir)
+-
+-
+ 
+ def test_main():
+     test_support.run_unittest(TestShutil, TestMove, TestCopyFile)

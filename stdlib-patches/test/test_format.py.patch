@@ -1,0 +1,40 @@
+--- lib-python/2.7/test/test_format.py	2015-04-18 05:34:44.551111136 +0300
++++ Lib/test/test_format.py	2015-04-18 05:34:31.835089846 +0300
+@@ -1,5 +1,6 @@
+ import sys
+ from test.test_support import verbose, have_unicode, TestFailed
++from test.test_support import is_jython
+ import test.test_support as test_support
+ import unittest
+ 
+@@ -77,7 +78,8 @@
+         testboth("%#.*g", (110, -1.e+100/3.))
+ 
+         # test some ridiculously large precision, expect overflow
+-        testboth('%12.*f', (123456, 1.0))
++        # ... Jython remains consistent with the original comment.
++        testboth('%12.*f', (123456, 1.0), overflowok=is_jython)
+ 
+         # check for internal overflow validation on length of precision
+         # these tests should no longer cause overflow in Python
+@@ -282,13 +284,18 @@
+         test_exc(u'no format', u'1', TypeError,
+                  "not all arguments converted during string formatting")
+ 
++        # For Jython, we do not support this use case. The test aims at the,
++        # use of __oct__ within %o formatting of long. (Or __hex__ within %x
++        # formatting?) CPython does this for long (not int) and has dropped
++        # the idea again by v3. Jython's %o and %x are likewise direct.
+         class Foobar(long):
+             def __oct__(self):
+                 # Returning a non-string should not blow up.
+                 return self + 1
+ 
+-        test_exc('%o', Foobar(), TypeError,
+-                 "expected string or Unicode object, long found")
++        if not is_jython :
++            test_exc('%o', Foobar(), TypeError,
++                     "expected string or Unicode object, long found")
+ 
+         if maxsize == 2**31-1:
+             # crashes 2.2.1 and earlier:

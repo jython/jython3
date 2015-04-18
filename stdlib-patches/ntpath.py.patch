@@ -1,0 +1,89 @@
+--- lib-python/2.7/ntpath.py	2015-04-18 05:34:44.703111390 +0300
++++ Lib/ntpath.py	2015-04-18 05:34:31.787089766 +0300
+@@ -310,7 +310,7 @@
+ #       - $varname is accepted.
+ #       - %varname% is accepted.
+ #       - varnames can be made out of letters, digits and the characters '_-'
+-#         (though is not verified in the ${varname} and %varname% cases)
++#         (though is not verifed in the ${varname} and %varname% cases)
+ # XXX With COMMAND.COM you can use any characters in a variable name,
+ # XXX except '^|<>='.
+ 
+@@ -451,16 +451,53 @@
+ try:
+     from nt import _getfullpathname
+ 
+-except ImportError: # not running on Windows - mock up something sensible
+-    def abspath(path):
+-        """Return the absolute version of a path."""
+-        if not isabs(path):
+-            if isinstance(path, unicode):
+-                cwd = os.getcwdu()
+-            else:
+-                cwd = os.getcwd()
+-            path = join(cwd, path)
+-        return normpath(path)
++except ImportError: # no built-in nt module - maybe it's Jython ;)
++
++    if os._name == 'nt' :
++        # on Windows so Java version of sys deals in NT paths
++        def abspath(path):
++            """Return the absolute version of a path."""
++            try:
++                if isinstance(path, unicode):
++                    # Result must be unicode
++                    if path:
++                        path = sys.getPath(path)
++                    else:
++                        # Empty path must return current working directory
++                        path = os.getcwdu()
++                else:
++                    # Result must be bytes
++                    if path:
++                        path = sys.getPath(path).encode('latin-1')
++                    else:
++                        # Empty path must return current working directory
++                        path = os.getcwd()
++            except EnvironmentError:
++                 pass # Bad path - return unchanged.
++            return normpath(path)
++
++    else:
++        # not running on Windows - mock up something sensible
++        def abspath(path):
++            """Return the absolute version of a path."""
++            try:
++                if isinstance(path, unicode):
++                    # Result must be unicode
++                    if path:
++                        path = join(os.getcwdu(), path)
++                    else:
++                        # Empty path must return current working directory
++                        path = os.getcwdu()
++                else:
++                    # Result must be bytes
++                    if path:
++                        path = join(os.getcwd(), path)
++                    else:
++                        # Empty path must return current working directory
++                        path = os.getcwd()
++            except EnvironmentError:
++                 pass # Bad path - return unchanged.
++            return normpath(path)
+ 
+ else:  # use native Windows method on Windows
+     def abspath(path):
+@@ -521,13 +558,3 @@
+     if not rel_list:
+         return curdir
+     return join(*rel_list)
+-
+-try:
+-    # The genericpath.isdir implementation uses os.stat and checks the mode
+-    # attribute to tell whether or not the path is a directory.
+-    # This is overkill on Windows - just pass the path to GetFileAttributes
+-    # and check the attribute from there.
+-    from nt import _isdir as isdir
+-except ImportError:
+-    # Use genericpath.isdir as imported above.
+-    pass

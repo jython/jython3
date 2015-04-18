@@ -1,0 +1,126 @@
+--- lib-python/2.7/pkgutil.py	2015-04-18 05:34:44.723111423 +0300
++++ Lib/pkgutil.py	2015-04-18 05:34:31.787089766 +0300
+@@ -8,25 +8,31 @@
+ import imp
+ import os.path
+ from types import ModuleType
++from java.lang import IllegalArgumentException
++from org.python.core import imp as _imp, BytecodeLoader
+ 
+ __all__ = [
+     'get_importer', 'iter_importers', 'get_loader', 'find_loader',
+-    'walk_packages', 'iter_modules', 'get_data',
++    'walk_packages', 'iter_modules',
+     'ImpImporter', 'ImpLoader', 'read_code', 'extend_path',
+ ]
+ 
+-def read_code(stream):
+-    # This helper is needed in order for the PEP 302 emulation to
+-    # correctly handle compiled files
+-    import marshal
+ 
+-    magic = stream.read(4)
+-    if magic != imp.get_magic():
+-        return None
++# equivalent to CPythonLib's pkgutil.read_code except that we need
++# diff args to pass into our underlying imp implementation, as
++# accessed by _imp here
+ 
+-    stream.read(4) # Skip timestamp
+-    return marshal.load(stream)
++def read_jython_code(fullname, stream, filename):
++    try:
++        data = _imp.readCode(filename, stream, False)
++        return BytecodeLoader.makeCode(fullname + "$py", data, filename)
++    except IllegalArgumentException:
++        return None
+ 
++def read_code(stream):
++    filename = stream.name
++    fullname = os.path.splitext(os.path.split(filename)[1])[0]
++    return read_jython_code(fullname, stream, filename)
+ 
+ def simplegeneric(func):
+     """Make a trivial single-dispatch generic function"""
+@@ -194,11 +200,8 @@
+ 
+         yielded = {}
+         import inspect
+-        try:
+-            filenames = os.listdir(self.path)
+-        except OSError:
+-            # ignore unreadable directories like import does
+-            filenames = []
++
++        filenames = os.listdir(self.path)
+         filenames.sort()  # handle packages before same-named modules
+ 
+         for fn in filenames:
+@@ -252,7 +255,11 @@
+         return mod
+ 
+     def get_data(self, pathname):
+-        return open(pathname, "rb").read()
++        f = open(pathname, "rb")
++        try:
++            return f.read()
++        finally:
++            f.close()
+ 
+     def _reopen(self):
+         if self.file and self.file.closed:
+@@ -284,7 +291,7 @@
+             elif mod_type==imp.PY_COMPILED:
+                 self._reopen()
+                 try:
+-                    self.code = read_code(self.file)
++                    self.code = read_jython_code(fullname, self.file, self.filename)
+                 finally:
+                     self.file.close()
+             elif mod_type==imp.PKG_DIRECTORY:
+@@ -304,8 +311,10 @@
+             elif mod_type==imp.PY_COMPILED:
+                 if os.path.exists(self.filename[:-1]):
+                     f = open(self.filename[:-1], 'rU')
+-                    self.source = f.read()
+-                    f.close()
++                    try:
++                        self.source = f.read()
++                    finally:
++                        f.close()
+             elif mod_type==imp.PKG_DIRECTORY:
+                 self.source = self._get_delegate().get_source()
+         return self.source
+@@ -459,6 +468,11 @@
+         if loader is not None:
+             return loader
+         fullname = module.__name__
++    elif module_or_name == sys:
++        # Jython sys is not a real module; fake it here for now since
++        # making it a module requires a fair amount of decoupling from
++        # PySystemState
++        fullname = "sys"
+     else:
+         fullname = module_or_name
+     return find_loader(fullname)
+@@ -544,12 +558,14 @@
+                 sys.stderr.write("Can't open %s: %s\n" %
+                                  (pkgfile, msg))
+             else:
+-                for line in f:
+-                    line = line.rstrip('\n')
+-                    if not line or line.startswith('#'):
+-                        continue
+-                    path.append(line) # Don't check for existence!
+-                f.close()
++                try:
++                    for line in f:
++                        line = line.rstrip('\n')
++                        if not line or line.startswith('#'):
++                            continue
++                        path.append(line) # Don't check for existence!
++                finally:
++                    f.close()
+ 
+     return path
+ 

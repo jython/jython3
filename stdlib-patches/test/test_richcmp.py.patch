@@ -1,0 +1,117 @@
+--- lib-python/2.7/test/test_richcmp.py	2015-04-18 05:34:44.643111290 +0300
++++ Lib/test/test_richcmp.py	2015-04-18 05:34:31.855089880 +0300
+@@ -48,7 +48,8 @@
+     def __setitem__(self, i, v):
+         self.data[i] = v
+ 
+-    __hash__ = None # Vectors cannot be hashed
++    def __hash__(self):
++        raise TypeError, "Vectors cannot be hashed"
+ 
+     def __nonzero__(self):
+         raise TypeError, "Vectors cannot be used in Boolean contexts"
+@@ -106,7 +107,7 @@
+             self.assertEqual(len(realres), len(expres))
+             for i in xrange(len(realres)):
+                 # results are bool, so we can use "is" here
+-                self.assertTrue(realres[i] is expres[i])
++                self.assert_(realres[i] is expres[i])
+ 
+     def test_mixed(self):
+         # check that comparisons involving Vector objects
+@@ -163,7 +164,7 @@
+                 for op in opmap[opname]:
+                     realres = op(ta, tb)
+                     realres = getattr(realres, "x", realres)
+-                    self.assertTrue(realres is expres)
++                    self.assert_(realres is expres)
+ 
+     def test_values(self):
+         # check all operators and all comparison results
+@@ -192,13 +193,13 @@
+ 
+     def test_misbehavin(self):
+         class Misb:
+-            def __lt__(self_, other): return 0
+-            def __gt__(self_, other): return 0
+-            def __eq__(self_, other): return 0
+-            def __le__(self_, other): self.fail("This shouldn't happen")
+-            def __ge__(self_, other): self.fail("This shouldn't happen")
+-            def __ne__(self_, other): self.fail("This shouldn't happen")
+-            def __cmp__(self_, other): raise RuntimeError, "expected"
++            def __lt__(self, other): return 0
++            def __gt__(self, other): return 0
++            def __eq__(self, other): return 0
++            def __le__(self, other): raise TestFailed, "This shouldn't happen"
++            def __ge__(self, other): raise TestFailed, "This shouldn't happen"
++            def __ne__(self, other): raise TestFailed, "This shouldn't happen"
++            def __cmp__(self, other): raise RuntimeError, "expected"
+         a = Misb()
+         b = Misb()
+         self.assertEqual(a<b, 0)
+@@ -239,8 +240,8 @@
+         b.append(17)
+         # Even recursive lists of different lengths are different,
+         # but they cannot be ordered
+-        self.assertTrue(not (a == b))
+-        self.assertTrue(a != b)
++        self.assert_(not (a == b))
++        self.assert_(a != b)
+         self.assertRaises(RuntimeError, operator.lt, a, b)
+         self.assertRaises(RuntimeError, operator.le, a, b)
+         self.assertRaises(RuntimeError, operator.gt, a, b)
+@@ -250,9 +251,9 @@
+         self.assertRaises(RuntimeError, operator.ne, a, b)
+         a.insert(0, 11)
+         b.insert(0, 12)
+-        self.assertTrue(not (a == b))
+-        self.assertTrue(a != b)
+-        self.assertTrue(a < b)
++        self.assert_(not (a == b))
++        self.assert_(a != b)
++        self.assert_(a < b)
+ 
+ class DictTest(unittest.TestCase):
+ 
+@@ -271,16 +272,19 @@
+             imag1b[k] = v
+         imag2 = imag1b.copy()
+         imag2[k] = v + 1.0
+-        self.assertTrue(imag1a == imag1a)
+-        self.assertTrue(imag1a == imag1b)
+-        self.assertTrue(imag2 == imag2)
+-        self.assertTrue(imag1a != imag2)
++        self.assert_(imag1a == imag1a)
++        self.assert_(imag1a == imag1b)
++        self.assert_(imag2 == imag2)
++        self.assert_(imag1a != imag2)
+         for opname in ("lt", "le", "gt", "ge"):
+             for op in opmap[opname]:
+                 self.assertRaises(TypeError, op, imag1a, imag2)
+ 
+ class ListTest(unittest.TestCase):
+ 
++    def assertIs(self, a, b):
++        self.assert_(a is b)
++
+     def test_coverage(self):
+         # exercise all comparisons for lists
+         x = [42]
+@@ -327,12 +331,11 @@
+             self.assertIs(op(x, y), True)
+ 
+ def test_main():
+-    test_support.run_unittest(VectorTest, NumberTest, MiscTest, ListTest)
+-    with test_support.check_py3k_warnings(("dict inequality comparisons "
+-                                             "not supported in 3.x",
+-                                             DeprecationWarning)):
+-        test_support.run_unittest(DictTest)
+-
++    if test_support.is_jython:
++        # A circular implementation of __eq__ returns False instead of
++        # True: http://jython.org/bugs/1758280
++        del MiscTest.test_recursion
++    test_support.run_unittest(VectorTest, NumberTest, MiscTest, DictTest, ListTest)
+ 
+ if __name__ == "__main__":
+     test_main()

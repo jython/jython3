@@ -1,0 +1,80 @@
+--- lib-python/2.7/io.py	2015-04-18 05:34:44.531111101 +0300
++++ Lib/io.py	2015-04-18 05:34:31.783089759 +0300
+@@ -1,10 +1,16 @@
++# XXX Temporary addition to Jython while we use _jyio.py in place of _io.
++# This module will stand in place of the lib-python io.py. The idea is
++# gradually to switch, in _jyio, between Python implementation there and
++# Java implementations imported from _io as classes in Java. In the end,
++# we delete this and _jyio.py, and go back to using lib-python's io.py
++
+ """The io module provides the Python interfaces to stream handling. The
+ builtin open function is defined in this module.
+ 
+ At the top of the I/O hierarchy is the abstract base class IOBase. It
+ defines the basic interface to a stream. Note, however, that there is no
+ separation between reading and writing to streams; implementations are
+-allowed to raise an IOError if they do not support a given operation.
++allowed to throw an IOError if they do not support a given operation.
+ 
+ Extending IOBase is RawIOBase which deals simply with the reading and
+ writing of raw bytes to a stream. FileIO subclasses RawIOBase to provide
+@@ -34,6 +40,15 @@
+ """
+ # New I/O library conforming to PEP 3116.
+ 
++# XXX edge cases when switching between reading/writing
++# XXX need to support 1 meaning line-buffered
++# XXX whenever an argument is None, use the default value
++# XXX read/write ops should check readable/writable
++# XXX buffered readinto should work with arbitrary buffer objects
++# XXX use incremental encoder for text output, at least for UTF-16 and UTF-8-SIG
++# XXX check writable, readable and seekable in appropriate places
++
++
+ __author__ = ("Guido van Rossum <guido@python.org>, "
+               "Mike Verdone <mike.verdone@gmail.com>, "
+               "Mark Russell <mark.russell@zen.co.uk>, "
+@@ -48,15 +63,18 @@
+            "UnsupportedOperation", "SEEK_SET", "SEEK_CUR", "SEEK_END"]
+ 
+ 
+-import _io
+ import abc
+ 
+-from _io import (DEFAULT_BUFFER_SIZE, BlockingIOError, UnsupportedOperation,
+-                 open, FileIO, BytesIO, StringIO, BufferedReader,
++# For the time being, import everything via _jyio instead of from _io directly
++import _jyio
++from _jyio import (DEFAULT_BUFFER_SIZE, BlockingIOError, UnsupportedOperation,
++                 open,
++                 FileIO,
++                 BytesIO, StringIO, BufferedReader,
+                  BufferedWriter, BufferedRWPair, BufferedRandom,
+                  IncrementalNewlineDecoder, TextIOWrapper)
+ 
+-OpenWrapper = _io.open # for compatibility with _pyio
++OpenWrapper = _jyio.open # for compatibility with _pyio
+ 
+ # for seek()
+ SEEK_SET = 0
+@@ -66,16 +84,16 @@
+ # Declaring ABCs in C is tricky so we do it here.
+ # Method descriptions and default implementations are inherited from the C
+ # version however.
+-class IOBase(_io._IOBase):
++class IOBase(_jyio._IOBase):
+     __metaclass__ = abc.ABCMeta
+ 
+-class RawIOBase(_io._RawIOBase, IOBase):
++class RawIOBase(_jyio._RawIOBase, IOBase):
+     pass
+ 
+-class BufferedIOBase(_io._BufferedIOBase, IOBase):
++class BufferedIOBase(_jyio._BufferedIOBase, IOBase):
+     pass
+ 
+-class TextIOBase(_io._TextIOBase, IOBase):
++class TextIOBase(_jyio._TextIOBase, IOBase):
+     pass
+ 
+ RawIOBase.register(FileIO)

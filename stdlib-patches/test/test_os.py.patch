@@ -1,0 +1,232 @@
+--- lib-python/2.7/test/test_os.py	2015-04-18 05:34:44.615111242 +0300
++++ Lib/test/test_os.py	2015-04-18 05:34:31.851089873 +0300
+@@ -10,9 +10,11 @@
+ import signal
+ import subprocess
+ import time
+-
+ from test import test_support
+-import mmap
++try:
++    import mmap
++except:
++    mmap = None
+ import uuid
+ 
+ warnings.filterwarnings("ignore", "tempnam", RuntimeWarning, __name__)
+@@ -21,6 +23,7 @@
+ # Tests creating TESTFN
+ class FileTests(unittest.TestCase):
+     def setUp(self):
++        test_support.gc_collect()
+         if os.path.exists(test_support.TESTFN):
+             os.unlink(test_support.TESTFN)
+     tearDown = setUp
+@@ -30,6 +33,9 @@
+         os.close(f)
+         self.assertTrue(os.access(test_support.TESTFN, os.W_OK))
+ 
++    @unittest.skipIf(test_support.is_jython and os._name == "nt",
++                     "Does not properly close files under Windows")
++    @unittest.skipUnless(hasattr(os, "dup"), "No os.dup function")
+     def test_closerange(self):
+         first = os.open(test_support.TESTFN, os.O_CREAT|os.O_RDWR)
+         # We must allocate two consecutive file descriptors, otherwise
+@@ -54,10 +60,12 @@
+     @test_support.cpython_only
+     def test_rename(self):
+         path = unicode(test_support.TESTFN)
+-        old = sys.getrefcount(path)
++        if not test_support.is_jython:
++            old = sys.getrefcount(path)
+         self.assertRaises(TypeError, os.rename, path, 0)
+-        new = sys.getrefcount(path)
+-        self.assertEqual(old, new)
++        if not test_support.is_jython:
++            new = sys.getrefcount(path)
++            self.assertEqual(old, new)
+ 
+ 
+ class TemporaryFileTests(unittest.TestCase):
+@@ -214,37 +222,37 @@
+ 
+         try:
+             result[200]
+-            self.fail("No exception raised")
++            self.fail("No exception thrown")
+         except IndexError:
+             pass
+ 
+         # Make sure that assignment fails
+         try:
+             result.st_mode = 1
+-            self.fail("No exception raised")
++            self.fail("No exception thrown")
+         except (AttributeError, TypeError):
+             pass
+ 
+         try:
+             result.st_rdev = 1
+-            self.fail("No exception raised")
++            self.fail("No exception thrown")
+         except (AttributeError, TypeError):
+             pass
+ 
+         try:
+             result.parrot = 1
+-            self.fail("No exception raised")
++            self.fail("No exception thrown")
+         except AttributeError:
+             pass
+ 
+         # Use the stat_result constructor with a too-short tuple.
+         try:
+             result2 = os.stat_result((10,))
+-            self.fail("No exception raised")
++            self.fail("No exception thrown")
+         except TypeError:
+             pass
+ 
+-        # Use the constructor with a too-long tuple.
++        # Use the constructr with a too-long tuple.
+         try:
+             result2 = os.stat_result((0,1,2,3,4,5,6,7,8,9,10,11,12,13,14))
+         except TypeError:
+@@ -274,24 +282,24 @@
+         # Make sure that assignment really fails
+         try:
+             result.f_bfree = 1
+-            self.fail("No exception raised")
++            self.fail("No exception thrown")
+         except TypeError:
+             pass
+ 
+         try:
+             result.parrot = 1
+-            self.fail("No exception raised")
++            self.fail("No exception thrown")
+         except AttributeError:
+             pass
+ 
+         # Use the constructor with a too-short tuple.
+         try:
+             result2 = os.statvfs_result((10,))
+-            self.fail("No exception raised")
++            self.fail("No exception thrown")
+         except TypeError:
+             pass
+ 
+-        # Use the constructor with a too-long tuple.
++        # Use the constructr with a too-long tuple.
+         try:
+             result2 = os.statvfs_result((0,1,2,3,4,5,6,7,8,9,10,11,12,13,14))
+         except TypeError:
+@@ -362,20 +370,6 @@
+                 value = popen.read().strip()
+                 self.assertEqual(value, "World")
+ 
+-    # On FreeBSD < 7 and OS X < 10.6, unsetenv() doesn't return a value (issue
+-    # #13415).
+-    @unittest.skipIf(sys.platform.startswith(('freebsd', 'darwin')),
+-                     "due to known OS bug: see issue #13415")
+-    def test_unset_error(self):
+-        if sys.platform == "win32":
+-            # an environment variable is limited to 32,767 characters
+-            key = 'x' * 50000
+-            self.assertRaises(ValueError, os.environ.__delitem__, key)
+-        else:
+-            # "=" is not allowed in a variable name
+-            key = 'key='
+-            self.assertRaises(OSError, os.environ.__delitem__, key)
+-
+ class WalkTests(unittest.TestCase):
+     """Tests for os.walk()."""
+ 
+@@ -527,42 +521,21 @@
+         f.close()
+ 
+ class URandomTests (unittest.TestCase):
++    def test_urandom(self):
++        try:
++            self.assertEqual(len(os.urandom(1)), 1)
++            self.assertEqual(len(os.urandom(10)), 10)
++            self.assertEqual(len(os.urandom(100)), 100)
++            self.assertEqual(len(os.urandom(1000)), 1000)
++            # see http://bugs.python.org/issue3708
++            self.assertRaises(TypeError, os.urandom, 0.9)
++            self.assertRaises(TypeError, os.urandom, 1.1)
++            self.assertRaises(TypeError, os.urandom, 2.0)
++        except NotImplementedError:
++            pass
+ 
+-    def test_urandom_length(self):
+-        self.assertEqual(len(os.urandom(0)), 0)
+-        self.assertEqual(len(os.urandom(1)), 1)
+-        self.assertEqual(len(os.urandom(10)), 10)
+-        self.assertEqual(len(os.urandom(100)), 100)
+-        self.assertEqual(len(os.urandom(1000)), 1000)
+-
+-    def test_urandom_value(self):
+-        data1 = os.urandom(16)
+-        data2 = os.urandom(16)
+-        self.assertNotEqual(data1, data2)
+-
+-    def get_urandom_subprocess(self, count):
+-        # We need to use repr() and eval() to avoid line ending conversions
+-        # under Windows.
+-        code = '\n'.join((
+-            'import os, sys',
+-            'data = os.urandom(%s)' % count,
+-            'sys.stdout.write(repr(data))',
+-            'sys.stdout.flush()',
+-            'print >> sys.stderr, (len(data), data)'))
+-        cmd_line = [sys.executable, '-c', code]
+-        p = subprocess.Popen(cmd_line, stdin=subprocess.PIPE,
+-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+-        out, err = p.communicate()
+-        self.assertEqual(p.wait(), 0, (p.wait(), err))
+-        out = eval(out)
+-        self.assertEqual(len(out), count, err)
+-        return out
+-
+-    def test_urandom_subprocess(self):
+-        data1 = self.get_urandom_subprocess(16)
+-        data2 = self.get_urandom_subprocess(16)
+-        self.assertNotEqual(data1, data2)
+-
++    @unittest.skipIf(test_support.is_jython,
++                     "Jython does not support os.execvpe.")
+     def test_execvpe_with_bad_arglist(self):
+         self.assertRaises(ValueError, os.execvpe, 'notepad', [], None)
+ 
+@@ -605,9 +578,12 @@
+ 
+     def check(self, f, *args):
+         try:
+-            f(test_support.make_bad_fd(), *args)
++            fd = test_support.make_bad_fd()
++            f(fd, *args)
+         except OSError as e:
+             self.assertEqual(e.errno, errno.EBADF)
++        except ValueError:
++            self.assertTrue(test_support.is_jython)
+         else:
+             self.fail("%r didn't raise a OSError with a bad file descriptor"
+                       % f)
+@@ -618,7 +594,7 @@
+ 
+     def test_closerange(self):
+         if hasattr(os, "closerange"):
+-            fd = test_support.make_bad_fd()
++            fd = int(test_support.make_bad_fd())  # need to take an int for Jython, given this test
+             # Make sure none of the descriptors we are about to close are
+             # currently valid (issue 6542).
+             for i in range(10):
+@@ -838,6 +814,7 @@
+ 
+         self._kill_with_event(signal.CTRL_C_EVENT, "CTRL_C_EVENT")
+ 
++    @unittest.skipIf(mmap == None, "This test depends on mmap")
+     def test_CTRL_BREAK_EVENT(self):
+         self._kill_with_event(signal.CTRL_BREAK_EVENT, "CTRL_BREAK_EVENT")
+ 

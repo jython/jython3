@@ -1,0 +1,56 @@
+--- lib-python/2.7/test/test_pkgimport.py	2015-04-18 05:34:44.623111256 +0300
++++ Lib/test/test_pkgimport.py	2015-04-18 05:34:31.851089873 +0300
+@@ -1,6 +1,6 @@
+ import os, sys, string, random, tempfile, unittest
+ 
+-from test.test_support import run_unittest
++from test.test_support import run_unittest, is_jython
+ 
+ class TestImport(unittest.TestCase):
+ 
+@@ -22,8 +22,8 @@
+         self.package_dir = os.path.join(self.test_dir,
+                                         self.package_name)
+         os.mkdir(self.package_dir)
+-        open(os.path.join(
+-                self.package_dir, '__init__'+os.extsep+'py'), 'w').close()
++        open(os.path.join(self.package_dir, '__init__'+os.extsep+'py'),
++             'w').close()
+         self.module_path = os.path.join(self.package_dir, 'foo'+os.extsep+'py')
+ 
+     def tearDown(self):
+@@ -36,10 +36,16 @@
+         self.remove_modules()
+ 
+     def rewrite_file(self, contents):
+-        for extension in "co":
+-            compiled_path = self.module_path + extension
++        if is_jython:
++            compiled_path = self.module_path.replace(".", "$") + ".class"
+             if os.path.exists(compiled_path):
+                 os.remove(compiled_path)
++        else:
++            for extension in "co":
++                compiled_path = self.module_path + extension
++                if os.path.exists(compiled_path):
++                    os.remove(compiled_path)
++
+         f = open(self.module_path, 'w')
+         f.write(contents)
+         f.close()
+@@ -53,12 +59,13 @@
+         try: __import__(self.module_name)
+         except SyntaxError: pass
+         else: raise RuntimeError, 'Failed to induce SyntaxError'
+-        self.assertNotIn(self.module_name, sys.modules)
++        self.assertTrue(self.module_name not in sys.modules)
+         self.assertFalse(hasattr(sys.modules[self.package_name], 'foo'))
+ 
+         # ...make up a variable name that isn't bound in __builtins__
++        import __builtin__
+         var = 'a'
+-        while var in dir(__builtins__):
++        while var in dir(__builtin__):
+             var += random.choose(string.letters)
+ 
+         # ...make a module that just contains that

@@ -1,0 +1,21 @@
+--- lib-python/2.7/test/test_email.py	2015-04-18 05:34:44.535111109 +0300
++++ Lib/test/test_email.py	2015-04-18 05:34:31.831089839 +0300
+@@ -2,13 +2,15 @@
+ # email package unit tests
+ 
+ # The specific tests now live in Lib/email/test
+-from email.test.test_email import suite
+-from email.test.test_email_renamed import suite as suite2
++from email.test.test_email import TestEncoders, suite
+ from test import test_support
+ 
+ def test_main():
++    #This one doesn't work on Jython
++    del TestEncoders.test_encode7or8bit
++
++    s = suite()
+     test_support.run_unittest(suite())
+-    test_support.run_unittest(suite2())
+ 
+ if __name__ == '__main__':
+     test_main()

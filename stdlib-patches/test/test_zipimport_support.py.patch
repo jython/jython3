@@ -1,0 +1,122 @@
+--- lib-python/2.7/test/test_zipimport_support.py	2015-04-18 05:34:44.751111471 +0300
++++ Lib/test/test_zipimport_support.py	2015-04-18 05:34:31.879089920 +0300
+@@ -3,6 +3,8 @@
+ # The tests are centralised in this fashion to make it easy to drop them
+ # if a platform doesn't support zipimport
+ import test.test_support
++from test.test_support import is_jython
++import unittest
+ import os
+ import os.path
+ import sys
+@@ -29,10 +31,27 @@
+ #  test_cmd_line_script (covers the zipimport support in runpy)
+ 
+ # Retrieve some helpers from other test cases
+-from test import (test_doctest, sample_doctest, sample_doctest_no_doctests,
+-                  sample_doctest_no_docstrings)
++from test import test_doctest, sample_doctest
+ from test.test_importhooks import ImportHooksBaseTestCase
+ 
++if is_jython and os._name=="nt":
++    # Jython holds open zip/jar files placed on its sys.path. (Assume there
++    # is a good reason for this.) Windows will not then allow the script
++    # directory to be cleaned up on context exit, resulting in test failures
++    # unrelated to the purpose of the test.
++
++    # Replace test.script_helper.temp_dir with this copy.
++    import contextlib, tempfile, shutil, warnings
++    @contextlib.contextmanager
++    def temp_dir():
++        dirname = os.path.realpath(tempfile.mkdtemp())
++        try:
++            yield dirname
++        finally:
++            try:
++                shutil.rmtree(dirname)
++            except OSError:
++                warnings.warn("Failed to remove "+dirname)
+ 
+ def _run_object_doctest(obj, module):
+     # Direct doctest output (normally just errors) to real stdout; doctest
+@@ -86,6 +105,8 @@
+             import zip_pkg
+             self.assertEqual(inspect.getsource(zip_pkg.foo), test_src)
+ 
++    @unittest.skipIf(is_jython, "FIXME: not working on Jython")
++    # Failure possibly due to sys.path not passing to sub-process in test_doctest.
+     def test_doctest_issue4197(self):
+         # To avoid having to keep two copies of the doctest module's
+         # unit tests in sync, this test works by taking the source of
+@@ -100,26 +121,16 @@
+                                     "test_zipped_doctest")
+         test_src = test_src.replace("test.sample_doctest",
+                                     "sample_zipped_doctest")
+-        # The sample doctest files rewritten to include in the zipped version.
+-        sample_sources = {}
+-        for mod in [sample_doctest, sample_doctest_no_doctests,
+-                    sample_doctest_no_docstrings]:
+-            src = inspect.getsource(mod)
+-            src = src.replace("test.test_doctest", "test_zipped_doctest")
+-            # Rewrite the module name so that, for example,
+-            # "test.sample_doctest" becomes "sample_zipped_doctest".
+-            mod_name = mod.__name__.split(".")[-1]
+-            mod_name = mod_name.replace("sample_", "sample_zipped_")
+-            sample_sources[mod_name] = src
+-
++        sample_src = inspect.getsource(sample_doctest)
++        sample_src = sample_src.replace("test.test_doctest",
++                                        "test_zipped_doctest")
+         with temp_dir() as d:
+             script_name = make_script(d, 'test_zipped_doctest',
+                                             test_src)
+             zip_name, run_name = make_zip_script(d, 'test_zip',
+                                                 script_name)
+             z = zipfile.ZipFile(zip_name, 'a')
+-            for mod_name, src in sample_sources.items():
+-                z.writestr(mod_name + ".py", src)
++            z.writestr("sample_zipped_doctest.py", sample_src)
+             z.close()
+             if verbose:
+                 zip_file = zipfile.ZipFile(zip_name, 'r')
+@@ -179,10 +190,9 @@
+                 test_zipped_doctest.test_unittest_reportflags,
+             ]
+             # Needed for test_DocTestParser and test_debug
+-            deprecations = []
+-            if __debug__:
++            deprecations = [
+                 # Ignore all warnings about the use of class Tester in this module.
+-                deprecations.append(("class Tester is deprecated", DeprecationWarning))
++                ("class Tester is deprecated", DeprecationWarning)]
+             if sys.py3kwarning:
+                 deprecations += [
+                     ("backquote not supported", SyntaxWarning),
+@@ -191,6 +201,7 @@
+                 for obj in known_good_tests:
+                     _run_object_doctest(obj, test_zipped_doctest)
+ 
++    @unittest.skipIf(is_jython, "FIXME: not working on Jython")
+     def test_doctest_main_issue4197(self):
+         test_src = textwrap.dedent("""\
+                     class Test:
+@@ -233,13 +244,17 @@
+             p = spawn_python(script_name)
+             p.stdin.write('l\n')
+             data = kill_python(p)
+-            self.assertIn(script_name, data)
++            # bdb/pdb applies normcase to its filename before displaying
++            # See CPython Issue 14255 (back-ported for Jython)
++            self.assertIn(os.path.normcase(script_name.encode('utf-8')), data)
+             zip_name, run_name = make_zip_script(d, "test_zip",
+                                                 script_name, '__main__.py')
+             p = spawn_python(zip_name)
+             p.stdin.write('l\n')
+             data = kill_python(p)
+-            self.assertIn(run_name, data)
++            # bdb/pdb applies normcase to its filename before displaying
++            # See CPython Issue 14255 (back-ported for Jython)
++            self.assertIn(os.path.normcase(run_name.encode('utf-8')), data)
+ 
+ 
+ def test_main():

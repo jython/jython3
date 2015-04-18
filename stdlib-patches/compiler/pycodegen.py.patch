@@ -1,0 +1,373 @@
+--- lib-python/2.7/compiler/pycodegen.py	2015-04-18 05:34:44.527111096 +0300
++++ Lib/compiler/pycodegen.py	2015-04-18 05:34:31.755089713 +0300
+@@ -4,15 +4,19 @@
+ import struct
+ import sys
+ from cStringIO import StringIO
++is_jython = sys.platform.startswith('java')
+ 
+ from compiler import ast, parse, walk, syntax
+-from compiler import pyassem, misc, future, symbols
++from compiler import misc, future, symbols
+ from compiler.consts import SC_LOCAL, SC_GLOBAL_IMPLICIT, SC_GLOBAL_EXPLICIT, \
+      SC_FREE, SC_CELL
+ from compiler.consts import (CO_VARARGS, CO_VARKEYWORDS, CO_NEWLOCALS,
+      CO_NESTED, CO_GENERATOR, CO_FUTURE_DIVISION,
+      CO_FUTURE_ABSIMPORT, CO_FUTURE_WITH_STATEMENT, CO_FUTURE_PRINT_FUNCTION)
+-from compiler.pyassem import TupleArg
++if not is_jython:
++    from compiler.pyassem import TupleArg
++else:
++    TupleArg = None
+ 
+ # XXX The version-specific code can go, since this code only works with 2.x.
+ # Do we have Python 1.x or Python 2.x?
+@@ -48,22 +52,26 @@
+         mod.dump(f)
+         f.close()
+ 
+-def compile(source, filename, mode, flags=None, dont_inherit=None):
+-    """Replacement for builtin compile() function"""
+-    if flags is not None or dont_inherit is not None:
+-        raise RuntimeError, "not implemented yet"
+-
+-    if mode == "single":
+-        gen = Interactive(source, filename)
+-    elif mode == "exec":
+-        gen = Module(source, filename)
+-    elif mode == "eval":
+-        gen = Expression(source, filename)
+-    else:
+-        raise ValueError("compile() 3rd arg must be 'exec' or "
+-                         "'eval' or 'single'")
+-    gen.compile()
+-    return gen.code
++if is_jython:
++    # use __builtin__ compile
++    compile = compile
++else:
++    def compile(source, filename, mode, flags=None, dont_inherit=None):
++        """Replacement for builtin compile() function"""
++        if flags is not None or dont_inherit is not None:
++            raise RuntimeError, "not implemented yet"
++
++        if mode == "single":
++            gen = Interactive(source, filename)
++        elif mode == "exec":
++            gen = Module(source, filename)
++        elif mode == "eval":
++            gen = Expression(source, filename)
++        else:
++            raise ValueError("compile() 3rd arg must be 'exec' or "
++                             "'eval' or 'single'")
++        gen.compile()
++        return gen.code
+ 
+ class AbstractCompileMode:
+ 
+@@ -120,7 +128,7 @@
+         f.write(self.getPycHeader())
+         marshal.dump(self.code, f)
+ 
+-    MAGIC = imp.get_magic()
++    MAGIC = None if is_jython else imp.get_magic()
+ 
+     def getPycHeader(self):
+         # compile.c uses marshal to write a long directly, with
+@@ -421,11 +429,13 @@
+             self.set_lineno(test)
+             self.visit(test)
+             nextTest = self.newBlock()
+-            self.emit('POP_JUMP_IF_FALSE', nextTest)
++            self.emit('JUMP_IF_FALSE', nextTest)
+             self.nextBlock()
++            self.emit('POP_TOP')
+             self.visit(suite)
+             self.emit('JUMP_FORWARD', end)
+             self.startBlock(nextTest)
++            self.emit('POP_TOP')
+         if node.else_:
+             self.visit(node.else_)
+         self.nextBlock(end)
+@@ -444,13 +454,15 @@
+ 
+         self.set_lineno(node, force=True)
+         self.visit(node.test)
+-        self.emit('POP_JUMP_IF_FALSE', else_ or after)
++        self.emit('JUMP_IF_FALSE', else_ or after)
+ 
+         self.nextBlock()
++        self.emit('POP_TOP')
+         self.visit(node.body)
+         self.emit('JUMP_ABSOLUTE', loop)
+ 
+         self.startBlock(else_) # or just the POPs if not else clause
++        self.emit('POP_TOP')
+         self.emit('POP_BLOCK')
+         self.setups.pop()
+         if node.else_:
+@@ -521,23 +533,26 @@
+             self.visit(child)
+             self.emit(jump, end)
+             self.nextBlock()
++            self.emit('POP_TOP')
+         self.visit(node.nodes[-1])
+         self.nextBlock(end)
+ 
+     def visitAnd(self, node):
+-        self.visitTest(node, 'JUMP_IF_FALSE_OR_POP')
++        self.visitTest(node, 'JUMP_IF_FALSE')
+ 
+     def visitOr(self, node):
+-        self.visitTest(node, 'JUMP_IF_TRUE_OR_POP')
++        self.visitTest(node, 'JUMP_IF_TRUE')
+ 
+     def visitIfExp(self, node):
+         endblock = self.newBlock()
+         elseblock = self.newBlock()
+         self.visit(node.test)
+-        self.emit('POP_JUMP_IF_FALSE', elseblock)
++        self.emit('JUMP_IF_FALSE', elseblock)
++        self.emit('POP_TOP')
+         self.visit(node.then)
+         self.emit('JUMP_FORWARD', endblock)
+         self.nextBlock(elseblock)
++        self.emit('POP_TOP')
+         self.visit(node.else_)
+         self.nextBlock(endblock)
+ 
+@@ -549,8 +564,9 @@
+             self.emit('DUP_TOP')
+             self.emit('ROT_THREE')
+             self.emit('COMPARE_OP', op)
+-            self.emit('JUMP_IF_FALSE_OR_POP', cleanup)
++            self.emit('JUMP_IF_FALSE', cleanup)
+             self.nextBlock()
++            self.emit('POP_TOP')
+         # now do the last comparison
+         if node.ops:
+             op, code = node.ops[-1]
+@@ -565,10 +581,17 @@
+             self.nextBlock(end)
+ 
+     # list comprehensions
++    __list_count = 0
++
+     def visitListComp(self, node):
+         self.set_lineno(node)
+         # setup list
++        append = "$append%d" % self.__list_count
++        self.__list_count = self.__list_count + 1
+         self.emit('BUILD_LIST', 0)
++        self.emit('DUP_TOP')
++        self.emit('LOAD_ATTR', 'append')
++        self._implicitNameOp('STORE', append)
+ 
+         stack = []
+         for i, for_ in zip(range(len(node.quals)), node.quals):
+@@ -580,63 +603,23 @@
+                 self.visit(if_, cont)
+             stack.insert(0, (start, cont, anchor))
+ 
++        self._implicitNameOp('LOAD', append)
+         self.visit(node.expr)
+-        self.emit('LIST_APPEND', len(node.quals) + 1)
+-
+-        for start, cont, anchor in stack:
+-            if cont:
+-                self.nextBlock(cont)
+-            self.emit('JUMP_ABSOLUTE', start)
+-            self.startBlock(anchor)
+-
+-    def visitSetComp(self, node):
+-        self.set_lineno(node)
+-        # setup list
+-        self.emit('BUILD_SET', 0)
+-
+-        stack = []
+-        for i, for_ in zip(range(len(node.quals)), node.quals):
+-            start, anchor = self.visit(for_)
+-            cont = None
+-            for if_ in for_.ifs:
+-                if cont is None:
+-                    cont = self.newBlock()
+-                self.visit(if_, cont)
+-            stack.insert(0, (start, cont, anchor))
+-
+-        self.visit(node.expr)
+-        self.emit('SET_ADD', len(node.quals) + 1)
++        self.emit('CALL_FUNCTION', 1)
++        self.emit('POP_TOP')
+ 
+         for start, cont, anchor in stack:
+             if cont:
+-                self.nextBlock(cont)
++                skip_one = self.newBlock()
++                self.emit('JUMP_FORWARD', skip_one)
++                self.startBlock(cont)
++                self.emit('POP_TOP')
++                self.nextBlock(skip_one)
+             self.emit('JUMP_ABSOLUTE', start)
+             self.startBlock(anchor)
++        self._implicitNameOp('DELETE', append)
+ 
+-    def visitDictComp(self, node):
+-        self.set_lineno(node)
+-        # setup list
+-        self.emit('BUILD_MAP', 0)
+-
+-        stack = []
+-        for i, for_ in zip(range(len(node.quals)), node.quals):
+-            start, anchor = self.visit(for_)
+-            cont = None
+-            for if_ in for_.ifs:
+-                if cont is None:
+-                    cont = self.newBlock()
+-                self.visit(if_, cont)
+-            stack.insert(0, (start, cont, anchor))
+-
+-        self.visit(node.value)
+-        self.visit(node.key)
+-        self.emit('MAP_ADD', len(node.quals) + 1)
+-
+-        for start, cont, anchor in stack:
+-            if cont:
+-                self.nextBlock(cont)
+-            self.emit('JUMP_ABSOLUTE', start)
+-            self.startBlock(anchor)
++        self.__list_count = self.__list_count - 1
+ 
+     def visitListCompFor(self, node):
+         start = self.newBlock()
+@@ -654,8 +637,9 @@
+     def visitListCompIf(self, node, branch):
+         self.set_lineno(node, force=True)
+         self.visit(node.test)
+-        self.emit('POP_JUMP_IF_FALSE', branch)
++        self.emit('JUMP_IF_FALSE', branch)
+         self.newBlock()
++        self.emit('POP_TOP')
+ 
+     def _makeClosure(self, gen, args):
+         frees = gen.scope.get_free_vars()
+@@ -701,12 +685,16 @@
+ 
+         for start, cont, anchor, end in stack:
+             if cont:
+-                self.nextBlock(cont)
++                skip_one = self.newBlock()
++                self.emit('JUMP_FORWARD', skip_one)
++                self.startBlock(cont)
++                self.emit('POP_TOP')
++                self.nextBlock(skip_one)
+             self.emit('JUMP_ABSOLUTE', start)
+             self.startBlock(anchor)
+             self.emit('POP_BLOCK')
+             self.setups.pop()
+-            self.nextBlock(end)
++            self.startBlock(end)
+ 
+         self.emit('LOAD_CONST', None)
+ 
+@@ -734,8 +722,9 @@
+     def visitGenExprIf(self, node, branch):
+         self.set_lineno(node, force=True)
+         self.visit(node.test)
+-        self.emit('POP_JUMP_IF_FALSE', branch)
++        self.emit('JUMP_IF_FALSE', branch)
+         self.newBlock()
++        self.emit('POP_TOP')
+ 
+     # exception related
+ 
+@@ -750,8 +739,9 @@
+             # is a sort of renaming op.
+             self.nextBlock()
+             self.visit(node.test)
+-            self.emit('POP_JUMP_IF_TRUE', end)
++            self.emit('JUMP_IF_TRUE', end)
+             self.nextBlock()
++            self.emit('POP_TOP')
+             self.emit('LOAD_GLOBAL', 'AssertionError')
+             if node.fail:
+                 self.visit(node.fail)
+@@ -759,6 +749,7 @@
+             else:
+                 self.emit('RAISE_VARARGS', 1)
+             self.nextBlock(end)
++            self.emit('POP_TOP')
+ 
+     def visitRaise(self, node):
+         self.set_lineno(node)
+@@ -801,8 +792,9 @@
+                 self.visit(expr)
+                 self.emit('COMPARE_OP', 'exception match')
+                 next = self.newBlock()
+-                self.emit('POP_JUMP_IF_FALSE', next)
++                self.emit('JUMP_IF_FALSE', next)
+                 self.nextBlock()
++                self.emit('POP_TOP')
+             self.emit('POP_TOP')
+             if target:
+                 self.visit(target)
+@@ -815,6 +807,8 @@
+                 self.nextBlock(next)
+             else:
+                 self.nextBlock()
++            if expr: # XXX
++                self.emit('POP_TOP')
+         self.emit('END_FINALLY')
+         if node.else_:
+             self.nextBlock(lElse)
+@@ -843,13 +837,14 @@
+     def visitWith(self, node):
+         body = self.newBlock()
+         final = self.newBlock()
++        exitvar = "$exit%d" % self.__with_count
++        valuevar = "$value%d" % self.__with_count
+         self.__with_count += 1
+-        valuevar = "_[%d]" % self.__with_count
+         self.set_lineno(node)
+         self.visit(node.expr)
+         self.emit('DUP_TOP')
+         self.emit('LOAD_ATTR', '__exit__')
+-        self.emit('ROT_TWO')
++        self._implicitNameOp('STORE', exitvar)
+         self.emit('LOAD_ATTR', '__enter__')
+         self.emit('CALL_FUNCTION', 0)
+         if node.vars is None:
+@@ -869,6 +864,8 @@
+         self.emit('LOAD_CONST', None)
+         self.nextBlock(final)
+         self.setups.push((END_FINALLY, final))
++        self._implicitNameOp('LOAD', exitvar)
++        self._implicitNameOp('DELETE', exitvar)
+         self.emit('WITH_CLEANUP')
+         self.emit('END_FINALLY')
+         self.setups.pop()
+@@ -919,10 +916,10 @@
+         level = node.level
+         if level == 0 and not self.graph.checkFlag(CO_FUTURE_ABSIMPORT):
+             level = -1
+-        fromlist = tuple(name for (name, alias) in node.names)
++        fromlist = map(lambda (name, alias): name, node.names)
+         if VERSION > 1:
+             self.emit('LOAD_CONST', level)
+-            self.emit('LOAD_CONST', fromlist)
++            self.emit('LOAD_CONST', tuple(fromlist))
+         self.emit('IMPORT_NAME', node.modname)
+         for name, alias in node.names:
+             if VERSION > 1:
+@@ -1264,12 +1261,6 @@
+             self.visit(elt)
+         self.emit('BUILD_LIST', len(node.nodes))
+ 
+-    def visitSet(self, node):
+-        self.set_lineno(node)
+-        for elt in node.nodes:
+-            self.visit(elt)
+-        self.emit('BUILD_SET', len(node.nodes))
+-
+     def visitSliceobj(self, node):
+         for child in node.nodes:
+             self.visit(child)

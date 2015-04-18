@@ -1,0 +1,10 @@
+--- lib-python/2.7/new.py	2015-04-18 05:34:44.687111364 +0300
++++ Lib/new.py	2015-04-18 05:34:31.787089766 +0300
+@@ -14,4 +14,6 @@
+ from types import MethodType as instancemethod
+ from types import ModuleType as module
+ 
+-from types import CodeType as code
++# XXX: Jython can't really create a code object like CPython does
++# (according to test.test_new)
++from org.python.core import PyBytecode as code

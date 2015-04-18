@@ -1,0 +1,300 @@
+--- lib-python/2.7/test/test_generators.py	2015-04-18 05:34:44.563111156 +0300
++++ Lib/test/test_generators.py	2015-04-18 05:34:31.835089846 +0300
+@@ -383,8 +383,7 @@
+ <type 'generator'>
+ >>> [s for s in dir(i) if not s.startswith('_')]
+ ['close', 'gi_code', 'gi_frame', 'gi_running', 'next', 'send', 'throw']
+->>> from test.test_support import HAVE_DOCSTRINGS
+->>> print(i.next.__doc__ if HAVE_DOCSTRINGS else 'x.next() -> the next value, or raise StopIteration')
++>>> print i.next.__doc__
+ x.next() -> the next value, or raise StopIteration
+ >>> iter(i) is i
+ True
+@@ -729,14 +728,14 @@
+ 
+ syntax_tests = """
+ 
+->>> def f():
++>>> def f(): #doctest: +IGNORE_EXCEPTION_DETAIL, +NORMALIZE_WHITESPACE
+ ...     return 22
+ ...     yield 1
+ Traceback (most recent call last):
+   ..
+ SyntaxError: 'return' with argument inside generator (<doctest test.test_generators.__test__.syntax[0]>, line 3)
+ 
+->>> def f():
++>>> def f(): #doctest: +IGNORE_EXCEPTION_DETAIL, +NORMALIZE_WHITESPACE
+ ...     yield 1
+ ...     return 22
+ Traceback (most recent call last):
+@@ -745,7 +744,7 @@
+ 
+ "return None" is not the same as "return" in a generator:
+ 
+->>> def f():
++>>> def f(): #doctest: +IGNORE_EXCEPTION_DETAIL, +NORMALIZE_WHITESPACE
+ ...     yield 1
+ ...     return None
+ Traceback (most recent call last):
+@@ -868,7 +867,7 @@
+ <type 'generator'>
+ 
+ 
+->>> def f():
++>>> def f(): #doctest: +IGNORE_EXCEPTION_DETAIL, +NORMALIZE_WHITESPACE
+ ...     if 0:
+ ...         lambda x:  x        # shouldn't trigger here
+ ...         return              # or here
+@@ -900,45 +899,6 @@
+ >>> print g.next()
+ Traceback (most recent call last):
+ StopIteration
+-
+-
+-Test the gi_code attribute
+-
+->>> def f():
+-...     yield 5
+-...
+->>> g = f()
+->>> g.gi_code is f.func_code
+-True
+->>> g.next()
+-5
+->>> g.next()
+-Traceback (most recent call last):
+-StopIteration
+->>> g.gi_code is f.func_code
+-True
+-
+-
+-Test the __name__ attribute and the repr()
+-
+->>> def f():
+-...    yield 5
+-...
+->>> g = f()
+->>> g.__name__
+-'f'
+->>> repr(g)  # doctest: +ELLIPSIS
+-'<generator object f at ...>'
+-
+-Lambdas shouldn't have their usual return behavior.
+-
+->>> x = lambda: (yield 1)
+->>> list(x())
+-[1]
+-
+->>> x = lambda: ((yield 1), (yield 2))
+->>> list(x())
+-[1, 2]
+ """
+ 
+ # conjoin is a simple backtracking generator, named in honor of Icon's
+@@ -961,11 +921,11 @@
+ # iterators have side-effects, so that which values *can* be generated at
+ # each slot depend on the values iterated at previous slots.
+ 
+-def simple_conjoin(gs):
++def conjoin(gs):
+ 
+     values = [None] * len(gs)
+ 
+-    def gen(i):
++    def gen(i, values=values):
+         if i >= len(gs):
+             yield values
+         else:
+@@ -990,7 +950,7 @@
+     # Do one loop nest at time recursively, until the # of loop nests
+     # remaining is divisible by 3.
+ 
+-    def gen(i):
++    def gen(i, values=values):
+         if i >= n:
+             yield values
+ 
+@@ -1008,7 +968,7 @@
+     # remain.  Don't call directly:  this is an internal optimization for
+     # gen's use.
+ 
+-    def _gen3(i):
++    def _gen3(i, values=values):
+         assert i < n and (n-i) % 3 == 0
+         ip1, ip2, ip3 = i+1, i+2, i+3
+         g, g1, g2 = gs[i : ip3]
+@@ -1562,34 +1522,30 @@
+ 
+ Check some syntax errors for yield expressions:
+ 
+->>> f=lambda: (yield 1),(yield 2)
++>>> f=lambda: (yield 1),(yield 2) #doctest: +IGNORE_EXCEPTION_DETAIL, +NORMALIZE_WHITESPACE
+ Traceback (most recent call last):
+   ...
+-  File "<doctest test.test_generators.__test__.coroutine[21]>", line 1
+-SyntaxError: 'yield' outside function
++SyntaxError: 'yield' outside function (<doctest test.test_generators.__test__.coroutine[21]>, line 1)
+ 
+->>> def f(): return lambda x=(yield): 1
++>>> def f(): return lambda x=(yield): 1 #doctest: +IGNORE_EXCEPTION_DETAIL, +NORMALIZE_WHITESPACE
+ Traceback (most recent call last):
+   ...
+ SyntaxError: 'return' with argument inside generator (<doctest test.test_generators.__test__.coroutine[22]>, line 1)
+ 
+->>> def f(): x = yield = y
++>>> def f(): x = yield = y #doctest: +IGNORE_EXCEPTION_DETAIL, +NORMALIZE_WHITESPACE
+ Traceback (most recent call last):
+   ...
+-  File "<doctest test.test_generators.__test__.coroutine[23]>", line 1
+-SyntaxError: assignment to yield expression not possible
++SyntaxError: assignment to yield expression not possible (<doctest test.test_generators.__test__.coroutine[23]>, line 1)
+ 
+->>> def f(): (yield bar) = y
++>>> def f(): (yield bar) = y #doctest: +IGNORE_EXCEPTION_DETAIL
+ Traceback (most recent call last):
+   ...
+-  File "<doctest test.test_generators.__test__.coroutine[24]>", line 1
+-SyntaxError: can't assign to yield expression
++SyntaxError: can't assign to yield expression (<doctest test.test_generators.__test__.coroutine[24]>, line 1)
+ 
+->>> def f(): (yield bar) += y
++>>> def f(): (yield bar) += y #doctest: +IGNORE_EXCEPTION_DETAIL
+ Traceback (most recent call last):
+   ...
+-  File "<doctest test.test_generators.__test__.coroutine[25]>", line 1
+-SyntaxError: can't assign to yield expression
++SyntaxError: augmented assignment to yield expression not possible (<doctest test.test_generators.__test__.coroutine[25]>, line 1)
+ 
+ 
+ Now check some throw() conditions:
+@@ -1624,7 +1580,7 @@
+   ...
+ TypeError: instance exception may not have a separate value
+ 
+->>> g.throw(ValueError, "foo", 23)      # bad args
++>>> g.throw(ValueError, "foo", 23)      # bad args #doctest: +IGNORE_EXCEPTION_DETAIL
+ Traceback (most recent call last):
+   ...
+ TypeError: throw() third argument must be a traceback object
+@@ -1663,11 +1619,6 @@
+   ...
+ ValueError: 7
+ 
+->>> f().throw("abc")     # throw on just-opened generator
+-Traceback (most recent call last):
+-  ...
+-TypeError: exceptions must be classes, or instances, not str
+-
+ Now let's try closing a generator:
+ 
+ >>> def f():
+@@ -1689,8 +1640,7 @@
+ >>> g.next()
+ >>> g.close()           # close normally
+ 
+-And finalization:
+-
++And finalization. But we have to force the timing of GC here, since we are running on Jython:
+ >>> def f():
+ ...     try: yield
+ ...     finally:
+@@ -1698,33 +1648,9 @@
+ 
+ >>> g = f()
+ >>> g.next()
+->>> del g
++>>> del g; extra_collect()
+ exiting
+ 
+->>> class context(object):
+-...    def __enter__(self): pass
+-...    def __exit__(self, *args): print 'exiting'
+->>> def f():
+-...     with context():
+-...          yield
+->>> g = f()
+->>> g.next()
+->>> del g
+-exiting
+-
+-
+-GeneratorExit is not caught by except Exception:
+-
+->>> def f():
+-...     try: yield
+-...     except Exception: print 'except'
+-...     finally: print 'finally'
+-
+->>> g = f()
+->>> g.next()
+->>> del g
+-finally
+-
+ 
+ Now let's try some ill-behaved generators:
+ 
+@@ -1747,9 +1673,9 @@
+ >>> old, sys.stderr = sys.stderr, StringIO.StringIO()
+ >>> g = f()
+ >>> g.next()
+->>> del g
++>>> del g; extra_collect()
+ >>> sys.stderr.getvalue().startswith(
+-...     "Exception RuntimeError: 'generator ignored GeneratorExit' in "
++...     "Exception RuntimeError"
+ ... )
+ True
+ >>> sys.stderr = old
+@@ -1846,38 +1772,6 @@
+ >>> leak()
+ 
+ 
+-
+-This test isn't really generator related, but rather exception-in-cleanup
+-related. The coroutine tests (above) just happen to cause an exception in
+-the generator's __del__ (tp_del) method. We can also test for this
+-explicitly, without generators. We do have to redirect stderr to avoid
+-printing warnings and to doublecheck that we actually tested what we wanted
+-to test.
+-
+->>> import sys, StringIO
+->>> old = sys.stderr
+->>> try:
+-...     sys.stderr = StringIO.StringIO()
+-...     class Leaker:
+-...         def __del__(self):
+-...             raise RuntimeError
+-...
+-...     l = Leaker()
+-...     del l
+-...     err = sys.stderr.getvalue().strip()
+-...     err.startswith(
+-...         "Exception RuntimeError: RuntimeError() in <"
+-...     )
+-...     err.endswith("> ignored")
+-...     len(err.splitlines())
+-... finally:
+-...     sys.stderr = old
+-True
+-True
+-1
+-
+-
+-
+ These refleak tests should perhaps be in a testfile of their own,
+ test_generators just happened to be the test that drew these out.
+ 
+@@ -1902,6 +1796,13 @@
+     from test import test_support, test_generators
+     test_support.run_doctest(test_generators, verbose)
+ 
++def extra_collect():
++    import gc
++    from time import sleep
++
++    gc.collect(); sleep(1); gc.collect(); sleep(0.1); gc.collect()
++
++
+ # This part isn't needed for regrtest, but for running the test directly.
+ if __name__ == "__main__":
+     test_main(1)

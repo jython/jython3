@@ -1,0 +1,22 @@
+--- lib-python/2.7/test/test_cookielib.py	2015-04-18 05:34:44.499111048 +0300
++++ Lib/test/test_cookielib.py	2015-04-18 05:34:31.827089833 +0300
+@@ -282,8 +282,8 @@
+         # Invalid contents of cookies file (eg. bad magic string)
+         # causes a LoadError.
+         try:
+-            f = open(filename, "w")
+-            f.write("oops\n")
++            with open(filename, "w") as f:
++                f.write("oops\n")
+             for cookiejar_class in LWPCookieJar, MozillaCookieJar:
+                 c = cookiejar_class()
+                 self.assertRaises(LoadError, c.load, filename)
+@@ -329,7 +329,7 @@
+ ##   commas and equals are commonly appear in the cookie value). This also
+ ##   means that if you fold multiple Set-Cookie header fields into one,
+ ##   comma-separated list, it'll be a headache to parse (at least my head
+-##   starts hurting everytime I think of that code).
++##   starts hurting every time I think of that code).
+ ## - Expires: You'll get all sorts of date formats in the expires,
+ ##   including emtpy expires attributes ("expires="). Be as flexible as you
+ ##   can, and certainly don't expect the weekday to be there; if you can't

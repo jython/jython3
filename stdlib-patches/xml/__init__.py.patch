@@ -1,0 +1,32 @@
+--- lib-python/2.7/xml/__init__.py	2015-04-18 05:34:44.839111617 +0300
++++ Lib/xml/__init__.py	2015-04-18 05:34:31.883089926 +0300
+@@ -1,25 +1,20 @@
+-"""Core XML support for Python.
++"""Core XML support for Jython.
+ 
+-This package contains four sub-packages:
++This package contains two sub-packages:
+ 
+ dom -- The W3C Document Object Model.  This supports DOM Level 1 +
+        Namespaces.
+ 
+-parsers -- Python wrappers for XML parsers (currently only supports Expat).
+-
+ sax -- The Simple API for XML, developed by XML-Dev, led by David
+        Megginson and ported to Python by Lars Marius Garshol.  This
+        supports the SAX 2 API.
+ 
+-etree -- The ElementTree XML library.  This is a subset of the full
+-       ElementTree XML release.
+-
+ """
+ 
++__all__ = ['dom', 'sax']
+ 
+-__all__ = ["dom", "parsers", "sax", "etree"]
+ 
+-_MINIMUM_XMLPLUS_VERSION = (0, 8, 4)
++_MINIMUM_XMLPLUS_VERSION = (0, 8, 5)
+ 
+ 
+ try:

@@ -1,0 +1,59 @@
+--- lib-python/2.7/test/test_codeccallbacks.py	2015-04-18 05:34:44.487111029 +0300
++++ Lib/test/test_codeccallbacks.py	2015-04-18 05:34:31.823089826 +0300
+@@ -262,12 +262,12 @@
+ 
+         self.assertEqual(
+             "\\u3042\u3xxx".decode("unicode-escape", "test.handler1"),
+-            u"\u3042[<92><117><51>]xxx"
++            u"\u3042[<92><117><51><120>]xx"
+         )
+ 
+         self.assertEqual(
+             "\\u3042\u3xx".decode("unicode-escape", "test.handler1"),
+-            u"\u3042[<92><117><51>]xx"
++            u"\u3042[<92><117><51><120><120>]"
+         )
+ 
+         self.assertEqual(
+@@ -296,8 +296,11 @@
+         l = 1000
+         errors += [ "test." + err for err in errors ]
+         for uni in [ s*l for s in (u"x", u"\u3042", u"a\xe4") ]:
+-            for enc in ("ascii", "latin-1", "iso-8859-1", "iso-8859-15",
+-                        "utf-8", "utf-7", "utf-16", "utf-32"):
++            encodings = ["ascii", "latin-1", "iso-8859-1", "iso-8859-15",
++                         "utf-8", "utf-7", "utf-16"]
++            if not test.test_support.is_jython: 
++                encodings.append("utf-32")
++            for enc in encodings:
+                 for err in errors:
+                     try:
+                         uni.encode(enc, err)
+@@ -593,7 +596,7 @@
+                 ("ascii", "\xff"),
+                 ("utf-8", "\xff"),
+                 ("utf-7", "+x-"),
+-                ("unicode-internal", "\x00"),
++                # ("unicode-internal", "\x00"), - not valid for Jython because PyUnicode/PyString share internal representation
+             ):
+                 self.assertRaises(
+                     TypeError,
+@@ -717,7 +720,7 @@
+                 raise ValueError
+         self.assertRaises(UnicodeError, codecs.charmap_decode, "\xff", "strict", {0xff: None})
+         self.assertRaises(ValueError, codecs.charmap_decode, "\xff", "strict", D())
+-        self.assertRaises(TypeError, codecs.charmap_decode, "\xff", "strict", {0xff: 0x110000})
++        self.assertRaises(TypeError, codecs.charmap_decode, "\xff", "strict", {0xff: sys.maxunicode+1})
+ 
+     def test_encodehelper(self):
+         # enhance coverage of:
+@@ -798,6 +801,9 @@
+             text.translate(charmap)
+ 
+ def test_main():
++    if test.test_support.is_jython:
++        del CodecCallbackTest.test_decodeunicodeinternal # PyUnicode/PyString share the same internal rep, so n/a
++
+     test.test_support.run_unittest(CodecCallbackTest)
+ 
+ if __name__ == "__main__":

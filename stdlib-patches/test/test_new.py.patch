@@ -1,0 +1,33 @@
+--- lib-python/2.7/test/test_new.py	2015-04-18 05:34:44.611111236 +0300
++++ Lib/test/test_new.py	2015-04-18 05:34:31.851089873 +0300
+@@ -24,10 +24,18 @@
+         c = new.instance(C, {'yolks': 3})
+ 
+         o = new.instance(C)
+-        self.assertEqual(o.__dict__, {}, "new __dict__ should be empty")
++
++        # __dict__ is a non dict mapping in Jython
++        if test_support.is_jython:
++            self.assertEqual(len(o.__dict__), 0, "new __dict__ should be empty")
++        else:
++            self.assertEqual(o.__dict__, {}, "new __dict__ should be empty")
+         del o
+         o = new.instance(C, None)
+-        self.assertEqual(o.__dict__, {}, "new __dict__ should be empty")
++        if test_support.is_jython:
++            self.assertEqual(len(o.__dict__), 0, "new __dict__ should be empty")
++        else:
++            self.assertEqual(o.__dict__, {}, "new __dict__ should be empty")
+         del o
+ 
+         def break_yolks(self):
+@@ -101,8 +109,7 @@
+         test_closure(g, (1, 1), ValueError) # closure is wrong size
+         test_closure(f, g.func_closure, ValueError) # no closure needed
+ 
+-    # Note: Jython will never have new.code()
+-    if hasattr(new, 'code'):
++    if hasattr(new, 'code') and not test_support.is_jython:
+         def test_code(self):
+             # bogus test of new.code()
+             def f(a): pass

@@ -1,0 +1,11 @@
+--- lib-python/2.7/compileall.py	2015-04-18 05:34:44.523111088 +0300
++++ Lib/compileall.py	2015-04-18 05:34:31.755089713 +0300
+@@ -86,7 +86,7 @@
+                 try:
+                     mtime = int(os.stat(fullname).st_mtime)
+                     expect = struct.pack('<4sl', imp.get_magic(), mtime)
+-                    cfile = fullname + (__debug__ and 'c' or 'o')
++                    cfile = fullname.replace('.py', '$py.class')
+                     with open(cfile, 'rb') as chandle:
+                         actual = chandle.read(8)
+                     if expect == actual:

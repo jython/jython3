@@ -1,0 +1,55 @@
+--- lib-python/2.7/sre_compile.py	2015-04-18 05:34:44.595111210 +0300
++++ Lib/sre_compile.py	2015-04-18 05:34:31.795089780 +0300
+@@ -11,9 +11,8 @@
+ """Internal support module for sre"""
+ 
+ import _sre, sys
+-import sre_parse
++
+ from sre_constants import *
+-from _sre import MAXREPEAT
+ 
+ assert _sre.MAGIC == MAGIC, "SRE module mismatch"
+ 
+@@ -25,6 +24,12 @@
+ def _identityfunction(x):
+     return x
+ 
++def set(seq):
++    s = {}
++    for elem in seq:
++        s[elem] = 1
++    return s
++
+ _LITERAL_CODES = set([LITERAL, NOT_LITERAL])
+ _REPEATING_CODES = set([REPEAT, MIN_REPEAT, MAX_REPEAT])
+ _SUCCESS_CODES = set([SUCCESS, FAILURE])
+@@ -300,6 +305,9 @@
+ # bigcharsets.
+ 
+ def _optimize_unicode(charset, fixup):
++    # problems with optimization in Jython, forget about it for now
++    return charset
++
+     try:
+         import array
+     except ImportError:
+@@ -342,7 +350,9 @@
+     if _sre.CODESIZE == 2:
+         code = 'H'
+     else:
+-        code = 'I'
++        # change this for Jython from 'I', since that will expand to
++        # long, and cause needless complexity (or so it seems)
++        code = 'i'
+     # Convert block indices to byte array of 256 bytes
+     mapping = array.array('b', mapping).tostring()
+     # Convert byte array to word array
+@@ -497,6 +507,7 @@
+     # internal: convert pattern list to internal format
+ 
+     if isstring(p):
++        import sre_parse
+         pattern = p
+         p = sre_parse.parse(p, flags)
+     else:

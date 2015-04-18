@@ -1,0 +1,28 @@
+--- lib-python/2.7/SocketServer.py	2015-04-18 05:34:44.479111016 +0300
++++ Lib/SocketServer.py	2015-04-18 05:34:31.751089705 +0300
+@@ -428,7 +428,12 @@
+         if self.allow_reuse_address:
+             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+         self.socket.bind(self.server_address)
+-        self.server_address = self.socket.getsockname()
++        try:
++            self.server_address = self.socket.getsockname()
++        except socket.error:
++            # Jython may raise ENOTCONN here;
++            # we will pick up again in server_activate
++            pass
+ 
+     def server_activate(self):
+         """Called by constructor to activate the server.
+@@ -437,7 +442,10 @@
+ 
+         """
+         self.socket.listen(self.request_queue_size)
+-
++        # Adding a second call to getsockname() because of this issue
++        # http://wiki.python.org/jython/NewSocketModule#Deferredsocketcreationonjython
++        self.server_address = self.socket.getsockname()
++        
+     def server_close(self):
+         """Called to clean-up the server.
+ 

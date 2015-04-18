@@ -1,0 +1,639 @@
+--- lib-python/2.7/test/test_file2k.py	2015-04-18 05:34:44.547111128 +0300
++++ Lib/test/test_file2k.py	2015-04-18 05:34:31.831089839 +0300
+@@ -1,10 +1,7 @@
+ import sys
+ import os
++import errno
+ import unittest
+-import itertools
+-import select
+-import signal
+-import subprocess
+ import time
+ from array import array
+ from weakref import proxy
+@@ -35,6 +32,9 @@
+         self.assertEqual(self.f.tell(), p.tell())
+         self.f.close()
+         self.f = None
++        if test_support.is_jython: # GC is not immediate: borrow a trick
++            from test_weakref import extra_collect
++            extra_collect()
+         self.assertRaises(ReferenceError, getattr, p, 'tell')
+ 
+     def testAttributes(self):
+@@ -93,8 +93,11 @@
+         # verify repr works
+         self.assertTrue(repr(self.f).startswith("<open file '" + TESTFN))
+         # see issue #14161
+-        # Windows doesn't like \r\n\t" in the file name, but ' is ok
+-        fname = 'xx\rxx\nxx\'xx"xx' if sys.platform != "win32" else "xx'xx"
++        if sys.platform == "win32" or (test_support.is_jython and os._name == "nt"):
++            # Windows doesn't like \r\n\t" in the file name, but ' is ok
++            fname = "xx'xx"
++        else:
++            fname = 'xx\rxx\nxx\'xx"xx'
+         with open(fname, 'w') as f:
+             self.addCleanup(os.remove, fname)
+             self.assertTrue(repr(f).startswith(
+@@ -127,7 +130,7 @@
+         for methodname in methods:
+             method = getattr(self.f, methodname)
+             # should raise on closed file
+-            self.assertRaises(ValueError, method)
++            self.assertRaises((TypeError, ValueError), method)
+         with test_support.check_py3k_warnings():
+             for methodname in deprecated_methods:
+                 method = getattr(self.f, methodname)
+@@ -154,6 +157,9 @@
+         self.assertRaises(ValueError, self.f.writelines, nasty())
+ 
+     def testIssue5677(self):
++        # We don't use the already-open file.
++        self.f.close()
++
+         # Remark: Do not perform more than one test per open file,
+         # since that does NOT catch the readline error on Windows.
+         data = 'xxx'
+@@ -189,14 +195,29 @@
+ 
+ class OtherFileTests(unittest.TestCase):
+ 
++    def setUp(self):
++        # (Jython addition) track open file so we can clean up
++        self.f = None
++        self.filename = TESTFN
++
++    def tearDown(self):
++        # (Jython addition) clean up to prevent errors cascading
++        if self.f:
++            self.f.close()
++        try:
++            os.remove(self.filename)
++        except EnvironmentError as ee:
++            if ee.errno != errno.ENOENT:
++                raise ee
++
+     def testOpenDir(self):
+         this_dir = os.path.dirname(__file__) or os.curdir
+         for mode in (None, "w"):
+             try:
+                 if mode:
+-                    f = open(this_dir, mode)
++                    self.f = open(this_dir, mode)
+                 else:
+-                    f = open(this_dir)
++                    self.f = open(this_dir)
+             except IOError as e:
+                 self.assertEqual(e.filename, this_dir)
+             else:
+@@ -206,7 +227,7 @@
+         # check invalid mode strings
+         for mode in ("", "aU", "wU+"):
+             try:
+-                f = open(TESTFN, mode)
++                self.f = f = open(TESTFN, mode)
+             except ValueError:
+                 pass
+             else:
+@@ -217,7 +238,7 @@
+         # Issue3965: avoid a crash on Windows when filename is unicode
+         for name in (TESTFN, unicode(TESTFN), unicode(TESTFN + '\t')):
+             try:
+-                f = open(name, "rr")
++                self.f = f = open(name, "rr")
+             except (IOError, ValueError):
+                 pass
+             else:
+@@ -235,7 +256,7 @@
+ 
+     def testUnicodeOpen(self):
+         # verify repr works for unicode too
+-        f = open(unicode(TESTFN), "w")
++        self.f = f = open(unicode(TESTFN), "w")
+         self.assertTrue(repr(f).startswith("<open file u'" + TESTFN))
+         f.close()
+         os.unlink(TESTFN)
+@@ -244,7 +265,7 @@
+         # verify that we get a sensible error message for bad mode argument
+         bad_mode = "qwerty"
+         try:
+-            f = open(TESTFN, bad_mode)
++            self.f = f = open(TESTFN, bad_mode)
+         except ValueError, msg:
+             if msg.args[0] != 0:
+                 s = str(msg)
+@@ -261,11 +282,11 @@
+         # misbehaviour especially with repeated close() calls
+         for s in (-1, 0, 1, 512):
+             try:
+-                f = open(TESTFN, 'w', s)
++                self.f = f = open(TESTFN, 'w', s)
+                 f.write(str(s))
+                 f.close()
+                 f.close()
+-                f = open(TESTFN, 'r', s)
++                self.f = f = open(TESTFN, 'r', s)
+                 d = int(f.read())
+                 f.close()
+                 f.close()
+@@ -274,16 +295,15 @@
+             self.assertEqual(d, s)
+ 
+     def testTruncateOnWindows(self):
+-        os.unlink(TESTFN)
+ 
+         def bug801631():
+             # SF bug <http://www.python.org/sf/801631>
+             # "file.truncate fault on windows"
+-            f = open(TESTFN, 'wb')
++            self.f = f = open(TESTFN, 'wb')
+             f.write('12345678901')   # 11 bytes
+             f.close()
+ 
+-            f = open(TESTFN,'rb+')
++            self.f = f = open(TESTFN,'rb+')
+             data = f.read(5)
+             if data != '12345':
+                 self.fail("Read on file opened for update failed %r" % data)
+@@ -304,6 +324,7 @@
+         finally:
+             os.unlink(TESTFN)
+ 
++    @unittest.skipIf(test_support.is_jython, "Specific to CPython")
+     def testIteration(self):
+         # Test the complex interaction when mixing file-iteration and the
+         # various read* methods. Ostensibly, the mixture could just be tested
+@@ -337,7 +358,7 @@
+             bag.close()
+             # Test for appropriate errors mixing read* and iteration
+             for methodname, args in methods:
+-                f = open(TESTFN)
++                self.f = f = open(TESTFN)
+                 if f.next() != filler:
+                     self.fail, "Broken testfile"
+                 meth = getattr(f, methodname)
+@@ -357,7 +378,7 @@
+             # ("h", "a", "m", "\n"), so 4096 lines of that should get us
+             # exactly on the buffer boundary for any power-of-2 buffersize
+             # between 4 and 16384 (inclusive).
+-            f = open(TESTFN)
++            self.f = f = open(TESTFN)
+             for i in range(nchunks):
+                 f.next()
+             testline = testlines.pop(0)
+@@ -399,7 +420,7 @@
+                 self.fail("readlines() after next() with empty buffer "
+                           "failed. Got %r, expected %r" % (line, testline))
+             # Reading after iteration hit EOF shouldn't hurt either
+-            f = open(TESTFN)
++            self.f = f = open(TESTFN)
+             try:
+                 for line in f:
+                     pass
+@@ -415,6 +436,46 @@
+         finally:
+             os.unlink(TESTFN)
+ 
++    @unittest.skipUnless(test_support.is_jython, "Applicable to Jython")
++    def testIterationMixes(self):
++        # And now for something completely different. An implementation where
++        # various read* methods mix happily with iteration over the lines of
++        # a file using next().
++
++        sheep = [
++            "It's my belief that these sheep\n",
++            "are labouring under the\n",
++            "mis-apprehension that they're birds.\n",
++            "Now witness their attempts\n",
++            "to fly from tree to tree.\n",
++            "Notice that they do not so much fly\n",
++            "as plummet.\n"
++        ]
++
++        # Prepare the testfile
++        self.f = f = open(TESTFN, "w")
++        f.writelines(sheep)
++        f.close()
++
++        # Test for appropriate results mixing read* and iteration
++        self.f = f = open(TESTFN)
++        self.assertEqual(f.next(), sheep[0])
++        self.assertEqual(f.readline(), sheep[1])
++        self.assertEqual(f.next(), sheep[2])
++        self.assertEqual(f.read(5), sheep[3][:5])
++
++        r = array('c', "1234567")
++        f.readinto(r)
++        self.assertEqual(r, array('c', sheep[3][5:12]))
++
++        self.assertEqual(f.next(), sheep[3][12:])
++        r = f.readlines()
++        self.assertEqual(r, sheep[4:])
++        self.assertRaises(StopIteration, f.next)
++
++        f.close()
++
++
+ class FileSubclassTests(unittest.TestCase):
+ 
+     def testExit(self):
+@@ -438,10 +499,14 @@
+     # (including close()) concurrently without crashing the Python interpreter.
+     # See #815646, #595601
+ 
++    # Modified for Jython so that each worker thread holds *and closes* its own
++    # file object, since we cannot rely on immediate garbage collection closing
++    # files. (Open file objects prevent deletion of TESTFN on Windows at least.)
++
+     def setUp(self):
+         self._threads = test_support.threading_setup()
+-        self.f = None
+         self.filename = TESTFN
++        self.exc_info = None
+         with open(self.filename, "w") as f:
+             f.write("\n".join("0123456789"))
+         self._count_lock = threading.Lock()
+@@ -450,35 +515,32 @@
+         self.use_buffering = False
+ 
+     def tearDown(self):
+-        if self.f:
+-            try:
+-                self.f.close()
+-            except (EnvironmentError, ValueError):
+-                pass
+         try:
+             os.remove(self.filename)
+-        except EnvironmentError:
+-            pass
++        except EnvironmentError as ee:
++            # (Jython addition) detect failure common on Windows, on missing
++            # close, that creates spurious errors in subsequent tests.
++            if ee.errno != errno.ENOENT:
++                raise ee
+         test_support.threading_cleanup(*self._threads)
+ 
+     def _create_file(self):
+         if self.use_buffering:
+-            self.f = open(self.filename, "w+", buffering=1024*16)
++            return open(self.filename, "w+", buffering=1024*16)
+         else:
+-            self.f = open(self.filename, "w+")
++            return open(self.filename, "w+")
+ 
+-    def _close_file(self):
++    def _close_file(self, f):
+         with self._count_lock:
+             self.close_count += 1
+-        self.f.close()
++        f.close()
+         with self._count_lock:
+             self.close_success_count += 1
+ 
+-    def _close_and_reopen_file(self):
+-        self._close_file()
+-        # if close raises an exception thats fine, self.f remains valid so
+-        # we don't need to reopen.
+-        self._create_file()
++    # Close one file object and return a new one
++    def _close_and_reopen_file(self, f):
++        self._close_file(f)
++        return self._create_file()
+ 
+     def _run_workers(self, func, nb_workers, duration=0.2):
+         with self._count_lock:
+@@ -505,248 +567,118 @@
+                 t.join()
+ 
+     def _test_close_open_io(self, io_func, nb_workers=5):
++
+         def worker():
+-            self._create_file()
+-            funcs = itertools.cycle((
+-                lambda: io_func(),
+-                lambda: self._close_and_reopen_file(),
+-            ))
+-            for f in funcs:
+-                if not self.do_continue:
+-                    break
+-                try:
+-                    f()
+-                except (IOError, ValueError):
+-                    pass
++            # Each worker has its own currently open file object
++            myfile = None
++            try:
++                myfile = self._create_file()
++                while self.do_continue:
++                    io_func(myfile)
++                    myfile = self._close_and_reopen_file(myfile)
++            except Exception as e:
++                # Stop the test (other threads) and remember why
++                self.do_continue = False
++                self.exc_info = sys.exc_info()
++            # Finally close the last file object
++            if myfile:
++                self._close_file(myfile)
++
+         self._run_workers(worker, nb_workers)
++        if self.exc_info:
++            # Some worker saved an exception: re-raise it now
++            raise self.exc_info[0], self.exc_info[1], self.exc_info[2]
++
+         if test_support.verbose:
+             # Useful verbose statistics when tuning this test to take
+             # less time to run but still ensuring that its still useful.
+             #
+             # the percent of close calls that raised an error
+-            percent = 100. - 100.*self.close_success_count/self.close_count
++            percent = 100.
++            if self.close_count > 0:
++                percent -= 100.*self.close_success_count/self.close_count
+             print self.close_count, ('%.4f ' % percent),
+ 
++    # Each test function defines an operation on the worker's file object
++
+     def test_close_open(self):
+-        def io_func():
++        def io_func(f):
+             pass
+         self._test_close_open_io(io_func)
+ 
+     def test_close_open_flush(self):
+-        def io_func():
+-            self.f.flush()
++        def io_func(f):
++            f.flush()
+         self._test_close_open_io(io_func)
+ 
+     def test_close_open_iter(self):
+-        def io_func():
+-            list(iter(self.f))
++        def io_func(f):
++            list(iter(f))
+         self._test_close_open_io(io_func)
+ 
+     def test_close_open_isatty(self):
+-        def io_func():
+-            self.f.isatty()
++        def io_func(f):
++            f.isatty()
+         self._test_close_open_io(io_func)
+ 
+     def test_close_open_print(self):
+-        def io_func():
+-            print >> self.f, ''
++        def io_func(f):
++            print >> f, ''
+         self._test_close_open_io(io_func)
+ 
+     def test_close_open_print_buffered(self):
+         self.use_buffering = True
+-        def io_func():
+-            print >> self.f, ''
++        def io_func(f):
++            print >> f, ''
+         self._test_close_open_io(io_func)
+ 
+     def test_close_open_read(self):
+-        def io_func():
+-            self.f.read(0)
++        def io_func(f):
++            f.read(0)
+         self._test_close_open_io(io_func)
+ 
+     def test_close_open_readinto(self):
+-        def io_func():
++        def io_func(f):
+             a = array('c', 'xxxxx')
+-            self.f.readinto(a)
++            f.readinto(a)
+         self._test_close_open_io(io_func)
+ 
+     def test_close_open_readline(self):
+-        def io_func():
+-            self.f.readline()
++        def io_func(f):
++            f.readline()
+         self._test_close_open_io(io_func)
+ 
+     def test_close_open_readlines(self):
+-        def io_func():
+-            self.f.readlines()
++        def io_func(f):
++            f.readlines()
+         self._test_close_open_io(io_func)
+ 
+     def test_close_open_seek(self):
+-        def io_func():
+-            self.f.seek(0, 0)
++        def io_func(f):
++            f.seek(0, 0)
+         self._test_close_open_io(io_func)
+ 
+     def test_close_open_tell(self):
+-        def io_func():
+-            self.f.tell()
++        def io_func(f):
++            f.tell()
+         self._test_close_open_io(io_func)
+ 
+     def test_close_open_truncate(self):
+-        def io_func():
+-            self.f.truncate()
++        def io_func(f):
++            f.truncate()
+         self._test_close_open_io(io_func)
+ 
+     def test_close_open_write(self):
+-        def io_func():
+-            self.f.write('')
++        def io_func(f):
++            f.write('')
+         self._test_close_open_io(io_func)
+ 
+     def test_close_open_writelines(self):
+-        def io_func():
+-            self.f.writelines('')
++        def io_func(f):
++            f.writelines('')
+         self._test_close_open_io(io_func)
+ 
+ 
+-@unittest.skipUnless(os.name == 'posix', 'test requires a posix system.')
+-class TestFileSignalEINTR(unittest.TestCase):
+-    def _test_reading(self, data_to_write, read_and_verify_code, method_name,
+-                      universal_newlines=False):
+-        """Generic buffered read method test harness to verify EINTR behavior.
+-
+-        Also validates that Python signal handlers are run during the read.
+-
+-        Args:
+-            data_to_write: String to write to the child process for reading
+-                before sending it a signal, confirming the signal was handled,
+-                writing a final newline char and closing the infile pipe.
+-            read_and_verify_code: Single "line" of code to read from a file
+-                object named 'infile' and validate the result.  This will be
+-                executed as part of a python subprocess fed data_to_write.
+-            method_name: The name of the read method being tested, for use in
+-                an error message on failure.
+-            universal_newlines: If True, infile will be opened in universal
+-                newline mode in the child process.
+-        """
+-        if universal_newlines:
+-            # Test the \r\n -> \n conversion while we're at it.
+-            data_to_write = data_to_write.replace('\n', '\r\n')
+-            infile_setup_code = 'infile = os.fdopen(sys.stdin.fileno(), "rU")'
+-        else:
+-            infile_setup_code = 'infile = sys.stdin'
+-        # Total pipe IO in this function is smaller than the minimum posix OS
+-        # pipe buffer size of 512 bytes.  No writer should block.
+-        assert len(data_to_write) < 512, 'data_to_write must fit in pipe buf.'
+-
+-        child_code = (
+-             'import os, signal, sys ;'
+-             'signal.signal('
+-                     'signal.SIGINT, lambda s, f: sys.stderr.write("$\\n")) ;'
+-             + infile_setup_code + ' ;' +
+-             'assert isinstance(infile, file) ;'
+-             'sys.stderr.write("Go.\\n") ;'
+-             + read_and_verify_code)
+-        reader_process = subprocess.Popen(
+-                [sys.executable, '-c', child_code],
+-                stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+-                stderr=subprocess.PIPE)
+-        # Wait for the signal handler to be installed.
+-        go = reader_process.stderr.read(4)
+-        if go != 'Go.\n':
+-            reader_process.kill()
+-            self.fail('Error from %s process while awaiting "Go":\n%s' % (
+-                    method_name, go+reader_process.stderr.read()))
+-        reader_process.stdin.write(data_to_write)
+-        signals_sent = 0
+-        rlist = []
+-        # We don't know when the read_and_verify_code in our child is actually
+-        # executing within the read system call we want to interrupt.  This
+-        # loop waits for a bit before sending the first signal to increase
+-        # the likelihood of that.  Implementations without correct EINTR
+-        # and signal handling usually fail this test.
+-        while not rlist:
+-            rlist, _, _ = select.select([reader_process.stderr], (), (), 0.05)
+-            reader_process.send_signal(signal.SIGINT)
+-            # Give the subprocess time to handle it before we loop around and
+-            # send another one.  On OSX the second signal happening close to
+-            # immediately after the first was causing the subprocess to crash
+-            # via the OS's default SIGINT handler.
+-            time.sleep(0.1)
+-            signals_sent += 1
+-            if signals_sent > 200:
+-                reader_process.kill()
+-                self.fail("failed to handle signal during %s." % method_name)
+-        # This assumes anything unexpected that writes to stderr will also
+-        # write a newline.  That is true of the traceback printing code.
+-        signal_line = reader_process.stderr.readline()
+-        if signal_line != '$\n':
+-            reader_process.kill()
+-            self.fail('Error from %s process while awaiting signal:\n%s' % (
+-                    method_name, signal_line+reader_process.stderr.read()))
+-        # We append a newline to our input so that a readline call can
+-        # end on its own before the EOF is seen.
+-        stdout, stderr = reader_process.communicate(input='\n')
+-        if reader_process.returncode != 0:
+-            self.fail('%s() process exited rc=%d.\nSTDOUT:\n%s\nSTDERR:\n%s' % (
+-                    method_name, reader_process.returncode, stdout, stderr))
+-
+-    def test_readline(self, universal_newlines=False):
+-        """file.readline must handle signals and not lose data."""
+-        self._test_reading(
+-                data_to_write='hello, world!',
+-                read_and_verify_code=(
+-                        'line = infile.readline() ;'
+-                        'expected_line = "hello, world!\\n" ;'
+-                        'assert line == expected_line, ('
+-                        '"read %r expected %r" % (line, expected_line))'
+-                ),
+-                method_name='readline',
+-                universal_newlines=universal_newlines)
+-
+-    def test_readline_with_universal_newlines(self):
+-        self.test_readline(universal_newlines=True)
+-
+-    def test_readlines(self, universal_newlines=False):
+-        """file.readlines must handle signals and not lose data."""
+-        self._test_reading(
+-                data_to_write='hello\nworld!',
+-                read_and_verify_code=(
+-                        'lines = infile.readlines() ;'
+-                        'expected_lines = ["hello\\n", "world!\\n"] ;'
+-                        'assert lines == expected_lines, ('
+-                        '"readlines returned wrong data.\\n" '
+-                        '"got lines %r\\nexpected  %r" '
+-                        '% (lines, expected_lines))'
+-                ),
+-                method_name='readlines',
+-                universal_newlines=universal_newlines)
+-
+-    def test_readlines_with_universal_newlines(self):
+-        self.test_readlines(universal_newlines=True)
+-
+-    def test_readall(self):
+-        """Unbounded file.read() must handle signals and not lose data."""
+-        self._test_reading(
+-                data_to_write='hello, world!abcdefghijklm',
+-                read_and_verify_code=(
+-                        'data = infile.read() ;'
+-                        'expected_data = "hello, world!abcdefghijklm\\n";'
+-                        'assert data == expected_data, ('
+-                        '"read %r expected %r" % (data, expected_data))'
+-                ),
+-                method_name='unbounded read')
+-
+-    def test_readinto(self):
+-        """file.readinto must handle signals and not lose data."""
+-        self._test_reading(
+-                data_to_write='hello, world!',
+-                read_and_verify_code=(
+-                        'data = bytearray(50) ;'
+-                        'num_read = infile.readinto(data) ;'
+-                        'expected_data = "hello, world!\\n";'
+-                        'assert data[:num_read] == expected_data, ('
+-                        '"read %r expected %r" % (data, expected_data))'
+-                ),
+-                method_name='readinto')
+-
+-
+ class StdoutTests(unittest.TestCase):
+ 
+     def test_move_stdout_on_write(self):
+@@ -783,7 +715,7 @@
+         import subprocess
+ 
+         def get_message(encoding, *code):
+-            code = '\n'.join(code)
++            code = ';'.join(code)   # jython.bat cannot cope with '\n' in arguments
+             env = os.environ.copy()
+             env['PYTHONIOENCODING'] = encoding
+             process = subprocess.Popen([sys.executable, "-c", code],
+@@ -819,14 +751,13 @@
+ 
+ 
+ def test_main():
+-    # Historically, these tests have been sloppy about removing TESTFN.
+-    # So get rid of it no matter what.
+-    try:
+-        run_unittest(AutoFileTests, OtherFileTests, FileSubclassTests,
+-            FileThreadingTests, TestFileSignalEINTR, StdoutTests)
+-    finally:
+-        if os.path.exists(TESTFN):
+-            os.unlink(TESTFN)
++    run_unittest(
++             AutoFileTests,
++             OtherFileTests,
++             FileSubclassTests,
++             FileThreadingTests,
++             StdoutTests
++         )
+ 
+ if __name__ == '__main__':
+     test_main()

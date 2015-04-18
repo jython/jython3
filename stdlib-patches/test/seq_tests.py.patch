@@ -1,0 +1,53 @@
+--- lib-python/2.7/test/seq_tests.py	2015-04-18 05:34:44.867111664 +0300
++++ Lib/test/seq_tests.py	2015-04-18 05:34:31.811089806 +0300
+@@ -5,6 +5,11 @@
+ import unittest
+ import sys
+ 
++from test import test_support
++
++if test_support.is_jython:
++    from java.util import List as JList
++
+ # Various iterables
+ # This is used for checking the constructor (here and in test_deque.py)
+ def iterfunc(seqn):
+@@ -111,14 +116,23 @@
+                 return len(self.__data)
+             def __getitem__(self, i):
+                 return self.__data[i]
+-        s = OtherSeq(u0)
+-        v0 = self.type2test(s)
+-        self.assertEqual(len(v0), len(s))
++        if not (test_support.is_jython and issubclass(self.type2test, JList)):
++            # Jython does not currently support in reflected args
++            # converting List-like objects to Lists. This lack of
++            # support should be fixed, but it's tricky.
++            s = OtherSeq(u0)
++            v0 = self.type2test(s)
++            self.assertEqual(len(v0), len(s))
+ 
+         s = "this is also a sequence"
+         vv = self.type2test(s)
+         self.assertEqual(len(vv), len(s))
+ 
++
++        if test_support.is_jython and issubclass(self.type2test, JList):
++            # Ditto from above, we need to skip the rest of the test
++            return
++
+         # Create from various iteratables
+         for s in ("123", "", range(1000), ('do', 1.2), xrange(2000,2200,5)):
+             for g in (Sequence, IterFunc, IterGen,
+@@ -196,7 +210,10 @@
+         self.assertEqual(a[ -pow(2,128L): 3 ], self.type2test([0,1,2]))
+         self.assertEqual(a[ 3: pow(2,145L) ], self.type2test([3,4]))
+ 
+-        self.assertRaises(TypeError, u.__getslice__)
++        if not (test_support.is_jython and issubclass(self.type2test, JList)):
++            # no support for __getslice__ on Jython for
++            # java.util.List, given that method deprecated since 2.0!
++            self.assertRaises(TypeError, u.__getslice__)
+ 
+     def test_contains(self):
+         u = self.type2test([0, 1, 2])

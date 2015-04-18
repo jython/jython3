@@ -1,0 +1,165 @@
+--- lib-python/2.7/test/test_tempfile.py	2015-04-18 05:34:44.675111343 +0300
++++ Lib/test/test_tempfile.py	2015-04-18 05:34:31.867089899 +0300
+@@ -27,8 +27,12 @@
+ 
+ # TEST_FILES may need to be tweaked for systems depending on the maximum
+ # number of files that can be opened at one time (see ulimit -n)
+-if sys.platform in ('openbsd3', 'openbsd4'):
++if sys.platform == 'mac':
++    TEST_FILES = 32
++elif sys.platform in ('openbsd3', 'openbsd4'):
+     TEST_FILES = 48
++elif sys.platform.startswith("java"):
++    TEST_FILES = 32  # uniformly have a small number
+ else:
+     TEST_FILES = 100
+ 
+@@ -287,10 +291,16 @@
+ 
+         def write(self, str):
+             os.write(self.fd, str)
++            # XXX: self.test_choose_directory expects the file to have been deleted
++            # (via __del__) by the time it's called, which is CPython specific
++            # garbage collection behavior. We need to delete it now in Jython
++            self._close(self.fd)
++            self._unlink(self.name)
+ 
+         def __del__(self):
+             self._close(self.fd)
+-            self._unlink(self.name)
++            if os.path.exists(self.name):
++                self._unlink(self.name)
+ 
+     def do_create(self, dir=None, pre="", suf="", bin=1):
+         if dir is None:
+@@ -316,6 +326,10 @@
+         extant = range(TEST_FILES)
+         for i in extant:
+             extant[i] = self.do_create(pre="aa")
++        # XXX: Ensure mkstemped files are deleted (can't rely on Java's
++        # GC)
++        for i in extant:
++            i.__del__()
+ 
+     def test_choose_directory(self):
+         # _mkstemp_inner can create files in a user-selected directory
+@@ -325,7 +339,8 @@
+         finally:
+             os.rmdir(dir)
+ 
+-    def test_file_mode(self):
++    # XXX: Jython can't set the write mode yet
++    def _test_file_mode(self):
+         # _mkstemp_inner creates files with the proper mode
+         if not has_stat:
+             return            # ugh, can't use SkipTest.
+@@ -333,7 +348,7 @@
+         file = self.do_create()
+         mode = stat.S_IMODE(os.stat(file.name).st_mode)
+         expected = 0600
+-        if sys.platform in ('win32', 'os2emx'):
++        if sys.platform in ('win32', 'os2emx', 'mac'):
+             # There's no distinction among 'user', 'group' and 'world';
+             # replicate the 'user' bits.
+             user = expected >> 6
+@@ -453,6 +468,22 @@
+ 
+         self.assertTrue(a is b)
+ 
++    def test_case_sensitive(self):
++        # gettempdir should not flatten its case
++        # even on a case-insensitive file system
++        # See CPython Issue 14255 (back-ported for Jython)
++        case_sensitive_tempdir = tempfile.mkdtemp("-Temp")
++        _tempdir, tempfile.tempdir = tempfile.tempdir, None
++        try:
++            with support.EnvironmentVarGuard() as env:
++                # Fake the first env var which is checked as a candidate
++                env["TMPDIR"] = case_sensitive_tempdir
++                self.assertEqual(tempfile.gettempdir(), case_sensitive_tempdir)
++        finally:
++            tempfile.tempdir = _tempdir
++            support.rmdir(case_sensitive_tempdir)
++
++
+ test_classes.append(test_gettempdir)
+ 
+ 
+@@ -545,14 +576,18 @@
+     def test_mode(self):
+         # mkdtemp creates directories with the proper mode
+         if not has_stat:
+-            return            # ugh, can't use SkipTest.
++            return            # ugh, can't use TestSkipped.
++        if support.is_jython and not os._native_posix:
++            # Java doesn't support stating files for permissions
++            return
+ 
+         dir = self.do_create()
+         try:
+             mode = stat.S_IMODE(os.stat(dir).st_mode)
+             mode &= 0777 # Mask off sticky bits inherited from /tmp
+             expected = 0700
+-            if sys.platform in ('win32', 'os2emx'):
++            if (sys.platform in ('win32', 'os2emx', 'mac') or
++                support.is_jython and os._name == 'nt'):
+                 # There's no distinction among 'user', 'group' and 'world';
+                 # replicate the 'user' bits.
+                 user = expected >> 6
+@@ -586,10 +621,14 @@
+             # Create the file.  This will raise an exception if it's
+             # mysteriously appeared in the meanwhile.
+             os.close(os.open(self.name, self._bflags, 0600))
+-
+-        def __del__(self):
++            # XXX: test_mktemp.tearDown expects the file to have been deleted
++            # (via __del__) by the time it's called, which is CPython specific
++            # garbage collection behavior. We need to delete it now in Jython
+             self._unlink(self.name)
+ 
++        #def __del__(self):
++        #    self._unlink(self.name)
++
+     def do_create(self, pre="", suf=""):
+         try:
+             file = self.mktemped(self.dir, pre, suf)
+@@ -856,19 +895,22 @@
+         self.assertFalse(f._rolled)
+         self.assertEqual(f.mode, 'w+b')
+         self.assertIsNone(f.name)
+-        with self.assertRaises(AttributeError):
+-            f.newlines
+-        with self.assertRaises(AttributeError):
+-            f.encoding
++        # Jython SpooledTemporaryFile has these properties:
++        if not support.is_jython:
++            with self.assertRaises(AttributeError):
++                f.newlines
++            with self.assertRaises(AttributeError):
++                f.encoding
+ 
+         f.write(b'x')
+         self.assertTrue(f._rolled)
+         self.assertEqual(f.mode, 'w+b')
+         self.assertIsNotNone(f.name)
+-        with self.assertRaises(AttributeError):
+-            f.newlines
+-        with self.assertRaises(AttributeError):
+-            f.encoding
++        if not support.is_jython:
++            with self.assertRaises(AttributeError):
++                f.newlines
++            with self.assertRaises(AttributeError):
++                f.encoding
+ 
+     def test_context_manager_before_rollover(self):
+         # A SpooledTemporaryFile can be used as a context manager
+@@ -963,3 +1005,8 @@
+ 
+ if __name__ == "__main__":
+     test_main()
++    if support.is_jython:
++        # XXX: Nudge Java's GC in an attempt to trigger any temp file's
++        # __del__ (cause them to be deleted) that hasn't been called
++        import gc
++        gc.collect()

@@ -1,0 +1,63 @@
+--- lib-python/2.7/test/test_codeop.py	2015-04-18 05:34:44.491111035 +0300
++++ Lib/test/test_codeop.py	2015-04-18 05:34:31.823089826 +0300
+@@ -120,7 +120,10 @@
+ 
+         av("def f():\n try: pass\n finally: [x for x in (1,2)]\n")
+         av("def f():\n pass\n#foo\n")
+-        av("@a.b.c\ndef f():\n pass\n")
++
++        #XXX: works in CPython
++        if not is_jython:
++            av("@a.b.c\ndef f():\n pass\n")
+ 
+     def test_incomplete(self):
+         ai = self.assertIncomplete
+@@ -250,6 +253,10 @@
+         ai("(x for x in")
+         ai("(x for x in (")
+ 
++        # Merge test cases below upstream.
++        ai("def x():\n pass\n#comment")
++
++
+     def test_invalid(self):
+         ai = self.assertInvalid
+         ai("a b")
+@@ -270,7 +277,11 @@
+         ai("a = 'a\\\n")
+ 
+         ai("a = 1","eval")
+-        ai("a = (","eval")
++
++        # XXX: PythonPartial.g needs to reject this.
++        if not is_jython:
++            ai("a = (","eval")
++
+         ai("]","eval")
+         ai("())","eval")
+         ai("[}","eval")
+@@ -280,14 +291,18 @@
+ 
+         ai("return 2.3")
+         ai("if (a == 1 and b = 2): pass")
++        # XXX: PythonPartial.g needs to reject these.
++        if not is_jython:
++            ai("del 1")
++            ai("del ()")
++            ai("del (1,)")
++            ai("del [1]")
++            ai("del '1'")
+ 
+-        ai("del 1")
+-        ai("del ()")
+-        ai("del (1,)")
+-        ai("del [1]")
+-        ai("del '1'")
++            ai("[i for i in range(10)] = (1, 2, 3)")
+ 
+-        ai("[i for i in range(10)] = (1, 2, 3)")
++        # Merge test cases below upstream.
++        ai("def x():\n pass\na=1\n")
+ 
+     def test_filename(self):
+         self.assertEqual(compile_command("a = 1\n", "abc").co_filename,

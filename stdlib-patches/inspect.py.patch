@@ -1,0 +1,127 @@
+--- lib-python/2.7/inspect.py	2015-04-18 05:34:44.531111101 +0300
++++ Lib/inspect.py	2015-04-18 05:34:31.783089759 +0300
+@@ -40,6 +40,9 @@
+ import linecache
+ from operator import attrgetter
+ from collections import namedtuple
++_jython = sys.platform.startswith('java')
++if _jython:
++    _ReflectedFunctionType = type(os.listdir)
+ 
+ # These constants are from Include/code.h.
+ CO_OPTIMIZED, CO_NEWLOCALS, CO_VARARGS, CO_VARKEYWORDS = 0x1, 0x2, 0x4, 0x8
+@@ -238,7 +241,8 @@
+     return (isbuiltin(object)
+             or isfunction(object)
+             or ismethod(object)
+-            or ismethoddescriptor(object))
++            or ismethoddescriptor(object)
++            or (_jython and isinstance(object, _ReflectedFunctionType)))
+ 
+ def isabstract(object):
+     """Return true if the object is an abstract base class (ABC)."""
+@@ -444,6 +448,8 @@
+     filename = getfile(object)
+     if string.lower(filename[-4:]) in ('.pyc', '.pyo'):
+         filename = filename[:-4] + '.py'
++    elif filename.endswith('$py.class'):
++        filename = filename[:-9] + '.py'
+     for suffix, mode, kind in imp.get_suffixes():
+         if 'b' in mode and string.lower(filename[-len(suffix):]) == suffix:
+             # Looks like a binary file.  We want to only return a text file.
+@@ -752,52 +758,58 @@
+ 
+     nargs = co.co_argcount
+     names = co.co_varnames
+-    args = list(names[:nargs])
+-    step = 0
+ 
+-    # The following acrobatics are for anonymous (tuple) arguments.
+-    for i in range(nargs):
+-        if args[i][:1] in ('', '.'):
+-            stack, remain, count = [], [], []
+-            while step < len(co.co_code):
+-                op = ord(co.co_code[step])
+-                step = step + 1
+-                if op >= dis.HAVE_ARGUMENT:
+-                    opname = dis.opname[op]
+-                    value = ord(co.co_code[step]) + ord(co.co_code[step+1])*256
+-                    step = step + 2
+-                    if opname in ('UNPACK_TUPLE', 'UNPACK_SEQUENCE'):
+-                        remain.append(value)
+-                        count.append(value)
+-                    elif opname == 'STORE_FAST':
+-                        stack.append(names[value])
+-
+-                        # Special case for sublists of length 1: def foo((bar))
+-                        # doesn't generate the UNPACK_TUPLE bytecode, so if
+-                        # `remain` is empty here, we have such a sublist.
+-                        if not remain:
+-                            stack[0] = [stack[0]]
+-                            break
+-                        else:
+-                            remain[-1] = remain[-1] - 1
+-                            while remain[-1] == 0:
+-                                remain.pop()
+-                                size = count.pop()
+-                                stack[-size:] = [stack[-size:]]
+-                                if not remain: break
+-                                remain[-1] = remain[-1] - 1
+-                            if not remain: break
+-            args[i] = stack[0]
++    # Jython manages anonymous tuple args differently, and arguably
++    # with less acrobatics, than CPython which interrogates Python
++    # bytecode. Look at lib-python/2.7/inspect.py for those specifics,
++    # which are removed for clarity of presentation and complete lack
++    # of relevance here.
+ 
+     varargs = None
+     if co.co_flags & CO_VARARGS:
+         varargs = co.co_varnames[nargs]
+-        nargs = nargs + 1
+     varkw = None
+     if co.co_flags & CO_VARKEYWORDS:
+-        varkw = co.co_varnames[nargs]
++        varkw = co.co_varnames[nargs + (1 if varargs else 0)]
++
++    # Jython specific - different style acrobatics for anonymous (tuple) arguments
++    # for example:
++    #
++    # >>> def spam(a, b, c, d=3, (e, (f,))=(4, (5,)), *g, **h): return 42
++    # >>> spam.func_code.co_varnames
++    # ('a', 'b', 'c', 'd', '(e, (f))', 'g', 'h', 'e', 'f')
++    args = []
++    for name in names[:nargs]:
++        if name.startswith('(') and name.endswith(')'):
++            args.append(_parse_anonymous_tuple_arg(name[1:-1]))
++        else:
++            args.append(name)
+     return Arguments(args, varargs, varkw)
+ 
++def _parse_anonymous_tuple_arg(tuple_arg):
++    # simple recursive descent parser, assumes no error checking necessary
++    names = tuple_arg.split(", ")
++    args = []
++    i = 0
++    while i < len(names):
++        name = names[i]
++        if name.startswith('('):
++            if name.endswith(')'):
++                args.append(list(name[1:-1]))
++                i += 1
++            else:
++                # need to recurse. find closing paren.
++                for j in xrange(len(names) - 1, i, -1):
++                    if names[j].endswith(')'):
++                        joined = (", ".join(names[i:j+1]))[1:-1]
++                        args.append(_parse_anonymous_tuple_arg(joined))
++                        i = j + 1
++                        break
++        else:
++            args.append(name)
++            i += 1
++    return args
++
+ ArgSpec = namedtuple('ArgSpec', 'args varargs keywords defaults')
+ 
+ def getargspec(func):

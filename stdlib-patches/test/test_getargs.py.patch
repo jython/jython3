@@ -1,0 +1,41 @@
+--- lib-python/2.7/test/test_getargs.py	2015-04-18 05:34:44.563111156 +0300
++++ Lib/test/test_getargs.py	2015-04-18 05:34:31.835089846 +0300
+@@ -1,5 +1,4 @@
+-"""
+-Test the internal getargs.c implementation
++"""Test the internal getargs.c implementation
+ 
+  PyArg_ParseTuple() is defined here.
+ 
+@@ -12,20 +11,16 @@
+ # verify that the error is propagated properly from the C code back to
+ # Python.
+ 
+-import marshal
+-import unittest
+-from test import test_support
+-
+-class GetArgsTest(unittest.TestCase):
+-    # If the encoding succeeds using the current default encoding,
+-    # this test will fail because it does not test the right part of the
+-    # PyArg_ParseTuple() implementation.
+-    def test_with_marshal(self):
+-        arg = unicode(r'\222', 'unicode-escape')
+-        self.assertRaises(UnicodeError, marshal.loads, arg)
++# XXX If the encoding succeeds using the current default encoding,
++# this test will fail because it does not test the right part of the
++# PyArg_ParseTuple() implementation.
++from test_support import is_jython
+ 
+-def test_main():
+-    test_support.run_unittest(GetArgsTest)
++import marshal
+ 
+-if __name__ == '__main__':
+-    test_main()
++#since this tests getargs.c impl, ignore for jython.
++if not is_jython:
++    try:
++        marshal.loads(u"\222")
++    except UnicodeError:
++        pass

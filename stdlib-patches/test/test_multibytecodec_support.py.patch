@@ -1,0 +1,12 @@
+--- lib-python/2.7/test/test_multibytecodec_support.py	2015-04-18 05:34:44.607111229 +0300
++++ Lib/test/test_multibytecodec_support.py	2015-04-18 05:34:31.847089867 +0300
+@@ -22,7 +22,8 @@
+     roundtriptest   = 1    # set if roundtrip is possible with unicode
+     has_iso10646    = 0    # set if this encoding contains whole iso10646 map
+     xmlcharnametest = None # string to test xmlcharrefreplace
+-    unmappedunicode = u'\udeee' # a unicode codepoint that is not mapped.
++    unmappedunicode = u'\ufffe' # a unicode codepoint that is not mapped
++                                # CPython uses an isolated surrogate, which will not work on Jython
+ 
+     def setUp(self):
+         if self.codec is None:

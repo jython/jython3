@@ -1,0 +1,29 @@
+--- lib-python/2.7/test/test_types.py	2015-04-18 05:34:44.683111356 +0300
++++ Lib/test/test_types.py	2015-04-18 05:34:31.871089907 +0300
+@@ -2,6 +2,8 @@
+ 
+ from test.test_support import run_unittest, have_unicode, run_with_locale, \
+                               check_py3k_warnings
++from test.test_support import is_jython
++
+ import unittest
+ import sys
+ import locale
+@@ -615,9 +617,7 @@
+ 
+ 
+         test(1.0, 'f', '1.000000')
+-
+         test(-1.0, 'f', '-1.000000')
+-
+         test( 1.0, ' f', ' 1.000000')
+         test(-1.0, ' f', '-1.000000')
+         test( 1.0, '+f', '+1.000000')
+@@ -741,6 +741,7 @@
+         for code in 'xXobns':
+             self.assertRaises(ValueError, format, 0, ',' + code)
+ 
++    @unittest.skipIf(is_jython, "Java does not allow access to object sizes")
+     def test_internal_sizes(self):
+         self.assertGreater(object.__basicsize__, 0)
+         self.assertGreater(tuple.__itemsize__, 0)

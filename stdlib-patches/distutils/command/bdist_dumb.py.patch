@@ -1,0 +1,38 @@
+--- lib-python/2.7/distutils/command/bdist_dumb.py	2015-04-18 05:34:44.611111236 +0300
++++ Lib/distutils/command/bdist_dumb.py	2015-04-18 05:34:31.763089726 +0300
+@@ -4,7 +4,7 @@
+ distribution -- i.e., just an archive to be unpacked under $prefix or
+ $exec_prefix)."""
+ 
+-__revision__ = "$Id$"
++__revision__ = "$Id: bdist_dumb.py 77761 2010-01-26 22:46:15Z tarek.ziade $"
+ 
+ import os
+ 
+@@ -48,6 +48,7 @@
+     boolean_options = ['keep-temp', 'skip-build', 'relative']
+ 
+     default_format = { 'posix': 'gztar',
++                       'java': 'gztar',
+                        'nt': 'zip',
+                        'os2': 'zip' }
+ 
+@@ -58,7 +59,7 @@
+         self.format = None
+         self.keep_temp = 0
+         self.dist_dir = None
+-        self.skip_build = None
++        self.skip_build = 0
+         self.relative = 0
+         self.owner = None
+         self.group = None
+@@ -78,8 +79,7 @@
+ 
+         self.set_undefined_options('bdist',
+                                    ('dist_dir', 'dist_dir'),
+-                                   ('plat_name', 'plat_name'),
+-                                   ('skip_build', 'skip_build'))
++                                   ('plat_name', 'plat_name'))
+ 
+     def run(self):
+         if not self.skip_build:

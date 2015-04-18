@@ -1,0 +1,25 @@
+--- lib-python/2.7/test/test_httpservers.py	2015-04-18 05:34:44.575111175 +0300
++++ Lib/test/test_httpservers.py	2015-04-18 05:34:31.839089854 +0300
+@@ -188,8 +188,9 @@
+         self.assertEqual(res.status, 501)
+ 
+     def test_request_line_trimming(self):
++        # Issue 2109: differs in Jython until CPython issue 20155 resolved.
+         self.con._http_vsn_str = 'HTTP/1.1\n'
+-        self.con.putrequest('GET', '/')
++        self.con.putrequest('XYZBOGUS', '/')
+         self.con.endheaders()
+         res = self.con.getresponse()
+         self.assertEqual(res.status, 501)
+@@ -216,8 +217,10 @@
+         self.assertEqual(res.status, 501)
+ 
+     def test_version_none(self):
++        # Issue 2109: differs in Jython until CPython issue 20155 resolved.
++        # Test that a valid method is rejected when not HTTP/1.x
+         self.con._http_vsn_str = ''
+-        self.con.putrequest('PUT', '/')
++        self.con.putrequest('CUSTOM', '/')
+         self.con.endheaders()
+         res = self.con.getresponse()
+         self.assertEqual(res.status, 400)

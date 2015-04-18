@@ -1,0 +1,28 @@
+--- lib-python/2.7/encodings/__init__.py	2015-04-18 05:34:44.743111457 +0300
++++ Lib/encodings/__init__.py	2015-04-18 05:34:31.783089759 +0300
+@@ -29,7 +29,7 @@
+ """#"
+ 
+ import codecs
+-from encodings import aliases
++from encodings import aliases, _java
+ import __builtin__
+ 
+ _cache = {}
+@@ -112,6 +112,16 @@
+         mod = None
+ 
+     if mod is None:
++        # First, see if we can load the encoding using java.nio.Charset;
++        # FIXME this could include encodings not known to Python, so we should test that out as well
++        entry, codecaliases = _java._java_factory(encoding)
++        if entry is not None:
++            _cache[encoding] = entry
++            for alias in codecaliases:
++                if alias not in _aliases:
++                    _aliases[alias] = modname
++            return entry
++
+         # Cache misses
+         _cache[encoding] = None
+         return None
