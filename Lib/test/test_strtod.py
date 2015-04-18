@@ -2,11 +2,10 @@
 # introduced in Python 2.7 and 3.1.
 
 import random
-import struct
 import unittest
 import re
 import sys
-from test import test_support
+import test.support
 
 if getattr(sys, 'float_repr_style', '') != 'short':
     raise unittest.SkipTest('correctly-rounded string->float conversions '
@@ -129,7 +128,7 @@ class StrtodTests(unittest.TestCase):
             lower = -(-2**53//5**k)
             if lower % 2 == 0:
                 lower += 1
-            for i in xrange(TEST_SIZE):
+            for i in range(TEST_SIZE):
                 # Select a random odd n in [2**53/5**k,
                 # 2**54/5**k). Then n * 10**k gives a halfway case
                 # with small number of significant digits.
@@ -165,7 +164,7 @@ class StrtodTests(unittest.TestCase):
 
     def test_halfway_cases(self):
         # test halfway cases for the round-half-to-even rule
-        for i in xrange(100 * TEST_SIZE):
+        for i in range(100 * TEST_SIZE):
             # bit pattern for a random finite positive (or +0.0) float
             bits = random.randrange(2047*2**52)
 
@@ -200,7 +199,7 @@ class StrtodTests(unittest.TestCase):
             (0, -327, 4941),                     # zero
             ]
         for n, e, u in boundaries:
-            for j in xrange(1000):
+            for j in range(1000):
                 digits = n + random.randrange(-3*u, 3*u)
                 exponent = e
                 s = '{}e{}'.format(digits, exponent)
@@ -213,9 +212,9 @@ class StrtodTests(unittest.TestCase):
         # test values close to 2**-1075, the underflow boundary; similar
         # to boundary_tests, except that the random error doesn't scale
         # with n
-        for exponent in xrange(-400, -320):
+        for exponent in range(-400, -320):
             base = 10**-exponent // 2**1075
-            for j in xrange(TEST_SIZE):
+            for j in range(TEST_SIZE):
                 digits = base + random.randrange(-1000, 1000)
                 s = '{}e{}'.format(digits, exponent)
                 self.check_strtod(s)
@@ -223,7 +222,7 @@ class StrtodTests(unittest.TestCase):
     def test_bigcomp(self):
         for ndigs in 5, 10, 14, 15, 16, 17, 18, 19, 20, 40, 41, 50:
             dig10 = 10**ndigs
-            for i in xrange(10 * TEST_SIZE):
+            for i in range(10 * TEST_SIZE):
                 digits = random.randrange(dig10)
                 exponent = random.randrange(-400, 400)
                 s = '{}e{}'.format(digits, exponent)
@@ -236,16 +235,16 @@ class StrtodTests(unittest.TestCase):
 
         # put together random short valid strings
         # \d*[.\d*]?e
-        for i in xrange(1000):
-            for j in xrange(TEST_SIZE):
+        for i in range(1000):
+            for j in range(TEST_SIZE):
                 s = random.choice(signs)
                 intpart_len = random.randrange(5)
-                s += ''.join(random.choice(digits) for _ in xrange(intpart_len))
+                s += ''.join(random.choice(digits) for _ in range(intpart_len))
                 if random.choice([True, False]):
                     s += '.'
                     fracpart_len = random.randrange(5)
                     s += ''.join(random.choice(digits)
-                                 for _ in xrange(fracpart_len))
+                                 for _ in range(fracpart_len))
                 else:
                     fracpart_len = 0
                 if random.choice([True, False]):
@@ -253,7 +252,7 @@ class StrtodTests(unittest.TestCase):
                     s += random.choice(signs)
                     exponent_len = random.randrange(1, 4)
                     s += ''.join(random.choice(digits)
-                                 for _ in xrange(exponent_len))
+                                 for _ in range(exponent_len))
 
                 if intpart_len + fracpart_len:
                     self.check_strtod(s)
@@ -264,6 +263,37 @@ class StrtodTests(unittest.TestCase):
                         pass
                     else:
                         assert False, "expected ValueError"
+
+    @test.support.bigmemtest(size=test.support._2G+10, memuse=3, dry_run=False)
+    def test_oversized_digit_strings(self, maxsize):
+        # Input string whose length doesn't fit in an INT.
+        s = "1." + "1" * maxsize
+        with self.assertRaises(ValueError):
+            float(s)
+        del s
+
+        s = "0." + "0" * maxsize + "1"
+        with self.assertRaises(ValueError):
+            float(s)
+        del s
+
+    def test_large_exponents(self):
+        # Verify that the clipping of the exponent in strtod doesn't affect the
+        # output values.
+        def positive_exp(n):
+            """ Long string with value 1.0 and exponent n"""
+            return '0.{}1e+{}'.format('0'*(n-1), n)
+
+        def negative_exp(n):
+            """ Long string with value 1.0 and exponent -n"""
+            return '1{}e-{}'.format('0'*n, n)
+
+        self.assertEqual(float(positive_exp(10000)), 1.0)
+        self.assertEqual(float(positive_exp(20000)), 1.0)
+        self.assertEqual(float(positive_exp(30000)), 1.0)
+        self.assertEqual(float(negative_exp(10000)), 1.0)
+        self.assertEqual(float(negative_exp(20000)), 1.0)
+        self.assertEqual(float(negative_exp(30000)), 1.0)
 
     def test_particular(self):
         # inputs that produced crashes or incorrectly rounded results with
@@ -297,24 +327,21 @@ class StrtodTests(unittest.TestCase):
             '6213413350821416312194420007991306908470147322020121018368e0',
             # incorrect lsb detection for round-half-to-even when
             # bc->scale != 0 (issue 7632, bug 6).
-
-            # Java does not correctly handle, so we don't either
-            # '104308485241983990666713401708072175773165034278685' #...
-            # '682646111762292409330928739751702404658197872319129' #...
-            # '036519947435319418387839758990478549477777586673075' #...
-            # '945844895981012024387992135617064532141489278815239' #...
-            # '849108105951619997829153633535314849999674266169258' #...
-            # '928940692239684771590065027025835804863585454872499' #...
-            # '320500023126142553932654370362024104462255244034053' #...
-            # '203998964360882487378334860197725139151265590832887' #...
-            # '433736189468858614521708567646743455601905935595381' #...
-            # '852723723645799866672558576993978025033590728687206' #...
-            # '296379801363024094048327273913079612469982585674824' #...
-            # '156000783167963081616214710691759864332339239688734' #...
-            # '656548790656486646106983450809073750535624894296242' #...
-            # '072010195710276073042036425579852459556183541199012' #...
-            # '652571123898996574563824424330960027873516082763671875e-1075',
-
+            '104308485241983990666713401708072175773165034278685' #...
+            '682646111762292409330928739751702404658197872319129' #...
+            '036519947435319418387839758990478549477777586673075' #...
+            '945844895981012024387992135617064532141489278815239' #...
+            '849108105951619997829153633535314849999674266169258' #...
+            '928940692239684771590065027025835804863585454872499' #...
+            '320500023126142553932654370362024104462255244034053' #...
+            '203998964360882487378334860197725139151265590832887' #...
+            '433736189468858614521708567646743455601905935595381' #...
+            '852723723645799866672558576993978025033590728687206' #...
+            '296379801363024094048327273913079612469982585674824' #...
+            '156000783167963081616214710691759864332339239688734' #...
+            '656548790656486646106983450809073750535624894296242' #...
+            '072010195710276073042036425579852459556183541199012' #...
+            '652571123898996574563824424330960027873516082763671875e-1075',
             # demonstration that original fix for issue 7632 bug 1 was
             # buggy; the exit condition was too strong
             '247032822920623295e-341',
@@ -336,23 +363,21 @@ class StrtodTests(unittest.TestCase):
             '10.900000000000000012345678912345678912345',
 
             # two humongous values from issue 7743
-            
-            # Java does not correctly handle, so we don't either
-            # '116512874940594195638617907092569881519034793229385' #...
-            # '228569165191541890846564669771714896916084883987920' #...
-            # '473321268100296857636200926065340769682863349205363' #...
-            # '349247637660671783209907949273683040397979984107806' #...
-            # '461822693332712828397617946036239581632976585100633' #...
-            # '520260770761060725403904123144384571612073732754774' #...
-            # '588211944406465572591022081973828448927338602556287' #...
-            # '851831745419397433012491884869454462440536895047499' #...
-            # '436551974649731917170099387762871020403582994193439' #...
-            # '761933412166821484015883631622539314203799034497982' #...
-            # '130038741741727907429575673302461380386596501187482' #...
-            # '006257527709842179336488381672818798450229339123527' #...
-            # '858844448336815912020452294624916993546388956561522' #...
-            # '161875352572590420823607478788399460162228308693742' #...
-            # '05287663441403533948204085390898399055004119873046875e-1075',
+            '116512874940594195638617907092569881519034793229385' #...
+            '228569165191541890846564669771714896916084883987920' #...
+            '473321268100296857636200926065340769682863349205363' #...
+            '349247637660671783209907949273683040397979984107806' #...
+            '461822693332712828397617946036239581632976585100633' #...
+            '520260770761060725403904123144384571612073732754774' #...
+            '588211944406465572591022081973828448927338602556287' #...
+            '851831745419397433012491884869454462440536895047499' #...
+            '436551974649731917170099387762871020403582994193439' #...
+            '761933412166821484015883631622539314203799034497982' #...
+            '130038741741727907429575673302461380386596501187482' #...
+            '006257527709842179336488381672818798450229339123527' #...
+            '858844448336815912020452294624916993546388956561522' #...
+            '161875352572590420823607478788399460162228308693742' #...
+            '05287663441403533948204085390898399055004119873046875e-1075',
 
             '525440653352955266109661060358202819561258984964913' #...
             '892256527849758956045218257059713765874251436193619' #...
@@ -409,12 +434,19 @@ class StrtodTests(unittest.TestCase):
             '999999999999999944488848768742172978818416595458984375e-54',
             '9999999999999999444888487687421729788184165954589843749999999e-54',
             '9999999999999999444888487687421729788184165954589843750000001e-54',
+            # Value found by Rick Regan that gives a result of 2**-968
+            # under Gay's dtoa.c (as of Nov 04, 2010);  since fixed.
+            # (Fixed some time ago in Python's dtoa.c.)
+            '0.0000000000000000000000000000000000000000100000000' #...
+            '000000000576129113423785429971690421191214034235435' #...
+            '087147763178149762956868991692289869941246658073194' #...
+            '51982237978882039897143840789794921875',
             ]
         for s in test_strings:
             self.check_strtod(s)
 
 def test_main():
-    test_support.run_unittest(StrtodTests)
+    test.support.run_unittest(StrtodTests)
 
 if __name__ == "__main__":
     test_main()

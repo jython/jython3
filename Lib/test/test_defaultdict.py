@@ -2,9 +2,10 @@
 
 import os
 import copy
+import pickle
 import tempfile
 import unittest
-from test import test_support
+from test import support
 
 from collections import defaultdict
 
@@ -43,7 +44,7 @@ class TestDefaultDict(unittest.TestCase):
         self.assertEqual(d2.default_factory, None)
         try:
             d2[15]
-        except KeyError, err:
+        except KeyError as err:
             self.assertEqual(err.args, (15,))
         else:
             self.fail("d2[15] didn't raise KeyError")
@@ -65,7 +66,7 @@ class TestDefaultDict(unittest.TestCase):
         d2 = defaultdict(int)
         self.assertEqual(d2.default_factory, int)
         d2[12] = 42
-        self.assertEqual(repr(d2), "defaultdict(<type 'int'>, {12: 42})")
+        self.assertEqual(repr(d2), "defaultdict(<class 'int'>, {12: 42})")
         def foo(): return 43
         d3 = defaultdict(foo)
         self.assertTrue(d3.default_factory is foo)
@@ -83,8 +84,8 @@ class TestDefaultDict(unittest.TestCase):
         try:
             f = open(tfn, "w+")
             try:
-                print >>f, d1
-                print >>f, d2
+                print(d1, file=f)
+                print(d2, file=f)
                 f.seek(0)
                 self.assertEqual(f.readline(), repr(d1) + "\n")
                 self.assertEqual(f.readline(), repr(d2) + "\n")
@@ -143,7 +144,7 @@ class TestDefaultDict(unittest.TestCase):
         d1 = defaultdict()
         try:
             d1[(1,)]
-        except KeyError, err:
+        except KeyError as err:
             self.assertEqual(err.args[0], (1,))
         else:
             self.fail("expected KeyError")
@@ -157,8 +158,9 @@ class TestDefaultDict(unittest.TestCase):
             def _factory(self):
                 return []
         d = sub()
-        self.assertTrue(repr(d).startswith(
-            "defaultdict(<bound method sub._factory of defaultdict(..."))
+        self.assertRegex(repr(d),
+            r"defaultdict\(<bound method .*sub\._factory "
+            r"of defaultdict\(\.\.\., \{\}\)>, \{\}\)")
 
         # NOTE: printing a subclass of a builtin type does not call its
         # tp_print slot. So this part is essentially the same test as above.
@@ -166,7 +168,7 @@ class TestDefaultDict(unittest.TestCase):
         try:
             f = open(tfn, "w+")
             try:
-                print >>f, d
+                print(d, file=f)
             finally:
                 f.close()
         finally:
@@ -175,8 +177,16 @@ class TestDefaultDict(unittest.TestCase):
     def test_callable_arg(self):
         self.assertRaises(TypeError, defaultdict, {})
 
+    def test_pickleing(self):
+        d = defaultdict(int)
+        d[1]
+        for proto in range(pickle.HIGHEST_PROTOCOL + 1):
+            s = pickle.dumps(d, proto)
+            o = pickle.loads(s)
+            self.assertEqual(d, o)
+
 def test_main():
-    test_support.run_unittest(TestDefaultDict)
+    support.run_unittest(TestDefaultDict)
 
 if __name__ == "__main__":
     test_main()

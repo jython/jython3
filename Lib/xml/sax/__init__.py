@@ -20,9 +20,9 @@ drivers2 -- Contains the driver for that wraps a Java sax implementation in pyth
             objects.
 """
 
-from xmlreader import InputSource
-from handler import ContentHandler, ErrorHandler
-from _exceptions import SAXException, SAXNotRecognizedException, \
+from .xmlreader import InputSource
+from .handler import ContentHandler, ErrorHandler
+from ._exceptions import SAXException, SAXNotRecognizedException, \
                         SAXParseException, SAXNotSupportedException, \
                         SAXReaderNotAvailable
 
@@ -34,10 +34,7 @@ def parse(source, handler, errorHandler=ErrorHandler()):
     parser.parse(source)
 
 def parseString(string, handler, errorHandler=ErrorHandler()):
-    try:
-        from cStringIO import StringIO
-    except ImportError:
-        from StringIO import StringIO
+    from io import BytesIO
 
     if errorHandler is None:
         errorHandler = ErrorHandler()
@@ -46,7 +43,7 @@ def parseString(string, handler, errorHandler=ErrorHandler()):
     parser.setErrorHandler(errorHandler)
 
     inpsrc = InputSource()
-    inpsrc.setByteStream(StringIO(string))
+    inpsrc.setByteStream(BytesIO(string))
     parser.parse(inpsrc)
 
 # this is the parser list used by the make_parser function if no
@@ -80,7 +77,7 @@ def make_parser(parser_list = []):
     for parser_name in parser_list + default_parser_list:
         try:
             return _create_parser(parser_name)
-        except ImportError,e:
+        except ImportError as e:
             import sys
             if sys.modules.has_key(parser_name):
                 # The parser module was found, but importing it
