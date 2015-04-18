@@ -1,92 +1,64 @@
 #!/usr/bin/env python
 """
-This script generates patches containing the Jython-specific deviations from the stdlib
-modules. It looks for the string "svn.python.org" in the changeset summary and generates
-a patch for all the changes made after that in each module.
-
-The script expects to be run in the jython root directory and there should be a "cpython"
-directory in the parent directory. That directory should be a clone of the CPython release
-against which the modules in Lib/ have currently been patched.
-Only modules that are common to Lib/, lib-python/ and ../cpython/Lib will be included in
-the patches.
+This script generates patches containing the Jython-specific deviations from
+the CPython standard library. It generates a patch file in stdlib-patches/ for
+every file in the Lib/ directory that has a counterpart in the CPython
+standard library.
 """
-from StringIO import StringIO
+
+from __future__ import print_function
 import os.path
 import subprocess
 import sys
 import shutil
 
-
-def get_modules(path):
-    modules = set()
-    for dirpath, dirnames, filenames in os.walk(path):
-        for filename in filenames:
-            if filename.endswith('.py'):
-                cutoff = len(path) + 1
-                fullpath = os.path.join(dirpath[cutoff:], filename)
-                modules.add(fullpath)
-    return modules
+PATCHES_DIR = 'stdlib-patches'
 
 if not os.path.exists('lib-python'):
-    print >>sys.stderr, 'You need to run this script from the Jython root directory.'
+    print('You need to run this script from the Jython root directory.',
+          file=sys.stderr)
     sys.exit(1)
 
-if not os.path.exists('../cpython'):
-    print >>sys.stderr, 'You need to have the CPython clone in ../cpython.'
-    sys.exit(1)
-
-jymodules = get_modules(u'Lib')
-cpymodules = get_modules(u'lib-python')
-cpy25modules = get_modules(u'../cpython/Lib')
-common_modules = jymodules.intersection(cpy25modules).intersection(cpymodules)
-
-# Run mercurial to get the changesets where each file was last synced with CPython stdlib
-print 'Parsing mercurial logs for the last synchronized changesets'
-changesets = {}
-for mod in common_modules:
-    path = 'Lib/' + mod
-    pipe = subprocess.Popen(['hg', 'log', '-v', path], stdout=subprocess.PIPE)
-    stdoutdata, stderrdata = pipe.communicate()
-    if pipe.returncode != 0:
-        print >>sys.stderr, stderrdata
-        sys.exit(1)
-
-    buf = StringIO(stdoutdata)
-    changeset = None
-    found = False
-    iterator = iter(list(buf))
-    for line in iterator:
-        if line.startswith('changeset:'):
-            changeset = line.split(':')[1].strip()
-        if line.startswith('description:'):
-            for descline in iterator:
-                if descline == '\n':
-                    break
-                if 'svn.python.org' in descline:
-                    found = True
-                    break
-            if found:
-                break
-
-    if not found:
-        print >>sys.stderr,'No sync changeset found for %s' % path
+if len(sys.argv) > 1:
+    cpython_basepath = os.path.join('lib-python', sys.argv[1])
+else:
+    cpythonlib_versions = os.listdir('lib-python')
+    if len(cpythonlib_versions) > 1:
+        print('More than one CPython library detected. '
+              'Please give the target version as the first argument',
+              file=sys.stderr)
+        sys.exit(2)
     else:
-        changesets[path] = changeset
+        cpython_basepath = os.path.join('lib-python', cpythonlib_versions[0])
 
-if os.path.exists('patches'):
-    shutil.rmtree('patches')
-os.mkdir('patches')
+lib_files = []
+for dirpath, dirnames, filenames in os.walk('Lib'):
+    for filename in filenames:
+        jythonlib_path = os.path.join(dirpath, filename)
+        cpythonlib_path = os.path.join(cpython_basepath, jythonlib_path[4:])
+        if os.path.isfile(cpythonlib_path):
+            lib_files.append((jythonlib_path, cpythonlib_path))
 
-print 'Generating patches'
-for path, changeset in changesets.iteritems():
-    patchname = 'patches/%s.patch' % path[4:]
-    patch_dir = os.path.dirname(patchname)
+if os.path.exists(PATCHES_DIR):
+    shutil.rmtree(PATCHES_DIR)
+
+print('Generating patches')
+for jythonlib_path, cpythonlib_path in lib_files:
+    patch_path = os.path.join(PATCHES_DIR, jythonlib_path[4:] + '.patch')
+    patch_dir = os.path.dirname(patch_path)
     if not os.path.exists(patch_dir):
         os.makedirs(patch_dir)
 
-    retcode = os.system('hg diff -r {} {} > {}'.format(changeset, path, patchname))
-    if retcode != 0:
-        print >>sys.stderr, "Error creating patch for %s" % path
+    process = subprocess.Popen(['diff', '-N', '-u', cpythonlib_path, jythonlib_path],
+                               stdout=subprocess.PIPE)
+    stdout, _ = process.communicate()
+    if process.returncode == 0:
+        print('No differences detected in {} -- no patch generated'.format(jythonlib_path))
+    elif process.returncode == 1:
+        with open(patch_path, 'wb') as f:
+            f.write(stdout)
+    else:
+        print("Error creating patch for {}".format(jythonlib_path), file=sys.stderr)
         sys.exit(3)
 
-print 'All done. You can now run applypatches.py to update and patch the modules.'
+print('All done. You can now update the CPython standard library and then run applypatches.py.')

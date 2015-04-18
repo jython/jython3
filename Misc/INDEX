@@ -1,8 +1,10 @@
 INDEX: this file
+applypatches.py: applies patches generated with genpatches.py
 bughtml.py: script to convert .xml bug reports into .html pages
 create_dist.py: creates scripts to package up a version of jpython for release
 create_pylib.py: creates a script to build the pylib???.jar file
 editbug.py: swing gui to edit bug reports (very weak)
+genpatches.py: generates patches to produce the Jython specific versions of stdlib modules
 jpybugreport.py: cgi script used to process bug reports on python.org
 jpylicense103.py: cgi script to collect registration data for jpython downloads
 process_licenses.py: script to read registration licenses.txt file and print info
