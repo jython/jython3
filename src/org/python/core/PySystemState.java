@@ -803,9 +803,9 @@ public class PySystemState extends PyObject implements AutoCloseable,
             PySystemState.exec_prefix = Py.newString(exec_prefix);
         }
         try {
-            String jythonpath = System.getenv("JYTHONPATH");
-            if (jythonpath != null) {
-                registry.setProperty("python.path", jythonpath);
+            String pythonpath = System.getenv("PYTHONPATH");
+            if (pythonpath != null) {
+                registry.setProperty("python.path", pythonpath);
             }
         } catch (SecurityException e) {
             // Continue

@@ -52,7 +52,7 @@ public class jython {
             + "-c cmd   : program passed in as string (terminates option list)\n"
             // + "-d       : debug output from parser (also PYTHONDEBUG=x)\n"
             + "-Dprop=v : Set the property `prop' to value `v'\n"
-            + "-E       : ignore environment variables (such as JYTHONPATH)\n"
+            + "-E       : ignore environment variables (such as PYTHONPATH)\n"
             + "-h       : print this help message and exit (also --help)\n"
             + "-i       : inspect interactively after running script\n"
             // + ", (also PYTHONINSPECT=x)\n"
@@ -80,7 +80,7 @@ public class jython {
             + "-        : program read from stdin (default; interactive mode if a tty)\n"
             + "arg ...  : arguments passed to program in sys.argv[1:]\n" + "\n"
             + "Other environment variables:\n" //
-            + "JYTHONPATH: '" + File.pathSeparator
+            + "PYTHONPATH: '" + File.pathSeparator
             + "'-separated list of directories prefixed to the default module\n"
             + "            search path.  The result is sys.path.\n"
             + "PYTHONIOENCODING: Encoding[:errors] used for stdin/stdout/stderr.";
