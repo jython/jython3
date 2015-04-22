@@ -5,6 +5,8 @@ import org.python.core.Py;
 import org.python.core.PyException;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
+import org.python.core.PyString;
+import org.python.core.PyTuple;
 import org.python.core.PyType;
 import org.python.core.ThreadState;
 import org.python.expose.ExposedType;
@@ -17,16 +19,16 @@ import org.python.core.Visitproc;
 public class Condition extends PyObject implements ContextManager, Traverseproc {
 
     public static final PyType TYPE = PyType.fromClass(Condition.class);
-    private final Lock _lock;
+    private final ConditionSupportingLock _lock;
     private final java.util.concurrent.locks.Condition _condition;
 
     public Condition() {
-        this(new Lock());
+        this(new RLock());
     }
 
-    public Condition(Lock lock) {
+    public Condition(ConditionSupportingLock lock) {
         _lock = lock;
-        _condition = lock._lock.newCondition();
+        _condition = lock.getLock().newCondition();
     }
 
     @ExposedNew
@@ -34,7 +36,7 @@ public class Condition extends PyObject implements ContextManager, Traverseproc 
             PyType subtype, PyObject[] args, String[] keywords) {
         final int nargs = args.length;
         if (nargs == 1) {
-            return new Condition((Lock)args[0]);
+            return new Condition((ConditionSupportingLock)args[0]);
         }
         return new Condition();
     }
@@ -102,13 +104,15 @@ public class Condition extends PyObject implements ContextManager, Traverseproc 
     }
 
     public void notify$() {
-        Condition_notify();
+        Condition_notify(1);
     }
 
-    @ExposedMethod
-    final void Condition_notify() {
+    @ExposedMethod(defaults = "1")
+    final void Condition_notify(int count) {
         try {
-            _condition.signal();
+            for( int i = 0; i < count; i++) {
+                _condition.signal();
+            }
         } catch (IllegalMonitorStateException ex) {
             throw Py.RuntimeError("cannot notify on un-acquired lock");
         }
@@ -138,14 +142,27 @@ public class Condition extends PyObject implements ContextManager, Traverseproc 
 
     @ExposedMethod
     final boolean Condition__is_owned() {
-        return _lock._lock.isHeldByCurrentThread();
+        return _lock._is_owned();
     }
 
+    @Override
+    public String toString() {
+        int count = 0;
+        try {
+            count = _lock.getWaitQueueLength(_condition);
+        } catch (IllegalMonitorStateException ex) {
+            // ignore if lock is not held
+        }
+        return (Py.newString("<_threading.Condition(%s, %d)>").__mod__(
+                new PyTuple(
+                        Py.newString(_lock.toString()),
+                        Py.newInteger(count)))).toString();
+    }
 
     /* Traverseproc implementation */
     @Override
     public int traverse(Visitproc visit, Object arg) {
-        return _lock != null ? visit.visit(_lock, arg) : 0;
+        return _lock != null ? visit.visit((PyObject)_lock, arg) : 0;
     }
 
     @Override
