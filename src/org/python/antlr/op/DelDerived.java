@@ -278,6 +278,30 @@ public class DelDerived extends Del implements Slotted,FinalizablePyObjectDerive
         return super.__rmul__(other);
     }
 
+    public PyObject __matmul__(PyObject other) {
+        PyType self_type=getType();
+        PyObject impl=self_type.lookup("__matmul__");
+        if (impl!=null) {
+            PyObject res=impl.__get__(this,self_type).__call__(other);
+            if (res==Py.NotImplemented)
+                return null;
+            return res;
+        }
+        return super.__matmul__(other);
+    }
+
+    public PyObject __rmatmul__(PyObject other) {
+        PyType self_type=getType();
+        PyObject impl=self_type.lookup("__rmatmul__");
+        if (impl!=null) {
+            PyObject res=impl.__get__(this,self_type).__call__(other);
+            if (res==Py.NotImplemented)
+                return null;
+            return res;
+        }
+        return super.__rmatmul__(other);
+    }
+
     public PyObject __div__(PyObject other) {
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__div__");
@@ -648,6 +672,18 @@ public class DelDerived extends Del implements Slotted,FinalizablePyObjectDerive
             return res;
         }
         return super.__imul__(other);
+    }
+
+    public PyObject __imatmul__(PyObject other) {
+        PyType self_type=getType();
+        PyObject impl=self_type.lookup("__imatmul__");
+        if (impl!=null) {
+            PyObject res=impl.__get__(this,self_type).__call__(other);
+            if (res==Py.NotImplemented)
+                return null;
+            return res;
+        }
+        return super.__imatmul__(other);
     }
 
     public PyObject __idiv__(PyObject other) {

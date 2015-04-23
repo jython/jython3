@@ -278,6 +278,30 @@ public class MatMultDerived extends MatMult implements Slotted,FinalizablePyObje
         return super.__rmul__(other);
     }
 
+    public PyObject __matmul__(PyObject other) {
+        PyType self_type=getType();
+        PyObject impl=self_type.lookup("__matmul__");
+        if (impl!=null) {
+            PyObject res=impl.__get__(this,self_type).__call__(other);
+            if (res==Py.NotImplemented)
+                return null;
+            return res;
+        }
+        return super.__matmul__(other);
+    }
+
+    public PyObject __rmatmul__(PyObject other) {
+        PyType self_type=getType();
+        PyObject impl=self_type.lookup("__rmatmul__");
+        if (impl!=null) {
+            PyObject res=impl.__get__(this,self_type).__call__(other);
+            if (res==Py.NotImplemented)
+                return null;
+            return res;
+        }
+        return super.__rmatmul__(other);
+    }
+
     public PyObject __div__(PyObject other) {
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__div__");
@@ -648,6 +672,18 @@ public class MatMultDerived extends MatMult implements Slotted,FinalizablePyObje
             return res;
         }
         return super.__imul__(other);
+    }
+
+    public PyObject __imatmul__(PyObject other) {
+        PyType self_type=getType();
+        PyObject impl=self_type.lookup("__imatmul__");
+        if (impl!=null) {
+            PyObject res=impl.__get__(this,self_type).__call__(other);
+            if (res==Py.NotImplemented)
+                return null;
+            return res;
+        }
+        return super.__imatmul__(other);
     }
 
     public PyObject __idiv__(PyObject other) {
@@ -1138,8 +1174,11 @@ public class MatMultDerived extends MatMult implements Slotted,FinalizablePyObje
         // Otherwise, we call the derived __tojava__, if it exists:
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__tojava__");
-        if (impl!=null)
-            return impl.__get__(this,self_type).__call__(Py.java2py(c)).__tojava__(Object.class);
+        if (impl!=null) {
+            PyObject delegate=impl.__get__(this,self_type).__call__(Py.java2py(c));
+            if (delegate!=this)
+                return delegate.__tojava__(Object.class);
+        }
         return super.__tojava__(c);
     }
 
