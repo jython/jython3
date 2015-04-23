@@ -2181,7 +2181,7 @@ dictorsetmaker[Token lcurly]
          )
     ;
 
-//classdef: 'class' NAME ['(' [testlist] ')'] ':' suite
+//classdef: 'class' NAME ['(' [arglist] ')'] ':' suite
 classdef
 @init {
     stmt stype = null;
@@ -2189,16 +2189,19 @@ classdef
 @after {
    $classdef.tree = stype;
 }
-    : decorators? CLASS NAME (LPAREN testlist[expr_contextType.Load]? RPAREN)? COLON suite[false]
+    : decorators? CLASS NAME (LPAREN arglist? RPAREN)? COLON suite[false]
       {
           Token t = $CLASS;
           if ($decorators.start != null) {
               t = $decorators.start;
           }
-          stype = new ClassDef(t, actions.cantBeNoneName($NAME),
-              actions.makeBases(actions.castExpr($testlist.tree)),
-              actions.castStmts($suite.stypes),
-              actions.castExprs($decorators.etypes));
+          stype = actions.makeClass(t, $NAME,
+                                    $arglist.args,
+                                    $arglist.keywords,
+                                    $arglist.starargs,
+                                    $arglist.kwargs,
+                                    $suite.stypes,
+                                    $decorators.etypes);
       }
     ;
 

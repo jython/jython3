@@ -12,6 +12,7 @@ import org.python.antlr.ast.Attribute;
 import org.python.antlr.ast.BinOp;
 import org.python.antlr.ast.BoolOp;
 import org.python.antlr.ast.Call;
+import org.python.antlr.ast.ClassDef;
 import org.python.antlr.ast.Context;
 import org.python.antlr.ast.DictComp;
 import org.python.antlr.ast.ExtSlice;
@@ -553,6 +554,15 @@ public class GrammarActions {
         List<keyword> k = makeKeywords(keywords);
         List<expr> a = castExprs(args);
         return new Call(t, func, a, k, starargs, kwargs);
+    }
+
+    stmt makeClass(Token t, Token nameToken, List args, List ktypes, expr starargs, expr kwargs, List stypes, List dtypes) {
+        String name = cantBeNone(nameToken);
+        List<expr> bases = castExprs(args);
+        List<stmt> statements = castStmts(stypes);
+        List<keyword> keywords = makeKeywords(ktypes);
+        List<expr> decorators = castExprs(dtypes);
+        return new ClassDef(t, name, bases, keywords, starargs, kwargs, statements, decorators);
     }
 
     expr negate(Token t, expr o) {

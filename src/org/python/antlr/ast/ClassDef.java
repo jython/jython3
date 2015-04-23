@@ -57,6 +57,45 @@ public static final PyType TYPE = PyType.fromClass(ClassDef.class);
         this.bases = AstAdapters.py2exprList(bases);
     }
 
+    private java.util.List<keyword> keywords;
+    public java.util.List<keyword> getInternalKeywords() {
+        return keywords;
+    }
+    @ExposedGet(name = "keywords")
+    public PyObject getKeywords() {
+        return new AstList(keywords, AstAdapters.keywordAdapter);
+    }
+    @ExposedSet(name = "keywords")
+    public void setKeywords(PyObject keywords) {
+        this.keywords = AstAdapters.py2keywordList(keywords);
+    }
+
+    private expr starargs;
+    public expr getInternalStarargs() {
+        return starargs;
+    }
+    @ExposedGet(name = "starargs")
+    public PyObject getStarargs() {
+        return starargs;
+    }
+    @ExposedSet(name = "starargs")
+    public void setStarargs(PyObject starargs) {
+        this.starargs = AstAdapters.py2expr(starargs);
+    }
+
+    private expr kwargs;
+    public expr getInternalKwargs() {
+        return kwargs;
+    }
+    @ExposedGet(name = "kwargs")
+    public PyObject getKwargs() {
+        return kwargs;
+    }
+    @ExposedSet(name = "kwargs")
+    public void setKwargs(PyObject kwargs) {
+        this.kwargs = AstAdapters.py2expr(kwargs);
+    }
+
     private java.util.List<stmt> body;
     public java.util.List<stmt> getInternalBody() {
         return body;
@@ -85,7 +124,8 @@ public static final PyType TYPE = PyType.fromClass(ClassDef.class);
 
 
     private final static PyString[] fields =
-    new PyString[] {new PyString("name"), new PyString("bases"), new PyString("body"), new
+    new PyString[] {new PyString("name"), new PyString("bases"), new PyString("keywords"), new
+                     PyString("starargs"), new PyString("kwargs"), new PyString("body"), new
                      PyString("decorator_list")};
     @ExposedGet(name = "_fields")
     public PyString[] get_fields() { return fields; }
@@ -105,32 +145,41 @@ public static final PyType TYPE = PyType.fromClass(ClassDef.class);
     @ExposedMethod
     public void ClassDef___init__(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("ClassDef", args, keywords, new String[]
-            {"name", "bases", "body", "decorator_list", "lineno", "col_offset"}, 4, true);
+            {"name", "bases", "keywords", "starargs", "kwargs", "body", "decorator_list", "lineno",
+              "col_offset"}, 7, true);
         setName(ap.getPyObject(0, Py.None));
         setBases(ap.getPyObject(1, Py.None));
-        setBody(ap.getPyObject(2, Py.None));
-        setDecorator_list(ap.getPyObject(3, Py.None));
-        int lin = ap.getInt(4, -1);
+        setKeywords(ap.getPyObject(2, Py.None));
+        setStarargs(ap.getPyObject(3, Py.None));
+        setKwargs(ap.getPyObject(4, Py.None));
+        setBody(ap.getPyObject(5, Py.None));
+        setDecorator_list(ap.getPyObject(6, Py.None));
+        int lin = ap.getInt(7, -1);
         if (lin != -1) {
             setLineno(lin);
         }
 
-        int col = ap.getInt(5, -1);
+        int col = ap.getInt(8, -1);
         if (col != -1) {
             setLineno(col);
         }
 
     }
 
-    public ClassDef(PyObject name, PyObject bases, PyObject body, PyObject decorator_list) {
+    public ClassDef(PyObject name, PyObject bases, PyObject keywords, PyObject starargs, PyObject
+    kwargs, PyObject body, PyObject decorator_list) {
         setName(name);
         setBases(bases);
+        setKeywords(keywords);
+        setStarargs(starargs);
+        setKwargs(kwargs);
         setBody(body);
         setDecorator_list(decorator_list);
     }
 
-    public ClassDef(Token token, String name, java.util.List<expr> bases, java.util.List<stmt>
-    body, java.util.List<expr> decorator_list) {
+    public ClassDef(Token token, String name, java.util.List<expr> bases, java.util.List<keyword>
+    keywords, expr starargs, expr kwargs, java.util.List<stmt> body, java.util.List<expr>
+    decorator_list) {
         super(token);
         this.name = name;
         this.bases = bases;
@@ -140,6 +189,17 @@ public static final PyType TYPE = PyType.fromClass(ClassDef.class);
         for(PythonTree t : this.bases) {
             addChild(t);
         }
+        this.keywords = keywords;
+        if (keywords == null) {
+            this.keywords = new ArrayList<keyword>();
+        }
+        for(PythonTree t : this.keywords) {
+            addChild(t);
+        }
+        this.starargs = starargs;
+        addChild(starargs);
+        this.kwargs = kwargs;
+        addChild(kwargs);
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
@@ -157,7 +217,8 @@ public static final PyType TYPE = PyType.fromClass(ClassDef.class);
     }
 
     public ClassDef(Integer ttype, Token token, String name, java.util.List<expr> bases,
-    java.util.List<stmt> body, java.util.List<expr> decorator_list) {
+    java.util.List<keyword> keywords, expr starargs, expr kwargs, java.util.List<stmt> body,
+    java.util.List<expr> decorator_list) {
         super(ttype, token);
         this.name = name;
         this.bases = bases;
@@ -167,6 +228,17 @@ public static final PyType TYPE = PyType.fromClass(ClassDef.class);
         for(PythonTree t : this.bases) {
             addChild(t);
         }
+        this.keywords = keywords;
+        if (keywords == null) {
+            this.keywords = new ArrayList<keyword>();
+        }
+        for(PythonTree t : this.keywords) {
+            addChild(t);
+        }
+        this.starargs = starargs;
+        addChild(starargs);
+        this.kwargs = kwargs;
+        addChild(kwargs);
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
@@ -183,8 +255,9 @@ public static final PyType TYPE = PyType.fromClass(ClassDef.class);
         }
     }
 
-    public ClassDef(PythonTree tree, String name, java.util.List<expr> bases, java.util.List<stmt>
-    body, java.util.List<expr> decorator_list) {
+    public ClassDef(PythonTree tree, String name, java.util.List<expr> bases,
+    java.util.List<keyword> keywords, expr starargs, expr kwargs, java.util.List<stmt> body,
+    java.util.List<expr> decorator_list) {
         super(tree);
         this.name = name;
         this.bases = bases;
@@ -194,6 +267,17 @@ public static final PyType TYPE = PyType.fromClass(ClassDef.class);
         for(PythonTree t : this.bases) {
             addChild(t);
         }
+        this.keywords = keywords;
+        if (keywords == null) {
+            this.keywords = new ArrayList<keyword>();
+        }
+        for(PythonTree t : this.keywords) {
+            addChild(t);
+        }
+        this.starargs = starargs;
+        addChild(starargs);
+        this.kwargs = kwargs;
+        addChild(kwargs);
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
@@ -223,6 +307,15 @@ public static final PyType TYPE = PyType.fromClass(ClassDef.class);
         sb.append("bases=");
         sb.append(dumpThis(bases));
         sb.append(",");
+        sb.append("keywords=");
+        sb.append(dumpThis(keywords));
+        sb.append(",");
+        sb.append("starargs=");
+        sb.append(dumpThis(starargs));
+        sb.append(",");
+        sb.append("kwargs=");
+        sb.append(dumpThis(kwargs));
+        sb.append(",");
         sb.append("body=");
         sb.append(dumpThis(body));
         sb.append(",");
@@ -244,6 +337,16 @@ public static final PyType TYPE = PyType.fromClass(ClassDef.class);
                     t.accept(visitor);
             }
         }
+        if (keywords != null) {
+            for (PythonTree t : keywords) {
+                if (t != null)
+                    t.accept(visitor);
+            }
+        }
+        if (starargs != null)
+            starargs.accept(visitor);
+        if (kwargs != null)
+            kwargs.accept(visitor);
         if (body != null) {
             for (PythonTree t : body) {
                 if (t != null)
