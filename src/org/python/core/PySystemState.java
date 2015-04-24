@@ -69,6 +69,9 @@ public class PySystemState extends PyObject implements AutoCloseable,
     private static final String VFSZIP_PREFIX = "vfszip:";
     private static final String VFS_PREFIX = "vfs:";
 
+    // XXX: should this be "mbcs" on Windows, like on CPython?
+    private static final PyString fileSystemEncoding = new PyString(System.getProperty("file.encoding")); 
+
     public static final PyString version = new PyString(Version.getVersion());
 
     public static final PyTuple subversion = new PyTuple(new PyString("Jython"), Py.newString(""),
@@ -491,7 +494,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
     }
 
     public PyObject getfilesystemencoding() {
-        return Py.None;
+        return fileSystemEncoding;
     }
 
     /**
