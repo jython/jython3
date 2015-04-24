@@ -173,7 +173,7 @@ import java.util.ListIterator;
 
     //Use to switch between python2 and python3 semantics.
     //true is python3, false is python2.
-    private boolean python3 = false;
+    private boolean python3 = true;
 
     private boolean printFunction = python3;
     private boolean unicodeLiterals = python3;
@@ -574,14 +574,14 @@ typedargslist
 }
     : d+=tdefparameter[defaults] (options {greedy=true;}:COMMA d+=tdefparameter[defaults])*
       (COMMA
-          (STAR starargs=NAME (COMMA DOUBLESTAR kwargs=NAME)?
+          (STAR (starargs=NAME)? (COMMA d+=tdefparameter[defaults] (options {greedy=true;}:COMMA d+=tdefparameter[defaults])*)? (COMMA DOUBLESTAR kwargs=NAME)?
           | DOUBLESTAR kwargs=NAME
           )?
       )?
       {
           $args = actions.makeArgumentsType($typedargslist.start, $d, $starargs, $kwargs, defaults);
       }
-    | STAR starargs=NAME (COMMA DOUBLESTAR kwargs=NAME)?
+    | STAR (starargs=NAME)? (COMMA d+=tdefparameter[defaults] (options {greedy=true;}:COMMA d+=tdefparameter[defaults])*)? (COMMA DOUBLESTAR kwargs=NAME)?
       {
           $args = actions.makeArgumentsType($typedargslist.start, $d, $starargs, $kwargs, defaults);
       }

@@ -771,7 +771,7 @@ class _realsocket(object):
             self._handle_timeout(future.await, reason)
             if not future.isSuccess():
                 log.debug("Got this failure %s during %s", future.cause(), reason, extra={"sock": self})
-                print "Got this failure %s during %s (%s)" % (future.cause(), reason, self)
+                print("Got this failure %s during %s (%s)" % (future.cause(), reason, self))
                 raise future.cause()
             return future
         else:
