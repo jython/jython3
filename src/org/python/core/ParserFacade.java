@@ -258,7 +258,7 @@ public class ParserFacade {
     private static class ExpectedEncodingBufferedReader extends BufferedReader {
 
         /**
-         * The encoding from the source file, or null if none was specified and ascii is being used.
+         * The encoding from the source file, or null if none was specified and UTF-8 is being used.
          */
         public final String encoding;
 
@@ -329,13 +329,9 @@ public class ParserFacade {
 
         Charset cs;
         try {
-            // Use ascii for the raw bytes when no encoding was specified
+            // Use UTF-8 for the raw bytes when no encoding was specified
             if (encoding == null) {
-                if (fromString) {
-                    cs = Charset.forName("ISO-8859-1");
-                } else {
-                    cs = Charset.forName("ascii");
-                }
+                cs = Charset.forName("UTF-8");
             } else {
                 cs = Charset.forName(encoding);
             }
@@ -391,7 +387,7 @@ public class ParserFacade {
     private static String readEncoding(InputStream stream) throws IOException {
         stream.mark(MARK_LIMIT);
         String encoding = null;
-        BufferedReader br = new BufferedReader(new InputStreamReader(stream, "ISO-8859-1"), 512);
+        BufferedReader br = new BufferedReader(new InputStreamReader(stream, "UTF-8"), 512);
         encoding = findEncoding(br);
         // XXX: reset() can still raise an IOException if a line exceeds our large mark
         // limit
