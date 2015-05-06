@@ -1023,7 +1023,11 @@ yield_stmt
       }
     ;
 
+//FIXME: for now, allow old python2 style exceptions.
 //raise_stmt: 'raise' [test [',' test [',' test]]]
+//
+//FIXME: when we fully switch to python3 this is the rule:
+//raise_stmt: 'raise' [test ['from' test]]
 raise_stmt
 @init {
     stmt stype = null;
@@ -1031,7 +1035,7 @@ raise_stmt
 @after {
    $raise_stmt.tree = stype;
 }
-    : RAISE (t1=test[expr_contextType.Load] (COMMA t2=test[expr_contextType.Load]
+    : RAISE (t1=test[expr_contextType.Load] (FROM t4=test[expr_contextType.Load])? (COMMA t2=test[expr_contextType.Load]
         (COMMA t3=test[expr_contextType.Load])?)?)?
       {
           stype = new Raise($RAISE, actions.castExpr($t1.tree), actions.castExpr($t2.tree), actions.castExpr($t3.tree));
