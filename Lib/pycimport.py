@@ -24,12 +24,12 @@ def __makeModule(name, code, path):
 
 class __Importer(object):
     def __init__(self, path):
-        if __debugging__: print "Importer invoked"
+        if __debugging__: print("Importer invoked")
         self.__path = path
     def find_module(self, fullname, path=None):
         if __debugging__:
-            print "Importer.find_module(fullname=%s, path=%s)" % (
-                repr(fullname), repr(path))
+            print("Importer.find_module(fullname=%s, path=%s)" % (
+                repr(fullname), repr(path)))
         path = fullname.split('.')
         filename = path[-1]
         path = path[:-1]
@@ -57,15 +57,15 @@ class __Importer(object):
         magic, mtime = __readPycHeader(f)
         #code = Unmarshaller(f, magic=magic).load()
         code = Unmarshaller(f).load()
-        if __debugging__: print "Successfully loaded:", fullname
+        if __debugging__: print("Successfully loaded:", fullname)
         return __makeModule( fullname, code, filename )
 
 class __MetaImporter(object):
     def __init__(self):
         self.__importers = {}
     def find_module(self, fullname, path):
-        if __debugging__: print "MetaImporter.find_module(%s, %s)" % (
-            repr(fullname), repr(path))
+        if __debugging__: print("MetaImporter.find_module(%s, %s)" % (
+            repr(fullname), repr(path)))
         for _path in sys.path:
             if _path not in self.__importers:
                 try:
