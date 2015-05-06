@@ -21,6 +21,7 @@ _MozillaCookieJar.py
 _pyio.py
 _strptime.py
 _threading_local.py
+_weakrefset.py
 abc.py
 aifc.py
 anydbm.py
