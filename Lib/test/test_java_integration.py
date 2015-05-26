@@ -700,7 +700,7 @@ class SerializationTest(unittest.TestCase):
             jars.append(proxies_jar_path)
             classpath = os.pathsep.join(jars)
             env = dict(os.environ)
-            env.update(PYTHONPATH=os.path.normpath(os.path.join(__file__, "..")))
+            env.update(JYTHONPATH=os.path.normpath(os.path.join(__file__, "..")))
             cmd = [os.path.join(System.getProperty("java.home"), "bin/java"),
                    "-classpath", classpath, "ProxyDeserialization", cat_path]
             self.assertEqual(subprocess.check_output(cmd, env=env, universal_newlines=True),
@@ -759,7 +759,7 @@ public class BarkTheDog {
             cmd = [os.path.join(System.getProperty("java.home"), "bin/java"),
                    "-classpath", classpath, "BarkTheDog"]
             env = dict(os.environ)
-            env.update(PYTHONPATH=os.path.normpath(os.path.join(__file__, "..")))
+            env.update(JYTHONPATH=os.path.normpath(os.path.join(__file__, "..")))
             self.assertRegexpMatches(
                 subprocess.check_output(cmd, env=env, universal_newlines=True,
                                         stderr=subprocess.STDOUT),
