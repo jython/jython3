@@ -173,7 +173,7 @@ import java.util.ListIterator;
 
     //Use to switch between python2 and python3 semantics.
     //true is python3, false is python2.
-    private boolean python3 = true;
+    private boolean python3 = false;
 
     private boolean printFunction = python3;
     private boolean unicodeLiterals = python3;
@@ -1943,21 +1943,22 @@ listmaker[Token lbrack]
 @after {
    $listmaker.tree = etype;
 }
-    : t+=test[$expr::ctype]
+    : t+=test_or_star_expr[$expr::ctype]
         (list_for[gens]
          {
              Collections.reverse(gens);
              List<comprehension> c = gens;
              etype = new ListComp($listmaker.start, actions.castExpr($t.get(0)), c);
          }
-        | (options {greedy=true;}:COMMA t+=test[$expr::ctype])*
+        | (options {greedy=true;}:COMMA t+=test_or_star_expr[$expr::ctype])*
            {
                etype = new org.python.antlr.ast.List($lbrack, actions.castExprs($t), $expr::ctype);
            }
         ) (COMMA)?
     ;
 
-//testlist_gexp: test ( comp_for | (',' test)* [','] )
+//XXX: rename to testlist_comp when further down the 3.x path.
+//testlist_comp: (test|star_expr) ( comp_for | (',' (test|star_expr))* [','] )
 testlist_gexp
 @init {
     expr etype = null;
@@ -1968,13 +1969,13 @@ testlist_gexp
         $testlist_gexp.tree = etype;
     }
 }
-    : t+=test[$expr::ctype]
-        ( (options {k=2;}: c1=COMMA t+=test[$expr::ctype])* (c2=COMMA)?
+    : t+=test_or_star_expr[$expr::ctype]
+        ( (options {k=2;}: c1=COMMA t+=test_or_star_expr[$expr::ctype])* (c2=COMMA)?
          { $c1 != null || $c2 != null }? 
            {
                etype = new Tuple($testlist_gexp.start, actions.castExprs($t), $expr::ctype);
            }
-        | -> test
+        | -> test_or_star_expr
         | (comp_for[gens]
            {
                Collections.reverse(gens);

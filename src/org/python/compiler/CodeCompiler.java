@@ -47,6 +47,7 @@ import org.python.antlr.ast.Lambda;
 import org.python.antlr.ast.List;
 import org.python.antlr.ast.ListComp;
 import org.python.antlr.ast.Name;
+import org.python.antlr.ast.Nonlocal;
 import org.python.antlr.ast.Num;
 import org.python.antlr.ast.Pass;
 import org.python.antlr.ast.Print;
@@ -56,8 +57,8 @@ import org.python.antlr.ast.Return;
 import org.python.antlr.ast.Set;
 import org.python.antlr.ast.SetComp;
 import org.python.antlr.ast.Slice;
-import org.python.antlr.ast.Str;
 import org.python.antlr.ast.Starred;
+import org.python.antlr.ast.Str;
 import org.python.antlr.ast.Subscript;
 import org.python.antlr.ast.Suite;
 import org.python.antlr.ast.TryExcept;
@@ -1027,6 +1028,11 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
     @Override
     public Object visitGlobal(Global node) throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object visitNonlocal(Nonlocal node) throws Exception {
         return null;
     }
 
@@ -2118,29 +2124,32 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         return null;
     }
 
+    private Object checkStarred(java.util.List<expr> elts, PythonTree node) throws Exception {
+        boolean foundStarred = false;
+        int count = elts.size();
+        int countAfter = -1;
+        for (int i=0; i<elts.size(); i++) {
+            expr elt = elts.get(i);
+            if (elt instanceof Starred) {
+                if (!foundStarred) {
+                    if (i >= 256) {
+                            throw new ParseException("too many expressions in star-unpacking assignment", node);
+                    }
+                    count = i;
+                    countAfter = elts.size()-i-1;
+                    foundStarred = true;
+                } else {
+                    throw new ParseException("two starred expressions in assignment", node);
+                }
+            }
+        }
+        return seqSet(elts, count, countAfter);
+    }
+
     @Override
     public Object visitTuple(Tuple node) throws Exception {
         if (node.getInternalCtx() == expr_contextType.Store) {
-            boolean foundStarred = false;
-            java.util.List<expr> elts = node.getInternalElts();
-            int count = elts.size();
-            int countAfter = -1;
-            for (int i=0; i<elts.size(); i++) {
-                expr elt = elts.get(i);
-                if (elt instanceof Starred) {
-                    if (!foundStarred) {
-                        if (i >= 256) {
-                                throw new ParseException("too many expressions in star-unpacking assignment", node);
-                        }
-                        count = i;
-                        countAfter = elts.size()-i-1;
-                        foundStarred = true;
-                    } else {
-                        throw new ParseException("two starred expressions in assignment", node);
-                    }
-                }
-            }
-            return seqSet(node.getInternalElts(), count, countAfter);
+            return checkStarred(node.getInternalElts(), node);
         }
 
         if (node.getInternalCtx() == expr_contextType.Del) {
@@ -2166,7 +2175,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     @Override
     public Object visitList(List node) throws Exception {
         if (node.getInternalCtx() == expr_contextType.Store) {
-            return seqSet(node.getInternalElts());
+            return checkStarred(node.getInternalElts(), node);
         }
         if (node.getInternalCtx() == expr_contextType.Del) {
             return seqDel(node.getInternalElts());
