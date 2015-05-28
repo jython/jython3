@@ -1988,25 +1988,48 @@ public final class Py {
         return Py.compile_flags(node, Py.getName(), filename, true, true, cflags);
     }
 
-    public static PyObject[] unpackSequence(PyObject obj, int length) {
-        if (obj instanceof PyTuple && obj.__len__() == length) {
+    public static PyObject[] unpackIterator(PyObject obj, int argcount, int argcountAfter) {
+        if (obj instanceof PyTuple && obj.__len__() == argcount && argcountAfter == -1) {
             // optimization
             return ((PyTuple)obj).getArray();
         }
 
-        PyObject[] ret = new PyObject[length];
+        PyObject[] ret = new PyObject[argcount + argcountAfter + 1];
         PyObject iter = obj.__iter__();
-        for (int i = 0; i < length; i++) {
+        int i = 0;
+        for (; i < argcount; i++) {
             PyObject tmp = iter.__iternext__();
             if (tmp == null) {
-                throw Py.ValueError(String.format("need more than %d value%s to unpack", i,
-                                                  i == 1 ? "" : "s"));
+                if (argcountAfter == -1) {
+                    throw Py.ValueError(String.format("not enough values to unpack (expected %d, got %d)",
+                                        argcount, i));
+                } else {
+                    throw Py.ValueError(String.format("not enough values to unpack (expected at least %d, got %d)",
+                                        argcount + argcountAfter, i));
+                }
             }
             ret[i] = tmp;
         }
 
-        if (iter.__iternext__() != null) {
-            throw Py.ValueError("too many values to unpack");
+        if (argcountAfter == -1) {
+            // We better have exhausted the iterator now.
+            if (iter.__iternext__() != null) {
+                throw Py.ValueError(String.format("too many values to unpack (expected %d)", argcount));
+            }
+        } else {
+            PyList after = new PyList();
+            for (PyObject o = null; (o = iter.__iternext__()) != null;) {
+                after.append(o);
+            }
+            if (after.size() < argcountAfter) {
+                throw Py.ValueError(String.format("not enough values to unpack (expected at least %d, got %d)",
+                                                  argcount + argcountAfter, argcount + after.size()));
+            }
+            ret[i] = after;
+            i++;
+            for (int j = after.size() - argcountAfter;j < after.size();j++, i++) {
+                ret[i] = after.pop(j);
+            }
         }
         return ret;
     }

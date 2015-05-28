@@ -57,6 +57,7 @@ import org.python.antlr.ast.Set;
 import org.python.antlr.ast.SetComp;
 import org.python.antlr.ast.Slice;
 import org.python.antlr.ast.Str;
+import org.python.antlr.ast.Starred;
 import org.python.antlr.ast.Subscript;
 import org.python.antlr.ast.Suite;
 import org.python.antlr.ast.TryExcept;
@@ -2086,10 +2087,15 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     }
 
     public Object seqSet(java.util.List<expr> nodes) throws Exception {
+        return seqSet(nodes, nodes.size(), -1);
+    }
+
+    public Object seqSet(java.util.List<expr> nodes, int count, int countAfter) throws Exception {
         code.aload(temporary);
-        code.iconst(nodes.size());
-        code.invokestatic(p(Py.class), "unpackSequence",
-                sig(PyObject[].class, PyObject.class, Integer.TYPE));
+        code.iconst(count);
+        code.iconst(countAfter);
+        code.invokestatic(p(Py.class), "unpackIterator",
+                sig(PyObject[].class, PyObject.class, Integer.TYPE, Integer.TYPE));
 
         int tmp = code.getLocal("[org/python/core/PyObject");
         code.astore(tmp);
@@ -2115,8 +2121,28 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     @Override
     public Object visitTuple(Tuple node) throws Exception {
         if (node.getInternalCtx() == expr_contextType.Store) {
-            return seqSet(node.getInternalElts());
+            boolean foundStarred = false;
+            java.util.List<expr> elts = node.getInternalElts();
+            int count = elts.size();
+            int countAfter = -1;
+            for (int i=0; i<elts.size(); i++) {
+                expr elt = elts.get(i);
+                if (elt instanceof Starred) {
+                    if (!foundStarred) {
+                        if (i >= 256) {
+                                throw new ParseException("too many expressions in star-unpacking assignment", node);
+                        }
+                        count = i;
+                        countAfter = elts.size()-i-1;
+                        foundStarred = true;
+                    } else {
+                        throw new ParseException("two starred expressions in assignment", node);
+                    }
+                }
+            }
+            return seqSet(node.getInternalElts(), count, countAfter);
         }
+
         if (node.getInternalCtx() == expr_contextType.Del) {
             return seqDel(node.getInternalElts());
         }
@@ -2445,6 +2471,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     void emitGetGlobal(String name) throws Exception {
         code.ldc(name);
         code.invokevirtual(p(PyFrame.class), "getglobal", sig(PyObject.class, String.class));
+    }
+
+    @Override
+    public Object visitStarred(Starred node) throws Exception {
+        visit(node.getInternalValue());
+        return null;
     }
 
     @Override
