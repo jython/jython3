@@ -929,6 +929,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
      */
     private int impliedImportLevel(int level) {
         // already prepared for a future change of DEFAULT_LEVEL
+        // TODO: remove the compatibility code
         if (imp.DEFAULT_LEVEL == 0 || level != 0 || module.getFutures().isAbsoluteImportOn()) {
             return level;
         } else {

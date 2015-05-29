@@ -32,9 +32,9 @@ public class imp {
 
     public static final int NO_MTIME = -1;
 
-    // This should change to Python 3.x; note that 2.7 allows relative
+    // This was changed for Python 3.x; note that 2.7 allows relative
     // imports unless `from __future__ import absolute_import`
-    public static final int DEFAULT_LEVEL = -1;
+    public static final int DEFAULT_LEVEL = 0;
 
     public static class CodeData {
 
