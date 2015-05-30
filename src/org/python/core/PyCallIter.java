@@ -31,7 +31,7 @@ public class PyCallIter extends PyIterator {
             }
             throw exc;
         }
-        if (result._eq(sentinel).__nonzero__()) {
+        if (result._eq(sentinel).__bool__()) {
             callable = null;
             return null;
         }

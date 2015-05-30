@@ -89,7 +89,7 @@ public class StdoutWrapper extends OutputStream {
             file.softspace = false;
         } else {
             PyObject ss = out.__findattr__("softspace");
-            if (ss != null && ss.__nonzero__()) {
+            if (ss != null && ss.__bool__()) {
                 out.invoke("write", Py.Newline);
             }
             try {
@@ -222,7 +222,7 @@ public class StdoutWrapper extends OutputStream {
 
         } else {
             PyObject ss = out.__findattr__("softspace");
-            if (ss != null && ss.__nonzero__()) {
+            if (ss != null && ss.__bool__()) {
                 out.invoke("write", Py.Space);
                 out.__setattr__("softspace", Py.Zero);
             }

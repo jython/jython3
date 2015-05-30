@@ -315,14 +315,14 @@ public class PyObject implements Serializable {
         if(ob_other == this) {
             return true;
         }
-        return (ob_other instanceof PyObject) && _eq((PyObject)ob_other).__nonzero__();
+        return (ob_other instanceof PyObject) && _eq((PyObject)ob_other).__bool__();
     }
 
     /**
-     * Equivalent to the standard Python __nonzero__ method. Returns whether of
+     * Equivalent to the standard Python __bool__ method. Returns whether of
      * not a given <code>PyObject</code> is considered true.
      */
-    public boolean __nonzero__() {
+    public boolean __bool__() {
         return true;
     }
 
@@ -1142,7 +1142,7 @@ public class PyObject implements Serializable {
     public PyObject __dir__() {
         PyDictionary accum = new PyDictionary();
         __rawdir__(accum);
-        PyList ret = accum.keys();
+        PyList ret = accum.keys_as_list();
         ret.sort();
         return ret;
     }
@@ -1351,7 +1351,7 @@ public class PyObject implements Serializable {
             if (result == null) {
                 result = o.__eq__(this);
             }
-            if (result != null && result.__nonzero__()) {
+            if (result != null && result.__bool__()) {
                 return 0;
             }
 
@@ -1359,7 +1359,7 @@ public class PyObject implements Serializable {
             if (result == null) {
                 result = o.__gt__(this);
             }
-            if (result != null && result.__nonzero__()) {
+            if (result != null && result.__bool__()) {
                 return -1;
             }
 
@@ -1367,7 +1367,7 @@ public class PyObject implements Serializable {
             if (result == null) {
                 result = o.__lt__(this);
             }
-            if (result != null && result.__nonzero__()) {
+            if (result != null && result.__bool__()) {
                 return 1;
             }
 
@@ -1387,7 +1387,7 @@ public class PyObject implements Serializable {
 
     private final int _default_cmp(PyObject other) {
         int result;
-        if (_is(other).__nonzero__())
+        if (_is(other).__bool__())
             return 0;
 
         /* None is smaller than anything */
@@ -1434,7 +1434,7 @@ public class PyObject implements Serializable {
             return result;
         }
 
-        return this._is(other).__nonzero__()?0:1;
+        return this._is(other).__bool__()?0:1;
     }
 
     /**
@@ -1791,7 +1791,7 @@ public class PyObject implements Serializable {
      * @return not this.
      **/
     public PyObject __not__() {
-        return __nonzero__() ? Py.False : Py.True;
+        return __bool__() ? Py.False : Py.True;
     }
 
     /* The basic numeric operations */
@@ -1821,23 +1821,12 @@ public class PyObject implements Serializable {
     /**
      * Equivalent to the standard Python __int__ method.
      * Should only be overridden by numeric objects that can be
-     * reasonably coerced into an integer.
-     *
-     * @return an integer corresponding to the value of this object.
-     **/
-    public PyObject __int__() {
-        throw Py.AttributeError("__int__");
-    }
-
-    /**
-     * Equivalent to the standard Python __long__ method.
-     * Should only be overridden by numeric objects that can be
      * reasonably coerced into a python long.
      *
      * @return a PyLong or PyInteger corresponding to the value of this object.
      **/
-    public PyObject __long__() {
-        throw Py.AttributeError("__long__");
+    public PyObject __int__() {
+        throw Py.AttributeError("__int__");
     }
 
     /**
@@ -2514,28 +2503,6 @@ public class PyObject implements Serializable {
     }
 
     /**
-     * Equivalent to the standard Python __div__ method
-     * @param     other the object to perform this binary operation with
-     *            (the right-hand operand).
-     * @return    the result of the div, or null if this operation
-     *            is not defined
-     **/
-    public PyObject __div__(PyObject other) {
-        return null;
-    }
-
-    /**
-     * Equivalent to the standard Python __rdiv__ method
-     * @param     other the object to perform this binary operation with
-     *            (the left-hand operand).
-     * @return    the result of the div, or null if this operation
-     *            is not defined.
-     **/
-    public PyObject __rdiv__(PyObject other) {
-        return null;
-    }
-
-    /**
      * Equivalent to the standard Python __idiv__ method
      * @param     other the object to perform this binary operation with
      *            (the right-hand operand).
@@ -2561,7 +2528,7 @@ public class PyObject implements Serializable {
         if (t1==t2||t1.builtin&&t2.builtin) {
             return this._basic_div(o2);
         }
-        return _binop_rule(t1,o2,t2,"__div__","__rdiv__","/");
+        return _binop_rule(t1,o2,t2,"__truediv__","__rtruediv__","/");
     }
 
     /**
@@ -2573,11 +2540,11 @@ public class PyObject implements Serializable {
      *            with these operands.
      **/
     final PyObject _basic_div(PyObject o2) {
-        PyObject x=__div__(o2);
+        PyObject x=__truediv__(o2);
         if (x!=null) {
             return x;
         }
-        x=o2.__rdiv__(this);
+        x=o2.__rtruediv__(this);
         if (x!=null) {
             return x;
         }
@@ -2607,7 +2574,7 @@ public class PyObject implements Serializable {
                 return res;
             }
         }
-        return _binop_rule(t1,o2,t2,"__div__","__rdiv__","/");
+        return _binop_rule(t1,o2,t2,"__truediv__","__rtruediv__","/");
     }
 
     /**
@@ -4305,7 +4272,7 @@ public class PyObject implements Serializable {
     public long asLong() {
         PyObject longObj;
         try {
-            longObj = __long__();
+            longObj = __int__();
         } catch (PyException pye) {
             if (pye.match(Py.AttributeError)) {
                 throw Py.TypeError("an integer is required");

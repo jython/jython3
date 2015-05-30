@@ -459,21 +459,6 @@ public class PyList extends PySequenceList implements List {
         return new PyReversedIterator(this);
     }
 
-    @ExposedMethod(defaults = "null", doc = BuiltinDocs.list___getslice___doc)
-    final synchronized PyObject list___getslice__(PyObject start, PyObject stop, PyObject step) {
-        return seq___getslice__(start, stop, step);
-    }
-
-    @ExposedMethod(defaults = "null", doc = BuiltinDocs.list___setslice___doc)
-    final synchronized void list___setslice__(PyObject start, PyObject stop, PyObject step, PyObject value) {
-        seq___setslice__(start, stop, step, value);
-    }
-
-    @ExposedMethod(defaults = "null", doc = BuiltinDocs.list___delslice___doc)
-    final synchronized void list___delslice__(PyObject start, PyObject stop, PyObject step) {
-        seq___delslice__(start, stop, step);
-    }
-
     @Override
     protected String unsupportedopMessage(String op, PyObject o2) {
         if (op.equals("+")) {
@@ -767,7 +752,7 @@ public class PyList extends PySequenceList implements List {
     }
 
     public void sort(PyObject cmp, PyObject key, PyObject reverse) {
-        boolean bReverse = reverse.__nonzero__();
+        boolean bReverse = reverse.__bool__();
         if (key == Py.None || key == null) {
             if (cmp == Py.None || cmp == null) {
                 sort(bReverse);
@@ -1008,7 +993,7 @@ public class PyList extends PySequenceList implements List {
 
         if (other instanceof PyObject) {
             synchronized (this) {
-                return _eq((PyObject)other).__nonzero__();
+                return _eq((PyObject)other).__bool__();
             }
         }
         if (other instanceof List) {

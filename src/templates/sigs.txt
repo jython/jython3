@@ -19,7 +19,7 @@ __delslice__
 ,hashCode (look slot_tp_hash)
 
 ,__cmp__ o
-,__nonzero__ (look slot_nb_nonzero)
+,__bool__ (look slot_nb_nonzero)
 ,__contains__ o
 ,__len__
 

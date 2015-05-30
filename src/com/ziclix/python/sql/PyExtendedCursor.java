@@ -328,8 +328,8 @@ public class PyExtendedCursor extends PyCursor {
         String q = getMetaDataName(qualifier);
         String o = getMetaDataName(owner);
         String t = getMetaDataName(table);
-        boolean u = unique.__nonzero__();
-        boolean a = accuracy.__nonzero__();
+        boolean u = unique.__bool__();
+        boolean a = accuracy.__bool__();
 
         try {
             this.fetch.add(getMetaData().getIndexInfo(q, o, t, u, a), skipCols);

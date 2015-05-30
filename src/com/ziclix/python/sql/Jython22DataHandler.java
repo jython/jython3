@@ -176,7 +176,7 @@ public class Jython22DataHandler extends DataHandler {
                     break;
 
                 case Types.BIT:
-                    stmt.setBoolean(index, object.__nonzero__());
+                    stmt.setBoolean(index, object.__bool__());
                     break;
 
                 default :

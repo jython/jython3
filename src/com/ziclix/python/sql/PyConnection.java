@@ -161,7 +161,7 @@ public class PyConnection extends PyObject implements ClassDictInit, ContextMana
         if ("autocommit".equals(name)) {
             try {
                 if (this.supportsTransactions) {
-                    this.connection.setAutoCommit(value.__nonzero__());
+                    this.connection.setAutoCommit(value.__bool__());
                 }
             } catch (SQLException e) {
                 throw zxJDBC.makeException(zxJDBC.DatabaseError, e);
@@ -522,7 +522,7 @@ class ConnectionFunc extends PyBuiltinMethodSet {
         PyConnection c = (PyConnection) __self__;
         switch (index) {
             case 2:
-                return c.cursor(arg.__nonzero__());
+                return c.cursor(arg.__bool__());
             case 4:
                 return c.nativesql(arg);
             default:
@@ -535,7 +535,7 @@ class ConnectionFunc extends PyBuiltinMethodSet {
         PyConnection c = (PyConnection) __self__;
         switch (index) {
             case 2:
-                return c.cursor(arg1.__nonzero__(), arg2, arg3);
+                return c.cursor(arg1.__bool__(), arg2, arg3);
             case 6:
                 return Py.newBoolean(c.__exit__(arg1, arg2, arg3));
             default:
@@ -557,7 +557,7 @@ class ConnectionFunc extends PyBuiltinMethodSet {
                 rstype = (parser.numArg() >= 2) ? parser.arg(1) : rstype;
                 rsconcur = (parser.numArg() >= 3) ? parser.arg(2) : rsconcur;
 
-                return c.cursor(dynamic.__nonzero__(), rstype, rsconcur);
+                return c.cursor(dynamic.__bool__(), rstype, rsconcur);
 
             default:
                 throw info.unexpectedCall(args.length, true);

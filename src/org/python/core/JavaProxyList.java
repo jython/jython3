@@ -94,12 +94,12 @@ class JavaProxyList {
 
         protected int fixBoundIndex(PyObject index) {
             PyInteger length = Py.newInteger(len());
-            if (index._lt(Py.Zero).__nonzero__()) {
+            if (index._lt(Py.Zero).__bool__()) {
                 index = index._add(length);
-                if (index._lt(Py.Zero).__nonzero__()) {
+                if (index._lt(Py.Zero).__bool__()) {
                     index = Py.Zero;
                 }
-            } else if (index._gt(length).__nonzero__()) {
+            } else if (index._gt(length).__bool__()) {
                 index = length;
             }
             int i = index.asIndex();
@@ -346,7 +346,7 @@ class JavaProxyList {
                     return Py.False;
                 }
                 for (int i = 0; i < jList.size(); i++) {
-                    if (!Py.java2py(jList.get(i))._eq(oList.pyget(i)).__nonzero__()) {
+                    if (!Py.java2py(jList.get(i))._eq(oList.pyget(i)).__bool__()) {
                         return Py.False;
                     }
                 }
@@ -360,7 +360,7 @@ class JavaProxyList {
                     }
                     for (int i = 0; i < jList.size(); i++) {
                         if (!Py.java2py(jList.get(i))._eq(
-                                Py.java2py(oList.get(i))).__nonzero__()) {
+                                Py.java2py(oList.get(i))).__bool__()) {
                             return Py.False;
                         }
                     }
@@ -449,7 +449,7 @@ class JavaProxyList {
                         break;
                     }
                     Object jobj = it.next();
-                    if (Py.java2py(jobj)._eq(object).__nonzero__()) {
+                    if (Py.java2py(jobj)._eq(object).__bool__()) {
                         return Py.newInteger(i);
                     }
                 }
@@ -466,7 +466,7 @@ class JavaProxyList {
             List jlist = asList();
             for (int i = 0; i < jlist.size(); i++) {
                 Object jobj = jlist.get(i);
-                if (Py.java2py(jobj)._eq(object).__nonzero__()) {
+                if (Py.java2py(jobj)._eq(object).__bool__()) {
                     ++count;
                 }
             }
@@ -487,7 +487,7 @@ class JavaProxyList {
             List jlist = asList();
             for (int i = 0; i < jlist.size(); i++) {
                 Object jobj = jlist.get(i);
-                if (Py.java2py(jobj)._eq(object).__nonzero__()) {
+                if (Py.java2py(jobj)._eq(object).__bool__()) {
                     jlist.remove(i);
                     return Py.None;
                 }
@@ -591,7 +591,7 @@ class JavaProxyList {
 
         @Override
         public PyObject __call__(PyObject cmp, PyObject key, PyObject reverse) {
-            list_sort(asList(), cmp, key, reverse.__nonzero__());
+            list_sort(asList(), cmp, key, reverse.__bool__());
             return Py.None;
         }
 
@@ -602,7 +602,7 @@ class JavaProxyList {
             PyObject cmp = ap.getPyObject(0, Py.None);
             PyObject key = ap.getPyObject(1, Py.None);
             PyObject reverse = ap.getPyObject(2, Py.False);
-            list_sort(asList(), cmp, key, reverse.__nonzero__());
+            list_sort(asList(), cmp, key, reverse.__bool__());
             return Py.None;
         }
     };

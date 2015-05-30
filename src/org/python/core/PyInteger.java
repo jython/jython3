@@ -213,12 +213,12 @@ public class PyInteger extends PyObject {
     }
 
     @Override
-    public boolean __nonzero__() {
-        return int___nonzero__();
+    public boolean __bool__() {
+        return int___bool__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.int___nonzero___doc)
-    final boolean int___nonzero__() {
+    @ExposedMethod(doc = BuiltinDocs.int___bool___doc)
+    final boolean int___bool__() {
         return getValue() != 0;
     }
 
@@ -251,29 +251,29 @@ public class PyInteger extends PyObject {
         return super.__tojava__(c);
     }
 
-    @Override
-    public int __cmp__(PyObject other) {
-        return int___cmp__(other);
-    }
-
-    @ExposedMethod(type = MethodType.CMP, doc = BuiltinDocs.int___cmp___doc)
-    final int int___cmp__(PyObject other) {
-        if (!canCoerce(other)) {
-            return -2;
-        }
-        int v = coerce(other);
-        return getValue() < v ? -1 : getValue() > v ? 1 : 0;
-    }
+//    @Override
+//    public int __cmp__(PyObject other) {
+//        return int___cmp__(other);
+//    }
+//
+//    @ExposedMethod(type = MethodType.CMP, doc = BuiltinDocs.int___cmp___doc)
+//    final int int___cmp__(PyObject other) {
+//        if (!canCoerce(other)) {
+//            return -2;
+//        }
+//        int v = coerce(other);
+//        return getValue() < v ? -1 : getValue() > v ? 1 : 0;
+//    }
 
     @Override
     public Object __coerce_ex__(PyObject other) {
         return int___coerce_ex__(other);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.int___coerce___doc)
-    final PyObject int___coerce__(PyObject other) {
-        return adaptToCoerceTuple(int___coerce_ex__(other));
-    }
+//    @ExposedMethod(doc = BuiltinDocs.int___coerce___doc)
+//    final PyObject int___coerce__(PyObject other) {
+//        return adaptToCoerceTuple(int___coerce_ex__(other));
+//    }
 
     /**
      * Coercion logic for int. Implemented as a final method to avoid invocation of virtual methods
@@ -376,7 +376,7 @@ public class PyInteger extends PyObject {
         if (x <= Integer.MAX_VALUE && x >= Integer.MIN_VALUE) {
             return Py.newInteger((int)x);
         }
-        return __long__().__mul__(right);
+        return __int__().__mul__(right);
     }
 
     @Override
@@ -408,38 +408,6 @@ public class PyInteger extends PyObject {
             // assert(xmody && ((y ^ xmody) >= 0));
         }
         return xdivy;
-    }
-
-    @Override
-    public PyObject __div__(PyObject right) {
-        return int___div__(right);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___div___doc)
-    final PyObject int___div__(PyObject right) {
-        if (!canCoerce(right)) {
-            return null;
-        }
-        if (Options.division_warning > 0) {
-            Py.warning(Py.DeprecationWarning, "classic int division");
-        }
-        return Py.newInteger(divide(getValue(), coerce(right)));
-    }
-
-    @Override
-    public PyObject __rdiv__(PyObject left) {
-        return int___rdiv__(left);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___rdiv___doc)
-    final PyObject int___rdiv__(PyObject left) {
-        if (!canCoerce(left)) {
-            return null;
-        }
-        if (Options.division_warning > 0) {
-            Py.warning(Py.DeprecationWarning, "classic int division");
-        }
-        return Py.newInteger(divide(coerce(left), getValue()));
     }
 
     @Override
@@ -478,7 +446,7 @@ public class PyInteger extends PyObject {
         if (right instanceof PyInteger) {
             return __float__().__truediv__(right);
         } else if (right instanceof PyLong) {
-            return int___long__().__truediv__(right);
+            return int___int__().__truediv__(right);
         } else {
             return null;
         }
@@ -494,7 +462,7 @@ public class PyInteger extends PyObject {
         if (left instanceof PyInteger) {
             return left.__float__().__truediv__(this);
         } else if (left instanceof PyLong) {
-            return left.__truediv__(int___long__());
+            return left.__truediv__(int___int__());
         } else {
             return null;
         }
@@ -631,7 +599,7 @@ public class PyInteger extends PyObject {
                 }
 
                 if (result > Integer.MAX_VALUE) {
-                    return left.__long__().__pow__(right, modulo);
+                    return left.__int__().__pow__(right, modulo);
                 }
             }
             pow >>= 1;
@@ -645,7 +613,7 @@ public class PyInteger extends PyObject {
             }
 
             if (tmp > Integer.MAX_VALUE) {
-                return left.__long__().__pow__(right, modulo);
+                return left.__int__().__pow__(right, modulo);
             }
         }
 
@@ -671,19 +639,19 @@ public class PyInteger extends PyObject {
         if (right instanceof PyInteger) {
             rightv = ((PyInteger)right).getValue();
         } else if (right instanceof PyLong) {
-            return int___long__().__lshift__(right);
+            return int___int__().__lshift__(right);
         } else {
             return null;
         }
 
         if (rightv >= Integer.SIZE) {
-            return __long__().__lshift__(right);
+            return __int__().__lshift__(right);
         } else if (rightv < 0) {
             throw Py.ValueError("negative shift count");
         }
         int result = getValue() << rightv;
         if (getValue() != result >> rightv) {
-            return __long__().__lshift__(right);
+            return __int__().__lshift__(right);
         }
         return Py.newInteger(result);
     }
@@ -694,19 +662,19 @@ public class PyInteger extends PyObject {
         if (left instanceof PyInteger) {
             leftv = ((PyInteger)left).getValue();
         } else if (left instanceof PyLong) {
-            return left.__rlshift__(int___long__());
+            return left.__rlshift__(int___int__());
         } else {
             return null;
         }
 
         if (getValue() >= Integer.SIZE) {
-            return left.__long__().__lshift__(this);
+            return left.__int__().__lshift__(this);
         } else if (getValue() < 0) {
             throw Py.ValueError("negative shift count");
         }
         int result = leftv << getValue();
         if (leftv != result >> getValue()) {
-            return left.__long__().__lshift__(this);
+            return left.__int__().__lshift__(this);
         }
         return Py.newInteger(result);
     }
@@ -722,7 +690,7 @@ public class PyInteger extends PyObject {
         if (right instanceof PyInteger) {
             rightv = ((PyInteger)right).getValue();
         } else if (right instanceof PyLong) {
-            return int___long__().__rshift__(right);
+            return int___int__().__rshift__(right);
         } else {
             return null;
         }
@@ -744,7 +712,7 @@ public class PyInteger extends PyObject {
         if (left instanceof PyInteger) {
             leftv = ((PyInteger)left).getValue();
         } else if (left instanceof PyLong) {
-            return left.__rshift__(int___long__());
+            return left.__rshift__(int___int__());
         } else {
             return null;
         }
@@ -771,7 +739,7 @@ public class PyInteger extends PyObject {
         if (right instanceof PyInteger) {
             rightv = ((PyInteger)right).getValue();
         } else if (right instanceof PyLong) {
-            return int___long__().__and__(right);
+            return int___int__().__and__(right);
         } else {
             return null;
         }
@@ -795,7 +763,7 @@ public class PyInteger extends PyObject {
         if (right instanceof PyInteger) {
             rightv = ((PyInteger)right).getValue();
         } else if (right instanceof PyLong) {
-            return int___long__().__xor__(right);
+            return int___int__().__xor__(right);
         } else {
             return null;
         }
@@ -809,7 +777,7 @@ public class PyInteger extends PyObject {
         if (left instanceof PyInteger) {
             leftv = ((PyInteger)left).getValue();
         } else if (left instanceof PyLong) {
-            return left.__rxor__(int___long__());
+            return left.__rxor__(int___int__());
         } else {
             return null;
         }
@@ -828,7 +796,7 @@ public class PyInteger extends PyObject {
         if (right instanceof PyInteger) {
             rightv = ((PyInteger)right).getValue();
         } else if (right instanceof PyLong) {
-            return int___long__().__or__(right);
+            return int___int__().__or__(right);
         } else {
             return null;
         }
@@ -896,17 +864,7 @@ public class PyInteger extends PyObject {
     }
 
     @ExposedMethod(doc = BuiltinDocs.int___int___doc)
-    final PyInteger int___int__() {
-        return getType() == TYPE ? this : Py.newInteger(getValue());
-    }
-
-    @Override
-    public PyObject __long__() {
-        return int___long__();
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.int___long___doc)
-    final PyObject int___long__() {
+    final PyObject int___int__() {
         return new PyLong(getValue());
     }
 
@@ -944,29 +902,6 @@ public class PyInteger extends PyObject {
     public PyComplex __complex__() {
         return new PyComplex(getValue(), 0.);
     }
-
-    @Override
-    public PyString __oct__() {
-        return int___oct__();
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.int___oct___doc)
-    final PyString int___oct__() {
-        // Use the prepared format specifier for octal.
-        return formatImpl(IntegerFormatter.OCT);
-    }
-
-    @Override
-    public PyString __hex__() {
-        return int___hex__();
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.int___hex___doc)
-    final PyString int___hex__() {
-        // Use the prepared format specifier for hexadecimal.
-        return formatImpl(IntegerFormatter.HEX);
-    }
-
     /**
      * Common code used by the number-base conversion method __oct__ and __hex__.
      *

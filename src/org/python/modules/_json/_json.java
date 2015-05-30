@@ -116,7 +116,7 @@ public class _json implements ClassDictInit {
         public PyObject __call__(PyObject s, PyObject end, PyObject encoding, PyObject strict) {
             // but rethrow in case it does work - see the test case for issue 362
             int end_idx = end.asIndex(Py.OverflowError);
-            boolean is_strict = strict.__nonzero__();
+            boolean is_strict = strict.__bool__();
             if (s instanceof PyString) {
                 return scanstring((PyString) s, end_idx,
                         encoding == Py.None ? null : encoding.toString(), is_strict);

@@ -21,8 +21,9 @@ import org.python.expose.MethodType;
  * arguments the same (one-dimensional byte-array) types. Their behaviour differs as detailed in the
  * documentation.
  */
+// TODO: remove?
 @Untraversable
-@ExposedType(name = "buffer", doc = BuiltinDocs.buffer_doc, base = PyObject.class,
+@ExposedType(name = "buffer", doc = "" /*BuiltinDocs.buffer_doc*/, base = PyObject.class,
         isBaseType = false)
 public class Py2kBuffer extends PySequence implements BufferProtocol {
 
@@ -217,7 +218,7 @@ public class Py2kBuffer extends PySequence implements BufferProtocol {
         return buffer___add__(other);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.buffer___add___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = "" /*BuiltinDocs.buffer___add___doc*/)
     final PyObject buffer___add__(PyObject other) {
 
         // The other operand must offer us the buffer interface
@@ -255,7 +256,7 @@ public class Py2kBuffer extends PySequence implements BufferProtocol {
         return buffer___mul__(o);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.buffer___mul___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = ""/*BuiltinDocs.buffer___mul___doc*/)
     final PyObject buffer___mul__(PyObject o) {
         if (!o.isIndex()) {
             return null;
@@ -272,7 +273,7 @@ public class Py2kBuffer extends PySequence implements BufferProtocol {
         return buffer___rmul__(o);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.buffer___rmul___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = ""/*BuiltinDocs.buffer___rmul___doc*/)
     final PyObject buffer___rmul__(PyObject o) {
         if (!o.isIndex()) {
             return null;

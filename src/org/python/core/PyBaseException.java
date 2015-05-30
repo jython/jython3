@@ -1,7 +1,6 @@
 /* Copyright (c) 2008 Jython Developers */
 package org.python.core;
 
-import org.python.expose.ExposedDelete;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
@@ -49,31 +48,6 @@ public class PyBaseException extends PyObject implements Traverseproc {
             message = args[0];
         }
     }
-
-    @Override
-    public PyObject __getitem__(PyObject index) {
-        return BaseException___getitem__(index);
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.BaseException___getitem___doc)
-    final PyObject BaseException___getitem__(PyObject index) {
-        Py.warnPy3k("__getitem__ not supported for exception classes in 3.x; use args "
-                    + "attribute");
-        return args.__getitem__(index);
-    }
-
-    @Override
-    public PyObject __getslice__(PyObject start, PyObject stop) {
-        return BaseException___getslice__(start, stop);
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.BaseException___getslice___doc)
-    final PyObject BaseException___getslice__(PyObject start, PyObject stop) {
-        Py.warnPy3k("__getslice__ not supported for exception classes in 3.x; use args "
-                    + "attribute");
-        return args.__getslice__(start, stop);
-    }
-
 
     @Override
     public PyObject __reduce__() {
@@ -183,7 +157,7 @@ public class PyBaseException extends PyObject implements Traverseproc {
         return BaseException___unicode__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.BaseException___unicode___doc)
+    @ExposedMethod(doc = BuiltinDocs.BaseException___str___doc)
     final PyUnicode BaseException___unicode__() {
         // CPython issue6108: if __str__ has been overridden in the subclass, unicode()
         // should return the message returned by __str__ as used to happen before this
@@ -227,37 +201,6 @@ public class PyBaseException extends PyObject implements Traverseproc {
     public void setArgs(PyObject val) {
         args = PyTuple.fromIterable(val);
     }
-
-    @ExposedGet(name = "message", doc = BuiltinDocs.BaseException_message_doc)
-    public PyObject getMessage() {
-        PyObject message;
-
-        // if "message" is in self->dict, accessing a user-set message attribute
-        if (__dict__ != null && (message = __dict__.__finditem__("message")) != null) {
-            return message;
-        }
-
-        if (this.message == null) {
-            throw Py.AttributeError("message attribute was deleted");
-        }
-
-        Py.DeprecationWarning("BaseException.message has been deprecated as of Python 2.6");
-        return this.message;
-    }
-
-    @ExposedSet(name = "message")
-    public void setMessage(PyObject value) {
-        getDict().__setitem__("message", value);
-    }
-
-    @ExposedDelete(name = "message")
-    public void delMessage() {
-        if (__dict__ != null && (message = __dict__.__finditem__("message")) != null) {
-            __dict__.__delitem__("message");
-        }
-        message = null;
-    }
-
 
     /* Traverseproc implementation */
     @Override

@@ -240,7 +240,7 @@ public class _codecs {
     }
 
     public static PyTuple utf_8_decode(String str, String errors, PyObject final_) {
-        return utf_8_decode(str, errors, final_.__nonzero__());
+        return utf_8_decode(str, errors, final_.__bool__());
     }
 
     public static PyTuple utf_8_decode(String str, String errors, boolean final_) {

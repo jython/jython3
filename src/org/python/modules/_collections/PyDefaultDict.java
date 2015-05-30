@@ -116,7 +116,7 @@ public class PyDefaultDict extends PyDictionary implements Traverseproc {
             PyObject[] ob = {defaultFactory};
             args = new PyTuple(ob);
         }
-        return new PyTuple(getType(), args, Py.None, Py.None, iteritems());
+        return new PyTuple(getType(), args, Py.None, Py.None, dict_iteritems());
     }
 
     @Override

@@ -340,7 +340,7 @@ public class PyCursor extends PyObject implements ClassDictInit, WarningListener
     @Override
     public PyObject __iternext__() {
         PyObject row = fetchone();
-        return row.__nonzero__() ? row : null;
+        return row.__bool__() ? row : null;
     }
 
     /**
@@ -692,7 +692,7 @@ public class PyCursor extends PyObject implements ClassDictInit, WarningListener
 
         // If the fetch is exhausted and multiple ResultSets are supported, try addding a
         // next ResultSet. XXX: DynamicFetch currently isn't so tailored for this
-        if (!nextset.__nonzero__() && connection.supportsMultipleResultSets && !dynamicFetch) {
+        if (!nextset.__bool__() && connection.supportsMultipleResultSets && !dynamicFetch) {
             Statement stmt = statement.statement;
             try {
                 boolean hasMoreResults;

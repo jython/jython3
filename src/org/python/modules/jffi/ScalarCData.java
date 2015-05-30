@@ -107,12 +107,6 @@ public class ScalarCData extends CData {
 
     @ExposedMethod
     @Override
-    public PyObject __long__() {
-        return getValue().__long__();
-    }
-
-    @ExposedMethod
-    @Override
     public PyFloat __float__() {
         return getValue().__float__();
     }

@@ -49,8 +49,8 @@ public class Encoder extends PyObject implements Traverseproc {
         key_separator = ap.getPyObject(4);
         item_separator = ap.getPyObject(5);
         sort_keys = ap.getPyObject(6);
-        skipkeys = ap.getPyObject(7).__nonzero__();
-        allow_nan = ap.getPyObject(8).__nonzero__();
+        skipkeys = ap.getPyObject(7).__bool__();
+        allow_nan = ap.getPyObject(8).__bool__();
     }
 
     public PyObject __call__(PyObject obj) {

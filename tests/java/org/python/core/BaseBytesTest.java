@@ -277,7 +277,7 @@ public class BaseBytesTest extends TestCase {
         // A scary set of objects
         final PyObject[] brantub =
                 {null, new PyInteger(5), new PyString("\u00A0\u00A1\u00A2\u00A3\u00A4"),
-                        getInstance(new int[] {180, 190, 200}), new PyXRange(1, 301, 50)};
+                        getInstance(new int[] {180, 190, 200}), new PyRange(1, 301, 50)};
         // The array contents we should obtain
         final int[][] prize =
                 { {}, {0, 0, 0, 0, 0}, {160, 161, 162, 163, 164}, {180, 190, 200},
@@ -303,8 +303,8 @@ public class BaseBytesTest extends TestCase {
         // A scary set of objects
         final PyObject[] brantub = {Py.None, new PyInteger(-1), //
                 new PyLong(0x80000000L), //
-                new PyXRange(3, -2, -1), //
-                new PyXRange(250, 257) //
+                new PyRange(3, -2, -1), //
+                new PyRange(250, 257) //
                 };
         // The PyException types we should obtain
         final PyObject[] boobyPrize = {Py.TypeError, // None

@@ -189,7 +189,7 @@ public class DataHandler {
                     break;
 
                 case Types.BIT:
-                    stmt.setBoolean(index, object.__nonzero__());
+                    stmt.setBoolean(index, object.__bool__());
                     break;
 
                 default :

@@ -34,23 +34,22 @@ import org.python.expose.ExposedType;
 /**
  * The Python file type. Wraps an {@link TextIOBase} object.
  */
-@ExposedType(name = "file", doc = BuiltinDocs.file_doc)
+@ExposedType(name = "file", doc = BuiltinDocs.TextIOBase_doc)
 public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc {
-
     public static final PyType TYPE = PyType.fromClass(PyFile.class);
 
     /** The filename */
-    @ExposedGet(doc = BuiltinDocs.file_name_doc)
+    @ExposedGet(doc = "") // BuiltinDocs.TextIOBase_name_doc)
     public PyObject name;
 
     /** The mode string */
-    @ExposedGet(doc = BuiltinDocs.file_mode_doc)
+    @ExposedGet(doc = "") //BuiltinDocs.TextIOBase_mode_doc)
     public String mode;
 
-    @ExposedGet(doc = BuiltinDocs.file_encoding_doc)
+    @ExposedGet(doc = BuiltinDocs.TextIOBase_encoding_doc)
     public String encoding;
 
-    @ExposedGet(doc = BuiltinDocs.file_errors_doc)
+    @ExposedGet(doc = BuiltinDocs.TextIOBase_errors_doc)
     public String errors;
 
     /** Indicator dictating whether a space should be written to this
@@ -163,7 +162,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
     }
 
     @ExposedNew
-    @ExposedMethod(doc = BuiltinDocs.file___init___doc)
+    @ExposedMethod(doc = BuiltinDocs.TextIOBase___init___doc)
     final void file___init__(PyObject[] args, String[] kwds) {
         ArgParser ap = new ArgParser("file", args, kwds, new String[] {"name", "mode", "buffering"},
                                      1);
@@ -338,7 +337,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         return fileioMode.toString();
     }
 
-    @ExposedMethod(defaults = {"-1"}, doc = BuiltinDocs.file_read_doc)
+    @ExposedMethod(defaults = {"-1"}, doc = BuiltinDocs.TextIOBase_read_doc)
     final synchronized PyString file_read(int size) {
         checkClosed();
         return new PyString(file.read(size));
@@ -352,17 +351,19 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         return file_read(-1);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.file_readinto_doc)
-    final synchronized int file_readinto(PyObject buf) {
-        checkClosed();
-        return file.readinto(buf);
-    }
+// TODO: what to do with these
+//
+//    @ExposedMethod(doc = BuiltinDocs.TextIOBase_readinto_doc)
+//    final synchronized int file_readinto(PyObject buf) {
+//        checkClosed();
+//        return file.readinto(buf);
+//    }
+//
+//    public int readinto(PyObject buf) {
+//        return file_readinto(buf);
+//    }
 
-    public int readinto(PyObject buf) {
-        return file_readinto(buf);
-    }
-
-    @ExposedMethod(defaults = {"-1"}, doc = BuiltinDocs.file_readline_doc)
+    @ExposedMethod(defaults = {"-1"}, doc = BuiltinDocs.TextIOBase_readline_doc)
     final synchronized PyString file_readline(int max) {
         checkClosed();
         return new PyString(file.readline(max));
@@ -376,7 +377,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         return file_readline(-1);
     }
 
-    @ExposedMethod(defaults = {"0"}, doc = BuiltinDocs.file_readlines_doc)
+    @ExposedMethod(defaults = {"0"}, doc = BuiltinDocs.TextIOBase_readlines_doc)
     final synchronized PyObject file_readlines(int sizehint) {
         checkClosed();
         PyList list = new PyList();
@@ -416,7 +417,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         return new PyString(next);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.file_next_doc)
+    @ExposedMethod(doc = BuiltinDocs.TextIOBase___next___doc)
     final PyObject file_next() {
         PyObject ret = file___iternext__();
         if (ret == null) {
@@ -430,7 +431,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
     }
 
     @ExposedMethod(names = {"__enter__", "__iter__", "xreadlines"},
-                   doc = BuiltinDocs.file___iter___doc)
+                   doc = BuiltinDocs.TextIOBase___iter___doc)
     final PyObject file_self() {
         checkClosed();
         return this;
@@ -449,7 +450,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         return file_self();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.file_write_doc)
+    @ExposedMethod(doc = BuiltinDocs.TextIOBase_write_doc)
     final void file_write(PyObject obj) {
         file_write(asWritable(obj, null));
     }
@@ -464,7 +465,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         file_write(string);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.file_writelines_doc)
+    @ExposedMethod(doc = BuiltinDocs.TextIOBase_writelines_doc)
     final synchronized void file_writelines(PyObject lines) {
         checkClosed();
         PyObject iter = Py.iter(lines, "writelines() requires an iterable argument");
@@ -516,7 +517,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         throw Py.TypeError(message);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.file_tell_doc)
+    @ExposedMethod(doc = BuiltinDocs.TextIOBase_tell_doc)
     final synchronized long file_tell() {
         checkClosed();
         return file.tell();
@@ -526,7 +527,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         return file_tell();
     }
 
-    @ExposedMethod(defaults = {"0"}, doc = BuiltinDocs.file_seek_doc)
+    @ExposedMethod(defaults = {"0"}, doc = BuiltinDocs.TextIOBase_seek_doc)
     final synchronized void file_seek(long pos, int how) {
         checkClosed();
         file.seek(pos, how);
@@ -540,7 +541,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         file_seek(pos, 0);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.file_flush_doc)
+    @ExposedMethod(doc = BuiltinDocs.TextIOBase_flush_doc)
     final synchronized void file_flush() {
         checkClosed();
         file.flush();
@@ -550,7 +551,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         file_flush();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.file_close_doc)
+    @ExposedMethod(doc = BuiltinDocs.TextIOBase_close_doc)
     final synchronized void file_close() {
         if (closer != null) {
             closer.close();
@@ -564,7 +565,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         file_close();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.file___exit___doc)
+    @ExposedMethod(doc = BuiltinDocs.TextIOBase___exit___doc)
     final void file___exit__(PyObject type, PyObject value, PyObject traceback) {
         close();
     }
@@ -573,7 +574,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         file___exit__(type, value, traceback);
     }
 
-    @ExposedMethod(defaults = {"null"}, doc = BuiltinDocs.file_truncate_doc)
+    @ExposedMethod(defaults = {"null"}, doc = BuiltinDocs.TextIOBase_truncate_doc)
     final void file_truncate(PyObject position) {
         if (position == null) {
             file_truncate();
@@ -602,7 +603,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         return file_isatty();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.file_isatty_doc)
+    @ExposedMethod(doc = BuiltinDocs.TextIOBase_isatty_doc)
     final boolean file_isatty() {
         return file.isatty();
     }
@@ -611,12 +612,12 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         return file_fileno();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.file_fileno_doc)
+    @ExposedMethod(doc = BuiltinDocs.TextIOBase_fileno_doc)
     final PyObject file_fileno() {
         return PyJavaType.wrapJavaObject(file.fileno());
     }
 
-    @ExposedMethod(names = {"__str__", "__repr__"}, doc = BuiltinDocs.file___str___doc)
+    @ExposedMethod(names = {"__str__", "__repr__"}, doc = BuiltinDocs.TextIOBase___str___doc)
     final String file_toString() {
         String state = file.closed() ? "closed" : "open";
         String id = Py.idstr(this);
@@ -640,31 +641,31 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         file.checkClosed();
     }
 
-    @ExposedGet(name = "closed", doc = BuiltinDocs.file_closed_doc)
+    @ExposedGet(name = "closed", doc = BuiltinDocs.TextIOBase_closed_doc)
     public boolean getClosed() {
         return file.closed();
     }
 
-    @ExposedGet(name = "newlines", doc = BuiltinDocs.file_newlines_doc)
+    @ExposedGet(name = "newlines", doc = BuiltinDocs.TextIOBase_newlines_doc)
     public PyObject getNewlines() {
         return file.getNewlines();
     }
+//
+//    @ExposedGet(name = "softspace", doc = BuiltinDocs.TextIOBase_softspace_doc)
+//    public PyObject getSoftspace() {
+//        // NOTE: not actual bools because CPython is this way
+//        return softspace ? Py.One : Py.Zero;
+//    }
 
-    @ExposedGet(name = "softspace", doc = BuiltinDocs.file_softspace_doc)
-    public PyObject getSoftspace() {
-        // NOTE: not actual bools because CPython is this way
-        return softspace ? Py.One : Py.Zero;
-    }
-
-    @ExposedSet(name = "softspace")
-    public void setSoftspace(PyObject obj) {
-        softspace = obj.__nonzero__();
-    }
-
-    @ExposedDelete(name = "softspace")
-    public void delSoftspace() {
-        throw Py.TypeError("can't delete numeric/char attribute");
-    }
+//    @ExposedSet(name = "softspace")
+//    public void setSoftspace(PyObject obj) {
+//        softspace = obj.__bool__();
+//    }
+//
+//    @ExposedDelete(name = "softspace")
+//    public void delSoftspace() {
+//        throw Py.TypeError("can't delete numeric/char attribute");
+//    }
 
     @Override
     public Object __tojava__(Class<?> cls) {

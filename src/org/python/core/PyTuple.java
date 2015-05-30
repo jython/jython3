@@ -251,11 +251,6 @@ public class PyTuple extends PySequenceList implements List {
         return new PyFastSequenceIter(this);
     }
 
-    @ExposedMethod(defaults = "null", doc = BuiltinDocs.tuple___getslice___doc)
-    final PyObject tuple___getslice__(PyObject s_start, PyObject s_stop, PyObject s_step) {
-        return seq___getslice__(s_start, s_stop, s_step);
-    }
-
     @ExposedMethod(doc = BuiltinDocs.tuple___getitem___doc)
     final PyObject tuple___getitem__(PyObject index) {
         PyObject ret = seq___finditem__(index);
@@ -523,7 +518,7 @@ public class PyTuple extends PySequenceList implements List {
         }
 
         if (other instanceof PyObject) {
-            return _eq((PyObject)other).__nonzero__();
+            return _eq((PyObject)other).__bool__();
         }
         if (other instanceof List) {
             return other.equals(this);

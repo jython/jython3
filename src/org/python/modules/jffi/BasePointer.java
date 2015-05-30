@@ -17,17 +17,12 @@ public abstract class BasePointer extends PyObject implements Pointer {
     }
 
     @Override
-    public boolean __nonzero__() {
+    public boolean __bool__() {
         return !getMemory().isNull();
     }
 
     @Override
     public PyObject __int__() {
-        return address();
-    }
-
-    @Override
-    public PyObject __long__() {
         return address();
     }
 }

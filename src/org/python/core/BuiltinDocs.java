@@ -4,31 +4,54 @@ package org.python.core;
 
 public class BuiltinDocs {
 
-    // Docs for <type 'object'>
+    // Docs for <class 'object'>
     public final static String object___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
     public final static String object___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
+
+    public final static String object___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String object_doc = 
         "The most base type";
 
+    public final static String object___eq___doc = 
+        "Return self==value.";
+
     public final static String object___format___doc = 
         "default object formatter";
 
+    public final static String object___ge___doc = 
+        "Return self>=value.";
+
     public final static String object___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
+
+    public final static String object___gt___doc = 
+        "Return self>value.";
 
     public final static String object___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String object___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String object___le___doc = 
+        "Return self<=value.";
+
+    public final static String object___lt___doc = 
+        "Return self<value.";
+
+    public final static String object___ne___doc = 
+        "Return self!=value.";
 
     public final static String object___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String object___reduce___doc = 
         "helper for pickle";
@@ -37,17 +60,17 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String object___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String object___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String object___sizeof___doc = 
         "__sizeof__() -> int\n" + 
         "size of object in memory, in bytes";
 
     public final static String object___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String object___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -58,7 +81,7 @@ public class BuiltinDocs {
         "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
-    // Docs for <type 'type'>
+    // Docs for <class 'type'>
     public final static String type___abstractmethods___doc = 
         "";
 
@@ -72,102 +95,134 @@ public class BuiltinDocs {
         "If the argument is a tuple, the return value is the same object.";
 
     public final static String type___basicsize___doc = 
-        "int(x[, base]) -> integer\n" + 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
         "\n" + 
-        "Convert a string or number to an integer, if possible.  A floating point\n" + 
-        "argument will be truncated towards zero (this does not include a string\n" + 
-        "representation of a floating point number!)  When converting a string, use\n" + 
-        "the optional base.  It is an error to supply a base when converting a\n" + 
-        "non-string.  If base is zero, the proper base is guessed based on the\n" + 
-        "string content.  If the argument is outside the integer range a\n" + 
-        "long object will be returned instead.";
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
 
     public final static String type___call___doc = 
-        "x.__call__(...) <==> x(...)";
+        "Call self as a function.";
 
     public final static String type___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
     public final static String type___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
 
     public final static String type___dict___doc = 
         "";
 
     public final static String type___dictoffset___doc = 
-        "int(x[, base]) -> integer\n" + 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
         "\n" + 
-        "Convert a string or number to an integer, if possible.  A floating point\n" + 
-        "argument will be truncated towards zero (this does not include a string\n" + 
-        "representation of a floating point number!)  When converting a string, use\n" + 
-        "the optional base.  It is an error to supply a base when converting a\n" + 
-        "non-string.  If base is zero, the proper base is guessed based on the\n" + 
-        "string content.  If the argument is outside the integer range a\n" + 
-        "long object will be returned instead.";
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String type___dir___doc = 
+        "__dir__() -> list\n" + 
+        "specialized __dir__ implementation for types";
 
     public final static String type_doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
     public final static String type___eq___doc = 
-        "x.__eq__(y) <==> x==y";
+        "Return self==value.";
 
     public final static String type___flags___doc = 
-        "int(x[, base]) -> integer\n" + 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
         "\n" + 
-        "Convert a string or number to an integer, if possible.  A floating point\n" + 
-        "argument will be truncated towards zero (this does not include a string\n" + 
-        "representation of a floating point number!)  When converting a string, use\n" + 
-        "the optional base.  It is an error to supply a base when converting a\n" + 
-        "non-string.  If base is zero, the proper base is guessed based on the\n" + 
-        "string content.  If the argument is outside the integer range a\n" + 
-        "long object will be returned instead.";
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
 
     public final static String type___format___doc = 
         "default object formatter";
 
     public final static String type___ge___doc = 
-        "x.__ge__(y) <==> x>=y";
+        "Return self>=value.";
 
     public final static String type___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
 
     public final static String type___gt___doc = 
-        "x.__gt__(y) <==> x>y";
+        "Return self>value.";
 
     public final static String type___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String type___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
 
     public final static String type___instancecheck___doc = 
         "__instancecheck__() -> bool\n" + 
         "check if an object is an instance";
 
     public final static String type___itemsize___doc = 
-        "int(x[, base]) -> integer\n" + 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
         "\n" + 
-        "Convert a string or number to an integer, if possible.  A floating point\n" + 
-        "argument will be truncated towards zero (this does not include a string\n" + 
-        "representation of a floating point number!)  When converting a string, use\n" + 
-        "the optional base.  It is an error to supply a base when converting a\n" + 
-        "non-string.  If base is zero, the proper base is guessed based on the\n" + 
-        "string content.  If the argument is outside the integer range a\n" + 
-        "long object will be returned instead.";
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
 
     public final static String type___le___doc = 
-        "x.__le__(y) <==> x<=y";
+        "Return self<=value.";
 
     public final static String type___lt___doc = 
-        "x.__lt__(y) <==> x<y";
+        "Return self<value.";
 
     public final static String type___module___doc = 
-        "str(object) -> string\n" + 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
         "\n" + 
-        "Return a nice string representation of the object.\n" + 
-        "If the argument is a string, the return value is the same object.";
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
 
     public final static String type___mro___doc = 
         "tuple() -> empty tuple\n" + 
@@ -176,16 +231,38 @@ public class BuiltinDocs {
         "If the argument is a tuple, the return value is the same object.";
 
     public final static String type___name___doc = 
-        "str(object) -> string\n" + 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
         "\n" + 
-        "Return a nice string representation of the object.\n" + 
-        "If the argument is a string, the return value is the same object.";
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
 
     public final static String type___ne___doc = 
-        "x.__ne__(y) <==> x!=y";
+        "Return self!=value.";
 
     public final static String type___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String type___prepare___doc = 
+        "__prepare__() -> dict\n" + 
+        "used to create the namespace for the class statement";
+
+    public final static String type___qualname___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
 
     public final static String type___reduce___doc = 
         "helper for pickle";
@@ -194,17 +271,17 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String type___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String type___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String type___sizeof___doc = 
         "__sizeof__() -> int\n" + 
-        "size of object in memory, in bytes";
+        "return memory consumption of the type object";
 
     public final static String type___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String type___subclasscheck___doc = 
         "__subclasscheck__() -> bool\n" + 
@@ -222,125 +299,131 @@ public class BuiltinDocs {
         "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
+    public final static String type___text_signature___doc = 
+        "";
+
     public final static String type___weakrefoffset___doc = 
-        "int(x[, base]) -> integer\n" + 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
         "\n" + 
-        "Convert a string or number to an integer, if possible.  A floating point\n" + 
-        "argument will be truncated towards zero (this does not include a string\n" + 
-        "representation of a floating point number!)  When converting a string, use\n" + 
-        "the optional base.  It is an error to supply a base when converting a\n" + 
-        "non-string.  If base is zero, the proper base is guessed based on the\n" + 
-        "string content.  If the argument is outside the integer range a\n" + 
-        "long object will be returned instead.";
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
 
     public final static String type_mro_doc = 
         "mro() -> list\n" + 
         "return a type's method resolution order";
 
-    // Docs for <type 'unicode'>
-    public final static String unicode___add___doc = 
-        "x.__add__(y) <==> x+y";
+    // Docs for <class 'bytes'>
+    public final static String bytes___add___doc = 
+        "Return self+value.";
 
-    public final static String unicode___class___doc = 
+    public final static String bytes___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
-    public final static String unicode___contains___doc = 
-        "x.__contains__(y) <==> y in x";
+    public final static String bytes___contains___doc = 
+        "Return key in self.";
 
-    public final static String unicode___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+    public final static String bytes___delattr___doc = 
+        "Implement delattr(self, name).";
 
-    public final static String unicode_doc = 
-        "unicode(object='') -> unicode object\n" +
-        "unicode(string[, encoding[, errors]]) -> unicode object\n" + 
+    public final static String bytes___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String bytes_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
         "\n" + 
-        "Create a new Unicode object from the given encoded string.\n" + 
-        "encoding defaults to the current default string encoding.\n" + 
-        "errors can be 'strict', 'replace' or 'ignore' and defaults to 'strict'.";
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
 
-    public final static String unicode___eq___doc = 
-        "x.__eq__(y) <==> x==y";
+    public final static String bytes___eq___doc = 
+        "Return self==value.";
 
-    public final static String unicode___format___doc = 
-        "S.__format__(format_spec) -> unicode\n" + 
-        "\n" + 
-        "Return a formatted version of S as described by format_spec.";
+    public final static String bytes___format___doc = 
+        "default object formatter";
 
-    public final static String unicode___ge___doc = 
-        "x.__ge__(y) <==> x>=y";
+    public final static String bytes___ge___doc = 
+        "Return self>=value.";
 
-    public final static String unicode___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+    public final static String bytes___getattribute___doc = 
+        "Return getattr(self, name).";
 
-    public final static String unicode___getitem___doc = 
-        "x.__getitem__(y) <==> x[y]";
+    public final static String bytes___getitem___doc = 
+        "Return self[key].";
 
-    public final static String unicode___getnewargs___doc = 
+    public final static String bytes___getnewargs___doc = 
         "";
 
-    public final static String unicode___getslice___doc = 
-        "x.__getslice__(i, j) <==> x[i:j]\n" + 
-        "           \n" + 
-        "           Use of negative indices is not supported.";
+    public final static String bytes___gt___doc = 
+        "Return self>value.";
 
-    public final static String unicode___gt___doc = 
-        "x.__gt__(y) <==> x>y";
+    public final static String bytes___hash___doc = 
+        "Return hash(self).";
 
-    public final static String unicode___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+    public final static String bytes___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
 
-    public final static String unicode___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+    public final static String bytes___iter___doc = 
+        "Implement iter(self).";
 
-    public final static String unicode___le___doc = 
-        "x.__le__(y) <==> x<=y";
+    public final static String bytes___le___doc = 
+        "Return self<=value.";
 
-    public final static String unicode___len___doc = 
-        "x.__len__() <==> len(x)";
+    public final static String bytes___len___doc = 
+        "Return len(self).";
 
-    public final static String unicode___lt___doc = 
-        "x.__lt__(y) <==> x<y";
+    public final static String bytes___lt___doc = 
+        "Return self<value.";
 
-    public final static String unicode___mod___doc = 
-        "x.__mod__(y) <==> x%y";
+    public final static String bytes___mul___doc = 
+        "Return self*value.n";
 
-    public final static String unicode___mul___doc = 
-        "x.__mul__(n) <==> x*n";
+    public final static String bytes___ne___doc = 
+        "Return self!=value.";
 
-    public final static String unicode___ne___doc = 
-        "x.__ne__(y) <==> x!=y";
+    public final static String bytes___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
 
-    public final static String unicode___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
-
-    public final static String unicode___reduce___doc = 
+    public final static String bytes___reduce___doc = 
         "helper for pickle";
 
-    public final static String unicode___reduce_ex___doc = 
+    public final static String bytes___reduce_ex___doc = 
         "helper for pickle";
 
-    public final static String unicode___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+    public final static String bytes___repr___doc = 
+        "Return repr(self).";
 
-    public final static String unicode___rmod___doc = 
-        "x.__rmod__(y) <==> y%x";
+    public final static String bytes___rmul___doc = 
+        "Return self*value.";
 
-    public final static String unicode___rmul___doc = 
-        "x.__rmul__(n) <==> n*x";
+    public final static String bytes___setattr___doc = 
+        "Implement setattr(self, name, value).";
 
-    public final static String unicode___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+    public final static String bytes___sizeof___doc = 
+        "B.__sizeof__() -> size of B in memory, in bytes";
 
-    public final static String unicode___sizeof___doc = 
-        "S.__sizeof__() -> size of S in memory, in bytes\n" + 
-        "\n" + 
-        "";
+    public final static String bytes___str___doc = 
+        "Return str(self).";
 
-    public final static String unicode___str___doc = 
-        "x.__str__() <==> str(x)";
-
-    public final static String unicode___subclasshook___doc = 
+    public final static String bytes___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
         "\n" + 
         "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
@@ -349,302 +432,280 @@ public class BuiltinDocs {
         "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
-    public final static String unicode__formatter_field_name_split_doc = 
-        "";
-
-    public final static String unicode__formatter_parser_doc = 
-        "";
-
-    public final static String unicode_capitalize_doc = 
-        "S.capitalize() -> unicode\n" + 
+    public final static String bytes_capitalize_doc = 
+        "B.capitalize() -> copy of B\n" + 
         "\n" + 
-        "Return a capitalized version of S, i.e. make the first character\n" + 
-        "have upper case and the rest lower case.";
+        "Return a copy of B with only its first character capitalized (ASCII)\n" + 
+        "and the rest lower-cased.";
 
-    public final static String unicode_center_doc = 
-        "S.center(width[, fillchar]) -> unicode\n" + 
+    public final static String bytes_center_doc = 
+        "B.center(width[, fillchar]) -> copy of B\n" + 
         "\n" + 
-        "Return S centered in a Unicode string of length width. Padding is\n" + 
-        "done using the specified fill character (default is a space)";
+        "Return B centered in a string of length width.  Padding is\n" + 
+        "done using the specified fill character (default is a space).";
 
-    public final static String unicode_count_doc = 
-        "S.count(sub[, start[, end]]) -> int\n" + 
+    public final static String bytes_count_doc = 
+        "B.count(sub[, start[, end]]) -> int\n" + 
         "\n" + 
         "Return the number of non-overlapping occurrences of substring sub in\n" + 
-        "Unicode string S[start:end].  Optional arguments start and end are\n" + 
-        "interpreted as in slice notation.";
+        "string B[start:end].  Optional arguments start and end are interpreted\n" + 
+        "as in slice notation.";
 
-    public final static String unicode_decode_doc = 
-        "S.decode([encoding[,errors]]) -> string or unicode\n" + 
+    public final static String bytes_decode_doc = 
+        "B.decode(encoding='utf-8', errors='strict') -> str\n" + 
         "\n" + 
-        "Decodes S using the codec registered for encoding. encoding defaults\n" + 
-        "to the default encoding. errors may be given to set a different error\n" + 
-        "handling scheme. Default is 'strict' meaning that encoding errors raise\n" + 
-        "a UnicodeDecodeError. Other possible values are 'ignore' and 'replace'\n" + 
+        "Decode B using the codec registered for encoding. Default encoding\n" + 
+        "is 'utf-8'. errors may be given to set a different error\n" + 
+        "handling scheme.  Default is 'strict' meaning that encoding errors raise\n" + 
+        "a UnicodeDecodeError.  Other possible values are 'ignore' and 'replace'\n" + 
         "as well as any other name registerd with codecs.register_error that is\n" + 
         "able to handle UnicodeDecodeErrors.";
 
-    public final static String unicode_encode_doc = 
-        "S.encode([encoding[,errors]]) -> string or unicode\n" + 
+    public final static String bytes_endswith_doc = 
+        "B.endswith(suffix[, start[, end]]) -> bool\n" + 
         "\n" + 
-        "Encodes S using the codec registered for encoding. encoding defaults\n" + 
-        "to the default encoding. errors may be given to set a different error\n" + 
-        "handling scheme. Default is 'strict' meaning that encoding errors raise\n" + 
-        "a UnicodeEncodeError. Other possible values are 'ignore', 'replace' and\n" + 
-        "'xmlcharrefreplace' as well as any other name registered with\n" + 
-        "codecs.register_error that can handle UnicodeEncodeErrors.";
+        "Return True if B ends with the specified suffix, False otherwise.\n" + 
+        "With optional start, test B beginning at that position.\n" + 
+        "With optional end, stop comparing B at that position.\n" + 
+        "suffix can also be a tuple of bytes to try.";
 
-    public final static String unicode_endswith_doc = 
-        "S.endswith(suffix[, start[, end]]) -> bool\n" + 
+    public final static String bytes_expandtabs_doc = 
+        "B.expandtabs(tabsize=8) -> copy of B\n" + 
         "\n" + 
-        "Return True if S ends with the specified suffix, False otherwise.\n" + 
-        "With optional start, test S beginning at that position.\n" + 
-        "With optional end, stop comparing S at that position.\n" + 
-        "suffix can also be a tuple of strings to try.";
-
-    public final static String unicode_expandtabs_doc = 
-        "S.expandtabs([tabsize]) -> unicode\n" + 
-        "\n" + 
-        "Return a copy of S where all tab characters are expanded using spaces.\n" + 
+        "Return a copy of B where all tab characters are expanded using spaces.\n" + 
         "If tabsize is not given, a tab size of 8 characters is assumed.";
 
-    public final static String unicode_find_doc = 
-        "S.find(sub [,start [,end]]) -> int\n" + 
+    public final static String bytes_find_doc = 
+        "B.find(sub[, start[, end]]) -> int\n" + 
         "\n" + 
-        "Return the lowest index in S where substring sub is found,\n" + 
-        "such that sub is contained within s[start:end].  Optional\n" + 
+        "Return the lowest index in B where substring sub is found,\n" + 
+        "such that sub is contained within B[start:end].  Optional\n" + 
         "arguments start and end are interpreted as in slice notation.\n" + 
         "\n" + 
         "Return -1 on failure.";
 
-    public final static String unicode_format_doc = 
-        "S.format(*args, **kwargs) -> unicode\n" + 
+    public final static String bytes_fromhex_doc = 
+        "bytes.fromhex(string) -> bytes\n" + 
         "\n" + 
-        "Return a formatted version of S, using substitutions from args and kwargs.\n" + 
-        "The substitutions are identified by braces ('{' and '}').";
+        "Create a bytes object from a string of hexadecimal numbers.\n" + 
+        "Spaces between two numbers are accepted.\n" + 
+        "Example: bytes.fromhex('B9 01EF') -> b'\\xb9\\x01\\xef'.";
 
-    public final static String unicode_index_doc = 
-        "S.index(sub [,start [,end]]) -> int\n" + 
+    public final static String bytes_index_doc = 
+        "B.index(sub[, start[, end]]) -> int\n" + 
         "\n" + 
-        "Like S.find() but raise ValueError when the substring is not found.";
+        "Like B.find() but raise ValueError when the substring is not found.";
 
-    public final static String unicode_isalnum_doc = 
-        "S.isalnum() -> bool\n" + 
+    public final static String bytes_isalnum_doc = 
+        "B.isalnum() -> bool\n" + 
         "\n" + 
-        "Return True if all characters in S are alphanumeric\n" + 
-        "and there is at least one character in S, False otherwise.";
+        "Return True if all characters in B are alphanumeric\n" + 
+        "and there is at least one character in B, False otherwise.";
 
-    public final static String unicode_isalpha_doc = 
-        "S.isalpha() -> bool\n" + 
+    public final static String bytes_isalpha_doc = 
+        "B.isalpha() -> bool\n" + 
         "\n" + 
-        "Return True if all characters in S are alphabetic\n" + 
-        "and there is at least one character in S, False otherwise.";
+        "Return True if all characters in B are alphabetic\n" + 
+        "and there is at least one character in B, False otherwise.";
 
-    public final static String unicode_isdecimal_doc = 
-        "S.isdecimal() -> bool\n" + 
+    public final static String bytes_isdigit_doc = 
+        "B.isdigit() -> bool\n" + 
         "\n" + 
-        "Return True if there are only decimal characters in S,\n" + 
-        "False otherwise.";
+        "Return True if all characters in B are digits\n" + 
+        "and there is at least one character in B, False otherwise.";
 
-    public final static String unicode_isdigit_doc = 
-        "S.isdigit() -> bool\n" + 
+    public final static String bytes_islower_doc = 
+        "B.islower() -> bool\n" + 
         "\n" + 
-        "Return True if all characters in S are digits\n" + 
-        "and there is at least one character in S, False otherwise.";
+        "Return True if all cased characters in B are lowercase and there is\n" + 
+        "at least one cased character in B, False otherwise.";
 
-    public final static String unicode_islower_doc = 
-        "S.islower() -> bool\n" + 
+    public final static String bytes_isspace_doc = 
+        "B.isspace() -> bool\n" + 
         "\n" + 
-        "Return True if all cased characters in S are lowercase and there is\n" + 
-        "at least one cased character in S, False otherwise.";
+        "Return True if all characters in B are whitespace\n" + 
+        "and there is at least one character in B, False otherwise.";
 
-    public final static String unicode_isnumeric_doc = 
-        "S.isnumeric() -> bool\n" + 
+    public final static String bytes_istitle_doc = 
+        "B.istitle() -> bool\n" + 
         "\n" + 
-        "Return True if there are only numeric characters in S,\n" + 
-        "False otherwise.";
+        "Return True if B is a titlecased string and there is at least one\n" + 
+        "character in B, i.e. uppercase characters may only follow uncased\n" + 
+        "characters and lowercase characters only cased ones. Return False\n" + 
+        "otherwise.";
 
-    public final static String unicode_isspace_doc = 
-        "S.isspace() -> bool\n" + 
+    public final static String bytes_isupper_doc = 
+        "B.isupper() -> bool\n" + 
         "\n" + 
-        "Return True if all characters in S are whitespace\n" + 
-        "and there is at least one character in S, False otherwise.";
+        "Return True if all cased characters in B are uppercase and there is\n" + 
+        "at least one cased character in B, False otherwise.";
 
-    public final static String unicode_istitle_doc = 
-        "S.istitle() -> bool\n" + 
+    public final static String bytes_join_doc = 
+        "B.join(iterable_of_bytes) -> bytes\n" + 
         "\n" + 
-        "Return True if S is a titlecased string and there is at least one\n" + 
-        "character in S, i.e. upper- and titlecase characters may only\n" + 
-        "follow uncased characters and lowercase characters only cased ones.\n" + 
-        "Return False otherwise.";
+        "Concatenate any number of bytes objects, with B in between each pair.\n" + 
+        "Example: b'.'.join([b'ab', b'pq', b'rs']) -> b'ab.pq.rs'.";
 
-    public final static String unicode_isupper_doc = 
-        "S.isupper() -> bool\n" + 
+    public final static String bytes_ljust_doc = 
+        "B.ljust(width[, fillchar]) -> copy of B\n" + 
         "\n" + 
-        "Return True if all cased characters in S are uppercase and there is\n" + 
-        "at least one cased character in S, False otherwise.";
-
-    public final static String unicode_join_doc = 
-        "S.join(iterable) -> unicode\n" + 
-        "\n" + 
-        "Return a string which is the concatenation of the strings in the\n" + 
-        "iterable.  The separator between elements is S.";
-
-    public final static String unicode_ljust_doc = 
-        "S.ljust(width[, fillchar]) -> int\n" + 
-        "\n" + 
-        "Return S left-justified in a Unicode string of length width. Padding is\n" + 
+        "Return B left justified in a string of length width. Padding is\n" + 
         "done using the specified fill character (default is a space).";
 
-    public final static String unicode_lower_doc = 
-        "S.lower() -> unicode\n" + 
+    public final static String bytes_lower_doc = 
+        "B.lower() -> copy of B\n" + 
         "\n" + 
-        "Return a copy of the string S converted to lowercase.";
+        "Return a copy of B with all ASCII characters converted to lowercase.";
 
-    public final static String unicode_lstrip_doc = 
-        "S.lstrip([chars]) -> unicode\n" + 
+    public final static String bytes_lstrip_doc = 
+        "B.lstrip([bytes]) -> bytes\n" + 
         "\n" + 
-        "Return a copy of the string S with leading whitespace removed.\n" + 
-        "If chars is given and not None, remove characters in chars instead.\n" + 
-        "If chars is a str, it will be converted to unicode before stripping";
+        "Strip leading bytes contained in the argument.\n" + 
+        "If the argument is omitted, strip leading ASCII whitespace.";
 
-    public final static String unicode_partition_doc = 
-        "S.partition(sep) -> (head, sep, tail)\n" + 
+    public final static String bytes_maketrans_doc = 
+        "B.maketrans(frm, to) -> translation table\n" + 
         "\n" + 
-        "Search for the separator sep in S, and return the part before it,\n" + 
+        "Return a translation table (a bytes object of length 256) suitable\n" + 
+        "for use in the bytes or bytearray translate method where each byte\n" + 
+        "in frm is mapped to the byte at the same position in to.\n" + 
+        "The bytes objects frm and to must be of the same length.";
+
+    public final static String bytes_partition_doc = 
+        "B.partition(sep) -> (head, sep, tail)\n" + 
+        "\n" + 
+        "Search for the separator sep in B, and return the part before it,\n" + 
         "the separator itself, and the part after it.  If the separator is not\n" + 
-        "found, return S and two empty strings.";
+        "found, returns B and two empty bytes objects.";
 
-    public final static String unicode_replace_doc = 
-        "S.replace(old, new[, count]) -> unicode\n" + 
+    public final static String bytes_replace_doc = 
+        "B.replace(old, new[, count]) -> bytes\n" + 
         "\n" + 
-        "Return a copy of S with all occurrences of substring\n" + 
+        "Return a copy of B with all occurrences of subsection\n" + 
         "old replaced by new.  If the optional argument count is\n" + 
-        "given, only the first count occurrences are replaced.";
+        "given, only first count occurances are replaced.";
 
-    public final static String unicode_rfind_doc = 
-        "S.rfind(sub [,start [,end]]) -> int\n" + 
+    public final static String bytes_rfind_doc = 
+        "B.rfind(sub[, start[, end]]) -> int\n" + 
         "\n" + 
-        "Return the highest index in S where substring sub is found,\n" + 
-        "such that sub is contained within s[start:end].  Optional\n" + 
+        "Return the highest index in B where substring sub is found,\n" + 
+        "such that sub is contained within B[start:end].  Optional\n" + 
         "arguments start and end are interpreted as in slice notation.\n" + 
         "\n" + 
         "Return -1 on failure.";
 
-    public final static String unicode_rindex_doc = 
-        "S.rindex(sub [,start [,end]]) -> int\n" + 
+    public final static String bytes_rindex_doc = 
+        "B.rindex(sub[, start[, end]]) -> int\n" + 
         "\n" + 
-        "Like S.rfind() but raise ValueError when the substring is not found.";
+        "Like B.rfind() but raise ValueError when the substring is not found.";
 
-    public final static String unicode_rjust_doc = 
-        "S.rjust(width[, fillchar]) -> unicode\n" + 
+    public final static String bytes_rjust_doc = 
+        "B.rjust(width[, fillchar]) -> copy of B\n" + 
         "\n" + 
-        "Return S right-justified in a Unicode string of length width. Padding is\n" + 
-        "done using the specified fill character (default is a space).";
+        "Return B right justified in a string of length width. Padding is\n" + 
+        "done using the specified fill character (default is a space)";
 
-    public final static String unicode_rpartition_doc = 
-        "S.rpartition(sep) -> (head, sep, tail)\n" + 
+    public final static String bytes_rpartition_doc = 
+        "B.rpartition(sep) -> (head, sep, tail)\n" + 
         "\n" + 
-        "Search for the separator sep in S, starting at the end of S, and return\n" + 
-        "the part before it, the separator itself, and the part after it.  If the\n" + 
-        "separator is not found, return two empty strings and S.";
+        "Search for the separator sep in B, starting at the end of B,\n" + 
+        "and return the part before it, the separator itself, and the\n" + 
+        "part after it.  If the separator is not found, returns two empty\n" + 
+        "bytes objects and B.";
 
-    public final static String unicode_rsplit_doc = 
-        "S.rsplit([sep [,maxsplit]]) -> list of strings\n" + 
+    public final static String bytes_rsplit_doc = 
+        "B.rsplit(sep=None, maxsplit=-1) -> list of bytes\n" + 
         "\n" + 
-        "Return a list of the words in S, using sep as the\n" + 
-        "delimiter string, starting at the end of the string and\n" + 
-        "working to the front.  If maxsplit is given, at most maxsplit\n" + 
-        "splits are done. If sep is not specified, any whitespace string\n" + 
-        "is a separator.";
+        "Return a list of the sections in B, using sep as the delimiter,\n" + 
+        "starting at the end of B and working to the front.\n" + 
+        "If sep is not given, B is split on ASCII whitespace characters\n" + 
+        "(space, tab, return, newline, formfeed, vertical tab).\n" + 
+        "If maxsplit is given, at most maxsplit splits are done.";
 
-    public final static String unicode_rstrip_doc = 
-        "S.rstrip([chars]) -> unicode\n" + 
+    public final static String bytes_rstrip_doc = 
+        "B.rstrip([bytes]) -> bytes\n" + 
         "\n" + 
-        "Return a copy of the string S with trailing whitespace removed.\n" + 
-        "If chars is given and not None, remove characters in chars instead.\n" + 
-        "If chars is a str, it will be converted to unicode before stripping";
+        "Strip trailing bytes contained in the argument.\n" + 
+        "If the argument is omitted, strip trailing ASCII whitespace.";
 
-    public final static String unicode_split_doc = 
-        "S.split([sep [,maxsplit]]) -> list of strings\n" + 
+    public final static String bytes_split_doc = 
+        "B.split(sep=None, maxsplit=-1) -> list of bytes\n" + 
         "\n" + 
-        "Return a list of the words in S, using sep as the\n" + 
-        "delimiter string.  If maxsplit is given, at most maxsplit\n" + 
-        "splits are done. If sep is not specified or is None, any\n" + 
-        "whitespace string is a separator and empty strings are\n" + 
-        "removed from the result.";
+        "Return a list of the sections in B, using sep as the delimiter.\n" + 
+        "If sep is not specified or is None, B is split on ASCII whitespace\n" + 
+        "characters (space, tab, return, newline, formfeed, vertical tab).\n" + 
+        "If maxsplit is given, at most maxsplit splits are done.";
 
-    public final static String unicode_splitlines_doc = 
-        "S.splitlines([keepends]) -> list of strings\n" + 
+    public final static String bytes_splitlines_doc = 
+        "B.splitlines([keepends]) -> list of lines\n" + 
         "\n" + 
-        "Return a list of the lines in S, breaking at line boundaries.\n" + 
+        "Return a list of the lines in B, breaking at line boundaries.\n" + 
         "Line breaks are not included in the resulting list unless keepends\n" + 
         "is given and true.";
 
-    public final static String unicode_startswith_doc = 
-        "S.startswith(prefix[, start[, end]]) -> bool\n" + 
+    public final static String bytes_startswith_doc = 
+        "B.startswith(prefix[, start[, end]]) -> bool\n" + 
         "\n" + 
-        "Return True if S starts with the specified prefix, False otherwise.\n" + 
-        "With optional start, test S beginning at that position.\n" + 
-        "With optional end, stop comparing S at that position.\n" + 
-        "prefix can also be a tuple of strings to try.";
+        "Return True if B starts with the specified prefix, False otherwise.\n" + 
+        "With optional start, test B beginning at that position.\n" + 
+        "With optional end, stop comparing B at that position.\n" + 
+        "prefix can also be a tuple of bytes to try.";
 
-    public final static String unicode_strip_doc = 
-        "S.strip([chars]) -> unicode\n" + 
+    public final static String bytes_strip_doc = 
+        "B.strip([bytes]) -> bytes\n" + 
         "\n" + 
-        "Return a copy of the string S with leading and trailing\n" + 
-        "whitespace removed.\n" + 
-        "If chars is given and not None, remove characters in chars instead.\n" + 
-        "If chars is a str, it will be converted to unicode before stripping";
+        "Strip leading and trailing bytes contained in the argument.\n" + 
+        "If the argument is omitted, strip leading and trailing ASCII whitespace.";
 
-    public final static String unicode_swapcase_doc = 
-        "S.swapcase() -> unicode\n" + 
+    public final static String bytes_swapcase_doc = 
+        "B.swapcase() -> copy of B\n" + 
         "\n" + 
-        "Return a copy of S with uppercase characters converted to lowercase\n" + 
-        "and vice versa.";
+        "Return a copy of B with uppercase ASCII characters converted\n" + 
+        "to lowercase ASCII and vice versa.";
 
-    public final static String unicode_title_doc = 
-        "S.title() -> unicode\n" + 
+    public final static String bytes_title_doc = 
+        "B.title() -> copy of B\n" + 
         "\n" + 
-        "Return a titlecased version of S, i.e. words start with title case\n" + 
-        "characters, all remaining cased characters have lower case.";
+        "Return a titlecased version of B, i.e. ASCII words start with uppercase\n" + 
+        "characters, all remaining cased characters have lowercase.";
 
-    public final static String unicode_translate_doc = 
-        "S.translate(table) -> unicode\n" + 
+    public final static String bytes_translate_doc = 
+        "B.translate(table[, deletechars]) -> bytes\n" + 
         "\n" + 
-        "Return a copy of the string S, where all characters have been mapped\n" + 
-        "through the given translation table, which must be a mapping of\n" + 
-        "Unicode ordinals to Unicode ordinals, Unicode strings or None.\n" + 
-        "Unmapped characters are left untouched. Characters mapped to None\n" + 
-        "are deleted.";
+        "Return a copy of B, where all characters occurring in the\n" + 
+        "optional argument deletechars are removed, and the remaining\n" + 
+        "characters have been mapped through the given translation\n" + 
+        "table, which must be a bytes object of length 256.";
 
-    public final static String unicode_upper_doc = 
-        "S.upper() -> unicode\n" + 
+    public final static String bytes_upper_doc = 
+        "B.upper() -> copy of B\n" + 
         "\n" + 
-        "Return a copy of S converted to uppercase.";
+        "Return a copy of B with all ASCII characters converted to uppercase.";
 
-    public final static String unicode_zfill_doc = 
-        "S.zfill(width) -> unicode\n" + 
+    public final static String bytes_zfill_doc = 
+        "B.zfill(width) -> copy of B\n" + 
         "\n" + 
-        "Pad a numeric string S with zeros on the left, to fill a field\n" + 
-        "of the specified width. The string S is never truncated.";
+        "Pad a numeric string B with zeros on the left, to fill a field\n" + 
+        "of the specified width.  B is never truncated.";
 
-    // Docs for <type 'dict'>
+    // Docs for <class 'dict'>
     public final static String dict___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
-    public final static String dict___cmp___doc = 
-        "x.__cmp__(y) <==> cmp(x,y)";
-
     public final static String dict___contains___doc = 
-        "D.__contains__(k) -> True if D has a key k, else False";
+        "True if D has a key k, else False.";
 
     public final static String dict___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
 
     public final static String dict___delitem___doc = 
-        "x.__delitem__(y) <==> del x[y]";
+        "Delete self[key].";
+
+    public final static String dict___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String dict_doc = 
         "dict() -> new empty dictionary\n" + 
@@ -658,46 +719,46 @@ public class BuiltinDocs {
         "    in the keyword argument list.  For example:  dict(one=1, two=2)";
 
     public final static String dict___eq___doc = 
-        "x.__eq__(y) <==> x==y";
+        "Return self==value.";
 
     public final static String dict___format___doc = 
         "default object formatter";
 
     public final static String dict___ge___doc = 
-        "x.__ge__(y) <==> x>=y";
+        "Return self>=value.";
 
     public final static String dict___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
 
     public final static String dict___getitem___doc = 
         "x.__getitem__(y) <==> x[y]";
 
     public final static String dict___gt___doc = 
-        "x.__gt__(y) <==> x>y";
+        "Return self>value.";
 
     public final static String dict___hash___doc = 
         "";
 
     public final static String dict___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
 
     public final static String dict___iter___doc = 
-        "x.__iter__() <==> iter(x)";
+        "Implement iter(self).";
 
     public final static String dict___le___doc = 
-        "x.__le__(y) <==> x<=y";
+        "Return self<=value.";
 
     public final static String dict___len___doc = 
-        "x.__len__() <==> len(x)";
+        "Return len(self).";
 
     public final static String dict___lt___doc = 
-        "x.__lt__(y) <==> x<y";
+        "Return self<value.";
 
     public final static String dict___ne___doc = 
-        "x.__ne__(y) <==> x!=y";
+        "Return self!=value.";
 
     public final static String dict___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String dict___reduce___doc = 
         "helper for pickle";
@@ -706,19 +767,19 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String dict___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String dict___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String dict___setitem___doc = 
-        "x.__setitem__(i, y) <==> x[i]=y";
+        "Set self[key] to value.";
 
     public final static String dict___sizeof___doc = 
         "D.__sizeof__() -> size of D in memory, in bytes";
 
     public final static String dict___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String dict___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -736,29 +797,16 @@ public class BuiltinDocs {
         "D.copy() -> a shallow copy of D";
 
     public final static String dict_fromkeys_doc = 
-        "dict.fromkeys(S[,v]) -> New dict with keys from S and values equal to v.\n" + 
-        "v defaults to None.";
+        "Returns a new dict with keys from iterable and values equal to value.";
 
     public final static String dict_get_doc = 
         "D.get(k[,d]) -> D[k] if k in D, else d.  d defaults to None.";
 
-    public final static String dict_has_key_doc = 
-        "D.has_key(k) -> True if D has a key k, else False";
-
     public final static String dict_items_doc = 
-        "D.items() -> list of D's (key, value) pairs, as 2-tuples";
-
-    public final static String dict_iteritems_doc = 
-        "D.iteritems() -> an iterator over the (key, value) items of D";
-
-    public final static String dict_iterkeys_doc = 
-        "D.iterkeys() -> an iterator over the keys of D";
-
-    public final static String dict_itervalues_doc = 
-        "D.itervalues() -> an iterator over the values of D";
+        "D.items() -> a set-like object providing a view on D's items";
 
     public final static String dict_keys_doc = 
-        "D.keys() -> list of D's keys";
+        "D.keys() -> a set-like object providing a view on D's keys";
 
     public final static String dict_pop_doc = 
         "D.pop(k[,d]) -> v, remove specified key and return the corresponding value.\n" + 
@@ -772,104 +820,90 @@ public class BuiltinDocs {
         "D.setdefault(k[,d]) -> D.get(k,d), also set D[k]=d if k not in D";
 
     public final static String dict_update_doc = 
-        "D.update(E, **F) -> None.  Update D from dict/iterable E and F.\n" + 
-        "If E has a .keys() method, does:     for k in E: D[k] = E[k]\n" + 
-        "If E lacks .keys() method, does:     for (k, v) in E: D[k] = v\n" + 
-        "In either case, this is followed by: for k in F: D[k] = F[k]";
+        "D.update([E, ]**F) -> None.  Update D from dict/iterable E and F.\n" + 
+        "If E is present and has a .keys() method, then does:  for k in E: D[k] = E[k]\n" + 
+        "If E is present and lacks a .keys() method, then does:  for k, v in E: D[k] = v\n" + 
+        "In either case, this is followed by: for k in F:  D[k] = F[k]";
 
     public final static String dict_values_doc = 
-        "D.values() -> list of D's values";
+        "D.values() -> an object providing a view on D's values";
 
-    public final static String dict_viewitems_doc = 
-        "D.viewitems() -> a set-like object providing a view on D's items";
-
-    public final static String dict_viewkeys_doc = 
-        "D.viewkeys() -> a set-like object providing a view on D's keys";
-
-    public final static String dict_viewvalues_doc = 
-        "D.viewvalues() -> an object providing a view on D's values";
-
-    // Docs for <type 'list'>
+    // Docs for <class 'list'>
     public final static String list___add___doc = 
-        "x.__add__(y) <==> x+y";
+        "Return self+value.";
 
     public final static String list___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
     public final static String list___contains___doc = 
-        "x.__contains__(y) <==> y in x";
+        "Return key in self.";
 
     public final static String list___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
 
     public final static String list___delitem___doc = 
-        "x.__delitem__(y) <==> del x[y]";
+        "Delete self[key].";
 
-    public final static String list___delslice___doc = 
-        "x.__delslice__(i, j) <==> del x[i:j]\n" + 
-        "           \n" + 
-        "           Use of negative indices is not supported.";
+    public final static String list___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String list_doc = 
         "list() -> new empty list\n" + 
         "list(iterable) -> new list initialized from iterable's items";
 
     public final static String list___eq___doc = 
-        "x.__eq__(y) <==> x==y";
+        "Return self==value.";
 
     public final static String list___format___doc = 
         "default object formatter";
 
     public final static String list___ge___doc = 
-        "x.__ge__(y) <==> x>=y";
+        "Return self>=value.";
 
     public final static String list___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
 
     public final static String list___getitem___doc = 
         "x.__getitem__(y) <==> x[y]";
 
-    public final static String list___getslice___doc = 
-        "x.__getslice__(i, j) <==> x[i:j]\n" + 
-        "           \n" + 
-        "           Use of negative indices is not supported.";
-
     public final static String list___gt___doc = 
-        "x.__gt__(y) <==> x>y";
+        "Return self>value.";
 
     public final static String list___hash___doc = 
         "";
 
     public final static String list___iadd___doc = 
-        "x.__iadd__(y) <==> x+=y";
+        "Implement self+=value.";
 
     public final static String list___imul___doc = 
-        "x.__imul__(y) <==> x*=y";
+        "Implement self*=value.";
 
     public final static String list___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
 
     public final static String list___iter___doc = 
-        "x.__iter__() <==> iter(x)";
+        "Implement iter(self).";
 
     public final static String list___le___doc = 
-        "x.__le__(y) <==> x<=y";
+        "Return self<=value.";
 
     public final static String list___len___doc = 
-        "x.__len__() <==> len(x)";
+        "Return len(self).";
 
     public final static String list___lt___doc = 
-        "x.__lt__(y) <==> x<y";
+        "Return self<value.";
 
     public final static String list___mul___doc = 
-        "x.__mul__(n) <==> x*n";
+        "Return self*value.n";
 
     public final static String list___ne___doc = 
-        "x.__ne__(y) <==> x!=y";
+        "Return self!=value.";
 
     public final static String list___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String list___reduce___doc = 
         "helper for pickle";
@@ -878,30 +912,25 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String list___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String list___reversed___doc = 
         "L.__reversed__() -- return a reverse iterator over the list";
 
     public final static String list___rmul___doc = 
-        "x.__rmul__(n) <==> n*x";
+        "Return self*value.";
 
     public final static String list___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String list___setitem___doc = 
-        "x.__setitem__(i, y) <==> x[i]=y";
-
-    public final static String list___setslice___doc = 
-        "x.__setslice__(i, j, y) <==> x[i:j]=y\n" + 
-        "           \n" + 
-        "           Use  of negative indices is not supported.";
+        "Set self[key] to value.";
 
     public final static String list___sizeof___doc = 
         "L.__sizeof__() -- size of L in memory, in bytes";
 
     public final static String list___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String list___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -913,13 +942,19 @@ public class BuiltinDocs {
         "";
 
     public final static String list_append_doc = 
-        "L.append(object) -- append object to end";
+        "L.append(object) -> None -- append object to end";
+
+    public final static String list_clear_doc = 
+        "L.clear() -> None -- remove all items from L";
+
+    public final static String list_copy_doc = 
+        "L.copy() -> list -- a shallow copy of L";
 
     public final static String list_count_doc = 
         "L.count(value) -> integer -- return number of occurrences of value";
 
     public final static String list_extend_doc = 
-        "L.extend(iterable) -- extend list by appending elements from the iterable";
+        "L.extend(iterable) -> None -- extend list by appending elements from the iterable";
 
     public final static String list_index_doc = 
         "L.index(value, [start, [stop]]) -> integer -- return first index of value.\n" + 
@@ -933,46 +968,66 @@ public class BuiltinDocs {
         "Raises IndexError if list is empty or index is out of range.";
 
     public final static String list_remove_doc = 
-        "L.remove(value) -- remove first occurrence of value.\n" + 
+        "L.remove(value) -> None -- remove first occurrence of value.\n" + 
         "Raises ValueError if the value is not present.";
 
     public final static String list_reverse_doc = 
         "L.reverse() -- reverse *IN PLACE*";
 
     public final static String list_sort_doc = 
-        "L.sort(cmp=None, key=None, reverse=False) -- stable sort *IN PLACE*;\n" + 
-        "cmp(x, y) -> -1, 0, 1";
+        "L.sort(key=None, reverse=False) -> None -- stable sort *IN PLACE*";
 
-    // Docs for <type 'slice'>
+    // Docs for <class 'slice'>
     public final static String slice___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
-    public final static String slice___cmp___doc = 
-        "x.__cmp__(y) <==> cmp(x,y)";
-
     public final static String slice___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
+
+    public final static String slice___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String slice_doc = 
-        "slice([start,] stop[, step])\n" + 
+        "slice(stop)\n" + 
+        "slice(start, stop[, step])\n" + 
         "\n" + 
         "Create a slice object.  This is used for extended slicing (e.g. a[0:10:2]).";
+
+    public final static String slice___eq___doc = 
+        "Return self==value.";
 
     public final static String slice___format___doc = 
         "default object formatter";
 
+    public final static String slice___ge___doc = 
+        "Return self>=value.";
+
     public final static String slice___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
+
+    public final static String slice___gt___doc = 
+        "Return self>value.";
 
     public final static String slice___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "";
 
     public final static String slice___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String slice___le___doc = 
+        "Return self<=value.";
+
+    public final static String slice___lt___doc = 
+        "Return self<value.";
+
+    public final static String slice___ne___doc = 
+        "Return self!=value.";
 
     public final static String slice___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String slice___reduce___doc = 
         "Return state information for pickling.";
@@ -981,17 +1036,17 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String slice___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String slice___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String slice___sizeof___doc = 
         "__sizeof__() -> int\n" + 
         "size of object in memory, in bytes";
 
     public final static String slice___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String slice___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -1019,40 +1074,70 @@ public class BuiltinDocs {
     public final static String slice_stop_doc = 
         "";
 
-    // Docs for <type 'super'>
+    // Docs for <class 'super'>
     public final static String super___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
     public final static String super___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
+
+    public final static String super___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String super_doc = 
+        "super() -> same as super(__class__, <first argument>)\n" + 
         "super(type) -> unbound super object\n" + 
         "super(type, obj) -> bound super object; requires isinstance(obj, type)\n" + 
         "super(type, type2) -> bound super object; requires issubclass(type2, type)\n" + 
         "Typical use to call a cooperative superclass method:\n" + 
         "class C(B):\n" + 
         "    def meth(self, arg):\n" + 
-        "        super(C, self).meth(arg)";
+        "        super().meth(arg)\n" + 
+        "This works for class methods too:\n" + 
+        "class C(B):\n" + 
+        "    @classmethod\n" + 
+        "    def cmeth(cls, arg):\n" + 
+        "        super().cmeth(arg)\n" + 
+        "";
+
+    public final static String super___eq___doc = 
+        "Return self==value.";
 
     public final static String super___format___doc = 
         "default object formatter";
 
+    public final static String super___ge___doc = 
+        "Return self>=value.";
+
     public final static String super___get___doc = 
-        "descr.__get__(obj[, type]) -> value";
+        "Return an attribute of instance, which is of type owner.";
 
     public final static String super___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
+
+    public final static String super___gt___doc = 
+        "Return self>value.";
 
     public final static String super___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String super___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String super___le___doc = 
+        "Return self<=value.";
+
+    public final static String super___lt___doc = 
+        "Return self<value.";
+
+    public final static String super___ne___doc = 
+        "Return self!=value.";
 
     public final static String super___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String super___reduce___doc = 
         "helper for pickle";
@@ -1061,7 +1146,7 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String super___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String super___self___doc = 
         "the instance invoking super(); may be None";
@@ -1070,14 +1155,14 @@ public class BuiltinDocs {
         "the type of the instance invoking super(); may be None";
 
     public final static String super___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String super___sizeof___doc = 
         "__sizeof__() -> int\n" + 
         "size of object in memory, in bytes";
 
     public final static String super___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String super___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -1091,13 +1176,21 @@ public class BuiltinDocs {
     public final static String super___thisclass___doc = 
         "the class invoking super()";
 
-    // Docs for <type 'staticmethod'>
+    // Docs for <class 'staticmethod'>
     public final static String staticmethod___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
     public final static String staticmethod___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
+
+    public final static String staticmethod___dict___doc = 
+        "";
+
+    public final static String staticmethod___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String staticmethod_doc = 
         "staticmethod(function) -> method\n" + 
@@ -1117,26 +1210,47 @@ public class BuiltinDocs {
         "Static methods in Python are similar to those found in Java or C++.\n" + 
         "For a more advanced concept, see the classmethod builtin.";
 
+    public final static String staticmethod___eq___doc = 
+        "Return self==value.";
+
     public final static String staticmethod___format___doc = 
         "default object formatter";
 
     public final static String staticmethod___func___doc = 
         "";
 
+    public final static String staticmethod___ge___doc = 
+        "Return self>=value.";
+
     public final static String staticmethod___get___doc = 
-        "descr.__get__(obj[, type]) -> value";
+        "Return an attribute of instance, which is of type owner.";
 
     public final static String staticmethod___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
+
+    public final static String staticmethod___gt___doc = 
+        "Return self>value.";
 
     public final static String staticmethod___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String staticmethod___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String staticmethod___isabstractmethod___doc = 
+        "";
+
+    public final static String staticmethod___le___doc = 
+        "Return self<=value.";
+
+    public final static String staticmethod___lt___doc = 
+        "Return self<value.";
+
+    public final static String staticmethod___ne___doc = 
+        "Return self!=value.";
 
     public final static String staticmethod___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String staticmethod___reduce___doc = 
         "helper for pickle";
@@ -1145,17 +1259,17 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String staticmethod___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String staticmethod___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String staticmethod___sizeof___doc = 
         "__sizeof__() -> int\n" + 
         "size of object in memory, in bytes";
 
     public final static String staticmethod___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String staticmethod___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -1166,28 +1280,30 @@ public class BuiltinDocs {
         "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
-    // Docs for <type 'float'>
+    // Docs for <class 'float'>
     public final static String float___abs___doc = 
-        "x.__abs__() <==> abs(x)";
+        "abs(self)";
 
     public final static String float___add___doc = 
-        "x.__add__(y) <==> x+y";
+        "Return self+value.";
+
+    public final static String float___bool___doc = 
+        "self != 0";
 
     public final static String float___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
-    public final static String float___coerce___doc = 
-        "x.__coerce__(y) <==> coerce(x, y)";
-
     public final static String float___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
 
-    public final static String float___div___doc = 
-        "x.__div__(y) <==> x/y";
+    public final static String float___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String float___divmod___doc = 
-        "x.__divmod__(y) <==> divmod(x, y)";
+        "Return divmod(self, value).";
 
     public final static String float_doc = 
         "float(x) -> floating point number\n" + 
@@ -1195,13 +1311,13 @@ public class BuiltinDocs {
         "Convert a string or number to a floating point number, if possible.";
 
     public final static String float___eq___doc = 
-        "x.__eq__(y) <==> x==y";
+        "Return self==value.";
 
     public final static String float___float___doc = 
-        "x.__float__() <==> float(x)";
+        "float(self)";
 
     public final static String float___floordiv___doc = 
-        "x.__floordiv__(y) <==> x//y";
+        "Return self//value.";
 
     public final static String float___format___doc = 
         "float.__format__(format_spec) -> string\n" + 
@@ -1209,10 +1325,10 @@ public class BuiltinDocs {
         "Formats the float according to format_spec.";
 
     public final static String float___ge___doc = 
-        "x.__ge__(y) <==> x>=y";
+        "Return self>=value.";
 
     public final static String float___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
 
     public final static String float___getformat___doc = 
         "float.__getformat__(typestr) -> string\n" + 
@@ -1228,58 +1344,49 @@ public class BuiltinDocs {
         "";
 
     public final static String float___gt___doc = 
-        "x.__gt__(y) <==> x>y";
+        "Return self>value.";
 
     public final static String float___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String float___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
 
     public final static String float___int___doc = 
-        "x.__int__() <==> int(x)";
+        "int(self)";
 
     public final static String float___le___doc = 
-        "x.__le__(y) <==> x<=y";
-
-    public final static String float___long___doc = 
-        "x.__long__() <==> long(x)";
+        "Return self<=value.";
 
     public final static String float___lt___doc = 
-        "x.__lt__(y) <==> x<y";
+        "Return self<value.";
 
     public final static String float___mod___doc = 
-        "x.__mod__(y) <==> x%y";
+        "Return self%value.";
 
     public final static String float___mul___doc = 
-        "x.__mul__(y) <==> x*y";
+        "Return self*value.";
 
     public final static String float___ne___doc = 
-        "x.__ne__(y) <==> x!=y";
+        "Return self!=value.";
 
     public final static String float___neg___doc = 
-        "x.__neg__() <==> -x";
+        "-self";
 
     public final static String float___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
-
-    public final static String float___nonzero___doc = 
-        "x.__nonzero__() <==> x != 0";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String float___pos___doc = 
-        "x.__pos__() <==> +x";
+        "+self";
 
     public final static String float___pow___doc = 
-        "x.__pow__(y[, z]) <==> pow(x, y[, z])";
+        "Return pow(self, value, mod).";
 
     public final static String float___radd___doc = 
-        "x.__radd__(y) <==> y+x";
-
-    public final static String float___rdiv___doc = 
-        "x.__rdiv__(y) <==> y/x";
+        "Return value+self.";
 
     public final static String float___rdivmod___doc = 
-        "x.__rdivmod__(y) <==> divmod(y, x)";
+        "Return divmod(value, self).";
 
     public final static String float___reduce___doc = 
         "helper for pickle";
@@ -1288,28 +1395,32 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String float___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String float___rfloordiv___doc = 
-        "x.__rfloordiv__(y) <==> y//x";
+        "Return value//self.";
 
     public final static String float___rmod___doc = 
-        "x.__rmod__(y) <==> y%x";
+        "Return value%self.";
 
     public final static String float___rmul___doc = 
-        "x.__rmul__(y) <==> y*x";
+        "Return value*self.";
+
+    public final static String float___round___doc = 
+        "Return the Integral closest to x, rounding half toward even.\n" + 
+        "When an argument is passed, work like built-in round(x, ndigits).";
 
     public final static String float___rpow___doc = 
-        "y.__rpow__(x[, z]) <==> pow(x, y[, z])";
+        "Return pow(value, self, mod).";
 
     public final static String float___rsub___doc = 
-        "x.__rsub__(y) <==> y-x";
+        "Return value-self.";
 
     public final static String float___rtruediv___doc = 
-        "x.__rtruediv__(y) <==> y/x";
+        "Return value/self.";
 
     public final static String float___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String float___setformat___doc = 
         "float.__setformat__(typestr, fmt) -> None\n" + 
@@ -1321,7 +1432,7 @@ public class BuiltinDocs {
         "'IEEE, big-endian' or 'IEEE, little-endian', and in addition can only be\n" + 
         "one of the latter two if it appears to match the underlying C reality.\n" + 
         "\n" + 
-        "Overrides the automatic determination of C-level floating point type.\n" + 
+        "Override the automatic determination of C-level floating point type.\n" + 
         "This affects how floats are converted to and from binary strings.";
 
     public final static String float___sizeof___doc = 
@@ -1329,10 +1440,10 @@ public class BuiltinDocs {
         "size of object in memory, in bytes";
 
     public final static String float___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String float___sub___doc = 
-        "x.__sub__(y) <==> x-y";
+        "Return self-value.";
 
     public final static String float___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -1344,17 +1455,17 @@ public class BuiltinDocs {
         "";
 
     public final static String float___truediv___doc = 
-        "x.__truediv__(y) <==> x/y";
+        "Return self/value.";
 
     public final static String float___trunc___doc = 
-        "Returns the Integral closest to x between 0 and x.";
+        "Return the Integral closest to x between 0 and x.";
 
     public final static String float_as_integer_ratio_doc = 
         "float.as_integer_ratio() -> (int, int)\n" + 
         "\n" + 
-        "Returns a pair of integers, whose ratio is exactly equal to the original\n" + 
+        "Return a pair of integers, whose ratio is exactly equal to the original\n" + 
         "float and with a positive denominator.\n" + 
-        "Raises OverflowError on infinities and a ValueError on NaNs.\n" + 
+        "Raise OverflowError on infinities and a ValueError on NaNs.\n" + 
         "\n" + 
         ">>> (10.0).as_integer_ratio()\n" + 
         "(10, 1)\n" + 
@@ -1364,7 +1475,7 @@ public class BuiltinDocs {
         "(-1, 4)";
 
     public final static String float_conjugate_doc = 
-        "Returns self, the complex conjugate of any float.";
+        "Return self, the complex conjugate of any float.";
 
     public final static String float_fromhex_doc = 
         "float.fromhex(string) -> float\n" + 
@@ -1373,7 +1484,7 @@ public class BuiltinDocs {
         ">>> float.fromhex('0x1.ffffp10')\n" + 
         "2047.984375\n" + 
         ">>> float.fromhex('-0x1p-1074')\n" + 
-        "-4.9406564584124654e-324";
+        "-5e-324";
 
     public final static String float_hex_doc = 
         "float.hex() -> string\n" + 
@@ -1388,18 +1499,23 @@ public class BuiltinDocs {
         "the imaginary part of a complex number";
 
     public final static String float_is_integer_doc = 
-        "Returns True if the float is an integer.";
+        "Return True if the float is an integer.";
 
     public final static String float_real_doc = 
         "the real part of a complex number";
 
-    // Docs for <type 'enumerate'>
+    // Docs for <class 'enumerate'>
     public final static String enumerate___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
     public final static String enumerate___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
+
+    public final static String enumerate___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String enumerate_doc = 
         "enumerate(iterable[, start]) -> iterator for index, value of iterable\n" + 
@@ -1410,42 +1526,63 @@ public class BuiltinDocs {
         "enumerate is useful for obtaining an indexed list:\n" + 
         "    (0, seq[0]), (1, seq[1]), (2, seq[2]), ...";
 
+    public final static String enumerate___eq___doc = 
+        "Return self==value.";
+
     public final static String enumerate___format___doc = 
         "default object formatter";
 
+    public final static String enumerate___ge___doc = 
+        "Return self>=value.";
+
     public final static String enumerate___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
+
+    public final static String enumerate___gt___doc = 
+        "Return self>value.";
 
     public final static String enumerate___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String enumerate___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
 
     public final static String enumerate___iter___doc = 
-        "x.__iter__() <==> iter(x)";
+        "Implement iter(self).";
+
+    public final static String enumerate___le___doc = 
+        "Return self<=value.";
+
+    public final static String enumerate___lt___doc = 
+        "Return self<value.";
+
+    public final static String enumerate___ne___doc = 
+        "Return self!=value.";
 
     public final static String enumerate___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String enumerate___next___doc = 
+        "Implement next(self).";
 
     public final static String enumerate___reduce___doc = 
-        "helper for pickle";
+        "Return state information for pickling.";
 
     public final static String enumerate___reduce_ex___doc = 
         "helper for pickle";
 
     public final static String enumerate___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String enumerate___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String enumerate___sizeof___doc = 
         "__sizeof__() -> int\n" + 
         "size of object in memory, in bytes";
 
     public final static String enumerate___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String enumerate___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -1456,234 +1593,196 @@ public class BuiltinDocs {
         "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
-    public final static String enumerate_next_doc = 
-        "x.next() -> the next value, or raise StopIteration";
+    // Docs for <class 'int'>
+    public final static String int___abs___doc = 
+        "abs(self)";
 
-    // Docs for <type 'basestring'>
-    public final static String basestring___class___doc = 
+    public final static String int___add___doc = 
+        "Return self+value.";
+
+    public final static String int___and___doc = 
+        "Return self&value.";
+
+    public final static String int___bool___doc = 
+        "self != 0";
+
+    public final static String int___ceil___doc = 
+        "Ceiling of an Integral returns itself.";
+
+    public final static String int___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
-    public final static String basestring___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+    public final static String int___delattr___doc = 
+        "Implement delattr(self, name).";
 
-    public final static String basestring_doc = 
-        "Type basestring cannot be instantiated; it is the base for str and unicode.";
+    public final static String int___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
-    public final static String basestring___format___doc = 
-        "default object formatter";
+    public final static String int___divmod___doc = 
+        "Return divmod(self, value).";
 
-    public final static String basestring___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
-
-    public final static String basestring___hash___doc = 
-        "x.__hash__() <==> hash(x)";
-
-    public final static String basestring___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
-
-    public final static String basestring___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
-
-    public final static String basestring___reduce___doc = 
-        "helper for pickle";
-
-    public final static String basestring___reduce_ex___doc = 
-        "helper for pickle";
-
-    public final static String basestring___repr___doc = 
-        "x.__repr__() <==> repr(x)";
-
-    public final static String basestring___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
-
-    public final static String basestring___sizeof___doc = 
-        "__sizeof__() -> int\n" + 
-        "size of object in memory, in bytes";
-
-    public final static String basestring___str___doc = 
-        "x.__str__() <==> str(x)";
-
-    public final static String basestring___subclasshook___doc = 
-        "Abstract classes can override this to customize issubclass().\n" + 
+    public final static String int_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
         "\n" + 
-        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
-        "It should return True, False or NotImplemented.  If it returns\n" + 
-        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
-        "overrides the normal algorithm (and the outcome is cached).\n" + 
-        "";
-
-    // Docs for <type 'long'>
-    public final static String long___abs___doc = 
-        "x.__abs__() <==> abs(x)";
-
-    public final static String long___add___doc = 
-        "x.__add__(y) <==> x+y";
-
-    public final static String long___and___doc = 
-        "x.__and__(y) <==> x&y";
-
-    public final static String long___class___doc = 
-        "type(object) -> the object's type\n" + 
-        "type(name, bases, dict) -> a new type";
-
-    public final static String long___cmp___doc = 
-        "x.__cmp__(y) <==> cmp(x,y)";
-
-    public final static String long___coerce___doc = 
-        "x.__coerce__(y) <==> coerce(x, y)";
-
-    public final static String long___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
-
-    public final static String long___div___doc = 
-        "x.__div__(y) <==> x/y";
-
-    public final static String long___divmod___doc = 
-        "x.__divmod__(y) <==> divmod(x, y)";
-
-    public final static String long_doc = 
-        "long(x[, base]) -> integer\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
         "\n" + 
-        "Convert a string or number to a long integer, if possible.  A floating\n" + 
-        "point argument will be truncated towards zero (this does not include a\n" + 
-        "string representation of a floating point number!)  When converting a\n" + 
-        "string, use the optional base.  It is an error to supply a base when\n" + 
-        "converting a non-string.";
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
 
-    public final static String long___float___doc = 
-        "x.__float__() <==> float(x)";
+    public final static String int___eq___doc = 
+        "Return self==value.";
 
-    public final static String long___floordiv___doc = 
-        "x.__floordiv__(y) <==> x//y";
+    public final static String int___float___doc = 
+        "float(self)";
 
-    public final static String long___format___doc = 
+    public final static String int___floor___doc = 
+        "Flooring an Integral returns itself.";
+
+    public final static String int___floordiv___doc = 
+        "Return self//value.";
+
+    public final static String int___format___doc = 
         "";
 
-    public final static String long___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+    public final static String int___ge___doc = 
+        "Return self>=value.";
 
-    public final static String long___getnewargs___doc = 
+    public final static String int___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String int___getnewargs___doc = 
         "";
 
-    public final static String long___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+    public final static String int___gt___doc = 
+        "Return self>value.";
 
-    public final static String long___hex___doc = 
-        "x.__hex__() <==> hex(x)";
+    public final static String int___hash___doc = 
+        "Return hash(self).";
 
-    public final static String long___index___doc = 
-        "x[y:z] <==> x[y.__index__():z.__index__()]";
+    public final static String int___index___doc = 
+        "Return self converted to an integer, if self is suitable for use as an index into a list.";
 
-    public final static String long___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+    public final static String int___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
 
-    public final static String long___int___doc = 
-        "x.__int__() <==> int(x)";
+    public final static String int___int___doc = 
+        "int(self)";
 
-    public final static String long___invert___doc = 
-        "x.__invert__() <==> ~x";
+    public final static String int___invert___doc = 
+        "~self";
 
-    public final static String long___long___doc = 
-        "x.__long__() <==> long(x)";
+    public final static String int___le___doc = 
+        "Return self<=value.";
 
-    public final static String long___lshift___doc = 
-        "x.__lshift__(y) <==> x<<y";
+    public final static String int___lshift___doc = 
+        "Return self<<value.";
 
-    public final static String long___mod___doc = 
-        "x.__mod__(y) <==> x%y";
+    public final static String int___lt___doc = 
+        "Return self<value.";
 
-    public final static String long___mul___doc = 
-        "x.__mul__(y) <==> x*y";
+    public final static String int___mod___doc = 
+        "Return self%value.";
 
-    public final static String long___neg___doc = 
-        "x.__neg__() <==> -x";
+    public final static String int___mul___doc = 
+        "Return self*value.";
 
-    public final static String long___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+    public final static String int___ne___doc = 
+        "Return self!=value.";
 
-    public final static String long___nonzero___doc = 
-        "x.__nonzero__() <==> x != 0";
+    public final static String int___neg___doc = 
+        "-self";
 
-    public final static String long___oct___doc = 
-        "x.__oct__() <==> oct(x)";
+    public final static String int___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
 
-    public final static String long___or___doc = 
-        "x.__or__(y) <==> x|y";
+    public final static String int___or___doc = 
+        "Return self|value.";
 
-    public final static String long___pos___doc = 
-        "x.__pos__() <==> +x";
+    public final static String int___pos___doc = 
+        "+self";
 
-    public final static String long___pow___doc = 
-        "x.__pow__(y[, z]) <==> pow(x, y[, z])";
+    public final static String int___pow___doc = 
+        "Return pow(self, value, mod).";
 
-    public final static String long___radd___doc = 
-        "x.__radd__(y) <==> y+x";
+    public final static String int___radd___doc = 
+        "Return value+self.";
 
-    public final static String long___rand___doc = 
-        "x.__rand__(y) <==> y&x";
+    public final static String int___rand___doc = 
+        "Return value&self.";
 
-    public final static String long___rdiv___doc = 
-        "x.__rdiv__(y) <==> y/x";
+    public final static String int___rdivmod___doc = 
+        "Return divmod(value, self).";
 
-    public final static String long___rdivmod___doc = 
-        "x.__rdivmod__(y) <==> divmod(y, x)";
-
-    public final static String long___reduce___doc = 
+    public final static String int___reduce___doc = 
         "helper for pickle";
 
-    public final static String long___reduce_ex___doc = 
+    public final static String int___reduce_ex___doc = 
         "helper for pickle";
 
-    public final static String long___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+    public final static String int___repr___doc = 
+        "Return repr(self).";
 
-    public final static String long___rfloordiv___doc = 
-        "x.__rfloordiv__(y) <==> y//x";
+    public final static String int___rfloordiv___doc = 
+        "Return value//self.";
 
-    public final static String long___rlshift___doc = 
-        "x.__rlshift__(y) <==> y<<x";
+    public final static String int___rlshift___doc = 
+        "Return value<<self.";
 
-    public final static String long___rmod___doc = 
-        "x.__rmod__(y) <==> y%x";
+    public final static String int___rmod___doc = 
+        "Return value%self.";
 
-    public final static String long___rmul___doc = 
-        "x.__rmul__(y) <==> y*x";
+    public final static String int___rmul___doc = 
+        "Return value*self.";
 
-    public final static String long___ror___doc = 
-        "x.__ror__(y) <==> y|x";
+    public final static String int___ror___doc = 
+        "Return value|self.";
 
-    public final static String long___rpow___doc = 
-        "y.__rpow__(x[, z]) <==> pow(x, y[, z])";
+    public final static String int___round___doc = 
+        "Rounding an Integral returns itself.\n" + 
+        "Rounding with an ndigits argument also returns an integer.";
 
-    public final static String long___rrshift___doc = 
-        "x.__rrshift__(y) <==> y>>x";
+    public final static String int___rpow___doc = 
+        "Return pow(value, self, mod).";
 
-    public final static String long___rshift___doc = 
-        "x.__rshift__(y) <==> x>>y";
+    public final static String int___rrshift___doc = 
+        "Return value>>self.";
 
-    public final static String long___rsub___doc = 
-        "x.__rsub__(y) <==> y-x";
+    public final static String int___rshift___doc = 
+        "Return self>>value.";
 
-    public final static String long___rtruediv___doc = 
-        "x.__rtruediv__(y) <==> y/x";
+    public final static String int___rsub___doc = 
+        "Return value-self.";
 
-    public final static String long___rxor___doc = 
-        "x.__rxor__(y) <==> y^x";
+    public final static String int___rtruediv___doc = 
+        "Return value/self.";
 
-    public final static String long___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+    public final static String int___rxor___doc = 
+        "Return value^self.";
 
-    public final static String long___sizeof___doc = 
+    public final static String int___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String int___sizeof___doc = 
         "Returns size in memory, in bytes";
 
-    public final static String long___str___doc = 
-        "x.__str__() <==> str(x)";
+    public final static String int___str___doc = 
+        "Return str(self).";
 
-    public final static String long___sub___doc = 
-        "x.__sub__(y) <==> x-y";
+    public final static String int___sub___doc = 
+        "Return self-value.";
 
-    public final static String long___subclasshook___doc = 
+    public final static String int___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
         "\n" + 
         "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
@@ -1692,52 +1791,94 @@ public class BuiltinDocs {
         "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
-    public final static String long___truediv___doc = 
-        "x.__truediv__(y) <==> x/y";
+    public final static String int___truediv___doc = 
+        "Return self/value.";
 
-    public final static String long___trunc___doc = 
+    public final static String int___trunc___doc = 
         "Truncating an Integral returns itself.";
 
-    public final static String long___xor___doc = 
-        "x.__xor__(y) <==> x^y";
+    public final static String int___xor___doc = 
+        "Return self^value.";
 
-    public final static String long_bit_length_doc = 
-        "long.bit_length() -> int or long\n" + 
+    public final static String int_bit_length_doc = 
+        "int.bit_length() -> int\n" + 
         "\n" + 
         "Number of bits necessary to represent self in binary.\n" + 
-        ">>> bin(37L)\n" + 
+        ">>> bin(37)\n" + 
         "'0b100101'\n" + 
-        ">>> (37L).bit_length()\n" + 
+        ">>> (37).bit_length()\n" + 
         "6";
 
-    public final static String long_conjugate_doc = 
-        "Returns self, the complex conjugate of any long.";
+    public final static String int_conjugate_doc = 
+        "Returns self, the complex conjugate of any int.";
 
-    public final static String long_denominator_doc = 
+    public final static String int_denominator_doc = 
         "the denominator of a rational number in lowest terms";
 
-    public final static String long_imag_doc = 
+    public final static String int_from_bytes_doc = 
+        "int.from_bytes(bytes, byteorder, *, signed=False) -> int\n" + 
+        "\n" + 
+        "Return the integer represented by the given array of bytes.\n" + 
+        "\n" + 
+        "The bytes argument must either support the buffer protocol or be an\n" + 
+        "iterable object producing bytes.  Bytes and bytearray are examples of\n" + 
+        "built-in objects that support the buffer protocol.\n" + 
+        "\n" + 
+        "The byteorder argument determines the byte order used to represent the\n" + 
+        "integer.  If byteorder is 'big', the most significant byte is at the\n" + 
+        "beginning of the byte array.  If byteorder is 'little', the most\n" + 
+        "significant byte is at the end of the byte array.  To request the native\n" + 
+        "byte order of the host system, use `sys.byteorder' as the byte order value.\n" + 
+        "\n" + 
+        "The signed keyword-only argument indicates whether two's complement is\n" + 
+        "used to represent the integer.";
+
+    public final static String int_imag_doc = 
         "the imaginary part of a complex number";
 
-    public final static String long_numerator_doc = 
+    public final static String int_numerator_doc = 
         "the numerator of a rational number in lowest terms";
 
-    public final static String long_real_doc = 
+    public final static String int_real_doc = 
         "the real part of a complex number";
 
-    // Docs for <type 'tuple'>
+    public final static String int_to_bytes_doc = 
+        "int.to_bytes(length, byteorder, *, signed=False) -> bytes\n" + 
+        "\n" + 
+        "Return an array of bytes representing an integer.\n" + 
+        "\n" + 
+        "The integer is represented using length bytes.  An OverflowError is\n" + 
+        "raised if the integer is not representable with the given number of\n" + 
+        "bytes.\n" + 
+        "\n" + 
+        "The byteorder argument determines the byte order used to represent the\n" + 
+        "integer.  If byteorder is 'big', the most significant byte is at the\n" + 
+        "beginning of the byte array.  If byteorder is 'little', the most\n" + 
+        "significant byte is at the end of the byte array.  To request the native\n" + 
+        "byte order of the host system, use `sys.byteorder' as the byte order value.\n" + 
+        "\n" + 
+        "The signed keyword-only argument determines whether two's complement is\n" + 
+        "used to represent the integer.  If signed is False and a negative integer\n" + 
+        "is given, an OverflowError is raised.";
+
+    // Docs for <class 'tuple'>
     public final static String tuple___add___doc = 
-        "x.__add__(y) <==> x+y";
+        "Return self+value.";
 
     public final static String tuple___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
     public final static String tuple___contains___doc = 
-        "x.__contains__(y) <==> y in x";
+        "Return key in self.";
 
     public final static String tuple___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
+
+    public final static String tuple___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String tuple_doc = 
         "tuple() -> empty tuple\n" + 
@@ -1746,57 +1887,52 @@ public class BuiltinDocs {
         "If the argument is a tuple, the return value is the same object.";
 
     public final static String tuple___eq___doc = 
-        "x.__eq__(y) <==> x==y";
+        "Return self==value.";
 
     public final static String tuple___format___doc = 
         "default object formatter";
 
     public final static String tuple___ge___doc = 
-        "x.__ge__(y) <==> x>=y";
+        "Return self>=value.";
 
     public final static String tuple___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
 
     public final static String tuple___getitem___doc = 
-        "x.__getitem__(y) <==> x[y]";
+        "Return self[key].";
 
     public final static String tuple___getnewargs___doc = 
         "";
 
-    public final static String tuple___getslice___doc = 
-        "x.__getslice__(i, j) <==> x[i:j]\n" + 
-        "           \n" + 
-        "           Use of negative indices is not supported.";
-
     public final static String tuple___gt___doc = 
-        "x.__gt__(y) <==> x>y";
+        "Return self>value.";
 
     public final static String tuple___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String tuple___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
 
     public final static String tuple___iter___doc = 
-        "x.__iter__() <==> iter(x)";
+        "Implement iter(self).";
 
     public final static String tuple___le___doc = 
-        "x.__le__(y) <==> x<=y";
+        "Return self<=value.";
 
     public final static String tuple___len___doc = 
-        "x.__len__() <==> len(x)";
+        "Return len(self).";
 
     public final static String tuple___lt___doc = 
-        "x.__lt__(y) <==> x<y";
+        "Return self<value.";
 
     public final static String tuple___mul___doc = 
-        "x.__mul__(n) <==> x*n";
+        "Return self*value.n";
 
     public final static String tuple___ne___doc = 
-        "x.__ne__(y) <==> x!=y";
+        "Return self!=value.";
 
     public final static String tuple___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String tuple___reduce___doc = 
         "helper for pickle";
@@ -1805,19 +1941,19 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String tuple___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String tuple___rmul___doc = 
-        "x.__rmul__(n) <==> n*x";
+        "Return self*value.";
 
     public final static String tuple___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String tuple___sizeof___doc = 
         "T.__sizeof__() -- size of T in memory, in bytes";
 
     public final static String tuple___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String tuple___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -1835,80 +1971,89 @@ public class BuiltinDocs {
         "T.index(value, [start, [stop]]) -> integer -- return first index of value.\n" + 
         "Raises ValueError if the value is not present.";
 
-    // Docs for <type 'str'>
+    // Docs for <class 'str'>
     public final static String str___add___doc = 
-        "x.__add__(y) <==> x+y";
+        "Return self+value.";
 
     public final static String str___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
     public final static String str___contains___doc = 
-        "x.__contains__(y) <==> y in x";
+        "Return key in self.";
 
     public final static String str___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
+
+    public final static String str___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String str_doc = 
-        "str(object) -> string\n" + 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
         "\n" + 
-        "Return a nice string representation of the object.\n" + 
-        "If the argument is a string, the return value is the same object.";
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
 
     public final static String str___eq___doc = 
-        "x.__eq__(y) <==> x==y";
+        "Return self==value.";
 
     public final static String str___format___doc = 
-        "S.__format__(format_spec) -> string\n" + 
+        "S.__format__(format_spec) -> str\n" + 
         "\n" + 
         "Return a formatted version of S as described by format_spec.";
 
     public final static String str___ge___doc = 
-        "x.__ge__(y) <==> x>=y";
+        "Return self>=value.";
 
     public final static String str___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
 
     public final static String str___getitem___doc = 
-        "x.__getitem__(y) <==> x[y]";
+        "Return self[key].";
 
     public final static String str___getnewargs___doc = 
         "";
 
-    public final static String str___getslice___doc = 
-        "x.__getslice__(i, j) <==> x[i:j]\n" + 
-        "           \n" + 
-        "           Use of negative indices is not supported.";
-
     public final static String str___gt___doc = 
-        "x.__gt__(y) <==> x>y";
+        "Return self>value.";
 
     public final static String str___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String str___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String str___iter___doc = 
+        "Implement iter(self).";
 
     public final static String str___le___doc = 
-        "x.__le__(y) <==> x<=y";
+        "Return self<=value.";
 
     public final static String str___len___doc = 
-        "x.__len__() <==> len(x)";
+        "Return len(self).";
 
     public final static String str___lt___doc = 
-        "x.__lt__(y) <==> x<y";
+        "Return self<value.";
 
     public final static String str___mod___doc = 
-        "x.__mod__(y) <==> x%y";
+        "Return self%value.";
 
     public final static String str___mul___doc = 
-        "x.__mul__(n) <==> x*n";
+        "Return self*value.n";
 
     public final static String str___ne___doc = 
-        "x.__ne__(y) <==> x!=y";
+        "Return self!=value.";
 
     public final static String str___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String str___reduce___doc = 
         "helper for pickle";
@@ -1917,22 +2062,22 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String str___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String str___rmod___doc = 
-        "x.__rmod__(y) <==> y%x";
+        "Return value%self.";
 
     public final static String str___rmul___doc = 
-        "x.__rmul__(n) <==> n*x";
+        "Return self*value.";
 
     public final static String str___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String str___sizeof___doc = 
         "S.__sizeof__() -> size of S in memory, in bytes";
 
     public final static String str___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String str___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -1943,20 +2088,19 @@ public class BuiltinDocs {
         "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
-    public final static String str__formatter_field_name_split_doc = 
-        "";
-
-    public final static String str__formatter_parser_doc = 
-        "";
-
     public final static String str_capitalize_doc = 
-        "S.capitalize() -> string\n" + 
+        "S.capitalize() -> str\n" + 
         "\n" + 
-        "Return a copy of the string S with only its first character\n" + 
-        "capitalized.";
+        "Return a capitalized version of S, i.e. make the first character\n" + 
+        "have upper case and the rest lower case.";
+
+    public final static String str_casefold_doc = 
+        "S.casefold() -> str\n" + 
+        "\n" + 
+        "Return a version of S suitable for caseless comparisons.";
 
     public final static String str_center_doc = 
-        "S.center(width[, fillchar]) -> string\n" + 
+        "S.center(width[, fillchar]) -> str\n" + 
         "\n" + 
         "Return S centered in a string of length width. Padding is\n" + 
         "done using the specified fill character (default is a space)";
@@ -1965,28 +2109,18 @@ public class BuiltinDocs {
         "S.count(sub[, start[, end]]) -> int\n" + 
         "\n" + 
         "Return the number of non-overlapping occurrences of substring sub in\n" + 
-        "string S[start:end].  Optional arguments start and end are interpreted\n" + 
-        "as in slice notation.";
-
-    public final static String str_decode_doc = 
-        "S.decode([encoding[,errors]]) -> object\n" + 
-        "\n" + 
-        "Decodes S using the codec registered for encoding. encoding defaults\n" + 
-        "to the default encoding. errors may be given to set a different error\n" + 
-        "handling scheme. Default is 'strict' meaning that encoding errors raise\n" + 
-        "a UnicodeDecodeError. Other possible values are 'ignore' and 'replace'\n" + 
-        "as well as any other name registered with codecs.register_error that is\n" + 
-        "able to handle UnicodeDecodeErrors.";
+        "string S[start:end].  Optional arguments start and end are\n" + 
+        "interpreted as in slice notation.";
 
     public final static String str_encode_doc = 
-        "S.encode([encoding[,errors]]) -> object\n" + 
+        "S.encode(encoding='utf-8', errors='strict') -> bytes\n" + 
         "\n" + 
-        "Encodes S using the codec registered for encoding. encoding defaults\n" + 
-        "to the default encoding. errors may be given to set a different error\n" + 
+        "Encode S using the codec registered for encoding. Default encoding\n" + 
+        "is 'utf-8'. errors may be given to set a different error\n" + 
         "handling scheme. Default is 'strict' meaning that encoding errors raise\n" + 
         "a UnicodeEncodeError. Other possible values are 'ignore', 'replace' and\n" + 
         "'xmlcharrefreplace' as well as any other name registered with\n" + 
-        "codecs.register_error that is able to handle UnicodeEncodeErrors.";
+        "codecs.register_error that can handle UnicodeEncodeErrors.";
 
     public final static String str_endswith_doc = 
         "S.endswith(suffix[, start[, end]]) -> bool\n" + 
@@ -1997,28 +2131,34 @@ public class BuiltinDocs {
         "suffix can also be a tuple of strings to try.";
 
     public final static String str_expandtabs_doc = 
-        "S.expandtabs([tabsize]) -> string\n" + 
+        "S.expandtabs(tabsize=8) -> str\n" + 
         "\n" + 
         "Return a copy of S where all tab characters are expanded using spaces.\n" + 
         "If tabsize is not given, a tab size of 8 characters is assumed.";
 
     public final static String str_find_doc = 
-        "S.find(sub [,start [,end]]) -> int\n" + 
+        "S.find(sub[, start[, end]]) -> int\n" + 
         "\n" + 
         "Return the lowest index in S where substring sub is found,\n" + 
-        "such that sub is contained within s[start:end].  Optional\n" + 
+        "such that sub is contained within S[start:end].  Optional\n" + 
         "arguments start and end are interpreted as in slice notation.\n" + 
         "\n" + 
         "Return -1 on failure.";
 
     public final static String str_format_doc = 
-        "S.format(*args, **kwargs) -> string\n" + 
+        "S.format(*args, **kwargs) -> str\n" + 
         "\n" + 
         "Return a formatted version of S, using substitutions from args and kwargs.\n" + 
         "The substitutions are identified by braces ('{' and '}').";
 
+    public final static String str_format_map_doc = 
+        "S.format_map(mapping) -> str\n" + 
+        "\n" + 
+        "Return a formatted version of S, using substitutions from mapping.\n" + 
+        "The substitutions are identified by braces ('{' and '}').";
+
     public final static String str_index_doc = 
-        "S.index(sub [,start [,end]]) -> int\n" + 
+        "S.index(sub[, start[, end]]) -> int\n" + 
         "\n" + 
         "Like S.find() but raise ValueError when the substring is not found.";
 
@@ -2034,17 +2174,45 @@ public class BuiltinDocs {
         "Return True if all characters in S are alphabetic\n" + 
         "and there is at least one character in S, False otherwise.";
 
+    public final static String str_isdecimal_doc = 
+        "S.isdecimal() -> bool\n" + 
+        "\n" + 
+        "Return True if there are only decimal characters in S,\n" + 
+        "False otherwise.";
+
     public final static String str_isdigit_doc = 
         "S.isdigit() -> bool\n" + 
         "\n" + 
         "Return True if all characters in S are digits\n" + 
         "and there is at least one character in S, False otherwise.";
 
+    public final static String str_isidentifier_doc = 
+        "S.isidentifier() -> bool\n" + 
+        "\n" + 
+        "Return True if S is a valid identifier according\n" + 
+        "to the language definition.\n" + 
+        "\n" + 
+        "Use keyword.iskeyword() to test for reserved identifiers\n" + 
+        "such as \"def\" and \"class\".\n" + 
+        "";
+
     public final static String str_islower_doc = 
         "S.islower() -> bool\n" + 
         "\n" + 
         "Return True if all cased characters in S are lowercase and there is\n" + 
         "at least one cased character in S, False otherwise.";
+
+    public final static String str_isnumeric_doc = 
+        "S.isnumeric() -> bool\n" + 
+        "\n" + 
+        "Return True if there are only numeric characters in S,\n" + 
+        "False otherwise.";
+
+    public final static String str_isprintable_doc = 
+        "S.isprintable() -> bool\n" + 
+        "\n" + 
+        "Return True if all characters in S are considered\n" + 
+        "printable in repr() or S is empty, False otherwise.";
 
     public final static String str_isspace_doc = 
         "S.isspace() -> bool\n" + 
@@ -2056,9 +2224,9 @@ public class BuiltinDocs {
         "S.istitle() -> bool\n" + 
         "\n" + 
         "Return True if S is a titlecased string and there is at least one\n" + 
-        "character in S, i.e. uppercase characters may only follow uncased\n" + 
-        "characters and lowercase characters only cased ones. Return False\n" + 
-        "otherwise.";
+        "character in S, i.e. upper- and titlecase characters may only\n" + 
+        "follow uncased characters and lowercase characters only cased ones.\n" + 
+        "Return False otherwise.";
 
     public final static String str_isupper_doc = 
         "S.isupper() -> bool\n" + 
@@ -2067,28 +2235,38 @@ public class BuiltinDocs {
         "at least one cased character in S, False otherwise.";
 
     public final static String str_join_doc = 
-        "S.join(iterable) -> string\n" + 
+        "S.join(iterable) -> str\n" + 
         "\n" + 
         "Return a string which is the concatenation of the strings in the\n" + 
         "iterable.  The separator between elements is S.";
 
     public final static String str_ljust_doc = 
-        "S.ljust(width[, fillchar]) -> string\n" + 
+        "S.ljust(width[, fillchar]) -> str\n" + 
         "\n" + 
-        "Return S left-justified in a string of length width. Padding is\n" + 
+        "Return S left-justified in a Unicode string of length width. Padding is\n" + 
         "done using the specified fill character (default is a space).";
 
     public final static String str_lower_doc = 
-        "S.lower() -> string\n" + 
+        "S.lower() -> str\n" + 
         "\n" + 
         "Return a copy of the string S converted to lowercase.";
 
     public final static String str_lstrip_doc = 
-        "S.lstrip([chars]) -> string or unicode\n" + 
+        "S.lstrip([chars]) -> str\n" + 
         "\n" + 
         "Return a copy of the string S with leading whitespace removed.\n" + 
-        "If chars is given and not None, remove characters in chars instead.\n" + 
-        "If chars is unicode, S will be converted to unicode before stripping";
+        "If chars is given and not None, remove characters in chars instead.";
+
+    public final static String str_maketrans_doc = 
+        "Return a translation table usable for str.translate().\n" + 
+        "\n" + 
+        "If there is only one argument, it must be a dictionary mapping Unicode\n" + 
+        "ordinals (integers) or characters to Unicode ordinals, strings or None.\n" + 
+        "Character keys will be then converted to ordinals.\n" + 
+        "If there are two arguments, they must be strings of equal length, and\n" + 
+        "in the resulting dictionary, each character in x will be mapped to the\n" + 
+        "character at the same position in y. If there is a third argument, it\n" + 
+        "must be a string, whose characters will be mapped to None in the result.";
 
     public final static String str_partition_doc = 
         "S.partition(sep) -> (head, sep, tail)\n" + 
@@ -2098,31 +2276,31 @@ public class BuiltinDocs {
         "found, return S and two empty strings.";
 
     public final static String str_replace_doc = 
-        "S.replace(old, new[, count]) -> string\n" + 
+        "S.replace(old, new[, count]) -> str\n" + 
         "\n" + 
-        "Return a copy of string S with all occurrences of substring\n" + 
+        "Return a copy of S with all occurrences of substring\n" + 
         "old replaced by new.  If the optional argument count is\n" + 
         "given, only the first count occurrences are replaced.";
 
     public final static String str_rfind_doc = 
-        "S.rfind(sub [,start [,end]]) -> int\n" + 
+        "S.rfind(sub[, start[, end]]) -> int\n" + 
         "\n" + 
         "Return the highest index in S where substring sub is found,\n" + 
-        "such that sub is contained within s[start:end].  Optional\n" + 
+        "such that sub is contained within S[start:end].  Optional\n" + 
         "arguments start and end are interpreted as in slice notation.\n" + 
         "\n" + 
         "Return -1 on failure.";
 
     public final static String str_rindex_doc = 
-        "S.rindex(sub [,start [,end]]) -> int\n" + 
+        "S.rindex(sub[, start[, end]]) -> int\n" + 
         "\n" + 
         "Like S.rfind() but raise ValueError when the substring is not found.";
 
     public final static String str_rjust_doc = 
-        "S.rjust(width[, fillchar]) -> string\n" + 
+        "S.rjust(width[, fillchar]) -> str\n" + 
         "\n" + 
         "Return S right-justified in a string of length width. Padding is\n" + 
-        "done using the specified fill character (default is a space)";
+        "done using the specified fill character (default is a space).";
 
     public final static String str_rpartition_doc = 
         "S.rpartition(sep) -> (head, sep, tail)\n" + 
@@ -2132,29 +2310,28 @@ public class BuiltinDocs {
         "separator is not found, return two empty strings and S.";
 
     public final static String str_rsplit_doc = 
-        "S.rsplit([sep [,maxsplit]]) -> list of strings\n" + 
+        "S.rsplit(sep=None, maxsplit=-1) -> list of strings\n" + 
         "\n" + 
-        "Return a list of the words in the string S, using sep as the\n" + 
-        "delimiter string, starting at the end of the string and working\n" + 
-        "to the front.  If maxsplit is given, at most maxsplit splits are\n" + 
-        "done. If sep is not specified or is None, any whitespace string\n" + 
+        "Return a list of the words in S, using sep as the\n" + 
+        "delimiter string, starting at the end of the string and\n" + 
+        "working to the front.  If maxsplit is given, at most maxsplit\n" + 
+        "splits are done. If sep is not specified, any whitespace string\n" + 
         "is a separator.";
 
     public final static String str_rstrip_doc = 
-        "S.rstrip([chars]) -> string or unicode\n" + 
+        "S.rstrip([chars]) -> str\n" + 
         "\n" + 
         "Return a copy of the string S with trailing whitespace removed.\n" + 
-        "If chars is given and not None, remove characters in chars instead.\n" + 
-        "If chars is unicode, S will be converted to unicode before stripping";
+        "If chars is given and not None, remove characters in chars instead.";
 
     public final static String str_split_doc = 
-        "S.split([sep [,maxsplit]]) -> list of strings\n" + 
+        "S.split(sep=None, maxsplit=-1) -> list of strings\n" + 
         "\n" + 
-        "Return a list of the words in the string S, using sep as the\n" + 
+        "Return a list of the words in S, using sep as the\n" + 
         "delimiter string.  If maxsplit is given, at most maxsplit\n" + 
         "splits are done. If sep is not specified or is None, any\n" + 
-        "whitespace string is a separator and empty strings are removed\n" + 
-        "from the result.";
+        "whitespace string is a separator and empty strings are\n" + 
+        "removed from the result.";
 
     public final static String str_splitlines_doc = 
         "S.splitlines([keepends]) -> list of strings\n" + 
@@ -2172,54 +2349,59 @@ public class BuiltinDocs {
         "prefix can also be a tuple of strings to try.";
 
     public final static String str_strip_doc = 
-        "S.strip([chars]) -> string or unicode\n" + 
+        "S.strip([chars]) -> str\n" + 
         "\n" + 
         "Return a copy of the string S with leading and trailing\n" + 
         "whitespace removed.\n" + 
-        "If chars is given and not None, remove characters in chars instead.\n" + 
-        "If chars is unicode, S will be converted to unicode before stripping";
+        "If chars is given and not None, remove characters in chars instead.";
 
     public final static String str_swapcase_doc = 
-        "S.swapcase() -> string\n" + 
+        "S.swapcase() -> str\n" + 
         "\n" + 
-        "Return a copy of the string S with uppercase characters\n" + 
-        "converted to lowercase and vice versa.";
+        "Return a copy of S with uppercase characters converted to lowercase\n" + 
+        "and vice versa.";
 
     public final static String str_title_doc = 
-        "S.title() -> string\n" + 
+        "S.title() -> str\n" + 
         "\n" + 
-        "Return a titlecased version of S, i.e. words start with uppercase\n" + 
-        "characters, all remaining cased characters have lowercase.";
+        "Return a titlecased version of S, i.e. words start with title case\n" + 
+        "characters, all remaining cased characters have lower case.";
 
     public final static String str_translate_doc = 
-        "S.translate(table [,deletechars]) -> string\n" + 
+        "S.translate(table) -> str\n" + 
         "\n" + 
-        "Return a copy of the string S, where all characters occurring\n" + 
-        "in the optional argument deletechars are removed, and the\n" + 
-        "remaining characters have been mapped through the given\n" + 
-        "translation table, which must be a string of length 256.";
+        "Return a copy of the string S, where all characters have been mapped\n" + 
+        "through the given translation table, which must be a mapping of\n" + 
+        "Unicode ordinals to Unicode ordinals, strings, or None.\n" + 
+        "Unmapped characters are left untouched. Characters mapped to None\n" + 
+        "are deleted.";
 
     public final static String str_upper_doc = 
-        "S.upper() -> string\n" + 
+        "S.upper() -> str\n" + 
         "\n" + 
-        "Return a copy of the string S converted to uppercase.";
+        "Return a copy of S converted to uppercase.";
 
     public final static String str_zfill_doc = 
-        "S.zfill(width) -> string\n" + 
+        "S.zfill(width) -> str\n" + 
         "\n" + 
         "Pad a numeric string S with zeros on the left, to fill a field\n" + 
-        "of the specified width.  The string S is never truncated.";
+        "of the specified width. The string S is never truncated.";
 
-    // Docs for <type 'property'>
+    // Docs for <class 'property'>
     public final static String property___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
     public final static String property___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
 
     public final static String property___delete___doc = 
-        "descr.__delete__(obj)";
+        "Delete an attribute of instance.";
+
+    public final static String property___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String property_doc = 
         "property(fget=None, fset=None, fdel=None, doc=None) -> property attribute\n" + 
@@ -2227,6 +2409,7 @@ public class BuiltinDocs {
         "fget is a function to be used for getting an attribute value, and likewise\n" + 
         "fset is a function for setting, and fdel a function for del'ing, an\n" + 
         "attribute.  Typical use is to define a managed attribute x:\n" + 
+        "\n" + 
         "class C(object):\n" + 
         "    def getx(self): return self._x\n" + 
         "    def setx(self, value): self._x = value\n" + 
@@ -2234,32 +2417,58 @@ public class BuiltinDocs {
         "    x = property(getx, setx, delx, \"I'm the 'x' property.\")\n" + 
         "\n" + 
         "Decorators make defining new properties or modifying existing ones easy:\n" + 
+        "\n" + 
         "class C(object):\n" + 
         "    @property\n" + 
-        "    def x(self): return self._x\n" + 
+        "    def x(self):\n" + 
+        "        \"I am the 'x' property.\"\n" + 
+        "        return self._x\n" + 
         "    @x.setter\n" + 
-        "    def x(self, value): self._x = value\n" + 
+        "    def x(self, value):\n" + 
+        "        self._x = value\n" + 
         "    @x.deleter\n" + 
-        "    def x(self): del self._x\n" + 
+        "    def x(self):\n" + 
+        "        del self._x\n" + 
         "";
+
+    public final static String property___eq___doc = 
+        "Return self==value.";
 
     public final static String property___format___doc = 
         "default object formatter";
 
+    public final static String property___ge___doc = 
+        "Return self>=value.";
+
     public final static String property___get___doc = 
-        "descr.__get__(obj[, type]) -> value";
+        "Return an attribute of instance, which is of type owner.";
 
     public final static String property___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
+
+    public final static String property___gt___doc = 
+        "Return self>value.";
 
     public final static String property___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String property___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String property___isabstractmethod___doc = 
+        "";
+
+    public final static String property___le___doc = 
+        "Return self<=value.";
+
+    public final static String property___lt___doc = 
+        "Return self<value.";
+
+    public final static String property___ne___doc = 
+        "Return self!=value.";
 
     public final static String property___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String property___reduce___doc = 
         "helper for pickle";
@@ -2268,20 +2477,20 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String property___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String property___set___doc = 
-        "descr.__set__(obj, value)";
+        "Set an attribute of instance to value.";
 
     public final static String property___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String property___sizeof___doc = 
         "__sizeof__() -> int\n" + 
         "size of object in memory, in bytes";
 
     public final static String property___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String property___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -2310,283 +2519,93 @@ public class BuiltinDocs {
     public final static String property_setter_doc = 
         "Descriptor to change the setter on a property.";
 
-    // Docs for <type 'int'>
-    public final static String int___abs___doc = 
-        "x.__abs__() <==> abs(x)";
-
-    public final static String int___add___doc = 
-        "x.__add__(y) <==> x+y";
-
-    public final static String int___and___doc = 
-        "x.__and__(y) <==> x&y";
-
-    public final static String int___class___doc = 
+    // Docs for <class 'range'>
+    public final static String range___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
-    public final static String int___cmp___doc = 
-        "x.__cmp__(y) <==> cmp(x,y)";
+    public final static String range___contains___doc = 
+        "Return key in self.";
 
-    public final static String int___coerce___doc = 
-        "x.__coerce__(y) <==> coerce(x, y)";
+    public final static String range___delattr___doc = 
+        "Implement delattr(self, name).";
 
-    public final static String int___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+    public final static String range___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
-    public final static String int___div___doc = 
-        "x.__div__(y) <==> x/y";
-
-    public final static String int___divmod___doc = 
-        "x.__divmod__(y) <==> divmod(x, y)";
-
-    public final static String int_doc = 
-        "int(x[, base]) -> integer\n" + 
+    public final static String range_doc = 
+        "range(stop) -> range object\n" + 
+        "range(start, stop[, step]) -> range object\n" + 
         "\n" + 
-        "Convert a string or number to an integer, if possible.  A floating point\n" + 
-        "argument will be truncated towards zero (this does not include a string\n" + 
-        "representation of a floating point number!)  When converting a string, use\n" + 
-        "the optional base.  It is an error to supply a base when converting a\n" + 
-        "non-string.  If base is zero, the proper base is guessed based on the\n" + 
-        "string content.  If the argument is outside the integer range a\n" + 
-        "long object will be returned instead.";
+        "Return a sequence of numbers from start to stop by step.";
 
-    public final static String int___float___doc = 
-        "x.__float__() <==> float(x)";
+    public final static String range___eq___doc = 
+        "Return self==value.";
 
-    public final static String int___floordiv___doc = 
-        "x.__floordiv__(y) <==> x//y";
-
-    public final static String int___format___doc = 
-        "";
-
-    public final static String int___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
-
-    public final static String int___getnewargs___doc = 
-        "";
-
-    public final static String int___hash___doc = 
-        "x.__hash__() <==> hash(x)";
-
-    public final static String int___hex___doc = 
-        "x.__hex__() <==> hex(x)";
-
-    public final static String int___index___doc = 
-        "x[y:z] <==> x[y.__index__():z.__index__()]";
-
-    public final static String int___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
-
-    public final static String int___int___doc = 
-        "x.__int__() <==> int(x)";
-
-    public final static String int___invert___doc = 
-        "x.__invert__() <==> ~x";
-
-    public final static String int___long___doc = 
-        "x.__long__() <==> long(x)";
-
-    public final static String int___lshift___doc = 
-        "x.__lshift__(y) <==> x<<y";
-
-    public final static String int___mod___doc = 
-        "x.__mod__(y) <==> x%y";
-
-    public final static String int___mul___doc = 
-        "x.__mul__(y) <==> x*y";
-
-    public final static String int___neg___doc = 
-        "x.__neg__() <==> -x";
-
-    public final static String int___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
-
-    public final static String int___nonzero___doc = 
-        "x.__nonzero__() <==> x != 0";
-
-    public final static String int___oct___doc = 
-        "x.__oct__() <==> oct(x)";
-
-    public final static String int___or___doc = 
-        "x.__or__(y) <==> x|y";
-
-    public final static String int___pos___doc = 
-        "x.__pos__() <==> +x";
-
-    public final static String int___pow___doc = 
-        "x.__pow__(y[, z]) <==> pow(x, y[, z])";
-
-    public final static String int___radd___doc = 
-        "x.__radd__(y) <==> y+x";
-
-    public final static String int___rand___doc = 
-        "x.__rand__(y) <==> y&x";
-
-    public final static String int___rdiv___doc = 
-        "x.__rdiv__(y) <==> y/x";
-
-    public final static String int___rdivmod___doc = 
-        "x.__rdivmod__(y) <==> divmod(y, x)";
-
-    public final static String int___reduce___doc = 
-        "helper for pickle";
-
-    public final static String int___reduce_ex___doc = 
-        "helper for pickle";
-
-    public final static String int___repr___doc = 
-        "x.__repr__() <==> repr(x)";
-
-    public final static String int___rfloordiv___doc = 
-        "x.__rfloordiv__(y) <==> y//x";
-
-    public final static String int___rlshift___doc = 
-        "x.__rlshift__(y) <==> y<<x";
-
-    public final static String int___rmod___doc = 
-        "x.__rmod__(y) <==> y%x";
-
-    public final static String int___rmul___doc = 
-        "x.__rmul__(y) <==> y*x";
-
-    public final static String int___ror___doc = 
-        "x.__ror__(y) <==> y|x";
-
-    public final static String int___rpow___doc = 
-        "y.__rpow__(x[, z]) <==> pow(x, y[, z])";
-
-    public final static String int___rrshift___doc = 
-        "x.__rrshift__(y) <==> y>>x";
-
-    public final static String int___rshift___doc = 
-        "x.__rshift__(y) <==> x>>y";
-
-    public final static String int___rsub___doc = 
-        "x.__rsub__(y) <==> y-x";
-
-    public final static String int___rtruediv___doc = 
-        "x.__rtruediv__(y) <==> y/x";
-
-    public final static String int___rxor___doc = 
-        "x.__rxor__(y) <==> y^x";
-
-    public final static String int___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
-
-    public final static String int___sizeof___doc = 
-        "__sizeof__() -> int\n" + 
-        "size of object in memory, in bytes";
-
-    public final static String int___str___doc = 
-        "x.__str__() <==> str(x)";
-
-    public final static String int___sub___doc = 
-        "x.__sub__(y) <==> x-y";
-
-    public final static String int___subclasshook___doc = 
-        "Abstract classes can override this to customize issubclass().\n" + 
-        "\n" + 
-        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
-        "It should return True, False or NotImplemented.  If it returns\n" + 
-        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
-        "overrides the normal algorithm (and the outcome is cached).\n" + 
-        "";
-
-    public final static String int___truediv___doc = 
-        "x.__truediv__(y) <==> x/y";
-
-    public final static String int___trunc___doc = 
-        "Truncating an Integral returns itself.";
-
-    public final static String int___xor___doc = 
-        "x.__xor__(y) <==> x^y";
-
-    public final static String int_bit_length_doc = 
-        "int.bit_length() -> int\n" + 
-        "\n" + 
-        "Number of bits necessary to represent self in binary.\n" + 
-        ">>> bin(37)\n" + 
-        "'0b100101'\n" + 
-        ">>> (37).bit_length()\n" + 
-        "6";
-
-    public final static String int_conjugate_doc = 
-        "Returns self, the complex conjugate of any int.";
-
-    public final static String int_denominator_doc = 
-        "the denominator of a rational number in lowest terms";
-
-    public final static String int_imag_doc = 
-        "the imaginary part of a complex number";
-
-    public final static String int_numerator_doc = 
-        "the numerator of a rational number in lowest terms";
-
-    public final static String int_real_doc = 
-        "the real part of a complex number";
-
-    // Docs for <type 'xrange'>
-    public final static String xrange___class___doc = 
-        "type(object) -> the object's type\n" + 
-        "type(name, bases, dict) -> a new type";
-
-    public final static String xrange___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
-
-    public final static String xrange_doc = 
-        "xrange([start,] stop[, step]) -> xrange object\n" + 
-        "\n" + 
-        "Like range(), but instead of returning a list, returns an object that\n" + 
-        "generates the numbers in the range on demand.  For looping, this is \n" + 
-        "slightly faster than range() and more memory efficient.";
-
-    public final static String xrange___format___doc = 
+    public final static String range___format___doc = 
         "default object formatter";
 
-    public final static String xrange___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+    public final static String range___ge___doc = 
+        "Return self>=value.";
 
-    public final static String xrange___getitem___doc = 
-        "x.__getitem__(y) <==> x[y]";
+    public final static String range___getattribute___doc = 
+        "Return getattr(self, name).";
 
-    public final static String xrange___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+    public final static String range___getitem___doc = 
+        "Return self[key].";
 
-    public final static String xrange___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+    public final static String range___gt___doc = 
+        "Return self>value.";
 
-    public final static String xrange___iter___doc = 
-        "x.__iter__() <==> iter(x)";
+    public final static String range___hash___doc = 
+        "Return hash(self).";
 
-    public final static String xrange___len___doc = 
-        "x.__len__() <==> len(x)";
+    public final static String range___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
 
-    public final static String xrange___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+    public final static String range___iter___doc = 
+        "Implement iter(self).";
 
-    public final static String xrange___reduce___doc = 
+    public final static String range___le___doc = 
+        "Return self<=value.";
+
+    public final static String range___len___doc = 
+        "Return len(self).";
+
+    public final static String range___lt___doc = 
+        "Return self<value.";
+
+    public final static String range___ne___doc = 
+        "Return self!=value.";
+
+    public final static String range___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String range___reduce___doc = 
         "";
 
-    public final static String xrange___reduce_ex___doc = 
+    public final static String range___reduce_ex___doc = 
         "helper for pickle";
 
-    public final static String xrange___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+    public final static String range___repr___doc = 
+        "Return repr(self).";
 
-    public final static String xrange___reversed___doc = 
-        "Returns a reverse iterator.";
+    public final static String range___reversed___doc = 
+        "Return a reverse iterator.";
 
-    public final static String xrange___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+    public final static String range___setattr___doc = 
+        "Implement setattr(self, name, value).";
 
-    public final static String xrange___sizeof___doc = 
+    public final static String range___sizeof___doc = 
         "__sizeof__() -> int\n" + 
         "size of object in memory, in bytes";
 
-    public final static String xrange___str___doc = 
-        "x.__str__() <==> str(x)";
+    public final static String range___str___doc = 
+        "Return str(self).";
 
-    public final static String xrange___subclasshook___doc = 
+    public final static String range___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
         "\n" + 
         "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
@@ -2595,213 +2614,46 @@ public class BuiltinDocs {
         "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
-    // Docs for <type 'file'>
-    public final static String file___class___doc = 
-        "type(object) -> the object's type\n" + 
-        "type(name, bases, dict) -> a new type";
+    public final static String range_count_doc = 
+        "rangeobject.count(value) -> integer -- return number of occurrences of value";
 
-    public final static String file___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+    public final static String range_index_doc = 
+        "rangeobject.index(value, [start, [stop]]) -> integer -- return index of value.\n" + 
+        "Raise ValueError if the value is not present.";
 
-    public final static String file_doc = 
-        "file(name[, mode[, buffering]]) -> file object\n" + 
-        "\n" + 
-        "Open a file.  The mode can be 'r', 'w' or 'a' for reading (default),\n" + 
-        "writing or appending.  The file will be created if it doesn't exist\n" + 
-        "when opened for writing or appending; it will be truncated when\n" + 
-        "opened for writing.  Add a 'b' to the mode for binary files.\n" + 
-        "Add a '+' to the mode to allow simultaneous reading and writing.\n" + 
-        "If the buffering argument is given, 0 means unbuffered, 1 means line\n" + 
-        "buffered, and larger numbers specify the buffer size.  The preferred way\n" + 
-        "to open a file is with the builtin open() function.\n" + 
-        "Add a 'U' to mode to open the file for input with universal newline\n" + 
-        "support.  Any line ending in the input file will be seen as a '\\n'\n" + 
-        "in Python.  Also, a file so opened gains the attribute 'newlines';\n" + 
-        "the value for this attribute is one of None (no newline read yet),\n" + 
-        "'\\r', '\\n', '\\r\\n' or a tuple containing all the newline types seen.\n" + 
-        "\n" + 
-        "'U' cannot be combined with 'w' or '+' mode.\n" + 
+    public final static String range_start_doc = 
         "";
 
-    public final static String file___enter___doc = 
-        "__enter__() -> self.";
-
-    public final static String file___exit___doc = 
-        "__exit__(*excinfo) -> None.  Closes the file.";
-
-    public final static String file___format___doc = 
-        "default object formatter";
-
-    public final static String file___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
-
-    public final static String file___hash___doc = 
-        "x.__hash__() <==> hash(x)";
-
-    public final static String file___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
-
-    public final static String file___iter___doc = 
-        "x.__iter__() <==> iter(x)";
-
-    public final static String file___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
-
-    public final static String file___reduce___doc = 
-        "helper for pickle";
-
-    public final static String file___reduce_ex___doc = 
-        "helper for pickle";
-
-    public final static String file___repr___doc = 
-        "x.__repr__() <==> repr(x)";
-
-    public final static String file___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
-
-    public final static String file___sizeof___doc = 
-        "__sizeof__() -> int\n" + 
-        "size of object in memory, in bytes";
-
-    public final static String file___str___doc = 
-        "x.__str__() <==> str(x)";
-
-    public final static String file___subclasshook___doc = 
-        "Abstract classes can override this to customize issubclass().\n" + 
-        "\n" + 
-        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
-        "It should return True, False or NotImplemented.  If it returns\n" + 
-        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
-        "overrides the normal algorithm (and the outcome is cached).\n" + 
+    public final static String range_step_doc = 
         "";
 
-    public final static String file_close_doc = 
-        "close() -> None or (perhaps) an integer.  Close the file.\n" + 
-        "\n" + 
-        "Sets data attribute .closed to True.  A closed file cannot be used for\n" + 
-        "further I/O operations.  close() may be called more than once without\n" + 
-        "error.  Some kinds of file objects (for example, opened by popen())\n" + 
-        "may return an exit status upon closing.";
+    public final static String range_stop_doc = 
+        "";
 
-    public final static String file_closed_doc = 
-        "True if the file is closed";
-
-    public final static String file_encoding_doc = 
-        "file encoding";
-
-    public final static String file_errors_doc = 
-        "Unicode error handler";
-
-    public final static String file_fileno_doc = 
-        "fileno() -> integer \"file descriptor\".\n" + 
-        "\n" + 
-        "This is needed for lower-level file interfaces, such os.read().";
-
-    public final static String file_flush_doc = 
-        "flush() -> None.  Flush the internal I/O buffer.";
-
-    public final static String file_isatty_doc = 
-        "isatty() -> true or false.  True if the file is connected to a tty device.";
-
-    public final static String file_mode_doc = 
-        "file mode ('r', 'U', 'w', 'a', possibly with 'b' or '+' added)";
-
-    public final static String file_name_doc = 
-        "file name";
-
-    public final static String file_newlines_doc = 
-        "end-of-line convention used in this file";
-
-    public final static String file_next_doc = 
-        "x.next() -> the next value, or raise StopIteration";
-
-    public final static String file_read_doc = 
-        "read([size]) -> read at most size bytes, returned as a string.\n" + 
-        "\n" + 
-        "If the size argument is negative or omitted, read until EOF is reached.\n" + 
-        "Notice that when in non-blocking mode, less data than what was requested\n" + 
-        "may be returned, even if no size parameter was given.";
-
-    public final static String file_readinto_doc = 
-        "readinto() -> Undocumented.  Don't use this; it may go away.";
-
-    public final static String file_readline_doc = 
-        "readline([size]) -> next line from the file, as a string.\n" + 
-        "\n" + 
-        "Retain newline.  A non-negative size argument limits the maximum\n" + 
-        "number of bytes to return (an incomplete line may be returned then).\n" + 
-        "Return an empty string at EOF.";
-
-    public final static String file_readlines_doc = 
-        "readlines([size]) -> list of strings, each a line from the file.\n" + 
-        "\n" + 
-        "Call readline() repeatedly and return a list of the lines so read.\n" + 
-        "The optional size argument, if given, is an approximate bound on the\n" + 
-        "total number of bytes in the lines returned.";
-
-    public final static String file_seek_doc = 
-        "seek(offset[, whence]) -> None.  Move to new file position.\n" + 
-        "\n" + 
-        "Argument offset is a byte count.  Optional argument whence defaults to\n" + 
-        "0 (offset from start of file, offset should be >= 0); other values are 1\n" + 
-        "(move relative to current position, positive or negative), and 2 (move\n" + 
-        "relative to end of file, usually negative, although many platforms allow\n" + 
-        "seeking beyond the end of a file).  If the file is opened in text mode,\n" + 
-        "only offsets returned by tell() are legal.  Use of other offsets causes\n" + 
-        "undefined behavior.\n" + 
-        "Note that not all file objects are seekable.";
-
-    public final static String file_softspace_doc = 
-        "flag indicating that a space needs to be printed; used by print";
-
-    public final static String file_tell_doc = 
-        "tell() -> current file position, an integer (may be a long integer).";
-
-    public final static String file_truncate_doc = 
-        "truncate([size]) -> None.  Truncate the file to at most size bytes.\n" + 
-        "\n" + 
-        "Size defaults to the current file position, as returned by tell().";
-
-    public final static String file_write_doc = 
-        "write(str) -> None.  Write string str to file.\n" + 
-        "\n" + 
-        "Note that due to buffering, flush() or close() may be needed before\n" + 
-        "the file on disk reflects the data written.";
-
-    public final static String file_writelines_doc = 
-        "writelines(sequence_of_strings) -> None.  Write the strings to the file.\n" + 
-        "\n" + 
-        "Note that newlines are not added.  The sequence can be any iterable object\n" + 
-        "producing strings. This is equivalent to calling write() for each string.";
-
-    public final static String file_xreadlines_doc = 
-        "xreadlines() -> returns self.\n" + 
-        "\n" + 
-        "For backward compatibility. File objects now include the performance\n" + 
-        "optimizations previously implemented in the xreadlines module.";
-
-    // Docs for <type 'complex'>
+    // Docs for <class 'complex'>
     public final static String complex___abs___doc = 
-        "x.__abs__() <==> abs(x)";
+        "abs(self)";
 
     public final static String complex___add___doc = 
-        "x.__add__(y) <==> x+y";
+        "Return self+value.";
+
+    public final static String complex___bool___doc = 
+        "self != 0";
 
     public final static String complex___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
-    public final static String complex___coerce___doc = 
-        "x.__coerce__(y) <==> coerce(x, y)";
-
     public final static String complex___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
 
-    public final static String complex___div___doc = 
-        "x.__div__(y) <==> x/y";
+    public final static String complex___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String complex___divmod___doc = 
-        "x.__divmod__(y) <==> divmod(x, y)";
+        "Return divmod(self, value).";
 
     public final static String complex_doc = 
         "complex(real[, imag]) -> complex number\n" + 
@@ -2810,81 +2662,72 @@ public class BuiltinDocs {
         "This is equivalent to (real + imag*1j) where imag defaults to 0.";
 
     public final static String complex___eq___doc = 
-        "x.__eq__(y) <==> x==y";
+        "Return self==value.";
 
     public final static String complex___float___doc = 
-        "x.__float__() <==> float(x)";
+        "float(self)";
 
     public final static String complex___floordiv___doc = 
-        "x.__floordiv__(y) <==> x//y";
+        "Return self//value.";
 
     public final static String complex___format___doc = 
         "complex.__format__() -> str\n" + 
         "\n" + 
-        "Converts to a string according to format_spec.";
+        "Convert to a string according to format_spec.";
 
     public final static String complex___ge___doc = 
-        "x.__ge__(y) <==> x>=y";
+        "Return self>=value.";
 
     public final static String complex___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
 
     public final static String complex___getnewargs___doc = 
         "";
 
     public final static String complex___gt___doc = 
-        "x.__gt__(y) <==> x>y";
+        "Return self>value.";
 
     public final static String complex___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String complex___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
 
     public final static String complex___int___doc = 
-        "x.__int__() <==> int(x)";
+        "int(self)";
 
     public final static String complex___le___doc = 
-        "x.__le__(y) <==> x<=y";
-
-    public final static String complex___long___doc = 
-        "x.__long__() <==> long(x)";
+        "Return self<=value.";
 
     public final static String complex___lt___doc = 
-        "x.__lt__(y) <==> x<y";
+        "Return self<value.";
 
     public final static String complex___mod___doc = 
-        "x.__mod__(y) <==> x%y";
+        "Return self%value.";
 
     public final static String complex___mul___doc = 
-        "x.__mul__(y) <==> x*y";
+        "Return self*value.";
 
     public final static String complex___ne___doc = 
-        "x.__ne__(y) <==> x!=y";
+        "Return self!=value.";
 
     public final static String complex___neg___doc = 
-        "x.__neg__() <==> -x";
+        "-self";
 
     public final static String complex___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
-
-    public final static String complex___nonzero___doc = 
-        "x.__nonzero__() <==> x != 0";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String complex___pos___doc = 
-        "x.__pos__() <==> +x";
+        "+self";
 
     public final static String complex___pow___doc = 
-        "x.__pow__(y[, z]) <==> pow(x, y[, z])";
+        "Return pow(self, value, mod).";
 
     public final static String complex___radd___doc = 
-        "x.__radd__(y) <==> y+x";
-
-    public final static String complex___rdiv___doc = 
-        "x.__rdiv__(y) <==> y/x";
+        "Return value+self.";
 
     public final static String complex___rdivmod___doc = 
-        "x.__rdivmod__(y) <==> divmod(y, x)";
+        "Return divmod(value, self).";
 
     public final static String complex___reduce___doc = 
         "helper for pickle";
@@ -2893,38 +2736,38 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String complex___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String complex___rfloordiv___doc = 
-        "x.__rfloordiv__(y) <==> y//x";
+        "Return value//self.";
 
     public final static String complex___rmod___doc = 
-        "x.__rmod__(y) <==> y%x";
+        "Return value%self.";
 
     public final static String complex___rmul___doc = 
-        "x.__rmul__(y) <==> y*x";
+        "Return value*self.";
 
     public final static String complex___rpow___doc = 
-        "y.__rpow__(x[, z]) <==> pow(x, y[, z])";
+        "Return pow(value, self, mod).";
 
     public final static String complex___rsub___doc = 
-        "x.__rsub__(y) <==> y-x";
+        "Return value-self.";
 
     public final static String complex___rtruediv___doc = 
-        "x.__rtruediv__(y) <==> y/x";
+        "Return value/self.";
 
     public final static String complex___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String complex___sizeof___doc = 
         "__sizeof__() -> int\n" + 
         "size of object in memory, in bytes";
 
     public final static String complex___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String complex___sub___doc = 
-        "x.__sub__(y) <==> x-y";
+        "Return self-value.";
 
     public final static String complex___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -2936,12 +2779,12 @@ public class BuiltinDocs {
         "";
 
     public final static String complex___truediv___doc = 
-        "x.__truediv__(y) <==> x/y";
+        "Return self/value.";
 
     public final static String complex_conjugate_doc = 
         "complex.conjugate() -> complex\n" + 
         "\n" + 
-        "Returns the complex conjugate of its argument. (3-4j).conjugate() == 3+4j.";
+        "Return the complex conjugate of its argument. (3-4j).conjugate() == 3+4j.";
 
     public final static String complex_imag_doc = 
         "the imaginary part of a complex number";
@@ -2949,34 +2792,36 @@ public class BuiltinDocs {
     public final static String complex_real_doc = 
         "the real part of a complex number";
 
-    // Docs for <type 'bool'>
+    // Docs for <class 'bool'>
     public final static String bool___abs___doc = 
-        "x.__abs__() <==> abs(x)";
+        "abs(self)";
 
     public final static String bool___add___doc = 
-        "x.__add__(y) <==> x+y";
+        "Return self+value.";
 
     public final static String bool___and___doc = 
-        "x.__and__(y) <==> x&y";
+        "Return self&value.";
+
+    public final static String bool___bool___doc = 
+        "self != 0";
+
+    public final static String bool___ceil___doc = 
+        "Ceiling of an Integral returns itself.";
 
     public final static String bool___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
-    public final static String bool___cmp___doc = 
-        "x.__cmp__(y) <==> cmp(x,y)";
-
-    public final static String bool___coerce___doc = 
-        "x.__coerce__(y) <==> coerce(x, y)";
-
     public final static String bool___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
 
-    public final static String bool___div___doc = 
-        "x.__div__(y) <==> x/y";
+    public final static String bool___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String bool___divmod___doc = 
-        "x.__divmod__(y) <==> divmod(x, y)";
+        "Return divmod(self, value).";
 
     public final static String bool_doc = 
         "bool(x) -> bool\n" + 
@@ -2985,83 +2830,89 @@ public class BuiltinDocs {
         "The builtins True and False are the only two instances of the class bool.\n" + 
         "The class bool is a subclass of the class int, and cannot be subclassed.";
 
+    public final static String bool___eq___doc = 
+        "Return self==value.";
+
     public final static String bool___float___doc = 
-        "x.__float__() <==> float(x)";
+        "float(self)";
+
+    public final static String bool___floor___doc = 
+        "Flooring an Integral returns itself.";
 
     public final static String bool___floordiv___doc = 
-        "x.__floordiv__(y) <==> x//y";
+        "Return self//value.";
 
     public final static String bool___format___doc = 
         "";
 
+    public final static String bool___ge___doc = 
+        "Return self>=value.";
+
     public final static String bool___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
 
     public final static String bool___getnewargs___doc = 
         "";
 
-    public final static String bool___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+    public final static String bool___gt___doc = 
+        "Return self>value.";
 
-    public final static String bool___hex___doc = 
-        "x.__hex__() <==> hex(x)";
+    public final static String bool___hash___doc = 
+        "Return hash(self).";
 
     public final static String bool___index___doc = 
-        "x[y:z] <==> x[y.__index__():z.__index__()]";
+        "Return self converted to an integer, if self is suitable for use as an index into a list.";
 
     public final static String bool___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
 
     public final static String bool___int___doc = 
-        "x.__int__() <==> int(x)";
+        "int(self)";
 
     public final static String bool___invert___doc = 
-        "x.__invert__() <==> ~x";
+        "~self";
 
-    public final static String bool___long___doc = 
-        "x.__long__() <==> long(x)";
+    public final static String bool___le___doc = 
+        "Return self<=value.";
 
     public final static String bool___lshift___doc = 
-        "x.__lshift__(y) <==> x<<y";
+        "Return self<<value.";
+
+    public final static String bool___lt___doc = 
+        "Return self<value.";
 
     public final static String bool___mod___doc = 
-        "x.__mod__(y) <==> x%y";
+        "Return self%value.";
 
     public final static String bool___mul___doc = 
-        "x.__mul__(y) <==> x*y";
+        "Return self*value.";
+
+    public final static String bool___ne___doc = 
+        "Return self!=value.";
 
     public final static String bool___neg___doc = 
-        "x.__neg__() <==> -x";
+        "-self";
 
     public final static String bool___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
-
-    public final static String bool___nonzero___doc = 
-        "x.__nonzero__() <==> x != 0";
-
-    public final static String bool___oct___doc = 
-        "x.__oct__() <==> oct(x)";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String bool___or___doc = 
-        "x.__or__(y) <==> x|y";
+        "Return self|value.";
 
     public final static String bool___pos___doc = 
-        "x.__pos__() <==> +x";
+        "+self";
 
     public final static String bool___pow___doc = 
-        "x.__pow__(y[, z]) <==> pow(x, y[, z])";
+        "Return pow(self, value, mod).";
 
     public final static String bool___radd___doc = 
-        "x.__radd__(y) <==> y+x";
+        "Return value+self.";
 
     public final static String bool___rand___doc = 
-        "x.__rand__(y) <==> y&x";
-
-    public final static String bool___rdiv___doc = 
-        "x.__rdiv__(y) <==> y/x";
+        "Return value&self.";
 
     public final static String bool___rdivmod___doc = 
-        "x.__rdivmod__(y) <==> divmod(y, x)";
+        "Return divmod(value, self).";
 
     public final static String bool___reduce___doc = 
         "helper for pickle";
@@ -3070,53 +2921,56 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String bool___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String bool___rfloordiv___doc = 
-        "x.__rfloordiv__(y) <==> y//x";
+        "Return value//self.";
 
     public final static String bool___rlshift___doc = 
-        "x.__rlshift__(y) <==> y<<x";
+        "Return value<<self.";
 
     public final static String bool___rmod___doc = 
-        "x.__rmod__(y) <==> y%x";
+        "Return value%self.";
 
     public final static String bool___rmul___doc = 
-        "x.__rmul__(y) <==> y*x";
+        "Return value*self.";
 
     public final static String bool___ror___doc = 
-        "x.__ror__(y) <==> y|x";
+        "Return value|self.";
+
+    public final static String bool___round___doc = 
+        "Rounding an Integral returns itself.\n" + 
+        "Rounding with an ndigits argument also returns an integer.";
 
     public final static String bool___rpow___doc = 
-        "y.__rpow__(x[, z]) <==> pow(x, y[, z])";
+        "Return pow(value, self, mod).";
 
     public final static String bool___rrshift___doc = 
-        "x.__rrshift__(y) <==> y>>x";
+        "Return value>>self.";
 
     public final static String bool___rshift___doc = 
-        "x.__rshift__(y) <==> x>>y";
+        "Return self>>value.";
 
     public final static String bool___rsub___doc = 
-        "x.__rsub__(y) <==> y-x";
+        "Return value-self.";
 
     public final static String bool___rtruediv___doc = 
-        "x.__rtruediv__(y) <==> y/x";
+        "Return value/self.";
 
     public final static String bool___rxor___doc = 
-        "x.__rxor__(y) <==> y^x";
+        "Return value^self.";
 
     public final static String bool___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String bool___sizeof___doc = 
-        "__sizeof__() -> int\n" + 
-        "size of object in memory, in bytes";
+        "Returns size in memory, in bytes";
 
     public final static String bool___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String bool___sub___doc = 
-        "x.__sub__(y) <==> x-y";
+        "Return self-value.";
 
     public final static String bool___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -3128,13 +2982,13 @@ public class BuiltinDocs {
         "";
 
     public final static String bool___truediv___doc = 
-        "x.__truediv__(y) <==> x/y";
+        "Return self/value.";
 
     public final static String bool___trunc___doc = 
         "Truncating an Integral returns itself.";
 
     public final static String bool___xor___doc = 
-        "x.__xor__(y) <==> x^y";
+        "Return self^value.";
 
     public final static String bool_bit_length_doc = 
         "int.bit_length() -> int\n" + 
@@ -3151,6 +3005,24 @@ public class BuiltinDocs {
     public final static String bool_denominator_doc = 
         "the denominator of a rational number in lowest terms";
 
+    public final static String bool_from_bytes_doc = 
+        "int.from_bytes(bytes, byteorder, *, signed=False) -> int\n" + 
+        "\n" + 
+        "Return the integer represented by the given array of bytes.\n" + 
+        "\n" + 
+        "The bytes argument must either support the buffer protocol or be an\n" + 
+        "iterable object producing bytes.  Bytes and bytearray are examples of\n" + 
+        "built-in objects that support the buffer protocol.\n" + 
+        "\n" + 
+        "The byteorder argument determines the byte order used to represent the\n" + 
+        "integer.  If byteorder is 'big', the most significant byte is at the\n" + 
+        "beginning of the byte array.  If byteorder is 'little', the most\n" + 
+        "significant byte is at the end of the byte array.  To request the native\n" + 
+        "byte order of the host system, use `sys.byteorder' as the byte order value.\n" + 
+        "\n" + 
+        "The signed keyword-only argument indicates whether two's complement is\n" + 
+        "used to represent the integer.";
+
     public final static String bool_imag_doc = 
         "the imaginary part of a complex number";
 
@@ -3160,13 +3032,40 @@ public class BuiltinDocs {
     public final static String bool_real_doc = 
         "the real part of a complex number";
 
-    // Docs for <type 'classmethod'>
+    public final static String bool_to_bytes_doc = 
+        "int.to_bytes(length, byteorder, *, signed=False) -> bytes\n" + 
+        "\n" + 
+        "Return an array of bytes representing an integer.\n" + 
+        "\n" + 
+        "The integer is represented using length bytes.  An OverflowError is\n" + 
+        "raised if the integer is not representable with the given number of\n" + 
+        "bytes.\n" + 
+        "\n" + 
+        "The byteorder argument determines the byte order used to represent the\n" + 
+        "integer.  If byteorder is 'big', the most significant byte is at the\n" + 
+        "beginning of the byte array.  If byteorder is 'little', the most\n" + 
+        "significant byte is at the end of the byte array.  To request the native\n" + 
+        "byte order of the host system, use `sys.byteorder' as the byte order value.\n" + 
+        "\n" + 
+        "The signed keyword-only argument determines whether two's complement is\n" + 
+        "used to represent the integer.  If signed is False and a negative integer\n" + 
+        "is given, an OverflowError is raised.";
+
+    // Docs for <class 'classmethod'>
     public final static String classmethod___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
     public final static String classmethod___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
+
+    public final static String classmethod___dict___doc = 
+        "";
+
+    public final static String classmethod___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String classmethod_doc = 
         "classmethod(function) -> method\n" + 
@@ -3189,26 +3088,47 @@ public class BuiltinDocs {
         "Class methods are different than C++ or Java static methods.\n" + 
         "If you want those, see the staticmethod builtin.";
 
+    public final static String classmethod___eq___doc = 
+        "Return self==value.";
+
     public final static String classmethod___format___doc = 
         "default object formatter";
 
     public final static String classmethod___func___doc = 
         "";
 
+    public final static String classmethod___ge___doc = 
+        "Return self>=value.";
+
     public final static String classmethod___get___doc = 
-        "descr.__get__(obj[, type]) -> value";
+        "Return an attribute of instance, which is of type owner.";
 
     public final static String classmethod___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
+
+    public final static String classmethod___gt___doc = 
+        "Return self>value.";
 
     public final static String classmethod___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String classmethod___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String classmethod___isabstractmethod___doc = 
+        "";
+
+    public final static String classmethod___le___doc = 
+        "Return self<=value.";
+
+    public final static String classmethod___lt___doc = 
+        "Return self<value.";
+
+    public final static String classmethod___ne___doc = 
+        "Return self!=value.";
 
     public final static String classmethod___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String classmethod___reduce___doc = 
         "helper for pickle";
@@ -3217,17 +3137,17 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String classmethod___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String classmethod___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String classmethod___sizeof___doc = 
         "__sizeof__() -> int\n" + 
         "size of object in memory, in bytes";
 
     public final static String classmethod___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String classmethod___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -3238,22 +3158,24 @@ public class BuiltinDocs {
         "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
-    // Docs for <type 'set'>
+    // Docs for <class 'set'>
     public final static String set___and___doc = 
-        "x.__and__(y) <==> x&y";
+        "Return self&value.";
 
     public final static String set___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
-
-    public final static String set___cmp___doc = 
-        "x.__cmp__(y) <==> cmp(x,y)";
 
     public final static String set___contains___doc = 
         "x.__contains__(y) <==> y in x.";
 
     public final static String set___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
+
+    public final static String set___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String set_doc = 
         "set() -> new empty set object\n" + 
@@ -3262,61 +3184,61 @@ public class BuiltinDocs {
         "Build an unordered collection of unique elements.";
 
     public final static String set___eq___doc = 
-        "x.__eq__(y) <==> x==y";
+        "Return self==value.";
 
     public final static String set___format___doc = 
         "default object formatter";
 
     public final static String set___ge___doc = 
-        "x.__ge__(y) <==> x>=y";
+        "Return self>=value.";
 
     public final static String set___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
 
     public final static String set___gt___doc = 
-        "x.__gt__(y) <==> x>y";
+        "Return self>value.";
 
     public final static String set___hash___doc = 
         "";
 
     public final static String set___iand___doc = 
-        "x.__iand__(y) <==> x&y";
+        "Return self&=value.";
 
     public final static String set___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
 
     public final static String set___ior___doc = 
-        "x.__ior__(y) <==> x|y";
+        "Return self|=value.";
 
     public final static String set___isub___doc = 
-        "x.__isub__(y) <==> x-y";
+        "Return self-=value.";
 
     public final static String set___iter___doc = 
-        "x.__iter__() <==> iter(x)";
+        "Implement iter(self).";
 
     public final static String set___ixor___doc = 
-        "x.__ixor__(y) <==> x^y";
+        "Return self^=value.";
 
     public final static String set___le___doc = 
-        "x.__le__(y) <==> x<=y";
+        "Return self<=value.";
 
     public final static String set___len___doc = 
-        "x.__len__() <==> len(x)";
+        "Return len(self).";
 
     public final static String set___lt___doc = 
-        "x.__lt__(y) <==> x<y";
+        "Return self<value.";
 
     public final static String set___ne___doc = 
-        "x.__ne__(y) <==> x!=y";
+        "Return self!=value.";
 
     public final static String set___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String set___or___doc = 
-        "x.__or__(y) <==> x|y";
+        "Return self|value.";
 
     public final static String set___rand___doc = 
-        "x.__rand__(y) <==> y&x";
+        "Return value&self.";
 
     public final static String set___reduce___doc = 
         "Return state information for pickling.";
@@ -3325,28 +3247,28 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String set___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String set___ror___doc = 
-        "x.__ror__(y) <==> y|x";
+        "Return value|self.";
 
     public final static String set___rsub___doc = 
-        "x.__rsub__(y) <==> y-x";
+        "Return value-self.";
 
     public final static String set___rxor___doc = 
-        "x.__rxor__(y) <==> y^x";
+        "Return value^self.";
 
     public final static String set___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String set___sizeof___doc = 
         "S.__sizeof__() -> size of S in memory, in bytes";
 
     public final static String set___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String set___sub___doc = 
-        "x.__sub__(y) <==> x-y";
+        "Return self-value.";
 
     public final static String set___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -3358,7 +3280,7 @@ public class BuiltinDocs {
         "";
 
     public final static String set___xor___doc = 
-        "x.__xor__(y) <==> x^y";
+        "Return self^value.";
 
     public final static String set_add_doc = 
         "Add an element to a set.\n" + 
@@ -3385,9 +3307,9 @@ public class BuiltinDocs {
         "If the element is not a member, do nothing.";
 
     public final static String set_intersection_doc = 
-        "Return the intersection of two or more sets as a new set.\n" + 
+        "Return the intersection of two sets as a new set.\n" + 
         "\n" + 
-        "(i.e. elements that are common to all of the sets.)";
+        "(i.e. all elements that are in both sets.)";
 
     public final static String set_intersection_update_doc = 
         "Update a set with the intersection of itself and another.";
@@ -3426,22 +3348,24 @@ public class BuiltinDocs {
     public final static String set_update_doc = 
         "Update a set with the union of itself and others.";
 
-    // Docs for <type 'frozenset'>
+    // Docs for <class 'frozenset'>
     public final static String frozenset___and___doc = 
-        "x.__and__(y) <==> x&y";
+        "Return self&value.";
 
     public final static String frozenset___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
-
-    public final static String frozenset___cmp___doc = 
-        "x.__cmp__(y) <==> cmp(x,y)";
 
     public final static String frozenset___contains___doc = 
         "x.__contains__(y) <==> y in x.";
 
     public final static String frozenset___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
+
+    public final static String frozenset___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String frozenset_doc = 
         "frozenset() -> empty frozenset object\n" + 
@@ -3450,49 +3374,49 @@ public class BuiltinDocs {
         "Build an immutable unordered collection of unique elements.";
 
     public final static String frozenset___eq___doc = 
-        "x.__eq__(y) <==> x==y";
+        "Return self==value.";
 
     public final static String frozenset___format___doc = 
         "default object formatter";
 
     public final static String frozenset___ge___doc = 
-        "x.__ge__(y) <==> x>=y";
+        "Return self>=value.";
 
     public final static String frozenset___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
 
     public final static String frozenset___gt___doc = 
-        "x.__gt__(y) <==> x>y";
+        "Return self>value.";
 
     public final static String frozenset___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String frozenset___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
 
     public final static String frozenset___iter___doc = 
-        "x.__iter__() <==> iter(x)";
+        "Implement iter(self).";
 
     public final static String frozenset___le___doc = 
-        "x.__le__(y) <==> x<=y";
+        "Return self<=value.";
 
     public final static String frozenset___len___doc = 
-        "x.__len__() <==> len(x)";
+        "Return len(self).";
 
     public final static String frozenset___lt___doc = 
-        "x.__lt__(y) <==> x<y";
+        "Return self<value.";
 
     public final static String frozenset___ne___doc = 
-        "x.__ne__(y) <==> x!=y";
+        "Return self!=value.";
 
     public final static String frozenset___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String frozenset___or___doc = 
-        "x.__or__(y) <==> x|y";
+        "Return self|value.";
 
     public final static String frozenset___rand___doc = 
-        "x.__rand__(y) <==> y&x";
+        "Return value&self.";
 
     public final static String frozenset___reduce___doc = 
         "Return state information for pickling.";
@@ -3501,28 +3425,28 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String frozenset___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String frozenset___ror___doc = 
-        "x.__ror__(y) <==> y|x";
+        "Return value|self.";
 
     public final static String frozenset___rsub___doc = 
-        "x.__rsub__(y) <==> y-x";
+        "Return value-self.";
 
     public final static String frozenset___rxor___doc = 
-        "x.__rxor__(y) <==> y^x";
+        "Return value^self.";
 
     public final static String frozenset___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String frozenset___sizeof___doc = 
         "S.__sizeof__() -> size of S in memory, in bytes";
 
     public final static String frozenset___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String frozenset___sub___doc = 
-        "x.__sub__(y) <==> x-y";
+        "Return self-value.";
 
     public final static String frozenset___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -3534,7 +3458,7 @@ public class BuiltinDocs {
         "";
 
     public final static String frozenset___xor___doc = 
-        "x.__xor__(y) <==> x^y";
+        "Return self^value.";
 
     public final static String frozenset_copy_doc = 
         "Return a shallow copy of a set.";
@@ -3545,9 +3469,9 @@ public class BuiltinDocs {
         "(i.e. all elements that are in this set but not the others.)";
 
     public final static String frozenset_intersection_doc = 
-        "Return the intersection of two or more sets as a new set.\n" + 
+        "Return the intersection of two sets as a new set.\n" + 
         "\n" + 
-        "(i.e. elements that are common to all of the sets.)";
+        "(i.e. all elements that are in both sets.)";
 
     public final static String frozenset_isdisjoint_doc = 
         "Return True if two sets have a null intersection.";
@@ -3568,42 +3492,63 @@ public class BuiltinDocs {
         "\n" + 
         "(i.e. all elements that are in either set.)";
 
-    // Docs for <type 'exceptions.BaseException'>
+    // Docs for <class 'BaseException'>
+    public final static String BaseException___cause___doc = 
+        "exception cause";
+
     public final static String BaseException___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
+    public final static String BaseException___context___doc = 
+        "exception context";
+
     public final static String BaseException___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
 
     public final static String BaseException___dict___doc = 
         "";
 
+    public final static String BaseException___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
     public final static String BaseException_doc = 
         "Common base class for all exceptions";
+
+    public final static String BaseException___eq___doc = 
+        "Return self==value.";
 
     public final static String BaseException___format___doc = 
         "default object formatter";
 
+    public final static String BaseException___ge___doc = 
+        "Return self>=value.";
+
     public final static String BaseException___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
 
-    public final static String BaseException___getitem___doc = 
-        "x.__getitem__(y) <==> x[y]";
-
-    public final static String BaseException___getslice___doc = 
-        "x.__getslice__(i, j) <==> x[i:j]\n" + 
-        "           \n" + 
-        "           Use of negative indices is not supported.";
+    public final static String BaseException___gt___doc = 
+        "Return self>value.";
 
     public final static String BaseException___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String BaseException___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String BaseException___le___doc = 
+        "Return self<=value.";
+
+    public final static String BaseException___lt___doc = 
+        "Return self<value.";
+
+    public final static String BaseException___ne___doc = 
+        "Return self!=value.";
 
     public final static String BaseException___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String BaseException___reduce___doc = 
         "";
@@ -3612,10 +3557,10 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String BaseException___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String BaseException___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String BaseException___setstate___doc = 
         "";
@@ -3625,7 +3570,7 @@ public class BuiltinDocs {
         "size of object in memory, in bytes";
 
     public final static String BaseException___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String BaseException___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -3636,121 +3581,128 @@ public class BuiltinDocs {
         "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
-    public final static String BaseException___unicode___doc = 
+    public final static String BaseException___suppress_context___doc = 
+        "";
+
+    public final static String BaseException___traceback___doc = 
         "";
 
     public final static String BaseException_args_doc = 
         "";
 
-    public final static String BaseException_message_doc = 
-        "";
+    public final static String BaseException_with_traceback_doc = 
+        "Exception.with_traceback(tb) --\n" + 
+        "    set self.__traceback__ to tb and return self.";
 
-    // Docs for <type 'bytearray'>
+    // Docs for <class 'bytearray'>
     public final static String bytearray___add___doc = 
-        "x.__add__(y) <==> x+y";
+        "Return self+value.";
 
     public final static String bytearray___alloc___doc = 
         "B.__alloc__() -> int\n" + 
         "\n" + 
-        "Returns the number of bytes actually allocated.";
+        "Return the number of bytes actually allocated.";
 
     public final static String bytearray___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
     public final static String bytearray___contains___doc = 
-        "x.__contains__(y) <==> y in x";
+        "Return key in self.";
 
     public final static String bytearray___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
 
     public final static String bytearray___delitem___doc = 
-        "x.__delitem__(y) <==> del x[y]";
+        "Delete self[key].";
+
+    public final static String bytearray___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String bytearray_doc = 
-        "bytearray(iterable_of_ints) -> bytearray.\n" + 
-        "bytearray(string, encoding[, errors]) -> bytearray.\n" + 
-        "bytearray(bytes_or_bytearray) -> mutable copy of bytes_or_bytearray.\n" + 
-        "bytearray(memory_view) -> bytearray.\n" + 
+        "bytearray(iterable_of_ints) -> bytearray\n" + 
+        "bytearray(string, encoding[, errors]) -> bytearray\n" + 
+        "bytearray(bytes_or_buffer) -> mutable copy of bytes_or_buffer\n" + 
+        "bytearray(int) -> bytes array of size given by the parameter initialized with null bytes\n" + 
+        "bytearray() -> empty bytes array\n" + 
         "\n" + 
         "Construct an mutable bytearray object from:\n" + 
         "  - an iterable yielding integers in range(256)\n" + 
         "  - a text string encoded using the specified encoding\n" + 
-        "  - a bytes or a bytearray object\n" + 
+        "  - a bytes or a buffer object\n" + 
         "  - any object implementing the buffer API.\n" + 
-        "\n" + 
-        "bytearray(int) -> bytearray.\n" + 
-        "\n" + 
-        "Construct a zero-initialized bytearray of the given length.";
+        "  - an integer";
 
     public final static String bytearray___eq___doc = 
-        "x.__eq__(y) <==> x==y";
+        "Return self==value.";
 
     public final static String bytearray___format___doc = 
         "default object formatter";
 
     public final static String bytearray___ge___doc = 
-        "x.__ge__(y) <==> x>=y";
+        "Return self>=value.";
 
     public final static String bytearray___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
 
     public final static String bytearray___getitem___doc = 
-        "x.__getitem__(y) <==> x[y]";
+        "Return self[key].";
 
     public final static String bytearray___gt___doc = 
-        "x.__gt__(y) <==> x>y";
+        "Return self>value.";
 
     public final static String bytearray___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "";
 
     public final static String bytearray___iadd___doc = 
-        "x.__iadd__(y) <==> x+=y";
+        "Implement self+=value.";
 
     public final static String bytearray___imul___doc = 
-        "x.__imul__(y) <==> x*=y";
+        "Implement self*=value.";
 
     public final static String bytearray___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
 
     public final static String bytearray___iter___doc = 
-        "x.__iter__() <==> iter(x)";
+        "Implement iter(self).";
 
     public final static String bytearray___le___doc = 
-        "x.__le__(y) <==> x<=y";
+        "Return self<=value.";
 
     public final static String bytearray___len___doc = 
-        "x.__len__() <==> len(x)";
+        "Return len(self).";
 
     public final static String bytearray___lt___doc = 
-        "x.__lt__(y) <==> x<y";
+        "Return self<value.";
 
     public final static String bytearray___mul___doc = 
-        "x.__mul__(n) <==> x*n";
+        "Return self*value.n";
 
     public final static String bytearray___ne___doc = 
-        "x.__ne__(y) <==> x!=y";
+        "Return self!=value.";
 
     public final static String bytearray___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String bytearray___reduce___doc = 
         "Return state information for pickling.";
 
     public final static String bytearray___reduce_ex___doc = 
-        "helper for pickle";
+        "Return state information for pickling.";
 
     public final static String bytearray___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String bytearray___rmul___doc = 
-        "x.__rmul__(n) <==> n*x";
+        "Return self*value.";
 
     public final static String bytearray___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String bytearray___setitem___doc = 
-        "x.__setitem__(i, y) <==> x[i]=y";
+        "Set self[key] to value.";
 
     public final static String bytearray___sizeof___doc = 
         "B.__sizeof__() -> int\n" + 
@@ -3758,7 +3710,7 @@ public class BuiltinDocs {
         "Returns the size of B in memory, in bytes";
 
     public final static String bytearray___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String bytearray___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -3786,61 +3738,71 @@ public class BuiltinDocs {
         "Return B centered in a string of length width.  Padding is\n" + 
         "done using the specified fill character (default is a space).";
 
+    public final static String bytearray_clear_doc = 
+        "B.clear() -> None\n" + 
+        "\n" + 
+        "Remove all items from B.";
+
+    public final static String bytearray_copy_doc = 
+        "B.copy() -> bytearray\n" + 
+        "\n" + 
+        "Return a copy of B.";
+
     public final static String bytearray_count_doc = 
-        "B.count(sub [,start [,end]]) -> int\n" + 
+        "B.count(sub[, start[, end]]) -> int\n" + 
         "\n" + 
         "Return the number of non-overlapping occurrences of subsection sub in\n" + 
         "bytes B[start:end].  Optional arguments start and end are interpreted\n" + 
         "as in slice notation.";
 
     public final static String bytearray_decode_doc = 
-        "B.decode([encoding[, errors]]) -> unicode object.\n" + 
+        "B.decode(encoding='utf-8', errors='strict') -> str\n" + 
         "\n" + 
-        "Decodes B using the codec registered for encoding. encoding defaults\n" + 
-        "to the default encoding. errors may be given to set a different error\n" + 
+        "Decode B using the codec registered for encoding. Default encoding\n" + 
+        "is 'utf-8'. errors may be given to set a different error\n" + 
         "handling scheme.  Default is 'strict' meaning that encoding errors raise\n" + 
         "a UnicodeDecodeError.  Other possible values are 'ignore' and 'replace'\n" + 
         "as well as any other name registered with codecs.register_error that is\n" + 
         "able to handle UnicodeDecodeErrors.";
 
     public final static String bytearray_endswith_doc = 
-        "B.endswith(suffix [,start [,end]]) -> bool\n" + 
+        "B.endswith(suffix[, start[, end]]) -> bool\n" + 
         "\n" + 
         "Return True if B ends with the specified suffix, False otherwise.\n" + 
         "With optional start, test B beginning at that position.\n" + 
         "With optional end, stop comparing B at that position.\n" + 
-        "suffix can also be a tuple of strings to try.";
+        "suffix can also be a tuple of bytes to try.";
 
     public final static String bytearray_expandtabs_doc = 
-        "B.expandtabs([tabsize]) -> copy of B\n" + 
+        "B.expandtabs(tabsize=8) -> copy of B\n" + 
         "\n" + 
         "Return a copy of B where all tab characters are expanded using spaces.\n" + 
         "If tabsize is not given, a tab size of 8 characters is assumed.";
 
     public final static String bytearray_extend_doc = 
-        "B.extend(iterable int) -> None\n" + 
+        "B.extend(iterable_of_ints) -> None\n" + 
         "\n" + 
         "Append all the elements from the iterator or sequence to the\n" + 
         "end of B.";
 
     public final static String bytearray_find_doc = 
-        "B.find(sub [,start [,end]]) -> int\n" + 
+        "B.find(sub[, start[, end]]) -> int\n" + 
         "\n" + 
         "Return the lowest index in B where subsection sub is found,\n" + 
-        "such that sub is contained within s[start,end].  Optional\n" + 
+        "such that sub is contained within B[start,end].  Optional\n" + 
         "arguments start and end are interpreted as in slice notation.\n" + 
         "\n" + 
         "Return -1 on failure.";
 
     public final static String bytearray_fromhex_doc = 
-        "bytearray.fromhex(string) -> bytearray\n" + 
+        "bytearray.fromhex(string) -> bytearray (static method)\n" + 
         "\n" + 
         "Create a bytearray object from a string of hexadecimal numbers.\n" + 
         "Spaces between two numbers are accepted.\n" + 
         "Example: bytearray.fromhex('B9 01EF') -> bytearray(b'\\xb9\\x01\\xef').";
 
     public final static String bytearray_index_doc = 
-        "B.index(sub [,start [,end]]) -> int\n" + 
+        "B.index(sub[, start[, end]]) -> int\n" + 
         "\n" + 
         "Like B.find() but raise ValueError when the subsection is not found.";
 
@@ -3894,9 +3856,10 @@ public class BuiltinDocs {
         "at least one cased character in B, False otherwise.";
 
     public final static String bytearray_join_doc = 
-        "B.join(iterable_of_bytes) -> bytes\n" + 
+        "B.join(iterable_of_bytes) -> bytearray\n" + 
         "\n" + 
-        "Concatenates any number of bytearray objects, with B in between each pair.";
+        "Concatenate any number of bytes/bytearray objects, with B\n" + 
+        "in between each pair, and return the result as a new bytearray.";
 
     public final static String bytearray_ljust_doc = 
         "B.ljust(width[, fillchar]) -> copy of B\n" + 
@@ -3912,13 +3875,22 @@ public class BuiltinDocs {
     public final static String bytearray_lstrip_doc = 
         "B.lstrip([bytes]) -> bytearray\n" + 
         "\n" + 
-        "Strip leading bytes contained in the argument.\n" + 
+        "Strip leading bytes contained in the argument\n" + 
+        "and return the result as a new bytearray.\n" + 
         "If the argument is omitted, strip leading ASCII whitespace.";
+
+    public final static String bytearray_maketrans_doc = 
+        "B.maketrans(frm, to) -> translation table\n" + 
+        "\n" + 
+        "Return a translation table (a bytes object of length 256) suitable\n" + 
+        "for use in the bytes or bytearray translate method where each byte\n" + 
+        "in frm is mapped to the byte at the same position in to.\n" + 
+        "The bytes objects frm and to must be of the same length.";
 
     public final static String bytearray_partition_doc = 
         "B.partition(sep) -> (head, sep, tail)\n" + 
         "\n" + 
-        "Searches for the separator sep in B, and returns the part before it,\n" + 
+        "Search for the separator sep in B, and return the part before it,\n" + 
         "the separator itself, and the part after it.  If the separator is not\n" + 
         "found, returns B and two empty bytearray objects.";
 
@@ -3931,10 +3903,10 @@ public class BuiltinDocs {
     public final static String bytearray_remove_doc = 
         "B.remove(int) -> None\n" + 
         "\n" + 
-        "Remove the first occurance of a value in B.";
+        "Remove the first occurrence of a value in B.";
 
     public final static String bytearray_replace_doc = 
-        "B.replace(old, new[, count]) -> bytes\n" + 
+        "B.replace(old, new[, count]) -> bytearray\n" + 
         "\n" + 
         "Return a copy of B with all occurrences of subsection\n" + 
         "old replaced by new.  If the optional argument count is\n" + 
@@ -3946,16 +3918,16 @@ public class BuiltinDocs {
         "Reverse the order of the values in B in place.";
 
     public final static String bytearray_rfind_doc = 
-        "B.rfind(sub [,start [,end]]) -> int\n" + 
+        "B.rfind(sub[, start[, end]]) -> int\n" + 
         "\n" + 
         "Return the highest index in B where subsection sub is found,\n" + 
-        "such that sub is contained within s[start,end].  Optional\n" + 
+        "such that sub is contained within B[start,end].  Optional\n" + 
         "arguments start and end are interpreted as in slice notation.\n" + 
         "\n" + 
         "Return -1 on failure.";
 
     public final static String bytearray_rindex_doc = 
-        "B.rindex(sub [,start [,end]]) -> int\n" + 
+        "B.rindex(sub[, start[, end]]) -> int\n" + 
         "\n" + 
         "Like B.rfind() but raise ValueError when the subsection is not found.";
 
@@ -3968,13 +3940,13 @@ public class BuiltinDocs {
     public final static String bytearray_rpartition_doc = 
         "B.rpartition(sep) -> (head, sep, tail)\n" + 
         "\n" + 
-        "Searches for the separator sep in B, starting at the end of B,\n" + 
-        "and returns the part before it, the separator itself, and the\n" + 
+        "Search for the separator sep in B, starting at the end of B,\n" + 
+        "and return the part before it, the separator itself, and the\n" + 
         "part after it.  If the separator is not found, returns two empty\n" + 
         "bytearray objects and B.";
 
     public final static String bytearray_rsplit_doc = 
-        "B.rsplit(sep[, maxsplit]) -> list of bytearray\n" + 
+        "B.rsplit(sep=None, maxsplit=-1) -> list of bytearrays\n" + 
         "\n" + 
         "Return a list of the sections in B, using sep as the delimiter,\n" + 
         "starting at the end of B and working to the front.\n" + 
@@ -3985,11 +3957,12 @@ public class BuiltinDocs {
     public final static String bytearray_rstrip_doc = 
         "B.rstrip([bytes]) -> bytearray\n" + 
         "\n" + 
-        "Strip trailing bytes contained in the argument.\n" + 
+        "Strip trailing bytes contained in the argument\n" + 
+        "and return the result as a new bytearray.\n" + 
         "If the argument is omitted, strip trailing ASCII whitespace.";
 
     public final static String bytearray_split_doc = 
-        "B.split([sep[, maxsplit]]) -> list of bytearray\n" + 
+        "B.split(sep=None, maxsplit=-1) -> list of bytearrays\n" + 
         "\n" + 
         "Return a list of the sections in B, using sep as the delimiter.\n" + 
         "If sep is not given, B is split on ASCII whitespace characters\n" + 
@@ -4004,17 +3977,18 @@ public class BuiltinDocs {
         "is given and true.";
 
     public final static String bytearray_startswith_doc = 
-        "B.startswith(prefix [,start [,end]]) -> bool\n" + 
+        "B.startswith(prefix[, start[, end]]) -> bool\n" + 
         "\n" + 
         "Return True if B starts with the specified prefix, False otherwise.\n" + 
         "With optional start, test B beginning at that position.\n" + 
         "With optional end, stop comparing B at that position.\n" + 
-        "prefix can also be a tuple of strings to try.";
+        "prefix can also be a tuple of bytes to try.";
 
     public final static String bytearray_strip_doc = 
         "B.strip([bytes]) -> bytearray\n" + 
         "\n" + 
-        "Strip leading and trailing bytes contained in the argument.\n" + 
+        "Strip leading and trailing bytes contained in the argument\n" + 
+        "and return the result as a new bytearray.\n" + 
         "If the argument is omitted, strip ASCII whitespace.";
 
     public final static String bytearray_swapcase_doc = 
@@ -4048,158 +4022,71 @@ public class BuiltinDocs {
         "Pad a numeric string B with zeros on the left, to fill a field\n" + 
         "of the specified width.  B is never truncated.";
 
-    // Docs for <type 'buffer'>
-    public final static String buffer___add___doc = 
-        "x.__add__(y) <==> x+y";
-
-    public final static String buffer___class___doc = 
-        "type(object) -> the object's type\n" + 
-        "type(name, bases, dict) -> a new type";
-
-    public final static String buffer___cmp___doc = 
-        "x.__cmp__(y) <==> cmp(x,y)";
-
-    public final static String buffer___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
-
-    public final static String buffer___delitem___doc = 
-        "x.__delitem__(y) <==> del x[y]";
-
-    public final static String buffer___delslice___doc = 
-        "x.__delslice__(i, j) <==> del x[i:j]\n" + 
-        "           \n" + 
-        "           Use of negative indices is not supported.";
-
-    public final static String buffer_doc = 
-        "buffer(object [, offset[, size]])\n" + 
-        "\n" + 
-        "Create a new buffer object which references the given object.\n" + 
-        "The buffer will reference a slice of the target object from the\n" + 
-        "start of the object (or at the specified offset). The slice will\n" + 
-        "extend to the end of the target object (or with the specified size).";
-
-    public final static String buffer___format___doc = 
-        "default object formatter";
-
-    public final static String buffer___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
-
-    public final static String buffer___getitem___doc = 
-        "x.__getitem__(y) <==> x[y]";
-
-    public final static String buffer___getslice___doc = 
-        "x.__getslice__(i, j) <==> x[i:j]\n" + 
-        "           \n" + 
-        "           Use of negative indices is not supported.";
-
-    public final static String buffer___hash___doc = 
-        "x.__hash__() <==> hash(x)";
-
-    public final static String buffer___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
-
-    public final static String buffer___len___doc = 
-        "x.__len__() <==> len(x)";
-
-    public final static String buffer___mul___doc = 
-        "x.__mul__(n) <==> x*n";
-
-    public final static String buffer___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
-
-    public final static String buffer___reduce___doc = 
-        "helper for pickle";
-
-    public final static String buffer___reduce_ex___doc = 
-        "helper for pickle";
-
-    public final static String buffer___repr___doc = 
-        "x.__repr__() <==> repr(x)";
-
-    public final static String buffer___rmul___doc = 
-        "x.__rmul__(n) <==> n*x";
-
-    public final static String buffer___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
-
-    public final static String buffer___setitem___doc = 
-        "x.__setitem__(i, y) <==> x[i]=y";
-
-    public final static String buffer___setslice___doc = 
-        "x.__setslice__(i, j, y) <==> x[i:j]=y\n" + 
-        "           \n" + 
-        "           Use  of negative indices is not supported.";
-
-    public final static String buffer___sizeof___doc = 
-        "__sizeof__() -> int\n" + 
-        "size of object in memory, in bytes";
-
-    public final static String buffer___str___doc = 
-        "x.__str__() <==> str(x)";
-
-    public final static String buffer___subclasshook___doc = 
-        "Abstract classes can override this to customize issubclass().\n" + 
-        "\n" + 
-        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
-        "It should return True, False or NotImplemented.  If it returns\n" + 
-        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
-        "overrides the normal algorithm (and the outcome is cached).\n" + 
-        "";
-
-    // Docs for <type 'memoryview'>
+    // Docs for <class 'memoryview'>
     public final static String memoryview___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
     public final static String memoryview___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
 
     public final static String memoryview___delitem___doc = 
-        "x.__delitem__(y) <==> del x[y]";
+        "Delete self[key].";
+
+    public final static String memoryview___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String memoryview_doc = 
         "memoryview(object)\n" + 
         "\n" + 
         "Create a new memoryview object which references the given object.";
 
+    public final static String memoryview___enter___doc = 
+        "";
+
     public final static String memoryview___eq___doc = 
-        "x.__eq__(y) <==> x==y";
+        "Return self==value.";
+
+    public final static String memoryview___exit___doc = 
+        "";
 
     public final static String memoryview___format___doc = 
         "default object formatter";
 
     public final static String memoryview___ge___doc = 
-        "x.__ge__(y) <==> x>=y";
+        "Return self>=value.";
 
     public final static String memoryview___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
 
     public final static String memoryview___getitem___doc = 
-        "x.__getitem__(y) <==> x[y]";
+        "Return self[key].";
 
     public final static String memoryview___gt___doc = 
-        "x.__gt__(y) <==> x>y";
+        "Return self>value.";
 
     public final static String memoryview___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String memoryview___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
 
     public final static String memoryview___le___doc = 
-        "x.__le__(y) <==> x<=y";
+        "Return self<=value.";
 
     public final static String memoryview___len___doc = 
-        "x.__len__() <==> len(x)";
+        "Return len(self).";
 
     public final static String memoryview___lt___doc = 
-        "x.__lt__(y) <==> x<y";
+        "Return self<value.";
 
     public final static String memoryview___ne___doc = 
-        "x.__ne__(y) <==> x!=y";
+        "Return self!=value.";
 
     public final static String memoryview___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String memoryview___reduce___doc = 
         "helper for pickle";
@@ -4208,20 +4095,20 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String memoryview___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String memoryview___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String memoryview___setitem___doc = 
-        "x.__setitem__(i, y) <==> x[i]=y";
+        "Set self[key] to value.";
 
     public final static String memoryview___sizeof___doc = 
         "__sizeof__() -> int\n" + 
         "size of object in memory, in bytes";
 
     public final static String memoryview___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String memoryview___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -4232,38 +4119,76 @@ public class BuiltinDocs {
         "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
+    public final static String memoryview_c_contiguous_doc = 
+        "A bool indicating whether the memory is C contiguous.";
+
+    public final static String memoryview_cast_doc = 
+        "M.cast(format[, shape]) -> memoryview\n" + 
+        "\n" + 
+        "Cast a memoryview to a new format or shape.";
+
+    public final static String memoryview_contiguous_doc = 
+        "A bool indicating whether the memory is contiguous.";
+
+    public final static String memoryview_f_contiguous_doc = 
+        "A bool indicating whether the memory is Fortran contiguous.";
+
     public final static String memoryview_format_doc = 
-        "";
+        "A string containing the format (in struct module style)\n" + 
+        " for each element in the view.";
 
     public final static String memoryview_itemsize_doc = 
-        "";
+        "The size in bytes of each element of the memoryview.";
+
+    public final static String memoryview_nbytes_doc = 
+        "The amount of space in bytes that the array would use in\n" + 
+        " a contiguous representation.";
 
     public final static String memoryview_ndim_doc = 
-        "";
+        "An integer indicating how many dimensions of a multi-dimensional\n" + 
+        " array the memory represents.";
+
+    public final static String memoryview_obj_doc = 
+        "The underlying object of the memoryview.";
 
     public final static String memoryview_readonly_doc = 
-        "";
+        "A bool indicating whether the memory is read only.";
+
+    public final static String memoryview_release_doc = 
+        "M.release() -> None\n" + 
+        "\n" + 
+        "Release the underlying buffer exposed by the memoryview object.";
 
     public final static String memoryview_shape_doc = 
-        "";
+        "A tuple of ndim integers giving the shape of the memory\n" + 
+        " as an N-dimensional array.";
 
     public final static String memoryview_strides_doc = 
-        "";
+        "A tuple of ndim integers giving the size in bytes to access\n" + 
+        " each element for each dimension of the array.";
 
     public final static String memoryview_suboffsets_doc = 
-        "";
+        "A tuple of integers used internally for PIL-style arrays.";
 
     public final static String memoryview_tobytes_doc = 
-        "";
+        "M.tobytes() -> bytes\n" + 
+        "\n" + 
+        "Return the data in the buffer as a byte string.";
 
     public final static String memoryview_tolist_doc = 
+        "M.tolist() -> list\n" + 
+        "\n" + 
+        "Return the data in the buffer as a list of elements.";
+
+    // Docs for <class 'function'>
+    public final static String function___annotations___doc = 
         "";
 
-    // Docs for <type 'function'>
     public final static String function___call___doc = 
-        "x.__call__(...) <==> x(...)";
+        "Call self as a function.";
 
     public final static String function___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
@@ -4277,10 +4202,14 @@ public class BuiltinDocs {
         "";
 
     public final static String function___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
 
     public final static String function___dict___doc = 
         "";
+
+    public final static String function___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String function_doc = 
         "function(code, globals[, name[, argdefs[, closure]]])\n" + 
@@ -4290,38 +4219,83 @@ public class BuiltinDocs {
         "The optional argdefs tuple specifies the default argument values.\n" + 
         "The optional closure tuple supplies the bindings for free variables.";
 
+    public final static String function___eq___doc = 
+        "Return self==value.";
+
     public final static String function___format___doc = 
         "default object formatter";
 
+    public final static String function___ge___doc = 
+        "Return self>=value.";
+
     public final static String function___get___doc = 
-        "descr.__get__(obj[, type]) -> value";
+        "Return an attribute of instance, which is of type owner.";
 
     public final static String function___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
 
     public final static String function___globals___doc = 
         "";
 
+    public final static String function___gt___doc = 
+        "Return self>value.";
+
     public final static String function___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String function___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String function___kwdefaults___doc = 
+        "";
+
+    public final static String function___le___doc = 
+        "Return self<=value.";
+
+    public final static String function___lt___doc = 
+        "Return self<value.";
 
     public final static String function___module___doc = 
-        "str(object) -> string\n" + 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
         "\n" + 
-        "Return a nice string representation of the object.\n" + 
-        "If the argument is a string, the return value is the same object.";
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
 
     public final static String function___name___doc = 
-        "str(object) -> string\n" + 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
         "\n" + 
-        "Return a nice string representation of the object.\n" + 
-        "If the argument is a string, the return value is the same object.";
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String function___ne___doc = 
+        "Return self!=value.";
 
     public final static String function___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String function___qualname___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
 
     public final static String function___reduce___doc = 
         "helper for pickle";
@@ -4330,17 +4304,17 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String function___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String function___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String function___sizeof___doc = 
         "__sizeof__() -> int\n" + 
         "size of object in memory, in bytes";
 
     public final static String function___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String function___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -4351,156 +4325,58 @@ public class BuiltinDocs {
         "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
-    public final static String function_func_closure_doc = 
-        "";
-
-    public final static String function_func_code_doc = 
-        "";
-
-    public final static String function_func_defaults_doc = 
-        "";
-
-    public final static String function_func_dict_doc = 
-        "";
-
-    public final static String function_func_doc_doc = 
-        "";
-
-    public final static String function_func_globals_doc = 
-        "";
-
-    public final static String function_func_name_doc = 
-        "";
-
-    // Docs for <type 'instancemethod'>
-    public final static String instancemethod___call___doc = 
-        "x.__call__(...) <==> x(...)";
-
-    public final static String instancemethod___class___doc = 
-        "type(object) -> the object's type\n" + 
-        "type(name, bases, dict) -> a new type";
-
-    public final static String instancemethod___cmp___doc = 
-        "x.__cmp__(y) <==> cmp(x,y)";
-
-    public final static String instancemethod___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
-
-    public final static String instancemethod_doc = 
-        "instancemethod(function, instance, class)\n" + 
-        "\n" + 
-        "Create an instance method object.";
-
-    public final static String instancemethod___format___doc = 
-        "default object formatter";
-
-    public final static String instancemethod___func___doc = 
-        "the function (or other callable) implementing a method";
-
-    public final static String instancemethod___get___doc = 
-        "descr.__get__(obj[, type]) -> value";
-
-    public final static String instancemethod___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
-
-    public final static String instancemethod___hash___doc = 
-        "x.__hash__() <==> hash(x)";
-
-    public final static String instancemethod___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
-
-    public final static String instancemethod___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
-
-    public final static String instancemethod___reduce___doc = 
-        "helper for pickle";
-
-    public final static String instancemethod___reduce_ex___doc = 
-        "helper for pickle";
-
-    public final static String instancemethod___repr___doc = 
-        "x.__repr__() <==> repr(x)";
-
-    public final static String instancemethod___self___doc = 
-        "the instance to which a method is bound; None for unbound methods";
-
-    public final static String instancemethod___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
-
-    public final static String instancemethod___sizeof___doc = 
-        "__sizeof__() -> int\n" + 
-        "size of object in memory, in bytes";
-
-    public final static String instancemethod___str___doc = 
-        "x.__str__() <==> str(x)";
-
-    public final static String instancemethod___subclasshook___doc = 
-        "Abstract classes can override this to customize issubclass().\n" + 
-        "\n" + 
-        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
-        "It should return True, False or NotImplemented.  If it returns\n" + 
-        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
-        "overrides the normal algorithm (and the outcome is cached).\n" + 
-        "";
-
-    public final static String instancemethod_im_class_doc = 
-        "the class associated with a method";
-
-    public final static String instancemethod_im_func_doc = 
-        "the function (or other callable) implementing a method";
-
-    public final static String instancemethod_im_self_doc = 
-        "the instance to which a method is bound; None for unbound methods";
-
-    // Docs for <type 'code'>
+    // Docs for <class 'code'>
     public final static String code___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
-
-    public final static String code___cmp___doc = 
-        "x.__cmp__(y) <==> cmp(x,y)";
 
     public final static String code___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
+
+    public final static String code___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String code_doc = 
-        "code(argcount, nlocals, stacksize, flags, codestring, constants, names,\n" + 
-        "      varnames, filename, name, firstlineno, lnotab[, freevars[, cellvars]])\n" + 
+        "code(argcount, kwonlyargcount, nlocals, stacksize, flags, codestring,\n" + 
+        "      constants, names, varnames, filename, name, firstlineno,\n" + 
+        "      lnotab[, freevars[, cellvars]])\n" + 
         "\n" + 
         "Create a code object.  Not for the faint of heart.";
 
     public final static String code___eq___doc = 
-        "x.__eq__(y) <==> x==y";
+        "Return self==value.";
 
     public final static String code___format___doc = 
         "default object formatter";
 
     public final static String code___ge___doc = 
-        "x.__ge__(y) <==> x>=y";
+        "Return self>=value.";
 
     public final static String code___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
 
     public final static String code___gt___doc = 
-        "x.__gt__(y) <==> x>y";
+        "Return self>value.";
 
     public final static String code___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String code___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
 
     public final static String code___le___doc = 
-        "x.__le__(y) <==> x<=y";
+        "Return self<=value.";
 
     public final static String code___lt___doc = 
-        "x.__lt__(y) <==> x<y";
+        "Return self<value.";
 
     public final static String code___ne___doc = 
-        "x.__ne__(y) <==> x!=y";
+        "Return self!=value.";
 
     public final static String code___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String code___reduce___doc = 
         "helper for pickle";
@@ -4509,17 +4385,16 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String code___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String code___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String code___sizeof___doc = 
-        "__sizeof__() -> int\n" + 
-        "size of object in memory, in bytes";
+        "";
 
     public final static String code___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String code___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -4554,6 +4429,9 @@ public class BuiltinDocs {
     public final static String code_co_freevars_doc = 
         "";
 
+    public final static String code_co_kwonlyargcount_doc = 
+        "";
+
     public final static String code_co_lnotab_doc = 
         "";
 
@@ -4572,31 +4450,54 @@ public class BuiltinDocs {
     public final static String code_co_varnames_doc = 
         "";
 
-    // Docs for <type 'frame'>
+    // Docs for <class 'frame'>
     public final static String frame___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
     public final static String frame___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
+
+    public final static String frame___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
 
     public final static String frame_doc = 
         "";
 
+    public final static String frame___eq___doc = 
+        "Return self==value.";
+
     public final static String frame___format___doc = 
         "default object formatter";
 
+    public final static String frame___ge___doc = 
+        "Return self>=value.";
+
     public final static String frame___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
+
+    public final static String frame___gt___doc = 
+        "Return self>value.";
 
     public final static String frame___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String frame___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String frame___le___doc = 
+        "Return self<=value.";
+
+    public final static String frame___lt___doc = 
+        "Return self<value.";
+
+    public final static String frame___ne___doc = 
+        "Return self!=value.";
 
     public final static String frame___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String frame___reduce___doc = 
         "helper for pickle";
@@ -4605,16 +4506,16 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String frame___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String frame___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String frame___sizeof___doc = 
         "F.__sizeof__() -> size of F in memory, in bytes";
 
     public final static String frame___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String frame___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -4625,6 +4526,9 @@ public class BuiltinDocs {
         "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
+    public final static String frame_clear_doc = 
+        "F.clear(): clear most references held by the frame";
+
     public final static String frame_f_back_doc = 
         "";
 
@@ -4632,15 +4536,6 @@ public class BuiltinDocs {
         "";
 
     public final static String frame_f_code_doc = 
-        "";
-
-    public final static String frame_f_exc_traceback_doc = 
-        "";
-
-    public final static String frame_f_exc_type_doc = 
-        "";
-
-    public final static String frame_f_exc_value_doc = 
         "";
 
     public final static String frame_f_globals_doc = 
@@ -4655,37 +4550,56 @@ public class BuiltinDocs {
     public final static String frame_f_locals_doc = 
         "";
 
-    public final static String frame_f_restricted_doc = 
-        "";
-
     public final static String frame_f_trace_doc = 
         "";
 
-    // Docs for <type 'traceback'>
+    // Docs for <class 'traceback'>
     public final static String traceback___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
         "type(object) -> the object's type\n" + 
         "type(name, bases, dict) -> a new type";
 
     public final static String traceback___delattr___doc = 
-        "x.__delattr__('name') <==> del x.name";
+        "Implement delattr(self, name).";
+
+    public final static String traceback___dir___doc = 
+        "";
 
     public final static String traceback_doc = 
         "";
 
+    public final static String traceback___eq___doc = 
+        "Return self==value.";
+
     public final static String traceback___format___doc = 
         "default object formatter";
 
+    public final static String traceback___ge___doc = 
+        "Return self>=value.";
+
     public final static String traceback___getattribute___doc = 
-        "x.__getattribute__('name') <==> x.name";
+        "Return getattr(self, name).";
+
+    public final static String traceback___gt___doc = 
+        "Return self>value.";
 
     public final static String traceback___hash___doc = 
-        "x.__hash__() <==> hash(x)";
+        "Return hash(self).";
 
     public final static String traceback___init___doc = 
-        "x.__init__(...) initializes x; see help(type(x)) for signature";
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String traceback___le___doc = 
+        "Return self<=value.";
+
+    public final static String traceback___lt___doc = 
+        "Return self<value.";
+
+    public final static String traceback___ne___doc = 
+        "Return self!=value.";
 
     public final static String traceback___new___doc = 
-        "T.__new__(S, ...) -> a new object with type S, a subtype of T";
+        "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String traceback___reduce___doc = 
         "helper for pickle";
@@ -4694,17 +4608,17 @@ public class BuiltinDocs {
         "helper for pickle";
 
     public final static String traceback___repr___doc = 
-        "x.__repr__() <==> repr(x)";
+        "Return repr(self).";
 
     public final static String traceback___setattr___doc = 
-        "x.__setattr__('name', value) <==> x.name = value";
+        "Implement setattr(self, name, value).";
 
     public final static String traceback___sizeof___doc = 
         "__sizeof__() -> int\n" + 
         "size of object in memory, in bytes";
 
     public final static String traceback___str___doc = 
-        "x.__str__() <==> str(x)";
+        "Return str(self).";
 
     public final static String traceback___subclasshook___doc = 
         "Abstract classes can override this to customize issubclass().\n" + 
@@ -4725,6 +4639,289 @@ public class BuiltinDocs {
         "";
 
     public final static String traceback_tb_next_doc = 
+        "";
+
+    // Docs for <class 'io.TextIOBase'>
+    public final static String TextIOBase___abstractmethods___doc = 
+        "";
+
+    public final static String TextIOBase___class___doc = 
+        "Metaclass for defining Abstract Base Classes (ABCs).\n" + 
+        "\n" + 
+        "    Use this metaclass to create an ABC.  An ABC can be subclassed\n" + 
+        "    directly, and then acts as a mix-in class.  You can also register\n" + 
+        "    unrelated concrete classes (even built-in classes) and unrelated\n" + 
+        "    ABCs as 'virtual subclasses' -- these and their descendants will\n" + 
+        "    be considered subclasses of the registering ABC by the built-in\n" + 
+        "    issubclass() function, but the registering ABC won't show up in\n" + 
+        "    their MRO (Method Resolution Order) nor will method\n" + 
+        "    implementations defined by the registering ABC be callable (not\n" + 
+        "    even via super()).\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String TextIOBase___del___doc = 
+        "";
+
+    public final static String TextIOBase___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String TextIOBase___dict___doc = 
+        "";
+
+    public final static String TextIOBase___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String TextIOBase_doc = 
+        "Base class for text I/O.\n" + 
+        "\n" + 
+        "This class provides a character and line based interface to stream\n" + 
+        "I/O. There is no readinto method because Python's character strings\n" + 
+        "are immutable. There is no public constructor.\n" + 
+        "";
+
+    public final static String TextIOBase___enter___doc = 
+        "";
+
+    public final static String TextIOBase___eq___doc = 
+        "Return self==value.";
+
+    public final static String TextIOBase___exit___doc = 
+        "";
+
+    public final static String TextIOBase___format___doc = 
+        "default object formatter";
+
+    public final static String TextIOBase___ge___doc = 
+        "Return self>=value.";
+
+    public final static String TextIOBase___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String TextIOBase___gt___doc = 
+        "Return self>value.";
+
+    public final static String TextIOBase___hash___doc = 
+        "Return hash(self).";
+
+    public final static String TextIOBase___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String TextIOBase___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String TextIOBase___le___doc = 
+        "Return self<=value.";
+
+    public final static String TextIOBase___lt___doc = 
+        "Return self<value.";
+
+    public final static String TextIOBase___module___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String TextIOBase___ne___doc = 
+        "Return self!=value.";
+
+    public final static String TextIOBase___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String TextIOBase___next___doc = 
+        "Implement next(self).";
+
+    public final static String TextIOBase___reduce___doc = 
+        "helper for pickle";
+
+    public final static String TextIOBase___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String TextIOBase___repr___doc = 
+        "Return repr(self).";
+
+    public final static String TextIOBase___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String TextIOBase___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String TextIOBase___str___doc = 
+        "Return str(self).";
+
+    public final static String TextIOBase___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String TextIOBase__abc_cache_doc = 
+        "";
+
+    public final static String TextIOBase__abc_negative_cache_doc = 
+        "";
+
+    public final static String TextIOBase__abc_negative_cache_version_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String TextIOBase__abc_registry_doc = 
+        "";
+
+    public final static String TextIOBase__checkClosed_doc = 
+        "";
+
+    public final static String TextIOBase__checkReadable_doc = 
+        "";
+
+    public final static String TextIOBase__checkSeekable_doc = 
+        "";
+
+    public final static String TextIOBase__checkWritable_doc = 
+        "";
+
+    public final static String TextIOBase_close_doc = 
+        "Flush and close the IO object.\n" + 
+        "\n" + 
+        "This method has no effect if the file is already closed.\n" + 
+        "";
+
+    public final static String TextIOBase_closed_doc = 
+        "";
+
+    public final static String TextIOBase_detach_doc = 
+        "Separate the underlying buffer from the TextIOBase and return it.\n" + 
+        "\n" + 
+        "After the underlying buffer has been detached, the TextIO is in an\n" + 
+        "unusable state.\n" + 
+        "";
+
+    public final static String TextIOBase_encoding_doc = 
+        "Encoding of the text stream.\n" + 
+        "\n" + 
+        "Subclasses should override.\n" + 
+        "";
+
+    public final static String TextIOBase_errors_doc = 
+        "The error setting of the decoder or encoder.\n" + 
+        "\n" + 
+        "Subclasses should override.\n" + 
+        "";
+
+    public final static String TextIOBase_fileno_doc = 
+        "Returns underlying file descriptor if one exists.\n" + 
+        "\n" + 
+        "An IOError is raised if the IO object does not use a file descriptor.\n" + 
+        "";
+
+    public final static String TextIOBase_flush_doc = 
+        "Flush write buffers, if applicable.\n" + 
+        "\n" + 
+        "This is not implemented for read-only and non-blocking streams.\n" + 
+        "";
+
+    public final static String TextIOBase_isatty_doc = 
+        "Return whether this is an 'interactive' stream.\n" + 
+        "\n" + 
+        "Return False if it can't be determined.\n" + 
+        "";
+
+    public final static String TextIOBase_newlines_doc = 
+        "Line endings translated so far.\n" + 
+        "\n" + 
+        "Only line endings translated during reading are considered.\n" + 
+        "\n" + 
+        "Subclasses should override.\n" + 
+        "";
+
+    public final static String TextIOBase_read_doc = 
+        "Read at most n characters from stream.\n" + 
+        "\n" + 
+        "Read from underlying buffer until we have n characters or we hit EOF.\n" + 
+        "If n is negative or omitted, read until EOF.\n" + 
+        "";
+
+    public final static String TextIOBase_readable_doc = 
+        "Return whether object was opened for reading.\n" + 
+        "\n" + 
+        "If False, read() will raise UnsupportedOperation.";
+
+    public final static String TextIOBase_readline_doc = 
+        "Read until newline or EOF.\n" + 
+        "\n" + 
+        "Returns an empty string if EOF is hit immediately.\n" + 
+        "";
+
+    public final static String TextIOBase_readlines_doc = 
+        "Return a list of lines from the stream.\n" + 
+        "\n" + 
+        "hint can be specified to control the number of lines read: no more\n" + 
+        "lines will be read if the total size (in bytes/characters) of all\n" + 
+        "lines so far exceeds hint.";
+
+    public final static String TextIOBase_seek_doc = 
+        "Change stream position.\n" + 
+        "\n" + 
+        "Change the stream position to the given byte offset. The offset is\n" + 
+        "interpreted relative to the position indicated by whence.  Values\n" + 
+        "for whence are:\n" + 
+        "\n" + 
+        "* 0 -- start of stream (the default); offset should be zero or positive\n" + 
+        "* 1 -- current stream position; offset may be negative\n" + 
+        "* 2 -- end of stream; offset is usually negative\n" + 
+        "\n" + 
+        "Return the new absolute position.";
+
+    public final static String TextIOBase_seekable_doc = 
+        "Return whether object supports random access.\n" + 
+        "\n" + 
+        "If False, seek(), tell() and truncate() will raise UnsupportedOperation.\n" + 
+        "This method may need to do a test seek().";
+
+    public final static String TextIOBase_tell_doc = 
+        "Return current stream position.";
+
+    public final static String TextIOBase_truncate_doc = 
+        "Truncate file to size bytes.\n" + 
+        "\n" + 
+        "File pointer is left unchanged.  Size defaults to the current IO\n" + 
+        "position as reported by tell().  Returns the new size.";
+
+    public final static String TextIOBase_writable_doc = 
+        "Return whether object was opened for writing.\n" + 
+        "\n" + 
+        "If False, write() will raise UnsupportedOperation.";
+
+    public final static String TextIOBase_write_doc = 
+        "Write string to stream.\n" + 
+        "Returns the number of characters written (which is always equal to\n" + 
+        "the length of the string).\n" + 
+        "";
+
+    public final static String TextIOBase_writelines_doc = 
         "";
 
 }

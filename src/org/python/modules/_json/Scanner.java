@@ -33,7 +33,7 @@ public class Scanner extends PyObject implements Traverseproc {
     public Scanner(PyObject context) {
         super();
         encoding = _castString(context.__getattr__("encoding"), "utf-8");
-        strict = context.__getattr__("strict").__nonzero__();
+        strict = context.__getattr__("strict").__bool__();
         object_hook = context.__getattr__("object_hook");
         pairs_hook = context.__getattr__("object_pairs_hook");
         parse_float = context.__getattr__("parse_float");

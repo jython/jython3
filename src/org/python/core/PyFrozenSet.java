@@ -51,11 +51,6 @@ public class PyFrozenSet extends BaseSet {
         return fset;
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.frozenset___cmp___doc)
-    final PyObject frozenset___cmp__(PyObject o) {
-        return new PyInteger(baseset___cmp__(o));
-    }
-
     @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.frozenset___ne___doc)
     final PyObject frozenset___ne__(PyObject o) {
         return baseset___ne__(o);

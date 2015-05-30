@@ -735,7 +735,7 @@ public class cmath {
         if (bi != 0. || br <= 0.) {
             // Complex or negative real base requires complex log: general case.
             PyComplex lnb = log(bb);
-            z = (PyComplex)(new PyComplex(x, y)).__div__(lnb);
+            z = (PyComplex)(new PyComplex(x, y)).__truediv__(lnb);
 
         } else {
             // Real positive base: frequent case. (b = inf or nan ends up here too.)

@@ -1003,18 +1003,6 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @Override
     public PyObject __int__() {
-        try {
-            return Py.newInteger(atoi(10));
-        } catch (PyException e) {
-            if (e.match(Py.OverflowError)) {
-                return atol(10);
-            }
-            throw e;
-        }
-    }
-
-    @Override
-    public PyObject __long__() {
         return atol(10);
     }
 
@@ -3714,7 +3702,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
         return str_isdecimal();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.unicode_isdecimal_doc)
+    @ExposedMethod(doc = BuiltinDocs.str_isdecimal_doc)
     final boolean str_isdecimal() {
         int n = getString().length();
 
@@ -3774,7 +3762,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
         return str_isnumeric();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.unicode_isnumeric_doc)
+    @ExposedMethod(doc = BuiltinDocs.str_isnumeric_doc)
     final boolean str_isnumeric() {
         int n = getString().length();
 
@@ -3916,20 +3904,20 @@ public class PyString extends PyBaseString implements BufferProtocol {
         return codecs.decode(this, encoding, errors);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_decode_doc)
-    final PyObject str_decode(PyObject[] args, String[] keywords) {
-        ArgParser ap = new ArgParser("decode", args, keywords, "encoding", "errors");
-        String encoding = ap.getString(0, null);
-        String errors = ap.getString(1, null);
-        return decode(encoding, errors);
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.str__formatter_parser_doc)
+//    @ExposedMethod(doc = BuiltinDocs.str_decode_doc)
+//    final PyObject str_decode(PyObject[] args, String[] keywords) {
+//        ArgParser ap = new ArgParser("decode", args, keywords, "encoding", "errors");
+//        String encoding = ap.getString(0, null);
+//        String errors = ap.getString(1, null);
+//        return decode(encoding, errors);
+//    }
+//
+    @ExposedMethod(doc = ""/*BuiltinDocs.str__formatter_parser_doc*/)
     final PyObject str__formatter_parser() {
         return new MarkupIterator(this);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str__formatter_field_name_split_doc)
+    @ExposedMethod(doc = ""/*BuiltinDocs.str__formatter_field_name_split_doc*/)
     final PyObject str__formatter_field_name_split() {
         FieldNameIterator iterator = new FieldNameIterator(this);
         return new PyTuple(iterator.pyHead(), iterator);
@@ -4188,7 +4176,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @Override
     public long asLong() {
-        asNumberCheck("__long__", "an integer");
+        asNumberCheck("__int__", "an integer");
         return super.asLong();
     }
 
@@ -4330,7 +4318,7 @@ final class StringFormatter {
 
     /**
      * Return the argument as either a {@link PyInteger} or a {@link PyLong} according to its
-     * <code>__int__</code> method, or its <code>__long__</code> method. If the argument has neither
+     * <code>__int__</code> method, or its <code>__int__</code> method. If the argument has neither
      * method, or both raise an exception, we return the argument itself. The caller must check the
      * return type.
      *
@@ -4343,7 +4331,7 @@ final class StringFormatter {
             return arg;
 
         } else {
-            // use __int__ or __long__to get an int (or long)
+            // use __int__ or __int__to get an int (or long)
             if (arg.getClass() == PyFloat.class) {
                 // A common case where it is safe to return arg.__int__()
                 return arg.__int__();
@@ -4363,12 +4351,12 @@ final class StringFormatter {
                     // Swallow the exception
                 }
 
-                // Try again with arg.__long__()
+                // Try again with arg.__int__()
                 try {
-                    // Result is the result of arg.__long__() if that works
-                    return arg.__getattr__("__long__").__call__();
+                    // Result is the result of arg.__int__() if that works
+                    return arg.__getattr__("__int__").__call__();
                 } catch (PyException e) {
-                    // No __long__ defined (at Python level)
+                    // No __int__ defined (at Python level)
                     return arg;
                 }
             }
