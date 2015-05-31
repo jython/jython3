@@ -136,12 +136,12 @@ public class PyRange extends PySequence {
         return range_reverse();
     }
 
-    private final PyXRangeIter range_iter() {
-        return new PyXRangeIter(0, (long)start, (long)step, (long)len);
+    private final PyRangeIter range_iter() {
+        return new PyRangeIter(0, (long)start, (long)step, (long)len);
     }
 
-    private final PyXRangeIter range_reverse() {
-        return new PyXRangeIter(0,
+    private final PyRangeIter range_reverse() {
+        return new PyRangeIter(0,
                 (start + (len - 1) * step),   // start
                 (0 - step),                   // step (negative value)
                 len);

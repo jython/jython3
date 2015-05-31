@@ -1,0 +1,5 @@
+base_class: PyBytes
+want_dict: true
+ctr: PyBytes b
+incl: object
+no_toString: true

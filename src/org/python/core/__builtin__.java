@@ -279,6 +279,8 @@ public class __builtin__ {
         dict.__setitem__("classmethod", PyClassMethod.TYPE);
         dict.__setitem__("super", PySuper.TYPE);
         dict.__setitem__("str", PyString.TYPE);
+
+        // TODO: remove basestring, unicode...
         dict.__setitem__("unicode", PyUnicode.TYPE);
         dict.__setitem__("basestring", PyBaseString.TYPE);
         dict.__setitem__("file", PyFile.TYPE);
@@ -290,7 +292,7 @@ public class __builtin__ {
         dict.__setitem__("Ellipsis", Py.Ellipsis);
         dict.__setitem__("True", Py.True);
         dict.__setitem__("False", Py.False);
-        dict.__setitem__("bytes", PyString.TYPE);
+        dict.__setitem__("bytes", PyBytes.TYPE);
         dict.__setitem__("bytearray", PyByteArray.TYPE);
         dict.__setitem__("buffer", Py2kBuffer.TYPE);
         dict.__setitem__("memoryview", PyMemoryView.TYPE);

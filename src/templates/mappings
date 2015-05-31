@@ -14,6 +14,7 @@ PyBZ2Decompressor.derived:org.python.modules.bz2.PyBZ2DecompressorDerived
 PyStruct.derived:org.python.modules.PyStructDerived
 array.derived:org.python.core.PyArrayDerived
 bytearray.derived:org.python.core.PyByteArrayDerived
+bytes.derived:org.python.core.PyBytesDerived
 classmethod.derived:org.python.core.PyClassMethodDerived
 chain.derived:org.python.modules.itertools.chainDerived
 combinationsWithReplacement.derived:org.python.modules.itertools.combinationsWithReplacementDerived

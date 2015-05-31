@@ -7,6 +7,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.function.Supplier;
+
+import org.python.core.util.Allocator;
 
 /**
  * Base class for Jython <code>bytearray</code> (and <code>bytes</code> in due course) that provides
@@ -1908,7 +1911,8 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      * @param iter iterable of objects capable of being regarded as byte arrays
      * @return the byte array that is their join
      */
-    final synchronized PyByteArray basebytes_join(Iterable<? extends PyObject> iter) {
+    final synchronized <T extends BaseBytes> T basebytes_join(
+            Iterable<? extends PyObject> iter, Allocator<T> allocator) {
 
         List<PyBuffer> iterList = new LinkedList<PyBuffer>();
         long mysize = this.size;
@@ -1941,7 +1945,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
             }
 
             // Load the Views from the iterator into a new PyByteArray
-            PyByteArray result = new PyByteArray((int)totalSize);
+            T result = allocator.allocate((int)totalSize);
             int p = result.offset; // Copy-to pointer
             first = true;
 
