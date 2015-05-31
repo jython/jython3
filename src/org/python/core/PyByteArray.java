@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.python.core.buffer.BaseBuffer;
 import org.python.core.buffer.SimpleWritableBuffer;
+import org.python.core.util.Allocator;
 import org.python.expose.ExposedClassMethod;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
@@ -1495,7 +1496,12 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytearray_join_doc)
     final PyByteArray bytearray_join(PyObject iterable) {
-        return basebytes_join(iterable.asIterable());
+        return basebytes_join(iterable.asIterable(), new Allocator<PyByteArray>() {
+            @Override
+            public PyByteArray allocate(int size) {
+                return new PyByteArray(size);
+            }
+        });
     }
 
     @ExposedMethod(doc = BuiltinDocs.bytearray___len___doc)

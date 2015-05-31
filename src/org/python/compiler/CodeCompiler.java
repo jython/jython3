@@ -2604,10 +2604,13 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     @Override
     public Object visitStr(Str node) throws Exception {
         PyString s = (PyString)node.getInternalS();
+        // TODO: in Python 3 there is no alteration here anymore -
+        // Bytes node ought to be used for the b'' strings
         if (s instanceof PyUnicode) {
             module.unicodeConstant(s.asString()).get(code);
         } else {
-            module.stringConstant(s.asString()).get(code);
+            // TODO: this ought to be in Bytes visit
+            module.bytesConstant(s.asString()).get(code);
         }
         return null;
     }

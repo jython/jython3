@@ -7,6 +7,7 @@ org/python/core/PyBaseException.class
 org/python/core/PyBoolean.class
 org/python/core/PyBuiltinCallable.class
 org/python/core/PyByteArray.class
+org/python/core/PyBytes.class
 org/python/core/PyCell.class
 org/python/core/PyClass.class
 org/python/core/PyClassMethod.class
@@ -38,6 +39,7 @@ org/python/core/PyModule.class
 org/python/core/PyNone.class
 org/python/core/PyObject.class
 org/python/core/PyProperty.class
+org/python/core/PyRange.class
 org/python/core/PySet.class
 org/python/core/PySlice.class
 org/python/core/PySlot.class
@@ -49,7 +51,6 @@ org/python/core/PyTraceback.class
 org/python/core/PyTuple.class
 org/python/core/PyType.class
 org/python/core/PyUnicode.class
-org/python/core/PyRange.class
 org/python/core/stringlib/MarkupIterator.class
 org/python/core/stringlib/FieldNameIterator.class
 org/python/modules/PyStruct.class
