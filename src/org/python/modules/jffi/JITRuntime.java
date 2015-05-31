@@ -22,11 +22,11 @@ public final class JITRuntime {
     }
 
     public static int boolValue32(PyObject parameter) {
-        return parameter.__nonzero__() ? 1 : 0;
+        return parameter.__bool__() ? 1 : 0;
     }
 
     public static long boolValue64(PyObject parameter) {
-        return parameter.__nonzero__() ? 1L : 0L;
+        return parameter.__bool__() ? 1L : 0L;
     }
 
     public static int s8Value32(PyObject parameter) {

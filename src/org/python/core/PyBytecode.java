@@ -260,7 +260,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
 
     private boolean blocksLeft(PyFrame f) {
         if (f.f_exits != null) {
-            return ((PyList)f.f_exits[0]).__nonzero__();
+            return ((PyList)f.f_exits[0]).__bool__();
         } else {
             return false;
         }
@@ -995,13 +995,13 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                         break;
 
                     case Opcode.JUMP_IF_FALSE:
-                        if (!stack.top().__nonzero__()) {
+                        if (!stack.top().__bool__()) {
                             next_instr += oparg;
                         }
                         break;
 
                     case Opcode.JUMP_IF_TRUE:
-                        if (stack.top().__nonzero__()) {
+                        if (stack.top().__bool__()) {
                             next_instr += oparg;
                         }
                         break;
@@ -1042,7 +1042,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
 
                     case Opcode.CONTINUE_LOOP:
                         retval = Py.newInteger(oparg);
-                        if (retval.__nonzero__()) {
+                        if (retval.__bool__()) {
                             why = Why.CONTINUE;
                         }
                         break;
@@ -1091,7 +1091,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                             x = exit.__call__(u, v, w);
                         }
 
-                        if (u != Py.None && x != null && x.__nonzero__()) {
+                        if (u != Py.None && x != null && x.__bool__()) {
                             stack.popN(4); // XXX - consider stack.stackadj op
                             stack.push(Py.None);
                         } else {

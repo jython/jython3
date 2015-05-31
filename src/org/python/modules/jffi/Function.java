@@ -155,7 +155,7 @@ public class Function extends BasePointer implements Pointer {
         this.errcheck = errcheck;
     }
     @Override
-    public boolean __nonzero__() {
+    public boolean __bool__() {
         return !getMemory().isNull();
     }
 

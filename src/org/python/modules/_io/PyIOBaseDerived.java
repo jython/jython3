@@ -275,30 +275,6 @@ public class PyIOBaseDerived extends PyIOBase implements Slotted,FinalizablePyOb
         return super.__rmatmul__(other);
     }
 
-    public PyObject __div__(PyObject other) {
-        PyType self_type=getType();
-        PyObject impl=self_type.lookup("__div__");
-        if (impl!=null) {
-            PyObject res=impl.__get__(this,self_type).__call__(other);
-            if (res==Py.NotImplemented)
-                return null;
-            return res;
-        }
-        return super.__div__(other);
-    }
-
-    public PyObject __rdiv__(PyObject other) {
-        PyType self_type=getType();
-        PyObject impl=self_type.lookup("__rdiv__");
-        if (impl!=null) {
-            PyObject res=impl.__get__(this,self_type).__call__(other);
-            if (res==Py.NotImplemented)
-                return null;
-            return res;
-        }
-        return super.__rdiv__(other);
-    }
-
     public PyObject __floordiv__(PyObject other) {
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__floordiv__");
@@ -784,23 +760,11 @@ public class PyIOBaseDerived extends PyIOBase implements Slotted,FinalizablePyOb
         PyObject impl=self_type.lookup("__int__");
         if (impl!=null) {
             PyObject res=impl.__get__(this,self_type).__call__();
-            if (res instanceof PyInteger||res instanceof PyLong)
-                return res;
-            throw Py.TypeError("__int__"+" should return an integer");
-        }
-        return super.__int__();
-    }
-
-    public PyObject __long__() {
-        PyType self_type=getType();
-        PyObject impl=self_type.lookup("__long__");
-        if (impl!=null) {
-            PyObject res=impl.__get__(this,self_type).__call__();
             if (res instanceof PyLong||res instanceof PyInteger)
                 return res;
-            throw Py.TypeError("__long__"+" returned non-"+"long"+" (type "+res.getType().fastGetName()+")");
+            throw Py.TypeError("__int__"+" returned non-"+"long"+" (type "+res.getType().fastGetName()+")");
         }
-        return super.__long__();
+        return super.__int__();
     }
 
     public int hashCode() {
@@ -836,40 +800,20 @@ public class PyIOBaseDerived extends PyIOBase implements Slotted,FinalizablePyOb
         return super.__unicode__();
     }
 
-    public int __cmp__(PyObject other) {
+    public boolean __bool__() {
         PyType self_type=getType();
-        PyObject[]where_type=new PyObject[1];
-        PyObject impl=self_type.lookup_where("__cmp__",where_type);
-        // Full Compatibility with CPython __cmp__:
-        // If the derived type don't override __cmp__, the
-        // *internal* super().__cmp__ should be called, not the
-        // exposed one. The difference is that the exposed __cmp__
-        // throws a TypeError if the argument is an instance of the same type.
-        if (impl==null||where_type[0]==TYPE||Py.isSubClass(TYPE,where_type[0])) {
-            return super.__cmp__(other);
-        }
-        PyObject res=impl.__get__(this,self_type).__call__(other);
-        if (res==Py.NotImplemented) {
-            return-2;
-        }
-        int c=res.asInt();
-        return c<0?-1:c>0?1:0;
-    }
-
-    public boolean __nonzero__() {
-        PyType self_type=getType();
-        PyObject impl=self_type.lookup("__nonzero__");
+        PyObject impl=self_type.lookup("__bool__");
         if (impl==null) {
             impl=self_type.lookup("__len__");
             if (impl==null)
-                return super.__nonzero__();
+                return super.__bool__();
         }
         PyObject o=impl.__get__(this,self_type).__call__();
         Class c=o.getClass();
         if (c!=PyInteger.class&&c!=PyBoolean.class) {
-            throw Py.TypeError(String.format("__nonzero__ should return bool or int, returned %s",self_type.getName()));
+            throw Py.TypeError(String.format("__bool__ should return bool or int, returned %s",self_type.getName()));
         }
-        return o.__nonzero__();
+        return o.__bool__();
     }
 
     public boolean __contains__(PyObject o) {
@@ -877,7 +821,7 @@ public class PyIOBaseDerived extends PyIOBase implements Slotted,FinalizablePyOb
         PyObject impl=self_type.lookup("__contains__");
         if (impl==null)
             return super.__contains__(o);
-        return impl.__get__(this,self_type).__call__(o).__nonzero__();
+        return impl.__get__(this,self_type).__call__(o).__bool__();
     }
 
     public int __len__() {
@@ -1251,7 +1195,7 @@ public class PyIOBaseDerived extends PyIOBase implements Slotted,FinalizablePyOb
         PyType self_type=getType();
         PyObject impl=self_type.lookup("seekable");
         if (impl!=null) {
-            return impl.__get__(this,self_type).__call__().__nonzero__();
+            return impl.__get__(this,self_type).__call__().__bool__();
         } else {
             return super.seekable();
         }
@@ -1272,7 +1216,7 @@ public class PyIOBaseDerived extends PyIOBase implements Slotted,FinalizablePyOb
         PyType self_type=getType();
         PyObject impl=self_type.lookup("readable");
         if (impl!=null) {
-            return impl.__get__(this,self_type).__call__().__nonzero__();
+            return impl.__get__(this,self_type).__call__().__bool__();
         } else {
             return super.readable();
         }
@@ -1293,7 +1237,7 @@ public class PyIOBaseDerived extends PyIOBase implements Slotted,FinalizablePyOb
         PyType self_type=getType();
         PyObject impl=self_type.lookup("writable");
         if (impl!=null) {
-            return impl.__get__(this,self_type).__call__().__nonzero__();
+            return impl.__get__(this,self_type).__call__().__bool__();
         } else {
             return super.writable();
         }
@@ -1327,7 +1271,7 @@ public class PyIOBaseDerived extends PyIOBase implements Slotted,FinalizablePyOb
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__exit__");
         if (impl!=null) {
-            return impl.__get__(this,self_type).__call__(type,value,traceback).__nonzero__();
+            return impl.__get__(this,self_type).__call__(type,value,traceback).__bool__();
         } else {
             return super.__exit__(type,value,traceback);
         }
@@ -1337,7 +1281,7 @@ public class PyIOBaseDerived extends PyIOBase implements Slotted,FinalizablePyOb
         PyType self_type=getType();
         PyObject impl=self_type.lookup("isatty");
         if (impl!=null) {
-            return impl.__get__(this,self_type).__call__().__nonzero__();
+            return impl.__get__(this,self_type).__call__().__bool__();
         } else {
             return super.isatty();
         }

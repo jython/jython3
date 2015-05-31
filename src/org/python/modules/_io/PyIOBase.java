@@ -280,7 +280,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
 
     @ExposedMethod(defaults = "null")
     final void _IOBase__checkSeekable(String msg) {
-        if (!invoke("seekable").__nonzero__()) {
+        if (!invoke("seekable").__bool__()) {
             throw tailoredIOError(msg, "seek");
         }
     }
@@ -323,7 +323,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
 
     @ExposedMethod(defaults = "null")
     final void _IOBase__checkReadable(String msg) {
-        if (!invoke("readable").__nonzero__()) {
+        if (!invoke("readable").__bool__()) {
             throw tailoredIOError(msg, "read");
         }
     }
@@ -366,7 +366,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
 
     @ExposedMethod(defaults = "null")
     final void _IOBase__checkWritable(String msg) throws PyException {
-        if (!invoke("writable").__nonzero__()) {
+        if (!invoke("writable").__bool__()) {
             throw tailoredIOError(msg, "writ");
         }
     }
@@ -525,7 +525,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
             while (remainingLimit > 0) {
 
                 // We hope to get away with just one pass of the loop, but if not ...
-                if (curr.__nonzero__()) {
+                if (curr.__bool__()) {
                     // We have some previous bytes that must be added to the list
                     if (list == null) {
                         // ... be first we need a list to add them to.
@@ -540,7 +540,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
                  * non-blocking read).
                  */
                 PyObject peekResult = peekMethod.__call__(Py.One);
-                if (peekResult.__nonzero__()) {
+                if (peekResult.__bool__()) {
 
                     // Get a look at the bytes themselves
                     PyBuffer peekBuffer = readablePyBuffer(peekResult);
@@ -588,7 +588,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
 
             } else {
                 // Previous reads are in the list: return them all stitched together
-                if (curr.__nonzero__()) {
+                if (curr.__bool__()) {
                     list.add(curr);
                 }
                 return Py.EmptyString.join(list);
@@ -608,7 +608,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
                  */
                 PyObject curr = readMethod.__call__(Py.One);
 
-                if (curr.__nonzero__()) {
+                if (curr.__bool__()) {
                     if (curr instanceof PyString) {
                         // Should be one-character string holding a byte
                         char c = ((PyString)curr).getString().charAt(0);
@@ -647,7 +647,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
     @Override
     public PyObject __iternext__() {
         PyObject line = invoke("readline");
-        return (!line.__nonzero__()) ? null : line;
+        return (!line.__bool__()) ? null : line;
     }
 
     /**
@@ -666,7 +666,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
     final PyObject _IOBase_next() throws PyException {
         // Implement directly. Calling __iternext__() fails when PyIOBaseDerived is considered.
         PyObject line = invoke("readline");
-        if (!line.__nonzero__()) {
+        if (!line.__bool__()) {
             throw Py.StopIteration("");
         }
         return line;

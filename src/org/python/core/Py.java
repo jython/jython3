@@ -1297,7 +1297,7 @@ public final class Py {
 
     /* Equivalent to Python's assert statement */
     public static void assert_(PyObject test, PyObject message) {
-        if (!test.__nonzero__()) {
+        if (!test.__bool__()) {
             throw new PyException(Py.AssertionError, message);
         }
     }
@@ -1641,7 +1641,7 @@ public final class Py {
      * A collection of convenience functions for converting PyObjects to Java primitives
      */
     public static boolean py2boolean(PyObject o) {
-        return o.__nonzero__();
+        return o.__bool__();
     }
 
     public static byte py2byte(PyObject o) {
@@ -2139,7 +2139,7 @@ public final class Py {
 
         PyObject checkerResult;
         if ((checkerResult = dispatchToChecker(inst, cls, "__instancecheck__")) != null) {
-            return checkerResult.__nonzero__();
+            return checkerResult.__bool__();
         }
 
         return recursiveIsInstance(inst, cls);
@@ -2193,7 +2193,7 @@ public final class Py {
 
         PyObject checkerResult;
         if ((checkerResult = dispatchToChecker(derived, cls, "__subclasscheck__")) != null) {
-            return checkerResult.__nonzero__();
+            return checkerResult.__bool__();
         }
 
         return recursiveIsSubClass(derived, cls);

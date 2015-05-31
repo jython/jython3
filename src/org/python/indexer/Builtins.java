@@ -506,12 +506,12 @@ public class Builtins {
     void buildNumTypes() {
         Scope bnt = BaseNum.getTable();
         String[] num_methods_num = {
-            "__abs__", "__add__", "__coerce__", "__div__", "__divmod__",
+            "__abs__", "__add__", "__coerce__", "__truediv__", "__divmod__",
             "__eq__", "__float__", "__floordiv__", "__format__",
             "__ge__", "__getformat__", "__gt__", "__int__",
-            "__le__", "__long__", "__lt__", "__mod__", "__mul__", "__ne__",
-            "__neg__", "__new__", "__nonzero__", "__pos__", "__pow__",
-            "__radd__", "__rdiv__", "__rdivmod__", "__rfloordiv__", "__rmod__",
+            "__le__", "__int__", "__lt__", "__mod__", "__mul__", "__ne__",
+            "__neg__", "__new__", "__bool__", "__pos__", "__pow__",
+            "__radd__", "__rtruediv__", "__rdivmod__", "__rfloordiv__", "__rmod__",
             "__rmul__", "__rpow__", "__rsub__", "__rtruediv__", "__setformat__",
             "__sub__", "__truediv__", "__trunc__", "as_integer_ratio",
             "fromhex", "is_integer"
@@ -525,10 +525,10 @@ public class Builtins {
 
         Scope bct = BaseComplex.getTable();
         String[] complex_methods = {
-            "__abs__", "__add__", "__div__", "__divmod__",
+            "__abs__", "__add__", "__truediv__", "__divmod__",
             "__float__", "__floordiv__", "__format__", "__getformat__", "__int__",
-            "__long__", "__mod__", "__mul__", "__neg__", "__new__",
-            "__pos__", "__pow__", "__radd__", "__rdiv__", "__rdivmod__",
+            "__int__", "__mod__", "__mul__", "__neg__", "__new__",
+            "__pos__", "__pow__", "__radd__", "__rtruediv__", "__rdivmod__",
             "__rfloordiv__", "__rmod__", "__rmul__", "__rpow__", "__rsub__",
             "__rtruediv__", "__sub__", "__truediv__", "conjugate"
         };
@@ -537,7 +537,7 @@ public class Builtins {
         }
         String[] complex_methods_num = {
             "__eq__", "__ge__", "__gt__", "__le__","__lt__", "__ne__",
-            "__nonzero__", "__coerce__"
+            "__bool__", "__coerce__"
         };
         for (String cn : complex_methods_num) {
             bct.update(cn, numUrl(), newFunc(BaseNum), METHOD);
@@ -1771,7 +1771,7 @@ public class Builtins {
             // XXX:  mark __getslice__, __setslice__ and __delslice__ as deprecated.
             addNumFuncs(
                 "__abs__", "__add__", "__and__", "__concat__", "__contains__",
-                "__div__", "__doc__", "__eq__", "__floordiv__", "__ge__",
+                "__truediv__", "__doc__", "__eq__", "__floordiv__", "__ge__",
                 "__getitem__", "__getslice__", "__gt__", "__iadd__", "__iand__",
                 "__iconcat__", "__idiv__", "__ifloordiv__", "__ilshift__",
                 "__imod__", "__imul__", "__index__", "__inv__", "__invert__",

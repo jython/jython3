@@ -6,7 +6,7 @@ import org.python.core.PyIterator;
 import org.python.core.PyObject;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
-import org.python.core.PyXRange;
+import org.python.core.PyRange;
 import org.python.core.Visitproc;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedMethod;
@@ -61,7 +61,7 @@ public class izip extends PyIterator {
         final int itemsize = argstar.length;
         
         if (itemsize == 0) {
-            iter = (PyIterator)(new PyXRange(0).__iter__());
+            iter = (PyIterator)(new PyRange(0).__iter__());
             return;
         }
 

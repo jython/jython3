@@ -89,7 +89,7 @@ public class InformixDataHandler extends FilterDataHandler {
             case Types.OTHER:
 
                 // this is most likely an Informix boolean
-                stmt.setBoolean(index, object.__nonzero__());
+                stmt.setBoolean(index, object.__bool__());
                 break;
 
             default :

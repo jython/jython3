@@ -57,11 +57,6 @@ public class PySet extends BaseSet {
         _update(args[0]);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.set___cmp___doc)
-    final PyObject set___cmp__(PyObject o) {
-        return new PyInteger(baseset___cmp__(o));
-    }
-
     @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.set___ne___doc)
     final PyObject set___ne__(PyObject o) {
         return baseset___ne__(o);

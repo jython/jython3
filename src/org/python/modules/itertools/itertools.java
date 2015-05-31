@@ -147,8 +147,8 @@ public class itertools implements ClassDictInit {
                     // the boolean value of calling predicate with the element
                     // or if predicate is null/None of the element itself
                     boolean booleanValue = predicate != null ? predicate
-                            .__call__(element).__nonzero__() : element
-                            .__nonzero__();
+                            .__call__(element).__bool__() : element
+                            .__bool__();
                     if (booleanValue == filterTrue) {
                         // if the boolean value is the same as filterTrue return
                         // the element
@@ -214,7 +214,7 @@ public class itertools implements ClassDictInit {
                     if (!predicateSatisfied) {
                         // the predicate is not satisfied yet (or still satisfied in the case of drop beeing 
                         // false), so we need to check it
-                        if (predicate.__call__(element).__nonzero__() != drop) {
+                        if (predicate.__call__(element).__bool__() != drop) {
                             predicateSatisfied = drop;
                             return element;
                         }

@@ -97,8 +97,8 @@ final class Util {
         return parameter.asDouble();
     }
 
-    private static final long __long__value(PyObject value) {
-        PyObject l = value.__long__();
+    private static final long __int__value(PyObject value) {
+        PyObject l = value.__int__();
         if (l instanceof PyLong) {
             return ((PyLong) l).getValue().longValue();
 
@@ -106,7 +106,7 @@ final class Util {
             return ((PyInteger) l).getValue();
         }
 
-        throw Py.TypeError("invalid __long__() result");
+        throw Py.TypeError("invalid __int__() result");
     }
 
     public static final void checkBounds(long size, long off, long len) {
@@ -142,7 +142,7 @@ final class Util {
             return intValue(((ScalarCData) parameter).getValue());
 
         } else {
-            return (int) __long__value(parameter);
+            return (int) __int__value(parameter);
         }
     }
 
@@ -157,7 +157,7 @@ final class Util {
             return longValue(((ScalarCData) parameter).getValue());
 
         } else {
-            return __long__value(parameter);
+            return __int__value(parameter);
         }
     }
 }

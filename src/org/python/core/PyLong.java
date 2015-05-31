@@ -22,7 +22,7 @@ import org.python.expose.MethodType;
  * A builtin python long. This is implemented as a java.math.BigInteger.
  */
 @Untraversable
-@ExposedType(name = "long", doc = BuiltinDocs.long_doc)
+@ExposedType(name = "long", doc = BuiltinDocs.int_doc)
 public class PyLong extends PyObject {
 
     public static final PyType TYPE = PyType.fromClass(PyLong.class);
@@ -101,7 +101,7 @@ public class PyLong extends PyObject {
      */
     private static PyObject asPyLong(PyObject x) {
         try {
-            return x.__long__();
+            return x.__int__();
         } catch (PyException pye) {
             if (!pye.match(Py.AttributeError)) {
                 throw pye;
@@ -166,22 +166,22 @@ public class PyLong extends PyObject {
         return new BigDecimal(value).toBigInteger();
     }
 
-    @ExposedGet(name = "real", doc = BuiltinDocs.long_real_doc)
+    @ExposedGet(name = "real", doc = BuiltinDocs.int_real_doc)
     public PyObject getReal() {
-        return long___long__();
+        return long___int__();
     }
 
-    @ExposedGet(name = "imag", doc = BuiltinDocs.long_imag_doc)
+    @ExposedGet(name = "imag", doc = BuiltinDocs.int_imag_doc)
     public PyObject getImag() {
         return Py.newLong(0);
     }
 
-    @ExposedGet(name = "numerator", doc = BuiltinDocs.long_numerator_doc)
+    @ExposedGet(name = "numerator", doc = BuiltinDocs.int_numerator_doc)
     public PyObject getNumerator() {
-        return long___long__();
+        return long___int__();
     }
 
-    @ExposedGet(name = "denominator", doc = BuiltinDocs.long_denominator_doc)
+    @ExposedGet(name = "denominator", doc = BuiltinDocs.int_denominator_doc)
     public PyObject getDenominator() {
         return Py.newLong(1);
     }
@@ -191,9 +191,9 @@ public class PyLong extends PyObject {
         return long_toString();
     }
 
-    @ExposedMethod(names = "__repr__", doc = BuiltinDocs.long___repr___doc)
+    @ExposedMethod(names = "__repr__", doc = BuiltinDocs.int___repr___doc)
     final String long_toString() {
-        return getValue().toString() + "L";
+        return getValue().toString();
     }
 
     @Override
@@ -201,18 +201,18 @@ public class PyLong extends PyObject {
         return long___hash__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.long___hash___doc)
+    @ExposedMethod(doc = BuiltinDocs.int___hash___doc)
     final int long___hash__() {
         return getValue().hashCode();
     }
 
     @Override
-    public boolean __nonzero__() {
-        return long___nonzero__();
+    public boolean __bool__() {
+        return long___bool__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.long___nonzero___doc)
-    public boolean long___nonzero__() {
+    @ExposedMethod(doc = BuiltinDocs.int___bool___doc)
+    public boolean long___bool__() {
         return !getValue().equals(BigInteger.ZERO);
     }
 
@@ -321,26 +321,8 @@ public class PyLong extends PyObject {
     }
 
     @Override
-    public int __cmp__(PyObject other) {
-        return long___cmp__(other);
-    }
-
-    @ExposedMethod(type = MethodType.CMP, doc = BuiltinDocs.long___cmp___doc)
-    final int long___cmp__(PyObject other) {
-        if (!canCoerce(other)) {
-            return -2;
-        }
-        return getValue().compareTo(coerce(other));
-    }
-
-    @Override
     public Object __coerce_ex__(PyObject other) {
         return long___coerce_ex__(other);
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.long___coerce___doc)
-    final PyObject long___coerce__(PyObject other) {
-        return adaptToCoerceTuple(long___coerce_ex__(other));
     }
 
     /**
@@ -376,7 +358,7 @@ public class PyLong extends PyObject {
         return long___add__(right);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___add___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___add___doc)
     final PyObject long___add__(PyObject right) {
         if (!canCoerce(right)) {
             return null;
@@ -389,7 +371,7 @@ public class PyLong extends PyObject {
         return long___radd__(left);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___radd___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___radd___doc)
     final PyObject long___radd__(PyObject left) {
         return __add__(left);
     }
@@ -399,7 +381,7 @@ public class PyLong extends PyObject {
         return long___sub__(right);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___sub___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___sub___doc)
     final PyObject long___sub__(PyObject right) {
         if (!canCoerce(right)) {
             return null;
@@ -412,7 +394,7 @@ public class PyLong extends PyObject {
         return long___rsub__(left);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___rsub___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___rsub___doc)
     final PyObject long___rsub__(PyObject left) {
         return Py.newLong(coerce(left).subtract(getValue()));
     }
@@ -422,7 +404,7 @@ public class PyLong extends PyObject {
         return long___mul__(right);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___mul___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___mul___doc)
     final PyObject long___mul__(PyObject right) {
         if (right instanceof PySequence) {
             return ((PySequence)right).repeat(coerceInt(this));
@@ -439,7 +421,7 @@ public class PyLong extends PyObject {
         return long___rmul__(left);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___rmul___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___rmul___doc)
     final PyObject long___rmul__(PyObject left) {
         if (left instanceof PySequence) {
             return ((PySequence)left).repeat(coerceInt(this));
@@ -471,43 +453,11 @@ public class PyLong extends PyObject {
     }
 
     @Override
-    public PyObject __div__(PyObject right) {
-        return long___div__(right);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___div___doc)
-    final PyObject long___div__(PyObject right) {
-        if (!canCoerce(right)) {
-            return null;
-        }
-        if (Options.division_warning > 0) {
-            Py.warning(Py.DeprecationWarning, "classic long division");
-        }
-        return Py.newLong(divide(getValue(), coerce(right)));
-    }
-
-    @Override
-    public PyObject __rdiv__(PyObject left) {
-        return long___rdiv__(left);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___rdiv___doc)
-    final PyObject long___rdiv__(PyObject left) {
-        if (!canCoerce(left)) {
-            return null;
-        }
-        if (Options.division_warning > 0) {
-            Py.warning(Py.DeprecationWarning, "classic long division");
-        }
-        return Py.newLong(divide(coerce(left), getValue()));
-    }
-
-    @Override
     public PyObject __floordiv__(PyObject right) {
         return long___floordiv__(right);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___floordiv___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___floordiv___doc)
     final PyObject long___floordiv__(PyObject right) {
         if (!canCoerce(right)) {
             return null;
@@ -520,7 +470,7 @@ public class PyLong extends PyObject {
         return long___rfloordiv__(left);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___rfloordiv___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___rfloordiv___doc)
     final PyObject long___rfloordiv__(PyObject left) {
         if (!canCoerce(left)) {
             return null;
@@ -563,7 +513,7 @@ public class PyLong extends PyObject {
         return long___truediv__(right);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___truediv___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___truediv___doc)
     final PyObject long___truediv__(PyObject right) {
         if (!canCoerce(right)) {
             return null;
@@ -576,7 +526,7 @@ public class PyLong extends PyObject {
         return long___rtruediv__(left);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___rtruediv___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___rtruediv___doc)
     final PyObject long___rtruediv__(PyObject left) {
         if (!canCoerce(left)) {
             return null;
@@ -593,7 +543,7 @@ public class PyLong extends PyObject {
         return long___mod__(right);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___mod___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___mod___doc)
     final PyObject long___mod__(PyObject right) {
         if (!canCoerce(right)) {
             return null;
@@ -607,7 +557,7 @@ public class PyLong extends PyObject {
         return long___rmod__(left);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___rmod___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___rmod___doc)
     final PyObject long___rmod__(PyObject left) {
         if (!canCoerce(left)) {
             return null;
@@ -621,7 +571,7 @@ public class PyLong extends PyObject {
         return long___divmod__(right);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___divmod___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___divmod___doc)
     final PyObject long___divmod__(PyObject right) {
         if (!canCoerce(right)) {
             return null;
@@ -637,7 +587,7 @@ public class PyLong extends PyObject {
         return long___rdivmod__(left);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___rdivmod___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___rdivmod___doc)
     final PyObject long___rdivmod__(PyObject left) {
         if (!canCoerce(left)) {
             return null;
@@ -654,7 +604,7 @@ public class PyLong extends PyObject {
     }
 
     @ExposedMethod(type = MethodType.BINARY, defaults = {"null"},
-            doc = BuiltinDocs.long___pow___doc)
+            doc = BuiltinDocs.int___pow___doc)
     final PyObject long___pow__(PyObject right, PyObject modulo) {
         if (!canCoerce(right)) {
             return null;
@@ -673,7 +623,7 @@ public class PyLong extends PyObject {
         return long___rpow__(left);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___rpow___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___rpow___doc)
     final PyObject long___rpow__(PyObject left) {
         if (!canCoerce(left)) {
             return null;
@@ -743,7 +693,7 @@ public class PyLong extends PyObject {
         return long___lshift__(right);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___lshift___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___lshift___doc)
     final PyObject long___lshift__(PyObject right) {
         if (!canCoerce(right)) {
             return null;
@@ -755,7 +705,7 @@ public class PyLong extends PyObject {
         return Py.newLong(getValue().shiftLeft(rightv));
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___rlshift___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___rlshift___doc)
     final PyObject long___rlshift__(PyObject left) {
         if (!canCoerce(left)) {
             return null;
@@ -771,7 +721,7 @@ public class PyLong extends PyObject {
         return long___rshift__(right);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___rshift___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___rshift___doc)
     final PyObject long___rshift__(PyObject right) {
         if (!canCoerce(right)) {
             return null;
@@ -783,7 +733,7 @@ public class PyLong extends PyObject {
         return Py.newLong(getValue().shiftRight(rightv));
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___rrshift___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___rrshift___doc)
     final PyObject long___rrshift__(PyObject left) {
         if (!canCoerce(left)) {
             return null;
@@ -799,7 +749,7 @@ public class PyLong extends PyObject {
         return long___and__(right);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___and___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___and___doc)
     final PyObject long___and__(PyObject right) {
         if (!canCoerce(right)) {
             return null;
@@ -812,7 +762,7 @@ public class PyLong extends PyObject {
         return long___rand__(left);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___rand___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___rand___doc)
     final PyObject long___rand__(PyObject left) {
         if (!canCoerce(left)) {
             return null;
@@ -825,7 +775,7 @@ public class PyLong extends PyObject {
         return long___xor__(right);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___xor___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___xor___doc)
     final PyObject long___xor__(PyObject right) {
         if (!canCoerce(right)) {
             return null;
@@ -838,7 +788,7 @@ public class PyLong extends PyObject {
         return long___rxor__(left);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___rxor___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___rxor___doc)
     final PyObject long___rxor__(PyObject left) {
         if (!canCoerce(left)) {
             return null;
@@ -851,7 +801,7 @@ public class PyLong extends PyObject {
         return long___or__(right);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___or___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___or___doc)
     final PyObject long___or__(PyObject right) {
         if (!canCoerce(right)) {
             return null;
@@ -864,7 +814,7 @@ public class PyLong extends PyObject {
         return long___ror__(left);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.long___ror___doc)
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___ror___doc)
     final PyObject long___ror__(PyObject left) {
         if (!canCoerce(left)) {
             return null;
@@ -877,7 +827,7 @@ public class PyLong extends PyObject {
         return long___neg__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.long___neg___doc)
+    @ExposedMethod(doc = BuiltinDocs.int___neg___doc)
     final PyObject long___neg__() {
         return Py.newLong(getValue().negate());
     }
@@ -887,9 +837,9 @@ public class PyLong extends PyObject {
         return long___pos__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.long___pos___doc)
+    @ExposedMethod(doc = BuiltinDocs.int___pos___doc)
     final PyObject long___pos__() {
-        return long___long__();
+        return long___int__();
     }
 
     @Override
@@ -897,12 +847,12 @@ public class PyLong extends PyObject {
         return long___abs__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.long___abs___doc)
+    @ExposedMethod(doc = BuiltinDocs.int___abs___doc)
     final PyObject long___abs__() {
         if (getValue().signum() == -1) {
             return long___neg__();
         }
-        return long___long__();
+        return long___int__();
     }
 
     @Override
@@ -910,7 +860,7 @@ public class PyLong extends PyObject {
         return long___invert__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.long___invert___doc)
+    @ExposedMethod(doc = BuiltinDocs.int___invert___doc)
     final PyObject long___invert__() {
         return Py.newLong(getValue().not());
     }
@@ -920,22 +870,8 @@ public class PyLong extends PyObject {
         return long___int__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.long___int___doc)
+    @ExposedMethod(doc = BuiltinDocs.int___int___doc)
     final PyObject long___int__() {
-        if (getValue().compareTo(PyInteger.MAX_INT) <= 0
-                && getValue().compareTo(PyInteger.MIN_INT) >= 0) {
-            return Py.newInteger(getValue().intValue());
-        }
-        return long___long__();
-    }
-
-    @Override
-    public PyObject __long__() {
-        return long___long__();
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.long___long___doc)
-    final PyObject long___long__() {
         return getType() == TYPE ? this : Py.newLong(getValue());
     }
 
@@ -944,7 +880,7 @@ public class PyLong extends PyObject {
         return long___float__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.long___float___doc)
+    @ExposedMethod(doc = BuiltinDocs.int___float___doc)
     final PyFloat long___float__() {
         return new PyFloat(doubleValue());
     }
@@ -963,7 +899,7 @@ public class PyLong extends PyObject {
         return long___trunc__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.long___trunc___doc)
+    @ExposedMethod(doc = BuiltinDocs.int___trunc___doc)
     final PyObject long___trunc__() {
         return this;
     }
@@ -973,31 +909,9 @@ public class PyLong extends PyObject {
         return long_conjugate();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.long_conjugate_doc)
+    @ExposedMethod(doc = BuiltinDocs.int_conjugate_doc)
     final PyObject long_conjugate() {
         return this;
-    }
-
-    @Override
-    public PyString __oct__() {
-        return long___oct__();
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.long___oct___doc)
-    final PyString long___oct__() {
-        // Use the prepared format specifier for octal.
-        return formatImpl(IntegerFormatter.OCT);
-    }
-
-    @Override
-    public PyString __hex__() {
-        return long___hex__();
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.long___hex___doc)
-    final PyString long___hex__() {
-        // Use the prepared format specifier for hexadecimal.
-        return formatImpl(IntegerFormatter.HEX);
     }
 
     /**
@@ -1013,7 +927,7 @@ public class PyLong extends PyObject {
         return new PyString(f.getResult());
     }
 
-    @ExposedMethod(doc = BuiltinDocs.long___str___doc)
+    @ExposedMethod(doc = BuiltinDocs.int___str___doc)
     public PyString long___str__() {
         return Py.newString(getValue().toString());
     }
@@ -1028,7 +942,7 @@ public class PyLong extends PyObject {
         return new PyUnicode(getValue().toString());
     }
 
-    @ExposedMethod(doc = BuiltinDocs.long___getnewargs___doc)
+    @ExposedMethod(doc = BuiltinDocs.int___getnewargs___doc)
     final PyTuple long___getnewargs__() {
         return new PyTuple(new PyLong(this.getValue()));
     }
@@ -1043,7 +957,7 @@ public class PyLong extends PyObject {
         return long___index__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.long___index___doc)
+    @ExposedMethod(doc = BuiltinDocs.int___index___doc)
     final PyObject long___index__() {
         return this;
     }
@@ -1053,7 +967,7 @@ public class PyLong extends PyObject {
         return long_bit_length();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.long_bit_length_doc)
+    @ExposedMethod(doc = BuiltinDocs.int_bit_length_doc)
     final int long_bit_length() {
         BigInteger v = value;
         if (v.compareTo(BigInteger.ZERO) == -1) {
@@ -1067,7 +981,7 @@ public class PyLong extends PyObject {
         return long___format__(formatSpec);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.long___format___doc)
+    @ExposedMethod(doc = BuiltinDocs.int___format___doc)
     final PyObject long___format__(PyObject formatSpec) {
 
         // Parse the specification

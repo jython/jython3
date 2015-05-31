@@ -129,7 +129,7 @@ public class _csv implements ClassDictInit {
     }
 
     public static void unregister_dialect(PyObject name) {
-        if (!_dialects.has_key(name)) {
+        if (!_dialects.__contains__(name)) {
             throw Error("unknown dialect");
         }
         _dialects.__delitem__(name);
@@ -140,7 +140,7 @@ public class _csv implements ClassDictInit {
     }
 
     public static PyObject list_dialects() {
-        return _dialects.keys();
+        return _dialects.keys_as_list();
     }
 
     public static PyObject reader(PyObject[] args, String[] keywords) {

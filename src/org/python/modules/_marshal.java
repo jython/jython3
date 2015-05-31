@@ -204,7 +204,7 @@ public class _marshal implements ClassDictInit {
             } else if (v instanceof PyDictionary) {
                 write_byte(TYPE_DICT);
                 PyDictionary dict = (PyDictionary) v;
-                for (PyObject item : dict.iteritems().asIterable()) {
+                for (PyObject item : dict.dict_iteritems().asIterable()) {
                     PyTuple pair = (PyTuple) item;
                     write_object(pair.__getitem__(0), depth + 1);
                     write_object(pair.__getitem__(1), depth + 1);

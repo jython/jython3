@@ -23,6 +23,7 @@ import org.python.util.Generic;
  * Special fast dict implementation for __dict__ instances. Allows interned String keys in addition
  * to PyObject unlike PyDictionary.
  */
+// TODO: this needs proper key, value, item views
 @ExposedType(name = "stringmap", isBaseType = false)
 public class PyStringMap extends PyObject implements Traverseproc {
 
@@ -104,7 +105,7 @@ public class PyStringMap extends PyObject implements Traverseproc {
     }
 
     @Override
-    public boolean __nonzero__() {
+    public boolean __bool__() {
         return table.size() != 0;
     }
 
@@ -257,12 +258,13 @@ public class PyStringMap extends PyObject implements Traverseproc {
         return buf.toString();
     }
 
+    // TODO: handle properly the __cmp__
     @Override
     public int __cmp__(PyObject other) {
         return stringmap___cmp__(other);
     }
 
-    @ExposedMethod(type = MethodType.CMP, doc = BuiltinDocs.dict___cmp___doc)
+    @ExposedMethod(type = MethodType.CMP, doc = "") // BuiltinDocs.dict___cmp___doc)
     final int stringmap___cmp__(PyObject other) {
         if (!(other instanceof PyStringMap || other instanceof PyDictionary)) {
             return -2;
@@ -280,7 +282,7 @@ public class PyStringMap extends PyObject implements Traverseproc {
         if (other instanceof PyStringMap) {
             bkeys = ((PyStringMap)other).keys();
         } else {
-            bkeys = ((PyDictionary)other).keys();
+            bkeys = ((PyDictionary)other).keys_as_list();
         }
         akeys.sort();
         bkeys.sort();
@@ -301,22 +303,6 @@ public class PyStringMap extends PyObject implements Traverseproc {
         return 0;
     }
 
-    /**
-     * Return true if the key exist in the dictionary.
-     */
-    public boolean has_key(String key) {
-        return table.containsKey(key);
-    }
-
-    public boolean has_key(PyObject key) {
-        return stringmap_has_key(key);
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.dict_has_key_doc)
-    final boolean stringmap_has_key(PyObject key) {
-        return table.containsKey(pyToKey(key));
-    }
-
     @Override
     public boolean __contains__(PyObject o) {
         return stringmap___contains__(o);
@@ -324,7 +310,7 @@ public class PyStringMap extends PyObject implements Traverseproc {
 
     @ExposedMethod(doc = BuiltinDocs.dict___contains___doc)
     final boolean stringmap___contains__(PyObject o) {
-        return stringmap_has_key(o);
+        return table.containsKey(pyToKey(o));
     }
 
     /**
@@ -403,8 +389,9 @@ public class PyStringMap extends PyObject implements Traverseproc {
         if (other instanceof PyStringMap) {
             table.putAll(((PyStringMap)other).table);
         } else if (other instanceof PyDictionary) {
-            mergeFromKeys(other, ((PyDictionary)other).keys());
+            mergeFromKeys(other, ((PyDictionary)other).keys_as_list());
         } else {
+            // TODO: fix properly
             mergeFromKeys(other, other.invoke("keys"));
         }
     }
@@ -523,18 +510,6 @@ public class PyStringMap extends PyObject implements Traverseproc {
         return value;
     }
 
-    /**
-     * Return a copy of the mappings list of (key, value) tuple pairs.
-     */
-    public PyList items() {
-        return stringmap_items();
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.dict_items_doc)
-    final PyList stringmap_items() {
-        return new PyList(stringmap_iteritems());
-    }
-
     private PyTuple itemTuple(Entry<Object, PyObject> entry) {
         return new PyTuple(keyToPy(entry.getKey()), entry.getValue());
     }
@@ -569,42 +544,10 @@ public class PyStringMap extends PyObject implements Traverseproc {
         return new PyList(table.values());
     }
 
-    /**
-     * return an iterator over (key, value) pairs
-     */
-    public PyObject iteritems() {
-        return stringmap_iteritems();
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.dict_iteritems_doc)
-    final PyObject stringmap_iteritems() {
-        return new ItemsIter(table.entrySet());
-    }
-
-    /**
-     * return an iterator over the keys
-     */
-    public PyObject iterkeys() {
-        return stringmap_iterkeys();
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.dict_iterkeys_doc)
     final PyObject stringmap_iterkeys() {
-        // Python allows one to change the dict while iterating over it, including
-        // deletion. Java does not. Can we resolve with CHM?
-        return new KeysIter(table.keySet());
-    }
-
-    /**
-     * return an iterator over the values
-     */
-    public PyObject itervalues() {
-        return stringmap_itervalues();
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.dict_itervalues_doc)
-    final PyObject stringmap_itervalues() {
-        return new ValuesIter(table.values());
+       // Python allows one to change the dict while iterating over it, including
+       // deletion. Java does not. Can we resolve with CHM?
+       return new KeysIter(table.keySet());
     }
 
     @Override

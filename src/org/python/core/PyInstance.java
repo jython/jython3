@@ -575,15 +575,15 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
     }
 
     @Override
-    public boolean __nonzero__() {
-        return instance___nonzero__();
+    public boolean __bool__() {
+        return instance___bool__();
     }
 
     @ExposedMethod
-    final boolean instance___nonzero__() {
+    final boolean instance___bool__() {
         PyObject meth = null;
         try {
-            meth = __findattr__("__nonzero__");
+            meth = __findattr__("__bool__");
         } catch (PyException exc) {
         }
 
@@ -598,7 +598,7 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
         }
 
         PyObject ret = meth.__call__();
-        return ret.__nonzero__();
+        return ret.__bool__();
     }
 
     @Override
@@ -771,7 +771,7 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
         if (func == null)
             return super.__contains__(o);
         PyObject ret = func.__call__(o);
-        return ret.__nonzero__();
+        return ret.__bool__();
     }
 
     @Override
@@ -864,23 +864,6 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
     }
 
     @Override
-    public PyObject __int__() {
-        return instance___int__();
-    }
-
-    /**
-     * Implements the __int__ method by looking it up
-     * in the instance's dictionary and calling it if it is found.
-     */
-    @ExposedMethod
-    final PyObject instance___int__() {
-        PyObject ret = invoke("__int__");
-        if (ret instanceof PyLong || ret instanceof PyInteger)
-            return ret;
-        throw Py.TypeError("__int__() should return a int");
-    }
-
-    @Override
     public PyFloat __float__() {
         return instance___float__();
     }
@@ -898,20 +881,20 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
     }
 
     @Override
-    public PyObject __long__() {
-        return instance___long__();
+    public PyObject __int__() {
+        return instance___int__();
     }
 
     /**
-     * Implements the __long__ method by looking it up
+     * Implements the __int__ method by looking it up
      * in the instance's dictionary and calling it if it is found.
      */
     @ExposedMethod
-    final PyObject instance___long__() {
-        PyObject ret = invoke("__long__");
+    final PyObject instance___int__() {
+        PyObject ret = invoke("__int__");
         if (ret instanceof PyLong || ret instanceof PyInteger)
             return ret;
-        throw Py.TypeError("__long__() should return a long");
+        throw Py.TypeError("__int__() should return a long");
     }
 
     @Override
@@ -1194,58 +1177,6 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
         if (ret != null)
             return ret;
         return super.__imul__(o);
-    }
-
-    @Override
-    public PyObject __div__(PyObject o) {
-        return instance___div__(o);
-    }
-
-    /**
-     * Implements the __div__ method by looking it up
-     * in the instance's dictionary and calling it if it is found.
-     */
-    @ExposedMethod(type = MethodType.BINARY)
-    public PyObject instance___div__(PyObject o) {
-        Object ctmp = __coerce_ex__(o);
-        if (ctmp == null || ctmp == Py.None)
-            return invoke_ex("__div__", o);
-        else {
-            PyObject o1 = ((PyObject[]) ctmp)[0];
-            PyObject o2 = ((PyObject[]) ctmp)[1];
-            if (this == o1) {
-                // Prevent recursion if __coerce__ return self
-                return invoke_ex("__div__", o2);
-            } else {
-                return o1._div(o2);
-            }
-        }
-    }
-
-    @Override
-    public PyObject __rdiv__(PyObject o) {
-        return instance___rdiv__(o);
-    }
-
-    /**
-     * Implements the __rdiv__ method by looking it up
-     * in the instance's dictionary and calling it if it is found.
-     */
-    @ExposedMethod(type = MethodType.BINARY)
-    public PyObject instance___rdiv__(PyObject o) {
-        Object ctmp = __coerce_ex__(o);
-        if (ctmp == null || ctmp == Py.None)
-            return invoke_ex("__rdiv__", o);
-        else {
-            PyObject o1 = ((PyObject[]) ctmp)[0];
-            PyObject o2 = ((PyObject[]) ctmp)[1];
-            if (this == o1) {
-                // Prevent recursion if __coerce__ return self
-                return invoke_ex("__rdiv__", o2);
-            } else {
-                return o2._div(o1);
-            }
-        }
     }
 
     @Override

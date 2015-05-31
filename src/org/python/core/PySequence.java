@@ -148,11 +148,11 @@ public abstract class PySequence extends PyObject {
     }
 
     @Override
-    public boolean __nonzero__() {
-        return seq___nonzero__();
+    public boolean __bool__() {
+        return seq___bool__();
     }
 
-    final boolean seq___nonzero__() {
+    final boolean seq___bool__() {
         return __len__() != 0;
     }
 

@@ -74,7 +74,7 @@ rest:
         PyType self_type = getType();
         PyObject impl = self_type.lookup("seekable");
         if (impl != null) {
-            return impl.__get__(this, self_type).__call__().__nonzero__();
+            return impl.__get__(this, self_type).__call__().__bool__();
         } else {
             return super.seekable();
         }
@@ -95,7 +95,7 @@ rest:
         PyType self_type = getType();
         PyObject impl = self_type.lookup("readable");
         if (impl != null) {
-            return impl.__get__(this, self_type).__call__().__nonzero__();
+            return impl.__get__(this, self_type).__call__().__bool__();
         } else {
             return super.readable();
         }
@@ -116,7 +116,7 @@ rest:
         PyType self_type = getType();
         PyObject impl = self_type.lookup("writable");
         if (impl != null) {
-            return impl.__get__(this, self_type).__call__().__nonzero__();
+            return impl.__get__(this, self_type).__call__().__bool__();
         } else {
             return super.writable();
         }
@@ -150,7 +150,7 @@ rest:
         PyType self_type = getType();
         PyObject impl = self_type.lookup("__exit__");
         if (impl != null) {
-            return impl.__get__(this, self_type).__call__(type, value, traceback).__nonzero__();
+            return impl.__get__(this, self_type).__call__(type, value, traceback).__bool__();
         } else {
             return super.__exit__(type, value, traceback);
         }
@@ -160,7 +160,7 @@ rest:
         PyType self_type = getType();
         PyObject impl = self_type.lookup("isatty");
         if (impl != null) {
-            return impl.__get__(this, self_type).__call__().__nonzero__();
+            return impl.__get__(this, self_type).__call__().__bool__();
         } else {
             return super.isatty();
         }

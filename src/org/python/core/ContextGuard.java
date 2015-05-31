@@ -28,7 +28,7 @@ public class ContextGuard implements ContextManager {
         }
         return __exit__method.__call__(ts, type,
                 value == null ? Py.None : value,
-                traceback == null ? Py.None : traceback).__nonzero__();
+                traceback == null ? Py.None : traceback).__bool__();
     }
 
     public static ContextManager getManager(PyObject manager) {
@@ -163,7 +163,7 @@ public class ContextGuard implements ContextManager {
             if (frame.f_lasti != -1) {
                 throw Py.RuntimeError("generator didn't stop");
             }
-            return res.__nonzero__();
+            return res.__bool__();
         }
 
         abstract PyObject body(ThreadState ts);

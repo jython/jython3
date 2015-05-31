@@ -279,7 +279,7 @@ public class PyFloat extends PyObject {
             if (intPart <= Integer.MAX_VALUE && intPart >= Integer.MIN_VALUE) {
                 return (int)value;
             } else {
-                return __long__().hashCode();
+                return __int__().hashCode();
             }
         } else {
             long v = Double.doubleToLongBits(getValue());
@@ -288,12 +288,12 @@ public class PyFloat extends PyObject {
     }
 
     @Override
-    public boolean __nonzero__() {
-        return float___nonzero__();
+    public boolean __bool__() {
+        return float___bool__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.float___nonzero___doc)
-    final boolean float___nonzero__() {
+    @ExposedMethod(doc = BuiltinDocs.float___bool___doc)
+    final boolean float___bool__() {
         return getValue() != 0;
     }
 
@@ -410,11 +410,11 @@ public class PyFloat extends PyObject {
     public Object __coerce_ex__(PyObject other) {
         return float___coerce_ex__(other);
     }
-
-    @ExposedMethod(doc = BuiltinDocs.float___coerce___doc)
-    final PyObject float___coerce__(PyObject other) {
-        return adaptToCoerceTuple(float___coerce_ex__(other));
-    }
+//
+//    @ExposedMethod(doc = BuiltinDocs.float___coerce___doc)
+//    final PyObject float___coerce__(PyObject other) {
+//        return adaptToCoerceTuple(float___coerce_ex__(other));
+//    }
 
     /**
      * Coercion logic for float. Implemented as a final method to avoid invocation of virtual
@@ -522,46 +522,6 @@ public class PyFloat extends PyObject {
     @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.float___rmul___doc)
     final PyObject float___rmul__(PyObject left) {
         return __mul__(left);
-    }
-
-    @Override
-    public PyObject __div__(PyObject right) {
-        return float___div__(right);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.float___div___doc)
-    final PyObject float___div__(PyObject right) {
-        if (!canCoerce(right)) {
-            return null;
-        } else if (Options.division_warning >= 2) {
-            Py.warning(Py.DeprecationWarning, "classic float division");
-        }
-
-        double rightv = coerce(right);
-        if (rightv == 0) {
-            throw Py.ZeroDivisionError("float division");
-        }
-        return new PyFloat(getValue() / rightv);
-    }
-
-    @Override
-    public PyObject __rdiv__(PyObject left) {
-        return float___rdiv__(left);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.float___rdiv___doc)
-    final PyObject float___rdiv__(PyObject left) {
-        if (!canCoerce(left)) {
-            return null;
-        } else if (Options.division_warning >= 2) {
-            Py.warning(Py.DeprecationWarning, "classic float division");
-        }
-
-        double leftv = coerce(left);
-        if (getValue() == 0) {
-            throw Py.ZeroDivisionError("float division");
-        }
-        return new PyFloat(leftv / getValue());
     }
 
     @Override
@@ -851,27 +811,8 @@ public class PyFloat extends PyObject {
         return float___int__();
     }
 
-    /** Smallest value that cannot be represented as an int */
-    private static double INT_LONG_BOUNDARY = -(double)Integer.MIN_VALUE; // 2^31
-
     @ExposedMethod(doc = BuiltinDocs.float___int___doc)
     final PyObject float___int__() {
-        double v = getValue();
-        if (v < INT_LONG_BOUNDARY && v > -(INT_LONG_BOUNDARY + 1.0)) {
-            // v will fit into an int (when rounded towards zero).
-            return new PyInteger((int)v);
-        } else {
-            return __long__();
-        }
-    }
-
-    @Override
-    public PyObject __long__() {
-        return float___long__();
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.float___long___doc)
-    final PyObject float___long__() {
         return new PyLong(getValue());
     }
 

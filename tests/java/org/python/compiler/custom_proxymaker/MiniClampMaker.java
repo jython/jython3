@@ -29,7 +29,7 @@ public class MiniClampMaker extends JavaMaker {
     
     private static AnnotationDescr[] extractAnnotation(PyDictionary dict) {
         List<AnnotationDescr> annotationDescrs = Generic.list();
-        for (PyObject annotationIter: dict.iteritems().asIterable()) {
+        for (PyObject annotationIter: dict.dict_iteritems().asIterable()) {
             PyObject annotationClass = annotationIter.__getitem__(0);
             PyObject annotationFields = annotationIter.__getitem__(1);
             AnnotationDescr annotationDescr = null;
@@ -37,7 +37,7 @@ public class MiniClampMaker extends JavaMaker {
                 annotationDescr = new AnnotationDescr(Py.tojava(annotationClass, Class.class));
             } else {
                 Map<String, Object> fields = Generic.map();
-                for (PyObject item: ((PyDictionary)annotationFields).iteritems().asIterable()) {
+                for (PyObject item: ((PyDictionary)annotationFields).dict_iteritems().asIterable()) {
                     fields.put(Py.tojava(item.__getitem__(0), String.class), Py.tojava(item.__getitem__(1), Object.class));
                 }
                 annotationDescr = new AnnotationDescr(Py.tojava(annotationClass, Class.class), fields);

@@ -25,7 +25,7 @@ public class ProxyType extends AbstractReference {
         this(TYPE, ref, callback);
     }
 
-    public boolean __nonzero__() { return py().__nonzero__(); }
+    public boolean __bool__() { return py().__bool__(); }
     public int __len__() { return py().__len__(); }
 
     public PyObject __finditem__(PyObject key) { return py().__finditem__(key); }
@@ -51,9 +51,8 @@ public class ProxyType extends AbstractReference {
     public PyUnicode __unicode__() { return py().__unicode__(); }
     public PyString __hex__() { return py().__hex__(); }
     public PyString __oct__() { return py().__oct__(); }
-    public PyObject __int__() { return py().__int__(); }
     public PyFloat __float__() { return py().__float__(); }
-    public PyObject __long__() { return py().__long__(); }
+    public PyObject __int__() { return py().__int__(); }
     public PyComplex __complex__() { return py().__complex__(); }
     public PyObject __pos__() { return py().__pos__(); }
     public PyObject __neg__() { return py().__neg__(); }
@@ -73,9 +72,9 @@ public class ProxyType extends AbstractReference {
     public PyObject __mul__(PyObject o) { return py().__mul__(o); }
     public PyObject __rmul__(PyObject o) { return py().__rmul__(o); }
     public PyObject __imul__(PyObject o) { return py().__imul__(o); }
-    public PyObject __div__(PyObject o) { return py().__div__(o); }
+    public PyObject __truediv__(PyObject o) { return py().__truediv__(o); }
     public PyObject __floordiv__(PyObject o) { return py().__floordiv__(o); }
-    public PyObject __rdiv__(PyObject o) { return py().__rdiv__(o); }
+    public PyObject __rtruediv__(PyObject o) { return py().__rtruediv__(o); }
     public PyObject __idiv__(PyObject o) { return py().__idiv__(o); }
     public PyObject __ifloordiv__(PyObject o) { return py().__ifloordiv__(o); }
     public PyObject __mod__(PyObject o) { return py().__mod__(o); }

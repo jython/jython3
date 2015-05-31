@@ -40,7 +40,7 @@ public class PyBoolean extends PyInteger {
         if (obj == null) {
             return Py.False;
         }
-        return obj.__nonzero__() ? Py.True : Py.False;
+        return obj.__bool__() ? Py.True : Py.False;
     }
 
     @Override
@@ -64,12 +64,12 @@ public class PyBoolean extends PyInteger {
     }
 
     @Override
-    public boolean __nonzero__() {
-        return bool___nonzero__();
+    public boolean __bool__() {
+        return bool___bool__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.bool___nonzero___doc)
-    final boolean bool___nonzero__() {
+    @ExposedMethod(doc = BuiltinDocs.bool___bool___doc)
+    final boolean bool___bool__() {
         return getBooleanValue();
     }
 

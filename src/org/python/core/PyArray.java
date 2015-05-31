@@ -254,8 +254,8 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
     }
 
     @ExposedMethod
-    final boolean array___nonzero__() {
-        return seq___nonzero__();
+    final boolean array___bool__() {
+        return seq___bool__();
     }
 
     @ExposedMethod
@@ -490,7 +490,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
         } else if (obj instanceof PyString) {
             PyString s = (PyString)obj;
             return s.toString().charAt(0);
-        } else if (obj.__nonzero__()) {
+        } else if (obj.__bool__()) {
             return obj.asInt();
         } else {
             return -1;

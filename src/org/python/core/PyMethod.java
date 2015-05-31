@@ -15,21 +15,21 @@ import java.lang.reflect.Proxy;
 /**
  * A Python method.
  */
-@ExposedType(name = "instancemethod", isBaseType = false, doc = BuiltinDocs.instancemethod_doc)
+@ExposedType(name = "instancemethod", isBaseType = false, doc = "") // BuiltinDocs.instancemethod_doc)
 public class PyMethod extends PyObject implements InvocationHandler, Traverseproc {
 
     public static final PyType TYPE = PyType.fromClass(PyMethod.class);
 
     /** The class associated with a method. */
-    @ExposedGet(doc = BuiltinDocs.instancemethod_im_class_doc)
+    @ExposedGet(doc = "") // BuiltinDocs.instancemethod_im_class_doc)
     public PyObject im_class;
 
     /** The function (or other callable) implementing a method, also available via im_func */
-    @ExposedGet(doc = BuiltinDocs.instancemethod___func___doc)
+    @ExposedGet(doc = "") // BuiltinDocs.instancemethod___func___doc)
     public PyObject __func__;
 
     /** The instance to which a method is bound; None for unbound methods also available via im_self  */
-    @ExposedGet(doc = BuiltinDocs.instancemethod___self___doc)
+    @ExposedGet(doc = "") // BuiltinDocs.instancemethod___self___doc)
     public PyObject __self__;
 
     @Deprecated
@@ -85,7 +85,7 @@ public class PyMethod extends PyObject implements InvocationHandler, Traversepro
         return __func__.__findattr_ex__(name);
     }
     
-    @ExposedMethod(doc = BuiltinDocs.instancemethod___getattribute___doc)
+    @ExposedMethod(doc = "") // BuiltinDocs.instancemethod___getattribute___doc)
     final PyObject instancemethod___getattribute__(PyObject arg0) {
         String name = asName(arg0);
         PyObject ret = instancemethod___findattr_ex__(name);
@@ -100,7 +100,7 @@ public class PyMethod extends PyObject implements InvocationHandler, Traversepro
         return instancemethod___get__(obj, type);
     }
 
-    @ExposedMethod(defaults = "null", doc = BuiltinDocs.instancemethod___get___doc)
+    @ExposedMethod(defaults = "null", doc = "") // BuiltinDocs.instancemethod___get___doc)
     final PyObject instancemethod___get__(PyObject obj, PyObject type) {
         // Only if classes are compatible
         if (obj == null || __self__ != null) {
@@ -227,8 +227,8 @@ public class PyMethod extends PyObject implements InvocationHandler, Traversepro
     public PyObject __call__(ThreadState state, PyObject[] args, String[] keywords) {
         return instancemethod___call__(state, args, keywords);
     }
-    
-    @ExposedMethod(doc = BuiltinDocs.instancemethod___call___doc)
+
+    @ExposedMethod(doc = "") // BuiltinDocs.instancemethod___call___doc)
     final PyObject instancemethod___call__(ThreadState state, PyObject[] args, String[] keywords) {
         PyObject self = checkSelf(null, args);
         if (self == null) {
@@ -267,32 +267,6 @@ public class PyMethod extends PyObject implements InvocationHandler, Traversepro
             return null;
         } else {
             return self;
-        }
-    }
-
-    @Override
-    public int __cmp__(PyObject other) {
-        return instancemethod___cmp__(other);
-    }
-
-    @ExposedMethod(type = MethodType.CMP, doc = BuiltinDocs.instancemethod___cmp___doc)
-    final int instancemethod___cmp__(PyObject other) {
-        if (!(other instanceof PyMethod)) {
-            return -2;
-        }
-        PyMethod otherMethod = (PyMethod)other;
-        int cmp = __func__._cmp(otherMethod.__func__);
-        if (cmp != 0) {
-            return cmp;
-        }
-        if (__self__ == otherMethod.__self__) {
-            return 0;
-        }
-        if (__self__ == null || otherMethod.__self__ == null) {
-            return System.identityHashCode(__self__) < System.identityHashCode(otherMethod.__self__)
-                    ? -1 : 1;
-        } else {
-            return __self__._cmp(otherMethod.__self__);
         }
     }
 

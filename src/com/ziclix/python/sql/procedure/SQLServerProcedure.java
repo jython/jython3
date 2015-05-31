@@ -33,7 +33,7 @@ public class SQLServerProcedure extends Procedure {
 
         StringBuffer proc = new StringBuffer();
 
-        if (this.procedureSchema.__nonzero__()) {
+        if (this.procedureSchema.__bool__()) {
             proc.append(this.procedureSchema.toString()).append(".");
         }
 

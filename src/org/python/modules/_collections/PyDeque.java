@@ -375,12 +375,12 @@ public class PyDeque extends PyObject implements Traverseproc {
     }
 
     @Override
-    public boolean __nonzero__() {
-        return deque___nonzero__();
+    public boolean __bool__() {
+        return deque___bool__();
     }
 
     @ExposedMethod
-    synchronized final boolean deque___nonzero__() {
+    synchronized final boolean deque___bool__() {
         return size != 0;
     }
 

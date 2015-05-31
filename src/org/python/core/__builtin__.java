@@ -20,7 +20,6 @@ import org.python.modules._functools._functools;
 
 @Untraversable
 class BuiltinFunctions extends PyBuiltinFunctionSet {
-
     public static final PyObject module = Py.newString("__builtin__");
 
     public BuiltinFunctions(String name, int index, int argcount) {
@@ -284,7 +283,7 @@ public class __builtin__ {
         dict.__setitem__("basestring", PyBaseString.TYPE);
         dict.__setitem__("file", PyFile.TYPE);
         dict.__setitem__("slice", PySlice.TYPE);
-        dict.__setitem__("xrange", PyXRange.TYPE);
+        dict.__setitem__("range", PyRange.TYPE);
 
         dict.__setitem__("None", Py.None);
         dict.__setitem__("NotImplemented", Py.NotImplemented);
@@ -300,6 +299,7 @@ public class __builtin__ {
         // Hopefully add -O option in the future to change this
         dict.__setitem__("__debug__", Py.One);
 
+// TODO: redo the builtin function stuff to possibly use enum
         dict.__setitem__("abs", new BuiltinFunctions("abs", 7, 1));
         dict.__setitem__("apply", new BuiltinFunctions("apply", 9, 1, 3));
         dict.__setitem__("callable", new BuiltinFunctions("callable", 14, 1));
@@ -312,7 +312,7 @@ public class __builtin__ {
         dict.__setitem__("isinstance", new BuiltinFunctions("isinstance", 10, 2));
         dict.__setitem__("len", new BuiltinFunctions("len", 1, 1));
         dict.__setitem__("ord", new BuiltinFunctions("ord", 3, 1));
-        dict.__setitem__("range", new BuiltinFunctions("range", 2, 1, 3));
+//        dict.__setitem__("range", new BuiltinFunctions("range", 2, 1, 3));
         dict.__setitem__("sum", new BuiltinFunctions("sum", 12, 1, 2));
         dict.__setitem__("unichr", new BuiltinFunctions("unichr", 6, 1));
         dict.__setitem__("delattr", new BuiltinFunctions("delattr", 15, 2));
@@ -555,10 +555,10 @@ public class __builtin__ {
         PyList list = new PyList();
         for (PyObject item : seq.asIterable()) {
             if (func == PyBoolean.TYPE || func == Py.None) {
-                if (!item.__nonzero__()) {
+                if (!item.__bool__()) {
                     continue;
                 }
-            } else if (!func.__call__(item).__nonzero__()) {
+            } else if (!func.__call__(item).__bool__()) {
                 continue;
             }
             list.append(item);
@@ -577,10 +577,10 @@ public class __builtin__ {
         StringBuilder builder = new StringBuilder();
         for (PyObject item : seq.asIterable()) {
             if (func == Py.None) {
-                if (!item.__nonzero__()) {
+                if (!item.__bool__()) {
                     continue;
                 }
-            } else if (!func.__call__(item).__nonzero__()) {
+            } else if (!func.__call__(item).__bool__()) {
                 continue;
             }
             if (!Py.isInstance(item, stringType)) {
@@ -609,10 +609,10 @@ public class __builtin__ {
         for (int i = 0; i < len; i++) {
             item = seq.__finditem__(i);
             if (func == Py.None) {
-                if (!item.__nonzero__()) {
+                if (!item.__bool__()) {
                     continue;
                 }
-            } else if (!func.__call__(item).__nonzero__()) {
+            } else if (!func.__call__(item).__bool__()) {
                 continue;
             }
             list.append(item);
@@ -946,7 +946,7 @@ public class __builtin__ {
             return 0;
         }
         try {
-            // See PyXRange.getLenOfRange for the primitive version
+            // See PyRange.getLenOfRange for the primitive version
             PyObject diff = hi._sub(lo)._sub(Py.One);
             PyObject n = diff.__floordiv__(step).__add__(Py.One);
             return n.asInt();
@@ -1333,7 +1333,7 @@ class AllFunction extends PyBuiltinFunctionNarrow {
             throw Py.TypeError("'" + arg.getType().fastGetName() + "' object is not iterable");
         }
         for (PyObject item : iter.asIterable()) {
-            if (!item.__nonzero__()) {
+            if (!item.__bool__()) {
                 return Py.False;
             }
         }
@@ -1356,7 +1356,7 @@ class AnyFunction extends PyBuiltinFunctionNarrow {
             throw Py.TypeError("'" + arg.getType().fastGetName() + "' object is not iterable");
         }
         for (PyObject item : iter.asIterable()) {
-            if (item.__nonzero__()) {
+            if (item.__bool__()) {
                 return Py.True;
             }
         }
@@ -1509,7 +1509,7 @@ class MaxFunction extends PyBuiltinFunction {
             } else {
                 itemKey = key.__call__(item);
             }
-            if (maxKey == null || itemKey._gt(maxKey).__nonzero__()) {
+            if (maxKey == null || itemKey._gt(maxKey).__bool__()) {
                 maxKey = itemKey;
                 max = item;
             }
@@ -1568,7 +1568,7 @@ class MinFunction extends PyBuiltinFunction {
             } else {
                 itemKey = key.__call__(item);
             }
-            if (minKey == null || itemKey._lt(minKey).__nonzero__()) {
+            if (minKey == null || itemKey._lt(minKey).__bool__()) {
                 minKey = itemKey;
                 min = item;
             }
@@ -1632,7 +1632,7 @@ class CompileFunction extends PyBuiltinFunction {
         String filename = ap.getString(1);
         String mode = ap.getString(2);
         int flags = ap.getInt(3, 0);
-        boolean dont_inherit = ap.getPyObject(4, Py.False).__nonzero__();
+        boolean dont_inherit = ap.getPyObject(4, Py.False).__bool__();
         return compile(source, filename, mode, flags, dont_inherit);
     }
 

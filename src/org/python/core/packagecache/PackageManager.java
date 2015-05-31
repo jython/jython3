@@ -96,7 +96,7 @@ public abstract class PackageManager extends Object {
             PyList dictKeys = dict.keys();
 
             for (PyObject name : dictKeys.asIterable()) {
-                if (!cls.has_key(name)) {
+                if (!cls.__contains__(name)) {
                     if (exclpkgs && dict.get(name) instanceof PyJavaPackage)
                         continue;
                     ret.append(name);
@@ -107,7 +107,7 @@ public abstract class PackageManager extends Object {
         }
 
         for (PyObject pyname : cls.keys().asIterable()) {
-            if (!dict.has_key(pyname)) {
+            if (!dict.__contains__(pyname)) {
                 String name = pyname.toString();
                 jpkg.addClass(name, Py.findClass(jpkg.__name__ + "." + name));
             }

@@ -148,7 +148,7 @@ public abstract class PathPackageManager extends CachedJarsPackageManager {
                 }
 
                 // for opt maybe we should some hash-set for ret
-                if (jpkg.__dict__.has_key(name) || jpkg.clsSet.has_key(name)
+                if (jpkg.__dict__.__contains__(name) || jpkg.clsSet.__contains__(name)
                         || ret.__contains__(name)) {
                     continue;
                 }

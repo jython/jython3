@@ -949,7 +949,7 @@ public class PyJavaType extends PyType {
                 Object proxy = obj.getJavaProxy();
                 if (proxy == null) {
                     for (Object item : (Collection<?>) self.getJavaProxy()) {
-                        if (Py.java2py(item)._eq(obj).__nonzero__()) {
+                        if (Py.java2py(item)._eq(obj).__bool__()) {
                             contained = true;
                             break;
                         }

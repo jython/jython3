@@ -91,7 +91,7 @@ abstract class MemoryOp {
 
     private static final class BooleanOp extends MemoryOp {
         public final void put(Memory mem, long offset, PyObject value) {
-            mem.putInt(offset, value.__nonzero__() ? 1 : 0);
+            mem.putInt(offset, value.__bool__() ? 1 : 0);
         }
 
         public final PyObject get(Memory mem, long offset) {

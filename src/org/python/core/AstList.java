@@ -111,8 +111,8 @@ public class AstList extends PySequence implements Cloneable, List, Traverseproc
     }
 
     @ExposedMethod
-    final boolean astlist___nonzero__() {
-        return seq___nonzero__();
+    final boolean astlist___bool__() {
+        return seq___bool__();
     }
 
     @ExposedMethod

@@ -7,7 +7,7 @@ import org.python.core.PyIterator;
 import org.python.core.PyObject;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
-import org.python.core.PyXRange;
+import org.python.core.PyRange;
 import org.python.core.Visitproc;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
@@ -64,7 +64,7 @@ public class groupby extends PyIterator {
             PyObject currentKey;
             PyObject currentValue;
             PyObject iterator = iterable.__iter__();
-            PyObject targetKey = currentKey = currentValue = new PyXRange(0);
+            PyObject targetKey = currentKey = currentValue = new PyRange(0);
 
             public PyObject __iternext__() {
                 while (currentKey.equals(targetKey)) {

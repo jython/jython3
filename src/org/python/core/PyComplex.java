@@ -215,12 +215,12 @@ public class PyComplex extends PyObject {
     }
 
     @Override
-    public boolean __nonzero__() {
-        return complex___nonzero__();
+    public boolean __bool__() {
+        return complex___bool__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.complex___nonzero___doc)
-    final boolean complex___nonzero__() {
+    @ExposedMethod(doc = BuiltinDocs.complex___bool___doc)
+    final boolean complex___bool__() {
         return real != 0 || imag != 0;
     }
 
@@ -367,10 +367,10 @@ public class PyComplex extends PyObject {
         return complex___coerce_ex__(other);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.complex___coerce___doc)
-    final PyObject complex___coerce__(PyObject other) {
-        return adaptToCoerceTuple(complex___coerce_ex__(other));
-    }
+//    @ExposedMethod(doc = BuiltinDocs.complex___coerce___doc)
+//    final PyObject complex___coerce__(PyObject other) {
+//        return adaptToCoerceTuple(complex___coerce_ex__(other));
+//    }
 
     /**
      * Coercion logic for complex. Implemented as a final method to avoid invocation of virtual
@@ -520,36 +520,6 @@ public class PyComplex extends PyObject {
             return new PyComplex((a.real * ratio + a.imag) / denom, //
                     (a.imag * ratio - a.real) / denom);
         }
-    }
-
-    @Override
-    public PyObject __div__(PyObject right) {
-        return complex___div__(right);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.complex___div___doc)
-    final PyObject complex___div__(PyObject right) {
-        if (!canCoerce(right)) {
-            return null;
-        } else if (Options.division_warning >= 2) {
-            Py.warning(Py.DeprecationWarning, "classic complex division");
-        }
-        return _div(this, coerce(right));
-    }
-
-    @Override
-    public PyObject __rdiv__(PyObject left) {
-        return complex___rdiv__(left);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.complex___rdiv___doc)
-    final PyObject complex___rdiv__(PyObject left) {
-        if (!canCoerce(left)) {
-            return null;
-        } else if (Options.division_warning >= 2) {
-            Py.warning(Py.DeprecationWarning, "classic complex division");
-        }
-        return _div(coerce(left), this);
     }
 
     @Override
@@ -718,7 +688,7 @@ public class PyComplex extends PyObject {
         PyComplex ret = new PyComplex(zr, zi);
 
         if (iexp < 0) {
-            return new PyComplex(1, 0).__div__(ret);
+            return new PyComplex(1, 0).__truediv__(ret);
         }
         return ret;
     }
@@ -832,17 +802,7 @@ public class PyComplex extends PyObject {
     }
 
     @ExposedMethod(doc = BuiltinDocs.complex___int___doc)
-    final PyInteger complex___int__() {
-        throw Py.TypeError("can't convert complex to int; use e.g. int(abs(z))");
-    }
-
-    @Override
-    public PyObject __long__() {
-        return complex___long__();
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.complex___long___doc)
-    final PyObject complex___long__() {
+    final PyObject complex___int__() {
         throw Py.TypeError("can't convert complex to long; use e.g. long(abs(z))");
     }
 

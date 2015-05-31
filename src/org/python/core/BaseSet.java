@@ -214,7 +214,7 @@ public abstract class BaseSet extends PyObject implements Set, Traverseproc {
      *
      * @return <code>true</code> if the set is not empty, <code>false</code> otherwise
      */
-    public boolean __nonzero__() {
+    public boolean __bool__() {
         return !_set.isEmpty();
     }
 
@@ -308,7 +308,7 @@ public abstract class BaseSet extends PyObject implements Set, Traverseproc {
 
     final PyObject baseset___lt__(PyObject other) {
         BaseSet bs = asBaseSet(other);
-        return Py.newBoolean(size() < bs.size() && baseset_issubset(other).__nonzero__());
+        return Py.newBoolean(size() < bs.size() && baseset_issubset(other).__bool__());
     }
 
     public PyObject __gt__(PyObject other) {
@@ -317,7 +317,7 @@ public abstract class BaseSet extends PyObject implements Set, Traverseproc {
 
     final PyObject baseset___gt__(PyObject other) {
         BaseSet bs = asBaseSet(other);
-        return Py.newBoolean(size() > bs.size() && baseset_issuperset(other).__nonzero__());
+        return Py.newBoolean(size() > bs.size() && baseset_issuperset(other).__bool__());
     }
 
     /**

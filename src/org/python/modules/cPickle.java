@@ -2182,7 +2182,7 @@ public class cPickle implements ClassDictInit {
                     throw new PyException(UnpicklingError, "state is not a dictionary");
                 }
                 PyObject dict = inst.__getattr__("__dict__");
-                for (PyObject item : ((PyDictionary)state).iteritems().asIterable()) {
+                for (PyObject item : ((PyDictionary)state).dict_iteritems().asIterable()) {
                     dict.__setitem__(item.__getitem__(0), item.__getitem__(1));
                 }
             }
@@ -2192,7 +2192,7 @@ public class cPickle implements ClassDictInit {
                 if (!(slotstate instanceof PyDictionary)) {
                     throw new PyException(UnpicklingError, "slot state is not a dictionary");
                 }
-                for (PyObject item : ((PyDictionary)slotstate).iteritems().asIterable()) {
+                for (PyObject item : ((PyDictionary)slotstate).dict_iteritems().asIterable()) {
                     inst.__setattr__(PyObject.asName(item.__getitem__(0)),
                                      item.__getitem__(1));
                 }

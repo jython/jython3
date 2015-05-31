@@ -378,7 +378,7 @@ public class Procedure extends Object {
 
         StringBuffer proc = new StringBuffer();
 
-        if (this.procedureCatalog.__nonzero__()) {
+        if (this.procedureCatalog.__bool__()) {
             proc.append(this.procedureCatalog.toString()).append(".");
         }
 

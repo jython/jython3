@@ -46,7 +46,7 @@ class OperatorFunctions extends PyBuiltinFunctionSet
         case 12: return arg1.__neg__();
         case 13: return arg1.__not__();
         case 14: return arg1.__pos__();
-        case 15: return Py.newBoolean(arg1.__nonzero__());
+        case 15: return Py.newBoolean(arg1.__bool__());
         case 16: return Py.newBoolean(arg1.isCallable());
         case 17: return Py.newBoolean(arg1.isMappingType());
         case 18: return Py.newBoolean(arg1.isNumberType());
@@ -150,7 +150,7 @@ public class operator extends PyObject implements ClassDictInit
         dict.__setitem__("concat", new OperatorFunctions("concat", 0, 2));
         dict.__setitem__("__and__", new OperatorFunctions("__and__", 1, 2));
         dict.__setitem__("and_", new OperatorFunctions("and_", 1, 2));
-        dict.__setitem__("__div__", new OperatorFunctions("__div__", 2, 2));
+        dict.__setitem__("__truediv__", new OperatorFunctions("__div__", 2, 2));
         dict.__setitem__("div", new OperatorFunctions("div", 2, 2));
         dict.__setitem__("__lshift__", new OperatorFunctions("__lshift__", 3, 2));
         dict.__setitem__("lshift", new OperatorFunctions("lshift", 3, 2));
@@ -263,7 +263,7 @@ public class operator extends PyObject implements ClassDictInit
         int count = 0;
 
         for (PyObject tmp : seq.asIterable()) {
-            if (item._eq(tmp).__nonzero__()) {
+            if (item._eq(tmp).__bool__()) {
                 count++;
             }
         }
@@ -274,7 +274,7 @@ public class operator extends PyObject implements ClassDictInit
         int i = 0;
         PyObject iter = seq.__iter__();
         for (PyObject tmp = null; (tmp = iter.__iternext__()) != null; i++) {
-            if (item._eq(tmp).__nonzero__()) {
+            if (item._eq(tmp).__bool__()) {
                 return i;
             }
         }
