@@ -24,7 +24,6 @@ import org.python.util.Generic;
 @Untraversable
 @ExposedType(name = "unicode", base = PyBaseString.class, doc = BuiltinDocs.str_doc)
 public class PyUnicode extends PyString implements Iterable {
-
     /**
      * Nearly every significant method comes in two versions: one applicable when the string
      * contains only basic plane characters, and one that is correct when supplementary characters
@@ -684,7 +683,7 @@ public class PyUnicode extends PyString implements Iterable {
 
     @ExposedMethod(doc = BuiltinDocs.str___repr___doc)
     final PyString unicode___repr__() {
-        return new PyString("u" + encode_UnicodeEscape(getString(), true));
+        return new PyString(encode_UnicodeEscape(getString(), true));
     }
 
     @ExposedMethod(doc = BuiltinDocs.str___getitem___doc)
