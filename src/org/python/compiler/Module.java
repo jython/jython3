@@ -169,8 +169,8 @@ class PyBytesConstant extends Constant implements ClassConstants, Opcodes {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof PyStringConstant) {
-            return ((PyStringConstant)o).value.equals(value);
+        if (o instanceof PyBytesConstant) {
+            return ((PyBytesConstant)o).value.equals(value);
         } else {
             return false;
         }
