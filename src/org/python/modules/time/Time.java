@@ -12,6 +12,8 @@
 // see org/python/modules/time.java for previous history.
 package org.python.modules.time;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.text.DateFormatSymbols;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -251,6 +253,23 @@ public class Time implements ClassDictInit
         return cal.getTime().getTime()/1000.0;
     }
 
+    public static double monotonic() {
+        return System.nanoTime() / 1000000000.0;
+    }
+
+    public static double perf_counter() {
+        return System.nanoTime() / 1000000000.0;
+    }
+
+    public static double process_time() {
+        ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
+        double total = 0;
+        for (long id : threadBean.getAllThreadIds()) {
+            total += threadBean.getThreadCpuTime(id);
+        }
+        return total / 1000000000.0;
+    }
+    
     protected static PyTimeTuple _timefields(double secs, TimeZone tz) {
         GregorianCalendar cal = new GregorianCalendar(tz);
         cal.clear();
