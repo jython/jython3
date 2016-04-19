@@ -23,7 +23,9 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.DosFileAttributes;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import jnr.constants.Constant;
@@ -146,6 +148,20 @@ public class PosixModule implements ClassDictInit {
         dict.__setitem__("getPOSIX", null);
         dict.__setitem__("getOSName", null);
         dict.__setitem__("badFD", null);
+
+        String[] haveFunctions = new String[]{
+                "HAVE_FACCESSAT", "HAVE_FCHDIR", "HAVE_FCHMOD", "HAVE_FCHMODAT", "HAVE_FCHOWN", "HAVE_FCHOWNAT",
+                "HAVE_FEXECVE", "HAVE_FDOPENDIR", "HAVE_FPATHCONF", "HAVE_FSTATAT", "HAVE_FSTATVFS", "HAVE_FTRUNCATE",
+                "HAVE_FUTIMENS", "HAVE_FUTIMES", "HAVE_FUTIMESAT", "HAVE_LINKAT", "HAVE_LCHOWN", "HAVE_LSTAT",
+                "HAVE_LUTIMES", "HAVE_MKDIRAT", "HAVE_MKFIFOAT", "HAVE_MKNODAT", "HAVE_OPENAT", "HAVE_READLINKAT",
+                "HAVE_RENAMEAT", "HAVE_SYMLINKAT", "HAVE_UNLINKAT", "HAVE_UTIMENSAT"
+        };
+
+        List<PyObject> haveFuncs = new ArrayList<PyObject>();
+        for (String haveFunc : haveFunctions) {
+            haveFuncs.add(PyString.fromInterned(haveFunc));
+        }
+        dict.__setitem__("_have_functions", PyList.fromList(haveFuncs));
 
         // Hide __doc__s
         PyList keys = (PyList)dict.invoke("keys");
