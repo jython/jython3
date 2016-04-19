@@ -4,27 +4,7 @@ package org.python.compiler;
 
 import org.python.antlr.Visitor;
 import org.python.antlr.PythonTree;
-import org.python.antlr.ast.ClassDef;
-import org.python.antlr.ast.DictComp;
-import org.python.antlr.ast.Exec;
-import org.python.antlr.ast.Expression;
-import org.python.antlr.ast.FunctionDef;
-import org.python.antlr.ast.GeneratorExp;
-import org.python.antlr.ast.Global;
-import org.python.antlr.ast.Import;
-import org.python.antlr.ast.ImportFrom;
-import org.python.antlr.ast.Interactive;
-import org.python.antlr.ast.Lambda;
-import org.python.antlr.ast.ListComp;
-import org.python.antlr.ast.Name;
-import org.python.antlr.ast.Return;
-import org.python.antlr.ast.SetComp;
-import org.python.antlr.ast.Tuple;
-import org.python.antlr.ast.With;
-import org.python.antlr.ast.Yield;
-import org.python.antlr.ast.arguments;
-import org.python.antlr.ast.comprehension;
-import org.python.antlr.ast.expr_contextType;
+import org.python.antlr.ast.*;
 import org.python.antlr.base.expr;
 import org.python.antlr.base.stmt;
 import org.python.core.ParserFacade;
@@ -302,6 +282,25 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
     @Override
     public Object visitSetComp(SetComp node) throws Exception {
         return visitInternalGenerators(node, node.getInternalElt(), node.getInternalGenerators());
+    }
+
+    @Override
+    public Object visitYieldFrom(YieldFrom node) throws Exception {
+        String bound_exp = "_(x)";
+        String tmp = "_(" + node.getLine() + "_" + node.getCharPositionInLine()
+                + ")";
+        def(tmp);
+        ArgListCompiler ac = new ArgListCompiler();
+        List<expr> args = new ArrayList<expr>();
+        args.add(new Name(node.getToken(), bound_exp, expr_contextType.Param));
+        ac.visitArgs(new arguments(node, args, null, null, new ArrayList<expr>()));
+        beginScope(tmp, FUNCSCOPE, node, ac);
+        cur.addParam(bound_exp);
+        cur.markFromParam();
+
+        traverse(node);
+        endScope();
+        return null;
     }
 
     @Override

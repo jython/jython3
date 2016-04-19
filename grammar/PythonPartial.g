@@ -906,7 +906,7 @@ DEF       : 'def' ;
 DELETE    : 'del' ;
 ELIF      : 'elif' ;
 EXCEPT    : 'except' ;
-EXEC      : 'exec' ;
+EXEC      : 'exec1' ;
 FINALLY   : 'finally' ;
 FROM      : 'from' ;
 FOR       : 'for' ;
