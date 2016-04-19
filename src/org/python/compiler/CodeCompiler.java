@@ -2423,6 +2423,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.ldc(name);
 
         code.aload(baseArray);
+        if (node.getInternalKeywords() != null && node.getInternalKeywords().size() > 0) {
+            // Assume only keywords parameter is the metaclass
+            visit(node.getInternalKeywords().get(0).getInternalValue());
+        } else {
+            code.aconst_null();
+        }
 
         ScopeInfo scope = module.getScopeInfo(node);
 
@@ -2437,12 +2443,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         // Make class out of name, bases, and code
         if (!makeClosure(scope)) {
             code.invokestatic(p(Py.class), "makeClass",
-                    sig(PyObject.class, String.class, PyObject[].class, PyCode.class));
+                    sig(PyObject.class, String.class, PyObject[].class, PyObject.class, PyCode.class));
         } else {
             code.invokestatic(
                     p(Py.class),
                     "makeClass",
-                    sig(PyObject.class, String.class, PyObject[].class, PyCode.class,
+                    sig(PyObject.class, String.class, PyObject[].class, PyObject.class, PyCode.class,
                             PyObject[].class));
         }
 
