@@ -20,6 +20,7 @@ _LWPCookieJar.py
 _MozillaCookieJar.py
 _pyio.py
 _strptime.py
+_sitebuiltins.py
 _threading_local.py
 _weakrefset.py
 abc.py

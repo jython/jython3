@@ -24,6 +24,8 @@ public class _sre {
 
     // probably the right number for Jython since we are UTF-16.
     public static int MAXREPEAT = 65535;
+
+    public static int MAXGROUPS = 65535;
  
     // workaround the fact that H, I types are unsigned, but we are not really using them as such
     // XXX: May not be the right size, but I suspect it is -- see sre_compile.py

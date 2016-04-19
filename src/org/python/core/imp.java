@@ -548,7 +548,7 @@ public class imp {
             Py.writeComment(IMPORT_LOG, "'" + name + "' as sys in builtin modules");
             return Py.java2py(Py.getSystemState());
         }
-        if (name == "__builtin__") {
+        if (name == "__builtin__" || name == "builtins") {
             Py.writeComment(IMPORT_LOG, "'" + name + "' as __builtin__ in builtin modules");
             return new PyModule("__builtin__", Py.getSystemState().builtins);
         }

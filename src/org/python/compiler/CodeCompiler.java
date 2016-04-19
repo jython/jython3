@@ -2436,7 +2436,6 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.aload(baseArray);
         if (node.getInternalKeywords() != null && node.getInternalKeywords().size() > 0) {
             // Assume only keywords parameter is the metaclass
-            assert node.getInternalKeywords().get(0).getInternalArg().equals("metaclass");
             visit(node.getInternalKeywords().get(0).getInternalValue());
         } else {
             code.aconst_null();
