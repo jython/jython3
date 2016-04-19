@@ -112,6 +112,8 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
                 return fancyCall(new PyObject[] {arg1});
             case 45:
                 return __builtin__.reversed(arg1);
+            case 46:
+                return __builtin__.exec(arg1);
             default:
                 throw info.unexpectedCall(1, false);
         }
@@ -164,6 +166,8 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
                 return fancyCall(new PyObject[] {arg1, arg2});
             case 43:
                 return fancyCall(new PyObject[] {arg1, arg2});
+            case 46:
+                return __builtin__.exec(arg1, arg2);
             default:
                 throw info.unexpectedCall(2, false);
         }
@@ -211,6 +215,8 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
                 return fancyCall(new PyObject[] {arg1, arg2, arg3});
             case 43:
                 return fancyCall(new PyObject[] {arg1, arg2, arg3});
+            case 46:
+                return __builtin__.exec(arg1, arg2, arg3);
             default:
                 throw info.unexpectedCall(3, false);
         }
@@ -345,6 +351,7 @@ public class __builtin__ {
         dict.__setitem__("compile", new CompileFunction());
         dict.__setitem__("open", new OpenFunction());
         dict.__setitem__("reversed", new BuiltinFunctions("reversed", 45, 1));
+        dict.__setitem__("exec", new BuiltinFunctions("exec", 46, 1, 3));
         dict.__setitem__("__import__", new ImportFunction());
         dict.__setitem__("sorted", new SortedFunction());
         dict.__setitem__("all", new AllFunction());
@@ -480,6 +487,19 @@ public class __builtin__ {
         if (!isMappingType(locals)) {
             throw Py.TypeError("locals must be a mapping");
         }
+    }
+
+    public static PyObject exec(PyObject o, PyObject globals, PyObject locals) {
+        Py.exec(o, globals, locals);
+        return Py.None;
+    }
+
+    public static PyObject exec(PyObject o) {
+        return exec(o, null, null);
+    }
+
+    public static PyObject exec(PyObject o, PyObject globals) {
+        return exec(o, globals, null);
     }
 
     public static PyObject eval(PyObject o, PyObject globals, PyObject locals) {

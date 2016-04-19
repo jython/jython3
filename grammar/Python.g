@@ -1928,6 +1928,10 @@ atom
        {
            etype = new Num($COMPLEX, actions.makeComplex($COMPLEX));
        }
+     | d1=DOT DOT DOT
+       {
+          etype = new Ellipsis($d1);
+       }
      | (S+=STRING)+
        {
            etype = new Str(actions.extractStringToken($S), actions.extractStrings($S, encoding, unicodeLiterals));
@@ -2054,17 +2058,13 @@ subscriptlist[Token begin]
       }
     ;
 
-//subscript: '.' '.' '.' | test | [test] ':' [test] [sliceop]
+//subscript: test | [test] ':' [test] [sliceop]
 subscript
     returns [slice sltype]
 @after {
     $subscript.tree = $sltype;
 }
-    : d1=DOT DOT DOT
-      {
-          $sltype = new Ellipsis($d1);
-      }
-    | (test[null] COLON)
+    : (test[null] COLON)
    => lower=test[expr_contextType.Load] (c1=COLON (upper1=test[expr_contextType.Load])? (sliceop)?)?
       {
           $sltype = actions.makeSubscript($lower.tree, $c1, $upper1.tree, $sliceop.tree);
@@ -2391,7 +2391,7 @@ DEF       : 'def' ;
 DELETE    : 'del' ;
 ELIF      : 'elif' ;
 EXCEPT    : 'except' ;
-EXEC      : 'exec' ;
+EXEC      : 'exec1' ;
 FINALLY   : 'finally' ;
 FROM      : 'from' ;
 FOR       : 'for' ;

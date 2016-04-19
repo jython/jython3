@@ -735,6 +735,7 @@ atom
      | LONGINT
      | FLOAT
      | COMPLEX
+     | DOT DOT DOT
      | (STRING)+
      | TRISTRINGPART
      | STRINGPART TRAILBACKSLASH
@@ -906,7 +907,7 @@ DEF       : 'def' ;
 DELETE    : 'del' ;
 ELIF      : 'elif' ;
 EXCEPT    : 'except' ;
-EXEC      : 'exec' ;
+EXEC      : 'exec1' ;
 FINALLY   : 'finally' ;
 FROM      : 'from' ;
 FOR       : 'for' ;
