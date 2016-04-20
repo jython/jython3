@@ -270,10 +270,10 @@ public class __builtin__ {
         dict.__setitem__("object", PyObject.TYPE);
         dict.__setitem__("type", PyType.TYPE);
         dict.__setitem__("bool", PyBoolean.TYPE);
-        dict.__setitem__("int", PyInteger.TYPE);
+        dict.__setitem__("int", PyLong.TYPE);
         dict.__setitem__("enumerate", PyEnumerate.TYPE);
         dict.__setitem__("float", PyFloat.TYPE);
-        dict.__setitem__("long", PyLong.TYPE);
+        //dict.__setitem__("long", PyLong.TYPE);
         dict.__setitem__("complex", PyComplex.TYPE);
         dict.__setitem__("dict", PyDictionary.TYPE);
         dict.__setitem__("list", PyList.TYPE);
