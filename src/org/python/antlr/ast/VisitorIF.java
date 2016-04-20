@@ -48,13 +48,13 @@ public interface VisitorIF<R> {
     public R visitRepr(Repr node) throws Exception;
     public R visitNum(Num node) throws Exception;
     public R visitStr(Str node) throws Exception;
+    public R visitEllipsis(Ellipsis node) throws Exception;
     public R visitAttribute(Attribute node) throws Exception;
     public R visitSubscript(Subscript node) throws Exception;
     public R visitStarred(Starred node) throws Exception;
     public R visitName(Name node) throws Exception;
     public R visitList(List node) throws Exception;
     public R visitTuple(Tuple node) throws Exception;
-    public R visitEllipsis(Ellipsis node) throws Exception;
     public R visitSlice(Slice node) throws Exception;
     public R visitExtSlice(ExtSlice node) throws Exception;
     public R visitIndex(Index node) throws Exception;

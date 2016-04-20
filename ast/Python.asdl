@@ -80,6 +80,7 @@ module Python version "$Revision$"
          | Num(object n) -- a number as a PyObject.
          | Str(string s) -- need to specify raw, unicode, etc?
          -- other literals? bools?
+         | Ellipsis
 
          -- the following expression can appear in assignment context
          | Attribute(expr value, identifier attr, expr_context ctx)
@@ -94,7 +95,7 @@ module Python version "$Revision$"
 
     expr_context = Load | Store | Del | AugLoad | AugStore | Param
 
-    slice = Ellipsis | Slice(expr? lower, expr? upper, expr? step)
+    slice = Slice(expr? lower, expr? upper, expr? step)
           | ExtSlice(slice* dims)
           | Index(expr value)
 

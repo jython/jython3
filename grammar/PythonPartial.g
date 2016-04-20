@@ -735,6 +735,7 @@ atom
      | LONGINT
      | FLOAT
      | COMPLEX
+     | ELLIPSIS
      | (STRING)+
      | TRISTRINGPART
      | STRINGPART TRAILBACKSLASH
@@ -779,10 +780,9 @@ subscriptlist
     : subscript (options {greedy=true;}:COMMA subscript)* (COMMA)?
     ;
 
-//subscript: '.' '.' '.' | test | [test] ':' [test] [sliceop]
+//subscript: test | [test] ':' [test] [sliceop]
 subscript
-    : DOT DOT DOT
-    | (test COLON)
+    : (test COLON)
    => test (COLON (test)? (sliceop)?)?
     | (COLON)
    => COLON (test)? (sliceop)?
@@ -1013,6 +1013,8 @@ DOUBLESTAREQUAL    : '**=' ;
 DOUBLESLASHEQUAL    : '//=' ;
 
 DOT : '.' ;
+
+ELLIPSIS : '...' ;
 
 AT : '@' ;
 
