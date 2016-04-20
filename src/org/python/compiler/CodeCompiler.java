@@ -1,15 +1,10 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.compiler;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Stack;
-import java.util.Vector;
-
+import org.objectweb.asm.Label;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.Method;
 import org.python.antlr.ParseException;
 import org.python.antlr.PythonTree;
 import org.python.antlr.Visitor;
@@ -80,7 +75,6 @@ import org.python.antlr.base.stmt;
 import org.python.core.CompilerFlags;
 import org.python.core.ContextGuard;
 import org.python.core.ContextManager;
-import org.python.core.imp;
 import org.python.core.Py;
 import org.python.core.PyCode;
 import org.python.core.PyComplex;
@@ -99,10 +93,17 @@ import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyUnicode;
 import org.python.core.ThreadState;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.Method;
+import org.python.core.imp;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Stack;
+import java.util.Vector;
+
 import static org.python.util.CodegenUtils.*;
 
 public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
@@ -669,6 +670,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.goto_(continueLabels.peek());
         return Exit;
     }
+
 
     @Override
     public Object visitYield(Yield node) throws Exception {
@@ -2421,6 +2423,13 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.ldc(name);
 
         code.aload(baseArray);
+        if (node.getInternalKeywords() != null && node.getInternalKeywords().size() > 0) {
+            // Assume only keywords parameter is the metaclass
+            assert node.getInternalKeywords().get(0).getInternalArg().equals("metaclass");
+            visit(node.getInternalKeywords().get(0).getInternalValue());
+        } else {
+            code.aconst_null();
+        }
 
         ScopeInfo scope = module.getScopeInfo(node);
 
@@ -2435,12 +2444,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         // Make class out of name, bases, and code
         if (!makeClosure(scope)) {
             code.invokestatic(p(Py.class), "makeClass",
-                    sig(PyObject.class, String.class, PyObject[].class, PyCode.class));
+                    sig(PyObject.class, String.class, PyObject[].class, PyObject.class, PyCode.class));
         } else {
             code.invokestatic(
                     p(Py.class),
                     "makeClass",
-                    sig(PyObject.class, String.class, PyObject[].class, PyCode.class,
+                    sig(PyObject.class, String.class, PyObject[].class, PyObject.class, PyCode.class,
                             PyObject[].class));
         }
 
