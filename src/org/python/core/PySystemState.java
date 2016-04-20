@@ -143,8 +143,8 @@ public class PySystemState extends PyObject implements AutoCloseable,
 
     public PyList warnoptions = new PyList();
     public PyObject builtins;
-    private static PyObject defaultPlatform = new PyString("java");
-    public PyObject platform = defaultPlatform;
+    private static PyObject defaultPlatform = Py.newUnicode("java");
+    public PyObject platform;
 
     public PyList meta_path;
     public PyList path_hooks;
