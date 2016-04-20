@@ -292,7 +292,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes___repr___doc)
     final PyString bytes___repr__() {
-        return new PyString(encode_UnicodeEscape(getString(), true));
+        return new PyString("b" + encode_UnicodeEscape(getString(), true));
     }
 
     private static char[] hexdigit = "0123456789abcdef".toCharArray();

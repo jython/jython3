@@ -684,7 +684,7 @@ public class PyUnicode extends PyString implements Iterable {
 
     @ExposedMethod(doc = BuiltinDocs.str___repr___doc)
     final PyString str___repr__() {
-        return new PyString("u" + encode_UnicodeEscape(getString(), true));
+        return new PyString(encode_UnicodeEscape(getString(), true));
     }
 
     @ExposedMethod(doc = BuiltinDocs.str___getitem___doc)
