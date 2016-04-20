@@ -913,7 +913,7 @@ main (int argc, char **argv) {
     def debug_print(self, msg):
         from distutils.debug import DEBUG
         if DEBUG:
-            print msg
+            print(msg)
 
     def warn(self, msg):
         sys.stderr.write("warning: %s\n" % msg)

@@ -27,7 +27,7 @@ warnings.warn('The javashell module is deprecated. Use the subprocess module.',
 __all__ = ["shellexecute"]
 
 def __warn( *args ):
-    print " ".join( [str( arg ) for arg in args ])
+    print(" ".join([str( arg ) for arg in args ]))
 
 class _ShellEnv:
     """Provide environment derived by spawning a subshell and parsing its

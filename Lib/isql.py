@@ -53,7 +53,7 @@ class IsqlCmd(cmd.Cmd):
 
     def do_which(self, arg):
         """\nPrints the current db connection parameters.\n"""
-        print self.db
+        print(self.db)
         return False
 
     def do_EOF(self, arg):
@@ -62,9 +62,9 @@ class IsqlCmd(cmd.Cmd):
     def do_p(self, arg):
         """\nExecute a python expression.\n"""
         try:
-            exec arg.strip() in globals()
+            exec(arg.strip(), globals())
         except:
-            print sys.exc_info()[1]
+            print(sys.exc_info()[1])
         return False
 
     def do_column(self, arg):
@@ -95,9 +95,9 @@ class IsqlCmd(cmd.Cmd):
 
     def do_schema(self, arg):
         """\nPrints schema information.\n"""
-        print
+        print()
         self.db.schema(arg)
-        print
+        print()
         return False
 
     def do_delimiter(self, arg):
@@ -132,11 +132,11 @@ class IsqlCmd(cmd.Cmd):
         if len(arg.strip()) == 0:
             items = self.kw.items()
             if len(items):
-                print
+                print()
                 # format the results but don't include how many rows affected
                 for a in dbexts.console(items, ("key", "value"))[:-1]:
-                    print a
-                print
+                    print(a)
+                print()
             return False
         d = filter(lambda x: len(x) > 0, map(lambda x: x.strip(), arg.split("=")))
         if len(d) == 1:
@@ -148,7 +148,7 @@ class IsqlCmd(cmd.Cmd):
     def do_i(self, arg):
         fp = open(arg)
         try:
-            print
+            print()
             for line in fp.readlines():
                 line = self.precmd(line)
                 stop = self.onecmd(line)
@@ -175,24 +175,24 @@ class IsqlCmd(cmd.Cmd):
                     self.sqlbuffer.append(token[:-1 * len(self.delimiter)])
                     if self.sqlbuffer:
                         q = " ".join(self.sqlbuffer)
-                        print q
+                        print(q)
                         self.db.isql(q, **self.kw)
                         self.sqlbuffer = []
                         if self.db.updatecount:
-                            print
+                            print()
                             if self.db.updatecount == 1:
-                                print "1 row affected"
+                                print("1 row affected")
                             else:
-                                print "%d rows affected" % (self.db.updatecount)
-                            print
+                                print("%d rows affected" % (self.db.updatecount))
+                            print()
                         return False
             if token:
                 self.sqlbuffer.append(token)
         except:
             self.sqlbuffer = []
-            print
-            print sys.exc_info()[1]
-            print
+            print()
+            print(sys.exc_info()[1])
+            print()
         return False
 
     def emptyline(self):
@@ -208,9 +208,9 @@ class IsqlCmd(cmd.Cmd):
             except IsqlExit, e:
                 break
             except Exception, e:
-                print
-                print e
-                print
+                print()
+                print(e)
+                print()
             intro = None
 
 if __name__ == '__main__':
@@ -219,9 +219,9 @@ if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:], "b:", [])
     except getopt.error, msg:
-        print
-        print msg
-        print "Try `%s --help` for more information." % (sys.argv[0])
+        print()
+        print(msg)
+        print("Try `%s --help` for more information." % (sys.argv[0]))
         sys.exit(0)
 
     dbname = None

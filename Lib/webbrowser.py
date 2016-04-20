@@ -70,9 +70,9 @@ def main():
     url = args[0]
 
     open(url, new_win)
-    print ('opened')
+    print('opened')
 
-    print "\a"
+    print("\a")
 
 if __name__ == "__main__":
     main()
