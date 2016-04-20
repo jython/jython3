@@ -31,7 +31,7 @@ import org.python.expose.MethodType;
  * A builtin python string.
  */
 @Untraversable
-@ExposedType(name = "str", base = PyBaseString.class, doc = BuiltinDocs.str_doc)
+@ExposedType(name = "bytes", base = PyBaseString.class, doc = BuiltinDocs.str_doc)
 public class PyString extends PyBaseString implements BufferProtocol {
 
     public static final PyType TYPE = PyType.fromClass(PyString.class);
@@ -244,11 +244,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @Override
     public PyString __str__() {
-        return str___str__();
+        return bytes___str__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str___str___doc)
-    final PyString str___str__() {
+    @ExposedMethod(doc = BuiltinDocs.bytes___str___doc)
+    final PyString bytes___str__() {
         if (getClass() == PyString.class) {
             return this;
         }
@@ -262,11 +262,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @Override
     public int __len__() {
-        return str___len__();
+        return bytes___len__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str___len___doc)
-    final int str___len__() {
+    @ExposedMethod(doc = BuiltinDocs.bytes___len___doc)
+    final int bytes___len__() {
         return getString().length();
     }
 
@@ -287,12 +287,12 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @Override
     public PyString __repr__() {
-        return str___repr__();
+        return bytes___repr__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str___repr___doc)
-    final PyString str___repr__() {
-        return new PyString(encode_UnicodeEscape(getString(), true));
+    @ExposedMethod(doc = BuiltinDocs.bytes___repr___doc)
+    final PyString bytes___repr__() {
+        return new PyString("b" + encode_UnicodeEscape(getString(), true));
     }
 
     private static char[] hexdigit = "0123456789abcdef".toCharArray();
@@ -565,8 +565,8 @@ public class PyString extends PyBaseString implements BufferProtocol {
         return false;
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str___getitem___doc)
-    final PyObject str___getitem__(PyObject index) {
+    @ExposedMethod(doc = BuiltinDocs.bytes___getitem___doc)
+    final PyObject bytes___getitem__(PyObject index) {
         PyObject ret = seq___finditem__(index);
         if (ret == null) {
             throw Py.IndexError("string index out of range");
@@ -576,17 +576,17 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     // XXX: need doc
     @ExposedMethod(defaults = "null")
-    final PyObject str___getslice__(PyObject start, PyObject stop, PyObject step) {
+    final PyObject bytes___getslice__(PyObject start, PyObject stop, PyObject step) {
         return seq___getslice__(start, stop, step);
     }
 
     @Override
     public int __cmp__(PyObject other) {
-        return str___cmp__(other);
+        return bytes___cmp__(other);
     }
 
     @ExposedMethod(type = MethodType.CMP)
-    final int str___cmp__(PyObject other) {
+    final int bytes___cmp__(PyObject other) {
         if (!(other instanceof PyString)) {
             return -2;
         }
@@ -597,11 +597,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @Override
     public PyObject __eq__(PyObject other) {
-        return str___eq__(other);
+        return bytes___eq__(other);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.str___eq___doc)
-    final PyObject str___eq__(PyObject other) {
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___eq___doc)
+    final PyObject bytes___eq__(PyObject other) {
         String s = coerce(other);
         if (s == null) {
             return null;
@@ -611,11 +611,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @Override
     public PyObject __ne__(PyObject other) {
-        return str___ne__(other);
+        return bytes___ne__(other);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.str___ne___doc)
-    final PyObject str___ne__(PyObject other) {
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___ne___doc)
+    final PyObject bytes___ne__(PyObject other) {
         String s = coerce(other);
         if (s == null) {
             return null;
@@ -625,11 +625,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @Override
     public PyObject __lt__(PyObject other) {
-        return str___lt__(other);
+        return bytes___lt__(other);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.str___lt___doc)
-    final PyObject str___lt__(PyObject other) {
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___lt___doc)
+    final PyObject bytes___lt__(PyObject other) {
         String s = coerce(other);
         if (s == null) {
             return null;
@@ -639,11 +639,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @Override
     public PyObject __le__(PyObject other) {
-        return str___le__(other);
+        return bytes___le__(other);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.str___le___doc)
-    final PyObject str___le__(PyObject other) {
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___le___doc)
+    final PyObject bytes___le__(PyObject other) {
         String s = coerce(other);
         if (s == null) {
             return null;
@@ -653,11 +653,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @Override
     public PyObject __gt__(PyObject other) {
-        return str___gt__(other);
+        return bytes___gt__(other);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.str___gt___doc)
-    final PyObject str___gt__(PyObject other) {
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___gt___doc)
+    final PyObject bytes___gt__(PyObject other) {
         String s = coerce(other);
         if (s == null) {
             return null;
@@ -667,11 +667,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @Override
     public PyObject __ge__(PyObject other) {
-        return str___ge__(other);
+        return bytes___ge__(other);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.str___ge___doc)
-    final PyObject str___ge__(PyObject other) {
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___ge___doc)
+    final PyObject bytes___ge__(PyObject other) {
         String s = coerce(other);
         if (s == null) {
             return null;
@@ -688,11 +688,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @Override
     public int hashCode() {
-        return str___hash__();
+        return bytes___hash__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str___hash___doc)
-    final int str___hash__() {
+    @ExposedMethod(doc = BuiltinDocs.bytes___hash___doc)
+    final int bytes___hash__() {
         return getString().hashCode();
     }
 
@@ -899,11 +899,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @Override
     public boolean __contains__(PyObject o) {
-        return str___contains__(o);
+        return bytes___contains__(o);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str___contains___doc)
-    final boolean str___contains__(PyObject o) {
+    @ExposedMethod(doc = BuiltinDocs.bytes___contains___doc)
+    final boolean bytes___contains__(PyObject o) {
         String other = asUTF16StringOrError(o);
         return getString().indexOf(other) >= 0;
     }
@@ -930,11 +930,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @Override
     public PyObject __mul__(PyObject o) {
-        return str___mul__(o);
+        return bytes___mul__(o);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.str___mul___doc)
-    final PyObject str___mul__(PyObject o) {
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___mul___doc)
+    final PyObject bytes___mul__(PyObject o) {
         if (!o.isIndex()) {
             return null;
         }
@@ -943,11 +943,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @Override
     public PyObject __rmul__(PyObject o) {
-        return str___rmul__(o);
+        return bytes___rmul__(o);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.str___rmul___doc)
-    final PyObject str___rmul__(PyObject o) {
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___rmul___doc)
+    final PyObject bytes___rmul__(PyObject o) {
         if (!o.isIndex()) {
             return null;
         }
@@ -961,11 +961,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
      */
     @Override
     public PyObject __add__(PyObject other) {
-        return str___add__(other);
+        return bytes___add__(other);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.str___add___doc)
-    final PyObject str___add__(PyObject other) {
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___add___doc)
+    final PyObject bytes___add__(PyObject other) {
         // Expect other to be some kind of byte-like object.
         String otherStr = asStringOrNull(other);
         if (otherStr != null) {
@@ -980,23 +980,23 @@ public class PyString extends PyBaseString implements BufferProtocol {
         }
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str___getnewargs___doc)
-    final PyTuple str___getnewargs__() {
+    @ExposedMethod(doc = BuiltinDocs.bytes___getnewargs___doc)
+    final PyTuple bytes___getnewargs__() {
         return new PyTuple(new PyString(this.getString()));
     }
 
     @Override
     public PyTuple __getnewargs__() {
-        return str___getnewargs__();
+        return bytes___getnewargs__();
     }
 
     @Override
     public PyObject __mod__(PyObject other) {
-        return str___mod__(other);
+        return bytes___mod__(other);
     }
 
     @ExposedMethod(doc = BuiltinDocs.str___mod___doc)
-    public PyObject str___mod__(PyObject other) {
+    public PyObject bytes___mod__(PyObject other) {
         StringFormatter fmt = new StringFormatter(getString(), false);
         return fmt.format(other);
     }
@@ -1033,29 +1033,29 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     // Add in methods from string module
     public String lower() {
-        return str_lower();
+        return bytes_lower();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_lower_doc)
-    final String str_lower() {
+    @ExposedMethod(doc = BuiltinDocs.bytes_lower_doc)
+    final String bytes_lower() {
         return getString().toLowerCase(Locale.ROOT);
     }
 
     public String upper() {
-        return str_upper();
+        return bytes_uuper();
     }
 
     @ExposedMethod(doc = BuiltinDocs.str_upper_doc)
-    final String str_upper() {
+    final String bytes_uuper() {
         return getString().toUpperCase(Locale.ROOT);
     }
 
     public String title() {
-        return str_title();
+        return bytes_title();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_title_doc)
-    final String str_title() {
+    @ExposedMethod(doc = BuiltinDocs.bytes_title_doc)
+    final String bytes_title() {
         char[] chars = getString().toCharArray();
         int n = chars.length;
 
@@ -1078,11 +1078,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public String swapcase() {
-        return str_swapcase();
+        return bytes_swapcase();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_swapcase_doc)
-    final String str_swapcase() {
+    @ExposedMethod(doc = BuiltinDocs.bytes_swapcase_doc)
+    final String bytes_swapcase() {
         char[] chars = getString().toCharArray();
         int n = chars.length;
         for (int i = 0; i < n; i++) {
@@ -1127,14 +1127,14 @@ public class PyString extends PyBaseString implements BufferProtocol {
      *         characters/bytes
      */
     public PyObject strip(PyObject stripChars) {
-        return str_strip(stripChars);
+        return bytes_strip(stripChars);
     }
 
-    @ExposedMethod(defaults = "null", doc = BuiltinDocs.str_strip_doc)
-    final PyObject str_strip(PyObject chars) {
+    @ExposedMethod(defaults = "null", doc = BuiltinDocs.bytes_strip_doc)
+    final PyObject bytes_strip(PyObject chars) {
         if (chars instanceof PyUnicode) {
             // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).unicode_strip(chars);
+            return ((PyUnicode)decode()).str_strip(chars);
         } else {
             // It ought to be None, null, some kind of bytes with the buffer API.
             String stripChars = asStringNullOrError(chars, "strip");
@@ -1149,7 +1149,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * <code>str</code>.
      * <p>
      * Implementation note: although a <code>str</code> contains only bytes, this method is also
-     * called by {@link PyUnicode#unicode_strip(PyObject)} when this is a basic-plane string.
+     * called by {@link PyUnicode#str_strip(PyObject)} when this is a basic-plane string.
      *
      * @return a new String, stripped of the whitespace characters/bytes
      */
@@ -1174,7 +1174,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * stripped.
      * <p>
      * Implementation note: although a <code>str</code> contains only bytes, this method is also
-     * called by {@link PyUnicode#unicode_strip(PyObject)} when both arguments are basic-plane
+     * called by {@link PyUnicode#str_strip(PyObject)} when both arguments are basic-plane
      * strings.
      *
      * @param stripChars characters to strip or null
@@ -1297,14 +1297,14 @@ public class PyString extends PyBaseString implements BufferProtocol {
      *         characters/bytes
      */
     public PyObject lstrip(PyObject stripChars) {
-        return str_lstrip(stripChars);
+        return bytes_lstrip(stripChars);
     }
 
-    @ExposedMethod(defaults = "null", doc = BuiltinDocs.str_lstrip_doc)
-    final PyObject str_lstrip(PyObject chars) {
+    @ExposedMethod(defaults = "null", doc = BuiltinDocs.bytes_lstrip_doc)
+    final PyObject bytes_lstrip(PyObject chars) {
         if (chars instanceof PyUnicode) {
             // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).unicode_lstrip(chars);
+            return ((PyUnicode)decode()).str_lstrip(chars);
         } else {
             // It ought to be None, null, some kind of bytes with the buffer API.
             String stripChars = asStringNullOrError(chars, "lstrip");
@@ -1319,7 +1319,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * this <code>str</code>.
      * <p>
      * Implementation note: although a str contains only bytes, this method is also called by
-     * {@link PyUnicode#unicode_lstrip(PyObject)} when this is a basic-plane string.
+     * {@link PyUnicode#str_lstrip(PyObject)} when this is a basic-plane string.
      *
      * @return a new String, stripped of the whitespace characters/bytes
      */
@@ -1337,7 +1337,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * stripped.
      * <p>
      * Implementation note: although a <code>str</code> contains only bytes, this method is also
-     * called by {@link PyUnicode#unicode_lstrip(PyObject)} when both arguments are basic-plane
+     * called by {@link PyUnicode#str_lstrip(PyObject)} when both arguments are basic-plane
      * strings.
      *
      * @param stripChars characters to strip or null
@@ -1386,14 +1386,14 @@ public class PyString extends PyBaseString implements BufferProtocol {
      *         characters/bytes
      */
     public PyObject rstrip(PyObject stripChars) {
-        return str_rstrip(stripChars);
+        return bytes_rstrip(stripChars);
     }
 
-    @ExposedMethod(defaults = "null", doc = BuiltinDocs.str_rstrip_doc)
-    final PyObject str_rstrip(PyObject chars) {
+    @ExposedMethod(defaults = "null", doc = BuiltinDocs.bytes_rstrip_doc)
+    final PyObject bytes_rstrip(PyObject chars) {
         if (chars instanceof PyUnicode) {
             // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).unicode_rstrip(chars);
+            return ((PyUnicode)decode()).str_rstrip(chars);
         } else {
             // It ought to be None, null, some kind of bytes with the buffer API.
             String stripChars = asStringNullOrError(chars, "rstrip");
@@ -1408,7 +1408,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * this <code>str</code>.
      * <p>
      * Implementation note: although a <code>str</code> contains only bytes, this method is also
-     * called by {@link PyUnicode#unicode_rstrip(PyObject)} when this is a basic-plane string.
+     * called by {@link PyUnicode#str_rstrip(PyObject)} when this is a basic-plane string.
      *
      * @return a new String, stripped of the whitespace characters/bytes
      */
@@ -1432,7 +1432,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * stripped.
      * <p>
      * Implementation note: although a <code>str</code> contains only bytes, this method is also
-     * called by {@link PyUnicode#unicode_strip(PyObject)} when both arguments are basic-plane
+     * called by {@link PyUnicode#str_strip(PyObject)} when both arguments are basic-plane
      * strings.
      *
      * @param stripChars characters to strip or null
@@ -1493,7 +1493,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @return list(str) result
      */
     public PyList split(PyObject sep) {
-        return str_split(sep, -1);
+        return bytes_split(sep, -1);
     }
 
     /**
@@ -1507,14 +1507,14 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @return list(str) result
      */
     public PyList split(PyObject sep, int maxsplit) {
-        return str_split(sep, maxsplit);
+        return bytes_split(sep, maxsplit);
     }
 
-    @ExposedMethod(defaults = {"null", "-1"}, doc = BuiltinDocs.str_split_doc)
-    final PyList str_split(PyObject sepObj, int maxsplit) {
+    @ExposedMethod(defaults = {"null", "-1"}, doc = BuiltinDocs.bytes_split_doc)
+    final PyList bytes_split(PyObject sepObj, int maxsplit) {
         if (sepObj instanceof PyUnicode) {
             // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).unicode_split(sepObj, maxsplit);
+            return ((PyUnicode)decode()).str_split(sepObj, maxsplit);
         } else {
             // It ought to be None, null, some kind of bytes with the buffer API.
             String sep = asStringNullOrError(sepObj, "split");
@@ -1532,7 +1532,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * the last element of the list contains the what is left over after the last split.
      * <p>
      * Implementation note: although a str contains only bytes, this method is also called by
-     * {@link PyUnicode#unicode_split(PyObject, int)}.
+     * {@link PyUnicode#str_split(PyObject, int)}.
      *
      * @param sep string to use as separator (or <code>null</code> if to split on whitespace)
      * @param maxsplit maximum number of splits to make (there may be <code>maxsplit+1</code>
@@ -1744,7 +1744,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @return list(str) result
      */
     public PyList rsplit(PyObject sep) {
-        return str_rsplit(sep, -1);
+        return bytes_rsplit(sep, -1);
     }
 
     /**
@@ -1758,14 +1758,14 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @return list(str) result
      */
     public PyList rsplit(PyObject sep, int maxsplit) {
-        return str_rsplit(sep, maxsplit);
+        return bytes_rsplit(sep, maxsplit);
     }
 
-    @ExposedMethod(defaults = {"null", "-1"}, doc = BuiltinDocs.str_split_doc)
-    final PyList str_rsplit(PyObject sepObj, int maxsplit) {
+    @ExposedMethod(defaults = {"null", "-1"}, doc = BuiltinDocs.bytes_split_doc)
+    final PyList bytes_rsplit(PyObject sepObj, int maxsplit) {
         if (sepObj instanceof PyUnicode) {
             // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).unicode_rsplit(sepObj, maxsplit);
+            return ((PyUnicode)decode()).str_rsplit(sepObj, maxsplit);
         } else {
             // It ought to be None, null, some kind of bytes with the buffer API.
             String sep = asStringNullOrError(sepObj, "rsplit");
@@ -1944,11 +1944,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @return tuple of parts
      */
     public PyTuple partition(PyObject sepObj) {
-        return str_partition(sepObj);
+        return bytes_partition(sepObj);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_partition_doc)
-    final PyTuple str_partition(PyObject sepObj) {
+    @ExposedMethod(doc = BuiltinDocs.bytes_partition_doc)
+    final PyTuple bytes_partition(PyObject sepObj) {
 
         if (sepObj instanceof PyUnicode) {
             // Deal with Unicode separately
@@ -2003,11 +2003,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @return tuple of parts
      */
     public PyTuple rpartition(PyObject sepObj) {
-        return str_rpartition(sepObj);
+        return bytes_rpartition(sepObj);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_rpartition_doc)
-    final PyTuple str_rpartition(PyObject sepObj) {
+    @ExposedMethod(doc = BuiltinDocs.bytes_rpartition_doc)
+    final PyTuple bytes_rpartition(PyObject sepObj) {
 
         if (sepObj instanceof PyUnicode) {
             // Deal with Unicode separately
@@ -2054,15 +2054,15 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public PyList splitlines() {
-        return str_splitlines(false);
+        return bytes_splitlines(false);
     }
 
     public PyList splitlines(boolean keepends) {
-        return str_splitlines(keepends);
+        return bytes_splitlines(keepends);
     }
 
-    @ExposedMethod(defaults = "false", doc = BuiltinDocs.str_splitlines_doc)
-    final PyList str_splitlines(boolean keepends) {
+    @ExposedMethod(defaults = "false", doc = BuiltinDocs.bytes_splitlines_doc)
+    final PyList bytes_splitlines(boolean keepends) {
         PyList list = new PyList();
 
         char[] chars = getString().toCharArray();
@@ -2120,7 +2120,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @throws PyException(ValueError) if not found.
      */
     public int index(PyObject sub) {
-        return str_index(sub, null, null);
+        return bytes_index(sub, null, null);
     }
 
     /**
@@ -2134,7 +2134,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @throws PyException(ValueError) if not found.
      */
     public int index(PyObject sub, PyObject start) throws PyException {
-        return str_index(sub, start, null);
+        return bytes_index(sub, start, null);
     }
 
     /**
@@ -2151,7 +2151,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @throws PyException(ValueError) if not found.
      */
     public int index(PyObject sub, PyObject start, PyObject end) throws PyException {
-        return checkIndex(str_index(sub, start, end));
+        return checkIndex(bytes_index(sub, start, end));
     }
 
     /** Equivalent to {@link #index(PyObject)} specialized to <code>String</code>. */
@@ -2172,9 +2172,9 @@ public class PyString extends PyBaseString implements BufferProtocol {
         return checkIndex(_find(sub, start, end));
     }
 
-    @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.str_index_doc)
-    final int str_index(PyObject subObj, PyObject start, PyObject end) {
-        return checkIndex(str_find(subObj, start, end));
+    @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.bytes_index_doc)
+    final int bytes_index(PyObject subObj, PyObject start, PyObject end) {
+        return checkIndex(bytes_find(subObj, start, end));
     }
 
     /**
@@ -2186,7 +2186,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @throws PyException(ValueError) if not found.
      */
     public int rindex(PyObject sub) {
-        return str_rindex(sub, null, null);
+        return bytes_rindex(sub, null, null);
     }
 
     /**
@@ -2200,7 +2200,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @throws PyException(ValueError) if not found.
      */
     public int rindex(PyObject sub, PyObject start) throws PyException {
-        return str_rindex(sub, start, null);
+        return bytes_rindex(sub, start, null);
     }
 
     /**
@@ -2217,7 +2217,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @throws PyException(ValueError) if not found.
      */
     public int rindex(PyObject sub, PyObject start, PyObject end) throws PyException {
-        return checkIndex(str_rindex(sub, start, end));
+        return checkIndex(bytes_rindex(sub, start, end));
     }
 
     /** Equivalent to {@link #rindex(PyObject)} specialized to <code>String</code>. */
@@ -2238,9 +2238,9 @@ public class PyString extends PyBaseString implements BufferProtocol {
         return checkIndex(_rfind(sub, start, end));
     }
 
-    @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.str_rindex_doc)
-    final int str_rindex(PyObject subObj, PyObject start, PyObject end) {
-        return checkIndex(str_rfind(subObj, start, end));
+    @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.bytes_rindex_doc)
+    final int bytes_rindex(PyObject subObj, PyObject start, PyObject end) {
+        return checkIndex(bytes_rfind(subObj, start, end));
     }
 
     /**
@@ -2293,7 +2293,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @return count of occurrences.
      */
     public int count(PyObject sub, PyObject start, PyObject end) {
-        return str_count(sub, start, end);
+        return bytes_count(sub, start, end);
     }
 
     /** Equivalent to {@link #count(PyObject)} specialized to <code>String</code>. */
@@ -2314,11 +2314,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
         return _count(sub, start, end);
     }
 
-    @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.str_count_doc)
-    final int str_count(PyObject subObj, PyObject start, PyObject end) {
+    @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.bytes_count_doc)
+    final int bytes_count(PyObject subObj, PyObject start, PyObject end) {
         if (subObj instanceof PyUnicode) {
             // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).unicode_count(subObj, start, end);
+            return ((PyUnicode)decode()).str_count(subObj, start, end);
         } else {
             // It ought to be some kind of bytes with the buffer API.
             String sub = asStringOrError(subObj);
@@ -2329,7 +2329,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
     /**
      * Helper common to the Python and Java API returning the number of occurrences of a substring.
      * It accepts slice-like arguments, which may be <code>None</code> or end-relative (negative).
-     * This method also supports {@link PyUnicode#unicode_count(PyObject, PyObject, PyObject)}.
+     * This method also supports {@link PyUnicode#str_count(PyObject, PyObject, PyObject)}.
      *
      * @param sub substring to find.
      * @param startObj start of slice.
@@ -2409,7 +2409,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @return index of <code>sub</code> in this object or -1 if not found.
      */
     public int find(PyObject sub, PyObject start, PyObject end) {
-        return str_find(sub, start, end);
+        return bytes_find(sub, start, end);
     }
 
     /** Equivalent to {@link #find(PyObject)} specialized to <code>String</code>. */
@@ -2429,11 +2429,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
         return _find(sub, start, end);
     }
 
-    @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.str_find_doc)
-    final int str_find(PyObject subObj, PyObject start, PyObject end) {
+    @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.bytes_find_doc)
+    final int bytes_find(PyObject subObj, PyObject start, PyObject end) {
         if (subObj instanceof PyUnicode) {
             // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).unicode_find(subObj, start, end);
+            return ((PyUnicode)decode()).str_find(subObj, start, end);
         } else {
             // It ought to be some kind of bytes with the buffer API.
             String sub = asStringOrError(subObj);
@@ -2445,7 +2445,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * Helper common to the Python and Java API returning the index of the substring or -1 for not
      * found. It accepts slice-like arguments, which may be <code>None</code> or end-relative
      * (negative). This method also supports
-     * {@link PyUnicode#unicode_find(PyObject, PyObject, PyObject)}.
+     * {@link PyUnicode#str_find(PyObject, PyObject, PyObject)}.
      *
      * @param sub substring to find.
      * @param startObj start of slice.
@@ -2514,7 +2514,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @return index of <code>sub</code> in this object or -1 if not found.
      */
     public int rfind(PyObject sub, PyObject start, PyObject end) {
-        return str_rfind(sub, start, end);
+        return bytes_rfind(sub, start, end);
     }
 
     /** Equivalent to {@link #find(PyObject)} specialized to <code>String</code>. */
@@ -2534,11 +2534,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
         return _rfind(sub, start, end);
     }
 
-    @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.str_rfind_doc)
-    final int str_rfind(PyObject subObj, PyObject start, PyObject end) {
+    @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.bytes_rfind_doc)
+    final int bytes_rfind(PyObject subObj, PyObject start, PyObject end) {
         if (subObj instanceof PyUnicode) {
             // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).unicode_rfind(subObj, start, end);
+            return ((PyUnicode)decode()).str_rfind(subObj, start, end);
         } else {
             // It ought to be some kind of bytes with the buffer API.
             String sub = asStringOrError(subObj);
@@ -2550,7 +2550,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * Helper common to the Python and Java API returning the last index of the substring or -1 for
      * not found. It accepts slice-like arguments, which may be <code>None</code> or end-relative
      * (negative). This method also supports
-     * {@link PyUnicode#unicode_rfind(PyObject, PyObject, PyObject)}.
+     * {@link PyUnicode#str_frind(PyObject, PyObject, PyObject)}.
      *
      * @param sub substring to find.
      * @param startObj start of slice.
@@ -2937,15 +2937,15 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public String ljust(int width) {
-        return str_ljust(width, null);
+        return bytes_ljust(width, null);
     }
 
     public String ljust(int width, String padding) {
-        return str_ljust(width, padding);
+        return bytes_ljust(width, padding);
     }
 
-    @ExposedMethod(defaults = "null", doc = BuiltinDocs.str_ljust_doc)
-    final String str_ljust(int width, String fillchar) {
+    @ExposedMethod(defaults = "null", doc = BuiltinDocs.bytes_ljust_doc)
+    final String bytes_ljust(int width, String fillchar) {
         char pad = parse_fillchar("ljust", fillchar);
         int n = width - getString().length();
         if (n <= 0) {
@@ -2955,11 +2955,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public String rjust(int width) {
-        return str_rjust(width, null);
+        return bytes_rjust(width, null);
     }
 
-    @ExposedMethod(defaults = "null", doc = BuiltinDocs.str_rjust_doc)
-    final String str_rjust(int width, String fillchar) {
+    @ExposedMethod(defaults = "null", doc = BuiltinDocs.bytes_rjust_doc)
+    final String bytes_rjust(int width, String fillchar) {
         char pad = parse_fillchar("rjust", fillchar);
         int n = width - getString().length();
         if (n <= 0) {
@@ -2969,11 +2969,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public String center(int width) {
-        return str_center(width, null);
+        return bytes_center(width, null);
     }
 
-    @ExposedMethod(defaults = "null", doc = BuiltinDocs.str_center_doc)
-    final String str_center(int width, String fillchar) {
+    @ExposedMethod(defaults = "null", doc = BuiltinDocs.bytes_center_doc)
+    final String bytes_center(int width, String fillchar) {
         char pad = parse_fillchar("center", fillchar);
         int n = width - getString().length();
         if (n <= 0) {
@@ -2988,11 +2988,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public String zfill(int width) {
-        return str_zfill(width);
+        return bytes_zfill(width);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_zfill_doc)
-    final String str_zfill(int width) {
+    @ExposedMethod(doc = BuiltinDocs.bytes_zfill_doc)
+    final String bytes_zfill(int width) {
         String s = getString();
         int n = s.length();
         if (n >= width) {
@@ -3076,7 +3076,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @return PyString (or PyUnicode if any string is one), this string after replacements.
      */
     public PyString replace(PyObject oldPiece, PyObject newPiece) {
-        return str_replace(oldPiece, newPiece, -1);
+        return bytes_replace(oldPiece, newPiece, -1);
     }
 
     /**
@@ -3091,14 +3091,14 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @return PyString (or PyUnicode if any string is one), this string after replacements.
      */
     public PyString replace(PyObject oldPiece, PyObject newPiece, int count) {
-        return str_replace(oldPiece, newPiece, count);
+        return bytes_replace(oldPiece, newPiece, count);
     }
 
-    @ExposedMethod(defaults = "-1", doc = BuiltinDocs.str_replace_doc)
-    final PyString str_replace(PyObject oldPieceObj, PyObject newPieceObj, int count) {
+    @ExposedMethod(defaults = "-1", doc = BuiltinDocs.bytes_replace_doc)
+    final PyString bytes_replace(PyObject oldPieceObj, PyObject newPieceObj, int count) {
         if (oldPieceObj instanceof PyUnicode || newPieceObj instanceof PyUnicode) {
             // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).unicode_replace(oldPieceObj, newPieceObj, count);
+            return ((PyUnicode)decode()).str_replace(oldPieceObj, newPieceObj, count);
         } else {
             // Neither is a PyUnicode: both ought to be some kind of bytes with the buffer API.
             String oldPiece = asStringOrError(oldPieceObj);
@@ -3111,7 +3111,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * Helper common to the Python and Java API for <code>str.replace</code>, returning a new string
      * equal to this string with ocurrences of <code>oldPiece</code> replaced by
      * <code>newPiece</code>, up to a maximum of <code>count</code> occurrences, or all of them.
-     * This method also supports {@link PyUnicode#unicode_replace(PyObject, PyObject, int)}, in
+     * This method also supports {@link PyUnicode#str_replace(PyObject, PyObject, int)}, in
      * which context it returns a <code>PyUnicode</code>
      *
      * @param oldPiece to replace where found.
@@ -3155,11 +3155,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public PyString join(PyObject seq) {
-        return str_join(seq);
+        return bytes_join(seq);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_join_doc)
-    final PyString str_join(PyObject obj) {
+    @ExposedMethod(doc = BuiltinDocs.bytes_join_doc)
+    final PyString bytes_join(PyObject obj) {
         PySequence seq = fastSequence(obj, "");
         int seqLen = seq.__len__();
         if (seqLen == 0) {
@@ -3288,7 +3288,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      *         <code>false</code>.
      */
     public boolean startswith(PyObject prefix) {
-        return str_startswith(prefix, null, null);
+        return bytes_startswith(prefix, null, null);
     }
 
     /**
@@ -3303,7 +3303,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      *         <code>false</code>.
      */
     public boolean startswith(PyObject prefix, PyObject start) {
-        return str_startswith(prefix, start, null);
+        return bytes_startswith(prefix, start, null);
     }
 
     /**
@@ -3320,11 +3320,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
      *         <code>false</code>.
      */
     public boolean startswith(PyObject prefix, PyObject start, PyObject end) {
-        return str_startswith(prefix, start, end);
+        return bytes_startswith(prefix, start, end);
     }
 
     @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.str_startswith_doc)
-    final boolean str_startswith(PyObject prefix, PyObject startObj, PyObject endObj) {
+    final boolean bytes_startswith(PyObject prefix, PyObject startObj, PyObject endObj) {
         int[] indices = translateIndices(startObj, endObj);
         int start = indices[0];
         int sliceLen = indices[1] - start;
@@ -3359,7 +3359,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      *         <code>false</code>.
      */
     public boolean endswith(PyObject suffix) {
-        return str_endswith(suffix, null, null);
+        return bytes_endswith(suffix, null, null);
     }
 
     /**
@@ -3374,7 +3374,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      *         <code>false</code>.
      */
     public boolean endswith(PyObject suffix, PyObject start) {
-        return str_endswith(suffix, start, null);
+        return bytes_endswith(suffix, start, null);
     }
 
     /**
@@ -3391,11 +3391,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
      *         <code>false</code>.
      */
     public boolean endswith(PyObject suffix, PyObject start, PyObject end) {
-        return str_endswith(suffix, start, end);
+        return bytes_endswith(suffix, start, end);
     }
 
     @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.str_endswith_doc)
-    final boolean str_endswith(PyObject suffix, PyObject startObj, PyObject endObj) {
+    final boolean bytes_endswith(PyObject suffix, PyObject startObj, PyObject endObj) {
 
         int[] indices = translateIndices(startObj, endObj);
         String substr = getString().substring(indices[0], indices[1]);
@@ -3522,7 +3522,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @return transformed byte string
      */
     public String translate(PyObject table, PyObject deletechars) {
-        return str_translate(table, deletechars);
+        return bytes_translate(table, deletechars);
     }
 
     /**
@@ -3539,8 +3539,8 @@ public class PyString extends PyBaseString implements BufferProtocol {
         return _translate(table, deletechars);
     }
 
-    @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.str_translate_doc)
-    final String str_translate(PyObject tableObj, PyObject deletecharsObj) {
+    @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.bytes_translate_doc)
+    final String bytes_translate(PyObject tableObj, PyObject deletecharsObj) {
         // Accept anythiong withthe buffer API or null
         String table = asStringNullOrError(tableObj, null);
         String deletechars = asStringNullOrError(deletecharsObj, null);
@@ -3585,11 +3585,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public boolean islower() {
-        return str_islower();
+        return bytes_islower();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_islower_doc)
-    final boolean str_islower() {
+    @ExposedMethod(doc = BuiltinDocs.bytes_islower_doc)
+    final boolean bytes_islower() {
         int n = getString().length();
 
         /* Shortcut for single character strings */
@@ -3611,11 +3611,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public boolean isupper() {
-        return str_isupper();
+        return bytes_isupper();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_isupper_doc)
-    final boolean str_isupper() {
+    @ExposedMethod(doc = BuiltinDocs.bytes_isupper_doc)
+    final boolean bytes_isupper() {
         int n = getString().length();
 
         /* Shortcut for single character strings */
@@ -3637,11 +3637,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public boolean isalpha() {
-        return str_isalpha();
+        return bytes_isalpha();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_isalpha_doc)
-    final boolean str_isalpha() {
+    @ExposedMethod(doc = BuiltinDocs.bytes_isalpha_doc)
+    final boolean bytes_isalpha() {
         int n = getString().length();
 
         /* Shortcut for single character strings */
@@ -3664,11 +3664,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public boolean isalnum() {
-        return str_isalnum();
+        return bytes_isalnum();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_isalnum_doc)
-    final boolean str_isalnum() {
+    @ExposedMethod(doc = BuiltinDocs.bytes_isalnum_doc)
+    final boolean bytes_isalnum() {
         int n = getString().length();
 
         /* Shortcut for single character strings */
@@ -3699,11 +3699,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public boolean isdecimal() {
-        return str_isdecimal();
+        return bytes_isdecimal();
     }
 
     @ExposedMethod(doc = BuiltinDocs.str_isdecimal_doc)
-    final boolean str_isdecimal() {
+    final boolean bytes_isdecimal() {
         int n = getString().length();
 
         /* Shortcut for single character strings */
@@ -3732,11 +3732,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public boolean isdigit() {
-        return str_isdigit();
+        return bytes_isdigit();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_isdigit_doc)
-    final boolean str_isdigit() {
+    @ExposedMethod(doc = BuiltinDocs.bytes_isdigit_doc)
+    final boolean bytes_isdigit() {
         int n = getString().length();
 
         /* Shortcut for single character strings */
@@ -3759,11 +3759,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public boolean isnumeric() {
-        return str_isnumeric();
+        return bytes_isnumeric();
     }
 
     @ExposedMethod(doc = BuiltinDocs.str_isnumeric_doc)
-    final boolean str_isnumeric() {
+    final boolean bytes_isnumeric() {
         int n = getString().length();
 
         /* Shortcut for single character strings */
@@ -3791,11 +3791,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public boolean istitle() {
-        return str_istitle();
+        return bytes_istitle();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_istitle_doc)
-    final boolean str_istitle() {
+    @ExposedMethod(doc = BuiltinDocs.bytes_istitle_doc)
+    final boolean bytes_istitle() {
         int n = getString().length();
 
         /* Shortcut for single character strings */
@@ -3829,11 +3829,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public boolean isspace() {
-        return str_isspace();
+        return bytes_isspace();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_isspace_doc)
-    final boolean str_isspace() {
+    @ExposedMethod(doc = BuiltinDocs.bytes_isspace_doc)
+    final boolean bytes_isspace() {
         int n = getString().length();
 
         /* Shortcut for single character strings */
@@ -3856,11 +3856,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public boolean isunicode() {
-        return str_isunicode();
+        return bytes_isunicode();
     }
 
     @ExposedMethod(doc = "isunicode is deprecated.")
-    final boolean str_isunicode() {
+    final boolean bytes_isunicode() {
         Py.warning(Py.DeprecationWarning, "isunicode is deprecated.");
         int n = getString().length();
         for (int i = 0; i < n; i++) {
@@ -3885,7 +3885,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     @ExposedMethod(doc = BuiltinDocs.str_encode_doc)
-    final String str_encode(PyObject[] args, String[] keywords) {
+    final String bytes_encode(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("encode", args, keywords, "encoding", "errors");
         String encoding = ap.getString(0, null);
         String errors = ap.getString(1, null);
@@ -3924,7 +3924,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     @ExposedMethod(doc = BuiltinDocs.str_format_doc)
-    final PyObject str_format(PyObject[] args, String[] keywords) {
+    final PyObject bytes_format(PyObject[] args, String[] keywords) {
         try {
             return new PyString(buildFormattedString(args, keywords, null, null));
         } catch (IllegalArgumentException e) {
@@ -4088,11 +4088,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
     @Override
     public PyObject __format__(PyObject formatSpec) {
-        return str___format__(formatSpec);
+        return bytes___format__(formatSpec);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str___format___doc)
-    final PyObject str___format__(PyObject formatSpec) {
+    @ExposedMethod(doc = BuiltinDocs.bytes___format___doc)
+    final PyObject bytes___format__(PyObject formatSpec) {
 
         // Parse the specification
         Spec spec = InternalFormat.fromText(formatSpec, "__format__");
