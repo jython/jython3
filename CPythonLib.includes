@@ -125,6 +125,7 @@ profile.py
 pstats.py
 pty.py
 pyclbr.py
+pydoc.py
 pydoc_topics.py
 Queue.py
 quopri.py
