@@ -349,8 +349,8 @@ class MetaClass(type):
         return super(MetaClass, meta).__new__(meta, name, bases, d)
 
 
-class MetaBase(object):
-    __metaclass__ = MetaClass
+class MetaBase(object, metaclass=MetaClass):
+    pass
 
 
 class MetaClassTest(unittest.TestCase):

@@ -29,8 +29,8 @@ class TestDescrTestCase(unittest.TestCase):
                 self.assert_('foo' not in class_dict)
                 return cls
 
-        class Foo(object):
-            __metaclass__ = FooMeta
+        class Foo(object, metaclass=FooMeta):
+            pass
 
     def test_descr___get__(self):
         class Foo(object):

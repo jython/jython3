@@ -1,3 +1,3 @@
 from metaclass import NoOpMetaClass
-class TestClass(object):
-    __metaclass__ = NoOpMetaClass
+class TestClass(object, metaclass=NoOpMetaClass):
+    pass

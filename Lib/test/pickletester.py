@@ -122,8 +122,8 @@ class initarg(C):
 class metaclass(type):
     pass
 
-class use_metaclass(object):
-    __metaclass__ = metaclass
+class use_metaclass(object, metaclass=metaclass):
+    pass
 
 class pickling_metaclass(type):
     def __eq__(self, other):
