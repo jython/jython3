@@ -160,4 +160,8 @@ class DynamicClassAttribute:
         return result
 
 
-__all__ = [n for n in globals() if n[:1] != '_']
+# FIXME for loop leaks temporary variable to global
+def _get_all():
+    return [n for n in globals() if n[:1] != '_']
+
+__all__ = _get_all()

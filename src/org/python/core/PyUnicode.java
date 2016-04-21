@@ -1697,6 +1697,24 @@ public class PyUnicode extends PyString implements Iterable {
         return cased;
     }
 
+    @ExposedMethod(doc = BuiltinDocs.str_isidentifier_doc)
+    final boolean str_isidentifier() {
+        if (getCodePointCount() == 0) {
+            return false;
+        }
+        Iterator<Integer> iter = newSubsequenceIterator();
+        int first = iter.next();
+        if (!Character.isUnicodeIdentifierStart(first) && first != 0x5F) {
+            return false;
+        }
+        for (;iter.hasNext();) {
+            if (!Character.isUnicodeIdentifierPart(iter.next())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @ExposedMethod(doc = BuiltinDocs.str_isalpha_doc)
     final boolean str_isalpha() {
         if (isBasicPlane()) {
