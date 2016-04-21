@@ -2,6 +2,7 @@
 # used as fileset in build.xml (target copy-full)
 
 # Lib directories, in alphabetical order:
+collections/**
 compiler/**
 distutils/**
 email/**
@@ -16,6 +17,7 @@ json/**
 
 # Lib files, in alphabetical order:
 __future__.py
+_dummy_thread.py
 _LWPCookieJar.py
 _MozillaCookieJar.py
 _pyio.py
@@ -132,7 +134,7 @@ quopri.py
 random.py
 re.py
 reconvert.py
-repr.py
+reprlib.py
 rfc822.py
 rlcompleter.py
 robotparser.py
