@@ -62,6 +62,7 @@ memoryview,
 type(f),
 # type(m),
 type(f.__code__),
+type(sys.implementation),
 type(sys._getframe()),
 type(tb),
 io.TextIOBase
