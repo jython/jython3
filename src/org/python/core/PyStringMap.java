@@ -160,7 +160,7 @@ public class PyStringMap extends PyObject implements Traverseproc {
 
     @ExposedMethod(doc = BuiltinDocs.dict___iter___doc)
     final PyObject stringmap___iter__() {
-        return stringmap_iterkeys();
+        return stringmap_keys();
     }
 
     @Override
@@ -211,6 +211,21 @@ public class PyStringMap extends PyObject implements Traverseproc {
                 throw Py.KeyError(key);
             }
         }
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.dict_items_doc)
+    final PyObject stringmap_items() {
+        return new ItemsIter(table.entrySet());
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.dict_keys_doc)
+    final PyObject stringmap_keys() {
+        return new KeysIter(table.keySet());
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.dict_values_doc)
+    final PyObject stringmap_values() {
+        return new ValuesIter(table.values());
     }
 
     /**
@@ -277,10 +292,10 @@ public class PyStringMap extends PyObject implements Traverseproc {
         if (an > bn) {
             return 1;
         }
-        PyList akeys = keys();
+        PyList akeys = new PyList(keys());
         PyList bkeys = null;
         if (other instanceof PyStringMap) {
-            bkeys = ((PyStringMap)other).keys();
+            bkeys = new PyList(((PyStringMap)other).keys());
         } else {
             bkeys = ((PyDictionary)other).keys_as_list();
         }
@@ -518,36 +533,19 @@ public class PyStringMap extends PyObject implements Traverseproc {
      * Return a copy of the mappings list of keys. We have to take in account that we could be
      * storing String or PyObject objects
      */
-    public PyList keys() {
+    public PyObject keys() {
         return stringmap_keys();
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.dict_keys_doc)
-    final PyList stringmap_keys() {
-        PyObject[] keyArray = new PyObject[table.size()];
-        int i = 0;
-        for (Object key : table.keySet()) {
-            keyArray[i++] = keyToPy(key);
-        }
-        return new PyList(keyArray);
     }
 
     /**
      * Return a copy of the mappings list of values.
      */
-    public PyList values() {
+    public PyObject values() {
         return stringmap_values();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.dict_values_doc)
-    final PyList stringmap_values() {
-        return new PyList(table.values());
-    }
-
-    final PyObject stringmap_iterkeys() {
-       // Python allows one to change the dict while iterating over it, including
-       // deletion. Java does not. Can we resolve with CHM?
-       return new KeysIter(table.keySet());
+    public PyObject items() {
+        return stringmap_items();
     }
 
     @Override
