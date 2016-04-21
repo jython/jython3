@@ -1857,7 +1857,7 @@ public final class Py {
      * @return a new Python Class PyObject
      */
     public static PyObject makeClass(String name, PyObject[] bases, PyObject dict) {
-        return makeClass(name, bases, dict, null);
+        return makeClass(name, bases, dict, (PyObject) null);
     }
 
     public static PyObject makeClass(String name, PyObject[] bases, PyObject dict, PyObject metaclass) {
