@@ -393,6 +393,9 @@ public class BuiltinDocs {
     public final static String bytes___lt___doc = 
         "Return self<value.";
 
+    public final static String bytes___mod___doc = 
+        "Return self%value.";
+
     public final static String bytes___mul___doc = 
         "Return self*value.n";
 
@@ -411,6 +414,9 @@ public class BuiltinDocs {
     public final static String bytes___repr___doc = 
         "Return repr(self).";
 
+    public final static String bytes___rmod___doc = 
+        "Return value%self.";
+
     public final static String bytes___rmul___doc = 
         "Return self*value.";
 
@@ -418,7 +424,8 @@ public class BuiltinDocs {
         "Implement setattr(self, name, value).";
 
     public final static String bytes___sizeof___doc = 
-        "B.__sizeof__() -> size of B in memory, in bytes";
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
 
     public final static String bytes___str___doc = 
         "Return str(self).";
@@ -452,14 +459,16 @@ public class BuiltinDocs {
         "as in slice notation.";
 
     public final static String bytes_decode_doc = 
-        "B.decode(encoding='utf-8', errors='strict') -> str\n" + 
+        "Decode the bytes using the codec registered for encoding.\n" + 
         "\n" + 
-        "Decode B using the codec registered for encoding. Default encoding\n" + 
-        "is 'utf-8'. errors may be given to set a different error\n" + 
-        "handling scheme.  Default is 'strict' meaning that encoding errors raise\n" + 
-        "a UnicodeDecodeError.  Other possible values are 'ignore' and 'replace'\n" + 
-        "as well as any other name registerd with codecs.register_error that is\n" + 
-        "able to handle UnicodeDecodeErrors.";
+        "  encoding\n" + 
+        "    The encoding with which to decode the bytes.\n" + 
+        "  errors\n" + 
+        "    The error handling scheme to use for the handling of decoding errors.\n" + 
+        "    The default is 'strict' meaning that decoding errors raise a\n" + 
+        "    UnicodeDecodeError. Other possible values are 'ignore' and 'replace'\n" + 
+        "    as well as any other name registered with codecs.register_error that\n" + 
+        "    can handle UnicodeDecodeErrors.";
 
     public final static String bytes_endswith_doc = 
         "B.endswith(suffix[, start[, end]]) -> bool\n" + 
@@ -485,11 +494,16 @@ public class BuiltinDocs {
         "Return -1 on failure.";
 
     public final static String bytes_fromhex_doc = 
-        "bytes.fromhex(string) -> bytes\n" + 
-        "\n" + 
         "Create a bytes object from a string of hexadecimal numbers.\n" + 
+        "\n" + 
         "Spaces between two numbers are accepted.\n" + 
-        "Example: bytes.fromhex('B9 01EF') -> b'\\xb9\\x01\\xef'.";
+        "Example: bytes.fromhex('B9 01EF') -> b'\\\\xb9\\\\x01\\\\xef'.";
+
+    public final static String bytes_hex_doc = 
+        "B.hex() -> string\n" + 
+        "\n" + 
+        "Create a string of hexadecimal numbers from a bytes object.\n" + 
+        "Example: b'\\xb9\\x01\\xef'.hex() -> 'b901ef'.";
 
     public final static String bytes_index_doc = 
         "B.index(sub[, start[, end]]) -> int\n" + 
@@ -541,9 +555,12 @@ public class BuiltinDocs {
         "at least one cased character in B, False otherwise.";
 
     public final static String bytes_join_doc = 
-        "B.join(iterable_of_bytes) -> bytes\n" + 
+        "Concatenate any number of bytes objects.\n" + 
         "\n" + 
-        "Concatenate any number of bytes objects, with B in between each pair.\n" + 
+        "The bytes whose method is called is inserted in between each pair.\n" + 
+        "\n" + 
+        "The result is returned as a new bytes object.\n" + 
+        "\n" + 
         "Example: b'.'.join([b'ab', b'pq', b'rs']) -> b'ab.pq.rs'.";
 
     public final static String bytes_ljust_doc = 
@@ -558,32 +575,37 @@ public class BuiltinDocs {
         "Return a copy of B with all ASCII characters converted to lowercase.";
 
     public final static String bytes_lstrip_doc = 
-        "B.lstrip([bytes]) -> bytes\n" + 
-        "\n" + 
         "Strip leading bytes contained in the argument.\n" + 
-        "If the argument is omitted, strip leading ASCII whitespace.";
+        "\n" + 
+        "If the argument is omitted or None, strip leading  ASCII whitespace.";
 
     public final static String bytes_maketrans_doc = 
-        "B.maketrans(frm, to) -> translation table\n" + 
+        "Return a translation table useable for the bytes or bytearray translate method.\n" + 
         "\n" + 
-        "Return a translation table (a bytes object of length 256) suitable\n" + 
-        "for use in the bytes or bytearray translate method where each byte\n" + 
-        "in frm is mapped to the byte at the same position in to.\n" + 
+        "The returned table will be one where each byte in frm is mapped to the byte at\n" + 
+        "the same position in to.\n" + 
+        "\n" + 
         "The bytes objects frm and to must be of the same length.";
 
     public final static String bytes_partition_doc = 
-        "B.partition(sep) -> (head, sep, tail)\n" + 
+        "Partition the bytes into three parts using the given separator.\n" + 
         "\n" + 
-        "Search for the separator sep in B, and return the part before it,\n" + 
-        "the separator itself, and the part after it.  If the separator is not\n" + 
-        "found, returns B and two empty bytes objects.";
+        "This will search for the separator sep in the bytes. If the separator is found,\n" + 
+        "returns a 3-tuple containing the part before the separator, the separator\n" + 
+        "itself, and the part after it.\n" + 
+        "\n" + 
+        "If the separator is not found, returns a 3-tuple containing the original bytes\n" + 
+        "object and two empty bytes objects.";
 
     public final static String bytes_replace_doc = 
-        "B.replace(old, new[, count]) -> bytes\n" + 
+        "Return a copy with all occurrences of substring old replaced by new.\n" + 
         "\n" + 
-        "Return a copy of B with all occurrences of subsection\n" + 
-        "old replaced by new.  If the optional argument count is\n" + 
-        "given, only first count occurances are replaced.";
+        "  count\n" + 
+        "    Maximum number of occurrences to replace.\n" + 
+        "    -1 (the default value) means replace all occurrences.\n" + 
+        "\n" + 
+        "If the optional argument count is given, only the first count occurrences are\n" + 
+        "replaced.";
 
     public final static String bytes_rfind_doc = 
         "B.rfind(sub[, start[, end]]) -> int\n" + 
@@ -606,42 +628,49 @@ public class BuiltinDocs {
         "done using the specified fill character (default is a space)";
 
     public final static String bytes_rpartition_doc = 
-        "B.rpartition(sep) -> (head, sep, tail)\n" + 
+        "Partition the bytes into three parts using the given separator.\n" + 
         "\n" + 
-        "Search for the separator sep in B, starting at the end of B,\n" + 
-        "and return the part before it, the separator itself, and the\n" + 
-        "part after it.  If the separator is not found, returns two empty\n" + 
-        "bytes objects and B.";
+        "This will search for the separator sep in the bytes, starting and the end. If\n" + 
+        "the separator is found, returns a 3-tuple containing the part before the\n" + 
+        "separator, the separator itself, and the part after it.\n" + 
+        "\n" + 
+        "If the separator is not found, returns a 3-tuple containing two empty bytes\n" + 
+        "objects and the original bytes object.";
 
     public final static String bytes_rsplit_doc = 
-        "B.rsplit(sep=None, maxsplit=-1) -> list of bytes\n" + 
+        "Return a list of the sections in the bytes, using sep as the delimiter.\n" + 
         "\n" + 
-        "Return a list of the sections in B, using sep as the delimiter,\n" + 
-        "starting at the end of B and working to the front.\n" + 
-        "If sep is not given, B is split on ASCII whitespace characters\n" + 
-        "(space, tab, return, newline, formfeed, vertical tab).\n" + 
-        "If maxsplit is given, at most maxsplit splits are done.";
+        "  sep\n" + 
+        "    The delimiter according which to split the bytes.\n" + 
+        "    None (the default value) means split on ASCII whitespace characters\n" + 
+        "    (space, tab, return, newline, formfeed, vertical tab).\n" + 
+        "  maxsplit\n" + 
+        "    Maximum number of splits to do.\n" + 
+        "    -1 (the default value) means no limit.\n" + 
+        "\n" + 
+        "Splitting is done starting at the end of the bytes and working to the front.";
 
     public final static String bytes_rstrip_doc = 
-        "B.rstrip([bytes]) -> bytes\n" + 
-        "\n" + 
         "Strip trailing bytes contained in the argument.\n" + 
-        "If the argument is omitted, strip trailing ASCII whitespace.";
+        "\n" + 
+        "If the argument is omitted or None, strip trailing ASCII whitespace.";
 
     public final static String bytes_split_doc = 
-        "B.split(sep=None, maxsplit=-1) -> list of bytes\n" + 
+        "Return a list of the sections in the bytes, using sep as the delimiter.\n" + 
         "\n" + 
-        "Return a list of the sections in B, using sep as the delimiter.\n" + 
-        "If sep is not specified or is None, B is split on ASCII whitespace\n" + 
-        "characters (space, tab, return, newline, formfeed, vertical tab).\n" + 
-        "If maxsplit is given, at most maxsplit splits are done.";
+        "  sep\n" + 
+        "    The delimiter according which to split the bytes.\n" + 
+        "    None (the default value) means split on ASCII whitespace characters\n" + 
+        "    (space, tab, return, newline, formfeed, vertical tab).\n" + 
+        "  maxsplit\n" + 
+        "    Maximum number of splits to do.\n" + 
+        "    -1 (the default value) means no limit.";
 
     public final static String bytes_splitlines_doc = 
-        "B.splitlines([keepends]) -> list of lines\n" + 
+        "Return a list of the lines in the bytes, breaking at line boundaries.\n" + 
         "\n" + 
-        "Return a list of the lines in B, breaking at line boundaries.\n" + 
-        "Line breaks are not included in the resulting list unless keepends\n" + 
-        "is given and true.";
+        "Line breaks are not included in the resulting list unless keepends is given and\n" + 
+        "true.";
 
     public final static String bytes_startswith_doc = 
         "B.startswith(prefix[, start[, end]]) -> bool\n" + 
@@ -652,10 +681,9 @@ public class BuiltinDocs {
         "prefix can also be a tuple of bytes to try.";
 
     public final static String bytes_strip_doc = 
-        "B.strip([bytes]) -> bytes\n" + 
-        "\n" + 
         "Strip leading and trailing bytes contained in the argument.\n" + 
-        "If the argument is omitted, strip leading and trailing ASCII whitespace.";
+        "\n" + 
+        "If the argument is omitted or None, strip leading and trailing ASCII whitespace.";
 
     public final static String bytes_swapcase_doc = 
         "B.swapcase() -> copy of B\n" + 
@@ -670,12 +698,14 @@ public class BuiltinDocs {
         "characters, all remaining cased characters have lowercase.";
 
     public final static String bytes_translate_doc = 
-        "B.translate(table[, deletechars]) -> bytes\n" + 
+        "translate(table, [deletechars])\n" + 
+        "Return a copy with each character mapped by the given translation table.\n" + 
         "\n" + 
-        "Return a copy of B, where all characters occurring in the\n" + 
-        "optional argument deletechars are removed, and the remaining\n" + 
-        "characters have been mapped through the given translation\n" + 
-        "table, which must be a bytes object of length 256.";
+        "  table\n" + 
+        "    Translation table, which must be a bytes object of length 256.\n" + 
+        "\n" + 
+        "All characters occurring in the optional argument deletechars are removed.\n" + 
+        "The remaining characters are mapped through the given translation table.";
 
     public final static String bytes_upper_doc = 
         "B.upper() -> copy of B\n" + 
@@ -1820,9 +1850,7 @@ public class BuiltinDocs {
         "\n" + 
         "Return the integer represented by the given array of bytes.\n" + 
         "\n" + 
-        "The bytes argument must either support the buffer protocol or be an\n" + 
-        "iterable object producing bytes.  Bytes and bytearray are examples of\n" + 
-        "built-in objects that support the buffer protocol.\n" + 
+        "The bytes argument must be a bytes-like object (e.g. bytes or bytearray).\n" + 
         "\n" + 
         "The byteorder argument determines the byte order used to represent the\n" + 
         "integer.  If byteorder is 'big', the most significant byte is at the\n" + 
@@ -1950,7 +1978,8 @@ public class BuiltinDocs {
         "Implement setattr(self, name, value).";
 
     public final static String tuple___sizeof___doc = 
-        "T.__sizeof__() -- size of T in memory, in bytes";
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
 
     public final static String tuple___str___doc = 
         "Return str(self).";
@@ -2370,11 +2399,12 @@ public class BuiltinDocs {
     public final static String str_translate_doc = 
         "S.translate(table) -> str\n" + 
         "\n" + 
-        "Return a copy of the string S, where all characters have been mapped\n" + 
-        "through the given translation table, which must be a mapping of\n" + 
-        "Unicode ordinals to Unicode ordinals, strings, or None.\n" + 
-        "Unmapped characters are left untouched. Characters mapped to None\n" + 
-        "are deleted.";
+        "Return a copy of the string S in which each character has been mapped\n" + 
+        "through the given translation table. The table must implement\n" + 
+        "lookup/indexing via __getitem__, for instance a dictionary or list,\n" + 
+        "mapping Unicode ordinals to Unicode ordinals, strings, or None. If\n" + 
+        "this operation raises LookupError, the character is left untouched.\n" + 
+        "Characters mapped to None are deleted.";
 
     public final static String str_upper_doc = 
         "S.upper() -> str\n" + 
@@ -2539,7 +2569,11 @@ public class BuiltinDocs {
         "range(stop) -> range object\n" + 
         "range(start, stop[, step]) -> range object\n" + 
         "\n" + 
-        "Return a sequence of numbers from start to stop by step.";
+        "Return an object that produces a sequence of integers from start (inclusive)\n" + 
+        "to stop (exclusive) by step.  range(i, j) produces i, i+1, i+2, ..., j-1.\n" + 
+        "start defaults to 0, and stop is omitted!  range(4) produces 0, 1, 2, 3.\n" + 
+        "These are exactly the valid indices for a list of 4 elements.\n" + 
+        "When step is given, it specifies the increment (or decrement).";
 
     public final static String range___eq___doc = 
         "Return self==value.";
@@ -3010,9 +3044,7 @@ public class BuiltinDocs {
         "\n" + 
         "Return the integer represented by the given array of bytes.\n" + 
         "\n" + 
-        "The bytes argument must either support the buffer protocol or be an\n" + 
-        "iterable object producing bytes.  Bytes and bytearray are examples of\n" + 
-        "built-in objects that support the buffer protocol.\n" + 
+        "The bytes argument must be a bytes-like object (e.g. bytes or bytearray).\n" + 
         "\n" + 
         "The byteorder argument determines the byte order used to represent the\n" + 
         "integer.  If byteorder is 'big', the most significant byte is at the\n" + 
@@ -3677,6 +3709,9 @@ public class BuiltinDocs {
     public final static String bytearray___lt___doc = 
         "Return self<value.";
 
+    public final static String bytearray___mod___doc = 
+        "Return self%value.";
+
     public final static String bytearray___mul___doc = 
         "Return self*value.n";
 
@@ -3695,6 +3730,9 @@ public class BuiltinDocs {
     public final static String bytearray___repr___doc = 
         "Return repr(self).";
 
+    public final static String bytearray___rmod___doc = 
+        "Return value%self.";
+
     public final static String bytearray___rmul___doc = 
         "Return self*value.";
 
@@ -3705,9 +3743,7 @@ public class BuiltinDocs {
         "Set self[key] to value.";
 
     public final static String bytearray___sizeof___doc = 
-        "B.__sizeof__() -> int\n" + 
-        " \n" + 
-        "Returns the size of B in memory, in bytes";
+        "Returns the size of the bytearray object in memory, in bytes.";
 
     public final static String bytearray___str___doc = 
         "Return str(self).";
@@ -3722,9 +3758,10 @@ public class BuiltinDocs {
         "";
 
     public final static String bytearray_append_doc = 
-        "B.append(int) -> None\n" + 
+        "Append a single item to the end of the bytearray.\n" + 
         "\n" + 
-        "Append a single item to the end of B.";
+        "  item\n" + 
+        "    The item to be appended.";
 
     public final static String bytearray_capitalize_doc = 
         "B.capitalize() -> copy of B\n" + 
@@ -3739,13 +3776,9 @@ public class BuiltinDocs {
         "done using the specified fill character (default is a space).";
 
     public final static String bytearray_clear_doc = 
-        "B.clear() -> None\n" + 
-        "\n" + 
-        "Remove all items from B.";
+        "Remove all items from the bytearray.";
 
     public final static String bytearray_copy_doc = 
-        "B.copy() -> bytearray\n" + 
-        "\n" + 
         "Return a copy of B.";
 
     public final static String bytearray_count_doc = 
@@ -3756,14 +3789,16 @@ public class BuiltinDocs {
         "as in slice notation.";
 
     public final static String bytearray_decode_doc = 
-        "B.decode(encoding='utf-8', errors='strict') -> str\n" + 
+        "Decode the bytearray using the codec registered for encoding.\n" + 
         "\n" + 
-        "Decode B using the codec registered for encoding. Default encoding\n" + 
-        "is 'utf-8'. errors may be given to set a different error\n" + 
-        "handling scheme.  Default is 'strict' meaning that encoding errors raise\n" + 
-        "a UnicodeDecodeError.  Other possible values are 'ignore' and 'replace'\n" + 
-        "as well as any other name registered with codecs.register_error that is\n" + 
-        "able to handle UnicodeDecodeErrors.";
+        "  encoding\n" + 
+        "    The encoding with which to decode the bytearray.\n" + 
+        "  errors\n" + 
+        "    The error handling scheme to use for the handling of decoding errors.\n" + 
+        "    The default is 'strict' meaning that decoding errors raise a\n" + 
+        "    UnicodeDecodeError. Other possible values are 'ignore' and 'replace'\n" + 
+        "    as well as any other name registered with codecs.register_error that\n" + 
+        "    can handle UnicodeDecodeErrors.";
 
     public final static String bytearray_endswith_doc = 
         "B.endswith(suffix[, start[, end]]) -> bool\n" + 
@@ -3780,10 +3815,10 @@ public class BuiltinDocs {
         "If tabsize is not given, a tab size of 8 characters is assumed.";
 
     public final static String bytearray_extend_doc = 
-        "B.extend(iterable_of_ints) -> None\n" + 
+        "Append all the items from the iterator or sequence to the end of the bytearray.\n" + 
         "\n" + 
-        "Append all the elements from the iterator or sequence to the\n" + 
-        "end of B.";
+        "  iterable_of_ints\n" + 
+        "    The iterable of items to append.";
 
     public final static String bytearray_find_doc = 
         "B.find(sub[, start[, end]]) -> int\n" + 
@@ -3795,11 +3830,16 @@ public class BuiltinDocs {
         "Return -1 on failure.";
 
     public final static String bytearray_fromhex_doc = 
-        "bytearray.fromhex(string) -> bytearray (static method)\n" + 
-        "\n" + 
         "Create a bytearray object from a string of hexadecimal numbers.\n" + 
+        "\n" + 
         "Spaces between two numbers are accepted.\n" + 
-        "Example: bytearray.fromhex('B9 01EF') -> bytearray(b'\\xb9\\x01\\xef').";
+        "Example: bytearray.fromhex('B9 01EF') -> bytearray(b'\\\\xb9\\\\x01\\\\xef')";
+
+    public final static String bytearray_hex_doc = 
+        "B.hex() -> string\n" + 
+        "\n" + 
+        "Create a string of hexadecimal numbers from a bytearray object.\n" + 
+        "Example: bytearray([0xb9, 0x01, 0xef]).hex() -> 'b901ef'.";
 
     public final static String bytearray_index_doc = 
         "B.index(sub[, start[, end]]) -> int\n" + 
@@ -3807,9 +3847,12 @@ public class BuiltinDocs {
         "Like B.find() but raise ValueError when the subsection is not found.";
 
     public final static String bytearray_insert_doc = 
-        "B.insert(index, int) -> None\n" + 
+        "Insert a single item into the bytearray before the given index.\n" + 
         "\n" + 
-        "Insert a single item into the bytearray before the given index.";
+        "  index\n" + 
+        "    The index where the value is to be inserted.\n" + 
+        "  item\n" + 
+        "    The item to be inserted.";
 
     public final static String bytearray_isalnum_doc = 
         "B.isalnum() -> bool\n" + 
@@ -3856,10 +3899,11 @@ public class BuiltinDocs {
         "at least one cased character in B, False otherwise.";
 
     public final static String bytearray_join_doc = 
-        "B.join(iterable_of_bytes) -> bytearray\n" + 
+        "Concatenate any number of bytes/bytearray objects.\n" + 
         "\n" + 
-        "Concatenate any number of bytes/bytearray objects, with B\n" + 
-        "in between each pair, and return the result as a new bytearray.";
+        "The bytearray whose method is called is inserted in between each pair.\n" + 
+        "\n" + 
+        "The result is returned as a new bytearray object.";
 
     public final static String bytearray_ljust_doc = 
         "B.ljust(width[, fillchar]) -> copy of B\n" + 
@@ -3873,48 +3917,54 @@ public class BuiltinDocs {
         "Return a copy of B with all ASCII characters converted to lowercase.";
 
     public final static String bytearray_lstrip_doc = 
-        "B.lstrip([bytes]) -> bytearray\n" + 
+        "Strip leading bytes contained in the argument.\n" + 
         "\n" + 
-        "Strip leading bytes contained in the argument\n" + 
-        "and return the result as a new bytearray.\n" + 
-        "If the argument is omitted, strip leading ASCII whitespace.";
+        "If the argument is omitted or None, strip leading ASCII whitespace.";
 
     public final static String bytearray_maketrans_doc = 
-        "B.maketrans(frm, to) -> translation table\n" + 
+        "Return a translation table useable for the bytes or bytearray translate method.\n" + 
         "\n" + 
-        "Return a translation table (a bytes object of length 256) suitable\n" + 
-        "for use in the bytes or bytearray translate method where each byte\n" + 
-        "in frm is mapped to the byte at the same position in to.\n" + 
+        "The returned table will be one where each byte in frm is mapped to the byte at\n" + 
+        "the same position in to.\n" + 
+        "\n" + 
         "The bytes objects frm and to must be of the same length.";
 
     public final static String bytearray_partition_doc = 
-        "B.partition(sep) -> (head, sep, tail)\n" + 
+        "Partition the bytearray into three parts using the given separator.\n" + 
         "\n" + 
-        "Search for the separator sep in B, and return the part before it,\n" + 
-        "the separator itself, and the part after it.  If the separator is not\n" + 
-        "found, returns B and two empty bytearray objects.";
+        "This will search for the separator sep in the bytearray. If the separator is\n" + 
+        "found, returns a 3-tuple containing the part before the separator, the\n" + 
+        "separator itself, and the part after it.\n" + 
+        "\n" + 
+        "If the separator is not found, returns a 3-tuple containing the original\n" + 
+        "bytearray object and two empty bytearray objects.";
 
     public final static String bytearray_pop_doc = 
-        "B.pop([index]) -> int\n" + 
+        "Remove and return a single item from B.\n" + 
         "\n" + 
-        "Remove and return a single item from B. If no index\n" + 
-        "argument is given, will pop the last value.";
+        "  index\n" + 
+        "    The index from where to remove the item.\n" + 
+        "    -1 (the default value) means remove the last item.\n" + 
+        "\n" + 
+        "If no index argument is given, will pop the last item.";
 
     public final static String bytearray_remove_doc = 
-        "B.remove(int) -> None\n" + 
+        "Remove the first occurrence of a value in the bytearray.\n" + 
         "\n" + 
-        "Remove the first occurrence of a value in B.";
+        "  value\n" + 
+        "    The value to remove.";
 
     public final static String bytearray_replace_doc = 
-        "B.replace(old, new[, count]) -> bytearray\n" + 
+        "Return a copy with all occurrences of substring old replaced by new.\n" + 
         "\n" + 
-        "Return a copy of B with all occurrences of subsection\n" + 
-        "old replaced by new.  If the optional argument count is\n" + 
-        "given, only the first count occurrences are replaced.";
+        "  count\n" + 
+        "    Maximum number of occurrences to replace.\n" + 
+        "    -1 (the default value) means replace all occurrences.\n" + 
+        "\n" + 
+        "If the optional argument count is given, only the first count occurrences are\n" + 
+        "replaced.";
 
     public final static String bytearray_reverse_doc = 
-        "B.reverse() -> None\n" + 
-        "\n" + 
         "Reverse the order of the values in B in place.";
 
     public final static String bytearray_rfind_doc = 
@@ -3938,43 +3988,49 @@ public class BuiltinDocs {
         "done using the specified fill character (default is a space)";
 
     public final static String bytearray_rpartition_doc = 
-        "B.rpartition(sep) -> (head, sep, tail)\n" + 
+        "Partition the bytes into three parts using the given separator.\n" + 
         "\n" + 
-        "Search for the separator sep in B, starting at the end of B,\n" + 
-        "and return the part before it, the separator itself, and the\n" + 
-        "part after it.  If the separator is not found, returns two empty\n" + 
-        "bytearray objects and B.";
+        "This will search for the separator sep in the bytearray, starting and the end.\n" + 
+        "If the separator is found, returns a 3-tuple containing the part before the\n" + 
+        "separator, the separator itself, and the part after it.\n" + 
+        "\n" + 
+        "If the separator is not found, returns a 3-tuple containing two empty bytearray\n" + 
+        "objects and the original bytearray object.";
 
     public final static String bytearray_rsplit_doc = 
-        "B.rsplit(sep=None, maxsplit=-1) -> list of bytearrays\n" + 
+        "Return a list of the sections in the bytearray, using sep as the delimiter.\n" + 
         "\n" + 
-        "Return a list of the sections in B, using sep as the delimiter,\n" + 
-        "starting at the end of B and working to the front.\n" + 
-        "If sep is not given, B is split on ASCII whitespace characters\n" + 
-        "(space, tab, return, newline, formfeed, vertical tab).\n" + 
-        "If maxsplit is given, at most maxsplit splits are done.";
+        "  sep\n" + 
+        "    The delimiter according which to split the bytearray.\n" + 
+        "    None (the default value) means split on ASCII whitespace characters\n" + 
+        "    (space, tab, return, newline, formfeed, vertical tab).\n" + 
+        "  maxsplit\n" + 
+        "    Maximum number of splits to do.\n" + 
+        "    -1 (the default value) means no limit.\n" + 
+        "\n" + 
+        "Splitting is done starting at the end of the bytearray and working to the front.";
 
     public final static String bytearray_rstrip_doc = 
-        "B.rstrip([bytes]) -> bytearray\n" + 
+        "Strip trailing bytes contained in the argument.\n" + 
         "\n" + 
-        "Strip trailing bytes contained in the argument\n" + 
-        "and return the result as a new bytearray.\n" + 
-        "If the argument is omitted, strip trailing ASCII whitespace.";
+        "If the argument is omitted or None, strip trailing ASCII whitespace.";
 
     public final static String bytearray_split_doc = 
-        "B.split(sep=None, maxsplit=-1) -> list of bytearrays\n" + 
+        "Return a list of the sections in the bytearray, using sep as the delimiter.\n" + 
         "\n" + 
-        "Return a list of the sections in B, using sep as the delimiter.\n" + 
-        "If sep is not given, B is split on ASCII whitespace characters\n" + 
-        "(space, tab, return, newline, formfeed, vertical tab).\n" + 
-        "If maxsplit is given, at most maxsplit splits are done.";
+        "  sep\n" + 
+        "    The delimiter according which to split the bytearray.\n" + 
+        "    None (the default value) means split on ASCII whitespace characters\n" + 
+        "    (space, tab, return, newline, formfeed, vertical tab).\n" + 
+        "  maxsplit\n" + 
+        "    Maximum number of splits to do.\n" + 
+        "    -1 (the default value) means no limit.";
 
     public final static String bytearray_splitlines_doc = 
-        "B.splitlines([keepends]) -> list of lines\n" + 
+        "Return a list of the lines in the bytearray, breaking at line boundaries.\n" + 
         "\n" + 
-        "Return a list of the lines in B, breaking at line boundaries.\n" + 
-        "Line breaks are not included in the resulting list unless keepends\n" + 
-        "is given and true.";
+        "Line breaks are not included in the resulting list unless keepends is given and\n" + 
+        "true.";
 
     public final static String bytearray_startswith_doc = 
         "B.startswith(prefix[, start[, end]]) -> bool\n" + 
@@ -3985,11 +4041,9 @@ public class BuiltinDocs {
         "prefix can also be a tuple of bytes to try.";
 
     public final static String bytearray_strip_doc = 
-        "B.strip([bytes]) -> bytearray\n" + 
+        "Strip leading and trailing bytes contained in the argument.\n" + 
         "\n" + 
-        "Strip leading and trailing bytes contained in the argument\n" + 
-        "and return the result as a new bytearray.\n" + 
-        "If the argument is omitted, strip ASCII whitespace.";
+        "If the argument is omitted or None, strip leading and trailing ASCII whitespace.";
 
     public final static String bytearray_swapcase_doc = 
         "B.swapcase() -> copy of B\n" + 
@@ -4004,12 +4058,14 @@ public class BuiltinDocs {
         "characters, all remaining cased characters have lowercase.";
 
     public final static String bytearray_translate_doc = 
-        "B.translate(table[, deletechars]) -> bytearray\n" + 
+        "translate(table, [deletechars])\n" + 
+        "Return a copy with each character mapped by the given translation table.\n" + 
         "\n" + 
-        "Return a copy of B, where all characters occurring in the\n" + 
-        "optional argument deletechars are removed, and the remaining\n" + 
-        "characters have been mapped through the given translation\n" + 
-        "table, which must be a bytes object of length 256.";
+        "  table\n" + 
+        "    Translation table, which must be a bytes object of length 256.\n" + 
+        "\n" + 
+        "All characters occurring in the optional argument deletechars are removed.\n" + 
+        "The remaining characters are mapped through the given translation table.";
 
     public final static String bytearray_upper_doc = 
         "B.upper() -> copy of B\n" + 
@@ -4039,8 +4095,6 @@ public class BuiltinDocs {
         "default dir() implementation";
 
     public final static String memoryview_doc = 
-        "memoryview(object)\n" + 
-        "\n" + 
         "Create a new memoryview object which references the given object.";
 
     public final static String memoryview___enter___doc = 
@@ -4123,8 +4177,6 @@ public class BuiltinDocs {
         "A bool indicating whether the memory is C contiguous.";
 
     public final static String memoryview_cast_doc = 
-        "M.cast(format[, shape]) -> memoryview\n" + 
-        "\n" + 
         "Cast a memoryview to a new format or shape.";
 
     public final static String memoryview_contiguous_doc = 
@@ -4136,6 +4188,9 @@ public class BuiltinDocs {
     public final static String memoryview_format_doc = 
         "A string containing the format (in struct module style)\n" + 
         " for each element in the view.";
+
+    public final static String memoryview_hex_doc = 
+        "Return the data in the buffer as a string of hexadecimal numbers.";
 
     public final static String memoryview_itemsize_doc = 
         "The size in bytes of each element of the memoryview.";
@@ -4155,8 +4210,6 @@ public class BuiltinDocs {
         "A bool indicating whether the memory is read only.";
 
     public final static String memoryview_release_doc = 
-        "M.release() -> None\n" + 
-        "\n" + 
         "Release the underlying buffer exposed by the memoryview object.";
 
     public final static String memoryview_shape_doc = 
@@ -4171,13 +4224,9 @@ public class BuiltinDocs {
         "A tuple of integers used internally for PIL-style arrays.";
 
     public final static String memoryview_tobytes_doc = 
-        "M.tobytes() -> bytes\n" + 
-        "\n" + 
         "Return the data in the buffer as a byte string.";
 
     public final static String memoryview_tolist_doc = 
-        "M.tolist() -> list\n" + 
-        "\n" + 
         "Return the data in the buffer as a list of elements.";
 
     // Docs for <class 'function'>
@@ -4448,6 +4497,88 @@ public class BuiltinDocs {
         "";
 
     public final static String code_co_varnames_doc = 
+        "";
+
+    // Docs for <class 'types.SimpleNamespace'>
+    public final static String SimpleNamespace___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String SimpleNamespace___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String SimpleNamespace___dict___doc = 
+        "";
+
+    public final static String SimpleNamespace___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String SimpleNamespace_doc = 
+        "A simple attribute-based namespace.\n" + 
+        "\n" + 
+        "SimpleNamespace(**kwargs)";
+
+    public final static String SimpleNamespace___eq___doc = 
+        "Return self==value.";
+
+    public final static String SimpleNamespace___format___doc = 
+        "default object formatter";
+
+    public final static String SimpleNamespace___ge___doc = 
+        "Return self>=value.";
+
+    public final static String SimpleNamespace___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String SimpleNamespace___gt___doc = 
+        "Return self>value.";
+
+    public final static String SimpleNamespace___hash___doc = 
+        "";
+
+    public final static String SimpleNamespace___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String SimpleNamespace___le___doc = 
+        "Return self<=value.";
+
+    public final static String SimpleNamespace___lt___doc = 
+        "Return self<value.";
+
+    public final static String SimpleNamespace___ne___doc = 
+        "Return self!=value.";
+
+    public final static String SimpleNamespace___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String SimpleNamespace___reduce___doc = 
+        "Return state information for pickling";
+
+    public final static String SimpleNamespace___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String SimpleNamespace___repr___doc = 
+        "Return repr(self).";
+
+    public final static String SimpleNamespace___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String SimpleNamespace___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String SimpleNamespace___str___doc = 
+        "Return str(self).";
+
+    public final static String SimpleNamespace___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
     // Docs for <class 'frame'>
@@ -4806,8 +4937,7 @@ public class BuiltinDocs {
     public final static String TextIOBase_close_doc = 
         "Flush and close the IO object.\n" + 
         "\n" + 
-        "This method has no effect if the file is already closed.\n" + 
-        "";
+        "This method has no effect if the file is already closed.";
 
     public final static String TextIOBase_closed_doc = 
         "";
@@ -4834,20 +4964,17 @@ public class BuiltinDocs {
     public final static String TextIOBase_fileno_doc = 
         "Returns underlying file descriptor if one exists.\n" + 
         "\n" + 
-        "An IOError is raised if the IO object does not use a file descriptor.\n" + 
-        "";
+        "An IOError is raised if the IO object does not use a file descriptor.";
 
     public final static String TextIOBase_flush_doc = 
         "Flush write buffers, if applicable.\n" + 
         "\n" + 
-        "This is not implemented for read-only and non-blocking streams.\n" + 
-        "";
+        "This is not implemented for read-only and non-blocking streams.";
 
     public final static String TextIOBase_isatty_doc = 
         "Return whether this is an 'interactive' stream.\n" + 
         "\n" + 
-        "Return False if it can't be determined.\n" + 
-        "";
+        "Return False if it can't be determined.";
 
     public final static String TextIOBase_newlines_doc = 
         "Line endings translated so far.\n" + 
