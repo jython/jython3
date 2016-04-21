@@ -84,8 +84,8 @@ SEEK_END = 2
 # Declaring ABCs in C is tricky so we do it here.
 # Method descriptions and default implementations are inherited from the C
 # version however.
-class IOBase(_jyio._IOBase):
-    __metaclass__ = abc.ABCMeta
+class IOBase(_jyio._IOBase, metaclass=abc.ABCMeta):
+    pass
 
 class RawIOBase(_jyio._RawIOBase, IOBase):
     pass

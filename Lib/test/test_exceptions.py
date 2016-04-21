@@ -438,8 +438,7 @@ class ExceptionTests(unittest.TestCase):
             def __subclasscheck__(cls, subclass):
                 raise ValueError()
 
-        class MyException(Exception):
-            __metaclass__ = Meta
+        class MyException(Exception, metaclass=Meta):
             pass
 
         with captured_output("stderr") as stderr:

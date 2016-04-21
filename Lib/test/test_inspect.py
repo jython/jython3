@@ -129,8 +129,7 @@ class TestPredicates(IsTestBase):
     def test_isabstract(self):
         from abc import ABCMeta, abstractmethod
 
-        class AbstractClassExample(object):
-            __metaclass__ = ABCMeta
+        class AbstractClassExample(object, metaclass=ABCMeta):
 
             @abstractmethod
             def foo(self):
