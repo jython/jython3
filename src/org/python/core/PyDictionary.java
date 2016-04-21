@@ -578,7 +578,7 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
     }
 
     public final PyList keys_as_list() {
-        return PyList.fromList(new ArrayList<PyObject>(getMap().keySet()));
+        return new PyList(getMap().keySet());
     }
 
     public final PyObject dict_iteritems() {
