@@ -1,6 +1,17 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.core;
 
+import jnr.posix.util.Platform;
+import org.python.Version;
+import org.python.core.adapter.ClassicPyObjectAdapter;
+import org.python.core.adapter.ExtensiblePyObjectAdapter;
+import org.python.core.packagecache.PackageManager;
+import org.python.core.packagecache.SysPackageManager;
+import org.python.expose.ExposedGet;
+import org.python.expose.ExposedType;
+import org.python.modules.Setup;
+import org.python.util.Generic;
+
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
@@ -33,18 +44,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import jnr.posix.util.Platform;
-
-import org.python.Version;
-import org.python.core.adapter.ClassicPyObjectAdapter;
-import org.python.core.adapter.ExtensiblePyObjectAdapter;
-import org.python.core.packagecache.PackageManager;
-import org.python.core.packagecache.SysPackageManager;
-import org.python.expose.ExposedGet;
-import org.python.expose.ExposedType;
-import org.python.modules.Setup;
-import org.python.util.Generic;
 
 /**
  * The "sys" module.
@@ -146,6 +145,8 @@ public class PySystemState extends PyObject implements AutoCloseable,
     private static PyObject defaultPlatform = Py.newUnicode("java");
     public PyObject platform;
 
+    public PyNamespace implementation;
+
     public PyList meta_path;
     public PyList path_hooks;
     public PyObject path_importer_cache;
@@ -198,6 +199,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
 
     public PySystemState() {
         initialize();
+        initImplementation();
         closer = new PySystemStateCloser(this);
         modules = new PyStringMap();
         modules_reloading = new HashMap<String, PyModule>();
@@ -289,6 +291,17 @@ public class PySystemState extends PyObject implements AutoCloseable,
         ((PyFile)stdin).setEncoding(encoding, errors);
         ((PyFile)stdout).setEncoding(encoding, errors);
         ((PyFile)stderr).setEncoding(encoding, "backslashreplace");
+    }
+
+    private void initImplementation() {
+        Map<String, Object> dict = new HashMap<String, Object>();
+        dict.put("cache_tag", "jython-" + Version.getVersion());
+        dict.put("hexversion", hexversion);
+        dict.put("name", "Jython");
+        dict.put("version", version_info);
+        dict.put("release_level", "alpha");
+        dict.put("serial", 0);
+        implementation = new PyNamespace(dict);
     }
 
     @Deprecated
@@ -2055,5 +2068,50 @@ class LongInfo extends PyTuple {
     @Override
     public boolean refersDirectlyTo(PyObject ob) {
         return ob != null && (ob == bits_per_digit || ob == sizeof_digit);
+    }
+}
+
+/**
+ * namespace object implementation
+ */
+@ExposedType(name = "types.SimpleNamespace", doc = BuiltinDocs.SimpleNamespace___class___doc)
+class PyNamespace extends PyObject {
+    public static final PyType TYPE = PyType.fromClass(PyNamespace.class);
+
+    @ExposedGet
+    public PyDictionary __dict__;
+
+    public PyNamespace(Map<String, Object> dict) {
+        super();
+        __dict__ = new PyDictionary();
+        __dict__.putAll(dict);
+    }
+
+    public PyNamespace(PyObject[] args, String[] keywords) {
+        super();
+        __dict__ = new PyDictionary();
+        SimpleNamespace___init__(args, keywords);
+    }
+
+    final void SimpleNamespace___init__(PyObject[] args, String[] keywords) {
+        __dict__.dict_update(args, keywords);
+    }
+
+    final PyObject SimpleNamespace___repr__() {
+        PyList keys = __dict__.keys_as_list();
+        keys.sort();
+        StringBuilder items = new StringBuilder();
+        for (int i = 0; i < keys.size(); i++) {
+            Object key = keys.get(i);
+            if (i > 0) {
+                items.append(", ");
+            }
+            items.append(String.format("%s=%s", key, __dict__.get(key)));
+        }
+        return Py.newUnicode(String.format("%s(%s)", __getattr__("__name__"), items));
+    }
+
+    final PyObject SimpleNamespace___eq__(PyObject other) {
+        return __dict__.equals(other.__getattr__("__dict__")) ? Py.True : Py.False;
     }
 }
