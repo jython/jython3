@@ -1933,9 +1933,9 @@ atom
        {
            etype = new Num($COMPLEX, actions.makeComplex($COMPLEX));
        }
-     | d1=ELLIPSIS
+     | ELLIPSIS
        {
-          etype = new Ellipsis($d1);
+          etype = new Ellipsis($ELLIPSIS);
        }
      | (S+=STRING)+
        {
@@ -2508,6 +2508,8 @@ DOUBLESLASHEQUAL    : '//=' ;
 ARROW : '->' ;
 
 DOT : '.' ;
+
+ELLIPSIS: '...' ;
 
 AT : '@' ;
 
