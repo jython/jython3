@@ -3,11 +3,10 @@
 import codecs
 
 from array import array
-from functools import partial
 from java.lang import StringBuilder
 from java.nio import ByteBuffer, CharBuffer
 from java.nio.charset import Charset, IllegalCharsetNameException
-from StringIO import StringIO
+from io import StringIO
 
 
 python_to_java = {
@@ -21,6 +20,7 @@ python_to_java = {
 
 
 def _java_factory(encoding):
+    from functools import partial
     encoding = python_to_java.get(encoding, encoding)
 
     supported = False

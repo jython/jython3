@@ -10,7 +10,7 @@
     Each codec module must export the following interface:
 
     * getregentry() -> codecs.CodecInfo object
-    The getregentry() API must a CodecInfo object with encoder, decoder,
+    The getregentry() API must return a CodecInfo object with encoder, decoder,
     incrementalencoder, incrementaldecoder, streamwriter and streamreader
     atttributes which adhere to the Python Codec Interface Standard.
 
@@ -29,18 +29,11 @@ Written by Marc-Andre Lemburg (mal@lemburg.com).
 """#"
 
 import codecs
-from encodings import aliases, _java
-import __builtin__
+from . import aliases, _java
 
 _cache = {}
 _unknown = '--unknown--'
 _import_tail = ['*']
-_norm_encoding_map = ('                                              . '
-                      '0123456789       ABCDEFGHIJKLMNOPQRSTUVWXYZ     '
-                      ' abcdefghijklmnopqrstuvwxyz                     '
-                      '                                                '
-                      '                                                '
-                      '                ')
 _aliases = aliases.aliases
 
 class CodecRegistryError(LookupError, SystemError):
@@ -59,14 +52,19 @@ def normalize_encoding(encoding):
         non-ASCII characters, these must be Latin-1 compatible.
 
     """
-    # Make sure we have an 8-bit string, because .translate() works
-    # differently for Unicode strings.
-    if hasattr(__builtin__, "unicode") and isinstance(encoding, unicode):
-        # Note that .encode('latin-1') does *not* use the codec
-        # registry, so this call doesn't recurse. (See unicodeobject.c
-        # PyUnicode_AsEncodedString() for details)
-        encoding = encoding.encode('latin-1')
-    return '_'.join(encoding.translate(_norm_encoding_map).split())
+    if isinstance(encoding, bytes):
+        encoding = str(encoding, "ascii")
+    chars = []
+    punct = False
+    for c in encoding:
+        if c.isalnum() or c == '.':
+            if punct and chars:
+                chars.append('_')
+            chars.append(c)
+            punct = False
+        else:
+            punct = True
+    return ''.join(chars)
 
 def search_function(encoding):
 
@@ -112,16 +110,6 @@ def search_function(encoding):
         mod = None
 
     if mod is None:
-        # First, see if we can load the encoding using java.nio.Charset;
-        # FIXME this could include encodings not known to Python, so we should test that out as well
-        entry, codecaliases = _java._java_factory(encoding)
-        if entry is not None:
-            _cache[encoding] = entry
-            for alias in codecaliases:
-                if alias not in _aliases:
-                    _aliases[alias] = modname
-            return entry
-
         # Cache misses
         _cache[encoding] = None
         return None
@@ -130,18 +118,15 @@ def search_function(encoding):
     entry = getregentry()
     if not isinstance(entry, codecs.CodecInfo):
         if not 4 <= len(entry) <= 7:
-            raise CodecRegistryError,\
-                 'module "%s" (%s) failed to register' % \
-                  (mod.__name__, mod.__file__)
-        if not hasattr(entry[0], '__call__') or \
-           not hasattr(entry[1], '__call__') or \
-           (entry[2] is not None and not hasattr(entry[2], '__call__')) or \
-           (entry[3] is not None and not hasattr(entry[3], '__call__')) or \
-           (len(entry) > 4 and entry[4] is not None and not hasattr(entry[4], '__call__')) or \
-           (len(entry) > 5 and entry[5] is not None and not hasattr(entry[5], '__call__')):
-            raise CodecRegistryError,\
-                'incompatible codecs in module "%s" (%s)' % \
-                (mod.__name__, mod.__file__)
+            raise CodecRegistryError('module "%s" (%s) failed to register'
+                                     % (mod.__name__, mod.__file__))
+        if not callable(entry[0]) or not callable(entry[1]) or \
+           (entry[2] is not None and not callable(entry[2])) or \
+           (entry[3] is not None and not callable(entry[3])) or \
+           (len(entry) > 4 and entry[4] is not None and not callable(entry[4])) or \
+           (len(entry) > 5 and entry[5] is not None and not callable(entry[5])):
+            raise CodecRegistryError('incompatible codecs in module "%s" (%s)'
+                                     % (mod.__name__, mod.__file__))
         if len(entry)<7 or entry[6] is None:
             entry += (None,)*(6-len(entry)) + (mod.__name__.split(".", 1)[1],)
         entry = codecs.CodecInfo(*entry)
