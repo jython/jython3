@@ -80,6 +80,7 @@ module Python version "$Revision$"
          | Num(object n) -- a number as a PyObject.
          | Str(string s) -- need to specify raw, unicode, etc?
          -- other literals? bools?
+         | NameConstant(identifier value)
          | Ellipsis
 
          -- the following expression can appear in assignment context
