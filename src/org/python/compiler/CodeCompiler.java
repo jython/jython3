@@ -2462,9 +2462,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
     @Override
     public Object visitNum(Num node) throws Exception {
-        if (node.getInternalN() instanceof PyInteger) {
-            module.integerConstant(((PyInteger)node.getInternalN()).getValue()).get(code);
-        } else if (node.getInternalN() instanceof PyLong) {
+        if (node.getInternalN() instanceof PyInteger || node.getInternalN() instanceof PyLong) {
             module.longConstant(((PyObject)node.getInternalN()).__str__().toString()).get(code);
         } else if (node.getInternalN() instanceof PyFloat) {
             module.floatConstant(((PyFloat)node.getInternalN()).getValue()).get(code);
