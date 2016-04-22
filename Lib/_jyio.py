@@ -25,7 +25,6 @@ import _io  # Java implementations to replace this module
 import os
 import abc
 import codecs
-import warnings
 import errno
 import array
 # Import thread instead of threading to reduce startup cost
@@ -575,7 +574,6 @@ class BufferedReader(_BufferedIOMixin):
 
 
 class BufferedWriter(_BufferedIOMixin):
-
     """A buffer for a writeable sequential RawIO object.
 
     The constructor creates a BufferedWriter for the given writeable raw
@@ -594,6 +592,7 @@ class BufferedWriter(_BufferedIOMixin):
         if buffer_size <= 0:
             raise ValueError("invalid buffer size")
         if max_buffer_size is not None:
+            import warnings
             warnings.warn("max_buffer_size is deprecated", DeprecationWarning,
                           self._warning_stack_offset)
         self.buffer_size = buffer_size
@@ -700,6 +699,7 @@ class BufferedRWPair(_BufferedIOBase):
         The arguments are two RawIO instances.
         """
         if max_buffer_size is not None:
+            import warnings
             warnings.warn("max_buffer_size is deprecated", DeprecationWarning, 2)
 
         if not reader.readable():
