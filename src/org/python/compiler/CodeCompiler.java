@@ -2507,6 +2507,13 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     }
 
     @Override
+    public Object visitNameConstant(NameConstant node) throws Exception {
+        String name = node.getInternalValue();
+        code.getstatic(p(Py.class), name, ci(PyObject.class));
+        return null;
+    }
+
+    @Override
     public Object visitName(Name node) throws Exception {
         String name;
         if (fast_locals) {

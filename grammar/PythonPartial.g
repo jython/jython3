@@ -736,6 +736,7 @@ atom
      | FLOAT
      | COMPLEX
      | ELLIPSIS
+     | NAME_CONSTANT
      | (STRING)+
      | TRISTRINGPART
      | STRINGPART TRAILBACKSLASH
@@ -1055,6 +1056,8 @@ COMPLEX
 
 fragment
 DIGITS : ( '0' .. '9' )+ ;
+
+NAME_CONSTANT: 'None' | 'True' | 'False' ;
 
 NAME:    ( 'a' .. 'z' | 'A' .. 'Z' | '_')
         ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
