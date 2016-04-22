@@ -475,12 +475,7 @@ def _compile_info(code, pattern, flags):
         _compile_charset(charset, flags, code)
     code[skip] = len(code) - skip
 
-try:
-    unicode
-except NameError:
-    STRING_TYPES = (type(""),)
-else:
-    STRING_TYPES = (type(""), type(unicode("")))
+STRING_TYPES = (type(b""), type(""))
 
 def isstring(obj):
     for tp in STRING_TYPES:
