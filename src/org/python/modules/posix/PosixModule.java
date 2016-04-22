@@ -51,6 +51,7 @@ import org.python.core.PyFloat;
 import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyString;
+import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
 import org.python.core.imp;
@@ -164,7 +165,12 @@ public class PosixModule implements ClassDictInit {
         dict.__setitem__("_have_functions", PyList.fromList(haveFuncs));
 
         // Hide __doc__s
-        PyList keys = (PyList)dict.invoke("keys");
+        PyList keys;
+        if (dict instanceof PyStringMap) {
+            keys = (PyList) ((PyStringMap) dict).keys();
+        } else {
+            keys = (PyList) dict.invoke("keys");
+        }
         for (Iterator<?> it = keys.listIterator(); it.hasNext();) {
             String key = (String)it.next();
             if (key.startsWith("__doc__")) {
