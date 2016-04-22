@@ -876,6 +876,39 @@ public class PyLong extends PyObject {
     }
 
     @Override
+    public PyObject __lt__(PyObject other) {
+        return long___lt__(other);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.int___lt___doc)
+    final PyObject long___lt__(PyObject other) {
+        if (other instanceof PyInteger) {
+            return Py.newBoolean(value.compareTo(BigInteger.valueOf(((PyInteger) other).getValue())) < 0);
+        }
+
+        if (other instanceof PyLong) {
+            return Py.newBoolean(value.compareTo(((PyLong) other).getValue()) < 0);
+        }
+        throw Py.TypeError(String.format("unorderable types: %s < %s", getType(), other.getType()));
+    }
+
+    @Override
+    public PyObject __eq__(PyObject other) {
+        return long___eq__(other);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.int___eq___doc)
+    final PyObject long___eq__(PyObject other) {
+        if (other instanceof PyInteger) {
+            return Py.newBoolean(BigInteger.valueOf(((PyInteger) other).getValue()).compareTo(value) == 0);
+        }
+        if (other instanceof PyLong) {
+            return Py.newBoolean(((PyLong) other).getValue().compareTo(value) == 0);
+        }
+        return Py.False;
+    }
+
+    @Override
     public PyFloat __float__() {
         return long___float__();
     }
