@@ -1556,13 +1556,7 @@ public class PyObject implements Serializable {
                 if ((token = check_recursion(ts, this, o)) == null)
                     return Py.False;
             }
-            PyObject res = __ne__(o);
-            if (res != null)
-                return res;
-            res = o.__ne__(this);
-            if (res != null)
-                return res;
-            return _cmpeq_unsafe(o) != 0 ? Py.True : Py.False;
+            return Py.newBoolean(!_eq(o).__bool__());
         } finally {
             delete_token(ts, token);
             ts.compareStateNesting--;
@@ -1590,13 +1584,7 @@ public class PyObject implements Serializable {
                 if ((token = check_recursion(ts, this, o)) == null)
                     throw Py.ValueError("can't order recursive values");
             }
-            PyObject res = __le__(o);
-            if (res != null)
-                return res;
-            res = o.__ge__(this);
-            if (res != null)
-                return res;
-            return _cmp_unsafe(o) <= 0 ? Py.True : Py.False;
+            return Py.newBoolean(__lt__(o).__bool__() || __eq__(o).__bool__());
         } finally {
             delete_token(ts, token);
             ts.compareStateNesting--;
@@ -1658,13 +1646,7 @@ public class PyObject implements Serializable {
                 if ((token = check_recursion(ts, this, o)) == null)
                     throw Py.ValueError("can't order recursive values");
             }
-            PyObject res = __ge__(o);
-            if (res != null)
-                return res;
-            res = o.__le__(this);
-            if (res != null)
-                return res;
-            return _cmp_unsafe(o) >= 0 ? Py.True : Py.False;
+            return Py.newBoolean(!__lt__(o).__bool__());
         } finally {
             delete_token(ts, token);
             ts.compareStateNesting--;
@@ -1692,13 +1674,7 @@ public class PyObject implements Serializable {
                 if ((token = check_recursion(ts, this, o)) == null)
                     throw Py.ValueError("can't order recursive values");
             }
-            PyObject res = __gt__(o);
-            if (res != null)
-                return res;
-            res = o.__lt__(this);
-            if (res != null)
-                return res;
-            return _cmp_unsafe(o) > 0 ? Py.True : Py.False;
+            return Py.newBoolean(!_le(o).__bool__());
         } finally {
             delete_token(ts, token);
             ts.compareStateNesting--;
