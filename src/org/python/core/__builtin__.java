@@ -273,7 +273,7 @@ public class __builtin__ {
         dict.__setitem__("int", PyLong.TYPE);
         dict.__setitem__("enumerate", PyEnumerate.TYPE);
         dict.__setitem__("float", PyFloat.TYPE);
-        //dict.__setitem__("long", PyLong.TYPE);
+        dict.__setitem__("long", PyLong.TYPE);
         dict.__setitem__("complex", PyComplex.TYPE);
         dict.__setitem__("dict", PyDictionary.TYPE);
         dict.__setitem__("list", PyList.TYPE);
@@ -306,7 +306,7 @@ public class __builtin__ {
 
 // TODO: redo the builtin function stuff to possibly use enum
         dict.__setitem__("abs", new BuiltinFunctions("abs", 7, 1));
-        dict.__setitem__("apply", new BuiltinFunctions("apply", 9, 1, 3));
+//        dict.__setitem__("apply", new BuiltinFunctions("apply", 9, 1, 3));
         dict.__setitem__("callable", new BuiltinFunctions("callable", 14, 1));
         dict.__setitem__("coerce", new BuiltinFunctions("coerce", 13, 2));
         dict.__setitem__("chr", new BuiltinFunctions("chr", 0, 1));
