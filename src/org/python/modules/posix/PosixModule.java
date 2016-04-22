@@ -48,6 +48,7 @@ import org.python.core.PyDictionary;
 import org.python.core.PyException;
 import org.python.core.PyFile;
 import org.python.core.PyFloat;
+import org.python.core.PyIterator;
 import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyString;
