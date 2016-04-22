@@ -274,9 +274,9 @@ public class PyInteger extends PyObject {
     @ExposedMethod(doc = BuiltinDocs.int___lt___doc)
     final PyObject int___lt__(PyObject other) {
         if (other instanceof PyLong) {
-            return Py.newBoolean(BigInteger.valueOf(value).compareTo(((PyLong) other).getValue()) > 0);
+            return Py.newBoolean(BigInteger.valueOf(value).compareTo(((PyLong) other).getValue()) < 0);
         } else if (other instanceof PyInteger) {
-            return Py.newBoolean(value > ((PyInteger) other).value);
+            return Py.newBoolean(value < ((PyInteger) other).value);
         }
         throw Py.TypeError(String.format("unorderable types: %s, %s", getType(), other.getType()));
     }

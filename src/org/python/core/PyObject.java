@@ -1674,7 +1674,7 @@ public class PyObject implements Serializable {
                 if ((token = check_recursion(ts, this, o)) == null)
                     throw Py.ValueError("can't order recursive values");
             }
-            Py.newBoolean(!_le(o).__bool__());
+            return Py.newBoolean(!_le(o).__bool__());
         } finally {
             delete_token(ts, token);
             ts.compareStateNesting--;
