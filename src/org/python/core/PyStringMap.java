@@ -160,7 +160,7 @@ public class PyStringMap extends PyObject implements Traverseproc {
 
     @ExposedMethod(doc = BuiltinDocs.dict___iter___doc)
     final PyObject stringmap___iter__() {
-        return stringmap_keys();
+        return stringmap_iterkeys();
     }
 
     @Override
@@ -220,11 +220,21 @@ public class PyStringMap extends PyObject implements Traverseproc {
 
     @ExposedMethod(doc = BuiltinDocs.dict_keys_doc)
     final PyObject stringmap_keys() {
-        return new KeysIter(table.keySet());
+        return stringmap_iterkeys();
     }
 
     @ExposedMethod(doc = BuiltinDocs.dict_values_doc)
     final PyObject stringmap_values() {
+        return stringmap_itervalues();
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.dict_keys_doc)
+    final PyObject stringmap_iterkeys() {
+        return new KeysIter(table.keySet());
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.dict_values_doc)
+    final PyObject stringmap_itervalues() {
         return new ValuesIter(table.values());
     }
 
@@ -292,10 +302,10 @@ public class PyStringMap extends PyObject implements Traverseproc {
         if (an > bn) {
             return 1;
         }
-        PyList akeys = new PyList(keys());
+        PyList akeys = (PyList) keys();
         PyList bkeys = null;
         if (other instanceof PyStringMap) {
-            bkeys = new PyList(((PyStringMap)other).keys());
+            bkeys = (PyList) ((PyStringMap)other).keys();
         } else {
             bkeys = ((PyDictionary)other).keys_as_list();
         }
@@ -534,14 +544,14 @@ public class PyStringMap extends PyObject implements Traverseproc {
      * storing String or PyObject objects
      */
     public PyObject keys() {
-        return stringmap_keys();
+        return new PyList(stringmap_iterkeys());
     }
 
     /**
      * Return a copy of the mappings list of values.
      */
     public PyObject values() {
-        return stringmap_values();
+        return new PyList(stringmap_itervalues());
     }
 
     public PyObject items() {

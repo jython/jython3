@@ -92,8 +92,8 @@ public abstract class PackageManager extends Object {
         PyStringMap cls = jpkg.clsSet;
 
         if (!instantiate) {
-            PyList ret = cls.keys();
-            PyList dictKeys = dict.keys();
+            PyList ret = (PyList) cls.keys();
+            PyList dictKeys = (PyList) dict.keys();
 
             for (PyObject name : dictKeys.asIterable()) {
                 if (!cls.__contains__(name)) {
@@ -113,7 +113,7 @@ public abstract class PackageManager extends Object {
             }
         }
 
-        return dict.keys();
+        return (PyList) dict.keys();
     }
 
     /**
