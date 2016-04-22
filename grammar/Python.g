@@ -125,6 +125,7 @@ import org.python.antlr.ast.ListComp;
 import org.python.antlr.ast.Lambda;
 import org.python.antlr.ast.Module;
 import org.python.antlr.ast.Name;
+import org.python.antlr.ast.NameConstant;
 import org.python.antlr.ast.Nonlocal;
 import org.python.antlr.ast.Num;
 import org.python.antlr.ast.operatorType;
@@ -1859,7 +1860,7 @@ power
 //       '[' [listmaker] ']' |
 //       '{' [dictorsetmaker] '}' |
 //       '`' testlist1 '`' |
-//       NAME | NUMBER | STRING+)
+//       NAME | NUMBER | STRING+ | '...' | 'True' | 'False' | 'None')
 atom
     returns [Token lparen = null]
 @init {
@@ -1907,6 +1908,10 @@ atom
      | lb=BACKQUOTE testlist[expr_contextType.Load] rb=BACKQUOTE
        {
            etype = new Repr($lb, actions.castExpr($testlist.tree));
+       }
+     | NAME_CONSTANT
+       {
+           etype = new NameConstant($NAME_CONSTANT.tree);
        }
      | name_or_print
        {
@@ -2549,6 +2554,8 @@ DIGITS : ( '0' .. '9' )+ ;
 NAME:    ( 'a' .. 'z' | 'A' .. 'Z' | '_')
         ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
     ;
+
+NAME_CONSTANT: 'None' | 'True' | 'False' ;
 
 /** Match various string types.  Note that greedy=false implies '''
  *  should make us exit loop not continue.
