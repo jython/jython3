@@ -613,7 +613,7 @@ def get_platform():
             # bootstrap problem. We use a dict to get an error
             # if some suspicious happens.
             bitness = {2147483647:"32bit", 9223372036854775807:"64bit"}
-            machine += ".%s" % bitness[sys.maxint]
+            machine += ".%s" % bitness[sys.maxsize]
         # fall through to standard osname-release-machine representation
     elif osname[:4] == "irix":              # could be "irix64"!
         return "%s-%s" % (osname, release)
@@ -701,13 +701,13 @@ def get_platform():
                 # On OSX the machine type returned by uname is always the
                 # 32-bit variant, even if the executable architecture is
                 # the 64-bit variant
-                if sys.maxint >= 2**32:
+                if sys.maxsize >= 2**32:
                     machine = 'x86_64'
 
             elif machine in ('PowerPC', 'Power_Macintosh'):
                 # Pick a sane name for the PPC architecture.
                 # See 'i386' case
-                if sys.maxint >= 2**32:
+                if sys.maxsize >= 2**32:
                     machine = 'ppc64'
                 else:
                     machine = 'ppc'
