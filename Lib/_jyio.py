@@ -52,7 +52,7 @@ class BlockingIOError(IOError):
 
     def __init__(self, errno, strerror, characters_written=0):
         super(IOError, self).__init__(errno, strerror)
-        if not isinstance(characters_written, (int, long)):
+        if not isinstance(characters_written, (int, int)):
             raise TypeError("characters_written must be a integer")
         self.characters_written = characters_written
 
@@ -303,7 +303,7 @@ class BytesIO(_BufferedIOBase):
         # method instead of modifying self._pos directly to better protect the
         # object internal state against erroneous (or malicious) inputs. */
         p = state[1]
-        if not isinstance(p, (int, long)) :
+        if not isinstance(p, (int, int)) :
             fmt = "second item of state must be an integer, got %s"
             raise TypeError( fmt % type(p) )
         elif p < 0 :
@@ -331,7 +331,7 @@ class BytesIO(_BufferedIOBase):
             raise ValueError("read from closed file")
         if n is None:
             n = -1
-        if not isinstance(n, (int, long)):
+        if not isinstance(n, (int, int)):
             raise TypeError("integer argument expected, got {0!r}".format(
                 type(n)))
         if n < 0:
@@ -1442,7 +1442,7 @@ class TextIOWrapper(_TextIOBase):
                 result += self._get_decoded_chars(n - len(result))
             return result
 
-    def next(self):
+    def __next__(self):
         self._telling = False
         line = self.readline()
         if not line:
@@ -1456,7 +1456,7 @@ class TextIOWrapper(_TextIOBase):
             raise ValueError("read from closed file")
         if limit is None:
             limit = -1
-        elif not isinstance(limit, (int, long)):
+        elif not isinstance(limit, (int, int)):
             raise TypeError("limit must be an integer")
 
         # Grab all the decoded text (we will rewind any extra bits later).
@@ -1608,7 +1608,7 @@ class StringIO(TextIOWrapper):
 
         # Set the position value using seek. A long is tolerated (e.g from pickle).
         p = state[2]
-        if not isinstance(p, (int, long)) :
+        if not isinstance(p, (int, int)) :
             fmt = "third item of state must be an integer, got %s"
             raise TypeError( fmt % type(p) )
         elif p < 0 :

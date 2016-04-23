@@ -47,7 +47,7 @@ class IsqlCmd(cmd.Cmd):
 
     def parseline(self, line):
         command, arg, line = cmd.Cmd.parseline(self, line)
-        if command and command <> "EOF":
+        if command and command != "EOF":
             command = command.lower()
         return command, arg, line
 
@@ -138,7 +138,7 @@ class IsqlCmd(cmd.Cmd):
                     print(a)
                 print()
             return False
-        d = [x for x in map(lambda x: x.strip(), arg.split("=")) if len(x) > 0]
+        d = [x for x in [x.strip() for x in arg.split("=")] if len(x) > 0]
         if len(d) == 1:
             if d[0] in self.kw:
                 del self.kw[d[0]]

@@ -452,7 +452,7 @@ class _Stream:
                                             -self.zlib.MAX_WBITS,
                                             self.zlib.DEF_MEM_LEVEL,
                                             0)
-        timestamp = struct.pack("<L", long(time.time()))
+        timestamp = struct.pack("<L", int(time.time()))
         self.__write("\037\213\010\010%s\002\377" % timestamp)
         if isinstance(self.name, unicode):
             self.name = self.name.encode("iso-8859-1", "replace")
@@ -1571,7 +1571,7 @@ class TarFile(object):
         try:
             if self.mode == "r":
                 self.firstmember = None
-                self.firstmember = self.next()
+                self.firstmember = next(self)
 
             if self.mode == "a":
                 # Move to the end of the archive,
@@ -2295,7 +2295,7 @@ class TarFile(object):
             raise ExtractError("could not change modification time")
 
     #--------------------------------------------------------------------------
-    def next(self):
+    def __next__(self):
         """Return the next member of the archive as a TarInfo object, when
            TarFile is opened for reading. Return None if there is no more
            available.
@@ -2372,7 +2372,7 @@ class TarFile(object):
            members.
         """
         while True:
-            tarinfo = self.next()
+            tarinfo = next(self)
             if tarinfo is None:
                 break
         self._loaded = True
@@ -2450,7 +2450,7 @@ class TarIter:
         """Return iterator object.
         """
         return self
-    def next(self):
+    def __next__(self):
         """Return the next item using TarFile's next() method.
            When all members have been read, set TarFile as _loaded.
         """
@@ -2458,7 +2458,7 @@ class TarIter:
         # happen that getmembers() is called during iteration,
         # which will cause TarIter to stop prematurely.
         if not self.tarfile._loaded:
-            tarinfo = self.tarfile.next()
+            tarinfo = next(self.tarfile)
             if not tarinfo:
                 self.tarfile._loaded = True
                 raise StopIteration
@@ -2539,7 +2539,7 @@ class TarFileCompat:
                 m.file_size = m.size
                 m.date_time = time.gmtime(m.mtime)[:6]
     def namelist(self):
-        return map(lambda m: m.name, self.infolist())
+        return [m.name for m in self.infolist()]
     def infolist(self):
         return [m for m in self.tarfile.getmembers() if m.type in REGULAR_TYPES]
     def printdir(self):

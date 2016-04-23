@@ -16,7 +16,7 @@ from future_builtins import hex, oct
 
 __all__ = ['hex', 'oct', 'ascii', 'map', 'filter', 'zip']
 
-from itertools import imap as map, ifilter as filter, izip as zip
+
 
 ascii = repr
 _builtin_hex = hex

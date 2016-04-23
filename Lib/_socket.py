@@ -1579,9 +1579,9 @@ def _get_jsockaddr2(address_object, family, sock_type, proto, flags):
        ((family == AF_INET and len(address_object) != 2) or \
         (family == AF_INET6 and len(address_object) not in [2,4] )) or \
        not isinstance(address_object[0], (str, NoneType)) or \
-       not isinstance(address_object[1], (int, long)):
+       not isinstance(address_object[1], (int, int)):
         raise TypeError(error_message)
-    if len(address_object) == 4 and not isinstance(address_object[3], (int, long)):
+    if len(address_object) == 4 and not isinstance(address_object[3], (int, int)):
         raise TypeError(error_message)
     hostname = address_object[0]
     if hostname is not None:
@@ -1661,7 +1661,7 @@ def _getaddrinfo_get_port(port, flags):
                 raise gaierror(EAI_SERVICE, "Servname not supported for ai_socktype")
     elif port is None:
         int_port = 0
-    elif not isinstance(port, (int, long)):
+    elif not isinstance(port, (int, int)):
         raise error("Int or String expected")
     else:
         int_port = int(port)
@@ -1869,7 +1869,7 @@ def _getnameinfo_get_host(address, flags):
     return result
 
 def _getnameinfo_get_port(port, flags):
-    if not isinstance(port, (int, long)):
+    if not isinstance(port, (int, int)):
         raise TypeError("getnameinfo() port number must be an integer")
     if flags & NI_NUMERICSERV:
         return port
@@ -2185,7 +2185,7 @@ class _fileobject(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         line = self.readline()
         if not line:
             raise StopIteration

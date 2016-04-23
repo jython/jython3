@@ -461,11 +461,11 @@ def _norm_version(version, build=''):
     if build:
         l.append(build)
     try:
-        ints = map(int,l)
+        ints = list(map(int,l))
     except ValueError:
         strings = l
     else:
-        strings = map(str,ints)
+        strings = list(map(str,ints))
     version = string.join(strings[:3],'.')
     return version
 
@@ -929,8 +929,8 @@ def _platform(*args):
     """
     # Format the platform string
     platform = string.join(
-        map(string.strip,
-            list(filter(len, args))),
+        list(map(string.strip,
+            list(filter(len, args)))),
         '-')
 
     # Cleanup some possible filename obstacles...

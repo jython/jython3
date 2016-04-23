@@ -506,7 +506,7 @@ class _BaseIP(_IPAddrBase):
         return  '%s' % self._string_from_ip_int(self._ip)
 
     def __hash__(self):
-        return hash(hex(long(self._ip)))
+        return hash(hex(int(self._ip)))
 
     def _get_address_key(self):
         return (self._version, self)
@@ -1188,7 +1188,7 @@ class IPv4Address(_BaseV4, _BaseIP):
         _BaseV4.__init__(self, address)
 
         # Efficient constructor from integer.
-        if isinstance(address, (int, long)):
+        if isinstance(address, (int, int)):
             self._ip = address
             if address < 0 or address > self._ALL_ONES:
                 raise AddressValueError(address)
@@ -1268,7 +1268,7 @@ class IPv4Network(_BaseV4, _BaseNet):
         _BaseV4.__init__(self, address)
 
         # Efficient constructor from integer.
-        if isinstance(address, (int, long)):
+        if isinstance(address, (int, int)):
             self._ip = address
             self.ip = IPv4Address(self._ip)
             self._prefixlen = self._max_prefixlen
@@ -1768,7 +1768,7 @@ class IPv6Address(_BaseV6, _BaseIP):
         _BaseV6.__init__(self, address)
 
         # Efficient constructor from integer.
-        if isinstance(address, (int, long)):
+        if isinstance(address, (int, int)):
             self._ip = address
             if address < 0 or address > self._ALL_ONES:
                 raise AddressValueError(address)
@@ -1841,7 +1841,7 @@ class IPv6Network(_BaseV6, _BaseNet):
         _BaseV6.__init__(self, address)
 
         # Efficient constructor from integer.
-        if isinstance(address, (int, long)):
+        if isinstance(address, (int, int)):
             self._ip = address
             self.ip = IPv6Address(self._ip)
             self._prefixlen = self._max_prefixlen

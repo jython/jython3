@@ -411,7 +411,7 @@ def getfile(object):
             return object.__file__
         raise TypeError('{!r} is a built-in class'.format(object))
     if ismethod(object):
-        object = object.im_func
+        object = object.__func__
     if isfunction(object):
         object = object.__code__
     if istraceback(object):
@@ -428,9 +428,7 @@ ModuleInfo = namedtuple('ModuleInfo', 'name suffix mode module_type')
 def getmoduleinfo(path):
     """Get the module name, suffix, mode, and module type for a given file."""
     filename = os.path.basename(path)
-    suffixes = sorted(map(lambda info:
-                   (-len(info[0]), info[0], info[1], info[2]),
-                    imp.get_suffixes()))
+    suffixes = sorted([(-len(info[0]), info[0], info[1], info[2]) for info in imp.get_suffixes()])
     for neglen, suffix, mode, mtype in suffixes:
         if filename[neglen:] == suffix:
             return ModuleInfo(filename[:neglen], suffix, mode, mtype)
@@ -569,7 +567,7 @@ def findsource(object):
             raise IOError('could not find class definition')
 
     if ismethod(object):
-        object = object.im_func
+        object = object.__func__
     if isfunction(object):
         object = object.__code__
     if istraceback(object):
@@ -679,7 +677,7 @@ def getblock(lines):
     """Extract the block of code at the top of the given list of lines."""
     blockfinder = BlockFinder()
     try:
-        tokenize.tokenize(iter(lines).next, blockfinder.tokeneater)
+        tokenize.tokenize(iter(lines).__next__, blockfinder.tokeneater)
     except (EndOfBlock, IndentationError):
         pass
     return lines[:blockfinder.last]
@@ -821,7 +819,7 @@ def getargspec(func):
     """
 
     if ismethod(func):
-        func = func.im_func
+        func = func.__func__
     if not isfunction(func):
         raise TypeError('{!r} is not a Python function'.format(func))
     args, varargs, varkw = getargs(func.__code__)
@@ -848,7 +846,7 @@ def joinseq(seq):
 def strseq(object, convert, join=joinseq):
     """Recursively walk a sequence, stringifying each element."""
     if type(object) in (list, tuple):
-        return join(map(lambda o, c=convert, j=join: strseq(o, c, j), object))
+        return join(list(map(lambda o, c=convert, j=join: strseq(o, c, j), object)))
     else:
         return convert(object)
 
@@ -937,9 +935,9 @@ def getcallargs(func, *positional, **named):
         if isinstance(arg,str):
             return arg in arg2value
         return arg in assigned_tuple_params
-    if ismethod(func) and func.im_self is not None:
+    if ismethod(func) and func.__self__ is not None:
         # implicit 'self' (or 'cls' for classmethods) argument
-        positional = (func.im_self,) + positional
+        positional = (func.__self__,) + positional
     num_pos = len(positional)
     num_total = num_pos + len(named)
     num_args = len(args)
