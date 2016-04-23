@@ -250,7 +250,7 @@ def _mkstemp_inner(dir, pre, suf, flags):
             fd = _os.open(file, flags, 0600)
             _set_cloexec(fd)
             return (fd, _os.path.abspath(file))
-        except OSError, e:
+        except OSError as e:
             if e.errno == _errno.EEXIST:
                 continue # try again
             raise
@@ -339,7 +339,7 @@ def mkdtemp(suffix="", prefix=template, dir=None):
         try:
             _os.mkdir(file, 0700)
             return file
-        except OSError, e:
+        except OSError as e:
             if e.errno == _errno.EEXIST:
                 continue # try again
             raise

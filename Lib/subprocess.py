@@ -483,7 +483,7 @@ def _eintr_retry_call(func, *args):
     while True:
         try:
             return func(*args)
-        except OSError, e:
+        except OSError as e:
             if e.errno == errno.EINTR:
                 continue
             raise
@@ -753,7 +753,7 @@ if jython:
                     buf.flip()
                     self.write_func(buf)
                     buf.flip()
-                except IOError, ioe:
+                except IOError as ioe:
                     if self.close_func:
                         try:
                             self.close_func()
@@ -1154,7 +1154,7 @@ class Popen(object):
                                          env,
                                          cwd,
                                          startupinfo)
-            except pywintypes.error, e:
+            except pywintypes.error as e:
                 # Translate pywintypes.error to WindowsError, which is
                 # a subclass of OSError.  FIXME: We should really
                 # translate errno using _sys_errlist (or simliar), but
@@ -1278,7 +1278,7 @@ class Popen(object):
             Strings) for the subprocess if they haven't been modified.
             """
             # Determine what's safe to merge
-            merge_env = dict((key, value) for key, value in env.iteritems()
+            merge_env = dict((key, value) for key, value in list(env.items())
                              if key not in builder_env or
                              builder_env.get(key) != value)
 
@@ -1348,7 +1348,7 @@ class Popen(object):
             try:
                 self._process = builder.start()
             except (java.io.IOException,
-                    java.lang.IllegalArgumentException), e:
+                    java.lang.IllegalArgumentException) as e:
                 raise OSError(e.getMessage() or e)
             self.pid = self._get_pid()
             self._child_created = True
@@ -1782,7 +1782,7 @@ class Popen(object):
             while fd2file:
                 try:
                     ready = poller.poll()
-                except select.error, e:
+                except select.error as e:
                     if e.args[0] == errno.EINTR:
                         continue
                     raise
@@ -1824,7 +1824,7 @@ class Popen(object):
             while read_set or write_set:
                 try:
                     rlist, wlist, xlist = select.select(read_set, write_set, [])
-                except select.error, e:
+                except select.error as e:
                     if e.args[0] == errno.EINTR:
                         continue
                     raise
@@ -1889,7 +1889,7 @@ def _os_system(command):
     try:
         return builder.start().waitFor()
     except (java.io.IOException,
-            java.lang.IllegalArgumentException), e:
+            java.lang.IllegalArgumentException) as e:
         raise OSError(e.getMessage() or e)
 
 
@@ -1923,7 +1923,7 @@ def _demo_posix():
     print("Trying a weird file...")
     try:
         print(Popen(["/this/path/does/not/exist"]).communicate())
-    except OSError, e:
+    except OSError as e:
         if e.errno == errno.ENOENT:
             print("The file didn't exist.  I thought so...")
             print("Child traceback:")

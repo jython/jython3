@@ -3725,7 +3725,7 @@ _numbers.Number.register(Decimal)
 
 
 # get rounding method function:
-rounding_functions = [name for name in Decimal.__dict__.keys()
+rounding_functions = [name for name in list(Decimal.__dict__.keys())
                                     if name.startswith('_round_')]
 for name in rounding_functions:
     # name is like _round_half_even, goes to the global ROUND_HALF_EVEN value.
@@ -3813,9 +3813,9 @@ class Context(object):
         s.append('Context(prec=%(prec)d, rounding=%(rounding)s, '
                  'Emin=%(Emin)d, Emax=%(Emax)d, capitals=%(capitals)d'
                  % vars(self))
-        names = [f.__name__ for f, v in self.flags.items() if v]
+        names = [f.__name__ for f, v in list(self.flags.items()) if v]
         s.append('flags=[' + ', '.join(names) + ']')
-        names = [t.__name__ for t, v in self.traps.items() if v]
+        names = [t.__name__ for t, v in list(self.traps.items()) if v]
         s.append('traps=[' + ', '.join(names) + ']')
         return ', '.join(s) + ')'
 

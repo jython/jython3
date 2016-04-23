@@ -373,7 +373,7 @@ class Mapping(Sized, Iterable, Container):
     def __eq__(self, other):
         if not isinstance(other, Mapping):
             return NotImplemented
-        return dict(self.items()) == dict(other.items())
+        return dict(list(self.items())) == dict(list(other.items()))
 
     def __ne__(self, other):
         return not (self == other)
@@ -489,12 +489,12 @@ class MutableMapping(Mapping):
             for key in other:
                 self[key] = other[key]
         elif hasattr(other, "keys"):
-            for key in other.keys():
+            for key in list(other.keys()):
                 self[key] = other[key]
         else:
             for key, value in other:
                 self[key] = value
-        for key, value in kwds.items():
+        for key, value in list(kwds.items()):
             self[key] = value
 
     def setdefault(self, key, default=None):

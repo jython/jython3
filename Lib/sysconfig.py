@@ -155,12 +155,12 @@ def _subst_vars(s, local_vars):
     except KeyError:
         try:
             return s.format(**os.environ)
-        except KeyError, var:
+        except KeyError as var:
             raise AttributeError('{%s}' % var)
 
 def _extend_dict(target_dict, other_dict):
-    target_keys = target_dict.keys()
-    for key, value in other_dict.items():
+    target_keys = list(target_dict.keys())
+    for key, value in list(other_dict.items()):
         if key in target_keys:
             continue
         target_dict[key] = value
@@ -171,7 +171,7 @@ def _expand_vars(scheme, vars):
         vars = {}
     _extend_dict(vars, get_config_vars())
 
-    for key, value in _INSTALL_SCHEMES[scheme].items():
+    for key, value in list(_INSTALL_SCHEMES[scheme].items()):
         if os.name in ('posix', 'nt', 'java'):
             try:
                 value = os.path.expanduser(value)
@@ -255,7 +255,7 @@ def _parse_makefile(filename, vars=None):
 
     # do variable interpolation here
     while notdone:
-        for name in notdone.keys():
+        for name in list(notdone.keys()):
             value = notdone[name]
             m = _findvar1_rx.search(value) or _findvar2_rx.search(value)
             if m:
@@ -287,7 +287,7 @@ def _parse_makefile(filename, vars=None):
                 # bogus variable reference; just drop it since we can't deal
                 del notdone[name]
     # strip spurious spaces
-    for k, v in done.items():
+    for k, v in list(done.items()):
         if isinstance(v, str):
             done[k] = v.strip()
 
@@ -308,7 +308,7 @@ def _init_posix(vars):
     makefile = _get_makefile_filename()
     try:
         _parse_makefile(makefile, vars)
-    except IOError, e:
+    except IOError as e:
         msg = "invalid Python installation: unable to open %s" % makefile
         if hasattr(e, "strerror"):
             msg = msg + " (%s)" % e.strerror
@@ -319,7 +319,7 @@ def _init_posix(vars):
     try:
         with open(config_h) as f:
             parse_config_h(f, vars)
-    except IOError, e:
+    except IOError as e:
         msg = "invalid Python installation: unable to open %s" % config_h
         if hasattr(e, "strerror"):
             msg = msg + " (%s)" % e.strerror

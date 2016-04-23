@@ -202,7 +202,7 @@ class dbexts:
                         classname = dh.split(".")[-1]
                         datahandlerclass = __import__(dh, globals(), locals(), classname)
                         self.datahandler.append(datahandlerclass)
-                keys = [x for x in t.keys() if x not in ['url', 'user', 'pwd', 'driver', 'datahandler', 'name']]
+                keys = [x for x in list(t.keys()) if x not in ['url', 'user', 'pwd', 'driver', 'datahandler', 'name']]
                 props = {}
                 for a in keys:
                     props[a] = t[a]
@@ -227,7 +227,7 @@ class dbexts:
             self.db = database.Connect(self.dburl, dbuser, dbpwd, clear_auto_commit=1)
 
         self.dbname = dbname
-        for a in database.sqltype.keys():
+        for a in list(database.sqltype.keys()):
             setattr(self, database.sqltype[a], a)
         for a in dir(database):
             try:
@@ -466,7 +466,7 @@ class Bulkcopy:
                 colmap = {}
                 for a in self.dst.results:
                     colmap[a[3].lower()] = a[4]
-                cols = self.__filter__(colmap.keys(), include, exclude)
+                cols = self.__filter__(list(colmap.keys()), include, exclude)
                 for a in zip(range(len(cols)), cols):
                     self.bindings[a[0]] = colmap[a[1]]
                 colmap = None
@@ -614,7 +614,7 @@ class Schema:
                     if not idxdict.has_key(a[1]):
                         idxdict[a[1]] = []
                     idxdict[a[1]].append(a)
-                self.indices = idxdict.values()
+                self.indices = list(idxdict.values())
                 if self.sort: self.indices.sort(lambda x, y: cmp(x[0][1], y[0][1]))
         except:
             pass

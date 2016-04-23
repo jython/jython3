@@ -725,7 +725,7 @@ class _Environ(MutableMapping):
     def __repr__(self):
         return 'environ({{{}}})'.format(', '.join(
             ('{!r}: {!r}'.format(self.decodekey(key), self.decodevalue(value))
-            for key, value in self._data.items())))
+            for key, value in list(self._data.items()))))
 
     def copy(self):
         return dict(self)
@@ -763,7 +763,7 @@ def _createenviron():
         def encodekey(key):
             return encode(key).upper()
         data = {}
-        for key, value in environ.items():
+        for key, value in list(environ.items()):
             data[encodekey(key)] = value
     else:
         # Where Env Var Names Can Be Mixed Case

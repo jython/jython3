@@ -94,7 +94,7 @@ def compile(file, cfile=None, dfile=None, doraise=False):
     """
     try:
         _py_compile.compile(file, cfile, dfile)
-    except Exception,err:
+    except Exception as err:
         py_exc = PyCompileError(err.__class__,err.args,dfile or file)
         if doraise:
             raise py_exc
@@ -118,7 +118,7 @@ def main(args=None):
     for filename in args:
         try:
             compile(filename, doraise=True)
-        except PyCompileError, err:
+        except PyCompileError as err:
             # return value to indicate at least one failure
             rv = 1
             sys.stderr.write(err.msg)

@@ -976,7 +976,7 @@ class DocTestFinder:
 
         # Look for tests in a module's contained objects.
         if inspect.ismodule(obj) and self._recurse:
-            for valname, val in obj.__dict__.items():
+            for valname, val in list(obj.__dict__.items()):
                 valname = '%s.%s' % (name, valname)
                 # Recurse to functions & classes.
                 if ((inspect.isroutine(inspect.unwrap(val))
@@ -987,7 +987,7 @@ class DocTestFinder:
 
         # Look for tests in a module's __test__ dictionary.
         if inspect.ismodule(obj) and self._recurse:
-            for valname, val in getattr(obj, '__test__', {}).items():
+            for valname, val in list(getattr(obj, '__test__', {}).items()):
                 if not isinstance(valname, str):
                     raise ValueError("DocTestFinder.find: __test__ keys "
                                      "must be strings: %r" %
@@ -1004,7 +1004,7 @@ class DocTestFinder:
 
         # Look for tests in a class's contained objects.
         if inspect.isclass(obj) and self._recurse:
-            for valname, val in obj.__dict__.items():
+            for valname, val in list(obj.__dict__.items()):
                 # Special handling for staticmethod/classmethod.
                 if isinstance(val, staticmethod):
                     val = getattr(obj, valname)
@@ -1293,7 +1293,7 @@ class DocTestRunner:
             # Merge in the example's options.
             self.optionflags = original_optionflags
             if example.options:
-                for (optionflag, val) in example.options.items():
+                for (optionflag, val) in list(example.options.items()):
                     if val:
                         self.optionflags |= optionflag
                     else:
@@ -1497,7 +1497,7 @@ class DocTestRunner:
         passed = []
         failed = []
         totalt = totalf = 0
-        for x in self._name2ft.items():
+        for x in list(self._name2ft.items()):
             name, (f, t) = x
             assert f <= t
             totalt += t
@@ -1539,7 +1539,7 @@ class DocTestRunner:
     #/////////////////////////////////////////////////////////////////
     def merge(self, other):
         d = self._name2ft
-        for name, (f, t) in other._name2ft.items():
+        for name, (f, t) in list(other._name2ft.items()):
             if name in d:
                 # Don't print here by default, since doing
                 #     so breaks some of the buildbots
@@ -2741,7 +2741,7 @@ def _test():
     parser.add_argument('-v', '--verbose', action='store_true', default=False,
                         help='print very verbose output for all tests')
     parser.add_argument('-o', '--option', action='append',
-                        choices=OPTIONFLAGS_BY_NAME.keys(), default=[],
+                        choices=list(OPTIONFLAGS_BY_NAME.keys()), default=[],
                         help=('specify a doctest option flag to apply'
                               ' to the test run; may be specified more'
                               ' than once to apply multiple options'))
