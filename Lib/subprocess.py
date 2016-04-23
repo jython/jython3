@@ -466,7 +466,7 @@ _active = []
 
 def _cleanup():
     for inst in _active[:]:
-        res = inst._internal_poll(_deadstate=sys.maxint)
+        res = inst._internal_poll(_deadstate=sys.maxsize)
         if res is not None and res >= 0:
             try:
                 _active.remove(inst)
@@ -918,7 +918,7 @@ class Popen(object):
         return data
 
 
-    def __del__(self, _maxint=sys.maxint, _active=_active):
+    def __del__(self, _maxint=sys.maxsize, _active=_active):
         if not self._child_created:
             # We didn't get to successfully create a child process.
             return

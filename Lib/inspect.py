@@ -381,7 +381,7 @@ def cleandoc(doc):
         return None
     else:
         # Find minimum indentation of any non-blank lines after first line.
-        margin = sys.maxint
+        margin = sys.maxsize
         for line in lines[1:]:
             content = len(string.lstrip(line))
             if content:
@@ -390,7 +390,7 @@ def cleandoc(doc):
         # Remove indentation.
         if lines:
             lines[0] = lines[0].lstrip()
-        if margin < sys.maxint:
+        if margin < sys.maxsize:
             for i in range(1, len(lines)): lines[i] = lines[i][margin:]
         # Remove any trailing or leading blank lines.
         while lines and not lines[-1]:
