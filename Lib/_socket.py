@@ -1260,7 +1260,7 @@ class _realsocket(object):
         if local_addr.getAddress().isAnyLocalAddress():
             # Netty 4 will default to an IPv6 "any" address from a channel even if it was originally bound to an IPv4 "any" address
             # so, as a workaround, let's construct a new "any" address using the port information gathered above
-            if type(self.bind_addr.getAddress()) != type(local_addr.getAddress()):
+            if not isinstance(self.bind_addr.getAddress(), type(local_addr.getAddress())):
                 return _socktuple(java.net.InetSocketAddress(self.bind_addr.getAddress(), local_addr.getPort()))
         return _socktuple(local_addr)
 

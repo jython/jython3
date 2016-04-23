@@ -201,8 +201,7 @@ class ImpImporter:
         yielded = {}
         import inspect
 
-        filenames = os.listdir(self.path)
-        filenames.sort()  # handle packages before same-named modules
+        filenames = sorted(os.listdir(self.path))
 
         for fn in filenames:
             modname = inspect.getmodulename(fn)
@@ -338,8 +337,7 @@ try:
     from zipimport import zipimporter
 
     def iter_zipimport_modules(importer, prefix=''):
-        dirlist = zipimport._zip_directory_cache[importer.archive].keys()
-        dirlist.sort()
+        dirlist = sorted(zipimport._zip_directory_cache[importer.archive].keys())
         _prefix = importer.prefix
         plen = len(_prefix)
         yielded = {}

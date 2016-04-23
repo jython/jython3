@@ -166,7 +166,7 @@ def libc_ver(executable=sys.executable,lib='',version='',
     f = open(executable,'rb')
     binary = f.read(chunksize)
     pos = 0
-    while 1:
+    while True:
         m = _libc_search.search(binary,pos)
         if not m:
             binary = f.read(chunksize)
@@ -948,7 +948,7 @@ def _platform(*args):
     platform = replace(platform,'unknown','')
 
     # Fold '--'s and remove trailing '-'
-    while 1:
+    while True:
         cleaned = replace(platform,'--','-')
         if cleaned == platform:
             break

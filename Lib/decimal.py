@@ -3598,12 +3598,12 @@ class Decimal(object):
         return (self.__class__, (str(self),))
 
     def __copy__(self):
-        if type(self) is Decimal:
+        if isinstance(self, Decimal):
             return self     # I'm immutable; therefore I am my own clone
         return self.__class__(str(self))
 
     def __deepcopy__(self, memo):
-        if type(self) is Decimal:
+        if isinstance(self, Decimal):
             return self     # My components are also immutable
         return self.__class__(str(self))
 

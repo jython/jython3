@@ -332,7 +332,7 @@ class dbexts:
         if delim:
             headers = []
             results = []
-            if type(sql) == type(StringType):
+            if isinstance(sql, type(StringType)):
                 if comments: sql = comments(sql)
                 statements = filter(lambda x: len(x) > 0,
                         map(lambda statement: statement.strip(), sql.split(delim)))
@@ -427,14 +427,14 @@ class dbexts:
 
     def bulkcopy(self, dst, table, include=[], exclude=[], autobatch=0, executor=executor):
         """Returns a Bulkcopy object using the given table."""
-        if type(dst) == type(""):
+        if isinstance(dst, type("")):
             dst = dbexts(dst, cfg=self.dbs)
         bcp = Bulkcopy(dst, table, include=include, exclude=exclude, autobatch=autobatch, executor=executor)
         return bcp
 
     def bcp(self, src, table, where='(1=1)', params=[], include=[], exclude=[], autobatch=0, executor=executor):
         """Bulkcopy of rows from a src database to the current database for a given table and where clause."""
-        if type(src) == type(""):
+        if isinstance(src, type("")):
             src = dbexts(src, cfg=self.dbs)
         bcp = self.bulkcopy(self, table, include, exclude, autobatch, executor)
         num = bcp.transfer(src, where, params)
@@ -696,12 +696,12 @@ class ResultSetRow:
         self.row = row
         self.rs = rs
     def __getitem__(self, i):
-        if type(i) == type(""):
+        if isinstance(i, type("")):
             i = self.rs.index(i)
         return self.row[i]
     def __getslice__(self, i, j):
-        if type(i) == type(""): i = self.rs.index(i)
-        if type(j) == type(""): j = self.rs.index(j)
+        if isinstance(i, type("")): i = self.rs.index(i)
+        if isinstance(j, type("")): j = self.rs.index(j)
         return self.row[i:j]
     def __len__(self):
         return len(self.row)
