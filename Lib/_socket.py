@@ -636,7 +636,7 @@ class ChildSocketHandler(ChannelInitializer):
 
 
 # FIXME raise exceptions for ops not permitted on client socket, server socket
-UNKNOWN_SOCKET, CLIENT_SOCKET, SERVER_SOCKET, DATAGRAM_SOCKET = range(4)
+UNKNOWN_SOCKET, CLIENT_SOCKET, SERVER_SOCKET, DATAGRAM_SOCKET = list(range(4))
 _socket_types = {
     UNKNOWN_SOCKET:  "unknown",
     CLIENT_SOCKET:   "client", 

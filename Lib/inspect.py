@@ -796,7 +796,7 @@ def _parse_anonymous_tuple_arg(tuple_arg):
                 i += 1
             else:
                 # need to recurse. find closing paren.
-                for j in xrange(len(names) - 1, i, -1):
+                for j in range(len(names) - 1, i, -1):
                     if names[j].endswith(')'):
                         joined = (", ".join(names[i:j+1]))[1:-1]
                         args.append(_parse_anonymous_tuple_arg(joined))

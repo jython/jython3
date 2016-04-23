@@ -466,7 +466,7 @@ class Bulkcopy:
                 for a in self.dst.results:
                     colmap[a[3].lower()] = a[4]
                 cols = self.__filter__(list(colmap.keys()), include, exclude)
-                for a in zip(range(len(cols)), cols):
+                for a in zip(list(range(len(cols))), cols):
                     self.bindings[a[0]] = colmap[a[1]]
                 colmap = None
             else:
