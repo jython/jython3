@@ -1578,7 +1578,7 @@ def _get_jsockaddr2(address_object, family, sock_type, proto, flags):
     if not isinstance(address_object, tuple) or \
        ((family == AF_INET and len(address_object) != 2) or \
         (family == AF_INET6 and len(address_object) not in [2,4] )) or \
-       not isinstance(address_object[0], (basestring, NoneType)) or \
+       not isinstance(address_object[0], (str, NoneType)) or \
        not isinstance(address_object[1], (int, long)):
         raise TypeError(error_message)
     if len(address_object) == 4 and not isinstance(address_object[3], (int, long)):
@@ -1633,7 +1633,7 @@ def _use_ipv4_addresses_only(value):
 
 
 def _getaddrinfo_get_host(host, family, flags):
-    if not isinstance(host, basestring) and host is not None:
+    if not isinstance(host, str) and host is not None:
         raise TypeError("getaddrinfo() argument 1 must be string or None")
     if flags & AI_NUMERICHOST:
         if not is_ip_address(host):
@@ -1648,7 +1648,7 @@ def _getaddrinfo_get_host(host, family, flags):
 
 
 def _getaddrinfo_get_port(port, flags):
-    if isinstance(port, basestring):
+    if isinstance(port, str):
         try:
             int_port = int(port)
         except ValueError:
@@ -1852,7 +1852,7 @@ except ImportError:
 
 
 def _getnameinfo_get_host(address, flags):
-    if not isinstance(address, basestring):
+    if not isinstance(address, str):
         raise TypeError("getnameinfo() address 1 must be string, not None")
     if isinstance(address, unicode):
         address = encodings.idna.ToASCII(address)

@@ -1014,7 +1014,7 @@ class TextIOWrapper(_TextIOBase):
     def __init__(self, buffer, encoding=None, errors=None, newline=None,
                  line_buffering=False):
         self._ok = False    # Jython: to forbid use in an invalid state
-        if newline is not None and not isinstance(newline, basestring):
+        if newline is not None and not isinstance(newline, str):
             raise TypeError("illegal newline type: %r" % (type(newline),))
         if newline not in (None, "", "\n", "\r", "\r\n"):
             raise ValueError("illegal newline value: %r" % (newline,))
@@ -1027,13 +1027,13 @@ class TextIOWrapper(_TextIOBase):
             else:
                 encoding = locale.getpreferredencoding()
 
-        if not isinstance(encoding, basestring):
+        if not isinstance(encoding, str):
             raise ValueError("invalid encoding: %r" % encoding)
 
         if errors is None:
             errors = "strict"
         else:
-            if not isinstance(errors, basestring):
+            if not isinstance(errors, str):
                 raise ValueError("invalid errors: %r" % errors)
 
         self._buffer = buffer

@@ -206,7 +206,7 @@ class dbexts:
                 props = {}
                 for a in keys:
                     props[a] = t[a]
-                self.db = apply(database.connect, (self.dburl, dbuser, dbpwd, jdbcdriver), props)
+                self.db = database.connect(*(self.dburl, dbuser, dbpwd, jdbcdriver), **props)
             else:
                 self.db = database.lookup(jndiname)
             self.db.autocommit = self.autocommit
