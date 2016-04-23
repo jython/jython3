@@ -80,6 +80,7 @@ XXX Possible additions:
 """
 
 import sys, os
+import collections
 
 __all__ = ["input", "close", "nextfile", "filename", "lineno", "filelineno",
            "isfirstline", "isstdin", "FileInput"]
@@ -230,7 +231,7 @@ class FileInput:
         if openhook:
             if inplace:
                 raise ValueError("FileInput cannot use an opening hook in inplace mode")
-            if not callable(openhook):
+            if not isinstance(openhook, collections.Callable):
                 raise ValueError("FileInput openhook must be callable")
         self._openhook = openhook
 

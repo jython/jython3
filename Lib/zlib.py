@@ -200,7 +200,7 @@ def _get_inflate_data(inflater, max_length=0):
                 l = inflater.inflate(buf, 0, min(1024, max_length - total))
             else:
                 l = inflater.inflate(buf)
-        except DataFormatException, e:
+        except DataFormatException as e:
             raise error(str(e))
 
         if l == 0:

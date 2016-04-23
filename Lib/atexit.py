@@ -8,6 +8,7 @@ One public function, register, is defined.
 __all__ = ["register"]
 
 import sys
+import atexit
 
 _exithandlers = []
 def _run_exitfuncs():
@@ -49,7 +50,7 @@ def register(func, *targs, **kargs):
 if hasattr(sys, "exitfunc"):
     # Assume it's another registered exit function - append it to our list
     register(sys.exitfunc)
-sys.exitfunc = _run_exitfuncs
+atexit.register(_run_exitfuncs)
 
 if __name__ == "__main__":
     def x1():

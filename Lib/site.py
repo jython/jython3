@@ -108,7 +108,7 @@ def makepath(*paths):
 
 def abs__file__():
     """Set all module' __file__ attribute to an absolute path"""
-    for m in sys.modules.values():
+    for m in list(sys.modules.values()):
         if hasattr(m, '__loader__') or (
             _is_jython and not isinstance(m, _ModuleType)):
                 continue   # don't mess with a PEP 302-supplied __file__

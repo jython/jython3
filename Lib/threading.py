@@ -318,7 +318,7 @@ def activeCount():
 active_count = activeCount
 
 def enumerate():
-    return _threads.values()
+    return list(_threads.values())
 
 from thread import stack_size
 

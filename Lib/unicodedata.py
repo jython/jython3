@@ -257,7 +257,7 @@ def normalize(form, unistr):
 
 def get_icu_version():
     versions = []
-    for k in VersionInfo.__dict__.iterkeys():
+    for k in list(VersionInfo.__dict__.keys()):
         if k.startswith("UNICODE_"):
             v = getattr(VersionInfo, k)
             versions.append((v.getMajor(), v.getMinor(), v.getMilli()))

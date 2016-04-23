@@ -1160,7 +1160,7 @@ class TarInfo(object):
            must be unicode objects.
         """
         records = []
-        for keyword, value in pax_headers.iteritems():
+        for keyword, value in list(pax_headers.items()):
             keyword = keyword.encode("utf8")
             value = value.encode("utf8")
             l = len(keyword) + len(value) + 3   # ' ' + '=' + '\n'
@@ -1422,7 +1422,7 @@ class TarInfo(object):
         """Replace fields with supplemental information from a previous
            pax extended or global header.
         """
-        for keyword, value in pax_headers.iteritems():
+        for keyword, value in list(pax_headers.items()):
             if keyword not in PAX_FIELDS:
                 continue
 
@@ -1584,7 +1584,7 @@ class TarFile(object):
                     except EOFHeaderError:
                         self.fileobj.seek(self.offset)
                         break
-                    except HeaderError, e:
+                    except HeaderError as e:
                         raise ReadError(str(e))
 
             if self.mode in "aw":
@@ -1658,7 +1658,7 @@ class TarFile(object):
                     saved_pos = fileobj.tell()
                 try:
                     return func(name, "r", fileobj, **kwargs)
-                except (ReadError, CompressionError), e:
+                except (ReadError, CompressionError) as e:
                     if fileobj is not None:
                         fileobj.seek(saved_pos)
                     continue
@@ -2052,7 +2052,7 @@ class TarFile(object):
                 self.chown(tarinfo, dirpath)
                 self.utime(tarinfo, dirpath)
                 self.chmod(tarinfo, dirpath)
-            except ExtractError, e:
+            except ExtractError as e:
                 if self.errorlevel > 1:
                     raise
                 else:
@@ -2077,7 +2077,7 @@ class TarFile(object):
 
         try:
             self._extract_member(tarinfo, os.path.join(path, tarinfo.name))
-        except EnvironmentError, e:
+        except EnvironmentError as e:
             if self.errorlevel > 0:
                 raise
             else:
@@ -2085,7 +2085,7 @@ class TarFile(object):
                     self._dbg(1, "tarfile: %s" % e.strerror)
                 else:
                     self._dbg(1, "tarfile: %s %r" % (e.strerror, e.filename))
-        except ExtractError, e:
+        except ExtractError as e:
             if self.errorlevel > 1:
                 raise
             else:
@@ -2183,7 +2183,7 @@ class TarFile(object):
             # Use a safe mode for the directory, the real mode is set
             # later in _extract_member().
             os.mkdir(targetpath, 0700)
-        except EnvironmentError, e:
+        except EnvironmentError as e:
             if e.errno != errno.EEXIST:
                 raise
 
@@ -2272,7 +2272,7 @@ class TarFile(object):
                 else:
                     if sys.platform != "os2emx":
                         os.chown(targetpath, u, g)
-            except EnvironmentError, e:
+            except EnvironmentError as e:
                 raise ExtractError("could not change owner")
 
     def chmod(self, tarinfo, targetpath):
@@ -2281,7 +2281,7 @@ class TarFile(object):
         if hasattr(os, 'chmod'):
             try:
                 os.chmod(targetpath, tarinfo.mode)
-            except EnvironmentError, e:
+            except EnvironmentError as e:
                 raise ExtractError("could not change mode")
 
     def utime(self, tarinfo, targetpath):
@@ -2291,7 +2291,7 @@ class TarFile(object):
             return
         try:
             os.utime(targetpath, (tarinfo.mtime, tarinfo.mtime))
-        except EnvironmentError, e:
+        except EnvironmentError as e:
             raise ExtractError("could not change modification time")
 
     #--------------------------------------------------------------------------
@@ -2312,12 +2312,12 @@ class TarFile(object):
         while True:
             try:
                 tarinfo = self.tarinfo.fromtarfile(self)
-            except EOFHeaderError, e:
+            except EOFHeaderError as e:
                 if self.ignore_zeros:
                     self._dbg(2, "0x%X: %s" % (self.offset, e))
                     self.offset += BLOCKSIZE
                     continue
-            except InvalidHeaderError, e:
+            except InvalidHeaderError as e:
                 if self.ignore_zeros:
                     self._dbg(2, "0x%X: %s" % (self.offset, e))
                     self.offset += BLOCKSIZE
@@ -2327,10 +2327,10 @@ class TarFile(object):
             except EmptyHeaderError:
                 if self.offset == 0:
                     raise ReadError("empty file")
-            except TruncatedHeaderError, e:
+            except TruncatedHeaderError as e:
                 if self.offset == 0:
                     raise ReadError(str(e))
-            except SubsequentHeaderError, e:
+            except SubsequentHeaderError as e:
                 raise ReadError(str(e))
             break
 

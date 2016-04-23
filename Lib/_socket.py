@@ -355,9 +355,9 @@ def raises_java_exception(method_or_function):
         try:
             try:
                 return method_or_function(*args, **kwargs)
-            except java.lang.Exception, jlx:
+            except java.lang.Exception as jlx:
                 raise _map_exception(jlx)
-        except error, e:
+        except error as e:
             if is_socket:
                 args[0]._last_error = e[0]
             raise
@@ -603,11 +603,11 @@ class ChildSocketHandler(ChannelInitializer):
         #
         # It's OK that this copy could occur without a mutex, given that such iteration
         # is guaranteed to be weakly consistent
-        child.options = dict(((option, value) for option, value in self.parent_socket.options.iteritems()))
+        child.options = dict(((option, value) for option, value in list(self.parent_socket.options.items())))
         if child.options:
             log.debug("Setting inherited options %s", child.options, extra={"sock": child})
             config = child_channel.config()
-            for option, value in child.options.iteritems():
+            for option, value in list(child.options.items()):
                 _set_option(config.setOption, option, value)
 
         log.debug("Notifing listeners of parent socket %s", self.parent_socket, extra={"sock": child})
@@ -839,7 +839,7 @@ class _realsocket(object):
         self.connected = True
         self.python_inbound_handler = PythonInboundHandler(self)
         bootstrap = Bootstrap().group(NIO_GROUP).channel(NioSocketChannel)
-        for option, value in self.options.iteritems():
+        for option, value in list(self.options.items()):
             _set_option(bootstrap.option, option, value)
 
         # FIXME really this is just for SSL handling, so make more
@@ -917,7 +917,7 @@ class _realsocket(object):
         b.group(self.parent_group, self.child_group)
         b.channel(NioServerSocketChannel)
         b.option(ChannelOption.SO_BACKLOG, backlog)
-        for option, value in self.options.iteritems():
+        for option, value in list(self.options.items()):
             _set_option(b.option, option, value)
             # Note that child options are set in the child handler so
             # that they can take into account any subsequent changes,
@@ -964,7 +964,7 @@ class _realsocket(object):
             self.python_inbound_handler = PythonInboundHandler(self)
             bootstrap = Bootstrap().group(NIO_GROUP).channel(NioDatagramChannel)
             bootstrap.handler(self.python_inbound_handler)
-            for option, value in self.options.iteritems():
+            for option, value in list(self.options.items()):
                 _set_option(bootstrap.option, option, value)
 
             future = bootstrap.register()
@@ -2008,7 +2008,7 @@ class _fileobject(object):
             while True:
                 try:
                     data = self._sock.recv(rbufsize)
-                except error, e:
+                except error as e:
                     if e.args[0] == errno.EINTR:
                         continue
                     raise
@@ -2037,7 +2037,7 @@ class _fileobject(object):
                 # fragmentation issues on many platforms.
                 try:
                     data = self._sock.recv(left)
-                except error, e:
+                except error as e:
                     if e.args[0] == errno.EINTR:
                         continue
                     raise
@@ -2090,7 +2090,7 @@ class _fileobject(object):
                             if not data:
                                 break
                             buffers.append(data)
-                    except error, e:
+                    except error as e:
                         # The try..except to catch EINTR was moved outside the
                         # recv loop to avoid the per byte overhead.
                         if e.args[0] == errno.EINTR:
@@ -2104,7 +2104,7 @@ class _fileobject(object):
             while True:
                 try:
                     data = self._sock.recv(self._rbufsize)
-                except error, e:
+                except error as e:
                     if e.args[0] == errno.EINTR:
                         continue
                     raise
@@ -2133,7 +2133,7 @@ class _fileobject(object):
             while True:
                 try:
                     data = self._sock.recv(self._rbufsize)
-                except error, e:
+                except error as e:
                     if e.args[0] == errno.EINTR:
                         continue
                     raise

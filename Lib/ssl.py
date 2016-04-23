@@ -161,7 +161,7 @@ class SSLSocket(object):
         time.sleep(0.001)  # Necessary apparently for the handler to get into a good state
         try:
             self._sock._handle_channel_future(handshake, "SSL handshake")
-        except socket_error, e:
+        except socket_error as e:
             raise SSLError(SSL_ERROR_SSL, e.strerror)
 
     # Various pass through methods to the wrapped socket

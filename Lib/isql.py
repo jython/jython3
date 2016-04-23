@@ -130,7 +130,7 @@ class IsqlCmd(cmd.Cmd):
     def do_set(self, arg):
         """\nSet a parameter. Some examples:\n set owner = 'informix'\n set types = ['VIEW', 'TABLE']\nThe right hand side is evaluated using `eval()`\n"""
         if len(arg.strip()) == 0:
-            items = self.kw.items()
+            items = list(self.kw.items())
             if len(items):
                 print()
                 # format the results but don't include how many rows affected
@@ -205,9 +205,9 @@ class IsqlCmd(cmd.Cmd):
         while True:
             try:
                 cmd.Cmd.cmdloop(self, intro)
-            except IsqlExit, e:
+            except IsqlExit as e:
                 break
-            except Exception, e:
+            except Exception as e:
                 print()
                 print(e)
                 print()
@@ -218,7 +218,7 @@ if __name__ == '__main__':
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "b:", [])
-    except getopt.error, msg:
+    except getopt.error as msg:
         print()
         print(msg)
         print("Try `%s --help` for more information." % (sys.argv[0]))
