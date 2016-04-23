@@ -162,7 +162,7 @@ def isgeneratorfunction(object):
 
     See help(isfunction) for attributes listing."""
     return bool((isfunction(object) or ismethod(object)) and
-                object.func_code.co_flags & CO_GENERATOR)
+                object.__code__.co_flags & CO_GENERATOR)
 
 def isgenerator(object):
     """Return true if the object is a generator.
@@ -413,7 +413,7 @@ def getfile(object):
     if ismethod(object):
         object = object.im_func
     if isfunction(object):
-        object = object.func_code
+        object = object.__code__
     if istraceback(object):
         object = object.tb_frame
     if isframe(object):
@@ -571,7 +571,7 @@ def findsource(object):
     if ismethod(object):
         object = object.im_func
     if isfunction(object):
-        object = object.func_code
+        object = object.__code__
     if istraceback(object):
         object = object.tb_frame
     if isframe(object):
@@ -824,8 +824,8 @@ def getargspec(func):
         func = func.im_func
     if not isfunction(func):
         raise TypeError('{!r} is not a Python function'.format(func))
-    args, varargs, varkw = getargs(func.func_code)
-    return ArgSpec(args, varargs, varkw, func.func_defaults)
+    args, varargs, varkw = getargs(func.__code__)
+    return ArgSpec(args, varargs, varkw, func.__defaults__)
 
 ArgInfo = namedtuple('ArgInfo', 'args varargs keywords locals')
 

@@ -1975,7 +1975,7 @@ class TarFile(object):
 
         # Change or exclude the TarInfo object.
         if filter is not None:
-            tarinfo = filter(tarinfo)
+            tarinfo = list(filter(tarinfo))
             if tarinfo is None:
                 self._dbg(2, "tarfile: Excluded %r" % name)
                 return
@@ -2392,7 +2392,7 @@ class TarFile(object):
         """
         if tarinfo.issym():
             # Always search the entire archive.
-            linkname = "/".join(filter(None, (os.path.dirname(tarinfo.name), tarinfo.linkname)))
+            linkname = "/".join([_f for _f in (os.path.dirname(tarinfo.name), tarinfo.linkname) if _f])
             limit = None
         else:
             # Search the archive before the link, because a hard link is
@@ -2541,8 +2541,7 @@ class TarFileCompat:
     def namelist(self):
         return map(lambda m: m.name, self.infolist())
     def infolist(self):
-        return filter(lambda m: m.type in REGULAR_TYPES,
-                      self.tarfile.getmembers())
+        return [m for m in self.tarfile.getmembers() if m.type in REGULAR_TYPES]
     def printdir(self):
         self.tarfile.list()
     def testzip(self):

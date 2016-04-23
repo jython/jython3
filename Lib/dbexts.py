@@ -196,7 +196,7 @@ class dbexts:
             if not jndiname:
                 t = self.dbs[("jdbc", dbname)]
                 self.dburl, dbuser, dbpwd, jdbcdriver = t['url'], t['user'], t['pwd'], t['driver']
-                if t.has_key('datahandler'):
+                if 'datahandler' in t:
                     self.datahandler = []
                     for dh in t['datahandler'].split(','):
                         classname = dh.split(".")[-1]
@@ -334,8 +334,7 @@ class dbexts:
             results = []
             if isinstance(sql, type(StringType)):
                 if comments: sql = comments(sql)
-                statements = filter(lambda x: len(x) > 0,
-                        map(lambda statement: statement.strip(), sql.split(delim)))
+                statements = [x for x in map(lambda statement: statement.strip(), sql.split(delim)) if len(x) > 0]
             else:
                 statements = [sql]
             for a in statements:
@@ -490,9 +489,9 @@ class Bulkcopy:
     def __filter__(self, values, include, exclude):
         cols = map(lambda col: col.lower(), values)
         if exclude:
-            cols = filter(lambda x, ex=exclude: x not in ex, cols)
+            cols = list(filter(lambda x, ex=exclude: x not in ex, cols))
         if include:
-            cols = filter(lambda x, inc=include: x in inc, cols)
+            cols = list(filter(lambda x, inc=include: x in inc, cols))
         return cols
 
     def format(self, column, type):
@@ -603,7 +602,7 @@ class Schema:
             if self.db.results:
                 idxdict = {}
                 # mxODBC returns a row of None's, so filter it out
-                idx = map(lambda x: (x[3], x[5].strip(), x[6], x[7], x[8]), filter(lambda x: x[5], self.db.results))
+                idx = map(lambda x: (x[3], x[5].strip(), x[6], x[7], x[8]), [x for x in self.db.results if x[5]])
                 def cckmp(x, y):
                     c = cmp(x[1], y[1])
                     if c == 0: c = cmp(x[3], y[3])
@@ -611,7 +610,7 @@ class Schema:
                 # sort this regardless, this gets the indicies lined up
                 idx.sort(cckmp)
                 for a in idx:
-                    if not idxdict.has_key(a[1]):
+                    if a[1] not in idxdict:
                         idxdict[a[1]] = []
                     idxdict[a[1]].append(a)
                 self.indices = list(idxdict.values())
@@ -660,14 +659,14 @@ class IniParser:
         fp = open(self.cfg, "r")
         data = fp.readlines()
         fp.close()
-        lines = filter(lambda x: len(x) > 0 and x[0] not in ['#', ';'], map(lambda x: x.strip(), data))
+        lines = [x for x in map(lambda x: x.strip(), data) if len(x) > 0 and x[0] not in ['#', ';']]
         current = None
         for i in range(len(lines)):
             line = lines[i]
             g = self.ctypeRE.match(line)
             if g:   # a section header
                 current = {}
-                if not self.records.has_key(g.group(1)):
+                if g.group(1) not in self.records:
                     self.records[g.group(1)] = []
                 self.records[g.group(1)].append(current)
             else:
@@ -677,7 +676,7 @@ class IniParser:
 
     def __getitem__(self, (ctype, skey)):
         if skey == self.key: return self.records[ctype][0][skey]
-        t = filter(lambda x, p=self.key, s=skey: x[p] == s, self.records[ctype])
+        t = list(filter(lambda x, p=self.key, s=skey: x[p] == s, self.records[ctype]))
         if not t or len(t) > 1:
             raise KeyError, "invalid key ('%s', '%s')" % (ctype, skey)
         return t[0]

@@ -16,7 +16,7 @@ This was originally copied from the sandbox of the CPython CVS repository.
 Thanks to Tim Peters for suggesting using it.
 """
 
-from __future__ import division
+
 import time as _time
 import math as _math
 import struct as _struct
