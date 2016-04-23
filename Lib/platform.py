@@ -930,7 +930,7 @@ def _platform(*args):
     # Format the platform string
     platform = string.join(
         map(string.strip,
-            filter(len, args)),
+            list(filter(len, args))),
         '-')
 
     # Cleanup some possible filename obstacles...
@@ -1193,7 +1193,7 @@ def uname():
     except AttributeError:
         no_os_uname = 1
 
-    if no_os_uname or not filter(None, (system, node, release, version, machine)):
+    if no_os_uname or not [_f for _f in (system, node, release, version, machine) if _f]:
         # Hmm, no there is either no uname or uname has returned
         #'unknowns'... we'll have to poke around the system then.
         if no_os_uname:

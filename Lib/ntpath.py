@@ -464,7 +464,7 @@ except ImportError: # no built-in nt module - maybe it's Jython ;)
                         path = sys.getPath(path)
                     else:
                         # Empty path must return current working directory
-                        path = os.getcwdu()
+                        path = os.getcwd()
                 else:
                     # Result must be bytes
                     if path:
@@ -484,10 +484,10 @@ except ImportError: # no built-in nt module - maybe it's Jython ;)
                 if isinstance(path, unicode):
                     # Result must be unicode
                     if path:
-                        path = join(os.getcwdu(), path)
+                        path = join(os.getcwd(), path)
                     else:
                         # Empty path must return current working directory
-                        path = os.getcwdu()
+                        path = os.getcwd()
                 else:
                     # Result must be bytes
                     if path:
@@ -509,7 +509,7 @@ else:  # use native Windows method on Windows
             except WindowsError:
                 pass # Bad path - return unchanged.
         elif isinstance(path, unicode):
-            path = os.getcwdu()
+            path = os.getcwd()
         else:
             path = os.getcwd()
         return normpath(path)

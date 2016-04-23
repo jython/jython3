@@ -138,9 +138,9 @@ class IsqlCmd(cmd.Cmd):
                     print(a)
                 print()
             return False
-        d = filter(lambda x: len(x) > 0, map(lambda x: x.strip(), arg.split("=")))
+        d = [x for x in map(lambda x: x.strip(), arg.split("=")) if len(x) > 0]
         if len(d) == 1:
-            if self.kw.has_key(d[0]):
+            if d[0] in self.kw:
                 del self.kw[d[0]]
         else:
             self.kw[d[0]] = eval(d[1])

@@ -1985,7 +1985,7 @@ class _fileobject(object):
     def writelines(self, list):
         # XXX We could do better here for very long lists
         # XXX Should really reject non-string non-buffers
-        lines = filter(None, map(str, list))
+        lines = [_f for _f in map(str, list) if _f]
         self._wbuf_len += sum(map(len, lines))
         self._wbuf.extend(lines)
         if (self._wbufsize <= 1 or
