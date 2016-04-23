@@ -79,7 +79,7 @@ with catch_warnings():
         filterwarnings("ignore", ".*mimetools has been removed",
                         DeprecationWarning)
     import mimetools
-import SocketServer
+import socketserver
 
 # Default error message template
 DEFAULT_ERROR_MESSAGE = """\
@@ -99,13 +99,13 @@ DEFAULT_ERROR_CONTENT_TYPE = "text/html"
 def _quote_html(html):
     return html.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
-class HTTPServer(SocketServer.TCPServer):
+class HTTPServer(socketserver.TCPServer):
 
     allow_reuse_address = 1    # Seems to make sense in testing environment
 
     def server_bind(self):
         """Override server_bind to store the server name."""
-        SocketServer.TCPServer.server_bind(self)
+        socketserver.TCPServer.server_bind(self)
         try:
             host, port = self.socket.getsockname()[:2]
             self.server_name = socket.getfqdn(host)
@@ -114,7 +114,7 @@ class HTTPServer(SocketServer.TCPServer):
             pass
 
     def server_activate(self):
-        SocketServer.TCPServer.server_activate(self)
+        socketserver.TCPServer.server_activate(self)
         # Adding a second call to getsockname() because of this issue
         # http://wiki.python.org/jython/NewSocketModule#Deferredsocketcreationonjython
         host, port = self.socket.getsockname()[:2]
@@ -122,7 +122,7 @@ class HTTPServer(SocketServer.TCPServer):
         self.server_port = port
 
 
-class BaseHTTPRequestHandler(SocketServer.StreamRequestHandler):
+class BaseHTTPRequestHandler(socketserver.StreamRequestHandler):
 
     """HTTP request handler base class.
 

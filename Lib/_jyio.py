@@ -29,9 +29,9 @@ import errno
 import array
 # Import thread instead of threading to reduce startup cost
 try:
-    from thread import allocate_lock as Lock
+    from _thread import allocate_lock as Lock
 except ImportError:
-    from dummy_thread import allocate_lock as Lock
+    from _dummy_thread import allocate_lock as Lock
 
 #import io
 #from io import (__all__, SEEK_SET, SEEK_CUR, SEEK_END)

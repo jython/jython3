@@ -5,7 +5,7 @@ Performance or careful error checking is not an issue.
 
 """
 
-import cStringIO
+import io
 from _marshal import Marshaller, Unmarshaller
 
 def dump(x, f, version=2):
@@ -19,10 +19,10 @@ def load(f, debug=False):
     return u.load()
 
 def dumps(x, version=2):
-    f = cStringIO.StringIO()
+    f = io.StringIO()
     dump(x, f, version)
     return f.getvalue()
 
 def loads(s):
-    f = cStringIO.StringIO(s)
+    f = io.StringIO(s)
     return load(f)

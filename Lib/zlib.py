@@ -16,7 +16,7 @@ objects support decompress() and flush().
 import array
 import binascii
 import jarray
-from cStringIO import StringIO
+from io import StringIO
 
 from java.lang import Long, String, System
 from java.util.zip import Adler32, Deflater, Inflater, DataFormatException
