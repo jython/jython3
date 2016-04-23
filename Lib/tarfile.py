@@ -2554,9 +2554,9 @@ class TarFileCompat:
         self.tarfile.add(filename, arcname)
     def writestr(self, zinfo, bytes):
         try:
-            from cStringIO import StringIO
+            from io import StringIO
         except ImportError:
-            from StringIO import StringIO
+            from io import StringIO
         import calendar
         tinfo = TarInfo(zinfo.filename)
         tinfo.size = len(bytes)

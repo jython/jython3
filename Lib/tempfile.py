@@ -35,9 +35,9 @@ import errno as _errno
 from random import Random as _Random
 
 try:
-    from cStringIO import StringIO as _StringIO
+    from io import StringIO as _StringIO
 except ImportError:
-    from StringIO import StringIO as _StringIO
+    from io import StringIO as _StringIO
 
 try:
     import fcntl as _fcntl
@@ -57,9 +57,9 @@ else:
 
 
 try:
-    import thread as _thread
+    import _thread as _thread
 except ImportError:
-    import dummy_thread as _thread
+    import _dummy_thread as _thread
 _allocate_lock = _thread.allocate_lock
 
 _text_openflags = _os.O_RDWR | _os.O_CREAT | _os.O_EXCL

@@ -3,7 +3,7 @@ import sys
 import uuid
 from array import array
 from contextlib import closing
-from StringIO import StringIO
+from io import StringIO
 
 from java.io import BufferedInputStream, BufferedReader, FileReader, InputStreamReader, ByteArrayInputStream
 from java.security import KeyStore, Security

@@ -5,8 +5,8 @@ from java.util.concurrent.locks import ReentrantLock
 from org.python.util import jython
 from org.python.core import Py
 from jythonlib import CacheBuilder, CacheLoader, MapMaker, dict_builder
-from thread import _newFunctionThread
-from thread import _local as local
+from _thread import _newFunctionThread
+from _thread import _local as local
 from _threading import Lock, RLock, Condition, _Lock, _RLock
 import java.lang.Thread
 import sys as _sys
@@ -320,7 +320,7 @@ active_count = activeCount
 def enumerate():
     return list(_threads.values())
 
-from thread import stack_size
+from _thread import stack_size
 
 
 _MainThread()

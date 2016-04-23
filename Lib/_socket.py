@@ -15,7 +15,7 @@ from functools import partial, wraps
 from itertools import chain
 from jythonlib import MapMaker, dict_builder
 from numbers import Number
-from StringIO import StringIO
+from io import StringIO
 from threading import Condition, Lock
 from types import MethodType, NoneType
 
