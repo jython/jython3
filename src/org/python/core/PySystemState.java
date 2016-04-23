@@ -123,7 +123,9 @@ public class PySystemState extends PyObject implements AutoCloseable,
 
     public static Properties registry; // = init_registry();
     public static PyObject prefix;
+    public static PyObject base_prefix;
     public static PyObject exec_prefix = Py.EmptyString;
+    public static PyObject base_exec_prefix = exec_prefix;
 
     public static final PyString byteorder = new PyString("big");
     public static final int maxint = Integer.MAX_VALUE;
@@ -814,9 +816,11 @@ public class PySystemState extends PyObject implements AutoCloseable,
         }
         if (prefix != null) {
             PySystemState.prefix = Py.newString(prefix);
+            PySystemState.base_prefix = PySystemState.prefix;
         }
         if (exec_prefix != null) {
             PySystemState.exec_prefix = Py.newString(exec_prefix);
+            PySystemState.base_exec_prefix = Py.newString(exec_prefix);
         }
         try {
             String pythonpath = System.getenv("PYTHONPATH");
