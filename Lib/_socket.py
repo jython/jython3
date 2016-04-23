@@ -1594,7 +1594,7 @@ def _get_jsockaddr2(address_object, family, sock_type, proto, flags):
             hostname = {AF_INET: INADDR_ANY, AF_INET6: IN6ADDR_ANY_INIT}[family]
         else:
             hostname = "localhost"
-    if isinstance(hostname, unicode):
+    if isinstance(hostname, str):
         hostname = encodings.idna.ToASCII(hostname)
     addresses = getaddrinfo(hostname, port, family, sock_type, proto, flags)
     if len(addresses) == 0:
@@ -1642,7 +1642,7 @@ def _getaddrinfo_get_host(host, family, flags):
             raise gaierror(EAI_ADDRFAMILY, "Address family for hostname not supported")
         if family == AF_INET6 and not is_ipv6_address(host):
             raise gaierror(EAI_ADDRFAMILY, "Address family for hostname not supported")
-    if isinstance(host, unicode):
+    if isinstance(host, str):
         host = encodings.idna.ToASCII(host)
     return host
 
@@ -1854,7 +1854,7 @@ except ImportError:
 def _getnameinfo_get_host(address, flags):
     if not isinstance(address, str):
         raise TypeError("getnameinfo() address 1 must be string, not None")
-    if isinstance(address, unicode):
+    if isinstance(address, str):
         address = encodings.idna.ToASCII(address)
     jia = InetAddress.getByName(address)
     result = jia.getCanonicalHostName()

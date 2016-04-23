@@ -30,21 +30,21 @@ _forms = {
 Nonesuch = object()   # to distinguish from None, which is a valid return value for some functions
 
 
-def _validate_unichr(unichr):
-    if not(isinstance(unichr, unicode)):
-        raise TypeError("must be unicode, not {}".format(type(unichr).__name__))
-    if len(unichr) > 1 or len(unichr) == 0:
+def _validate_unichr(chr):
+    if not(isinstance(chr, str)):
+        raise TypeError("must be unicode, not {}".format(type(chr).__name__))
+    if len(chr) > 1 or len(chr) == 0:
         raise TypeError("need a single Unicode character as parameter")
 
 
-def _get_codepoint(unichr):
-    _validate_unichr(unichr)
-    return ord(unichr)
+def _get_codepoint(chr):
+    _validate_unichr(chr)
+    return ord(chr)
 
 
-def name(unichr, default=Nonesuch):
+def name(chr, default=Nonesuch):
     # handle None
-    n = UCharacter.getName(_get_codepoint(unichr))
+    n = UCharacter.getName(_get_codepoint(chr))
     if n is None:
         if default is not Nonesuch:
             return default
@@ -57,11 +57,11 @@ def lookup(name):
     codepoint = UCharacter.getCharFromName(name)
     if codepoint == -1:
         raise KeyError("undefined character name '{}".format(name))
-    return unichr(codepoint)
+    return chr(codepoint)
 
 
-def digit(unichr, default=Nonesuch):
-    d = UCharacter.digit(_get_codepoint(unichr))
+def digit(chr, default=Nonesuch):
+    d = UCharacter.digit(_get_codepoint(chr))
     if d == -1:
         if default is not Nonesuch:
             return default
@@ -70,8 +70,8 @@ def digit(unichr, default=Nonesuch):
     return d
 
 
-def decimal(unichr, default=Nonesuch):
-    d = UCharacter.getNumericValue(_get_codepoint(unichr))
+def decimal(chr, default=Nonesuch):
+    d = UCharacter.getNumericValue(_get_codepoint(chr))
     if d < 0 or d > 9:
         if default is not Nonesuch:
             return default
@@ -80,8 +80,8 @@ def decimal(unichr, default=Nonesuch):
     return d
 
 
-def numeric(unichr, default=Nonesuch):
-    n = UCharacter.getUnicodeNumericValue(_get_codepoint(unichr))
+def numeric(chr, default=Nonesuch):
+    n = UCharacter.getUnicodeNumericValue(_get_codepoint(chr))
     if n == UCharacter.NO_NUMERIC_VALUE:
         if default is not Nonesuch:
             return default
@@ -111,20 +111,20 @@ _decomp = {
     DecompositionType.WIDE: "wide"
 }
 
-def _get_decomp_type(unichr):
-    if unichr == u"\u2044":  # FRACTION SLASH
+def _get_decomp_type(chr):
+    if chr == "\u2044":  # FRACTION SLASH
         # special case this for CPython compatibility even though this returns as not being combining, eg, see
         # http://www.fileformat.info/info/unicode/char/2044/index.htm
         return "fraction"
     else:
-        return _decomp[UCharacter.getIntPropertyValue(ord(unichr), UProperty.DECOMPOSITION_TYPE)]
+        return _decomp[UCharacter.getIntPropertyValue(ord(chr), UProperty.DECOMPOSITION_TYPE)]
 
-def decomposition(unichr):
-    _validate_unichr(unichr)
-    d = Normalizer.decompose(unichr, True)
+def decomposition(chr):
+    _validate_unichr(chr)
+    d = Normalizer.decompose(chr, True)
     decomp_type = None
     if len(d) == 1:
-        decomp_type = _get_decomp_type(unichr)
+        decomp_type = _get_decomp_type(chr)
     else:
         for c in d:
             decomp_type = _get_decomp_type(c)
@@ -184,8 +184,8 @@ _cat = {
     ECharacterCategory.UPPERCASE_LETTER: "Lu",
 }
 
-def category(unichr):
-    return _cat[UCharacter.getType(_get_codepoint(unichr))]
+def category(chr):
+    return _cat[UCharacter.getType(_get_codepoint(chr))]
 
 
 _dir = {
@@ -214,16 +214,16 @@ _dir = {
     ECharacterDirection.WHITE_SPACE_NEUTRAL: "WS"
 }
 
-def bidirectional(unichr):
-    return _dir[UCharacter.getDirection(_get_codepoint(unichr))]
+def bidirectional(chr):
+    return _dir[UCharacter.getDirection(_get_codepoint(chr))]
 
 
-def combining(unichr):
-    return UCharacter.getCombiningClass(_get_codepoint(unichr))
+def combining(chr):
+    return UCharacter.getCombiningClass(_get_codepoint(chr))
 
 
-def mirrored(unichr):
-    return UCharacter.isMirrored(_get_codepoint(unichr))
+def mirrored(chr):
+    return UCharacter.isMirrored(_get_codepoint(chr))
 
 
 _eaw = {
@@ -237,8 +237,8 @@ _eaw = {
     EastAsianWidth.WIDE      : "W"
 }
 
-def east_asian_width(unichr):
-    return _eaw[UCharacter.getIntPropertyValue(_get_codepoint(unichr), UProperty.EAST_ASIAN_WIDTH)]
+def east_asian_width(chr):
+    return _eaw[UCharacter.getIntPropertyValue(_get_codepoint(chr), UProperty.EAST_ASIAN_WIDTH)]
 
 
 def normalize(form, unistr):

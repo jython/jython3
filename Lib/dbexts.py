@@ -674,7 +674,8 @@ class IniParser:
                 if g:
                     current[g.group(1)] = g.group(2)
 
-    def __getitem__(self, (ctype, skey)):
+    def __getitem__(self, xxx_todo_changeme):
+        (ctype, skey) = xxx_todo_changeme
         if skey == self.key: return self.records[ctype][0][skey]
         t = list(filter(lambda x, p=self.key, s=skey: x[p] == s, self.records[ctype]))
         if not t or len(t) > 1:

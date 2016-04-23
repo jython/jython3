@@ -454,7 +454,7 @@ class _Stream:
                                             0)
         timestamp = struct.pack("<L", int(time.time()))
         self.__write("\037\213\010\010%s\002\377" % timestamp)
-        if isinstance(self.name, unicode):
+        if isinstance(self.name, str):
             self.name = self.name.encode("iso-8859-1", "replace")
         if self.name.endswith(".gz"):
             self.name = self.name[:-3]
@@ -980,7 +980,7 @@ class TarInfo(object):
             info["name"] += "/"
 
         for key in ("name", "linkname", "uname", "gname"):
-            if isinstance(info[key], unicode):
+            if isinstance(info[key], str):
                 info[key] = info[key].encode(encoding, errors)
 
         return info
@@ -1066,7 +1066,7 @@ class TarInfo(object):
 
             val = info[name]
             if not 0 <= val < 8 ** (digits - 1) or isinstance(val, float):
-                pax_headers[name] = unicode(val)
+                pax_headers[name] = str(val)
                 info[name] = 0
 
         # Create a pax extended header if necessary.

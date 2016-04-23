@@ -864,7 +864,7 @@ class date(object):
         return _wrap_strftime(self, fmt, self.timetuple())
 
     def __format__(self, fmt):
-        if not isinstance(fmt, (str, unicode)):
+        if not isinstance(fmt, (str, str)):
             raise ValueError("__format__ expects str or unicode, not %s" %
                              fmt.__class__.__name__)
         if len(fmt) != 0:
@@ -1375,7 +1375,7 @@ class time(object):
         return _wrap_strftime(self, fmt, timetuple)
 
     def __format__(self, fmt):
-        if not isinstance(fmt, (str, unicode)):
+        if not isinstance(fmt, (str, str)):
             raise ValueError("__format__ expects str or unicode, not %s" %
                              fmt.__class__.__name__)
         if len(fmt) != 0:

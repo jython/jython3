@@ -30,10 +30,10 @@ def set(seq):
         s[elem] = 1
     return s
 
-_LITERAL_CODES = set([LITERAL, NOT_LITERAL])
-_REPEATING_CODES = set([REPEAT, MIN_REPEAT, MAX_REPEAT])
-_SUCCESS_CODES = set([SUCCESS, FAILURE])
-_ASSERT_CODES = set([ASSERT, ASSERT_NOT])
+_LITERAL_CODES = {LITERAL, NOT_LITERAL}
+_REPEATING_CODES = {REPEAT, MIN_REPEAT, MAX_REPEAT}
+_SUCCESS_CODES = {SUCCESS, FAILURE}
+_ASSERT_CODES = {ASSERT, ASSERT_NOT}
 
 def _compile(code, pattern, flags):
     # internal: compile a (sub)pattern
