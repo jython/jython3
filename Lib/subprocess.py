@@ -1111,7 +1111,7 @@ class Popen(object):
                            errread, errwrite):
             """Execute program (MS Windows version)"""
 
-            if not isinstance(args, types.StringTypes):
+            if not isinstance(args, str):
                 args = list2cmdline(args)
 
             # Process startup details
@@ -1300,14 +1300,14 @@ class Popen(object):
                            stdin, stdout, stderr):
             """Execute program (Java version)"""
 
-            if isinstance(args, types.StringTypes):
+            if isinstance(args, str):
                 args = _cmdline2listimpl(args)
             else:
                 args = list(args)
                 # NOTE: CPython posix (execv) will str() any unicode
                 # args first, maybe we should do the same on
                 # posix. Windows passes unicode through, however
-                if any(not isinstance(arg, (str, unicode)) for arg in args):
+                if any(not isinstance(arg, (str, str)) for arg in args):
                     raise TypeError('args must contain only strings')
             args = _escape_args(args)
 
@@ -1540,7 +1540,7 @@ class Popen(object):
                            errread, errwrite):
             """Execute program (POSIX version)"""
 
-            if isinstance(args, types.StringTypes):
+            if isinstance(args, str):
                 args = [args]
             else:
                 args = list(args)

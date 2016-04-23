@@ -351,7 +351,7 @@ class BytesIO(_BufferedIOBase):
     def write(self, b):
         if self.closed:
             raise ValueError("write to closed file")
-        if isinstance(b, unicode):
+        if isinstance(b, str):
             raise TypeError("can't write unicode to binary stream")
         n = len(b)
         if n == 0:
@@ -604,7 +604,7 @@ class BufferedWriter(_BufferedIOMixin):
         self._checkWritable()       # Jython: to forbid use in an invalid state
         if self.closed:
             raise ValueError("write to closed file")
-        if isinstance(b, unicode):
+        if isinstance(b, str):
             raise TypeError("can't write unicode to binary stream")
         with self._write_lock:
             # XXX we can implement some more tricks to try and avoid
@@ -973,7 +973,7 @@ class IncrementalNewlineDecoder(codecs.IncrementalDecoder):
 
 def _check_decoded_chars(chars):
     """Check decoder output is unicode"""
-    if not isinstance(chars, unicode):
+    if not isinstance(chars, str):
         raise TypeError("decoder should return a string result, not '%s'" %
                         type(chars))
 
@@ -1151,7 +1151,7 @@ class TextIOWrapper(_TextIOBase):
         self._checkWritable()       # Jython: to forbid use in an invalid state
         if self.closed:
             raise ValueError("write to closed file")
-        if not isinstance(s, unicode):
+        if not isinstance(s, str):
             raise TypeError("can't write %s to text stream" %
                             s.__class__.__name__)
         length = len(s)
@@ -1554,7 +1554,7 @@ class StringIO(TextIOWrapper):
     def __init__(self, initial_value="", newline="\n"):
 
         # Newline mark needs to be in bytes: convert if not already so
-        if isinstance(newline, unicode) :
+        if isinstance(newline, str) :
             newline = newline.encode("utf-8")
 
         super(StringIO, self).__init__(BytesIO(),
@@ -1567,7 +1567,7 @@ class StringIO(TextIOWrapper):
             self._writetranslate = False
         # An initial value may have been supplied (and must be unicode)
         if initial_value is not None:
-            if not isinstance(initial_value, unicode) :
+            if not isinstance(initial_value, str) :
                 fmt = "initial value should be unicode or None, got %s"
                 raise TypeError( fmt % type(initial_value) )
             if initial_value:
@@ -1595,7 +1595,7 @@ class StringIO(TextIOWrapper):
         # Write the buffer, bypassing end-of-line translation.
         value = state[0]
         if value is not None:
-            if not isinstance(value, unicode) :
+            if not isinstance(value, str) :
                 fmt = "ivalue should be unicode or None, got %s"
                 raise TypeError( fmt % type(value) )
             encoder = self._encoder or self._get_encoder()

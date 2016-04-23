@@ -65,7 +65,7 @@ def isclass(object):
     Class objects provide these attributes:
         __doc__         documentation string
         __module__      name of module in which this class was defined"""
-    return isinstance(object, (type, types.ClassType))
+    return isinstance(object, (type, type))
 
 def ismethod(object):
     """Return true if the object is an instance method.
@@ -366,7 +366,7 @@ def getdoc(object):
         doc = object.__doc__
     except AttributeError:
         return None
-    if not isinstance(doc, types.StringTypes):
+    if not isinstance(doc, str):
         return None
     return cleandoc(doc)
 
@@ -977,7 +977,7 @@ def getcallargs(func, *positional, **named):
         assign(varkw, named)
     elif named:
         unexpected = next(iter(named))
-        if isinstance(unexpected, unicode):
+        if isinstance(unexpected, str):
             unexpected = unexpected.encode(sys.getdefaultencoding(), 'replace')
         raise TypeError("%s() got an unexpected keyword argument '%s'" %
                         (f_name, unexpected))

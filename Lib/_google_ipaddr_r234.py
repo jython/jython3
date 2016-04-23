@@ -1222,7 +1222,7 @@ class IPv4Network(_BaseV4, _BaseNet):
     """
 
     # the valid octets for host and netmasks. only useful for IPv4.
-    _valid_mask_octets = set((255, 254, 252, 248, 240, 224, 192, 128, 0))
+    _valid_mask_octets = {255, 254, 252, 248, 240, 224, 192, 128, 0}
 
     def __init__(self, address, strict=False):
         """Instantiate a new IPv4 network object.

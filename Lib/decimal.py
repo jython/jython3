@@ -6002,7 +6002,7 @@ def _parse_format_specifier(format_spec, _localeconv=None):
         format_dict['decimal_point'] = '.'
 
     # record whether return type should be str or unicode
-    format_dict['unicode'] = isinstance(format_spec, unicode)
+    format_dict['unicode'] = isinstance(format_spec, str)
 
     return format_dict
 
@@ -6035,7 +6035,7 @@ def _format_align(sign, body, spec):
 
     # make sure that result is unicode if necessary
     if spec['unicode']:
-        result = unicode(result)
+        result = str(result)
 
     return result
 
