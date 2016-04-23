@@ -9,6 +9,8 @@ import java.util.Map;
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
 import org.python.core.PyArray;
+import org.python.core.PyFrozenSet;
+import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyType;
@@ -41,6 +43,8 @@ public class _hashlib implements ClassDictInit {
         dict.__setitem__("__name__", Py.newString("_hashlib"));
         dict.__setitem__("algorithmMap", null);
         dict.__setitem__("classDictInit", null);
+        PyList list = new PyList(algorithmMap.keySet());
+        dict.__setitem__("openssl_md_meth_names", new PyFrozenSet(list));
     }
 
     public static PyObject new$(String name) {
