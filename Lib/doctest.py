@@ -1278,7 +1278,7 @@ class DocTestRunner:
         # to modify them).
         original_optionflags = self.optionflags
 
-        SUCCESS, FAILURE, BOOM = range(3) # `outcome` state
+        SUCCESS, FAILURE, BOOM = list(range(3)) # `outcome` state
 
         check = self._checker.check_output
 

@@ -39,7 +39,7 @@ dict_valueiterator = type(iter(list({}.values())))
 dict_itemiterator = type(iter(list({}.items())))
 list_iterator = type(iter([]))
 list_reverseiterator = type(iter(reversed([])))
-range_iterator = type(iter(range(0)))
+range_iterator = type(iter(list(range(0))))
 set_iterator = type(iter(set()))
 str_iterator = type(iter(""))
 tuple_iterator = type(iter(()))
@@ -652,7 +652,7 @@ class Sequence(Sized, Iterable, Container):
         return False
 
     def __reversed__(self):
-        for i in reversed(range(len(self))):
+        for i in reversed(list(range(len(self)))):
             yield self[i]
 
     def index(self, value):

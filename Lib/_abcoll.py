@@ -538,7 +538,7 @@ class Sequence(Sized, Iterable, Container):
         return False
 
     def __reversed__(self):
-        for i in reversed(range(len(self))):
+        for i in reversed(list(range(len(self)))):
             yield self[i]
 
     def index(self, value):

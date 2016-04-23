@@ -135,7 +135,7 @@ def set_completer(function=None):
         # >>>
         # Display all 186 possibilities? (y or n)
         # Currently Jython arbitrarily limits this to 100 and displays them
-        for state in xrange(100):
+        for state in range(100):
             completion = None
             try:
                 completion = function(delimited, state)
@@ -155,7 +155,7 @@ def get_completer():
 
 def _get_delimited(buffer, cursor):
     start = cursor
-    for i in xrange(cursor-1, -1, -1):
+    for i in range(cursor-1, -1, -1):
         if buffer[i] in _completer_delims:
             break
         start = i

@@ -191,7 +191,7 @@ def nti(s):
             raise InvalidHeaderError("invalid header")
     else:
         n = 0
-        for i in xrange(len(s) - 1):
+        for i in range(len(s) - 1):
             n <<= 8
             n += ord(s[i + 1])
     return n
@@ -217,7 +217,7 @@ def itn(n, digits=8, format=DEFAULT_FORMAT):
             n = struct.unpack("L", struct.pack("l", n))[0]
 
         s = ""
-        for i in xrange(digits - 1):
+        for i in range(digits - 1):
             s = chr(n & 0o377) + s
             n >>= 8
         s = chr(0o200) + s
@@ -268,7 +268,7 @@ def copyfileobj(src, dst, length=None):
 
     BUFSIZE = 16 * 1024
     blocks, remainder = divmod(length, BUFSIZE)
-    for b in xrange(blocks):
+    for b in range(blocks):
         buf = src.read(BUFSIZE)
         if len(buf) < BUFSIZE:
             raise IOError("end of file reached")
@@ -549,7 +549,7 @@ class _Stream:
         """
         if pos - self.pos >= 0:
             blocks, remainder = divmod(pos - self.pos, self.bufsize)
-            for i in xrange(blocks):
+            for i in range(blocks):
                 self.read(self.bufsize)
             self.read(remainder)
         else:
@@ -1314,7 +1314,7 @@ class TarInfo(object):
         realpos = 0
         # There are 4 possible sparse structs in the
         # first header.
-        for i in xrange(4):
+        for i in range(4):
             try:
                 offset = nti(buf[pos:pos + 12])
                 numbytes = nti(buf[pos + 12:pos + 24])
@@ -1335,7 +1335,7 @@ class TarInfo(object):
         while isextended == 1:
             buf = tarfile.fileobj.read(BLOCKSIZE)
             pos = 0
-            for i in xrange(21):
+            for i in range(21):
                 try:
                     offset = nti(buf[pos:pos + 12])
                     numbytes = nti(buf[pos + 12:pos + 24])

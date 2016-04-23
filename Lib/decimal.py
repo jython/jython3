@@ -1918,7 +1918,7 @@ class Decimal(object):
 
         # compute result using integer pow()
         base = (base.int % modulo * pow(10, base.exp, modulo)) % modulo
-        for i in xrange(exponent.exp):
+        for i in range(exponent.exp):
             base = pow(base, 10, modulo)
         base = pow(base, exponent.int, modulo)
 
@@ -5555,7 +5555,7 @@ def _ilog(x, M, L = 8):
     T = -int(-10*len(str(M))//(3*L))
     yshift = _rshift_nearest(y, R)
     w = _div_nearest(M, T)
-    for k in xrange(T-1, 0, -1):
+    for k in range(T-1, 0, -1):
         w = _div_nearest(M, k) - _div_nearest(yshift*w, M)
 
     return _div_nearest(w*y, M)
@@ -5702,11 +5702,11 @@ def _iexp(x, M, L=8):
     T = -int(-10*len(str(M))//(3*L))
     y = _div_nearest(x, T)
     Mshift = int(M)<<R
-    for i in xrange(T-1, 0, -1):
+    for i in range(T-1, 0, -1):
         y = _div_nearest(x*(Mshift + y), Mshift * i)
 
     # Expansion
-    for k in xrange(R-1, -1, -1):
+    for k in range(R-1, -1, -1):
         Mshift = int(M)<<(k+2)
         y = _div_nearest(y*(y+Mshift), Mshift)
 
