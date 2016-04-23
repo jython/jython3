@@ -83,7 +83,7 @@ def compile_command(source, filename="<input>", symbol="single"):
       malformed literals).
     """
     if symbol not in ['single','eval']:
-        raise ValueError,"symbol arg must be either single or eval"
+        raise ValueError("symbol arg must be either single or eval")
     symbol = CompileMode.getMode(symbol)
     return Py.compile_command_flags(source,filename,symbol,Py.getCompilerFlags(),0)
 
@@ -129,6 +129,6 @@ class CommandCompiler:
           malformed literals).
         """
         if symbol not in ['single','eval']:
-            raise ValueError,"symbol arg must be either single or eval"
+            raise ValueError("symbol arg must be either single or eval")
         symbol = CompileMode.getMode(symbol)
         return Py.compile_command_flags(source,filename,symbol,self._cflags,0)

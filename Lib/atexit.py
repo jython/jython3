@@ -32,7 +32,7 @@ def _run_exitfuncs():
             exc_info = sys.exc_info()
 
     if exc_info is not None:
-        raise exc_info[0], exc_info[1], exc_info[2]
+        raise exc_info[0](exc_info[1]).with_traceback(exc_info[2])
 
 
 def register(func, *targs, **kargs):

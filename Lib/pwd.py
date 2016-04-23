@@ -18,7 +18,7 @@ except:
 import sys
 
 if _name == 'nt':
-    raise ImportError, 'pwd module not supported on Windows'
+    raise ImportError('pwd module not supported on Windows')
 
 class struct_passwd(tuple):
     """
