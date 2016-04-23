@@ -150,7 +150,7 @@ def commonprefix(m):
     prefix = m[0]
     for item in m:
         for i in range(len(prefix)):
-            if prefix[:i+1] <> item[:i+1]:
+            if prefix[:i+1] != item[:i+1]:
                 prefix = prefix[:i]
                 if i == 0: return ''
                 break
@@ -240,7 +240,7 @@ def normpath(path):
         elif comps[i] == pardir and i > 0 and comps[i-1] not in ('', pardir):
             del comps[i-1:i+1]
             i = i-1
-        elif comps[i] == '' and i > 0 and comps[i-1] <> '':
+        elif comps[i] == '' and i > 0 and comps[i-1] != '':
             del comps[i]
         else:
             i = i+1

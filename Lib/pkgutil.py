@@ -146,7 +146,7 @@ def iter_modules(path=None, prefix=''):
     if path is None:
         importers = iter_importers()
     else:
-        importers = map(get_importer, path)
+        importers = list(map(get_importer, path))
 
     yielded = {}
     for i in importers:

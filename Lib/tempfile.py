@@ -137,7 +137,7 @@ class _RandomNameSequence:
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         m = self.mutex
         c = self.characters
         choose = self.rng.choice
@@ -202,7 +202,7 @@ def _get_default_tempdir():
             dir = _os.path.abspath(dir) # See CPython Issue 14255
         # Try only a few names per directory.
         for seq in xrange(100):
-            name = namer.next()
+            name = next(namer)
             filename = _os.path.join(dir, name)
             try:
                 fd = _os.open(filename, flags, 0o600)
@@ -244,7 +244,7 @@ def _mkstemp_inner(dir, pre, suf, flags):
     names = _get_candidate_names()
 
     for seq in xrange(TMP_MAX):
-        name = names.next()
+        name = next(names)
         file = _os.path.join(dir, pre + name + suf)
         try:
             fd = _os.open(file, flags, 0600)
@@ -334,7 +334,7 @@ def mkdtemp(suffix="", prefix=template, dir=None):
     names = _get_candidate_names()
 
     for seq in xrange(TMP_MAX):
-        name = names.next()
+        name = next(names)
         file = _os.path.join(dir, prefix + name + suffix)
         try:
             _os.mkdir(file, 0700)
@@ -368,7 +368,7 @@ def mktemp(suffix="", prefix=template, dir=None):
 
     names = _get_candidate_names()
     for seq in xrange(TMP_MAX):
-        name = names.next()
+        name = next(names)
         file = _os.path.join(dir, prefix + name + suffix)
         if not _exists(file):
             return file
@@ -593,8 +593,8 @@ class SpooledTemporaryFile:
     def newlines(self): # Jython not CPython
         return self._file.newlines
 
-    def next(self):
-        return self._file.next
+    def __next__(self):
+        return self._file.__next__
 
     def read(self, *args):
         return self._file.read(*args)

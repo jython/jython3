@@ -777,7 +777,7 @@ class Popen(object):
         _cleanup()
 
         self._child_created = False
-        if not isinstance(bufsize, (int, long)):
+        if not isinstance(bufsize, (int, int)):
             raise TypeError("bufsize must be an integer")
 
         if mswindows:

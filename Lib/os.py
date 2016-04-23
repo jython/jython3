@@ -618,7 +618,7 @@ if _exists('execv'):
         path_list = get_exec_path(env)
         if name != 'nt':
             file = fsencode(file)
-            path_list = map(fsencode, path_list)
+            path_list = list(map(fsencode, path_list))
         for dir in path_list:
             fullname = path.join(dir, file)
             try:
