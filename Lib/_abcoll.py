@@ -551,7 +551,7 @@ class Sequence(Sized, Iterable, Container):
         return sum(1 for v in self if v == value)
 
 Sequence.register(tuple)
-Sequence.register(basestring)
+Sequence.register(str)
 Sequence.register(buffer)
 Sequence.register(xrange)
 

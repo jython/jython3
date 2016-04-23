@@ -27,7 +27,7 @@ warnings.warn('The javapath module is deprecated. Use the os.path module.',
 
 
 def _tostr(s, method):
-    if isinstance(s, basestring):
+    if isinstance(s, str):
         return s
     raise TypeError, "%s() argument must be a str or unicode object, not %s" % (
                 method, _type_name(s))

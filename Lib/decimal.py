@@ -547,7 +547,7 @@ class Decimal(object):
 
         # From a string
         # REs insist on real strings, so we can too.
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             m = _parser(value.strip())
             if m is None:
                 if context is None:
@@ -3915,7 +3915,7 @@ class Context(object):
         This method implements the to-number operation of the
         IBM Decimal specification."""
 
-        if isinstance(num, basestring) and num != num.strip():
+        if isinstance(num, str) and num != num.strip():
             return self._raise_error(ConversionSyntax,
                                      "no trailing or leading whitespace is "
                                      "permitted.")

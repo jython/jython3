@@ -35,7 +35,7 @@ class Popen3:
         stderr = subprocess.PIPE if capturestderr else None
         PIPE = subprocess.PIPE
         self._popen = subprocess.Popen(cmd, bufsize=bufsize,
-                                       shell=isinstance(cmd, basestring),
+                                       shell=isinstance(cmd, str),
                                        stdin=PIPE, stdout=PIPE, stderr=stderr)
         self._setup(cmd)
 
@@ -75,7 +75,7 @@ class Popen4(Popen3):
     def __init__(self, cmd, bufsize=-1):
         PIPE = subprocess.PIPE
         self._popen = subprocess.Popen(cmd, bufsize=bufsize,
-                                       shell=isinstance(cmd, basestring),
+                                       shell=isinstance(cmd, str),
                                        stdin=PIPE, stdout=PIPE,
                                        stderr=subprocess.STDOUT)
         self._setup(cmd)
