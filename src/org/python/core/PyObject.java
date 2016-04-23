@@ -583,10 +583,13 @@ public class PyObject implements Serializable {
 
             PyObject keys = kwargs.invoke("keys");
             PyObject key;
-            for (int i = 0;(key = keys.__finditem__(i)) != null; i++) {
+            int i = 0;
+            Iterator<PyObject> keysIter = keys.asIterable().iterator();
+            for (; keysIter.hasNext();) {
+                key = keysIter.next();
                 if (!(key instanceof PyString))
                     throw Py.TypeError(name + "keywords must be strings");
-                newkeywords[keywords.length + i] =
+                newkeywords[keywords.length + i++] =
                     ((PyString) key).internedString();
                 newargs[argidx++] = kwargs.__finditem__(key);
             }
