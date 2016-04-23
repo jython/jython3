@@ -41,7 +41,7 @@ log = logging.getLogger("_socket")
 
 # Pretend to be OpenSSL
 OPENSSL_VERSION = "OpenSSL 1.0.0 (as emulated by Java SSL)"
-OPENSSL_VERSION_NUMBER = 0x1000000L
+OPENSSL_VERSION_NUMBER = 0x1000000
 OPENSSL_VERSION_INFO = (1, 0, 0, 0, 0)
 
 CERT_NONE, CERT_OPTIONAL, CERT_REQUIRED = range(3)

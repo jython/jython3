@@ -678,7 +678,7 @@ class IniParser:
         if skey == self.key: return self.records[ctype][0][skey]
         t = list(filter(lambda x, p=self.key, s=skey: x[p] == s, self.records[ctype]))
         if not t or len(t) > 1:
-            raise KeyError, "invalid key ('%s', '%s')" % (ctype, skey)
+            raise KeyError("invalid key ('%s', '%s')" % (ctype, skey))
         return t[0]
 
 def random_table_name(prefix, num_chars):

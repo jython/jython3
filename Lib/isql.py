@@ -1,4 +1,5 @@
 import dbexts, cmd, sys, os
+from functools import reduce
 
 if sys.platform.startswith("java"):
     import java.lang.String
