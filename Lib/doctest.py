@@ -471,7 +471,7 @@ class Example:
         self.exc_msg = exc_msg
 
     def __eq__(self, other):
-        if type(self) is not type(other):
+        if not isinstance(self, type(other)):
             return NotImplemented
 
         return self.source == other.source and \
@@ -535,7 +535,7 @@ class DocTest:
                  self.name, self.filename, self.lineno, examples))
 
     def __eq__(self, other):
-        if type(self) is not type(other):
+        if not isinstance(self, type(other)):
             return NotImplemented
 
         return self.examples == other.examples and \
@@ -2280,7 +2280,7 @@ class DocTestCase(unittest.TestCase):
         return self._dt_test.name
 
     def __eq__(self, other):
-        if type(self) is not type(other):
+        if not isinstance(self, type(other)):
             return NotImplemented
 
         return self._dt_test == other._dt_test and \

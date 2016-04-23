@@ -71,7 +71,7 @@ def win_getpass(prompt='Password: ', stream=None):
     for c in prompt:
         msvcrt.putch(c)
     pw = ""
-    while 1:
+    while True:
         c = msvcrt.getch()
         if c == '\r' or c == '\n':
             break

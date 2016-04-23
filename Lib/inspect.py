@@ -428,10 +428,9 @@ ModuleInfo = namedtuple('ModuleInfo', 'name suffix mode module_type')
 def getmoduleinfo(path):
     """Get the module name, suffix, mode, and module type for a given file."""
     filename = os.path.basename(path)
-    suffixes = map(lambda info:
+    suffixes = sorted(map(lambda info:
                    (-len(info[0]), info[0], info[1], info[2]),
-                    imp.get_suffixes())
-    suffixes.sort() # try longest suffixes first, in case they overlap
+                    imp.get_suffixes()))
     for neglen, suffix, mode, mtype in suffixes:
         if filename[neglen:] == suffix:
             return ModuleInfo(filename[:neglen], suffix, mode, mtype)

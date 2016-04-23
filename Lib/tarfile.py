@@ -454,7 +454,7 @@ class _Stream:
                                             0)
         timestamp = struct.pack("<L", long(time.time()))
         self.__write("\037\213\010\010%s\002\377" % timestamp)
-        if type(self.name) is unicode:
+        if isinstance(self.name, unicode):
             self.name = self.name.encode("iso-8859-1", "replace")
         if self.name.endswith(".gz"):
             self.name = self.name[:-3]
@@ -980,7 +980,7 @@ class TarInfo(object):
             info["name"] += "/"
 
         for key in ("name", "linkname", "uname", "gname"):
-            if type(info[key]) is unicode:
+            if isinstance(info[key], unicode):
                 info[key] = info[key].encode(encoding, errors)
 
         return info

@@ -35,7 +35,7 @@ class IsqlCmd(cmd.Cmd):
 
     def __init__(self, db=None, delimiter=";", comment=('#', '--')):
         cmd.Cmd.__init__(self, completekey=None)
-        if db is None or type(db) == type(""):
+        if db is None or isinstance(db, type("")):
             self.db = dbexts.dbexts(db)
         else:
             self.db = db
@@ -202,7 +202,7 @@ class IsqlCmd(cmd.Cmd):
         raise IsqlExit()
 
     def cmdloop(self, intro=None):
-        while 1:
+        while True:
             try:
                 cmd.Cmd.cmdloop(self, intro)
             except IsqlExit, e:

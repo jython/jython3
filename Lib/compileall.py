@@ -138,7 +138,7 @@ def expand_args(args, flist):
                 fd = sys.stdin
             else:
                 fd = open(flist)
-            while 1:
+            while True:
                 line = fd.readline()
                 if not line:
                     break

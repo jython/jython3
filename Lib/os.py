@@ -882,7 +882,7 @@ if _exists("fork") and not _exists("spawnv") and _exists("execv"):
             # Parent
             if mode == P_NOWAIT:
                 return pid # Caller is responsible for waiting!
-            while 1:
+            while True:
                 wpid, sts = waitpid(pid, 0)
                 if WIFSTOPPED(sts):
                     continue
