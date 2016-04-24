@@ -1,5 +1,5 @@
-base_class: PyString
+base_class: PyUnicode
 want_dict: true
-ctr: String v
+ctr: PyString string
 incl: object
 no_toString: true
