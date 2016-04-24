@@ -784,8 +784,6 @@ subscriptlist
 //subscript: test | [test] ':' [test] [sliceop]
 subscript
     : (test COLON)
-    : ELLIPSIS
-    | (test COLON)
    => test (COLON (test)? (sliceop)?)?
     | (COLON)
    => COLON (test)? (sliceop)?
