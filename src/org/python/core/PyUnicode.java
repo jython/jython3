@@ -1563,17 +1563,17 @@ public class PyUnicode extends PyString implements Iterable {
     }
 
     @ExposedMethod(defaults = "8", doc = BuiltinDocs.str_expandtabs_doc)
-    final PyObject unicode_expandtabs(int tabsize) {
-        return new PyUnicode(str_expandtabs(tabsize));
+    final PyObject str_expandtabs(int tabsize) {
+        return new PyUnicode(bytes_expandtabs(tabsize));
     }
 
     @ExposedMethod(doc = BuiltinDocs.str_capitalize_doc)
-    final PyObject unicode_capitalize() {
+    final PyObject str_capitalize() {
         if (getString().length() == 0) {
             return this;
         }
         if (isBasicPlane()) {
-            return new PyUnicode(str_capitalize());
+            return new PyUnicode(bytes_capitalize());
         }
         StringBuilder buffer = new StringBuilder(getString().length());
         boolean first = true;
