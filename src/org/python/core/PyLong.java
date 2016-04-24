@@ -12,6 +12,7 @@ import org.python.core.stringlib.IntegerFormatter;
 import org.python.core.stringlib.InternalFormat;
 import org.python.core.stringlib.InternalFormat.Formatter;
 import org.python.core.stringlib.InternalFormat.Spec;
+import org.python.expose.ExposedClassMethod;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
@@ -164,6 +165,48 @@ public class PyLong extends PyObject {
             throw Py.ValueError("cannot convert float NaN to integer");
         }
         return new BigDecimal(value).toBigInteger();
+    }
+
+    public static PyObject from_bytes(PyObject bytes, PyObject byteorder) {
+        return long_from_bytes(TYPE, bytes, byteorder, Py.False);
+    }
+
+    public static PyObject from_bytes(PyObject bytes, PyObject byteorder, PyObject signed) {
+        return long_from_bytes(TYPE, bytes, byteorder, signed);
+    }
+
+    public static PyObject from_bytes(PyObject[] args, String[] keywords) {
+        if (args.length < 2) {
+            throw Py.TypeError("slice expected at least 2 arguments, got " + args.length);
+        }
+        ArgParser ap = new ArgParser("from_bytes", args, keywords, "bytes", "byteorder", "signed");
+        PyObject bytes = ap.getPyObject(0);
+        PyObject byteorder = ap.getPyObject(1);
+        PyObject signed = Py.False;
+        if (args.length > 2) {
+            signed = ap.getPyObject(2);
+        }
+        return long_from_bytes(TYPE, bytes, byteorder, signed);
+    }
+
+    @ExposedClassMethod(doc = BuiltinDocs.int_from_bytes_doc)
+    final static PyObject long_from_bytes(PyType type, PyObject[] args, String[] keywords) {
+        return long_from_bytes(type, args[0], args[1], Py.False);
+    }
+
+    final static PyObject long_from_bytes(PyType type, PyObject bytes, PyObject byteorder, PyObject signed) {
+//        PyObject obj = type.__call__(args, keywords);
+//        return obj;
+        return new PyLong(1);
+    }
+
+    public PyObject to_bytes(PyObject[] args, String[] keywords) {
+        return long_to_bytes(args, keywords);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.int_to_bytes_doc)
+    final PyObject long_to_bytes(PyObject[] args, String[] keywords) {
+        return new PyByteArray(new int[]{1,2});
     }
 
     @ExposedGet(name = "real", doc = BuiltinDocs.int_real_doc)
