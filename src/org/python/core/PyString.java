@@ -3019,15 +3019,15 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public String expandtabs() {
-        return str_expandtabs(8);
+        return bytes_expandtabs(8);
     }
 
     public String expandtabs(int tabsize) {
-        return str_expandtabs(tabsize);
+        return bytes_expandtabs(tabsize);
     }
 
-    @ExposedMethod(defaults = "8", doc = BuiltinDocs.str_expandtabs_doc)
-    final String str_expandtabs(int tabsize) {
+    @ExposedMethod(defaults = "8", doc = BuiltinDocs.bytes_expandtabs_doc)
+    final String bytes_expandtabs(int tabsize) {
         String s = getString();
         StringBuilder buf = new StringBuilder((int)(s.length() * 1.5));
         char[] chars = s.toCharArray();
@@ -3054,11 +3054,11 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public String capitalize() {
-        return str_capitalize();
+        return bytes_capitalize();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_capitalize_doc)
-    final String str_capitalize() {
+    @ExposedMethod(doc = BuiltinDocs.bytes_capitalize_doc)
+    final String bytes_capitalize() {
         if (getString().length() == 0) {
             return getString();
         }
