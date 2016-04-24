@@ -781,10 +781,9 @@ subscriptlist
     : subscript (options {greedy=true;}:COMMA subscript)* (COMMA)?
     ;
 
-//subscript: '.' '.' '.' | test | [test] ':' [test] [sliceop]
+//subscript: test | [test] ':' [test] [sliceop]
 subscript
-    : ELLIPSIS
-    | (test COLON)
+    : (test COLON)
    => test (COLON (test)? (sliceop)?)?
     | (COLON)
    => COLON (test)? (sliceop)?
