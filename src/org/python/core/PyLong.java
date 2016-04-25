@@ -6,6 +6,8 @@ package org.python.core;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import org.python.core.stringlib.FloatFormatter;
 import org.python.core.stringlib.IntegerFormatter;
@@ -167,46 +169,70 @@ public class PyLong extends PyObject {
         return new BigDecimal(value).toBigInteger();
     }
 
-    public static PyObject from_bytes(PyObject bytes, PyObject byteorder) {
-        return long_from_bytes(TYPE, bytes, byteorder, Py.False);
+    public static PyObject from_bytes(PyObject bytes, String byteorder) {
+        return long_from_bytes(TYPE, bytes, byteorder, false);
     }
 
-    public static PyObject from_bytes(PyObject bytes, PyObject byteorder, PyObject signed) {
+    public static PyObject from_bytes(PyObject bytes, String byteorder, boolean signed) {
         return long_from_bytes(TYPE, bytes, byteorder, signed);
     }
 
-    public static PyObject from_bytes(PyObject[] args, String[] keywords) {
-        if (args.length < 2) {
-            throw Py.TypeError("slice expected at least 2 arguments, got " + args.length);
+    @ExposedClassMethod(defaults = {"false"}, doc = BuiltinDocs.int_from_bytes_doc)
+    final static PyObject long_from_bytes(PyType type, PyObject bytes, String byteorder, boolean signed) {
+        ByteOrder order = getByteOrder(byteorder);
+
+        try (PyBuffer view = ((BufferProtocol) bytes).getBuffer(PyBUF.FULL_RO)) {
+            int length = view.getLen();
+            byte[] buf = new byte[length];
+            view.copyTo(buf, 0);
+            if (order == ByteOrder.LITTLE_ENDIAN) {
+                byte b;
+                for (int i = 0, j = length - 1; i < j; i++, j--) {
+                    b = buf[i];
+                    buf[i] = buf[j];
+                    buf[j] = b;
+                }
+            }
+            return new PyLong(new BigInteger(buf));
         }
-        ArgParser ap = new ArgParser("from_bytes", args, keywords, "bytes", "byteorder", "signed");
-        PyObject bytes = ap.getPyObject(0);
-        PyObject byteorder = ap.getPyObject(1);
-        PyObject signed = Py.False;
-        if (args.length > 2) {
-            signed = ap.getPyObject(2);
+    }
+
+    private static ByteOrder getByteOrder(String byteorder) {
+        switch(byteorder) {
+            case "little":
+                return ByteOrder.LITTLE_ENDIAN;
+            case "big":
+                return ByteOrder.BIG_ENDIAN;
+            default:
+                throw Py.TypeError("byteorder must be either 'little' or 'big'");
         }
-        return long_from_bytes(TYPE, bytes, byteorder, signed);
     }
 
-    @ExposedClassMethod(doc = BuiltinDocs.int_from_bytes_doc)
-    final static PyObject long_from_bytes(PyType type, PyObject[] args, String[] keywords) {
-        return long_from_bytes(type, args[0], args[1], Py.False);
+    public PyObject to_bytes(int length, String byteorder) {
+        return long_to_bytes(length, byteorder, false);
     }
 
-    final static PyObject long_from_bytes(PyType type, PyObject bytes, PyObject byteorder, PyObject signed) {
-//        PyObject obj = type.__call__(args, keywords);
-//        return obj;
-        return new PyLong(1);
+    public PyObject to_bytes(int length, String byteorder, boolean signed) {
+        return long_to_bytes(length, byteorder, signed);
     }
 
-    public PyObject to_bytes(PyObject[] args, String[] keywords) {
-        return long_to_bytes(args, keywords);
-    }
+    @ExposedMethod(defaults={"false"}, doc = BuiltinDocs.int_to_bytes_doc)
+    final PyObject long_to_bytes(int length, String byteorder, boolean signed) {
+        byte[] origin = value.toByteArray();
+        if (length < origin.length) {
+            throw Py.OverflowError("int too big to convert");
+        }
+        byte[] result = new byte[length];
+        ByteOrder order = getByteOrder(byteorder);
+        if (order == ByteOrder.LITTLE_ENDIAN) {
+            for (int i = 0, j = origin.length - 1; j >= 0; i++, j--) {
+                result[i] = origin[j];
+            }
+        } else {
+            System.arraycopy(origin, 0, result, length - origin.length, origin.length);
+        }
 
-    @ExposedMethod(doc = BuiltinDocs.int_to_bytes_doc)
-    final PyObject long_to_bytes(PyObject[] args, String[] keywords) {
-        return new PyByteArray(new int[]{1,2});
+        return new PyByteArray(result);
     }
 
     @ExposedGet(name = "real", doc = BuiltinDocs.int_real_doc)
