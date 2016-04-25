@@ -17,7 +17,8 @@ from jythonlib import MapMaker, dict_builder
 from numbers import Number
 from io import StringIO
 from threading import Condition, Lock
-from types import MethodType, NoneType
+from types import MethodType
+NoneType = type(None)
 
 import java
 from java.io import IOException, InterruptedIOException

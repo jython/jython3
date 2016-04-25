@@ -52,12 +52,6 @@ __date__    = "07 February 2010"
 #---------------------------------------------------------------------------
 #   Miscellaneous module data
 #---------------------------------------------------------------------------
-try:
-    unicode
-    _unicode = True
-except NameError:
-    _unicode = False
-
 #
 # _srcfile is used when walking the stack to check when we've got the first
 # caller stack frame.
@@ -317,15 +311,12 @@ class LogRecord(object):
         Return the message for this LogRecord after merging any user-supplied
         arguments with the message.
         """
-        if not _unicode: #if no unicode support...
-            msg = str(self.msg)
-        else:
-            msg = self.msg
-            if not isinstance(msg, basestring):
-                try:
-                    msg = str(self.msg)
-                except UnicodeError:
-                    msg = self.msg      #Defer encoding till later
+        msg = self.msg
+        if not isinstance(msg, basestring):
+            try:
+                msg = str(self.msg)
+            except UnicodeError:
+                msg = self.msg      #Defer encoding till later
         if self.args:
             msg = msg % self.args
         return msg
@@ -853,27 +844,24 @@ class StreamHandler(Handler):
             msg = self.format(record)
             stream = self.stream
             fs = "%s\n"
-            if not _unicode: #if no unicode support...
-                stream.write(fs % msg)
-            else:
-                try:
-                    if (isinstance(msg, unicode) and
+            try:
+                if (isinstance(msg, str) and
                         getattr(stream, 'encoding', None)):
-                        ufs = fs.decode(stream.encoding)
-                        try:
-                            stream.write(ufs % msg)
-                        except UnicodeEncodeError:
-                            #Printing to terminals sometimes fails. For example,
-                            #with an encoding of 'cp1251', the above write will
-                            #work if written to a stream opened or wrapped by
-                            #the codecs module, but fail when writing to a
-                            #terminal even when the codepage is set to cp1251.
-                            #An extra encoding step seems to be needed.
-                            stream.write((ufs % msg).encode(stream.encoding))
+                    ufs = fs.decode(stream.encoding)
+                    try:
+                        stream.write(ufs % msg)
+                    except UnicodeEncodeError:
+                        #Printing to terminals sometimes fails. For example,
+                        #with an encoding of 'cp1251', the above write will
+                        #work if written to a stream opened or wrapped by
+                        #the codecs module, but fail when writing to a
+                        #terminal even when the codepage is set to cp1251.
+                        #An extra encoding step seems to be needed.
+                        stream.write((ufs % msg).encode(stream.encoding))
                     else:
                         stream.write(fs % msg)
-                except UnicodeError:
-                    stream.write(fs % msg.encode("UTF-8"))
+            except UnicodeError:
+                stream.write(fs % msg.encode("UTF-8"))
             self.flush()
         except (KeyboardInterrupt, SystemExit):
             raise
@@ -1020,7 +1008,7 @@ class Manager(object):
         rv = None
         if not isinstance(name, basestring):
             raise TypeError('A logger name must be string or Unicode')
-        if isinstance(name, unicode):
+        if isinstance(name, str):
             name = name.encode('utf-8')
         _acquireLock()
         try:

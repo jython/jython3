@@ -85,7 +85,7 @@ def import_module(name, deprecated=False):
     with _ignore_deprecated_imports(deprecated):
         try:
             return importlib.import_module(name)
-        except ImportError, msg:
+        except ImportError as msg:
             raise unittest.SkipTest(str(msg))
 
 
@@ -146,7 +146,7 @@ def import_fresh_module(name, fresh=(), blocked=(), deprecated=False):
         except ImportError:
             fresh_module = None
         finally:
-            for orig_name, module in orig_modules.items():
+            for orig_name, module in list(orig_modules.items()):
                 sys.modules[orig_name] = module
             for name_to_remove in names_to_remove:
                 del sys.modules[name_to_remove]
@@ -261,7 +261,7 @@ def rmdir(dirname):
 def rmtree(path):
     try:
         _rmtree(path)
-    except OSError, e:
+    except OSError as e:
         # Unix returns ENOENT, Windows returns ESRCH.
         if e.errno not in (errno.ENOENT, errno.ESRCH):
             raise
@@ -412,7 +412,7 @@ def fcmp(x, y): # fuzzy comparison function
                 return 0
         except:
             pass
-    elif type(x) == type(y) and isinstance(x, (tuple, list)):
+    elif isinstance(x, type(y)) and isinstance(x, (tuple, list)):
         for i in range(min(len(x), len(y))):
             outcome = fcmp(x[i], y[i])
             if outcome != 0:
@@ -421,7 +421,7 @@ def fcmp(x, y): # fuzzy comparison function
     return (x > y) - (x < y)
 
 try:
-    unicode
+    str
     have_unicode = True
 except NameError:
     have_unicode = False
@@ -459,13 +459,13 @@ else:
         # Assuming sys.getfilesystemencoding()!=sys.getdefaultencoding()
         # TESTFN_UNICODE is a filename that can be encoded using the
         # file system encoding, but *not* with the default (ascii) encoding
-        if isinstance('', unicode):
+        if isinstance('', str):
             # python -U
             # XXX perhaps unicode() should accept Unicode strings?
             TESTFN_UNICODE = "@test-\xe0\xf2"
         else:
             # 2 latin characters.
-            TESTFN_UNICODE = unicode("@test-\xe0\xf2", "latin-1")
+            TESTFN_UNICODE = str("@test-\xe0\xf2", "latin-1")
         TESTFN_ENCODING = sys.getfilesystemencoding()
         # TESTFN_UNENCODABLE is a filename that should *not* be
         # able to be encoded by *either* the default or filesystem encoding.
@@ -476,7 +476,7 @@ else:
             TESTFN_UNENCODABLE = None
         else:
             # Japanese characters (I think - from bug 846133)
-            TESTFN_UNENCODABLE = eval('u"@test-\u5171\u6709\u3055\u308c\u308b"')
+            TESTFN_UNENCODABLE = eval('u"@test-\\u5171\\u6709\\u3055\\u308c\\u308b"')
             try:
                 # XXX - Note - should be using TESTFN_ENCODING here - but for
                 # Windows, "mbcs" currently always operates as if in
@@ -487,10 +487,9 @@ else:
             except UnicodeEncodeError:
                 pass
             else:
-                print \
-                'WARNING: The filename %r CAN be encoded by the filesystem.  ' \
+                print('WARNING: The filename %r CAN be encoded by the filesystem.  ' \
                 'Unicode filename tests may not be effective' \
-                % TESTFN_UNENCODABLE
+                % TESTFN_UNENCODABLE)
 
 # Make sure we can write to TESTFN, try in /tmp if we can't
 fp = None
@@ -503,8 +502,8 @@ except IOError:
         TESTFN = TMP_TESTFN
         del TMP_TESTFN
     except IOError:
-        print ('WARNING: tests will fail, unable to write to: %s or %s' %
-                (TESTFN, TMP_TESTFN))
+        print(('WARNING: tests will fail, unable to write to: %s or %s' %
+                (TESTFN, TMP_TESTFN)))
 if fp is not None:
     fp.close()
     unlink(TESTFN)
@@ -527,7 +526,7 @@ def temp_cwd(name='tempcwd', quiet=False):
     the CWD, an error is raised.  If it's True, only a warning is raised
     and the original CWD is used.
     """
-    if have_unicode and isinstance(name, unicode) and not is_jython:
+    if have_unicode and isinstance(name, str) and not is_jython:
         # Jython supports unicode paths
         try:
             name = name.encode(sys.getfilesystemencoding() or 'ascii')
@@ -571,8 +570,7 @@ def findfile(file, here=__file__, subdir=None):
 
 def sortdict(dict):
     "Like repr(dict), but in sorted order."
-    items = dict.items()
-    items.sort()
+    items = sorted(list(dict.items()))
     reprpairs = ["%r: %r" % pair for pair in items]
     withcommas = ", ".join(reprpairs)
     return "{%s}" % withcommas
@@ -594,9 +592,9 @@ def check_syntax_error(testcase, statement):
                           '<test string>', 'exec')
 
 def open_urlresource(url, check=None):
-    import urlparse, urllib2
+    import urllib.parse, urllib.request, urllib.error, urllib.parse
 
-    filename = urlparse.urlparse(url)[2].split('/')[-1] # '/': it's URL!
+    filename = urllib.parse.urlparse(url)[2].split('/')[-1] # '/': it's URL!
 
     fn = os.path.join(os.path.dirname(__file__), "data", filename)
 
@@ -618,8 +616,8 @@ def open_urlresource(url, check=None):
     # Verify the requirement before downloading the file
     requires('urlfetch')
 
-    print >> get_original_stdout(), '\tfetching %s ...' % url
-    f = urllib2.urlopen(url, timeout=15)
+    print('\tfetching %s ...' % url, file=get_original_stdout())
+    f = urllib.request.urlopen(url, timeout=15)
     try:
         with open(fn, "wb") as out:
             s = f.read()
@@ -802,7 +800,7 @@ class EnvironmentVarGuard(UserDict.DictMixin):
             del self._environ[envvar]
 
     def keys(self):
-        return self._environ.keys()
+        return list(self._environ.keys())
 
     def set(self, envvar, value):
         self[envvar] = value
@@ -814,7 +812,7 @@ class EnvironmentVarGuard(UserDict.DictMixin):
         return self
 
     def __exit__(self, *ignore_exc):
-        for (k, v) in self._changed.items():
+        for (k, v) in list(self._changed.items()):
             if v is None:
                 if k in self._environ:
                     del self._environ[k]
@@ -865,7 +863,7 @@ class TransientResource(object):
         self.attrs, raise ResourceDenied.  Otherwise let the exception
         propagate (if any)."""
         if type_ is not None and issubclass(self.exc, type_):
-            for attr, attr_value in self.attrs.iteritems():
+            for attr, attr_value in self.attrs.items():
                 if not hasattr(value, attr):
                     break
                 if getattr(value, attr) != attr_value:
@@ -944,9 +942,9 @@ def transient_internet(resource_name, timeout=30.0, errnos=()):
 def captured_output(stream_name):
     """Return a context manager used by captured_stdout and captured_stdin
     that temporarily replaces the sys stream *stream_name* with a StringIO."""
-    import StringIO
+    import io
     orig_stdout = getattr(sys, stream_name)
-    setattr(sys, stream_name, StringIO.StringIO())
+    setattr(sys, stream_name, io.StringIO())
     try:
         yield getattr(sys, stream_name)
     finally:
@@ -1003,8 +1001,8 @@ def check_sizeof(test, o, size):
     result = sys.getsizeof(o)
     # add GC header size
     if (_testcapi and\
-        (type(o) == type) and (o.__flags__ & _TPFLAGS_HEAPTYPE) or\
-        ((type(o) != type) and (type(o).__flags__ & _TPFLAGS_HAVE_GC))):
+        (isinstance(o, type)) and (o.__flags__ & _TPFLAGS_HEAPTYPE) or\
+        ((not isinstance(o, type)) and (type(o).__flags__ & _TPFLAGS_HAVE_GC))):
         size += _testcapi.SIZEOF_PYGC_HEAD
     msg = 'wrong size for %s: got %d, expected %d' \
             % (type(o), result, size)
@@ -1042,7 +1040,7 @@ def run_with_locale(catstr, *locales):
             finally:
                 if locale and orig_locale:
                     locale.setlocale(category, orig_locale)
-        inner.func_name = func.func_name
+        inner.__name__ = func.__name__
         inner.__doc__ = func.__doc__
         return inner
     return decorator
@@ -1193,8 +1191,8 @@ def _parse_guards(guards):
     # Returns a tuple ({platform_name: run_me}, default_value)
     if not guards:
         return ({'cpython': True}, False)
-    is_true = guards.values()[0]
-    assert guards.values() == [is_true] * len(guards)   # all True or all False
+    is_true = list(guards.values())[0]
+    assert list(guards.values()) == [is_true] * len(guards)   # all True or all False
     return (guards, not is_true)
 
 # Use the following check to guard CPython's implementation-specific tests --
@@ -1224,7 +1222,7 @@ def _run_suite(suite):
         suite.addTest(test)
         try:
             _run_suite(suite, testclass)
-        except TestFailed, e:
+        except TestFailed as e:
             if not failed:
                 failed = e
     if failed:
@@ -1308,7 +1306,7 @@ def run_doctest(module, verbosity=None):
     finally:
         sys.stdout = save_stdout
     if verbose:
-        print 'doctest (%s) ... %d tests with zero failures' % (module.__name__, t)
+        print('doctest (%s) ... %d tests with zero failures' % (module.__name__, t))
     return f, t
 
 #=======================================================================
@@ -1421,7 +1419,7 @@ def args_from_interpreter_flags():
         'verbose': 'v',
     }
     args = []
-    for flag, opt in flag_opt_map.items():
+    for flag, opt in list(flag_opt_map.items()):
         v = getattr(sys.flags, flag)
         if v > 0:
             args.append('-' + opt * v)
@@ -1448,7 +1446,7 @@ def retry(exceptions, tries=6, delay=3, backoff=1.2):
                     return f(*args, **kwds)
                 except exceptions as e:
                     if verbose:
-                        print "Got %s, retrying in %.2f seconds..." % (str(e), mdelay)
+                        print("Got %s, retrying in %.2f seconds..." % (str(e), mdelay))
                     # FIXME resource cleanup continues to be an issue
                     # in terms of tests we use from CPython. This only
                     # represents a bandaid - useful as it might be -

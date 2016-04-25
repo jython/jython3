@@ -103,7 +103,7 @@ def _init_signals():
     return signals
 
 _signals = _init_signals()
-NSIG = max(_signals.iterkeys()) + 1
+NSIG = max(_signals.keys()) + 1
 SIG_DFL = sun.misc.SignalHandler.SIG_DFL # default system handler
 SIG_IGN = sun.misc.SignalHandler.SIG_IGN # handler to ignore a signal
 
