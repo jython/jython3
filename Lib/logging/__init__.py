@@ -23,7 +23,7 @@ Copyright (C) 2001-2012 Vinay Sajip. All Rights Reserved.
 To use, simply 'import logging' and log away!
 """
 
-import sys, os, time, cStringIO, traceback, warnings, weakref
+import sys, os, time, io, traceback, warnings, weakref
 
 __all__ = ['BASIC_FORMAT', 'BufferingFormatter', 'CRITICAL', 'DEBUG', 'ERROR',
            'FATAL', 'FileHandler', 'Filter', 'Formatter', 'Handler', 'INFO',
@@ -39,7 +39,7 @@ except ImportError:
     codecs = None
 
 try:
-    import thread
+    import _thread
     import threading
 except ImportError:
     thread = None
@@ -176,7 +176,7 @@ def addLevelName(level, levelName):
         _releaseLock()
 
 def _checkLevel(level):
-    if isinstance(level, (int, long)):
+    if isinstance(level, int):
         rv = level
     elif str(level) == level:
         if level not in _levelNames:
@@ -273,10 +273,10 @@ class LogRecord(object):
         self.lineno = lineno
         self.funcName = func
         self.created = ct
-        self.msecs = (ct - long(ct)) * 1000
+        self.msecs = (ct - int(ct)) * 1000
         self.relativeCreated = (self.created - _startTime) * 1000
         if logThreads and thread:
-            self.thread = thread.get_ident()
+            self.thread = _thread.get_ident()
             self.threadName = threading.current_thread().name
         else:
             self.thread = None
@@ -293,7 +293,7 @@ class LogRecord(object):
                 # for an example
                 try:
                     self.processName = mp.current_process().name
-                except StandardError:
+                except Exception:
                     pass
         if logProcesses and hasattr(os, 'getpid'):
             self.process = os.getpid()
@@ -312,7 +312,7 @@ class LogRecord(object):
         arguments with the message.
         """
         msg = self.msg
-        if not isinstance(msg, basestring):
+        if not isinstance(msg, str):
             try:
                 msg = str(self.msg)
             except UnicodeError:
@@ -427,7 +427,7 @@ class Formatter(object):
         This default implementation just uses
         traceback.print_exception()
         """
-        sio = cStringIO.StringIO()
+        sio = io.StringIO()
         traceback.print_exception(ei[0], ei[1], ei[2], None, sio)
         s = sio.getvalue()
         sio.close()
@@ -1006,7 +1006,7 @@ class Manager(object):
         placeholder to now point to the logger.
         """
         rv = None
-        if not isinstance(name, basestring):
+        if not isinstance(name, str):
             raise TypeError('A logger name must be string or Unicode')
         if isinstance(name, str):
             name = name.encode('utf-8')
@@ -1071,7 +1071,7 @@ class Manager(object):
         """
         name = alogger.name
         namelen = len(name)
-        for c in ph.loggerMap.keys():
+        for c in list(ph.loggerMap.keys()):
             #The if means ... if not c.parent.name.startswith(nm)
             if c.parent.name[:namelen] != name:
                 alogger.parent = c.parent
