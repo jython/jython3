@@ -735,7 +735,7 @@ atom
      | LONGINT
      | FLOAT
      | COMPLEX
-     | ELLIPSIS
+     | DOT DOT DOT
      | NAME_CONSTANT
      | (STRING)+
      | TRISTRINGPART
@@ -1014,8 +1014,6 @@ DOUBLESTAREQUAL    : '**=' ;
 DOUBLESLASHEQUAL    : '//=' ;
 
 DOT : '.' ;
-
-ELLIPSIS : '...' ;
 
 AT : '@' ;
 

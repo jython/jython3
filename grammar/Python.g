@@ -2509,8 +2509,6 @@ ARROW : '->' ;
 
 DOT : '.' ;
 
-ELLIPSIS: '...' ;
-
 AT : '@' ;
 
 AND : 'and' ;
