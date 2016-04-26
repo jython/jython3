@@ -1063,7 +1063,7 @@ import_name
       }
     ;
 
-//import_from: ('from' ('.'* dotted_name | '.'+)
+//import_from: ('from' (('.' | '...')* dotted_name | ('.' | '...')+)
 //              'import' ('*' | '(' import_as_names ')' | import_as_names))
 import_from
 @init {
@@ -1933,9 +1933,9 @@ atom
        {
            etype = new Num($COMPLEX, actions.makeComplex($COMPLEX));
        }
-     | ELLIPSIS
+     | d=DOT DOT DOT
        {
-          etype = new Ellipsis($ELLIPSIS);
+          etype = new Ellipsis($d);
        }
      | (S+=STRING)+
        {
@@ -2508,8 +2508,6 @@ DOUBLESLASHEQUAL    : '//=' ;
 ARROW : '->' ;
 
 DOT : '.' ;
-
-ELLIPSIS: '...' ;
 
 AT : '@' ;
 
