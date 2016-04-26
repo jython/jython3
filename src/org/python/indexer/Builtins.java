@@ -106,7 +106,7 @@ public class Builtins {
         "IndentationError", "IndexError", "KeyError", "KeyboardInterrupt",
         "LookupError", "MemoryError", "NameError", "NotImplemented",
         "NotImplementedError", "OSError", "OverflowError",
-        "PendingDeprecationWarning", "ReferenceError", "RuntimeError",
+        "PendingDeprecationWarning", "ReferenceError", "ResourceWarning", "RuntimeError",
         "RuntimeWarning", "StandardError", "StopIteration", "SyntaxError",
         "SyntaxWarning", "SystemError", "SystemExit", "TabError", "TypeError",
         "UnboundLocalError", "UnicodeDecodeError", "UnicodeEncodeError",

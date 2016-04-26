@@ -49,7 +49,6 @@ public class Setup
         "binascii",
         "bz2:org.python.modules.bz2.bz2",
         "cPickle",
-        "cStringIO",
         "cmath",
         "errno",
         "exceptions:org.python.core.exceptions",
@@ -65,6 +64,7 @@ public class Setup
         "thread:org.python.modules.thread.thread",
         "time:org.python.modules.time.Time",
         "ucnhash",
+        "_warnings",
         "zipimport:org.python.modules.zipimport.zipimport",
         PosixModule.getOSName() + ":org.python.modules.posix.PosixModule"
     };

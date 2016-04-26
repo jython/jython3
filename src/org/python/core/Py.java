@@ -452,6 +452,12 @@ public final class Py {
         warning(BytesWarning, message);
     }
 
+    public static PyObject ResourceWarning;
+    public static void ResourceWarning(String message) {
+        warning(ResourceWarning, message);
+    }
+
+
     public static void warnPy3k(String message) {
         warnPy3k(message, 1);
     }
@@ -867,6 +873,7 @@ public final class Py {
         PendingDeprecationWarning = initExc("PendingDeprecationWarning", exc, dict);
         SyntaxWarning = initExc("SyntaxWarning", exc, dict);
         RuntimeWarning = initExc("RuntimeWarning", exc, dict);
+        ResourceWarning = initExc("ResourceWarning", exc, dict);
         FutureWarning = initExc("FutureWarning", exc, dict);
         ImportWarning = initExc("ImportWarning", exc, dict);
         UnicodeWarning = initExc("UnicodeWarning", exc, dict);
