@@ -434,7 +434,7 @@ import_name
     : IMPORT dotted_as_names
     ;
 
-//import_from: ('from' ('.'* dotted_name | '.'+)
+//import_from: ('from' (('.' | '...')* dotted_name | ('.' | '...')+)
 //              'import' ('*' | '(' import_as_names ')' | import_as_names))
 import_from
     : FROM (DOT* dotted_name | DOT+) IMPORT
@@ -735,7 +735,7 @@ atom
      | LONGINT
      | FLOAT
      | COMPLEX
-     | ELLIPSIS
+     | DOT DOT DOT
      | (STRING)+
      | TRISTRINGPART
      | STRINGPART TRAILBACKSLASH
@@ -1013,8 +1013,6 @@ DOUBLESTAREQUAL    : '**=' ;
 DOUBLESLASHEQUAL    : '//=' ;
 
 DOT : '.' ;
-
-ELLIPSIS : '...' ;
 
 AT : '@' ;
 
