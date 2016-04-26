@@ -156,6 +156,9 @@ public class exceptions extends PyObject implements ClassDictInit {
         buildClass(dict, "SyntaxWarning", "Warning",
                    "Base class for warnings about dubious syntax.");
 
+        buildClass(dict, "ResourceWarning", "Warning",
+                   "Base class for warnings about resource usage.");
+
         buildClass(dict, "RuntimeWarning", "Warning",
                    "Base class for warnings about dubious runtime behavior.");
 
