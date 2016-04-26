@@ -47,6 +47,7 @@ import org.python.antlr.ast.Lambda;
 import org.python.antlr.ast.List;
 import org.python.antlr.ast.ListComp;
 import org.python.antlr.ast.Name;
+import org.python.antlr.ast.NameConstant;
 import org.python.antlr.ast.Nonlocal;
 import org.python.antlr.ast.Num;
 import org.python.antlr.ast.Pass;
@@ -2486,6 +2487,13 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     @Override
     public Object visitStarred(Starred node) throws Exception {
         visit(node.getInternalValue());
+        return null;
+    }
+
+    @Override
+    public Object visitNameConstant(NameConstant node) throws Exception {
+        String name = node.getInternalValue();
+        code.getstatic(p(Py.class), name, ci(PyObject.class));
         return null;
     }
 
