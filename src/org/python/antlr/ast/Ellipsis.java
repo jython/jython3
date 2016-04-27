@@ -27,15 +27,16 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@ExposedType(name = "_ast.Ellipsis", base = slice.class)
-public class Ellipsis extends slice {
+@ExposedType(name = "_ast.Ellipsis", base = expr.class)
+public class Ellipsis extends expr {
 public static final PyType TYPE = PyType.fromClass(Ellipsis.class);
 
     private final static PyString[] fields = new PyString[0];
     @ExposedGet(name = "_fields")
     public PyString[] get_fields() { return fields; }
 
-    private final static PyString[] attributes = new PyString[0];
+    private final static PyString[] attributes =
+    new PyString[] {new PyString("lineno"), new PyString("col_offset")};
     @ExposedGet(name = "_attributes")
     public PyString[] get_attributes() { return attributes; }
 
@@ -46,7 +47,17 @@ public static final PyType TYPE = PyType.fromClass(Ellipsis.class);
     @ExposedMethod
     public void Ellipsis___init__(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("Ellipsis", args, keywords, new String[]
-            {}, 0, true);
+            {"lineno", "col_offset"}, 0, true);
+        int lin = ap.getInt(0, -1);
+        if (lin != -1) {
+            setLineno(lin);
+        }
+
+        int col = ap.getInt(1, -1);
+        if (col != -1) {
+            setLineno(col);
+        }
+
     }
 
     public Ellipsis() {
@@ -99,6 +110,34 @@ public static final PyType TYPE = PyType.fromClass(Ellipsis.class);
         if (__dict__ == null) {
             __dict__ = new PyStringMap();
         }
+    }
+
+    private int lineno = -1;
+    @ExposedGet(name = "lineno")
+    public int getLineno() {
+        if (lineno != -1) {
+            return lineno;
+        }
+        return getLine();
+    }
+
+    @ExposedSet(name = "lineno")
+    public void setLineno(int num) {
+        lineno = num;
+    }
+
+    private int col_offset = -1;
+    @ExposedGet(name = "col_offset")
+    public int getCol_offset() {
+        if (col_offset != -1) {
+            return col_offset;
+        }
+        return getCharPositionInLine();
+    }
+
+    @ExposedSet(name = "col_offset")
+    public void setCol_offset(int num) {
+        col_offset = num;
     }
 
 }

@@ -301,6 +301,12 @@ public abstract class VisitorBase<R> implements VisitorIF<R> {
         return ret;
     }
 
+    public R visitEllipsis(Ellipsis node) throws Exception {
+        R ret = unhandled_node(node);
+        traverse(node);
+        return ret;
+    }
+
     public R visitAttribute(Attribute node) throws Exception {
         R ret = unhandled_node(node);
         traverse(node);
@@ -332,12 +338,6 @@ public abstract class VisitorBase<R> implements VisitorIF<R> {
     }
 
     public R visitTuple(Tuple node) throws Exception {
-        R ret = unhandled_node(node);
-        traverse(node);
-        return ret;
-    }
-
-    public R visitEllipsis(Ellipsis node) throws Exception {
         R ret = unhandled_node(node);
         traverse(node);
         return ret;

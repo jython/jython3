@@ -434,7 +434,7 @@ import_name
     : IMPORT dotted_as_names
     ;
 
-//import_from: ('from' ('.'* dotted_name | '.'+)
+//import_from: ('from' (('.' | '...')* dotted_name | ('.' | '...')+)
 //              'import' ('*' | '(' import_as_names ')' | import_as_names))
 import_from
     : FROM (DOT* dotted_name | DOT+) IMPORT
@@ -735,6 +735,7 @@ atom
      | LONGINT
      | FLOAT
      | COMPLEX
+     | DOT DOT DOT
      | (STRING)+
      | TRISTRINGPART
      | STRINGPART TRAILBACKSLASH
@@ -779,10 +780,9 @@ subscriptlist
     : subscript (options {greedy=true;}:COMMA subscript)* (COMMA)?
     ;
 
-//subscript: '.' '.' '.' | test | [test] ':' [test] [sliceop]
+//subscript: test | [test] ':' [test] [sliceop]
 subscript
-    : DOT DOT DOT
-    | (test COLON)
+    : (test COLON)
    => test (COLON (test)? (sliceop)?)?
     | (COLON)
    => COLON (test)? (sliceop)?
