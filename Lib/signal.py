@@ -196,7 +196,7 @@ def pause():
 _alarm_timer_holder = AtomicReference()
 
 def _alarm_handler(sig, frame):
-    print "Alarm clock"
+    print("Alarm clock")
     os._exit(0)
 
 # install a default alarm handler, the one we get by default doesn't

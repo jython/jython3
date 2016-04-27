@@ -1651,5 +1651,5 @@ if __name__ == '__main__':
     # Default is to print the aliased verbose platform string
     terse = ('terse' in sys.argv or '--terse' in sys.argv)
     aliased = (not 'nonaliased' in sys.argv and not '--nonaliased' in sys.argv)
-    print platform(aliased,terse)
+    print(platform(aliased,terse))
     sys.exit(0)

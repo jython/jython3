@@ -166,7 +166,7 @@ def _spawn_java(cmd,
                   "command '%s' failed: %s" % (executable, exc[-1])
         if rc != 0:
             # and this reflects the command running but failing
-            print "command '%s' failed with exit status %d" % (executable, rc)
+            print("command '%s' failed with exit status %d" % (executable, rc))
             raise DistutilsExecError, \
                   "command '%s' failed with exit status %d" % (executable, rc)
 

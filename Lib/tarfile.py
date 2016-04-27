@@ -1916,25 +1916,23 @@ class TarFile(object):
 
         for tarinfo in self:
             if verbose:
-                print filemode(tarinfo.mode),
-                print "%s/%s" % (tarinfo.uname or tarinfo.uid,
-                                 tarinfo.gname or tarinfo.gid),
+                print(filemode(tarinfo.mode))
+                print("%s/%s" % (tarinfo.uname or tarinfo.uid,
+                                 tarinfo.gname or tarinfo.gid))
                 if tarinfo.ischr() or tarinfo.isblk():
-                    print "%10s" % ("%d,%d" \
-                                    % (tarinfo.devmajor, tarinfo.devminor)),
+                    print("%10s" % ("%d,%d" % (tarinfo.devmajor, tarinfo.devminor)))
                 else:
-                    print "%10d" % tarinfo.size,
-                print "%d-%02d-%02d %02d:%02d:%02d" \
-                      % time.localtime(tarinfo.mtime)[:6],
+                    print("%10d" % tarinfo.size)
+                print("%d-%02d-%02d %02d:%02d:%02d" % time.localtime(tarinfo.mtime)[:6])
 
-            print tarinfo.name + ("/" if tarinfo.isdir() else ""),
+            print(tarinfo.name + ("/" if tarinfo.isdir() else ""))
 
             if verbose:
                 if tarinfo.issym():
-                    print "->", tarinfo.linkname,
+                    print("->", tarinfo.linkname)
                 if tarinfo.islnk():
-                    print "link to", tarinfo.linkname,
-            print
+                    print("link to", tarinfo.linkname)
+            print()
 
     def add(self, name, arcname=None, recursive=True, exclude=None, filter=None):
         """Add the file `name' to the archive. `name' may be any type of file

@@ -19,7 +19,7 @@ def __makeModule(name, code, path):
     if not module:
         module = sys.modules[name] = imp.new_module(name)
     module.__file__ = path
-    exec code in module.__dict__
+    exec(code, module.__dict__)
     return module
 
 class __Importer(object):
