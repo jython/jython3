@@ -320,6 +320,10 @@ small_stmt : expr_stmt
            | assert_stmt
            ;
 
+//star_expr: '*' expr
+star_expr : STAR expr ;
+
+
 //expr_stmt: testlist (augassign (yield_expr|testlist) |
 //                     ('=' (yield_expr|testlist))*)
 expr_stmt
@@ -817,20 +821,17 @@ testlist
     | test
     ;
 
-//dictorsetmaker: ( (test ':' test (comp_for | (',' test ':' test)* [','])) |
-//                  (test (comp_for | (',' test)* [','])) )
+//dictorsetmaker: ( ((test ':' test | '**' expr)
+//                   (comp_for | (',' (test ':' test | '**' expr))* [','])) |
+//                  ((test | star_expr)
+//                   (comp_for | (',' (test | star_expr))* [','])) )
 dictorsetmaker
-    : test
-         (
-             (COLON test
-               ( comp_for
-               | (options {k=2;}:COMMA test COLON test)*
-               )
-             |(COMMA test)*
-             )
-             (COMMA)?
-         | comp_for
-         )
+    : (test COLON | DOUBLESTAR) => (test COLON test | DOUBLESTAR expr)
+         (comp_for
+         | (COMMA (test COLON test | DOUBLESTAR expr))* (COMMA)?)
+    | (test | star_expr)
+         (comp_for
+         | (COMMA (test | star_expr))* (COMMA)?)
     ;
 
 //classdef: 'class' NAME ['(' [testlist] ')'] ':' suite
