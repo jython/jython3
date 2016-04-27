@@ -187,6 +187,16 @@ public class GrammarActions {
         return result;
     }
 
+    List<expr> castExprs(List exprs1, List exprs2) {
+        List exprs = exprs1;
+        if (exprs == null) {
+            exprs = exprs2;
+        } else if (exprs2 != null) {
+            exprs.addAll(exprs2);
+        }
+        return castExprs(exprs);
+    }
+
     List<stmt> makeElse(List elseSuite, PythonTree elif) {
         if (elseSuite != null) {
             return castStmts(elseSuite);

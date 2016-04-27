@@ -2284,9 +2284,11 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     @Override
     public Object visitDict(Dict node) throws Exception {
         java.util.List<PythonTree> elts = new ArrayList<PythonTree>();
-        for (int i = 0; i < node.getInternalKeys().size(); i++) {
-            elts.add(node.getInternalKeys().get(i));
-            elts.add(node.getInternalValues().get(i));
+        java.util.List<expr> keys = node.getInternalKeys();
+        java.util.List<expr> vals = node.getInternalValues();
+        for (int i = 0; i < keys.size(); i++) {
+            elts.add(keys.get(i));
+            elts.add(vals.get(i));
         }
 
         if (my_scope.generator) {
@@ -2302,13 +2304,30 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             loadArray(code, elts);
             code.invokespecial(p(PyDictionary.class), "<init>", sig(Void.TYPE, PyObject[].class));
         }
+        if (vals.size() > keys.size()) {
+            for (int i = keys.size(); i < vals.size(); i++) {
+                code.dup();
+                visit(vals.get(i));
+                code.invokevirtual(p(PyDictionary.class), "merge", sig(Void.TYPE, PyObject.class));
+            }
+        }
         return null;
     }
 
     @Override
     public Object visitSet(Set node) throws Exception {
+        java.util.List<expr> elts = node.getInternalElts();
+        java.util.List<expr> stars = new ArrayList<>();
+        java.util.List<expr> scalars = new ArrayList<>();
+        for (expr e : elts) {
+            if (e instanceof Starred) {
+                stars.add(e);
+            } else {
+                scalars.add(e);
+            }
+        }
         if (my_scope.generator) {
-            int content = makeArray(node.getInternalElts());
+            int content = makeArray(scalars);
             code.new_(p(PySet.class));
             code.dup();
             code.aload(content);
@@ -2317,8 +2336,13 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         } else {
             code.new_(p(PySet.class));
             code.dup();
-            loadArray(code, node.getInternalElts());
+            loadArray(code, scalars);
             code.invokespecial(p(PySet.class), "<init>", sig(Void.TYPE, PyObject[].class));
+        }
+        for (expr e : stars) {
+            code.dup();
+            visit(e);
+            code.invokevirtual(p(PySet.class), "_update", sig(Void.TYPE, PyObject.class));
         }
         return null;
     }
