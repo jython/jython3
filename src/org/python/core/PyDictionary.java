@@ -442,7 +442,7 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
      *
      * @param other a PyObject with a keys() method
      */
-    private void merge(PyObject other) {
+    public void merge(PyObject other) {
         if (other instanceof PyDictionary) {
             getMap().putAll(((PyDictionary) other).getMap());
         } else if (other instanceof PyStringMap) {

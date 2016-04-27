@@ -2146,8 +2146,10 @@ testlist[expr_contextType ctype]
     | test[ctype]
     ;
 
-//dictorsetmaker: ( (test ':' test (comp_for | (',' test ':' test)* [','])) |
-//                  (test (comp_for | (',' test)* [','])) )
+//dictorsetmaker: ( ((test ':' test | '**' expr)
+//                   (comp_for | (',' (test ':' test | '**' expr))* [','])) |
+//                  ((test | star_expr)
+//                   (comp_for | (',' (test | star_expr))* [','])) )
 dictorsetmaker[Token lcurly]
 @init {
     List gens = new ArrayList();
@@ -2158,27 +2160,20 @@ dictorsetmaker[Token lcurly]
         $dictorsetmaker.tree = etype;
     }
 }
-    : k+=test[expr_contextType.Load]
-         (
-             (COLON v+=test[expr_contextType.Load]
-               ( comp_for[gens]
-                 {
-                     Collections.reverse(gens);
-                     List<comprehension> c = gens;
-                     etype = new DictComp($dictorsetmaker.start, actions.castExpr($k.get(0)), actions.castExpr($v.get(0)), c);
-                 }
-               | (options {k=2;}:COMMA k+=test[expr_contextType.Load] COLON v+=test[expr_contextType.Load])*
-                 {
-                     etype = new Dict($lcurly, actions.castExprs($k), actions.castExprs($v));
-                 }
-               )
-             |(COMMA k+=test[expr_contextType.Load])*
-              {
-                  etype = new Set($lcurly, actions.castExprs($k));
-              }
-             )
-             (COMMA)?
-         | comp_for[gens]
+    : (test[expr_contextType.Load] COLON | DOUBLESTAR) => (k+=test[expr_contextType.Load] COLON v+=test[expr_contextType.Load] | DOUBLESTAR uv+=expr[expr_contextType.Load])
+         ( comp_for[gens]
+           {
+              Collections.reverse(gens);
+              List<comprehension> c = gens;
+              etype = new DictComp($dictorsetmaker.start, actions.castExpr($k.get(0)), actions.castExpr($v.get(0)), c);
+           }
+         | (options {k=2;}:COMMA (k+=test[expr_contextType.Load] COLON v+=test[expr_contextType.Load] | DOUBLESTAR uv+=expr[expr_contextType.Load]))*
+           {
+              etype = new Dict($lcurly, actions.castExprs($k), actions.castExprs($v, $uv));
+           }
+         (COMMA)?)
+    | (k+=test[expr_contextType.Load] | s+=star_expr[expr_contextType.Load])
+         ( comp_for[gens]
            {
                Collections.reverse(gens);
                List<comprehension> c = gens;
@@ -2188,7 +2183,11 @@ dictorsetmaker[Token lcurly]
                }
                etype = new SetComp($lcurly, actions.castExpr($k.get(0)), c);
            }
-         )
+         | (COMMA (k+=test[expr_contextType.Load] | s+=star_expr[expr_contextType.Load]))*
+           {
+               etype = new Set($lcurly, actions.castExprs($k, $s));
+           }
+         (COMMA)?)
     ;
 
 //classdef: 'class' NAME ['(' [arglist] ')'] ':' suite
