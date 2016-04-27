@@ -74,8 +74,7 @@ module Python version "$Revision$"
          -- need sequences for compare to distinguish between
          -- x < 4 < 3 and (x < 4) < 3
          | Compare(expr left, cmpop* ops, expr* comparators)
-         | Call(expr func, expr* args, keyword* keywords,
-             expr? starargs, expr? kwargs)
+         | Call(expr func, expr* args, keyword* keywords)
          | Repr(expr value)
          | Num(object n) -- a number as a PyObject.
          | Str(string s) -- need to specify raw, unicode, etc?
@@ -114,11 +113,11 @@ module Python version "$Revision$"
     excepthandler = ExceptHandler(expr? type, expr? name, stmt* body)
                     attributes (int lineno, int col_offset)
 
-    arguments = (expr* args, identifier? vararg,
-             identifier? kwarg, expr* defaults)
+    arguments = (expr* args, identifier? vararg, identifier* kwonlyargs, expr* kw_defaults,
+                 identifier? kwarg, expr* defaults)
 
-    -- keyword arguments supplied to call
-    keyword = (identifier arg, expr value)
+    -- keyword arguments supplied to call (NULL identifier for **kwargs)
+    keyword = (identifier? arg, expr value)
 
     -- import name with optional 'as' alias.
     alias = (identifier name, identifier? asname)

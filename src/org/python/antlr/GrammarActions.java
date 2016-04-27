@@ -187,6 +187,16 @@ public class GrammarActions {
         return result;
     }
 
+    List<expr> castExprs(List exprs1, List exprs2) {
+        List exprs = exprs1;
+        if (exprs == null) {
+            exprs = exprs2;
+        } else if (exprs2 != null) {
+            exprs.addAll(exprs2);
+        }
+        return castExprs(exprs);
+    }
+
     List<stmt> makeElse(List elseSuite, PythonTree elif) {
         if (elseSuite != null) {
             return castStmts(elseSuite);
@@ -384,8 +394,10 @@ public class GrammarActions {
                 Object v = e.get(1);
                 checkAssign(castExpr(k));
                 if (k instanceof Name) {
-                    Name arg = (Name)k;
+                    Name arg = (Name) k;
                     keywords.add(new keyword(arg, arg.getInternalId(), castExpr(v)));
+                } else if (k == null) {
+                    keywords.add(new keyword(null, castExpr(v)));
                 } else {
                     errorHandler.error("keyword must be a name", (PythonTree)k);
                 }
@@ -547,13 +559,21 @@ public class GrammarActions {
         return makeCall(t, func, null, null, null, null);
     }
 
-    expr makeCall(Token t, expr func, List args, List keywords, expr starargs, expr kwargs) {
+    expr makeCall(Token t, expr func, List args, List keywords) {
         if (func == null) {
             return errorHandler.errorExpr(new PythonTree(t));
         }
         List<keyword> k = makeKeywords(keywords);
         List<expr> a = castExprs(args);
-        return new Call(t, func, a, k, starargs, kwargs);
+        return new Call(t, func, a, k);
+    }
+
+    expr makeCall(Token t, expr func, List args, List keywords, expr starargs, expr kwargs) {
+        return makeCall(t, func, args, keywords);
+    }
+
+    stmt makeClass(Token t, Token nameToken, List args, List ktypes, List stypes, List dtypes) {
+      return makeClass(t, nameToken, args, ktypes, null, null, stypes, dtypes);
     }
 
     stmt makeClass(Token t, Token nameToken, List args, List ktypes, expr starargs, expr kwargs, List stypes, List dtypes) {
