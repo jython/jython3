@@ -466,8 +466,7 @@ decorator
     ( LPAREN
       ( arglist
         {
-            $etype = actions.makeCall($LPAREN, $dotted_attr.etype, $arglist.args, $arglist.keywords,
-                     $arglist.starargs, $arglist.kwargs);
+            $etype = actions.makeCall($LPAREN, $dotted_attr.etype, $arglist.args, $arglist.keywords);
         }
       |
         {
@@ -2031,11 +2030,11 @@ trailer [Token begin, PythonTree ptree]
       (arglist
        {
            etype = new Call($begin, actions.castExpr($ptree), actions.castExprs($arglist.args),
-             actions.makeKeywords($arglist.keywords), $arglist.starargs, $arglist.kwargs);
+             actions.makeKeywords($arglist.keywords));
        }
       |
        {
-           etype = new Call($begin, actions.castExpr($ptree), new ArrayList<expr>(), new ArrayList<keyword>(), null, null);
+           etype = new Call($begin, actions.castExpr($ptree), new ArrayList<expr>(), new ArrayList<keyword>());
        }
       )
       RPAREN
@@ -2207,8 +2206,6 @@ classdef
           stype = actions.makeClass(t, $NAME,
                                     $arglist.args,
                                     $arglist.keywords,
-                                    $arglist.starargs,
-                                    $arglist.kwargs,
                                     $suite.stypes,
                                     $decorators.etypes);
       }

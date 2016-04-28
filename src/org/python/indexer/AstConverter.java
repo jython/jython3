@@ -385,8 +385,8 @@ public class AstConverter extends Visitor {
         return new NCall(convExpr(n.getInternalFunc()),
                          convertListExpr(n.getInternalArgs()),
                          convertListKeyword(n.getInternalKeywords()),
-                         convExpr(n.getInternalKwargs()),
-                         convExpr(n.getInternalStarargs()),
+                         null,
+                         null,
                          start(n), stop(n));
     }
 

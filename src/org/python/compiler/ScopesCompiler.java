@@ -293,7 +293,13 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         ArgListCompiler ac = new ArgListCompiler();
         List<expr> args = new ArrayList<expr>();
         args.add(new Name(node.getToken(), bound_exp, expr_contextType.Param));
-        ac.visitArgs(new arguments(node, args, null, null, new ArrayList<expr>()));
+
+        String vararg = null;
+        List<String> kwonlyargs = new ArrayList<>();
+        List<expr> kw_defaults = new ArrayList<>();
+        String kwarg = null;
+        List<expr> defaults = new ArrayList<>();
+        ac.visitArgs(new arguments(node, args, vararg, kwonlyargs, kw_defaults, kwarg, defaults));
         beginScope(tmp, FUNCSCOPE, node, ac);
         cur.addParam(bound_exp);
         cur.markFromParam();
@@ -333,7 +339,12 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         ArgListCompiler ac = new ArgListCompiler();
         List<expr> args = new ArrayList<expr>();
         args.add(new Name(node.getToken(), bound_exp, expr_contextType.Param));
-        ac.visitArgs(new arguments(node, args, null, null, new ArrayList<expr>()));
+        String vararg = null;
+        List<String> kwonlyargs = new ArrayList<>();
+        List<expr> kw_defaults = new ArrayList<>();
+        String kwarg = null;
+        List<expr> defaults = new ArrayList<>();
+        ac.visitArgs(new arguments(node, args, vararg, kwonlyargs, kw_defaults, kwarg, defaults));
         beginScope(tmp, FUNCSCOPE, node, ac);
         cur.addParam(bound_exp);
         cur.markFromParam();
