@@ -91,6 +91,7 @@ httplib.py
 ihooks.py
 imaplib.py
 imghdr.py
+imp.py
 io.py
 keyword.py
 linecache.py

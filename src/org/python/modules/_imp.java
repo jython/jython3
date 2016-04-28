@@ -1,6 +1,7 @@
 
 package org.python.modules;
 
+import org.python.compiler.Module;
 import org.python.core.__builtin__;
 import org.python.core.Py;
 import org.python.core.PyFile;
@@ -263,6 +264,29 @@ public class _imp {
         }
         PyObject modules = sys.modules;
         modules.__setitem__(name.intern(), mod);
+        return mod;
+    }
+
+    public static PyObject create_builtin(PyObject spec) {
+        PyObject name = spec.__getattr__("name");
+        if (name == null) return null;
+        return addModuleObject(name);
+    }
+
+    public static int exec_builtin(PyObject mod) {
+        return 0;
+    }
+
+    private static PyObject addModuleObject(PyObject name) {
+        PySystemState sys = Py.getSystemState();
+        PyObject modules = sys.modules;
+        PyObject mod = modules.__getitem__(name);
+        if (mod != null) {
+            return mod;
+        }
+
+        mod = new_module(name.toString());
+        modules.__setattr__(name.toString(), mod);
         return mod;
     }
 
