@@ -557,13 +557,21 @@ public class GrammarActions {
         return makeCall(t, func, null, null, null, null);
     }
 
-    expr makeCall(Token t, expr func, List args, List keywords, expr starargs, expr kwargs) {
+    expr makeCall(Token t, expr func, List args, List keywords) {
         if (func == null) {
             return errorHandler.errorExpr(new PythonTree(t));
         }
         List<keyword> k = makeKeywords(keywords);
         List<expr> a = castExprs(args);
-        return new Call(t, func, a, k, starargs, kwargs);
+        return new Call(t, func, a, k);
+    }
+
+    expr makeCall(Token t, expr func, List args, List keywords, expr starargs, expr kwargs) {
+        return makeCall(t, func, args, keywords);
+    }
+
+    stmt makeClass(Token t, Token nameToken, List args, List ktypes, List stypes, List dtypes) {
+      return makeClass(t, nameToken, args, ktypes, null, null, stypes, dtypes);
     }
 
     stmt makeClass(Token t, Token nameToken, List args, List ktypes, expr starargs, expr kwargs, List stypes, List dtypes) {
