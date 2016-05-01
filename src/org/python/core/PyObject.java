@@ -523,8 +523,8 @@ public class PyObject implements Serializable {
 
     public PyObject _callextra(PyObject[] args,
                                String[] keywords,
-                               PyObject starargs,
-                               PyObject kwargs) {
+                               PyObject[] starargsArray,
+                               PyObject[] kwargsArray) {
 
         int argslen = args.length;
 
@@ -536,7 +536,7 @@ public class PyObject implements Serializable {
         } else {
             name = getType().fastGetName() + " ";
         }
-        if (kwargs != null) {
+        for (PyObject kwargs : kwargsArray) {
             PyObject keys = kwargs.__findattr__("keys");
             if(keys == null)
                 throw Py.TypeError(name
@@ -552,7 +552,7 @@ public class PyObject implements Serializable {
             argslen += kwargs.__len__();
         }
         List<PyObject> starObjs = null;
-        if (starargs != null) {
+        for (PyObject starargs : starargsArray) {
             starObjs = new ArrayList<PyObject>();
             PyObject iter = Py.iter(starargs, name + "argument after * must be a sequence");
             for (PyObject cur = null; ((cur = iter.__iternext__()) != null); ) {
@@ -576,7 +576,7 @@ public class PyObject implements Serializable {
                          keywords.length);
         argidx += keywords.length;
 
-        if (kwargs != null) {
+        for (PyObject kwargs : kwargsArray) {
             String[] newkeywords =
                 new String[keywords.length + kwargs.__len__()];
             System.arraycopy(keywords, 0, newkeywords, 0, keywords.length);

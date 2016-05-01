@@ -1818,14 +1818,28 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
     @Override
     public Object visitCall(Call node) throws Exception {
+        java.util.List<expr> starargs = new ArrayList<>();
+        java.util.List<expr> kwargs = new ArrayList<>();
         java.util.List<String> keys = new ArrayList<String>();
         java.util.List<expr> values = new ArrayList<expr>();
         for (int i = 0; i < node.getInternalArgs().size(); i++) {
-            values.add(node.getInternalArgs().get(i));
+            expr arg = node.getInternalArgs().get(i);
+            if (arg instanceof Starred) {
+                starargs.add(arg);
+            } else {
+                values.add(arg);
+            }
         }
+
         for (int i = 0; i < node.getInternalKeywords().size(); i++) {
-            keys.add(node.getInternalKeywords().get(i).getInternalArg());
-            values.add(node.getInternalKeywords().get(i).getInternalValue());
+            String key = node.getInternalKeywords().get(i).getInternalArg();
+            expr value = node.getInternalKeywords().get(i).getInternalValue();
+            if (key == null) {
+                kwargs.add(value);
+            } else {
+                keys.add(key);
+                values.add(value);
+            }
         }
 
         if ((node.getInternalKeywords() == null || node.getInternalKeywords().size() == 0)
@@ -1835,6 +1849,25 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         visit(node.getInternalFunc());
         stackProduce();
+
+        if (!starargs.isEmpty() || !kwargs.isEmpty()) {
+            int argArray = makeArray(values);
+            int strArray = makeStrings(code, keys);
+            int starargArray = makeArray(starargs);
+            int kwArray = makeArray(kwargs);
+            code.aload(argArray);
+            code.aload(strArray);
+            code.aload(starargArray);
+            code.aload(kwArray);
+            code.freeLocal(strArray);
+            stackConsume(); // target
+            code.invokevirtual(
+                    p(PyObject.class),
+                    "_callextra",
+                    sig(PyObject.class, PyObject[].class, String[].class, PyObject[].class,
+                            PyObject[].class));
+            freeArrayRef(argArray);
+        }
 
 //        if (node.getInternalStarargs() != null || node.getInternalKwargs() != null) {
 //            int argArray = makeArray(values);
@@ -1866,7 +1899,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 //                            PyObject.class));
 //            freeArrayRef(argArray);
 //        } else
-        if (keys.size() > 0) {
+        else if (keys.size() > 0) {
             loadThreadState();
             stackProduce(p(ThreadState.class));
             int argArray = makeArray(values);
