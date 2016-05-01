@@ -563,10 +563,11 @@ vdefparameter
       }
     ;
 
-
-//typedargslist: ((tfpdef ['=' test] ',')*
-//              ('*' NAME [',' '**' NAME] | '**' NAME) |
-//              tfpdef ['=' test] (',' tfpdef ['=' test])* [','])
+//typedargslist: (tfpdef ['=' test] (',' tfpdef ['=' test])* [',' [
+//        '*' [tfpdef] (',' tfpdef ['=' test])* [',' ['**' tfpdef [',']]]
+//      | '**' tfpdef [',']]]
+//  | '*' [tfpdef] (',' tfpdef ['=' test])* [',' ['**' tfpdef [',']]]
+//  | '**' tfpdef [','])
 typedargslist
     returns [arguments args]
 @init {
@@ -623,7 +624,6 @@ fplist
           $etypes = $f;
       }
     ;
-
 
 //varargslist: ((vfpdef ['=' test] ',')*
 //              ('*' NAME [',' '**' NAME] | '**' NAME) |

@@ -1334,8 +1334,8 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
 
     private static void call_function(int na, int nk, boolean var, boolean kw, PyStack stack) {
         int n = na + nk * 2;
-        PyObject kwargs = kw ? stack.pop() : null;
-        PyObject starargs = var ? stack.pop() : null;
+        PyObject[] kwargs = kw ? new PyObject[]{stack.pop()} : new PyObject[0];
+        PyObject[] starargs = var ? new PyObject[]{stack.pop()} : new PyObject[0];
         PyObject params[] = stack.popN(n);
         PyObject callable = stack.pop();
 

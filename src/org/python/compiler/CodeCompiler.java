@@ -1842,8 +1842,8 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             }
         }
 
-        if ((node.getInternalKeywords() == null || node.getInternalKeywords().size() == 0)
-                && node.getInternalFunc() instanceof Attribute) {
+        if (node.getInternalFunc() instanceof Attribute
+                && keys.isEmpty() && starargs.isEmpty() && kwargs.isEmpty()) {
             return invokeNoKeywords((Attribute)node.getInternalFunc(), values);
         }
 
@@ -1867,39 +1867,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
                     sig(PyObject.class, PyObject[].class, String[].class, PyObject[].class,
                             PyObject[].class));
             freeArrayRef(argArray);
-        }
-
-//        if (node.getInternalStarargs() != null || node.getInternalKwargs() != null) {
-//            int argArray = makeArray(values);
-//            int strArray = makeStrings(code, keys);
-//            if (node.getInternalStarargs() == null) {
-//                code.aconst_null();
-//            } else {
-//                visit(node.getInternalStarargs());
-//            }
-//            stackProduce();
-//            if (node.getInternalKwargs() == null) {
-//                code.aconst_null();
-//            } else {
-//                visit(node.getInternalKwargs());
-//            }
-//            stackProduce();
-//
-//            code.aload(argArray);
-//            code.aload(strArray);
-//            code.freeLocal(strArray);
-//            code.dup2_x2();
-//            code.pop2();
-//
-//            stackConsume(3); // target + starargs + kwargs
-//            code.invokevirtual(
-//                    p(PyObject.class),
-//                    "_callextra",
-//                    sig(PyObject.class, PyObject[].class, String[].class, PyObject.class,
-//                            PyObject.class));
-//            freeArrayRef(argArray);
-//        } else
-        else if (keys.size() > 0) {
+        } else if (keys.size() > 0) {
             loadThreadState();
             stackProduce(p(ThreadState.class));
             int argArray = makeArray(values);
