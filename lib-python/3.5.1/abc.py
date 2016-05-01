@@ -130,7 +130,7 @@ class ABCMeta(type):
     _abc_invalidation_counter = 0
 
     def __new__(mcls, name, bases, namespace):
-        cls = super().__new__(mcls, name, bases, namespace)
+        cls = type.__new__(mcls, name, bases, namespace)
         # Compute set of abstract method names
         abstracts = {name
                      for name, value in namespace.items()

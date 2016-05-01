@@ -255,10 +255,10 @@ funcdef
     : decorators? DEF NAME parameters COLON suite
     ;
 
-//parameters: '(' [varargslist] ')'
+//parameters: '(' [typedargslist] ')'
 parameters
     : LPAREN
-      (varargslist
+      (typedargslist
       |
       )
       RPAREN
@@ -268,6 +268,23 @@ parameters
 defparameter
     : fpdef (ASSIGN test)?
     ;
+
+//typedargslist: (tfpdef ['=' test] (',' tfpdef ['=' test])* [',' [
+//        '*' [tfpdef] (',' tfpdef ['=' test])* [',' ['**' tfpdef [',']]]
+//      | '**' tfpdef [',']]]
+//  | '*' [tfpdef] (',' tfpdef ['=' test])* [',' ['**' tfpdef [',']]]
+//  | '**' tfpdef [','])
+typedargslist
+    :  (tfpdef (ASSIGN test)? (COMMA tfpdef (ASSIGN test)?)*
+       ( COMMA ( STAR tfpdef? (COMMA tfpdef (ASSIGN test)?)* (COMMA (DOUBLESTAR tfpdef COMMA?)?)?
+               | DOUBLESTAR tfpdef COMMA?)?)?
+       | STAR tfpdef? (COMMA tfpdef (ASSIGN test)?)* (COMMA (DOUBLESTAR tfpdef COMMA?)?)?
+       | DOUBLESTAR tfpdef COMMA?)
+    ;
+
+//tfpdef: NAME [':' test]
+tfpdef
+    : NAME (COLON test)? ;
 
 //varargslist: ((fpdef ['=' test] ',')*
 //              ('*' NAME [',' '**' NAME] | '**' NAME) |
