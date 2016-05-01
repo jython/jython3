@@ -394,8 +394,10 @@ public class GrammarActions {
                 Object v = e.get(1);
                 checkAssign(castExpr(k));
                 if (k instanceof Name) {
-                    Name arg = (Name)k;
+                    Name arg = (Name) k;
                     keywords.add(new keyword(arg, arg.getInternalId(), castExpr(v)));
+                } else if (k == null) {
+                    keywords.add(new keyword(null, castExpr(v)));
                 } else {
                     errorHandler.error("keyword must be a name", (PythonTree)k);
                 }
