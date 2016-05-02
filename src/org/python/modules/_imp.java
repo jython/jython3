@@ -2,6 +2,7 @@
 package org.python.modules;
 
 import org.python.compiler.Module;
+import org.python.core.PyCode;
 import org.python.core.__builtin__;
 import org.python.core.Py;
 import org.python.core.PyFile;
@@ -309,6 +310,22 @@ public class _imp {
 
     public static boolean is_builtin(String name) {
         return PySystemState.getBuiltin(name) != null;
+    }
+
+    public static PyObject _fix_co_filename(PyCode code, PyObject path) {
+        return Py.None;
+    }
+
+    public static PyObject get_frozen_object(String name) {
+        return null;
+    }
+
+    public static int init_frozen(String name) {
+        return -1;
+    }
+
+    public static boolean is_frozen_package(String name) {
+        return false;
     }
 
     public static boolean is_frozen(String name) {
