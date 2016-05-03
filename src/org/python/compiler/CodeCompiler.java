@@ -10,70 +10,12 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
 
+import org.antlr.runtime.CommonToken;
+import org.antlr.runtime.Token;
 import org.python.antlr.ParseException;
 import org.python.antlr.PythonTree;
 import org.python.antlr.Visitor;
-import org.python.antlr.ast.Assert;
-import org.python.antlr.ast.Assign;
-import org.python.antlr.ast.Attribute;
-import org.python.antlr.ast.AugAssign;
-import org.python.antlr.ast.BinOp;
-import org.python.antlr.ast.BoolOp;
-import org.python.antlr.ast.Break;
-import org.python.antlr.ast.Call;
-import org.python.antlr.ast.ClassDef;
-import org.python.antlr.ast.Compare;
-import org.python.antlr.ast.Continue;
-import org.python.antlr.ast.Delete;
-import org.python.antlr.ast.Dict;
-import org.python.antlr.ast.DictComp;
-import org.python.antlr.ast.Ellipsis;
-import org.python.antlr.ast.ExceptHandler;
-import org.python.antlr.ast.Exec;
-import org.python.antlr.ast.Expr;
-import org.python.antlr.ast.Expression;
-import org.python.antlr.ast.ExtSlice;
-import org.python.antlr.ast.For;
-import org.python.antlr.ast.FunctionDef;
-import org.python.antlr.ast.GeneratorExp;
-import org.python.antlr.ast.Global;
-import org.python.antlr.ast.If;
-import org.python.antlr.ast.IfExp;
-import org.python.antlr.ast.Import;
-import org.python.antlr.ast.ImportFrom;
-import org.python.antlr.ast.Index;
-import org.python.antlr.ast.Interactive;
-import org.python.antlr.ast.Lambda;
-import org.python.antlr.ast.List;
-import org.python.antlr.ast.ListComp;
-import org.python.antlr.ast.Name;
-import org.python.antlr.ast.Nonlocal;
-import org.python.antlr.ast.Num;
-import org.python.antlr.ast.Pass;
-import org.python.antlr.ast.Print;
-import org.python.antlr.ast.Raise;
-import org.python.antlr.ast.Repr;
-import org.python.antlr.ast.Return;
-import org.python.antlr.ast.Set;
-import org.python.antlr.ast.SetComp;
-import org.python.antlr.ast.Slice;
-import org.python.antlr.ast.Starred;
-import org.python.antlr.ast.Str;
-import org.python.antlr.ast.Subscript;
-import org.python.antlr.ast.Suite;
-import org.python.antlr.ast.TryExcept;
-import org.python.antlr.ast.TryFinally;
-import org.python.antlr.ast.Tuple;
-import org.python.antlr.ast.UnaryOp;
-import org.python.antlr.ast.While;
-import org.python.antlr.ast.With;
-import org.python.antlr.ast.Yield;
-import org.python.antlr.ast.alias;
-import org.python.antlr.ast.cmpopType;
-import org.python.antlr.ast.comprehension;
-import org.python.antlr.ast.expr_contextType;
-import org.python.antlr.ast.keyword;
-import org.python.antlr.ast.operatorType;
+import org.python.antlr.ast.*;
 import org.python.antlr.base.expr;
 import org.python.antlr.base.mod;
 import org.python.antlr.base.stmt;
@@ -668,6 +610,66 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         code.goto_(continueLabels.peek());
         return Exit;
+    }
+
+    @Override
+    public Object visitYieldFrom(YieldFrom node) throws Exception {
+        String bound_exp = "_(x)";
+
+        setline(node);
+
+        code.new_(p(PyFunction.class));
+        code.dup();
+        loadFrame();
+        code.getfield(p(PyFrame.class), "f_globals", ci(PyObject.class));
+
+        ScopeInfo scope = module.getScopeInfo(node);
+
+        int emptyArray = makeArray(new ArrayList<expr>());
+        code.aload(emptyArray);
+        scope.setup_closure();
+        scope.dump();
+        expr elt = new Name(node, "_(y)", expr_contextType.Load);
+
+        stmt n = new Expr(node, new Yield(node, elt));
+        java.util.List<stmt> bod = new ArrayList<stmt>();
+        bod.add(n);
+
+        expr iter = node.getInternalValue();
+
+        n = new For(node, elt, iter, bod, //
+                new ArrayList<stmt>());
+
+        bod = new ArrayList<stmt>();
+        bod.add(n);
+        module.codeConstant(new Suite(node, bod), "<genexpr>", true, className, false, false,
+                node.getLine(), scope, cflags).get(code);
+
+        code.aconst_null();
+        if (!makeClosure(scope)) {
+            code.invokespecial(p(PyFunction.class), "<init>",
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject.class));
+        } else {
+            code.invokespecial(
+                    p(PyFunction.class),
+                    "<init>",
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject.class,
+                            PyObject[].class));
+        }
+        int genExp = storeTop();
+
+        visit(iter);
+        code.aload(genExp);
+        code.freeLocal(genExp);
+        code.swap();
+        code.invokevirtual(p(PyObject.class), "__iter__", sig(PyObject.class));
+        loadThreadState();
+        code.swap();
+        code.invokevirtual(p(PyObject.class), "__call__",
+                sig(PyObject.class, ThreadState.class, PyObject.class));
+        freeArray(emptyArray);
+
+        return null;
     }
 
     @Override
