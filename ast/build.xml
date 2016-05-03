@@ -10,7 +10,7 @@
     <target name="asdl_gen">
         <apply
             verbose="true"
-            executable="python">
+            executable="python2">
             <arg value="./asdl_antlr.py" />
             <fileset dir="." includes="Python.asdl"/>
         </apply>

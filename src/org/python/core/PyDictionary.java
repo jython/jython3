@@ -7,6 +7,7 @@ package org.python.core;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,17 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
     public PyDictionary(PyType type) {
         super(type);
         internalMap = Generic.concurrentMap();
+    }
+
+    /**
+     * Create a dictionary with keys and values list, used when create keyvalue-only parameter defaults
+     */
+    public PyDictionary(String[] keys, PyObject[] values) {
+        this();
+        ConcurrentMap<PyObject, PyObject> map = getMap();
+        for (int i = 0; i < keys.length; i++) {
+            map.put(Py.newUnicode(keys[i]), values[i]);
+        }
     }
 
     /**
@@ -442,7 +454,7 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
      *
      * @param other a PyObject with a keys() method
      */
-    private void merge(PyObject other) {
+    public void merge(PyObject other) {
         if (other instanceof PyDictionary) {
             getMap().putAll(((PyDictionary) other).getMap());
         } else if (other instanceof PyStringMap) {

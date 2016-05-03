@@ -24,7 +24,7 @@ public abstract class BaseSet extends PyObject implements Set, Traverseproc {
         return _set;
     }
 
-    protected void _update(PyObject data) {
+    public void _update(PyObject data) {
         _update(_set, data);
     }
 

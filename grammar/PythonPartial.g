@@ -255,10 +255,10 @@ funcdef
     : decorators? DEF NAME parameters COLON suite
     ;
 
-//parameters: '(' [varargslist] ')'
+//parameters: '(' [typedargslist] ')'
 parameters
     : LPAREN
-      (varargslist
+      (typedargslist
       |
       )
       RPAREN
@@ -268,6 +268,23 @@ parameters
 defparameter
     : fpdef (ASSIGN test)?
     ;
+
+//typedargslist: (tfpdef ['=' test] (',' tfpdef ['=' test])* [',' [
+//        '*' [tfpdef] (',' tfpdef ['=' test])* [',' ['**' tfpdef [',']]]
+//      | '**' tfpdef [',']]]
+//  | '*' [tfpdef] (',' tfpdef ['=' test])* [',' ['**' tfpdef [',']]]
+//  | '**' tfpdef [','])
+typedargslist
+    :  (tfpdef (ASSIGN test)? (COMMA tfpdef (ASSIGN test)?)*
+       ( COMMA ( STAR tfpdef? (COMMA tfpdef (ASSIGN test)?)* (COMMA (DOUBLESTAR tfpdef COMMA?)?)?
+               | DOUBLESTAR tfpdef COMMA?)?)?
+       | STAR tfpdef? (COMMA tfpdef (ASSIGN test)?)* (COMMA (DOUBLESTAR tfpdef COMMA?)?)?
+       | DOUBLESTAR tfpdef COMMA?)
+    ;
+
+//tfpdef: NAME [':' test]
+tfpdef
+    : NAME (COLON test)? ;
 
 //varargslist: ((fpdef ['=' test] ',')*
 //              ('*' NAME [',' '**' NAME] | '**' NAME) |
@@ -319,6 +336,10 @@ small_stmt : expr_stmt
            | exec_stmt
            | assert_stmt
            ;
+
+//star_expr: '*' expr
+star_expr : STAR expr ;
+
 
 //expr_stmt: testlist (augassign (yield_expr|testlist) |
 //                     ('=' (yield_expr|testlist))*)
@@ -816,48 +837,40 @@ testlist
     | test
     ;
 
-//dictorsetmaker: ( (test ':' test (comp_for | (',' test ':' test)* [','])) |
-//                  (test (comp_for | (',' test)* [','])) )
+//dictorsetmaker: ( ((test ':' test | '**' expr)
+//                   (comp_for | (',' (test ':' test | '**' expr))* [','])) |
+//                  ((test | star_expr)
+//                   (comp_for | (',' (test | star_expr))* [','])) )
 dictorsetmaker
-    : test
-         (
-             (COLON test
-               ( comp_for
-               | (options {k=2;}:COMMA test COLON test)*
-               )
-             |(COMMA test)*
-             )
-             (COMMA)?
-         | comp_for
-         )
+    : (test COLON | DOUBLESTAR) => (test COLON test | DOUBLESTAR expr)
+         (comp_for
+         | (COMMA (test COLON test | DOUBLESTAR expr))* (COMMA)?)
+    | (test | star_expr)
+         (comp_for
+         | (COMMA (test | star_expr))* (COMMA)?)
     ;
 
-//classdef: 'class' NAME ['(' [testlist] ')'] ':' suite
+//classdef: 'class' NAME ['(' [arglist] ')'] ':' suite
 classdef
-    : decorators? CLASS NAME (LPAREN testlist? RPAREN)? COLON suite
+    : decorators? CLASS NAME (LPAREN arglist? RPAREN)? COLON suite
     ;
 
-//arglist: (argument ',')* (argument [',']
-//                         |'*' test (',' argument)* [',' '**' test]
-//                         |'**' test)
-arglist
-    : argument (COMMA argument)*
-          (COMMA
-              ( STAR test (COMMA argument)* (COMMA DOUBLESTAR test)?
-              | DOUBLESTAR test
-              )?
-          )?
-    | STAR test (COMMA argument)* (COMMA DOUBLESTAR test)?
-    | DOUBLESTAR test
-    ;
+//arglist: argument (',' argument)*  [',']
+arglist : argument (COMMA argument)* COMMA? ;
 
-//argument: test [comp_for] | test '=' test  # Really [keyword '='] test
+//argument: ( test [comp_for] |
+//            test '=' test |
+//            '**' test |
+//            '*' test )
 argument
     : test
-        ((ASSIGN test)
-        | comp_for
-        |
-        )
+      (comp_for
+      |ASSIGN test
+      |
+      )
+    | STAR
+      ( STAR test
+      | test)
     ;
 
 //list_iter: list_for | list_if

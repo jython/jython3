@@ -500,6 +500,8 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         // NOTE: this is attached to the constructed PyFunction, so it cannot be nulled out
         // with freeArray, unlike other usages of makeArray here
         int defaults = makeArray(scope.ac.getDefaults());
+        int kwDefaultKeys = makeStrings(code, scope.ac.kw_defaults.keySet());
+        int kwDefaultValues = makeArray(new ArrayList<>(scope.ac.kw_defaults.values()));
 
         code.new_(p(PyFunction.class));
         code.dup();
@@ -507,6 +509,15 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.getfield(p(PyFrame.class), "f_globals", ci(PyObject.class));
         code.aload(defaults);
         code.freeLocal(defaults);
+
+        code.new_(p(PyDictionary.class));
+        code.dup();
+        code.aload(kwDefaultKeys);
+        code.aload(kwDefaultValues);
+        code.invokespecial(p(PyDictionary.class), "<init>",
+                sig(Void.TYPE, String[].class, PyObject[].class));
+        code.freeLocal(kwDefaultKeys);
+        code.freeLocal(kwDefaultValues);
 
         scope.setup_closure();
         scope.dump();
@@ -522,12 +533,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         if (!makeClosure(scope)) {
             code.invokespecial(p(PyFunction.class), "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject.class));
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class));
         } else {
             code.invokespecial(
                     p(PyFunction.class),
                     "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject.class,
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class,
                             PyObject[].class));
         }
 
@@ -1816,53 +1827,54 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
     @Override
     public Object visitCall(Call node) throws Exception {
+        java.util.List<expr> starargs = new ArrayList<>();
+        java.util.List<expr> kwargs = new ArrayList<>();
         java.util.List<String> keys = new ArrayList<String>();
         java.util.List<expr> values = new ArrayList<expr>();
         for (int i = 0; i < node.getInternalArgs().size(); i++) {
-            values.add(node.getInternalArgs().get(i));
-        }
-        for (int i = 0; i < node.getInternalKeywords().size(); i++) {
-            keys.add(node.getInternalKeywords().get(i).getInternalArg());
-            values.add(node.getInternalKeywords().get(i).getInternalValue());
+            expr arg = node.getInternalArgs().get(i);
+            if (arg instanceof Starred) {
+                starargs.add(arg);
+            } else {
+                values.add(arg);
+            }
         }
 
-        if ((node.getInternalKeywords() == null || node.getInternalKeywords().size() == 0)
-                && node.getInternalStarargs() == null && node.getInternalKwargs() == null
-                && node.getInternalFunc() instanceof Attribute) {
+        for (int i = 0; i < node.getInternalKeywords().size(); i++) {
+            String key = node.getInternalKeywords().get(i).getInternalArg();
+            expr value = node.getInternalKeywords().get(i).getInternalValue();
+            if (key == null) {
+                kwargs.add(value);
+            } else {
+                keys.add(key);
+                values.add(value);
+            }
+        }
+
+        if (node.getInternalFunc() instanceof Attribute
+                && keys.isEmpty() && starargs.isEmpty() && kwargs.isEmpty()) {
             return invokeNoKeywords((Attribute)node.getInternalFunc(), values);
         }
 
         visit(node.getInternalFunc());
         stackProduce();
 
-        if (node.getInternalStarargs() != null || node.getInternalKwargs() != null) {
+        if (!starargs.isEmpty() || !kwargs.isEmpty()) {
             int argArray = makeArray(values);
             int strArray = makeStrings(code, keys);
-            if (node.getInternalStarargs() == null) {
-                code.aconst_null();
-            } else {
-                visit(node.getInternalStarargs());
-            }
-            stackProduce();
-            if (node.getInternalKwargs() == null) {
-                code.aconst_null();
-            } else {
-                visit(node.getInternalKwargs());
-            }
-            stackProduce();
-
+            int starargArray = makeArray(starargs);
+            int kwArray = makeArray(kwargs);
             code.aload(argArray);
             code.aload(strArray);
+            code.aload(starargArray);
+            code.aload(kwArray);
             code.freeLocal(strArray);
-            code.dup2_x2();
-            code.pop2();
-
-            stackConsume(3); // target + starargs + kwargs
+            stackConsume(); // target
             code.invokevirtual(
                     p(PyObject.class),
                     "_callextra",
-                    sig(PyObject.class, PyObject[].class, String[].class, PyObject.class,
-                            PyObject.class));
+                    sig(PyObject.class, PyObject[].class, String[].class, PyObject[].class,
+                            PyObject[].class));
             freeArrayRef(argArray);
         } else if (keys.size() > 0) {
             loadThreadState();
@@ -2246,8 +2258,8 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             java.util.List<comprehension> generators, String tmp_append) throws Exception {
         set(new Name(node, tmp_append, expr_contextType.Store));
 
-        stmt n = new Expr(node, new Call(node, new Name(node, tmp_append, expr_contextType.Load), //
-                args, new ArrayList<keyword>(), null, null));
+        stmt n = new Expr(node, new Call(node, new Name(node, tmp_append, expr_contextType.Load),
+                args, new ArrayList<keyword>()));
 
         for (int i = generators.size() - 1; i >= 0; i--) {
             comprehension lc = generators.get(i);
@@ -2271,9 +2283,11 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     @Override
     public Object visitDict(Dict node) throws Exception {
         java.util.List<PythonTree> elts = new ArrayList<PythonTree>();
-        for (int i = 0; i < node.getInternalKeys().size(); i++) {
-            elts.add(node.getInternalKeys().get(i));
-            elts.add(node.getInternalValues().get(i));
+        java.util.List<expr> keys = node.getInternalKeys();
+        java.util.List<expr> vals = node.getInternalValues();
+        for (int i = 0; i < keys.size(); i++) {
+            elts.add(keys.get(i));
+            elts.add(vals.get(i));
         }
 
         if (my_scope.generator) {
@@ -2289,13 +2303,30 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             loadArray(code, elts);
             code.invokespecial(p(PyDictionary.class), "<init>", sig(Void.TYPE, PyObject[].class));
         }
+        if (vals.size() > keys.size()) {
+            for (int i = keys.size(); i < vals.size(); i++) {
+                code.dup();
+                visit(vals.get(i));
+                code.invokevirtual(p(PyDictionary.class), "merge", sig(Void.TYPE, PyObject.class));
+            }
+        }
         return null;
     }
 
     @Override
     public Object visitSet(Set node) throws Exception {
+        java.util.List<expr> elts = node.getInternalElts();
+        java.util.List<expr> stars = new ArrayList<>();
+        java.util.List<expr> scalars = new ArrayList<>();
+        for (expr e : elts) {
+            if (e instanceof Starred) {
+                stars.add(e);
+            } else {
+                scalars.add(e);
+            }
+        }
         if (my_scope.generator) {
-            int content = makeArray(node.getInternalElts());
+            int content = makeArray(scalars);
             code.new_(p(PySet.class));
             code.dup();
             code.aload(content);
@@ -2304,8 +2335,13 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         } else {
             code.new_(p(PySet.class));
             code.dup();
-            loadArray(code, node.getInternalElts());
+            loadArray(code, scalars);
             code.invokespecial(p(PySet.class), "<init>", sig(Void.TYPE, PyObject[].class));
+        }
+        for (expr e : stars) {
+            code.dup();
+            visit(e);
+            code.invokevirtual(p(PySet.class), "_update", sig(Void.TYPE, PyObject.class));
         }
         return null;
     }
@@ -2340,6 +2376,8 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         ScopeInfo scope = module.getScopeInfo(node);
 
         int defaultsArray = makeArray(scope.ac.getDefaults());
+        int kwDefaultKeys = makeStrings(code, scope.ac.kw_defaults.keySet());
+        int kwDefaultValues = makeArray(new ArrayList<>(scope.ac.kw_defaults.values()));
 
         code.new_(p(PyFunction.class));
 
@@ -2349,8 +2387,16 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         loadFrame();
         code.getfield(p(PyFrame.class), "f_globals", ci(PyObject.class));
-
         code.swap();
+
+        code.new_(p(PyDictionary.class));
+        code.dup();
+        code.aload(kwDefaultKeys);
+        code.aload(kwDefaultValues);
+        code.invokespecial(p(PyDictionary.class), "<init>",
+                sig(Void.TYPE, String[].class, PyObject[].class));
+        code.freeLocal(kwDefaultKeys);
+        code.freeLocal(kwDefaultValues);
 
         scope.setup_closure();
         scope.dump();
@@ -2359,12 +2405,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         if (!makeClosure(scope)) {
             code.invokespecial(p(PyFunction.class), "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class));
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class));
         } else {
             code.invokespecial(
                     p(PyFunction.class),
                     "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject[].class));
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject[].class));
         }
         return null;
     }
@@ -2627,6 +2673,11 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         int emptyArray = makeArray(new ArrayList<expr>());
         code.aload(emptyArray);
+        code.new_(p(PyDictionary.class));
+        code.dup();
+        code.invokespecial(p(PyDictionary.class), "<init>",
+                sig(Void.TYPE));
+
         scope.setup_closure();
         scope.dump();
 
@@ -2661,12 +2712,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.aconst_null();
         if (!makeClosure(scope)) {
             code.invokespecial(p(PyFunction.class), "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject.class));
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class));
         } else {
             code.invokespecial(
                     p(PyFunction.class),
                     "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject.class,
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class,
                             PyObject[].class));
         }
         int genExp = storeTop();
@@ -2700,6 +2751,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         int emptyArray = makeArray(new ArrayList<expr>());
         code.aload(emptyArray);
+
+        code.new_(p(PyDictionary.class));
+        code.dup();
+        code.invokespecial(p(PyDictionary.class), "<init>",
+                sig(Void.TYPE));
+
         scope.setup_closure();
         scope.dump();
 
@@ -2734,12 +2791,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.aconst_null();
         if (!makeClosure(scope)) {
             code.invokespecial(p(PyFunction.class), "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject.class));
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class));
         } else {
             code.invokespecial(
                     p(PyFunction.class),
                     "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject.class,
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class,
                             PyObject[].class));
         }
         int genExp = storeTop();

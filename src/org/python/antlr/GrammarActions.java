@@ -187,6 +187,16 @@ public class GrammarActions {
         return result;
     }
 
+    List<expr> castExprs(List exprs1, List exprs2) {
+        List exprs = exprs1;
+        if (exprs == null) {
+            exprs = exprs2;
+        } else if (exprs2 != null) {
+            exprs.addAll(exprs2);
+        }
+        return castExprs(exprs);
+    }
+
     List<stmt> makeElse(List elseSuite, PythonTree elif) {
         if (elseSuite != null) {
             return castStmts(elseSuite);
@@ -300,7 +310,9 @@ public class GrammarActions {
         if (args != null) {
             a = args;
         } else {
-            a = new arguments(t, new ArrayList<expr>(), (Name)null, null, new ArrayList<expr>());
+            a = new arguments(t, new ArrayList<expr>(), (Name)null, null,
+                    // kwonlyargs, kw_defaults, defaults
+                    new ArrayList<Name>(), new ArrayList<expr>(), new ArrayList<expr>());
         }
         List<stmt> s = castStmts(funcStatements);
         List<expr> d = castExprs(decorators);
@@ -352,9 +364,10 @@ public class GrammarActions {
     }
 
     arguments makeArgumentsType(Token t, List params, Token snameToken,
-        Token knameToken, List defaults) {
+        Token knameToken, List kwonlyargs, List<expr> kwDefaults, List defaults) {
 
         List<expr> p = castExprs(params);
+        List<expr> kwd = kwDefaults; // Note: castExprs remove the null elements, don't do that
         List<expr> d = castExprs(defaults);
         Name s;
         Name k;
@@ -368,7 +381,7 @@ public class GrammarActions {
         } else {
             k = cantBeNoneName(knameToken);
         }
-        return new arguments(t, p, s, k, d);
+        return new arguments(t, p, s, k, kwonlyargs, kwd, d);
     }
 
     List<expr> extractArgs(List args) {
@@ -384,8 +397,10 @@ public class GrammarActions {
                 Object v = e.get(1);
                 checkAssign(castExpr(k));
                 if (k instanceof Name) {
-                    Name arg = (Name)k;
+                    Name arg = (Name) k;
                     keywords.add(new keyword(arg, arg.getInternalId(), castExpr(v)));
+                } else if (k == null) {
+                    keywords.add(new keyword(null, castExpr(v)));
                 } else {
                     errorHandler.error("keyword must be a name", (PythonTree)k);
                 }
@@ -547,13 +562,21 @@ public class GrammarActions {
         return makeCall(t, func, null, null, null, null);
     }
 
-    expr makeCall(Token t, expr func, List args, List keywords, expr starargs, expr kwargs) {
+    expr makeCall(Token t, expr func, List args, List keywords) {
         if (func == null) {
             return errorHandler.errorExpr(new PythonTree(t));
         }
         List<keyword> k = makeKeywords(keywords);
         List<expr> a = castExprs(args);
-        return new Call(t, func, a, k, starargs, kwargs);
+        return new Call(t, func, a, k);
+    }
+
+    expr makeCall(Token t, expr func, List args, List keywords, expr starargs, expr kwargs) {
+        return makeCall(t, func, args, keywords);
+    }
+
+    stmt makeClass(Token t, Token nameToken, List args, List ktypes, List stypes, List dtypes) {
+      return makeClass(t, nameToken, args, ktypes, null, null, stypes, dtypes);
     }
 
     stmt makeClass(Token t, Token nameToken, List args, List ktypes, expr starargs, expr kwargs, List stypes, List dtypes) {

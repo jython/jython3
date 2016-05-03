@@ -628,9 +628,9 @@ class TypeInfo(NewStyle):
 
     def __repr__(self):
         if self.namespace:
-            return "<TypeInfo %s (from %s)>" % (`self.name`, `self.namespace`)
+            return "<TypeInfo %s (from %s)>" % (repr(self.name), repr(self.namespace))
         else:
-            return "<TypeInfo %s>" % `self.name`
+            return "<TypeInfo %s>" % repr(self.name)
 
     def _get_name(self):
         return self.name
