@@ -442,6 +442,8 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         // NOTE: this is attached to the constructed PyFunction, so it cannot be nulled out
         // with freeArray, unlike other usages of makeArray here
         int defaults = makeArray(scope.ac.getDefaults());
+        int kwDefaultKeys = makeStrings(code, scope.ac.kw_defaults.keySet());
+        int kwDefaultValues = makeArray(new ArrayList<>(scope.ac.kw_defaults.values()));
 
         code.new_(p(PyFunction.class));
         code.dup();
@@ -449,6 +451,15 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.getfield(p(PyFrame.class), "f_globals", ci(PyObject.class));
         code.aload(defaults);
         code.freeLocal(defaults);
+
+        code.new_(p(PyDictionary.class));
+        code.dup();
+        code.aload(kwDefaultKeys);
+        code.aload(kwDefaultValues);
+        code.invokespecial(p(PyDictionary.class), "<init>",
+                sig(Void.TYPE, String[].class, PyObject[].class));
+        code.freeLocal(kwDefaultKeys);
+        code.freeLocal(kwDefaultValues);
 
         scope.setup_closure();
         scope.dump();
@@ -464,12 +475,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         if (!makeClosure(scope)) {
             code.invokespecial(p(PyFunction.class), "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject.class));
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class));
         } else {
             code.invokespecial(
                     p(PyFunction.class),
                     "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject.class,
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class,
                             PyObject[].class));
         }
 
@@ -627,6 +638,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         int emptyArray = makeArray(new ArrayList<expr>());
         code.aload(emptyArray);
+
+        code.new_(p(PyDictionary.class));
+        code.dup();
+        code.invokespecial(p(PyDictionary.class), "<init>",
+                sig(Void.TYPE));
+
         scope.setup_closure();
         scope.dump();
         expr elt = new Name(node, "_(y)", expr_contextType.Load);
@@ -648,12 +665,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.aconst_null();
         if (!makeClosure(scope)) {
             code.invokespecial(p(PyFunction.class), "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject.class));
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class));
         } else {
             code.invokespecial(
                     p(PyFunction.class),
                     "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject.class,
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class,
                             PyObject[].class));
         }
         int genExp = storeTop();
@@ -2367,6 +2384,8 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         ScopeInfo scope = module.getScopeInfo(node);
 
         int defaultsArray = makeArray(scope.ac.getDefaults());
+        int kwDefaultKeys = makeStrings(code, scope.ac.kw_defaults.keySet());
+        int kwDefaultValues = makeArray(new ArrayList<>(scope.ac.kw_defaults.values()));
 
         code.new_(p(PyFunction.class));
 
@@ -2376,8 +2395,16 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         loadFrame();
         code.getfield(p(PyFrame.class), "f_globals", ci(PyObject.class));
-
         code.swap();
+
+        code.new_(p(PyDictionary.class));
+        code.dup();
+        code.aload(kwDefaultKeys);
+        code.aload(kwDefaultValues);
+        code.invokespecial(p(PyDictionary.class), "<init>",
+                sig(Void.TYPE, String[].class, PyObject[].class));
+        code.freeLocal(kwDefaultKeys);
+        code.freeLocal(kwDefaultValues);
 
         scope.setup_closure();
         scope.dump();
@@ -2386,12 +2413,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         if (!makeClosure(scope)) {
             code.invokespecial(p(PyFunction.class), "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class));
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class));
         } else {
             code.invokespecial(
                     p(PyFunction.class),
                     "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject[].class));
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject[].class));
         }
         return null;
     }
@@ -2665,6 +2692,11 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         int emptyArray = makeArray(new ArrayList<expr>());
         code.aload(emptyArray);
+        code.new_(p(PyDictionary.class));
+        code.dup();
+        code.invokespecial(p(PyDictionary.class), "<init>",
+                sig(Void.TYPE));
+
         scope.setup_closure();
         scope.dump();
 
@@ -2699,12 +2731,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.aconst_null();
         if (!makeClosure(scope)) {
             code.invokespecial(p(PyFunction.class), "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject.class));
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class));
         } else {
             code.invokespecial(
                     p(PyFunction.class),
                     "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject.class,
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class,
                             PyObject[].class));
         }
         int genExp = storeTop();
@@ -2738,6 +2770,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         int emptyArray = makeArray(new ArrayList<expr>());
         code.aload(emptyArray);
+
+        code.new_(p(PyDictionary.class));
+        code.dup();
+        code.invokespecial(p(PyDictionary.class), "<init>",
+                sig(Void.TYPE));
+
         scope.setup_closure();
         scope.dump();
 
@@ -2772,12 +2810,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.aconst_null();
         if (!makeClosure(scope)) {
             code.invokespecial(p(PyFunction.class), "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject.class));
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class));
         } else {
             code.invokespecial(
                     p(PyFunction.class),
                     "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyCode.class, PyObject.class,
+                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class,
                             PyObject[].class));
         }
         int genExp = storeTop();

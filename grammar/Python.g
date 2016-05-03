@@ -523,7 +523,8 @@ parameters
         }
       |
         {
-            $args = new arguments($parameters.start, new ArrayList<expr>(), (Name)null, null, new ArrayList<expr>());
+            $args = new arguments($parameters.start, new ArrayList<expr>(), (Name)null, null,
+            new ArrayList<Name>(), new ArrayList<expr>(), new ArrayList<expr>());
         }
       )
       RPAREN
@@ -540,8 +541,8 @@ tdefparameter
           $etype = actions.castExpr($tfpdef.tree);
           if ($ASSIGN != null) {
               defaults.add($test.tree);
-          } else if (!defaults.isEmpty()) {
-              throw new ParseException("non-default argument follows default argument", $tfpdef.tree);
+          } else {
+              defaults.add(null);
           }
       }
     ;
@@ -557,8 +558,8 @@ vdefparameter
           $etype = actions.castExpr($vfpdef.tree);
           if ($ASSIGN != null) {
               defaults.add($test.tree);
-          } else if (!defaults.isEmpty()) {
-              throw new ParseException("non-default argument follows default argument", $vfpdef.tree);
+          } else {
+              defaults.add(null);
           }
       }
     ;
@@ -572,28 +573,28 @@ typedargslist
     returns [arguments args]
 @init {
     List defaults = new ArrayList();
+    List kw_defaults = new ArrayList();
 }
     : d+=tdefparameter[defaults] (options {greedy=true;}:COMMA d+=tdefparameter[defaults])*
       (COMMA
-          (STAR (starargs=NAME)? (COMMA d+=tdefparameter[defaults] (options {greedy=true;}:COMMA d+=tdefparameter[defaults])*)? (COMMA DOUBLESTAR kwargs=NAME)?
+          (STAR (starargs=NAME)? (COMMA kw+=tdefparameter[kw_defaults] (options {greedy=true;}:COMMA kw+=tdefparameter[kw_defaults])*)? (COMMA DOUBLESTAR kwargs=NAME)?
           | DOUBLESTAR kwargs=NAME
           )?
       )?
       {
-          $args = actions.makeArgumentsType($typedargslist.start, $d, $starargs, $kwargs, defaults);
+          $args = actions.makeArgumentsType($typedargslist.start, $d, $starargs, $kwargs, $kw, kw_defaults, defaults);
       }
-    | STAR (starargs=NAME)? (COMMA d+=tdefparameter[defaults] (options {greedy=true;}:COMMA d+=tdefparameter[defaults])*)? (COMMA DOUBLESTAR kwargs=NAME)?
+    | STAR (starargs=NAME)? (COMMA kw+=tdefparameter[kw_defaults] (options {greedy=true;}:COMMA kw+=tdefparameter[kw_defaults])*)? (COMMA DOUBLESTAR kwargs=NAME)?
       {
-          $args = actions.makeArgumentsType($typedargslist.start, $d, $starargs, $kwargs, defaults);
+          $args = actions.makeArgumentsType($typedargslist.start, $d, $starargs, $kwargs, $kw, kw_defaults, defaults);
       }
     | DOUBLESTAR kwargs=NAME
       {
-          $args = actions.makeArgumentsType($typedargslist.start, $d, null, $kwargs, defaults);
+          $args = actions.makeArgumentsType($typedargslist.start, $d, null, $kwargs, $kw, kw_defaults, defaults);
       }
     ;
 
 //tfpdef: NAME [':' test]
-//FIXME: remove fplist
 tfpdef[expr_contextType ctype]
 @init {
     expr etype = null;
@@ -608,11 +609,6 @@ tfpdef[expr_contextType ctype]
       {
           etype = new Name($NAME, $NAME.text, ctype);
       }
-    | (LPAREN tfpdef[null] COMMA) => LPAREN fplist RPAREN
-      {
-          etype = new Tuple($fplist.start, actions.castExprs($fplist.etypes), expr_contextType.Store);
-      }
-    | LPAREN! fplist RPAREN!
     ;
 
 //fplist: vfpdef (',' vfpdef)* [',']
@@ -625,30 +621,35 @@ fplist
       }
     ;
 
-//varargslist: ((vfpdef ['=' test] ',')*
-//              ('*' NAME [',' '**' NAME] | '**' NAME) |
-//              vfpdef ['=' test] (',' vfpdef ['=' test])* [','])
+//varargslist: (vfpdef ['=' test] (',' vfpdef ['=' test])* [',' [
+//        '*' [vfpdef] (',' vfpdef ['=' test])* [',' ['**' vfpdef [',']]]
+//      | '**' vfpdef [',']]]
+//  | '*' [vfpdef] (',' vfpdef ['=' test])* [',' ['**' vfpdef [',']]]
+//  | '**' vfpdef [',']
+//)
 varargslist
     returns [arguments args]
 @init {
     List defaults = new ArrayList();
+    List kw_defaults = new ArrayList();
 }
     : d+=vdefparameter[defaults] (options {greedy=true;}:COMMA d+=vdefparameter[defaults])*
       (COMMA
-          (STAR starargs=NAME (COMMA DOUBLESTAR kwargs=NAME)?
+          (STAR (starargs=NAME)? (COMMA kw+=vdefparameter[kw_defaults] (options {greedy=true;}:COMMA kw+=vdefparameter[kw_defaults])*)? (COMMA DOUBLESTAR kwargs=NAME)?
           | DOUBLESTAR kwargs=NAME
           )?
       )?
       {
-          $args = actions.makeArgumentsType($varargslist.start, $d, $starargs, $kwargs, defaults);
+          $args = actions.makeArgumentsType($varargslist.start, $d, $starargs, $kwargs, $kw,
+          kw_defaults, defaults);
       }
-    | STAR starargs=NAME (COMMA DOUBLESTAR kwargs=NAME)?
+    | STAR (starargs=NAME)? (COMMA kw+=vdefparameter[kw_defaults] (options {greedy=true;}:COMMA kw+=vdefparameter[kw_defaults])*)? (COMMA DOUBLESTAR kwargs=NAME)?
       {
-          $args = actions.makeArgumentsType($varargslist.start, $d, $starargs, $kwargs, defaults);
+          $args = actions.makeArgumentsType($varargslist.start, $d, $starargs, $kwargs, $kw, kw_defaults, defaults);
       }
     | DOUBLESTAR kwargs=NAME
       {
-          $args = actions.makeArgumentsType($varargslist.start, $d, null, $kwargs, defaults);
+          $args = actions.makeArgumentsType($varargslist.start, $d, null, $kwargs, $kw, kw_defaults, defaults);
       }
     ;
 
@@ -2026,7 +2027,8 @@ lambdef
       {
           arguments a = $varargslist.args;
           if (a == null) {
-              a = new arguments($LAMBDA, new ArrayList<expr>(), (Name)null, null, new ArrayList<expr>());
+              a = new arguments($LAMBDA, new ArrayList<expr>(), (Name)null, null,
+              new ArrayList<Name>(), new ArrayList<expr>(), new ArrayList<expr>());
           }
           etype = new Lambda($LAMBDA, a, actions.castExpr($test.tree));
       }
@@ -2044,7 +2046,7 @@ lambdef_nocond
       {
           arguments a = $varargslist.args;
           if (a == null) {
-              a = new arguments($LAMBDA, new ArrayList<expr>(), (Name)null, null, new ArrayList<expr>());
+              a = new arguments($LAMBDA, new ArrayList<expr>(), (Name)null, null, new ArrayList<Name>(), new ArrayList<expr>(), new ArrayList<expr>());
           }
           etype = new Lambda($LAMBDA, a, actions.castExpr($test_nocond.tree));
       }

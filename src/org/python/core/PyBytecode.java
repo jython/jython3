@@ -85,7 +85,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
         co_lnotab = getBytes(lnotab);
     }
     private static final String[] __members__ = {
-        "co_name", "co_argcount",
+        "co_name", "co_argcount", "co_kwonlyargcount",
         "co_varnames", "co_filename", "co_firstlineno",
         "co_flags", "co_cellvars", "co_freevars", "co_nlocals",
         "co_code", "co_consts", "co_names", "co_lnotab", "co_stacksize"
@@ -1127,12 +1127,13 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
 
                     case Opcode.MAKE_FUNCTION: {
                         PyCode code = (PyCode) stack.pop();
+                        PyDictionary kw_defaults = (PyDictionary) stack.pop();
                         PyObject[] defaults = stack.popN(oparg);
                         PyObject doc = null;
                         if (code instanceof PyBytecode && ((PyBytecode) code).co_consts.length > 0) {
                             doc = ((PyBytecode) code).co_consts[0];
                         }
-                        PyFunction func = new PyFunction(f.f_globals, defaults, code, doc);
+                        PyFunction func = new PyFunction(f.f_globals, defaults, kw_defaults, code, doc);
                         stack.push(func);
                         break;
                     }
@@ -1140,12 +1141,13 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                     case Opcode.MAKE_CLOSURE: {
                         PyCode code = (PyCode) stack.pop();
                         PyObject[] closure_cells = ((PySequenceList) (stack.pop())).getArray();
+                        PyDictionary kw_defaults = (PyDictionary) stack.pop();
                         PyObject[] defaults = stack.popN(oparg);
                         PyObject doc = null;
                         if (code instanceof PyBytecode && ((PyBytecode) code).co_consts.length > 0) {
                             doc = ((PyBytecode) code).co_consts[0];
                         }
-                        PyFunction func = new PyFunction(f.f_globals, defaults, code, doc, closure_cells);
+                        PyFunction func = new PyFunction(f.f_globals, defaults, kw_defaults, code, doc, closure_cells);
                         stack.push(func);
                         break;
                     }

@@ -34,8 +34,6 @@ import jnr.posix.util.Platform;
 import org.python.antlr.base.mod;
 import org.python.core.adapter.ClassicPyObjectAdapter;
 import org.python.core.adapter.ExtensiblePyObjectAdapter;
-import org.python.core.Traverseproc;
-import org.python.core.Visitproc;
 import org.python.modules.posix.PosixModule;
 import org.python.util.Generic;
 
@@ -765,11 +763,11 @@ public final class Py {
             boolean args, boolean keywords,
             PyFunctionTable funcs, int func_id,
             String[] cellvars, String[] freevars,
-            int npurecell, int moreflags) {
+            int npurecell, int kwonlyargcount, int moreflags) {
         return new PyTableCode(argcount, varnames,
                 filename, name, 0, args, keywords, funcs,
                 func_id, cellvars, freevars, npurecell,
-                moreflags);
+                kwonlyargcount, moreflags);
     }
 
     public static PyCode newCode(int argcount, String varnames[],
@@ -778,11 +776,11 @@ public final class Py {
             boolean args, boolean keywords,
             PyFunctionTable funcs, int func_id,
             String[] cellvars, String[] freevars,
-            int npurecell, int moreflags) {
+            int npurecell, int kwonlyargcount, int moreflags) {
         return new PyTableCode(argcount, varnames,
                 filename, name, firstlineno, args, keywords,
                 funcs, func_id, cellvars, freevars, npurecell,
-                moreflags);
+                kwonlyargcount, moreflags);
     }
 
     // --
@@ -1842,7 +1840,7 @@ public final class Py {
                                      PyObject[] closure_cells) {
         ThreadState state = getThreadState();
         PyObject dict = code.call(state, Py.EmptyObjects, Py.NoKeywords,
-                state.frame.f_globals, Py.EmptyObjects, new PyTuple(closure_cells));
+                state.frame.f_globals, Py.EmptyObjects, new PyDictionary(), new PyTuple(closure_cells));
         return makeClass(name, bases, dict, metaclass);
     }
     public static PyObject makeClass(String name, PyObject base, PyObject dict) {
@@ -2384,47 +2382,47 @@ class JavaCode extends PyCode implements Traverseproc {
 
     @Override
     public PyObject call(ThreadState state, PyObject args[], String keywords[],
-            PyObject globals, PyObject[] defaults,
-            PyObject closure) {
+                         PyObject globals, PyObject[] defaults, PyDictionary kw_defaults,
+                         PyObject closure) {
         return func.__call__(args, keywords);
     }
 
     @Override
     public PyObject call(ThreadState state, PyObject self, PyObject args[], String keywords[],
-            PyObject globals, PyObject[] defaults,
-            PyObject closure) {
+                         PyObject globals, PyObject[] defaults, PyDictionary kw_defaults,
+                         PyObject closure) {
         return func.__call__(self, args, keywords);
     }
 
     @Override
     public PyObject call(ThreadState state, PyObject globals, PyObject[] defaults,
-            PyObject closure) {
+                         PyDictionary kw_defaults, PyObject closure) {
         return func.__call__();
     }
 
     @Override
     public PyObject call(ThreadState state, PyObject arg1, PyObject globals,
-            PyObject[] defaults, PyObject closure) {
+                         PyObject[] defaults, PyDictionary kw_defaults, PyObject closure) {
         return func.__call__(arg1);
     }
 
     @Override
     public PyObject call(ThreadState state, PyObject arg1, PyObject arg2, PyObject globals,
-            PyObject[] defaults, PyObject closure) {
+                         PyObject[] defaults, PyDictionary kw_defaults, PyObject closure) {
         return func.__call__(arg1, arg2);
     }
 
     @Override
     public PyObject call(ThreadState state, PyObject arg1, PyObject arg2, PyObject arg3,
-            PyObject globals, PyObject[] defaults,
-            PyObject closure) {
+                         PyObject globals, PyObject[] defaults, PyDictionary kw_defaults,
+                         PyObject closure) {
         return func.__call__(arg1, arg2, arg3);
     }
 
     @Override
     public PyObject call(ThreadState state, PyObject arg1, PyObject arg2,
-            PyObject arg3, PyObject arg4, PyObject globals,
-            PyObject[] defaults, PyObject closure) {
+                         PyObject arg3, PyObject arg4, PyObject globals,
+                         PyObject[] defaults, PyDictionary kw_defaults, PyObject closure) {
         return func.__call__(arg1, arg2, arg3, arg4);
     }
 
