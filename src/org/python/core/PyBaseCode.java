@@ -116,7 +116,7 @@ public abstract class PyBaseCode extends PyCode {
     public PyObject call(ThreadState state, PyObject globals, PyObject[] defaults,
                          PyDictionary kw_defaults, PyObject closure)
     {
-        if (co_argcount != 0 || varargs || varkwargs)
+        if (co_argcount != 0 || varargs || varkwargs || !kw_defaults.isEmpty())
             return call(state, Py.EmptyObjects, Py.NoKeywords, globals, defaults,
                         kw_defaults, closure);
         PyFrame frame = new PyFrame(this, globals);
@@ -130,7 +130,7 @@ public abstract class PyBaseCode extends PyCode {
     public PyObject call(ThreadState state, PyObject arg1, PyObject globals, PyObject[] defaults,
                          PyDictionary kw_defaults, PyObject closure)
     {
-        if (co_argcount != 1 || varargs || varkwargs)
+        if (co_argcount != 1 || varargs || varkwargs || !kw_defaults.isEmpty())
             return call(state, new PyObject[] {arg1},
                         Py.NoKeywords, globals, defaults, kw_defaults, closure);
         PyFrame frame = new PyFrame(this, globals);
@@ -145,7 +145,7 @@ public abstract class PyBaseCode extends PyCode {
     public PyObject call(ThreadState state, PyObject arg1, PyObject arg2, PyObject globals,
                          PyObject[] defaults, PyDictionary kw_defaults, PyObject closure)
     {
-        if (co_argcount != 2 || varargs || varkwargs)
+        if (co_argcount != 2 || varargs || varkwargs || !kw_defaults.isEmpty())
             return call(state, new PyObject[] {arg1, arg2},
                         Py.NoKeywords, globals, defaults, kw_defaults, closure);
         PyFrame frame = new PyFrame(this, globals);
@@ -162,7 +162,7 @@ public abstract class PyBaseCode extends PyCode {
                          PyObject globals, PyObject[] defaults, PyDictionary kw_defaults,
                          PyObject closure)
     {
-        if (co_argcount != 3 || varargs || varkwargs)
+        if (co_argcount != 3 || varargs || varkwargs || !kw_defaults.isEmpty())
             return call(state, new PyObject[] {arg1, arg2, arg3},
                         Py.NoKeywords, globals, defaults, kw_defaults, closure);
         PyFrame frame = new PyFrame(this, globals);
@@ -179,7 +179,7 @@ public abstract class PyBaseCode extends PyCode {
     public PyObject call(ThreadState state, PyObject arg1, PyObject arg2,
                          PyObject arg3, PyObject arg4, PyObject globals,
                          PyObject[] defaults, PyDictionary kw_defaults, PyObject closure) {
-        if (co_argcount != 4 || varargs || varkwargs)
+        if (co_argcount != 4 || varargs || varkwargs || !kw_defaults.isEmpty())
             return call(state, new PyObject[]{arg1, arg2, arg3, arg4},
                         Py.NoKeywords, globals, defaults, kw_defaults, closure);
         PyFrame frame = new PyFrame(this, globals);
