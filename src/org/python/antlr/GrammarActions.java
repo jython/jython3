@@ -310,7 +310,9 @@ public class GrammarActions {
         if (args != null) {
             a = args;
         } else {
-            a = new arguments(t, new ArrayList<expr>(), (Name)null, null, new ArrayList<expr>());
+            a = new arguments(t, new ArrayList<expr>(), (Name)null, null,
+                    // kwonlyargs, kw_defaults, defaults
+                    new ArrayList<Name>(), new ArrayList<expr>(), new ArrayList<expr>());
         }
         List<stmt> s = castStmts(funcStatements);
         List<expr> d = castExprs(decorators);
@@ -362,9 +364,10 @@ public class GrammarActions {
     }
 
     arguments makeArgumentsType(Token t, List params, Token snameToken,
-        Token knameToken, List defaults) {
+        Token knameToken, List kwonlyargs, List<expr> kwDefaults, List defaults) {
 
         List<expr> p = castExprs(params);
+        List<expr> kwd = kwDefaults; // Note: castExprs remove the null elements, don't do that
         List<expr> d = castExprs(defaults);
         Name s;
         Name k;
@@ -378,7 +381,7 @@ public class GrammarActions {
         } else {
             k = cantBeNoneName(knameToken);
         }
-        return new arguments(t, p, s, k, d);
+        return new arguments(t, p, s, k, kwonlyargs, kwd, d);
     }
 
     List<expr> extractArgs(List args) {

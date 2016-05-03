@@ -39,6 +39,13 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
      */
     public PyObject[] __defaults__;
 
+    /**
+     * Default argument values for keyword-only arguments. Exposed as
+     * a dict to Python.
+     */
+    @ExposedGet
+    public PyDictionary __kwdefaults__;
+
     /** The actual function's code, writable. */
     @ExposedGet
     public PyCode __code__;
@@ -58,7 +65,7 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
     @ExposedSet
     public PyObject __module__;
 
-    public PyFunction(PyObject globals, PyObject[] defaults, PyCode code, PyObject doc,
+    public PyFunction(PyObject globals, PyObject[] defaults, PyDictionary kw_defaults, PyCode code, PyObject doc,
                       PyObject[] closure_cells) {
         super(TYPE);
         __globals__ = globals;
@@ -68,36 +75,37 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
         // instead of null for defaults, whereas we want __defaults__
         // to be None (null) in that situation
         __defaults__ = (defaults != null && defaults.length == 0) ? null : defaults;
+        __kwdefaults__ = kw_defaults;
         __code__ = code;
         __closure__ = closure_cells != null ? new PyTuple(closure_cells) : null;
         PyObject moduleName = globals.__finditem__("__name__");
         __module__ = moduleName != null ? moduleName : Py.None;
     }
 
-    public PyFunction(PyObject globals, PyObject[] defaults, PyCode code, PyObject doc) {
-        this(globals, defaults, code, doc, null);
+    public PyFunction(PyObject globals, PyObject[] defaults, PyDictionary kw_defaults, PyCode code, PyObject doc) {
+        this(globals, defaults, kw_defaults, code, doc, null);
+    }
+    public PyFunction(PyObject globals, PyObject[] defaults, PyDictionary kw_defaults, PyCode code) {
+        this(globals, defaults, kw_defaults, code, null, null);
     }
 
-    public PyFunction(PyObject globals, PyObject[] defaults, PyCode code) {
-        this(globals, defaults, code, null, null);
-    }
-
-    public PyFunction(PyObject globals, PyObject[] defaults, PyCode code,
+    public PyFunction(PyObject globals, PyObject[] defaults, PyDictionary kw_defaults, PyCode code,
                       PyObject[] closure_cells) {
-        this(globals, defaults, code, null, closure_cells);
+        this(globals, defaults, kw_defaults, code, null, closure_cells);
     }
 
     @ExposedNew
     static final PyObject function___new__(PyNewWrapper new_, boolean init, PyType subtype,
                                            PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("function", args, keywords,
-                                     new String[] {"code", "globals", "name", "argdefs",
+                                     new String[] {"code", "globals", "name", "argdefs", "kwdefs",
                                                    "closure"}, 0);
         PyObject code = ap.getPyObject(0);
         PyObject globals = ap.getPyObject(1);
         PyObject name = ap.getPyObject(2, Py.None);
         PyObject defaults = ap.getPyObject(3, Py.None);
-        PyObject closure = ap.getPyObject(4, Py.None);
+        PyObject kw_defaults = ap.getPyObject(4, Py.None);
+        PyObject closure = ap.getPyObject(5, Py.None);
 
         if (!(code instanceof PyBaseCode)) {
             throw Py.TypeError("function() argument 1 must be code, not " +
@@ -109,14 +117,18 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
         if (defaults != Py.None && !(defaults instanceof PyTuple)) {
             throw Py.TypeError("arg 4 (defaults) must be None or tuple");
         }
+        if (defaults != Py.None && !(defaults instanceof PyStringMap)) {
+            throw Py.TypeError("arg 5 (kw_defaults) must be None or dict");
+        }
+
 
         PyBaseCode tcode = (PyBaseCode)code;
         int nfree = tcode.co_freevars == null ? 0 : tcode.co_freevars.length;
         if (!(closure instanceof PyTuple)) {
             if (nfree > 0 && closure == Py.None) {
-                throw Py.TypeError("arg 5 (closure) must be tuple");
+                throw Py.TypeError("arg 6 (closure) must be tuple");
             } else if (closure != Py.None) {
-                throw Py.TypeError("arg 5 (closure) must be None or tuple");
+                throw Py.TypeError("arg 6 (closure) must be None or tuple");
             }
         }
 
@@ -137,6 +149,8 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
         PyFunction function = new PyFunction(globals,
                                              defaults == Py.None
                                              ? null : ((PyTuple)defaults).getArray(),
+                                             kw_defaults == Py.None
+                                             ? null : (PyDictionary) kw_defaults,
                                              tcode, null,
                                              closure == Py.None
                                              ? null : ((PyTuple)closure).getArray());
@@ -400,7 +414,7 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
 
     @Override
     public PyObject __call__(ThreadState state) {
-        return __code__.call(state, __globals__, __defaults__, __closure__);
+        return __code__.call(state, __globals__, __defaults__, __kwdefaults__, __closure__);
     }
 
     @Override
@@ -410,7 +424,7 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
 
     @Override
     public PyObject __call__(ThreadState state, PyObject arg0) {
-        return __code__.call(state, arg0, __globals__, __defaults__, __closure__);
+        return __code__.call(state, arg0, __globals__, __defaults__, __kwdefaults__, __closure__);
     }
 
     @Override
@@ -420,7 +434,7 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
 
     @Override
     public PyObject __call__(ThreadState state, PyObject arg0, PyObject arg1) {
-        return __code__.call(state, arg0, arg1, __globals__, __defaults__, __closure__);
+        return __code__.call(state, arg0, arg1, __globals__, __defaults__, __kwdefaults__, __closure__);
     }
 
     @Override
@@ -431,7 +445,7 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
     @Override
     public PyObject __call__(ThreadState state, PyObject arg0, PyObject arg1,
             PyObject arg2) {
-        return __code__.call(state, arg0, arg1, arg2, __globals__, __defaults__, __closure__);
+        return __code__.call(state, arg0, arg1, arg2, __globals__, __defaults__, __kwdefaults__, __closure__);
     }
 
     @Override
@@ -443,7 +457,7 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
     @Override
     public PyObject __call__(ThreadState state, PyObject arg0, PyObject arg1,
             PyObject arg2, PyObject arg3) {
-        return __code__.call(state, arg0, arg1, arg2, arg3, __globals__, __defaults__, __closure__);
+        return __code__.call(state, arg0, arg1, arg2, arg3, __globals__, __defaults__, __kwdefaults__, __closure__);
     }
 
     @Override
@@ -468,7 +482,7 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
 
     @ExposedMethod(doc = BuiltinDocs.function___call___doc)
     final PyObject function___call__(ThreadState state, PyObject[] args, String[] keywords) {
-        return __code__.call(state, args, keywords, __globals__, __defaults__, __closure__);
+        return __code__.call(state, args, keywords, __globals__, __defaults__,  __kwdefaults__, __closure__);
     }
 
     @Override
@@ -479,7 +493,7 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
     @Override
     public PyObject __call__(ThreadState state, PyObject arg1, PyObject[] args,
                              String[] keywords) {
-        return __code__.call(state, arg1, args, keywords, __globals__, __defaults__, __closure__);
+        return __code__.call(state, arg1, args, keywords, __globals__, __defaults__, __kwdefaults__, __closure__);
     }
 
     @Override
