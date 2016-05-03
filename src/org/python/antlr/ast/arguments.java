@@ -327,6 +327,7 @@ public class arguments extends PythonTree {
     // method signature to avoid clashes with the (Token, List<expr>,
     // String, String, List<expr>) version of the constructor.
     public arguments(Token token, java.util.List<expr> args, Name vararg, Name kwarg,
+                     java.util.List<Name> kwonlyargs, java.util.List<expr> kw_defaults,
             java.util.List<expr> defaults) {
         super(token);
         this.args = args;
@@ -340,6 +341,20 @@ public class arguments extends PythonTree {
         this.varargName = vararg;
         this.kwarg = kwarg == null ? null : kwarg.getText();
         this.kwargName = kwarg;
+
+        this.kwonlyargs = new ArrayList<>();
+        if (kwonlyargs != null) {
+            for (Name arg : kwonlyargs) {
+                this.kwonlyargs.add(arg.getText());
+            }
+        }
+        this.kw_defaults = kw_defaults;
+        if (kw_defaults == null) {
+            this.kw_defaults = new ArrayList<expr>();
+        }
+        for(PythonTree t : this.kw_defaults) {
+            addChild(t);
+        }
         this.defaults = defaults;
         if (defaults == null) {
             this.defaults = new ArrayList<expr>();

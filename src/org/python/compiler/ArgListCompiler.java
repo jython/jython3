@@ -3,7 +3,9 @@
 package org.python.compiler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.python.antlr.ParseException;
 import org.python.antlr.Visitor;
@@ -21,6 +23,8 @@ public class ArgListCompiler extends Visitor
     public boolean arglist, keywordlist;
     public List<expr> defaults;
     public List<String> names;
+    public Map<String, expr> kw_defaults;
+    public int kwonlyargcount;
     public List<String> fpnames;
     public List<stmt> init_code;
 
@@ -28,6 +32,7 @@ public class ArgListCompiler extends Visitor
         arglist = keywordlist = false;
         defaults = null;
         names = new ArrayList<String>();
+        kw_defaults = new HashMap<>();
         fpnames = new ArrayList<String>();
         init_code = new ArrayList<stmt>();
     }
@@ -64,17 +69,34 @@ public class ArgListCompiler extends Visitor
             arglist = true;
             names.add(args.getInternalVararg());
         }
+        kwonlyargcount = args.getInternalKwonlyargs().size();
+        names.addAll(args.getInternalKwonlyargs());
         if (args.getInternalKwarg() != null) {
             keywordlist = true;
             names.add(args.getInternalKwarg());
         }
-        
-        defaults = args.getInternalDefaults();
-        for (int i = 0; i < defaults.size(); i++) {
-            if (defaults.get(i) == null)
-                throw new ParseException(
+
+        List<String> kwonlyargs = args.getInternalKwonlyargs();
+        List<expr> kwdefaults = args.getInternalKw_defaults();
+        for (int i = 0; i < kwonlyargcount; i++) {
+            expr kwDefault = kwdefaults.get(i);
+            if (kwDefault != null) {
+                kw_defaults.put(kwonlyargs.get(i), kwDefault);
+            }
+        }
+
+        defaults = new ArrayList<expr>();
+        List<expr> internalDefaults = args.getInternalDefaults();
+        for (int i = 0; i < internalDefaults.size(); i++) {
+            expr val = internalDefaults.get(i);
+            if (val == null && ! defaults.isEmpty()) {
+                 throw new ParseException(
                     "non-default argument follows default argument",
                     args.getInternalArgs().get(args.getInternalArgs().size() - defaults.size() + i));
+            }
+            if (val != null) {
+                defaults.add(val);
+            }
         }
     }
 

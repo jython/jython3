@@ -23,7 +23,7 @@ public class PyTableCode extends PyBaseCode
                        PyFunctionTable funcs, int func_id)
     {
         this(argcount, varnames, filename, name, firstlineno, varargs,
-             varkwargs, funcs, func_id, null, null, 0, 0);
+             varkwargs, funcs, func_id, null, null, 0, 0, 0);
     }
 
     public PyTableCode(int argcount, String varnames[],
@@ -32,7 +32,7 @@ public class PyTableCode extends PyBaseCode
                        boolean varargs, boolean varkwargs,
                        PyFunctionTable funcs, int func_id,
                        String[] cellvars, String[] freevars, int npurecell,
-                       int moreflags) // may change
+                       int kwonlyargcount, int moreflags) // may change
     {
         co_argcount = nargs = argcount;
         co_varnames = varnames;
@@ -56,12 +56,14 @@ public class PyTableCode extends PyBaseCode
         co_flags = new CompilerFlags(co_flags.toBits() | moreflags);
         this.funcs = funcs;
         this.func_id = func_id;
+        co_kwonlyargcount = kwonlyargcount;
     }
 
     private static final String[] __members__ = {
         "co_name", "co_argcount",
         "co_varnames", "co_filename", "co_firstlineno",
-        "co_flags","co_cellvars","co_freevars","co_nlocals"
+        "co_flags","co_cellvars","co_freevars","co_nlocals",
+        "co_kwonlyargcount"
         // not supported: co_code, co_consts, co_names,
         // co_lnotab, co_stacksize
     };
@@ -117,18 +119,16 @@ public class PyTableCode extends PyBaseCode
             return new PyString(co_name);
         }
         if (name == "co_flags") {
-            return Py.newInteger(co_flags.toBits());
+            return Py.newLong(co_flags.toBits());
         }
         return super.__findattr_ex__(name);
     }
 
     @Override
     public PyObject call(ThreadState ts, PyFrame frame, PyObject closure) {
-//         System.err.println("tablecode call: "+co_name);
         if (ts.systemState == null) {
             ts.systemState = Py.defaultSystemState;
         }
-        //System.err.println("got ts: "+ts+", "+ts.systemState);
 
         // Cache previously defined exception
         PyException previous_exception = ts.exception;
@@ -139,8 +139,6 @@ public class PyTableCode extends PyBaseCode
             if (frame.f_back != null) {
                 frame.f_builtins = frame.f_back.f_builtins;
             } else {
-                //System.err.println("ts: "+ts);
-                //System.err.println("ss: "+ts.systemState);
                 frame.f_builtins = ts.systemState.builtins;;
             }
         }
