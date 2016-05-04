@@ -53,7 +53,7 @@ colorsys.py
 commands.py
 compileall.py
 contextlib.py
-ConfigParser.py
+configparser.py
 cookielib.py
 copy.py
 copyreg.py
@@ -100,7 +100,7 @@ macpath.py
 macurl2path.py
 mailbox.py
 mailcap.py
-markupbase.py
+_markupbase.py
 md5.py
 mhlib.py
 mimetools.py
@@ -130,7 +130,7 @@ pty.py
 pyclbr.py
 pydoc.py
 pydoc_topics.py
-Queue.py
+queue.py
 quopri.py
 random.py
 re.py
@@ -152,7 +152,7 @@ site-packages/README
 smtpd.py
 smtplib.py
 sndhdr.py
-SocketServer.py
+socketserver.py
 sre*.py
 stat.py
 string.py

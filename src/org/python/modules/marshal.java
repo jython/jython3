@@ -1,8 +1,12 @@
 package org.python.modules;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import org.python.core.BaseSet;
 import org.python.core.ClassDictInit;
+import org.python.core.PyFile;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.Py;
@@ -20,10 +24,10 @@ import org.python.core.PyUnicode;
 import org.python.core.Traverseproc;
 import org.python.core.Visitproc;
 
-public class _marshal implements ClassDictInit {
+public class marshal implements ClassDictInit {
 
     public static void classDictInit(PyObject dict) {
-        dict.__setitem__("__name__", Py.newString("_marshal"));
+        dict.__setitem__("__name__", Py.newString("marshal"));
     }
     private final static char TYPE_NULL = '0';
     private final static char TYPE_NONE = 'N';
@@ -558,5 +562,33 @@ public class _marshal implements ClassDictInit {
                 return ob == strings;
             }
         }
+    }
+    public static void dump(PyObject value, PyObject file) {
+        dump(value, file, 2);
+    }
+
+    public static void dump(PyObject value, PyObject file, int version) {
+        new Marshaller(file).dump(value);
+    }
+
+    public static PyObject dumps(PyObject value, int version) {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PyObject f = new PyFile(output);
+        dump(value, f, version);
+        return new PyString(new String(output.toByteArray()));
+    }
+
+    public static void dumps(PyObject value) {
+        dumps(value, 2);
+    }
+
+    public static PyObject load(PyObject f) {
+        return new Unmarshaller(f).load();
+    }
+
+    public static PyObject loads(PyObject bytes) {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(((PyString) bytes).getString().getBytes());
+        PyObject f = new PyFile(inputStream);
+        return new Unmarshaller(f).load();
     }
 }

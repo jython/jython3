@@ -37,7 +37,7 @@ public class Setup
         "_io:org.python.modules._io._io",
         "_json:org.python.modules._json._json",
         "_jythonlib:org.python.modules._jythonlib._jythonlib",
-        "_marshal",
+        "marshal",
         "_py_compile",
         "_random:org.python.modules.random.RandomModule",
         "_sre",
