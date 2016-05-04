@@ -12,6 +12,8 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
+import org.python.core.imp;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -279,16 +281,7 @@ public class _imp {
     }
 
     private static PyObject addModuleObject(PyObject name) {
-        PySystemState sys = Py.getSystemState();
-        PyObject modules = sys.modules;
-        PyObject mod = modules.__getitem__(name);
-        if (mod != null) {
-            return mod;
-        }
-
-        mod = new_module(name.toString());
-        modules.__setattr__(name.toString(), mod);
-        return mod;
+        return imp.load(name.asString());
     }
 
     public static PyObject get_magic() {
@@ -362,5 +355,12 @@ public class _imp {
      */
     public static boolean lock_held() {
         return Py.getSystemState().getImportLock().isHeldByCurrentThread();
+    }
+
+    /**
+     * Returns the list of file suffixes used to identify extension modules.
+     */
+    public static PyObject extension_suffixes() {
+        return new PyList();
     }
 }

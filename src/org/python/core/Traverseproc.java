@@ -426,7 +426,7 @@ import org.python.modules.gc;
  *     EncodingMap                   - no refs, untraversable<br>
  *   _hashlib:<br>
  *     Hash                          - no refs, untraversable<br>
- *   _marshal:<br>
+ *   marshal:<br>
  *     Marshaller                    - Traverseproc<br>
  *     Unmarshaller                  - Traverseproc<br>
  *   cStringIO:<br>
