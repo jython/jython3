@@ -73,7 +73,7 @@ class XMLParser(object):
 
         if namespace_separator is None:
             self.namespace_separator = namespace_separator
-        elif isinstance(namespace_separator, basestring):
+        elif isinstance(namespace_separator, str):
             self.namespace_separator = str(namespace_separator)
             if len(self.namespace_separator) > 1:
                 error = ("namespace_separator must be at most one character, "
@@ -189,7 +189,7 @@ class XMLParser(object):
         # represents an array of bytes. If instead it is a unicode string,
         # only the us-ascii range is considered safe enough to be silently
         # converted.
-        if isinstance(data, unicode):
+        if isinstance(data, str):
             data = data.encode(sys.getdefaultencoding())
 
         self._data.append(data)
@@ -202,7 +202,7 @@ class XMLParser(object):
                 source.setEncoding(self.encoding)
             try:
                 self._reader.parse(source)
-            except SAXParseException, sax_error:
+            except SAXParseException as sax_error:
                 # Experiments tend to show that the '_Next*' parser locations
                 # match more closely expat behavior than the 'Current*' or sax
                 # error locations.
@@ -222,11 +222,11 @@ XMLParserType = XMLParser
 
 
 def _encode(arg, encoding):
-    if isinstance(arg, unicode):
+    if isinstance(arg, str):
         return arg.encode(encoding)
     else:
         if isinstance(arg, dict):
-            iterator = arg.iteritems()
+            iterator = iter(list(arg.items()))
         else:
             iterator = iter(arg)
         return type(arg)(_encode(_arg, encoding) for _arg in iterator)

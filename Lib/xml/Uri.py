@@ -13,7 +13,7 @@
 import os.path
 import sys
 import re
-import urlparse, urllib, urllib2
+import urllib.parse, urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error, urllib.parse
 
 def UnsplitUriRef(uriRefSeq):
     """should replace urlparse.urlunsplit
@@ -206,12 +206,12 @@ def MakeUrllibSafe(uriRef):
     # Python 2.3 and up.
     #
     # see if host is a reg-name, as opposed to IPv4 or IPv6 addr.
-    if isinstance(uriRef, unicode):
+    if isinstance(uriRef, str):
         try:
             uriRef = uriRef.encode('us-ascii') # parts of urllib are not unicode safe
         except UnicodeError:
             raise ValueError("uri %r must consist of ASCII characters." % uriRef)
-    (scheme, auth, path, query, frag) = urlparse.urlsplit(uriRef)
+    (scheme, auth, path, query, frag) = urllib.parse.urlsplit(uriRef)
     if auth and auth.find('@') > -1:
         userinfo, hostport = auth.split('@')
     else:
@@ -224,7 +224,7 @@ def MakeUrllibSafe(uriRef):
         port = None
     if host and REG_NAME_HOST_PATTERN.match(host):
         # percent-encoded hostnames will always fail DNS lookups
-        host = urllib.unquote(host) #PercentDecode(host)
+        host = urllib.parse.unquote(host) #PercentDecode(host)
         # IDNA-encode if possible.
         # We shouldn't do this for schemes that don't need DNS lookup,
         # but are there any (that you'd be calling urlopen for)?
@@ -246,7 +246,7 @@ def MakeUrllibSafe(uriRef):
         path = path.replace(':', '|', 1)
 
     # Note that we drop fragment, if any. See RFC 3986 sec. 3.5.
-    uri = urlparse.urlunsplit((scheme, auth, path, query, None))
+    uri = urllib.parse.urlunsplit((scheme, auth, path, query, None))
 
     return uri
 

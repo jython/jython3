@@ -15,11 +15,11 @@ version = '2.0beta'
 # various other modules for Python 2 compatibility. If nobody uses
 # them here any longer, the references can be removed
 
-from handler import ErrorHandler, ContentHandler, DTDHandler, EntityResolver
-from xmlreader import XMLReader, InputSource, Locator, IncrementalParser
-from _exceptions import *
+from .handler import ErrorHandler, ContentHandler, DTDHandler, EntityResolver
+from .xmlreader import XMLReader, InputSource, Locator, IncrementalParser
+from ._exceptions import *
 
-from handler import \
+from .handler import \
      feature_namespaces,\
      feature_namespace_prefixes,\
      feature_string_interning,\
