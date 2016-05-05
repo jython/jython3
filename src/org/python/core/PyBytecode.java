@@ -956,7 +956,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                     case Opcode.IMPORT_NAME: {
                         PyObject __import__ = f.f_builtins.__finditem__("__import__");
                         if (__import__ == null) {
-                            throw Py.ImportError("__import__ not found");
+                            throw Py.ImportError("__import__ not found", "__import__");
                         }
                         PyString name = Py.newString(co_names[oparg]);
                         PyObject fromlist = stack.pop();
@@ -983,7 +983,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
 
                         } catch (PyException pye) {
                             if (pye.match(Py.AttributeError)) {
-                                throw Py.ImportError(String.format("cannot import name %.230s", name));
+                                throw Py.ImportError(String.format("cannot import name %.230s", name), name);
                             } else {
                                 throw pye;
                             }
