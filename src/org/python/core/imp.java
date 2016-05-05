@@ -212,7 +212,7 @@ public class imp {
         } catch (IOException ioe) {
             if (!testing) {
                 throw Py.ImportError(ioe.getMessage() + "[name=" + name + ", source=" + sourceName
-                        + ", compiled=" + compiledName + "]");
+                        + ", compiled=" + compiledName + "]", name);
             }
         }
         if (testing && data == null) {
@@ -265,7 +265,7 @@ public class imp {
                 return null;
             } else {
                 String fmt = "compiled unit contains version %d code (%d required): %.200s";
-                throw Py.ImportError(String.format(fmt, api, APIVersion, name));
+                throw Py.ImportError(String.format(fmt, api, APIVersion, name), name);
             }
         }
         if (testing && mtime != NO_MTIME) {
@@ -563,7 +563,7 @@ public class imp {
                     }
                     return createFromClass(name, c);
                 } catch (NoClassDefFoundError e) {
-                    throw Py.ImportError("Cannot import " + name + ", missing class " + c.getName());
+                    throw Py.ImportError("Cannot import " + name + ", missing class " + c.getName(), name);
                 }
             }
         }
@@ -842,7 +842,7 @@ public class imp {
     private static PyObject import_first(String name, StringBuilder parentNameBuffer) {
         PyObject ret = import_next(null, parentNameBuffer, name, null, null);
         if (ret == null || ret == Py.None) {
-            throw Py.ImportError("No module named " + name);
+            throw Py.ImportError("No module named " + name, name);
         }
         return ret;
     }
@@ -856,7 +856,7 @@ public class imp {
             }
         }
         if (ret == null || ret == Py.None) {
-            throw Py.ImportError("No module named " + name);
+            throw Py.ImportError("No module named " + name, name);
         }
         return ret;
     }
@@ -890,7 +890,7 @@ public class imp {
                 mod = import_next(jpkg, parentNameBuffer, name, fullName, fromlist);
             }
             if (mod == null || mod == Py.None) {
-                throw Py.ImportError("No module named " + name);
+                throw Py.ImportError("No module named " + name, name);
             }
             last_dot = dot + 1;
         } while (dot != -1);
@@ -1142,7 +1142,7 @@ public class imp {
             // end temporary fix.
 
             if (submod == null) {
-                throw Py.ImportError("cannot import name " + names[i]);
+                throw Py.ImportError("cannot import name " + names[i], names[i]);
             }
             submods[i] = submod;
         }
@@ -1236,7 +1236,7 @@ public class imp {
         String name = m.__getattr__("__name__").toString().intern();
         PyModule nm = (PyModule)modules.__finditem__(name);
         if (nm == null || !nm.__getattr__("__name__").toString().equals(name)) {
-            throw Py.ImportError("reload(): module " + name + " not in sys.modules");
+            throw Py.ImportError("reload(): module " + name + " not in sys.modules", name);
         }
         PyModule existing_module = modules_reloading.get(name);
         if (existing_module != null) {
@@ -1254,7 +1254,7 @@ public class imp {
             String iname = name.substring(0, dot).intern();
             PyObject pkg = modules.__finditem__(iname);
             if (pkg == null) {
-                throw Py.ImportError("reload(): parent not in sys.modules");
+                throw Py.ImportError("reload(): parent not in sys.modules", name);
             }
             path = (PyList)pkg.__getattr__("__path__");
             name = name.substring(dot + 1, name.length()).intern();

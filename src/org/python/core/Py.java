@@ -325,6 +325,12 @@ public final class Py {
     public static PyException ImportError(String message) {
         return new PyException(Py.ImportError, message);
     }
+
+    public static PyException ImportError(String message, String name) {
+      return new PyException(Py.ImportError, new PyTuple(
+            new PyString(message), new PyString(name)));
+    }
+
     public static PyObject ValueError;
 
     public static PyException ValueError(String message) {
@@ -1576,7 +1582,7 @@ public final class Py {
                                     + "You can use the -S option or python.import.site=false to not import the site module",
                             pye.value.__getattr__("args").__getitem__(0),
                             sys.path,
-                            sys.prefix));
+                            sys.prefix), "site");
                 } else {
                     throw pye;
                 }

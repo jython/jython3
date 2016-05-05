@@ -92,7 +92,7 @@ public class ClasspathPyImporter extends importer<String> {
             return null;
 
         } else if (moduleInfo == ModuleInfo.NOT_FOUND) {
-            throw Py.ImportError(String.format("can't find module '%s'", fullname));
+            throw Py.ImportError(String.format("can't find module '%s'", fullname), fullname);
 
         } else {
             // Turn the module name into a source file name

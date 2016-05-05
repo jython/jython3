@@ -137,7 +137,7 @@ public class _imp {
     }
 
     public static PyObject load_dynamic(String name, String pathname, PyObject file) {
-        throw Py.ImportError("No module named " + name);
+        throw Py.ImportError("No module named " + name, name);
     }
 
     public static PyObject load_source(String modname, String filename) {
@@ -212,7 +212,7 @@ public class _imp {
                                            new PyString(mi.mode),
                                            Py.newInteger(mi.type)));
         }
-        throw Py.ImportError("No module named " + name);
+        throw Py.ImportError("No module named " + name, name);
     }
 
     public static PyObject load_module(String name, PyObject file, PyObject filename, PyTuple data) {
@@ -262,7 +262,7 @@ public class _imp {
                     filename = new PyString(mi.filename);
                     break;
                 default:
-                    throw Py.ImportError("No module named " + name);
+                    throw Py.ImportError("No module named " + name, name);
             }
         }
         PyObject modules = sys.modules;

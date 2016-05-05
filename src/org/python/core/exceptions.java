@@ -86,7 +86,7 @@ public class exceptions extends PyObject implements ClassDictInit {
 
         buildClass(dict, "EOFError", "StandardError", "Read beyond end of file.");
 
-        buildClass(dict, "ImportError", "StandardError",
+        buildClass(dict, "ImportError", "StandardError", ImportError(),
                    "Import can't find module, or can't find name in module.");
 
         buildClass(dict, "TypeError", "StandardError", "Inappropriate argument type.");
@@ -182,6 +182,58 @@ public class exceptions extends PyObject implements ClassDictInit {
         zipimport.initClassExceptions(dict);
 
         ts.frame = ts.frame.f_back;
+    }
+
+    public static PyObject ImportError() {
+        PyObject __dict__ = new PyStringMap();
+        defineSlots(__dict__, "args", "msg", "name", "path");
+        __dict__.__setitem__("__init__", bindStaticJavaMethod("__init__", "ImportError__init__"));
+        __dict__.__setitem__("__str__", bindStaticJavaMethod("__str__", "ImportError__str__"));
+        return __dict__;
+    }
+
+    public static void ImportError__init__(PyObject self, PyObject[] args, String[] kwargs) {
+        PyBaseException.TYPE.invoke("__init__", self, args, kwargs);
+        initSlots(self);
+        if (args.length > kwargs.length) {
+            self.__setattr__("msg", args[0]);
+        }
+        if (args.length > 1) {
+            self.__setattr__("name", args[1]);
+        }
+        int kwargzero = args.length - kwargs.length;
+        for (int i = 0; i < kwargs.length; i++) {
+            String key = kwargs[i];
+            self.__setattr__(key, args[kwargzero + i]);
+        }
+    }
+
+    public static PyString ImportError__str__(PyObject self, PyObject[] arg, String[] kwargs) {
+        PyObject msg = self.__getattr__("msg");
+        PyObject str = msg.__str__();
+        if (!(msg instanceof PyString)) {
+            return Py.newString(str.toString());
+        }
+
+        PyObject name = self.__findattr__("name");
+        PyObject path = self.__findattr__("path");
+        boolean haveName = name instanceof PyString;
+        boolean havePath = path instanceof PyInteger;
+        if (!haveName && !havePath) {
+            return (PyString)str;
+        }
+
+        String result;
+        if (haveName && havePath) {
+            result = String.format("%s (%s, path %s)", str, basename(name.toString()),
+                                   path.toString());
+        } else if (haveName) {
+            result = String.format("%s (%s)", str, basename(name.toString()));
+        } else {
+            result = String.format("%s (path %s)", str, path.toString());
+        }
+
+        return Py.newString(result);
     }
 
     public static PyObject SyntaxError() {
