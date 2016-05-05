@@ -63,7 +63,7 @@ class JyErrorHandlerWrapper(javasax.ErrorHandler):
 
 class JyInputSourceWrapper(javasax.InputSource):
     def __init__(self, source):
-        if isinstance(source, basestring):
+        if isinstance(source, str):
             javasax.InputSource.__init__(self, source)
         elif hasattr(source, "read"):#file like object
             f = source
@@ -136,7 +136,7 @@ class JavaSAXParser(xmlreader.XMLReader, javasax.ContentHandler, LexicalHandler)
         self.setDTDHandler(self.getDTDHandler())
         try:
             self._parser.setProperty("http://xml.org/sax/properties/lexical-handler", self)
-        except Exception, x:
+        except Exception as x:
             pass
 
     # XMLReader methods
@@ -190,10 +190,10 @@ class JavaSAXParser(xmlreader.XMLReader, javasax.ContentHandler, LexicalHandler)
         self._cont_handler.startPrefixMapping(prefix, uri)
 
     def characters(self, char, start, len):
-        self._cont_handler.characters(unicode(String(char, start, len)))
+        self._cont_handler.characters(str(String(char, start, len)))
 
     def ignorableWhitespace(self, char, start, len):
-        self._cont_handler.ignorableWhitespace(unicode(String(char, start,
+        self._cont_handler.ignorableWhitespace(str(String(char, start,
                                                               len)))
 
     def endElement(self, uri, lname, qname):
@@ -215,7 +215,7 @@ class JavaSAXParser(xmlreader.XMLReader, javasax.ContentHandler, LexicalHandler)
     def comment(self, char, start, len):
         try:
             # Need to wrap this in a try..except in case the parser does not support lexical events
-            self._cont_handler.comment(unicode(String(char, start, len)))
+            self._cont_handler.comment(str(String(char, start, len)))
         except:
             pass
 
@@ -277,19 +277,19 @@ class AttributesImpl:
     def getValueByQName(self, qname):
         idx = self._attrs.getIndex(qname)
         if idx == -1:
-            raise KeyError, qname
+            raise KeyError(qname)
         return self._attrs.getValue(idx)
 
     def getNameByQName(self, qname):
         idx = self._attrs.getIndex(qname)
         if idx == -1:
-            raise KeyError, qname
+            raise KeyError(qname)
         return qname
 
     def getQNameByName(self, name):
         idx = self._attrs.getIndex(_makeJavaNsTuple(name))
         if idx == -1:
-            raise KeyError, name
+            raise KeyError(name)
         return name
 
     def __len__(self):
@@ -308,7 +308,7 @@ class AttributesImpl:
         return [(name, self[name]) for name in self.getNames()]
 
     def values(self):
-        return map(self.getValue, self.getNames())
+        return list(map(self.getValue, self.getNames()))
 
     def get(self, name, alt=None):
         try:
@@ -350,14 +350,14 @@ class AttributesNSImpl(AttributesImpl):
     def getNameByQName(self, qname):
         idx = self._attrs.getIndex(qname)
         if idx == -1:
-            raise KeyError, qname
+            raise KeyError(qname)
         return _makePythonNsTuple( (self._attrs.getURI(idx), self._attrs.getLocalName(idx)) )
 
     def getQNameByName(self, name):
         name = _makeJavaNsTuple(name)
         idx = self._attrs.getIndex(name[0], name[1])
         if idx == -1:
-            raise KeyError, name
+            raise KeyError(name)
         return self._attrs.getQName(idx)
 
     def getQNames(self):
@@ -373,9 +373,9 @@ def create_java_parser(jdriver = None):
             return factory.newSAXParser().getXMLReader()
         else:
             return XMLReaderFactory.createXMLReader()
-    except ParserConfigurationException, e:
+    except ParserConfigurationException as e:
         raise _exceptions.SAXReaderNotAvailable(e.getMessage())
-    except javasax.SAXException, e:
+    except javasax.SAXException as e:
         raise _exceptions.SAXReaderNotAvailable(e.getMessage())
 
 def create_parser(jdriver = None):

@@ -85,7 +85,7 @@ class PullDOM(xml.sax.ContentHandler):
                 attr.value = value
                 node.setAttributeNodeNS(attr)
             self._xmlns_attrs = []
-        for aname,value in attrs.items():
+        for aname,value in list(attrs.items()):
             a_uri, a_localname = aname
             if a_uri:
                 prefix = self._current_context[a_uri]
@@ -114,7 +114,7 @@ class PullDOM(xml.sax.ContentHandler):
         else:
             node = self.buildDocument(None, name)
 
-        for aname,value in attrs.items():
+        for aname,value in list(attrs.items()):
             attr = self.document.createAttribute(aname)
             attr.value = value
             node.setAttributeNode(attr)

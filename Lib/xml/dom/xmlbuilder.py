@@ -93,7 +93,7 @@ class DOMBuilder:
 
     def canSetFeature(self, name, state):
         key = (_name_xform(name), state and 1 or 0)
-        return self._settings.has_key(key)
+        return key in self._settings
 
     # This dictionary maps from (feature,value) to a list of
     # (option,value) pairs that should be set on the Options object.
@@ -249,7 +249,7 @@ class DOMEntityResolver(NewStyle):
 
     def _guess_media_encoding(self, source):
         info = source.byteStream.info()
-        if info.has_key("Content-Type"):
+        if "Content-Type" in info:
             for param in info.getplist():
                 if param.startswith("charset="):
                     return param.split("=", 1)[1].lower()
