@@ -1880,13 +1880,7 @@ public final class Py {
                     metaclass = base.getType();
                 }
             } else {
-                PyObject globals = getFrame().f_globals;
-                if (globals != null) {
-                    metaclass = globals.__finditem__("__metaclass__");
-                }
-                if (metaclass == null) {
-                    metaclass = PyClass.TYPE;
-                }
+                metaclass = PyType.TYPE;
             }
         }
 
