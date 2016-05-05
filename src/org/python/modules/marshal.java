@@ -572,14 +572,13 @@ public class marshal implements ClassDictInit {
     }
 
     public static PyObject dumps(PyObject value, int version) {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        PyObject f = new PyFile(output);
+        cStringIO.StringIO f = cStringIO.StringIO();
         dump(value, f, version);
-        return new PyString(new String(output.toByteArray()));
+        return f.getvalue();
     }
 
-    public static void dumps(PyObject value) {
-        dumps(value, 2);
+    public static PyObject dumps(PyObject value) {
+        return dumps(value, 2);
     }
 
     public static PyObject load(PyObject f) {
