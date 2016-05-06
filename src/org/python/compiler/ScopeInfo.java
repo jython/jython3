@@ -19,6 +19,7 @@ public class ScopeInfo extends Object implements ScopeConstants {
     public String scope_name;
     public int level;
     public int func_level;
+    public boolean needs_class_closure;
 
     public void dump() { // for debugging
         if (org.python.core.Options.verbose < org.python.core.Py.DEBUG)
