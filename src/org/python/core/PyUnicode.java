@@ -1410,7 +1410,7 @@ public class PyUnicode extends PyString implements Iterable {
     @ExposedMethod(defaults = "false", doc = BuiltinDocs.str_splitlines_doc)
     final PyList str_splitlines(boolean keepends) {
         if (isBasicPlane()) {
-            return str_splitlines(keepends);
+            return bytes_splitlines(keepends);
         }
         return new PyList(new LineSplitIterator(keepends));
 
