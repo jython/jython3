@@ -1872,7 +1872,46 @@ public final class Py {
         return makeClass(name, bases, dict, (PyObject) null);
     }
 
+    /**
+     * Note: it's too hard to unpack the starargs and kwargs in byte code, let's do it here instead.
+     * @param name
+     * @param bases
+     * @param dict
+     * @param metaclass
+     * @return
+     */
     public static PyObject makeClass(String name, PyObject[] bases, PyObject dict, PyObject metaclass) {
+        // arguments unpack
+        boolean starargs = false;
+        for (PyObject base : bases) {
+            if (!(base instanceof PyType)) {
+                Py.iter(base, name + "argument after * must be a sequence");
+                starargs = true;
+                break;
+            }
+        }
+
+        if (starargs) {
+            List<PyObject> expandBases = new ArrayList<>();
+            for (PyObject base : bases) {
+                if (base instanceof PyType) {
+                    expandBases.add(base);
+                } else {
+                    PyObject iter = Py.iter(base, name + "argument after * must be a sequence");
+                    for (PyObject cur = null; ((cur = iter.__iternext__()) != null); ) {
+                        expandBases.add(cur);
+                    }
+                }
+            }
+            bases = new PyObject[expandBases.size()];
+            expandBases.toArray(bases);
+        }
+
+        // in case of kwarg
+        if (metaclass instanceof PyDictionary) {
+            metaclass = metaclass.__finditem__("metaclass");
+        }
+
         if (metaclass == null) {
             if (bases.length != 0) {
                 PyObject base = bases[0];

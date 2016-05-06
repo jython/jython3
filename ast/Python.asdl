@@ -14,8 +14,6 @@ module Python version "$Revision$"
           | ClassDef(identifier name,
              expr* bases,
              keyword* keywords,
-             expr? starargs,
-             expr? kwargs,
              stmt* body,
              expr* decorator_list)
           | Return(expr? value)
