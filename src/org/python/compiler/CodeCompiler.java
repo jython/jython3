@@ -636,8 +636,6 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
     @Override
     public Object visitYieldFrom(YieldFrom node) throws Exception {
-        String bound_exp = "_(x)";
-
         setline(node);
 
         code.new_(p(PyFunction.class));
@@ -2477,13 +2475,79 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
     @Override
     public Object visitClassDef(ClassDef node) throws Exception {
+        ScopeInfo scope = module.getScopeInfo(node);
+        String clsName = getName(node.getInternalName());
+        String inner = clsName;
+
         setline(node);
+        if (scope.needs_class_closure) {
+            scope.needs_class_closure = false;
+            inner = "<inner" + clsName + ">";
+            String outer = "<outer" + clsName + ">";
+            code.new_(p(PyFunction.class));
+            code.dup();
+            loadFrame();
+            code.getfield(p(PyFrame.class), "f_globals", ci(PyObject.class));
+
+            int emptyArray = makeArray(new ArrayList<expr>());
+            code.aload(emptyArray);
+
+            code.new_(p(PyDictionary.class));
+            code.dup();
+            code.invokespecial(p(PyDictionary.class), "<init>",
+                    sig(Void.TYPE));
+
+            scope.setup_closure();
+            scope.dump();
+            node.setName(new PyString(inner));
+            java.util.List<stmt> bod = new ArrayList<stmt>();
+            bod.add(node);
+            Name innerName = new Name(node, inner, expr_contextType.Load);
+            Assign assign = new Assign(node, Arrays.<expr>asList(new Name(node, "__class__", expr_contextType.Store)),
+                    innerName);
+            bod.add(assign);
+            Return _ret = new Return(node.getToken(), innerName);
+            bod.add(_ret);
+            String vararg = "__args__";
+            String kwarg = "__kw__";
+            arguments args = new arguments(node, new ArrayList<expr>(),
+                vararg, new ArrayList<String>(), new ArrayList<expr>(), kwarg, new ArrayList<expr>());
+            FunctionDef funcdef = new FunctionDef(node.getToken(), outer, args, bod, new ArrayList<expr>());
+            module.codeConstant(new Suite(funcdef, bod), outer, true, className, false, false,
+                    node.getLine(), scope, cflags).get(code);
+
+            int genExp = storeTop();
+
+            code.aload(genExp);
+            code.freeLocal(genExp);
+            code.swap();
+            loadThreadState();
+
+            java.util.List<expr> actualArgs = node.getInternalBases();
+            java.util.List<String> kwargs = new ArrayList<>();
+
+            if (node.getInternalKeywords() != null && node.getInternalKeywords().size() > 0) {
+                // Assume only keywords parameter is the metaclass
+                actualArgs.add(node.getInternalKeywords().get(0).getInternalValue());
+                kwargs.add("metaclass");
+            }
+            int baseArray = makeArray(actualArgs);
+            int kwArray = makeStrings(code, kwargs);
+
+            code.aload(baseArray);
+            code.aload(kwArray);
+
+            code.invokevirtual(p(PyObject.class), "__call__",
+                    sig(PyObject.class, ThreadState.class, PyObject[].class, String[].class));
+            set(new Name(node, node.getInternalName(), expr_contextType.Store));
+            freeArray(emptyArray);
+
+            return null;
+        }
 
         int baseArray = makeArray(node.getInternalBases());
 
-        // Get class name
-        String name = getName(node.getInternalName());
-        code.ldc(name);
+        code.ldc(inner);
 
         code.aload(baseArray);
         if (node.getInternalKeywords() != null && node.getInternalKeywords().size() > 0) {
@@ -2493,13 +2557,11 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             code.aconst_null();
         }
 
-        ScopeInfo scope = module.getScopeInfo(node);
-
         scope.setup_closure();
         scope.dump();
         // Make code object out of suite
 
-        module.codeConstant(new Suite(node, node.getInternalBody()), name, false, name,
+        module.codeConstant(new Suite(node, node.getInternalBody()), inner, false, inner,
                 getDocStr(node.getInternalBody()), true, false, node.getLine(), scope, cflags).get(
                 code);
 

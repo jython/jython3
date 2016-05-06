@@ -9,6 +9,7 @@ import org.python.antlr.base.expr;
 import org.python.antlr.base.stmt;
 import org.python.core.ParserFacade;
 
+import java.io.CharArrayReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -234,18 +235,41 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
 
     @Override
     public Object visitClassDef(ClassDef node) throws Exception {
+        String outer = "<outer" + node.getInternalName() + ">";
+        String clsname = node.getInternalName();
+        String inner = "<inner" + clsname +">";
+        Name innerName = new Name(node.getToken(), inner, expr_contextType.Store);
+        def(outer);
+        ArgListCompiler ac = new ArgListCompiler();
+        String vararg = "__args__";
+        String kwarg = "__kw__";
+        ac.visitArgs(new arguments(node, new ArrayList<expr>(),
+                vararg, new ArrayList<String>(), new ArrayList<expr>(), kwarg, new ArrayList<expr>()));
+        beginScope(outer, FUNCSCOPE, node, ac);
+        cur.addParam(vararg);
+        cur.addParam(kwarg);
+        cur.markFromParam();
+
         List<expr> decs = node.getInternalDecorator_list();
         for (int i = decs.size() - 1; i >= 0; i--) {
             visit(decs.get(i));
         }
-        def(node.getInternalName());
+        def(inner);
         int n = node.getInternalBases().size();
         for (int i = 0; i < n; i++) {
             visit(node.getInternalBases().get(i));
         }
-        beginScope(node.getInternalName(), CLASSSCOPE, node, null);
+        beginScope(inner, CLASSSCOPE, node, null);
+        cur.needs_class_closure = true;
         suite(node.getInternalBody());
         endScope();
+
+        def("__class__");
+        Return _ret = new Return(node.getToken(), innerName);
+        visit(_ret);
+        endScope();
+        def(clsname);
+
         return null;
     }
 
@@ -282,6 +306,30 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
     @Override
     public Object visitSetComp(SetComp node) throws Exception {
         return visitInternalGenerators(node, node.getInternalElt(), node.getInternalGenerators());
+    }
+
+    private void cookOuterClsScope(ClassDef node) throws Exception {
+        String outer = "_outer_" + node.getInternalName();
+        expr clsname = (expr) node.getName();
+        Name inner = new Name(node.getToken(), "_inner_" + node.getInternalName(), expr_contextType.Store);
+        def(outer);
+        ArgListCompiler ac = new ArgListCompiler();
+        String vararg = "__args__";
+        String kwarg = "__kw__";
+        ac.visitArgs(new arguments(node, new ArrayList<expr>(),
+                vararg, new ArrayList<String>(), new ArrayList<expr>(), kwarg, new ArrayList<expr>()));
+        beginScope(outer, FUNCSCOPE, node, ac);
+        cur.addParam(vararg);
+        cur.addParam(kwarg);
+        cur.markFromParam();
+        Name __class__ = new Name(node.getToken(), "__class__", expr_contextType.Store);
+        traverse(node);
+        Assign assign = new Assign(node.getToken(), Arrays.<expr>asList(__class__), inner);
+        visit(assign);
+        Return _ret = new Return(node.getToken(), inner);
+        visit(_ret);
+        endScope();
+        visit(new Assign(node.getToken(), Arrays.<expr>asList(clsname), new Name(node.getToken(), outer, expr_contextType.Load)));
     }
 
     @Override
