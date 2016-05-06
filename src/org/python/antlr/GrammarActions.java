@@ -576,16 +576,12 @@ public class GrammarActions {
     }
 
     stmt makeClass(Token t, Token nameToken, List args, List ktypes, List stypes, List dtypes) {
-      return makeClass(t, nameToken, args, ktypes, null, null, stypes, dtypes);
-    }
-
-    stmt makeClass(Token t, Token nameToken, List args, List ktypes, expr starargs, expr kwargs, List stypes, List dtypes) {
         String name = cantBeNone(nameToken);
         List<expr> bases = castExprs(args);
         List<stmt> statements = castStmts(stypes);
         List<keyword> keywords = makeKeywords(ktypes);
         List<expr> decorators = castExprs(dtypes);
-        return new ClassDef(t, name, bases, keywords, starargs, kwargs, statements, decorators);
+        return new ClassDef(t, name, bases, keywords, statements, decorators);
     }
 
     expr negate(Token t, expr o) {
