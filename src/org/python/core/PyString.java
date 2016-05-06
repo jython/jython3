@@ -6,6 +6,8 @@ import java.lang.ref.SoftReference;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.List;
@@ -22,6 +24,7 @@ import org.python.core.stringlib.InternalFormat.Spec;
 import org.python.core.stringlib.MarkupIterator;
 import org.python.core.stringlib.TextFormatter;
 import org.python.core.util.StringUtil;
+import org.python.expose.ExposedClassMethod;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
@@ -3582,6 +3585,41 @@ public class PyString extends PyBaseString implements BufferProtocol {
             }
         }
         return buf.toString();
+    }
+
+    public static PyObject maketrans(PyUnicode fromstr, PyUnicode tostr) {
+        return bytes_maketrans(TYPE, fromstr, tostr, null);
+    }
+
+    public static PyObject maketrans(PyUnicode fromstr, PyUnicode tostr, PyUnicode other) {
+        return bytes_maketrans(TYPE, fromstr, tostr, other);
+    }
+
+    @ExposedClassMethod(defaults = {"null"}, doc = BuiltinDocs.str_maketrans_doc)
+    static final PyObject bytes_maketrans(PyType type, PyObject fromstr, PyObject tostr, PyObject other) {
+        if (fromstr.__len__() != tostr.__len__()) {
+            throw Py.ValueError("maketrans arguments must have same length");
+        }
+        if (!(fromstr instanceof PyString))
+            throw Py.TypeError(String.format("a bytes-like object is required, not '%s'", fromstr.TYPE));
+        if (!(tostr instanceof PyString))
+            throw Py.TypeError(String.format("a bytes-like object is required, not '%s'", tostr.TYPE));
+        if (other != null && !(other instanceof PyString))
+            throw Py.TypeError(String.format("a bytes-like object is required, not '%s'", other.TYPE));
+        int[] fromCodePoints = ((PyString) fromstr).toCodePoints();
+        int[] toCodePoints = ((PyString) tostr).toCodePoints();
+        Map<PyObject, PyObject> tbl = new HashMap<>();
+        for (int i = 0; i < fromCodePoints.length; i++) {
+            tbl.put(new PyLong(fromCodePoints[i]), new PyLong(toCodePoints[i]));
+        }
+
+        if (other != null) {
+            int[] codePoints = ((PyUnicode) other).toCodePoints();
+            for (Integer code : codePoints) {
+                tbl.put(new PyLong(code), Py.None);
+            }
+        }
+        return new PyDictionary(tbl);
     }
 
     public boolean islower() {
