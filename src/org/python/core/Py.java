@@ -1849,6 +1849,7 @@ public final class Py {
                 state.frame.f_globals, Py.EmptyObjects, new PyDictionary(), new PyTuple(closure_cells));
         return makeClass(name, bases, dict, metaclass);
     }
+
     public static PyObject makeClass(String name, PyObject base, PyObject dict) {
         return makeClass(name, base, dict, null);
     }
@@ -1883,9 +1884,18 @@ public final class Py {
                 metaclass = PyType.TYPE;
             }
         }
+        PyObject prepare =  metaclass.__findattr__("__prepare__");
+        PyString clsname = new PyString(name);
+        PyObject basesArray = new PyTuple(bases);
+        if (prepare != null) {
+            ThreadState state = getThreadState();
+            PyDictionary map = (PyDictionary) prepare.__call__(state, clsname, basesArray);
+            map.update(dict);
+            dict = map;
+        }
 
         try {
-            return metaclass.__call__(new PyString(name), new PyTuple(bases), dict);
+            return metaclass.__call__(clsname, basesArray, dict);
         } catch (PyException pye) {
             if (!pye.match(TypeError)) {
                 throw pye;
