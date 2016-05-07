@@ -27,38 +27,25 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@ExposedType(name = "_ast.Raise", base = stmt.class)
-public class Raise extends stmt {
-public static final PyType TYPE = PyType.fromClass(Raise.class);
-    private expr exc;
-    public expr getInternalExc() {
-        return exc;
+@ExposedType(name = "_ast.Await", base = expr.class)
+public class Await extends expr {
+public static final PyType TYPE = PyType.fromClass(Await.class);
+    private expr value;
+    public expr getInternalValue() {
+        return value;
     }
-    @ExposedGet(name = "exc")
-    public PyObject getExc() {
-        return exc;
+    @ExposedGet(name = "value")
+    public PyObject getValue() {
+        return value;
     }
-    @ExposedSet(name = "exc")
-    public void setExc(PyObject exc) {
-        this.exc = AstAdapters.py2expr(exc);
-    }
-
-    private expr cause;
-    public expr getInternalCause() {
-        return cause;
-    }
-    @ExposedGet(name = "cause")
-    public PyObject getCause() {
-        return cause;
-    }
-    @ExposedSet(name = "cause")
-    public void setCause(PyObject cause) {
-        this.cause = AstAdapters.py2expr(cause);
+    @ExposedSet(name = "value")
+    public void setValue(PyObject value) {
+        this.value = AstAdapters.py2expr(value);
     }
 
 
     private final static PyString[] fields =
-    new PyString[] {new PyString("exc"), new PyString("cause")};
+    new PyString[] {new PyString("value")};
     @ExposedGet(name = "_fields")
     public PyString[] get_fields() { return fields; }
 
@@ -67,86 +54,73 @@ public static final PyType TYPE = PyType.fromClass(Raise.class);
     @ExposedGet(name = "_attributes")
     public PyString[] get_attributes() { return attributes; }
 
-    public Raise(PyType subType) {
+    public Await(PyType subType) {
         super(subType);
     }
-    public Raise() {
+    public Await() {
         this(TYPE);
     }
     @ExposedNew
     @ExposedMethod
-    public void Raise___init__(PyObject[] args, String[] keywords) {
-        ArgParser ap = new ArgParser("Raise", args, keywords, new String[]
-            {"exc", "cause", "lineno", "col_offset"}, 2, true);
-        setExc(ap.getPyObject(0, Py.None));
-        setCause(ap.getPyObject(1, Py.None));
-        int lin = ap.getInt(2, -1);
+    public void Await___init__(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("Await", args, keywords, new String[]
+            {"value", "lineno", "col_offset"}, 1, true);
+        setValue(ap.getPyObject(0, Py.None));
+        int lin = ap.getInt(1, -1);
         if (lin != -1) {
             setLineno(lin);
         }
 
-        int col = ap.getInt(3, -1);
+        int col = ap.getInt(2, -1);
         if (col != -1) {
             setLineno(col);
         }
 
     }
 
-    public Raise(PyObject exc, PyObject cause) {
-        setExc(exc);
-        setCause(cause);
+    public Await(PyObject value) {
+        setValue(value);
     }
 
-    public Raise(Token token, expr exc, expr cause) {
+    public Await(Token token, expr value) {
         super(token);
-        this.exc = exc;
-        addChild(exc);
-        this.cause = cause;
-        addChild(cause);
+        this.value = value;
+        addChild(value);
     }
 
-    public Raise(Integer ttype, Token token, expr exc, expr cause) {
+    public Await(Integer ttype, Token token, expr value) {
         super(ttype, token);
-        this.exc = exc;
-        addChild(exc);
-        this.cause = cause;
-        addChild(cause);
+        this.value = value;
+        addChild(value);
     }
 
-    public Raise(PythonTree tree, expr exc, expr cause) {
+    public Await(PythonTree tree, expr value) {
         super(tree);
-        this.exc = exc;
-        addChild(exc);
-        this.cause = cause;
-        addChild(cause);
+        this.value = value;
+        addChild(value);
     }
 
     @ExposedGet(name = "repr")
     public String toString() {
-        return "Raise";
+        return "Await";
     }
 
     public String toStringTree() {
-        StringBuffer sb = new StringBuffer("Raise(");
-        sb.append("exc=");
-        sb.append(dumpThis(exc));
-        sb.append(",");
-        sb.append("cause=");
-        sb.append(dumpThis(cause));
+        StringBuffer sb = new StringBuffer("Await(");
+        sb.append("value=");
+        sb.append(dumpThis(value));
         sb.append(",");
         sb.append(")");
         return sb.toString();
     }
 
     public <R> R accept(VisitorIF<R> visitor) throws Exception {
-        return visitor.visitRaise(this);
+        return visitor.visitAwait(this);
     }
 
     public void traverse(VisitorIF<?> visitor) throws Exception {
-        if (exc != null)
-            exc.accept(visitor);
-        if (cause != null)
-            cause.accept(visitor);
+        if (value != null)
+            value.accept(visitor);
     }
 
     public PyObject __dict__;

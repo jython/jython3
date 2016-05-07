@@ -7,6 +7,7 @@ public interface VisitorIF<R> {
     public R visitExpression(Expression node) throws Exception;
     public R visitSuite(Suite node) throws Exception;
     public R visitFunctionDef(FunctionDef node) throws Exception;
+    public R visitAsyncFunctionDef(AsyncFunctionDef node) throws Exception;
     public R visitClassDef(ClassDef node) throws Exception;
     public R visitReturn(Return node) throws Exception;
     public R visitDelete(Delete node) throws Exception;
@@ -14,9 +15,11 @@ public interface VisitorIF<R> {
     public R visitAugAssign(AugAssign node) throws Exception;
     public R visitPrint(Print node) throws Exception;
     public R visitFor(For node) throws Exception;
+    public R visitAsyncFor(AsyncFor node) throws Exception;
     public R visitWhile(While node) throws Exception;
     public R visitIf(If node) throws Exception;
     public R visitWith(With node) throws Exception;
+    public R visitAsyncWith(AsyncWith node) throws Exception;
     public R visitRaise(Raise node) throws Exception;
     public R visitTryExcept(TryExcept node) throws Exception;
     public R visitTryFinally(TryFinally node) throws Exception;
@@ -41,6 +44,7 @@ public interface VisitorIF<R> {
     public R visitSetComp(SetComp node) throws Exception;
     public R visitDictComp(DictComp node) throws Exception;
     public R visitGeneratorExp(GeneratorExp node) throws Exception;
+    public R visitAwait(Await node) throws Exception;
     public R visitYield(Yield node) throws Exception;
     public R visitYieldFrom(YieldFrom node) throws Exception;
     public R visitCompare(Compare node) throws Exception;

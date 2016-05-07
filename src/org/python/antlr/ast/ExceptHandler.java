@@ -43,17 +43,18 @@ public static final PyType TYPE = PyType.fromClass(ExceptHandler.class);
         this.type = AstAdapters.py2expr(type);
     }
 
-    private expr name;
-    public expr getInternalName() {
+    private String name;
+    public String getInternalName() {
         return name;
     }
     @ExposedGet(name = "name")
     public PyObject getName() {
-        return name;
+        if (name == null) return Py.None;
+        return new PyString(name);
     }
     @ExposedSet(name = "name")
     public void setName(PyObject name) {
-        this.name = AstAdapters.py2expr(name);
+        this.name = AstAdapters.py2identifier(name);
     }
 
     private java.util.List<stmt> body;
@@ -112,12 +113,11 @@ public static final PyType TYPE = PyType.fromClass(ExceptHandler.class);
         setBody(body);
     }
 
-    public ExceptHandler(Token token, expr type, expr name, java.util.List<stmt> body) {
+    public ExceptHandler(Token token, expr type, String name, java.util.List<stmt> body) {
         super(token);
         this.type = type;
         addChild(type);
         this.name = name;
-        addChild(name);
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
@@ -127,13 +127,12 @@ public static final PyType TYPE = PyType.fromClass(ExceptHandler.class);
         }
     }
 
-    public ExceptHandler(Integer ttype, Token token, expr type, expr name, java.util.List<stmt>
+    public ExceptHandler(Integer ttype, Token token, expr type, String name, java.util.List<stmt>
     body) {
         super(ttype, token);
         this.type = type;
         addChild(type);
         this.name = name;
-        addChild(name);
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
@@ -143,12 +142,11 @@ public static final PyType TYPE = PyType.fromClass(ExceptHandler.class);
         }
     }
 
-    public ExceptHandler(PythonTree tree, expr type, expr name, java.util.List<stmt> body) {
+    public ExceptHandler(PythonTree tree, expr type, String name, java.util.List<stmt> body) {
         super(tree);
         this.type = type;
         addChild(type);
         this.name = name;
-        addChild(name);
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
@@ -185,8 +183,6 @@ public static final PyType TYPE = PyType.fromClass(ExceptHandler.class);
     public void traverse(VisitorIF<?> visitor) throws Exception {
         if (type != null)
             type.accept(visitor);
-        if (name != null)
-            name.accept(visitor);
         if (body != null) {
             for (PythonTree t : body) {
                 if (t != null)

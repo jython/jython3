@@ -27,20 +27,34 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@ExposedType(name = "_ast.With", base = stmt.class)
-public class With extends stmt {
-public static final PyType TYPE = PyType.fromClass(With.class);
-    private java.util.List<withitem> items;
-    public java.util.List<withitem> getInternalItems() {
-        return items;
+@ExposedType(name = "_ast.AsyncFunctionDef", base = stmt.class)
+public class AsyncFunctionDef extends stmt {
+public static final PyType TYPE = PyType.fromClass(AsyncFunctionDef.class);
+    private String name;
+    public String getInternalName() {
+        return name;
     }
-    @ExposedGet(name = "items")
-    public PyObject getItems() {
-        return new AstList(items, AstAdapters.withitemAdapter);
+    @ExposedGet(name = "name")
+    public PyObject getName() {
+        if (name == null) return Py.None;
+        return new PyString(name);
     }
-    @ExposedSet(name = "items")
-    public void setItems(PyObject items) {
-        this.items = AstAdapters.py2withitemList(items);
+    @ExposedSet(name = "name")
+    public void setName(PyObject name) {
+        this.name = AstAdapters.py2identifier(name);
+    }
+
+    private arguments args;
+    public arguments getInternalArgs() {
+        return args;
+    }
+    @ExposedGet(name = "args")
+    public PyObject getArgs() {
+        return args;
+    }
+    @ExposedSet(name = "args")
+    public void setArgs(PyObject args) {
+        this.args = AstAdapters.py2arguments(args);
     }
 
     private java.util.List<stmt> body;
@@ -56,9 +70,23 @@ public static final PyType TYPE = PyType.fromClass(With.class);
         this.body = AstAdapters.py2stmtList(body);
     }
 
+    private java.util.List<expr> decorator_list;
+    public java.util.List<expr> getInternalDecorator_list() {
+        return decorator_list;
+    }
+    @ExposedGet(name = "decorator_list")
+    public PyObject getDecorator_list() {
+        return new AstList(decorator_list, AstAdapters.exprAdapter);
+    }
+    @ExposedSet(name = "decorator_list")
+    public void setDecorator_list(PyObject decorator_list) {
+        this.decorator_list = AstAdapters.py2exprList(decorator_list);
+    }
+
 
     private final static PyString[] fields =
-    new PyString[] {new PyString("items"), new PyString("body")};
+    new PyString[] {new PyString("name"), new PyString("args"), new PyString("body"), new
+                     PyString("decorator_list")};
     @ExposedGet(name = "_fields")
     public PyString[] get_fields() { return fields; }
 
@@ -67,45 +95,45 @@ public static final PyType TYPE = PyType.fromClass(With.class);
     @ExposedGet(name = "_attributes")
     public PyString[] get_attributes() { return attributes; }
 
-    public With(PyType subType) {
+    public AsyncFunctionDef(PyType subType) {
         super(subType);
     }
-    public With() {
+    public AsyncFunctionDef() {
         this(TYPE);
     }
     @ExposedNew
     @ExposedMethod
-    public void With___init__(PyObject[] args, String[] keywords) {
-        ArgParser ap = new ArgParser("With", args, keywords, new String[]
-            {"items", "body", "lineno", "col_offset"}, 2, true);
-        setItems(ap.getPyObject(0, Py.None));
-        setBody(ap.getPyObject(1, Py.None));
-        int lin = ap.getInt(2, -1);
+    public void AsyncFunctionDef___init__(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("AsyncFunctionDef", args, keywords, new String[]
+            {"name", "args", "body", "decorator_list", "lineno", "col_offset"}, 4, true);
+        setName(ap.getPyObject(0, Py.None));
+        setArgs(ap.getPyObject(1, Py.None));
+        setBody(ap.getPyObject(2, Py.None));
+        setDecorator_list(ap.getPyObject(3, Py.None));
+        int lin = ap.getInt(4, -1);
         if (lin != -1) {
             setLineno(lin);
         }
 
-        int col = ap.getInt(3, -1);
+        int col = ap.getInt(5, -1);
         if (col != -1) {
             setLineno(col);
         }
 
     }
 
-    public With(PyObject items, PyObject body) {
-        setItems(items);
+    public AsyncFunctionDef(PyObject name, PyObject args, PyObject body, PyObject decorator_list) {
+        setName(name);
+        setArgs(args);
         setBody(body);
+        setDecorator_list(decorator_list);
     }
 
-    public With(Token token, java.util.List<withitem> items, java.util.List<stmt> body) {
+    public AsyncFunctionDef(Token token, String name, arguments args, java.util.List<stmt> body,
+    java.util.List<expr> decorator_list) {
         super(token);
-        this.items = items;
-        if (items == null) {
-            this.items = new ArrayList<withitem>();
-        }
-        for(PythonTree t : this.items) {
-            addChild(t);
-        }
+        this.name = name;
+        this.args = args;
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
@@ -113,75 +141,95 @@ public static final PyType TYPE = PyType.fromClass(With.class);
         for(PythonTree t : this.body) {
             addChild(t);
         }
+        this.decorator_list = decorator_list;
+        if (decorator_list == null) {
+            this.decorator_list = new ArrayList<expr>();
+        }
+        for(PythonTree t : this.decorator_list) {
+            addChild(t);
+        }
     }
 
-    public With(Integer ttype, Token token, java.util.List<withitem> items, java.util.List<stmt>
-    body) {
+    public AsyncFunctionDef(Integer ttype, Token token, String name, arguments args,
+    java.util.List<stmt> body, java.util.List<expr> decorator_list) {
         super(ttype, token);
-        this.items = items;
-        if (items == null) {
-            this.items = new ArrayList<withitem>();
-        }
-        for(PythonTree t : this.items) {
-            addChild(t);
-        }
+        this.name = name;
+        this.args = args;
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
         }
         for(PythonTree t : this.body) {
+            addChild(t);
+        }
+        this.decorator_list = decorator_list;
+        if (decorator_list == null) {
+            this.decorator_list = new ArrayList<expr>();
+        }
+        for(PythonTree t : this.decorator_list) {
             addChild(t);
         }
     }
 
-    public With(PythonTree tree, java.util.List<withitem> items, java.util.List<stmt> body) {
+    public AsyncFunctionDef(PythonTree tree, String name, arguments args, java.util.List<stmt>
+    body, java.util.List<expr> decorator_list) {
         super(tree);
-        this.items = items;
-        if (items == null) {
-            this.items = new ArrayList<withitem>();
-        }
-        for(PythonTree t : this.items) {
-            addChild(t);
-        }
+        this.name = name;
+        this.args = args;
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
         }
         for(PythonTree t : this.body) {
+            addChild(t);
+        }
+        this.decorator_list = decorator_list;
+        if (decorator_list == null) {
+            this.decorator_list = new ArrayList<expr>();
+        }
+        for(PythonTree t : this.decorator_list) {
             addChild(t);
         }
     }
 
     @ExposedGet(name = "repr")
     public String toString() {
-        return "With";
+        return "AsyncFunctionDef";
     }
 
     public String toStringTree() {
-        StringBuffer sb = new StringBuffer("With(");
-        sb.append("items=");
-        sb.append(dumpThis(items));
+        StringBuffer sb = new StringBuffer("AsyncFunctionDef(");
+        sb.append("name=");
+        sb.append(dumpThis(name));
+        sb.append(",");
+        sb.append("args=");
+        sb.append(dumpThis(args));
         sb.append(",");
         sb.append("body=");
         sb.append(dumpThis(body));
+        sb.append(",");
+        sb.append("decorator_list=");
+        sb.append(dumpThis(decorator_list));
         sb.append(",");
         sb.append(")");
         return sb.toString();
     }
 
     public <R> R accept(VisitorIF<R> visitor) throws Exception {
-        return visitor.visitWith(this);
+        return visitor.visitAsyncFunctionDef(this);
     }
 
     public void traverse(VisitorIF<?> visitor) throws Exception {
-        if (items != null) {
-            for (PythonTree t : items) {
+        if (args != null)
+            args.accept(visitor);
+        if (body != null) {
+            for (PythonTree t : body) {
                 if (t != null)
                     t.accept(visitor);
             }
         }
-        if (body != null) {
-            for (PythonTree t : body) {
+        if (decorator_list != null) {
+            for (PythonTree t : decorator_list) {
                 if (t != null)
                     t.accept(visitor);
             }
