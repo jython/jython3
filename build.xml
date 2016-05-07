@@ -1,112 +1,112 @@
 <!-- Copyright 2000 Dj Walker-Morgan -->
 <project name="jython" default="developer-build" basedir=".">
-    <target name="usage" description="print usage hints (-emacs removes [echo] prefix)">
-        <echo>
-Use case 1: developer build (in your local Jython copy)
--------------------------------------------------------
-  - call target 'developer-build' (the default for this build.xml)
+  <target name="usage" description="print usage hints (-emacs removes [echo] prefix)">
+    <echo>
+      Use case 1: developer build (in your local Jython copy)
+      -------------------------------------------------------
+      - call target 'developer-build' (the default for this build.xml)
 
-This build will create directories /build and /dist below basedir.
-
-
-Use case 2: full build for a release (using hg checkout)
----------------------------------------------------------
-  - make sure you have access to the Jython mercurial repository
-    (http://hg.python.org/jython)
-  - override ant.properties (if necessary)
-  - call target 'full-build'
-
-This build will create a working directory named
-full_build at the same level as your local directories
-jython and installer.  It will contain a big
-jython_installer-${jython.version}.jar file suitable for installation.
-
-To build older releases, it may be necessary to use an older
-build.xml, too (with the corresponding tag).  For example it is not
-possible to build Release_2_2alpha1 with this version of build.xml.
-
-Note on targets
----------------
-A subset of the available targets are designed for direct invocation.
-Following an ant convention, the callable targets have a description
-attribute.  Use ant -p to display these targets.  All other targets
-may behave unpredictably if called directly.
+      This build will create directories /build and /dist below basedir.
 
 
-Where ant looks for ant.properties 
-----------------------------------
-  1. in user.home
-  2. in the same directory as this build.xml file
-The first setting of a property wins. Further settings are ignored.
+      Use case 2: full build for a release (using hg checkout)
+      ---------------------------------------------------------
+      - make sure you have access to the Jython mercurial repository
+      (http://hg.python.org/jython)
+      - override ant.properties (if necessary)
+      - call target 'full-build'
+
+      This build will create a working directory named
+      full_build at the same level as your local directories
+      jython and installer.  It will contain a big
+      jython_installer-${jython.version}.jar file suitable for installation.
+
+      To build older releases, it may be necessary to use an older
+      build.xml, too (with the corresponding tag).  For example it is not
+      possible to build Release_2_2alpha1 with this version of build.xml.
+
+      Note on targets
+      ---------------
+      A subset of the available targets are designed for direct invocation.
+      Following an ant convention, the callable targets have a description
+      attribute.  Use ant -p to display these targets.  All other targets
+      may behave unpredictably if called directly.
 
 
-Actions for a release
----------------------
-See http://wiki.python.org/jython/JythonDeveloperGuide/HowToReleaseJython
+      Where ant looks for ant.properties 
+      ----------------------------------
+      1. in user.home
+      2. in the same directory as this build.xml file
+      The first setting of a property wins. Further settings are ignored.
 
-        	
-An example ant.properties file:
--------------------------------
 
-# - zxJDBC
-oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/ojdbc14.jar
-#informix.jar=${basedir}/../externals/external-jars/ifxjdbc.jar
+      Actions for a release
+      ---------------------
+      See http://wiki.python.org/jython/JythonDeveloperGuide/HowToReleaseJython
 
-# - option for javac (build.compiler=modern is a global option to use standard jdk 1.7/1.8)
-#build.compiler=modern
-#jdk.target.version=1.7
-#debug=false
-#deprecation=off
 
-        </echo>
-    </target>
+      An example ant.properties file:
+      -------------------------------
 
-    <target name="jarless" depends="compile, pycompile"/>
+      # - zxJDBC
+      oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/ojdbc14.jar
+      #informix.jar=${basedir}/../externals/external-jars/ifxjdbc.jar
 
-    <target name="developer-build" depends="prepare-output, pycompile" description="a local build for developers" />
+      # - option for javac (build.compiler=modern is a global option to use standard jdk 1.7/1.8)
+      #build.compiler=modern
+      #jdk.target.version=1.7
+      #debug=false
+      #deprecation=off
 
-    <target name="full-build" depends="full-check, installer" description="a full build with hg checkout" />
+    </echo>
+  </target>
 
-    <target name="needed-check" unless="full-build">
-        <uptodate property="antlr.notneeded" targetfile="${gensrc.dir}/org/python/antlr/PythonParser.java">
-            <srcfiles dir="grammar" includes="*.g" />
-        </uptodate>
-    </target>
+  <target name="jarless" depends="compile, pycompile"/>
 
-    <target name="init">
-        <property file="${user.home}/ant.properties" />
-        <property file="${basedir}/ant.properties" />
+  <target name="developer-build" depends="prepare-output, pycompile" description="a local build for developers" />
 
-        <property name="PY_RELEASE_LEVEL_ALPHA" value="10"/> <!-- 0xA -->
-        <property name="PY_RELEASE_LEVEL_BETA" value="11"/> <!-- 0xB -->
-        <property name="PY_RELEASE_LEVEL_GAMMA" value="12"/> <!-- 0xC -->
-        <property name="PY_RELEASE_LEVEL_FINAL" value="15"/> <!-- 0xF -->
-        <property name="PY_RELEASE_LEVEL_SNAPSHOT" value="170"/> <!-- 0xAA -->
+  <target name="full-build" depends="full-check, installer" description="a full build with hg checkout" />
 
-        <!-- The current version info -->
-        <property name="jython.version" value="3.5.1a1+"/>
-        <property name="jython.version.noplus" value="3.5.1a1"/>
-        <property name="jython.major_version" value="3"/>
-        <property name="jython.minor_version" value="5"/>
-        <property name="jython.micro_version" value="1"/>
-        <property name="jython.release_level" value="${PY_RELEASE_LEVEL_ALPHA}"/>
-        <!-- Usually zero, only used for alpha, beta and candidate versions
+  <target name="needed-check" unless="full-build">
+    <uptodate property="antlr.notneeded" targetfile="${gensrc.dir}/org/python/antlr/PythonParser.java">
+      <srcfiles dir="grammar" includes="*.g" />
+    </uptodate>
+  </target>
+
+  <target name="init">
+    <property file="${user.home}/ant.properties" />
+    <property file="${basedir}/ant.properties" />
+
+    <property name="PY_RELEASE_LEVEL_ALPHA" value="10"/> <!-- 0xA -->
+    <property name="PY_RELEASE_LEVEL_BETA" value="11"/> <!-- 0xB -->
+    <property name="PY_RELEASE_LEVEL_GAMMA" value="12"/> <!-- 0xC -->
+    <property name="PY_RELEASE_LEVEL_FINAL" value="15"/> <!-- 0xF -->
+    <property name="PY_RELEASE_LEVEL_SNAPSHOT" value="170"/> <!-- 0xAA -->
+
+    <!-- The current version info -->
+    <property name="jython.version" value="3.5.1a1+"/>
+    <property name="jython.version.noplus" value="3.5.1a1"/>
+    <property name="jython.major_version" value="3"/>
+    <property name="jython.minor_version" value="5"/>
+    <property name="jython.micro_version" value="1"/>
+    <property name="jython.release_level" value="${PY_RELEASE_LEVEL_ALPHA}"/>
+    <!-- Usually zero, only used for alpha, beta and candidate versions
              where it must be greater than zero. -->
         <property name="jython.release_serial" value="1"/>
         <property name="jython.java.version" value="1.7"/>
 
         <condition property="do.snapshot.build">
-            <isset property="snapshot.revision" />
+          <isset property="snapshot.revision" />
         </condition>
         <!-- Switch to a snapshot release_level when appropriate -->
         <condition property="jython.real_release_level" value="${PY_RELEASE_LEVEL_SNAPSHOT}" else="${jython.release_level}">
-            <isset property="do.snapshot.build" />
+          <isset property="do.snapshot.build" />
         </condition>
         <condition property="os.family.unix">
-            <os family="unix"/>
+          <os family="unix"/>
         </condition>
         <condition property="os.family.windows">
-            <os family="windows"/>
+          <os family="windows"/>
         </condition>
         <property name="build.compiler" value="modern" />
         <property name="jdk.target.version" value="${jython.java.version}" />
@@ -140,70 +140,70 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
 
         <!-- classpaths -->
         <path id="main.classpath">
-            <pathelement path="${extlibs.dir}/servlet-api-2.5.jar" />
-            <pathelement path="${informix.jar}" />
-            <pathelement path="${oracle.jar}" />
-            <pathelement path="${extlibs.dir}/mysql-connector-java-5.1.6.jar" />
-            <pathelement path="${extlibs.dir}/postgresql-8.3-603.jdbc4.jar" />
-            <pathelement path="${extlibs.dir}/antlr-3.1.3.jar" />
-            <pathelement path="${extlibs.dir}/stringtemplate-3.2.1.jar" />
-            <pathelement path="${extlibs.dir}/commons-compress-1.9.jar"/>
-            <pathelement path="${extlibs.dir}/asm-5.0.3.jar" />
-            <pathelement path="${extlibs.dir}/asm-commons-5.0.3.jar" />
-            <pathelement path="${extlibs.dir}/asm-util-5.0.3.jar" />
-            <pathelement path="${extlibs.dir}/guava-18.0.jar" />
-            <pathelement path="${extlibs.dir}/icu4j-54_1_1.jar" />
-            <pathelement path="${extlibs.dir}/jffi-arm-Linux.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-Darwin.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-i386-FreeBSD.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-i386-Linux.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-i386-OpenBSD.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-i386-SunOS.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-i386-Windows.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-ppc-AIX.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-ppc-Linux.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-ppc64-Linux.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-s390x-Linux.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-sparc-SunOS.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-sparcv9-SunOS.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-x86_64-FreeBSD.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-x86_64-Linux.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-x86_64-OpenBSD.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-x86_64-SunOS.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-x86_64-Windows.jar"/>
-            <pathelement path="${extlibs.dir}/jffi-1.2.7.jar"/>
-            <pathelement path="${extlibs.dir}/jnr-ffi-2.0.1.jar"/>
-            <pathelement path="${extlibs.dir}/jnr-netdb-1.1.4.jar"/>
-            <pathelement path="${extlibs.dir}/jnr-posix-3.0.9.jar"/>
-            <pathelement path="${extlibs.dir}/jnr-constants-0.8.6.jar"/>
-            <pathelement path="${extlibs.dir}/jline-2.12.1.jar"/>
-            <pathelement path="${extlibs.dir}/netty-buffer-4.0.25.Final.jar"/>
-            <pathelement path="${extlibs.dir}/netty-codec-4.0.25.Final.jar"/>
-            <pathelement path="${extlibs.dir}/netty-common-4.0.25.Final.jar"/>
-            <pathelement path="${extlibs.dir}/netty-handler--4.0.25.Final.jar"/>
-            <pathelement path="${extlibs.dir}/netty-transport-4.0.25.Final.jar"/>
+          <pathelement path="${extlibs.dir}/servlet-api-2.5.jar" />
+          <pathelement path="${informix.jar}" />
+          <pathelement path="${oracle.jar}" />
+          <pathelement path="${extlibs.dir}/mysql-connector-java-5.1.6.jar" />
+          <pathelement path="${extlibs.dir}/postgresql-8.3-603.jdbc4.jar" />
+          <pathelement path="${extlibs.dir}/antlr-3.1.3.jar" />
+          <pathelement path="${extlibs.dir}/stringtemplate-3.2.1.jar" />
+          <pathelement path="${extlibs.dir}/commons-compress-1.9.jar"/>
+          <pathelement path="${extlibs.dir}/asm-5.0.3.jar" />
+          <pathelement path="${extlibs.dir}/asm-commons-5.0.3.jar" />
+          <pathelement path="${extlibs.dir}/asm-util-5.0.3.jar" />
+          <pathelement path="${extlibs.dir}/guava-18.0.jar" />
+          <pathelement path="${extlibs.dir}/icu4j-54_1_1.jar" />
+          <pathelement path="${extlibs.dir}/jffi-arm-Linux.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-Darwin.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-i386-FreeBSD.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-i386-Linux.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-i386-OpenBSD.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-i386-SunOS.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-i386-Windows.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-ppc-AIX.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-ppc-Linux.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-ppc64-Linux.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-s390x-Linux.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-sparc-SunOS.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-sparcv9-SunOS.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-x86_64-FreeBSD.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-x86_64-Linux.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-x86_64-OpenBSD.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-x86_64-SunOS.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-x86_64-Windows.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-1.2.7.jar"/>
+          <pathelement path="${extlibs.dir}/jnr-ffi-2.0.1.jar"/>
+          <pathelement path="${extlibs.dir}/jnr-netdb-1.1.4.jar"/>
+          <pathelement path="${extlibs.dir}/jnr-posix-3.0.9.jar"/>
+          <pathelement path="${extlibs.dir}/jnr-constants-0.8.6.jar"/>
+          <pathelement path="${extlibs.dir}/jline-2.12.1.jar"/>
+          <pathelement path="${extlibs.dir}/netty-buffer-4.0.25.Final.jar"/>
+          <pathelement path="${extlibs.dir}/netty-codec-4.0.25.Final.jar"/>
+          <pathelement path="${extlibs.dir}/netty-common-4.0.25.Final.jar"/>
+          <pathelement path="${extlibs.dir}/netty-handler--4.0.25.Final.jar"/>
+          <pathelement path="${extlibs.dir}/netty-transport-4.0.25.Final.jar"/>
         </path>
 
         <available property="informix.present" classname="com.informix.jdbc.IfxDriver" classpath="${informix.jar}" />
         <available property="oracle.present" classname="oracle.jdbc.driver.OracleDriver" classpath="${oracle.jar}" />
 
         <path id="test.classpath">
-            <path refid="main.classpath"/>
-            <pathelement path="${extlibs.dir}/asm-commons-4.0.jar" />
-            <pathelement path="${extlibs.dir}/asm-util-4.0.jar" />
-            <pathelement path="${extlibs.dir}/junit-4.10.jar" />
-            <pathelement path="${exposed.dir}" />
-            <pathelement path="${compile.dir}" />
-            <pathelement path="${cpptasks.jar.dir}" />
+          <path refid="main.classpath"/>
+          <pathelement path="${extlibs.dir}/asm-commons-4.0.jar" />
+          <pathelement path="${extlibs.dir}/asm-util-4.0.jar" />
+          <pathelement path="${extlibs.dir}/junit-4.10.jar" />
+          <pathelement path="${exposed.dir}" />
+          <pathelement path="${compile.dir}" />
+          <pathelement path="${cpptasks.jar.dir}" />
         </path>
         <property name="jython.dev.jar" value="jython-dev.jar" />
         <property name="jython.deploy.jar" value="jython.jar" />
         <property name="jython.standalone.jar" value="jython-standalone.jar" />
         <property name="jython.javadoc.jar" value="javadoc.jar" />
         <property name="jython.sources.jar" value="sources.jar" />
-    </target>
+      </target>
 
-    <target name="full-preinit">
+      <target name="full-preinit">
         <property file="${user.home}/ant.properties" />
         <property file="${basedir}/ant.properties" />
 
@@ -221,19 +221,19 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
         <property name="work.dir" value="${basedir}/../full_build/work" />
         <property name="checkout.dir" value="${work.dir}/checkout" />
         <property name="jython.base.dir" value="${checkout.dir}/${hg.code.dir}" />
-    	<!-- set has.repositories.connection to false in ant.properties if you want to skip checkout -->
+        <!-- set has.repositories.connection to false in ant.properties if you want to skip checkout -->
         <property name="has.repositories.connection" value="true" />
         <condition property="do.checkout" value="true">
-            <istrue value="${has.repositories.connection}" />
+          <istrue value="${has.repositories.connection}" />
         </condition>
 
-    </target>
-    <target name="full-check" depends="full-preinit, init, dump-env">
+      </target>
+      <target name="full-check" depends="full-preinit, init, dump-env">
         <!-- Require all of the optional jars for a full build -->
         <fail unless="informix.present" message="informix jar not present" />
         <fail unless="oracle.present" message="oracle jar not present" />
-    </target>
-    <target name="dump-env" depends="init">
+      </target>
+      <target name="dump-env" depends="init">
         <echo>.</echo>
         <echo>Build environment for ${ant.project.name}</echo>
         <echo>(Note: if ${propertyname} is displayed, then the property is not set)</echo>
@@ -268,198 +268,198 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
         <echo>do.snapshot.build  = '${do.snapshot.build}'</echo>
         <echo>snapshot.revision  = '${snapshot.revision}'</echo>
         <echo>do.checkout        = '${do.checkout}'</echo>
-    </target>
+      </target>
 
-    <!-- delete what's necessary. should correspond to the directories created in prepare  -->
-    <!-- if called directly, we use settings as in developer-build -->
-    <!-- (at the moment all properties will already be set if we do a full build) -->
-    <target name="clean" depends="init, clean-checkout-dir" description="clean up build working directories">
+      <!-- delete what's necessary. should correspond to the directories created in prepare  -->
+      <!-- if called directly, we use settings as in developer-build -->
+      <!-- (at the moment all properties will already be set if we do a full build) -->
+      <target name="clean" depends="init, clean-checkout-dir" description="clean up build working directories">
         <!-- do not hard delete ${work.dir}, since it could be ${basedir} -->
         <!-- deletes all files and subdirectories of ${output.dir}, without ${output.dir} itself. -->
         <delete includeemptydirs="true" failonerror="false">
-            <fileset dir="${output.dir}" includes="**/*" />
+          <fileset dir="${output.dir}" includes="**/*" />
         </delete>
         <!-- deletes all files and subdirectories of ${dist.dir}, without ${dist.dir} itself. -->
         <delete includeemptydirs="true" failonerror="false">
-            <fileset dir="${dist.dir}" includes="**/*" />
+          <fileset dir="${dist.dir}" includes="**/*" />
         </delete>
         <!-- delete the installation .jar file from ${work.dir}, but no other files -->
         <delete failonerror="false">
-            <fileset dir="${work.dir}" includes="jython*.jar" />
+          <fileset dir="${work.dir}" includes="jython*.jar" />
         </delete>
-    </target>
+      </target>
 
-    <target name="devclean" depends="init"
+      <target name="devclean" depends="init"
         description="clean up build working directories without deleting antlr files, cachedir, or Lib">
 
         <delete includeemptydirs="true" failonerror="false">
-            <fileset dir="${output.dir}" includes="**/*" excludes="gensrc/**"/>
+          <fileset dir="${output.dir}" includes="**/*" excludes="gensrc/**"/>
         </delete>
         <!-- deletes all files and subdirectories of ${dist.dir}, without ${dist.dir} itself. -->
         <delete includeemptydirs="true" failonerror="false">
-            <fileset dir="${dist.dir}" includes="**/*" excludes="cachedir/**,Lib/**"/>
+          <fileset dir="${dist.dir}" includes="**/*" excludes="cachedir/**,Lib/**"/>
         </delete>
         <!-- delete the installation .jar file from ${work.dir}, but no other files -->
         <delete failonerror="false">
-            <fileset dir="${work.dir}" includes="jython*.jar" />
+          <fileset dir="${work.dir}" includes="jython*.jar" />
         </delete>
-    </target>
+      </target>
 
 
-    <!-- clean checkout.dir if we really checkout -->
-    <target name="clean-checkout-dir" if="do.checkout">
+      <!-- clean checkout.dir if we really checkout -->
+      <target name="clean-checkout-dir" if="do.checkout">
         <delete includeemptydirs="true" failonerror="false">
-            <fileset dir="${checkout.dir}" includes="**/*" defaultexcludes="no" />
+          <fileset dir="${checkout.dir}" includes="**/*" defaultexcludes="no" />
         </delete>
-    </target>
+      </target>
 
-    <target name="clean-if-antlr-needed" unless="antlr.notneeded">
+      <target name="clean-if-antlr-needed" unless="antlr.notneeded">
         <!-- this seems to be the only way I could get a clean when there has been a
              change to grammar files.  If you are working on the grammars you might
              want to comment this out, as a clean is really only needed if you change
              the tokens defined in Python.g (and cleans make the build slow) -->
         <antcall target="clean"/>
-    </target>
-    
-    <!-- create output directories -->
-    <target name ="prepare-output" depends="init,needed-check,clean-if-antlr-needed">
+      </target>
+
+      <!-- create output directories -->
+      <target name ="prepare-output" depends="init,needed-check,clean-if-antlr-needed">
         <mkdir dir="${compile.dir}" />
         <mkdir dir="${gensrc.dir}/org/python/antlr" />
         <mkdir dir="${exposed.dir}" />
         <mkdir dir="${dist.dir}" />
-    </target>
+      </target>
 
-    <!-- create necessary directories -->
-    <target name="prepare" depends="prepare-full, prepare-checkout, prepare-output"/>
+      <!-- create necessary directories -->
+      <target name="prepare" depends="prepare-full, prepare-checkout, prepare-output"/>
 
-    <!-- create directories needed only in full-build -->
-    <target name="prepare-full" depends="clean" if="full-build">
+      <!-- create directories needed only in full-build -->
+      <target name="prepare-full" depends="clean" if="full-build">
         <mkdir dir="${work.dir}" />
         <mkdir dir="${dist.dir}/Doc" />
         <mkdir dir="${apidoc.dir}" />
-    </target>
+      </target>
 
-    <!-- create checkout directory if necessary -->
-    <target name="prepare-checkout" if="do.checkout">
+      <!-- create checkout directory if necessary -->
+      <target name="prepare-checkout" if="do.checkout">
         <mkdir dir="${checkout.dir}" />
-    </target>
+      </target>
 
-    <target name="checkout" depends="prepare" if="do.checkout">
+      <target name="checkout" depends="prepare" if="do.checkout">
         <exec executable="hg">
-            <!--
+          <!--
             <arg line="clone http://hg.python.org/jython-releasing/2.5.3 -b 2.5 ${checkout.dir}/${hg.code.dir}"/>
             -->
             <arg line="clone http://hg.python.org/jython ${checkout.dir}/${hg.code.dir}"/>
-        </exec>
-    </target>
+          </exec>
+        </target>
 
-    <target name="check-hg">
-      <available file=".hg" type="dir" property="hg.present"/>
-      <condition property="hg-run">
-        <and>
-          <isset property="hg.present"/>
-          <or>
-              <isset property="os.family.unix"/>
-              <isset property="os.family.windows"/>
-          </or>
-        </and>
-      </condition>
-    </target>
-    <target name="hg-id" depends="check-hg, hg-branch, hg-tag, hg-version"/>
+        <target name="check-hg">
+          <available file=".hg" type="dir" property="hg.present"/>
+          <condition property="hg-run">
+            <and>
+              <isset property="hg.present"/>
+              <or>
+                <isset property="os.family.unix"/>
+                <isset property="os.family.windows"/>
+              </or>
+            </and>
+          </condition>
+        </target>
+        <target name="hg-id" depends="check-hg, hg-branch, hg-tag, hg-version"/>
 
-    <target name="hg-branch" if="hg-run">
-        <exec executable="hg" failifexecutionfails="false" outputproperty="build.hg.branch">
-          <arg line="id -b"/>
-        </exec>
-    </target>
-    <target name="hg-tag" if="hg-run">
-        <exec executable="hg" failifexecutionfails="false" outputproperty="build.hg.tag">
-          <arg line="id -t"/>
-        </exec>
-    </target>
-    <target name="hg-version" if="hg-run">
-        <exec executable="hg" failifexecutionfails="false" outputproperty="build.hg.version">
-          <arg line="id -i"/>
-        </exec>
-    </target>
+        <target name="hg-branch" if="hg-run">
+          <exec executable="hg" failifexecutionfails="false" outputproperty="build.hg.branch">
+            <arg line="id -b"/>
+          </exec>
+        </target>
+        <target name="hg-tag" if="hg-run">
+          <exec executable="hg" failifexecutionfails="false" outputproperty="build.hg.tag">
+            <arg line="id -t"/>
+          </exec>
+        </target>
+        <target name="hg-version" if="hg-run">
+          <exec executable="hg" failifexecutionfails="false" outputproperty="build.hg.version">
+            <arg line="id -i"/>
+          </exec>
+        </target>
 
-    <!-- skip-brand can be set in ant.properties or as a system property to keep from updating the
+        <!-- skip-brand can be set in ant.properties or as a system property to keep from updating the
          version.properties file and making the jar on every developer build. -->
     <target name="brand-version" depends="init, hg-id" unless="skip-brand">
-        <property name="build.hg.branch" value=""/>
-        <property name="build.hg.tag" value=""/>
-        <property name="build.hg.version" value=""/>
-        <tstamp>
-            <format property="build.date" pattern="MMM d yyyy" offset="0"/>
-            <format property="build.time" pattern="HH:mm:ss" offset="0"/>
-        </tstamp>
-        <mkdir dir="${compile.dir}/org/python"/>
-        <echo file="${compile.dir}/org/python/version.properties"># Jython version information
-jython.version=${jython.version}
-jython.major_version=${jython.major_version}
-jython.minor_version=${jython.minor_version}
-jython.micro_version=${jython.micro_version}
-jython.release_level=${jython.release_level}
-jython.release_serial=${jython.release_serial}
-jython.build.date=${build.date}
-jython.build.time=${build.time}
-jython.build.hg_branch=${build.hg.branch}
-jython.build.hg_tag=${build.hg.tag}
-jython.build.hg_version=${build.hg.version}</echo>
+      <property name="build.hg.branch" value=""/>
+      <property name="build.hg.tag" value=""/>
+      <property name="build.hg.version" value=""/>
+      <tstamp>
+        <format property="build.date" pattern="MMM d yyyy" offset="0"/>
+        <format property="build.time" pattern="HH:mm:ss" offset="0"/>
+      </tstamp>
+      <mkdir dir="${compile.dir}/org/python"/>
+      <echo file="${compile.dir}/org/python/version.properties"># Jython version information
+        jython.version=${jython.version}
+        jython.major_version=${jython.major_version}
+        jython.minor_version=${jython.minor_version}
+        jython.micro_version=${jython.micro_version}
+        jython.release_level=${jython.release_level}
+        jython.release_serial=${jython.release_serial}
+        jython.build.date=${build.date}
+        jython.build.time=${build.time}
+        jython.build.hg_branch=${build.hg.branch}
+        jython.build.hg_tag=${build.hg.tag}
+        jython.build.hg_version=${build.hg.version}</echo>
     </target>
 
     <target name="brand-readme-version" depends="checkout" if="do.snapshot.build">
-        <!-- change README.txt version string, if so defined: used for
+      <!-- change README.txt version string, if so defined: used for
         snapshot builds. XXX: a bit broken for now-->
         <replace file="${jython.base.dir}/README.txt" token='2.7b3+'
-        value='2.7b${xxx.revision}' />
+          value='2.7b${xxx.revision}' />
         <replace file="${jython.base.dir}/README.txt">
-            <replacetoken>=======================</replacetoken>
-            <replacevalue>--------------------------
+          <replacetoken>=======================</replacetoken>
+          <replacevalue>--------------------------
 
-This is a snapshot build.
-It reflects the current development status.
-				
-The readme text for the next release will be like:
+            This is a snapshot build.
+            It reflects the current development status.
 
-            </replacevalue>
+            The readme text for the next release will be like:
+
+          </replacevalue>
         </replace>
-    </target>
+      </target>
 
-    <target name="template-init" depends="prepare">
+      <target name="template-init" depends="prepare">
         <javac srcdir="${source.dir}/"
-                destdir="${compile.dir}"
-                target="${jdk.target.version}"
-                source="${jdk.source.version}"
-                debug="${debug}"
-                deprecation="${deprecation}"
-                nowarn="${nowarn}">
-            <include name="org/python/util/TemplateAntTask.java" />
-            <compilerarg line="${javac.Xlint}"/>
+          destdir="${compile.dir}"
+          target="${jdk.target.version}"
+          source="${jdk.source.version}"
+          debug="${debug}"
+          deprecation="${deprecation}"
+          nowarn="${nowarn}">
+          <include name="org/python/util/TemplateAntTask.java" />
+          <compilerarg line="${javac.Xlint}"/>
         </javac>
-    </target>
+      </target>
 
-    <target name="template" depends="checkout, template-init">
+      <target name="template" depends="checkout, template-init">
         <taskdef name="gentempl" classname="org.python.util.TemplateAntTask"
-            classpath="${compile.dir}" />
+          classpath="${compile.dir}" />
         <gentempl srcdir="${templates.dir}" verbose="true"
-		  lazy="${templates.lazy}"/>
-    </target>
+          lazy="${templates.lazy}"/>
+      </target>
 
-    <target name="antlr_gen" depends="prepare-output" unless="antlr.notneeded">
+      <target name="antlr_gen" depends="prepare-output" unless="antlr.notneeded">
         <java classname="org.antlr.Tool" failonerror="true" fork="true" dir="${jython.base.dir}">
-            <jvmarg value="-Xmx512m"/>
-            <arg value="-Xconversiontimeout"/>
-            <arg value="2000"/>
-            <arg value="-fo"/>
-            <arg path="${work.dir}/build/gensrc/org/python/antlr"/>
-            <arg value="-lib"/>
-            <arg path="${work.dir}/build/gensrc/org/python/antlr"/>
-            <arg file="${jython.base.dir}/grammar/Python.g"/>
-            <arg file="${jython.base.dir}/grammar/PythonPartial.g"/>
-            <classpath refid="main.classpath"/>
+          <jvmarg value="-Xmx512m"/>
+          <arg value="-Xconversiontimeout"/>
+          <arg value="2000"/>
+          <arg value="-fo"/>
+          <arg path="${work.dir}/build/gensrc/org/python/antlr"/>
+          <arg value="-lib"/>
+          <arg path="${work.dir}/build/gensrc/org/python/antlr"/>
+          <arg file="${jython.base.dir}/grammar/Python.g"/>
+          <arg file="${jython.base.dir}/grammar/PythonPartial.g"/>
+          <classpath refid="main.classpath"/>
         </java>
-        
+
         <!-- copy the .tokens to /grammar, for usage in ANTLRWorks -->
         <!--
         <copy todir="grammar" preservelastmodified="true">
@@ -470,73 +470,73 @@ The readme text for the next release will be like:
         -->
 
     </target>
- 
+
     <target name="compile" depends="init,antlr_gen,brand-version">
-        <javac destdir="${compile.dir}"
-               target="${jdk.target.version}"
-               source="${jdk.source.version}"
-               debug="${debug}"
-               deprecation="${deprecation}"
-               nowarn="${nowarn}"
-               memoryMaximumSize="1024m"
-               fork="true"
-               encoding="UTF-8">
-            <compilerarg line="${javac.Xlint}"/>
-            <src path="${source.dir}"/>
-            <src path="${gensrc.dir}"/>
-            <exclude name="**/handler/InformixDataHandler.java" unless="informix.present" />
-            <exclude name="**/handler/OracleDataHandler.java" unless="oracle.present" />
-            <classpath refid="main.classpath" />
-        </javac>
+      <javac destdir="${compile.dir}"
+        target="${jdk.target.version}"
+        source="${jdk.source.version}"
+        debug="${debug}"
+        deprecation="${deprecation}"
+        nowarn="${nowarn}"
+        memoryMaximumSize="1024m"
+        fork="true"
+        encoding="UTF-8">
+        <compilerarg line="${javac.Xlint}"/>
+        <src path="${source.dir}"/>
+        <src path="${gensrc.dir}"/>
+        <exclude name="**/handler/InformixDataHandler.java" unless="informix.present" />
+        <exclude name="**/handler/OracleDataHandler.java" unless="oracle.present" />
+        <classpath refid="main.classpath" />
+      </javac>
 
-        <javac srcdir="${jython.base.dir}/Lib"
-               includes="jxxload_help/**"
-               destdir="${compile.dir}"
-               target="${jdk.target.version}"
-               source="${jdk.source.version}"
-               debug="${debug}"
-               deprecation="${deprecation}"
-               nowarn="${nowarn}">
-            <compilerarg line="${javac.Xlint}"/>
-        </javac>
+      <javac srcdir="${jython.base.dir}/Lib"
+        includes="jxxload_help/**"
+        destdir="${compile.dir}"
+        target="${jdk.target.version}"
+        source="${jdk.source.version}"
+        debug="${debug}"
+        deprecation="${deprecation}"
+        nowarn="${nowarn}">
+        <compilerarg line="${javac.Xlint}"/>
+      </javac>
 
-        <!-- java files used by tests -->
-        <javac srcdir="${test.source.dir}"
-               destdir="${compile.dir}"
-               target="${jdk.target.version}"
-               source="${jdk.source.version}"
-               debug="${debug}"
-               deprecation="${deprecation}"
-               nowarn="${nowarn}"
-               encoding="UTF-8">
-            <compilerarg line="${javac.Xlint}"/>
-            <classpath refid="test.classpath" />
-        </javac>
-        <javac srcdir="tests/data/initializer"
-            destdir="tests/data/initializer"
-            target="${jdk.target.version}"
-            source="${jdk.source.version}"
-            debug="${debug}"
-            deprecation="${deprecation}"
-            nowarn="${nowarn}"> 
-            <compilerarg line="${javac.Xlint}"/>
-            <classpath refid="test.classpath" />
-        </javac>
-        <copy file="${source.dir}/org/python/modules/ucnhash.dat"
-              todir="${compile.dir}/org/python/modules"
-              preservelastmodified="true" />
+      <!-- java files used by tests -->
+      <javac srcdir="${test.source.dir}"
+        destdir="${compile.dir}"
+        target="${jdk.target.version}"
+        source="${jdk.source.version}"
+        debug="${debug}"
+        deprecation="${deprecation}"
+        nowarn="${nowarn}"
+        encoding="UTF-8">
+        <compilerarg line="${javac.Xlint}"/>
+        <classpath refid="test.classpath" />
+      </javac>
+      <javac srcdir="tests/data/initializer"
+        destdir="tests/data/initializer"
+        target="${jdk.target.version}"
+        source="${jdk.source.version}"
+        debug="${debug}"
+        deprecation="${deprecation}"
+        nowarn="${nowarn}"> 
+        <compilerarg line="${javac.Xlint}"/>
+        <classpath refid="test.classpath" />
+      </javac>
+      <copy file="${source.dir}/org/python/modules/ucnhash.dat"
+        todir="${compile.dir}/org/python/modules"
+        preservelastmodified="true" />
 
-        <copy todir="${compile.dir}" preservelastmodified="true">
-            <fileset dir="${source.dir}">
-                <include name="**/*.properties" />
-            </fileset>
-        </copy>
-        <!-- grammar must now be up to date -->
-        <property name="antlr.notneeded" value="true" />
+      <copy todir="${compile.dir}" preservelastmodified="true">
+        <fileset dir="${source.dir}">
+          <include name="**/*.properties" />
+        </fileset>
+      </copy>
+      <!-- grammar must now be up to date -->
+      <property name="antlr.notneeded" value="true" />
 
-	<copy todir="${compile.dir}/META-INF/services">
-	    <fileset dir="${source.dir}/META-INF/services" />
-	</copy>
+      <copy todir="${compile.dir}/META-INF/services">
+        <fileset dir="${source.dir}/META-INF/services" />
+      </copy>
     </target>
 
     <!--
@@ -549,474 +549,474 @@ The readme text for the next release will be like:
     XXX: get cpptasks running without an arg to ant.
     -->
     <target name="compile_cpp" depends="compile">
-        <taskdef resource="cpptasks.tasks"/>
-        <cc outtype="shared" subsystem="console" outfile="ctypes_test" objdir="${compile.dir}">
-             <fileset dir="tests/c" includes="*.c"/>
-         </cc>
+      <taskdef resource="cpptasks.tasks"/>
+      <cc outtype="shared" subsystem="console" outfile="ctypes_test" objdir="${compile.dir}">
+        <fileset dir="tests/c" includes="*.c"/>
+      </cc>
     </target>
 
 
     <target name="expose" depends="compile">
-        <taskdef name="expose" classname="org.python.expose.generate.ExposeTask">
-            <classpath>
-                <path refid="main.classpath" />
-                <pathelement path="${compile.dir}" />
-            </classpath>
-        </taskdef>
-        <expose srcdir="${compile.dir}"
-            destdir="${exposed.dir}" 
-            includesfile="${jython.base.dir}/CoreExposed.includes"/>
+      <taskdef name="expose" classname="org.python.expose.generate.ExposeTask">
+        <classpath>
+          <path refid="main.classpath" />
+          <pathelement path="${compile.dir}" />
+        </classpath>
+      </taskdef>
+      <expose srcdir="${compile.dir}"
+        destdir="${exposed.dir}" 
+        includesfile="${jython.base.dir}/CoreExposed.includes"/>
     </target>
 
     <target name="jar-complete" depends="jar, pycompile">
-        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="extlibs/jarjar-1.4.jar"/>
-        <jarjar destfile="${dist.dir}/${jython.deploy.jar}">
-            <zipfileset src="${dist.dir}/${jython.dev.jar}"/>
-            <zipfileset src="extlibs/antlr-runtime-3.1.3.jar"/>
-            <rule pattern="org.antlr.runtime.**" result="org.python.antlr.runtime.@1"/>
-            <zipfileset src="extlibs/asm-5.0.3.jar"/>
-            <zipfileset src="extlibs/asm-commons-5.0.3.jar"/>
-            <zipfileset src="extlibs/asm-util-5.0.3.jar"/>
-            <rule pattern="org.objectweb.asm.**" result="org.python.objectweb.asm.@1"/>
-	    <zipfileset src="extlibs/bcpkix-jdk15on-150.jar" excludes="META-INF/**"/>
-	    <rule pattern="org.bouncycastle.**" result="org.python.bouncycastle.@1"/>
-	    <zipfileset src="extlibs/bcprov-jdk15on-150.jar" excludes="META-INF/**"/>
-	    <rule pattern="org.bouncycastle.**" result="org.python.bouncycastle.@1"/>
-	    <zipfileset src="extlibs/commons-compress-1.9.jar"/>
-	    <rule pattern="org.apache.**" result="org.python.apache.@1"/>
-            <zipfileset src="extlibs/guava-18.0.jar"/>
-            <rule pattern="com.google.**" result="org.python.google.@1"/>
-            <zipfileset src="extlibs/icu4j-54_1_1.jar"/>
-            <rule pattern="com.ibm.icu.**" result="org.python.icu.@1"/>
-            <zipfileset src="extlibs/netty-buffer-4.0.25.Final.jar" excludes="META-INF/**"/>
-            <rule pattern="io.netty.**" result="org.python.netty.@1"/>
-            <zipfileset src="extlibs/netty-codec-4.0.25.Final.jar" excludes="META-INF/**"/>
-            <rule pattern="io.netty.**" result="org.python.netty.@1"/>
-            <zipfileset src="extlibs/netty-common-4.0.25.Final.jar" excludes="META-INF/**"/>
-            <rule pattern="io.netty.**" result="org.python.netty.@1"/>
-            <zipfileset src="extlibs/netty-handler-4.0.25.Final.jar" excludes="META-INF/**"/>
-            <rule pattern="io.netty.**" result="org.python.netty.@1"/>
-            <zipfileset src="extlibs/netty-transport-4.0.25.Final.jar" excludes="META-INF/**"/>
-            <rule pattern="io.netty.**" result="org.python.netty.@1"/>
-            <zipfileset src="extlibs/jffi-arm-Linux.jar"/>
-            <zipfileset src="extlibs/jffi-Darwin.jar"/>
-            <zipfileset src="extlibs/jffi-i386-FreeBSD.jar"/>
-            <zipfileset src="extlibs/jffi-i386-Linux.jar"/>
-            <zipfileset src="extlibs/jffi-i386-OpenBSD.jar"/>
-            <zipfileset src="extlibs/jffi-i386-SunOS.jar"/>
-            <zipfileset src="extlibs/jffi-i386-Windows.jar"/>
-            <zipfileset src="extlibs/jffi-ppc-AIX.jar"/>
-            <zipfileset src="extlibs/jffi-ppc-Linux.jar"/>
-            <zipfileset src="extlibs/jffi-ppc64-Linux.jar"/>
-            <zipfileset src="extlibs/jffi-s390x-Linux.jar"/>
-            <zipfileset src="extlibs/jffi-sparc-SunOS.jar"/>
-            <zipfileset src="extlibs/jffi-sparcv9-SunOS.jar"/>
-            <zipfileset src="extlibs/jffi-x86_64-FreeBSD.jar"/>
-            <zipfileset src="extlibs/jffi-x86_64-Linux.jar"/>
-            <zipfileset src="extlibs/jffi-x86_64-OpenBSD.jar"/>
-            <zipfileset src="extlibs/jffi-x86_64-SunOS.jar"/>
-            <zipfileset src="extlibs/jffi-x86_64-Windows.jar"/>
-            <zipfileset src="extlibs/jffi-1.2.7.jar"/>
-            <zipfileset src="${extlibs.dir}/jnr-ffi-2.0.1.jar"/>
-	    <zipfileset src="${extlibs.dir}/jnr-netdb-1.1.4.jar"/>
-	    <zipfileset src="${extlibs.dir}/jnr-posix-3.0.9.jar"/>
-            <zipfileset src="${extlibs.dir}/jnr-constants-0.8.6.jar"/>
-            <zipfileset src="extlibs/xml-apis-2.11.0.jar" excludes="META-INF/services/*"/>
-            <zipfileset src="extlibs/xercesImpl-2.11.0.jar" excludes="META-INF/services/*"/>
-            <rule pattern="org.apache.xml.**" result="org.python.apache.xml.@1"/>
-            <rule pattern="org.apache.xerces.**" result="org.python.apache.xerces.@1"/>
-            <rule pattern="org.apache.wml.**" result="org.python.apache.wml.@1"/>
-            <rule pattern="org.apache.html.**" result="org.python.apache.html.@1"/>
-            <zipfileset src="extlibs/jline-2.12.1.jar"/>
-            <rule pattern="jline.**" result="org.python.jline.@1"/>
-            <manifest>
-                <attribute name="Main-Class" value="org.python.util.jython" />
-                <attribute name="Built-By" value="${user.name}" />
-                <!-- info section. ATTN: no blanks, no '.' in the names -->
-                <section name="Build-Info">
-                    <attribute name="version" value="${jython.version}" />
-                    <attribute name="oracle" value="${oracle.present}" />
-                    <attribute name="informix" value="${informix.present}" />
-                    <attribute name="build-compiler" value="${build.compiler}" />
-                    <attribute name="jdk-target-version" value="${jdk.target.version}" />
-                    <attribute name="debug" value="${debug}" />
-                </section>
-            </manifest>
-        </jarjar>
+      <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="extlibs/jarjar-1.4.jar"/>
+      <jarjar destfile="${dist.dir}/${jython.deploy.jar}">
+        <zipfileset src="${dist.dir}/${jython.dev.jar}"/>
+        <zipfileset src="extlibs/antlr-runtime-3.1.3.jar"/>
+        <rule pattern="org.antlr.runtime.**" result="org.python.antlr.runtime.@1"/>
+        <zipfileset src="extlibs/asm-5.0.3.jar"/>
+        <zipfileset src="extlibs/asm-commons-5.0.3.jar"/>
+        <zipfileset src="extlibs/asm-util-5.0.3.jar"/>
+        <rule pattern="org.objectweb.asm.**" result="org.python.objectweb.asm.@1"/>
+        <zipfileset src="extlibs/bcpkix-jdk15on-150.jar" excludes="META-INF/**"/>
+        <rule pattern="org.bouncycastle.**" result="org.python.bouncycastle.@1"/>
+        <zipfileset src="extlibs/bcprov-jdk15on-150.jar" excludes="META-INF/**"/>
+        <rule pattern="org.bouncycastle.**" result="org.python.bouncycastle.@1"/>
+        <zipfileset src="extlibs/commons-compress-1.9.jar"/>
+        <rule pattern="org.apache.**" result="org.python.apache.@1"/>
+        <zipfileset src="extlibs/guava-18.0.jar"/>
+        <rule pattern="com.google.**" result="org.python.google.@1"/>
+        <zipfileset src="extlibs/icu4j-54_1_1.jar"/>
+        <rule pattern="com.ibm.icu.**" result="org.python.icu.@1"/>
+        <zipfileset src="extlibs/netty-buffer-4.0.25.Final.jar" excludes="META-INF/**"/>
+        <rule pattern="io.netty.**" result="org.python.netty.@1"/>
+        <zipfileset src="extlibs/netty-codec-4.0.25.Final.jar" excludes="META-INF/**"/>
+        <rule pattern="io.netty.**" result="org.python.netty.@1"/>
+        <zipfileset src="extlibs/netty-common-4.0.25.Final.jar" excludes="META-INF/**"/>
+        <rule pattern="io.netty.**" result="org.python.netty.@1"/>
+        <zipfileset src="extlibs/netty-handler-4.0.25.Final.jar" excludes="META-INF/**"/>
+        <rule pattern="io.netty.**" result="org.python.netty.@1"/>
+        <zipfileset src="extlibs/netty-transport-4.0.25.Final.jar" excludes="META-INF/**"/>
+        <rule pattern="io.netty.**" result="org.python.netty.@1"/>
+        <zipfileset src="extlibs/jffi-arm-Linux.jar"/>
+        <zipfileset src="extlibs/jffi-Darwin.jar"/>
+        <zipfileset src="extlibs/jffi-i386-FreeBSD.jar"/>
+        <zipfileset src="extlibs/jffi-i386-Linux.jar"/>
+        <zipfileset src="extlibs/jffi-i386-OpenBSD.jar"/>
+        <zipfileset src="extlibs/jffi-i386-SunOS.jar"/>
+        <zipfileset src="extlibs/jffi-i386-Windows.jar"/>
+        <zipfileset src="extlibs/jffi-ppc-AIX.jar"/>
+        <zipfileset src="extlibs/jffi-ppc-Linux.jar"/>
+        <zipfileset src="extlibs/jffi-ppc64-Linux.jar"/>
+        <zipfileset src="extlibs/jffi-s390x-Linux.jar"/>
+        <zipfileset src="extlibs/jffi-sparc-SunOS.jar"/>
+        <zipfileset src="extlibs/jffi-sparcv9-SunOS.jar"/>
+        <zipfileset src="extlibs/jffi-x86_64-FreeBSD.jar"/>
+        <zipfileset src="extlibs/jffi-x86_64-Linux.jar"/>
+        <zipfileset src="extlibs/jffi-x86_64-OpenBSD.jar"/>
+        <zipfileset src="extlibs/jffi-x86_64-SunOS.jar"/>
+        <zipfileset src="extlibs/jffi-x86_64-Windows.jar"/>
+        <zipfileset src="extlibs/jffi-1.2.7.jar"/>
+        <zipfileset src="${extlibs.dir}/jnr-ffi-2.0.1.jar"/>
+        <zipfileset src="${extlibs.dir}/jnr-netdb-1.1.4.jar"/>
+        <zipfileset src="${extlibs.dir}/jnr-posix-3.0.9.jar"/>
+        <zipfileset src="${extlibs.dir}/jnr-constants-0.8.6.jar"/>
+        <zipfileset src="extlibs/xml-apis-2.11.0.jar" excludes="META-INF/services/*"/>
+        <zipfileset src="extlibs/xercesImpl-2.11.0.jar" excludes="META-INF/services/*"/>
+        <rule pattern="org.apache.xml.**" result="org.python.apache.xml.@1"/>
+        <rule pattern="org.apache.xerces.**" result="org.python.apache.xerces.@1"/>
+        <rule pattern="org.apache.wml.**" result="org.python.apache.wml.@1"/>
+        <rule pattern="org.apache.html.**" result="org.python.apache.html.@1"/>
+        <zipfileset src="extlibs/jline-2.12.1.jar"/>
+        <rule pattern="jline.**" result="org.python.jline.@1"/>
+        <manifest>
+          <attribute name="Main-Class" value="org.python.util.jython" />
+          <attribute name="Built-By" value="${user.name}" />
+          <!-- info section. ATTN: no blanks, no '.' in the names -->
+          <section name="Build-Info">
+            <attribute name="version" value="${jython.version}" />
+            <attribute name="oracle" value="${oracle.present}" />
+            <attribute name="informix" value="${informix.present}" />
+            <attribute name="build-compiler" value="${build.compiler}" />
+            <attribute name="jdk-target-version" value="${jdk.target.version}" />
+            <attribute name="debug" value="${debug}" />
+          </section>
+        </manifest>
+      </jarjar>
     </target>
 
     <target name="jar-standalone" depends="jar-complete">
-        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="extlibs/jarjar-1.4.jar"/>
-        <jar destfile="${dist.dir}/${jython.standalone.jar}">
-	  <zipfileset src="${dist.dir}/${jython.deploy.jar}"/>
-	  <fileset dir="${dist.dir}" includes="Lib/**" excludes="Lib/test/**" />
-          <manifest>
-                <attribute name="Main-Class" value="org.python.util.jython" />
-                <attribute name="Built-By" value="${user.name}" />
-                <!-- info section. ATTN: no blanks, no '.' in the names -->
-                <section name="Build-Info">
-                    <attribute name="version" value="${jython.version}" />
-                    <attribute name="hg-build" value="${do.checkout}" />
-                    <attribute name="oracle" value="${oracle.present}" />
-                    <attribute name="informix" value="${informix.present}" />
-                    <attribute name="build-compiler" value="${build.compiler}" />
-                    <attribute name="jdk-target-version" value="${jdk.target.version}" />
-                    <attribute name="debug" value="${debug}" />
-                </section>
-            </manifest>
-	</jar>
+      <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="extlibs/jarjar-1.4.jar"/>
+      <jar destfile="${dist.dir}/${jython.standalone.jar}">
+        <zipfileset src="${dist.dir}/${jython.deploy.jar}"/>
+        <fileset dir="${dist.dir}" includes="Lib/**" excludes="Lib/test/**" />
+        <manifest>
+          <attribute name="Main-Class" value="org.python.util.jython" />
+          <attribute name="Built-By" value="${user.name}" />
+          <!-- info section. ATTN: no blanks, no '.' in the names -->
+          <section name="Build-Info">
+            <attribute name="version" value="${jython.version}" />
+            <attribute name="hg-build" value="${do.checkout}" />
+            <attribute name="oracle" value="${oracle.present}" />
+            <attribute name="informix" value="${informix.present}" />
+            <attribute name="build-compiler" value="${build.compiler}" />
+            <attribute name="jdk-target-version" value="${jdk.target.version}" />
+            <attribute name="debug" value="${debug}" />
+          </section>
+        </manifest>
+      </jar>
     </target>
 
     <target name="jar" depends="compile,expose">
-       <typedef name="nameunion" classname="org.python.util.NameUnionAntType">
-           <classpath>
-               <path refid="main.classpath" />
-               <pathelement path="${compile.dir}" />
-           </classpath>
-       </typedef>
-       <jar destfile="${dist.dir}/callbacker_test.jar">
-           <fileset dir="${compile.dir}" includes="org/python/tests/Callbacker*"/>
-       </jar>
-       <jar destfile="${dist.dir}/${jython.dev.jar}" duplicate="fail">
-          <!-- If only nameunion is used, ant issues a spurious warning about no files being
+      <typedef name="nameunion" classname="org.python.util.NameUnionAntType">
+        <classpath>
+          <path refid="main.classpath" />
+          <pathelement path="${compile.dir}" />
+        </classpath>
+      </typedef>
+      <jar destfile="${dist.dir}/callbacker_test.jar">
+        <fileset dir="${compile.dir}" includes="org/python/tests/Callbacker*"/>
+      </jar>
+      <jar destfile="${dist.dir}/${jython.dev.jar}" duplicate="fail">
+        <!-- If only nameunion is used, ant issues a spurious warning about no files being
                included.  Use a fileset for version.properties just to shut that up. -->
           <fileset dir="${compile.dir}" includes="org/python/version.properties"/>
           <nameunion>
-             <fileset dir="${exposed.dir}"/>
-             <fileset dir="${compile.dir}"
-                 excludes="org/python/expose/generate/**,org/python/version.properties"/>   
+            <fileset dir="${exposed.dir}"/>
+            <fileset dir="${compile.dir}"
+              excludes="org/python/expose/generate/**,org/python/version.properties"/>   
           </nameunion>
           <manifest>
-              <attribute name="Main-Class" value="org.python.util.jython" />
-              <attribute name="Built-By" value="${user.name}" />
-              <!-- info section. ATTN: no blanks, no '.' in the names -->
-              <section name="Build-Info">
-                  <attribute name="version" value="${jython.version}" />
-                  <attribute name="hg-build" value="${do.checkout}" />
-                  <attribute name="oracle" value="${oracle.present}" />
-                  <attribute name="informix" value="${informix.present}" />
-                  <attribute name="build-compiler" value="${build.compiler}" />
-                  <attribute name="jdk-target-version" value="${jdk.target.version}" />
-                  <attribute name="debug" value="${debug}" />
-              </section>
+            <attribute name="Main-Class" value="org.python.util.jython" />
+            <attribute name="Built-By" value="${user.name}" />
+            <!-- info section. ATTN: no blanks, no '.' in the names -->
+            <section name="Build-Info">
+              <attribute name="version" value="${jython.version}" />
+              <attribute name="hg-build" value="${do.checkout}" />
+              <attribute name="oracle" value="${oracle.present}" />
+              <attribute name="informix" value="${informix.present}" />
+              <attribute name="build-compiler" value="${build.compiler}" />
+              <attribute name="jdk-target-version" value="${jdk.target.version}" />
+              <attribute name="debug" value="${debug}" />
+            </section>
           </manifest>
         </jar>
-    </target>
+      </target>
 
-    <target name="javadoc" depends="compile">
+      <target name="javadoc" depends="compile">
         <path id="javadoc.classpath">
-            <pathelement path="${java.class.path}" />
-            <pathelement path="${compile.dir}" />
-            <path refid="main.classpath" />
+          <pathelement path="${java.class.path}" />
+          <pathelement path="${compile.dir}" />
+          <path refid="main.classpath" />
         </path> 
         <javadoc sourcepath="${source.dir}" 
-                 destdir="${apidoc.dir}"
-                 source="${jdk.source.version}"
-		 maxmemory="1024m"
-                 public="true"
-                 breakiterator="yes"
-                 packagenames="org.python.core.*, org.python.util.*, org.python.modules.*, com.ziclix.python.sql, com.xhaus.modjy"
-                 windowtitle="Jython API documentation"
-                 bottom="&lt;a href='http://www.jython.org' target='_top'>Jython homepage&lt;/a>"
-        >
-            <link href="http://docs.oracle.com/javase/7/docs/api/" />
-            <classpath refid="javadoc.classpath" />
+          destdir="${apidoc.dir}"
+          source="${jdk.source.version}"
+          maxmemory="1024m"
+          public="true"
+          breakiterator="yes"
+          packagenames="org.python.core.*, org.python.util.*, org.python.modules.*, com.ziclix.python.sql, com.xhaus.modjy"
+          windowtitle="Jython API documentation"
+          bottom="&lt;a href='http://www.jython.org' target='_top'>Jython homepage&lt;/a>"
+          >
+          <link href="http://docs.oracle.com/javase/7/docs/api/" />
+          <classpath refid="javadoc.classpath" />
         </javadoc>
-    </target>
+      </target>
 
-    <target name="all-jars" depends="prepare, jar-standalone, javadoc, installer">
+      <target name="all-jars" depends="prepare, jar-standalone, javadoc, installer">
         <jar destfile="dist/${jython.javadoc.jar}">
-            <fileset dir="${apidoc.dir}" includes="**"/>
+          <fileset dir="${apidoc.dir}" includes="**"/>
         </jar>
         <jar destfile="dist/${jython.sources.jar}">
-            <fileset dir="${jython.base.dir}">
-                <exclude name="build/**" />
-                <exclude name="dist/**" />
-                <exclude name="extlibs/**" />
-                <exclude name="Doc/**" />
-            </fileset>
+          <fileset dir="${jython.base.dir}">
+            <exclude name="build/**" />
+            <exclude name="dist/**" />
+            <exclude name="extlibs/**" />
+            <exclude name="Doc/**" />
+          </fileset>
         </jar>
-    </target>
+      </target>
 
-    <target name="copy-license" if="do.checkout">
+      <target name="copy-license" if="do.checkout">
         <echo>copy CPython LICENSE from ${checkout.dir}/python</echo>
         <copy file="${checkout.dir}/python/LICENSE" tofile="${dist.dir}/LICENSE_CPython.txt" preservelastmodified="true" />
-    </target>
+      </target>
 
-    <target name="copy-full" depends="copy-lib, copy-license" if="full-build">
+      <target name="copy-full" depends="copy-lib, copy-license" if="full-build">
         <echo>copy misc files from ${jython.base.dir}</echo>
         <copy todir="${dist.dir}" preservelastmodified="true" overwrite="true">
-            <fileset dir="${jython.base.dir}"
-                     includes="ACKNOWLEDGMENTS, build.xml, build.Lib.include.properties, NEWS, LICENSE.txt, README.txt, registry"
+          <fileset dir="${jython.base.dir}"
+            includes="ACKNOWLEDGMENTS, build.xml, build.Lib.include.properties, NEWS, LICENSE.txt, README.txt, registry"
             />
         </copy>
 
         <!-- sources: todir has to correspond with installer/**/JarInstaller.java -->
         <echo>copy sources from ${jython.base.dir}</echo>
         <copy todir="${dist.dir}" preservelastmodified="true">
-            <fileset dir="${jython.base.dir}">
-              <include name="src/**/*.java" />
-              <include name="src/com/**/*.properties" />
-              <include name="src/shell/*" />
-              <include name="src/templates/*" />
-              <include name="Lib/jxxload_help/*.java" />
-              <include name="src/org/**/ucnhash.dat" />
-              <include name="grammar/*.g" />
-              <include name="tests/java/**/*.java" />
-              <include name="CoreExposed.includes" />
-              <include name="extlibs/**/*.jar" />
+          <fileset dir="${jython.base.dir}">
+            <include name="src/**/*.java" />
+            <include name="src/com/**/*.properties" />
+            <include name="src/shell/*" />
+            <include name="src/templates/*" />
+            <include name="Lib/jxxload_help/*.java" />
+            <include name="src/org/**/ucnhash.dat" />
+            <include name="grammar/*.g" />
+            <include name="tests/java/**/*.java" />
+            <include name="CoreExposed.includes" />
+            <include name="extlibs/**/*.jar" />
 
-              <!-- don't distribute jdbc jars -->
-              <exclude name="extlibs/mysql-connector-java-5.1.6.jar" />
-              <exclude name="extlibs/postgresql-8.3-603.jdbc4.jar" />
-              <exclude name="extlibs/ifxjdbc.jar" />
-              <exclude name="extlibs/ojdbc14.jar" />
+            <!-- don't distribute jdbc jars -->
+            <exclude name="extlibs/mysql-connector-java-5.1.6.jar" />
+            <exclude name="extlibs/postgresql-8.3-603.jdbc4.jar" />
+            <exclude name="extlibs/ifxjdbc.jar" />
+            <exclude name="extlibs/ojdbc14.jar" />
 
-            </fileset>
+          </fileset>
         </copy>
 
         <echo>copy the demo files from ${jython.base.dir}/Demo</echo>
         <copy todir="${dist.dir}/Demo" preservelastmodified="true">
-            <fileset dir="${jython.base.dir}/Demo">
-              <include name="**/*.java" />
-              <include name="**/*.html" />
-              <include name="**/*.py" />
-              <include name="**/*.txt" />
-              <include name="**/*.xml**" />
-              <include name="**/jreload/example.jar" />
-              <include name="**/jreload/_xample/Version.class" />
-              <exclude name="**/jpywork/**" />
-            </fileset>
+          <fileset dir="${jython.base.dir}/Demo">
+            <include name="**/*.java" />
+            <include name="**/*.html" />
+            <include name="**/*.py" />
+            <include name="**/*.txt" />
+            <include name="**/*.xml**" />
+            <include name="**/jreload/example.jar" />
+            <include name="**/jreload/_xample/Version.class" />
+            <exclude name="**/jpywork/**" />
+          </fileset>
         </copy>
-    </target>
+      </target>
 
-    <target name="pycompile" depends="jar,copy-lib">
+      <target name="pycompile" depends="jar,copy-lib">
         <taskdef name="jycompile" classname="org.python.util.JycompileAntTask">
-            <classpath path="${dist.dir}/Lib"/>
-            <classpath path="${dist.dir}/${jython.dev.jar}" />
-            <classpath refid="main.classpath" />
+          <classpath path="${dist.dir}/Lib"/>
+          <classpath path="${dist.dir}/${jython.dev.jar}" />
+          <classpath refid="main.classpath" />
         </taskdef>
         <jycompile srcdir="${dist.dir}/Lib" destdir="${dist.dir}/Lib" excludes="test/**"/>
-    </target>
+      </target>
 
-    <target name="copy-lib" depends="init, copy-javalib, copy-cpythonlib">
+      <target name="copy-lib" depends="init, copy-javalib, copy-cpythonlib">
         <copy todir="${dist.dir}/Lib">
-            <fileset dir="${jython.base.dir}/Lib">
-	       <exclude name="**/*.class"/>   
-            </fileset>
+          <fileset dir="${jython.base.dir}/Lib">
+            <exclude name="**/*.class"/>   
+          </fileset>
         </copy>
 
         <!-- copy the shell scripts and make them executable -->
         <copy todir="${dist.dir}/bin">
-            <fileset dir="${source.dir}/shell"/>
+          <fileset dir="${source.dir}/shell"/>
         </copy>
         <chmod perm="ugo+rx">
-            <fileset dir="${dist.dir}/bin" />
+          <fileset dir="${dist.dir}/bin" />
         </chmod>
 
         <!-- copy the registry -->
         <copy todir="${dist.dir}" file="${jython.base.dir}/registry" preservelastmodified="true"/>
-    </target>
+      </target>
 
-    <target name="copy-cpythonlib">
+      <target name="copy-cpythonlib">
         <copy todir="${dist.dir}/Lib">
-            <fileset dir="${python.lib}" excludes="**/*.pyc, **/*.pyo" includesfile="${jython.base.dir}/CPythonLib.includes">
-                <!-- The include file gets all of lib-python/3.5's test directory, but we only want the ones from Jython's Lib.   -->
-                <present present="srconly" targetdir="${jython.base.dir}/Lib"/>
-            </fileset>
+          <fileset dir="${python.lib}" excludes="**/*.pyc, **/*.pyo" includesfile="${jython.base.dir}/CPythonLib.includes">
+            <!-- The include file gets all of lib-python/3.5's test directory, but we only want the ones from Jython's Lib.   -->
+            <present present="srconly" targetdir="${jython.base.dir}/Lib"/>
+          </fileset>
         </copy>
-    </target>
+      </target>
 
-    <target name="copy-javalib" unless="full-build">
+      <target name="copy-javalib" unless="full-build">
         <copy todir="${dist.dir}/javalib">
-            <fileset dir="${jython.base.dir}/extlibs">
-                <exclude name="profile.properties"/>
-            </fileset>
-            <fileset dir="${work.dir}/build">
-                <include name="*.jar"/>
-                <include name="*.properties"/>
-            </fileset>
+          <fileset dir="${jython.base.dir}/extlibs">
+            <exclude name="profile.properties"/>
+          </fileset>
+          <fileset dir="${work.dir}/build">
+            <include name="*.jar"/>
+            <include name="*.properties"/>
+          </fileset>
         </copy>
-    </target>
+      </target>
 
-    <!-- if installer called by itself, make sure all the dependent targets run;
+      <!-- if installer called by itself, make sure all the dependent targets run;
          otherwise, redundant with full-check -->
     <target name="installer-init">
-        <property name="full-build" value="true" />
+      <property name="full-build" value="true" />
     </target>
 
     <!-- wrap the build into the installer -->
     <target name="installer" depends="brand-readme-version, installer-init, jar-standalone, javadoc, copy-full">
-        <property name="installer.src.dir" value="${jython.base.dir}/installer/src/java" />
-        <echo>compiling installer from ${installer.src.dir}</echo>
-        <javac srcdir="${installer.src.dir}"
-               includes="org/**"
-               destdir="${compile.dir}"
-               target="${jdk.target.version}"
-               source="${jdk.source.version}"
-               debug="${debug}"
-               deprecation="${deprecation}"
-               nowarn="${nowarn}"
+      <property name="installer.src.dir" value="${jython.base.dir}/installer/src/java" />
+      <echo>compiling installer from ${installer.src.dir}</echo>
+      <javac srcdir="${installer.src.dir}"
+        includes="org/**"
+        destdir="${compile.dir}"
+        target="${jdk.target.version}"
+        source="${jdk.source.version}"
+        debug="${debug}"
+        deprecation="${deprecation}"
+        nowarn="${nowarn}"
         />
-        <echo>copy installer classes to ${dist.dir}</echo>
-        <copy todir="${dist.dir}" preservelastmodified="true">
-            <fileset dir="${compile.dir}">
-            	<include name="org/python/util/install/**/*.class" />
-            	<include name="org/apache/commons/cli/*.class" />
-            </fileset>
-        </copy>
-        <copy file="${installer.src.dir}/org/apache/LICENSE.txt" tofile="${dist.dir}/LICENSE_Apache.txt" preservelastmodified="true" />
-        <echo>copy installer icon to ${dist.dir}</echo>
-        <copy todir="${dist.dir}" preservelastmodified="true">
-            <fileset dir="${installer.src.dir}">
-                <include name="**/*.png" />
-                <include name="**/*.template" />
-                <!-- check no /bin directory -->
-                <exclude name="bin/**" />
-            </fileset>
-        </copy>
-        <echo>building installer .jar file</echo>
-        <jar destfile="${dist.dir}/jython-installer.jar" update="true">
-            <fileset dir="${dist.dir}">
-                <exclude name="${jython.dev.jar}"/>
-                <exclude name="${jython.standalone.jar}"/>
-                <exclude name="${jython.javadoc.jar}"/>
-                <exclude name="${jython.sources.jar}"/>
-                <exclude name="callbacker_test.jar"/>
-                <exclude name="extlibs/antlr*.jar" />
-                <exclude name="extlibs/asm*.jar" />
-                <exclude name="extlibs/jarjar*.jar" />
-                <exclude name="extlibs/junit*.jar" />
-                <exclude name="extlibs/servlet-api*.jar" />
-                <exclude name="extlibs/stringtemplate*.jar" />
-                <exclude name="extlibs/xerces*.jar" />
-            </fileset>
-            <manifest>
-                <attribute name="Main-Class" value="org.python.util.install.Installation" />
-                <attribute name="Built-By" value="${user.name}" />
-                <!-- section for the installer program -->
-                <section name="Jython">
-                    <attribute name="version" value="${jython.version}" />
-                    <attribute name="exclude-dirs" value="org;META-INF" />
-                </section>
-                <!-- info section. ATTN: no blanks, no '.' in the names -->
-                <section name="Build-Info">
-                    <attribute name="hg-build" value="${do.checkout}" />
-                    <attribute name="oracle" value="${oracle.present}" />
-                    <attribute name="informix" value="${informix.present}" />
-                    <attribute name="build-compiler" value="${build.compiler}" />
-                    <attribute name="jdk-target-version" value="${jdk.target.version}" />
-                    <attribute name="debug" value="${debug}" />
-                </section>
-            </manifest>
-        </jar>
+      <echo>copy installer classes to ${dist.dir}</echo>
+      <copy todir="${dist.dir}" preservelastmodified="true">
+        <fileset dir="${compile.dir}">
+          <include name="org/python/util/install/**/*.class" />
+          <include name="org/apache/commons/cli/*.class" />
+        </fileset>
+      </copy>
+      <copy file="${installer.src.dir}/org/apache/LICENSE.txt" tofile="${dist.dir}/LICENSE_Apache.txt" preservelastmodified="true" />
+      <echo>copy installer icon to ${dist.dir}</echo>
+      <copy todir="${dist.dir}" preservelastmodified="true">
+        <fileset dir="${installer.src.dir}">
+          <include name="**/*.png" />
+          <include name="**/*.template" />
+          <!-- check no /bin directory -->
+          <exclude name="bin/**" />
+        </fileset>
+      </copy>
+      <echo>building installer .jar file</echo>
+      <jar destfile="${dist.dir}/jython-installer.jar" update="true">
+        <fileset dir="${dist.dir}">
+          <exclude name="${jython.dev.jar}"/>
+          <exclude name="${jython.standalone.jar}"/>
+          <exclude name="${jython.javadoc.jar}"/>
+          <exclude name="${jython.sources.jar}"/>
+          <exclude name="callbacker_test.jar"/>
+          <exclude name="extlibs/antlr*.jar" />
+          <exclude name="extlibs/asm*.jar" />
+          <exclude name="extlibs/jarjar*.jar" />
+          <exclude name="extlibs/junit*.jar" />
+          <exclude name="extlibs/servlet-api*.jar" />
+          <exclude name="extlibs/stringtemplate*.jar" />
+          <exclude name="extlibs/xerces*.jar" />
+        </fileset>
+        <manifest>
+          <attribute name="Main-Class" value="org.python.util.install.Installation" />
+          <attribute name="Built-By" value="${user.name}" />
+          <!-- section for the installer program -->
+          <section name="Jython">
+            <attribute name="version" value="${jython.version}" />
+            <attribute name="exclude-dirs" value="org;META-INF" />
+          </section>
+          <!-- info section. ATTN: no blanks, no '.' in the names -->
+          <section name="Build-Info">
+            <attribute name="hg-build" value="${do.checkout}" />
+            <attribute name="oracle" value="${oracle.present}" />
+            <attribute name="informix" value="${informix.present}" />
+            <attribute name="build-compiler" value="${build.compiler}" />
+            <attribute name="jdk-target-version" value="${jdk.target.version}" />
+            <attribute name="debug" value="${debug}" />
+          </section>
+        </manifest>
+      </jar>
     </target>
 
     <target name="test" depends="prepare-test,javatest,launchertest,regrtest,modjytest" description="run all the tests"/>
     <target name="singlejavatest" depends="compile,expose" description="run a single JUnit test (specify with -Dtest=classname)">
-        <junit haltonfailure="true" fork="true">
-            <formatter type="brief" usefile="false"/>
-            <sysproperty key="python.cachedir.skip" value="true"/>
-            <sysproperty key="python.home" value="${dist.dir}"/>
-            <classpath refid="test.classpath"/>
-            <batchtest>
-                <fileset dir="${test.source.dir}" includes="**/${test}.java"/>
-            </batchtest>
-        </junit>
+      <junit haltonfailure="true" fork="true">
+        <formatter type="brief" usefile="false"/>
+        <sysproperty key="python.cachedir.skip" value="true"/>
+        <sysproperty key="python.home" value="${dist.dir}"/>
+        <classpath refid="test.classpath"/>
+        <batchtest>
+          <fileset dir="${test.source.dir}" includes="**/${test}.java"/>
+        </batchtest>
+      </junit>
     </target>
     <target name="prepare-test" depends="init">
-        <!-- Clean any old test output -->
-        <delete dir="${junit.reports}"/>
-</target>
+      <!-- Clean any old test output -->
+      <delete dir="${junit.reports}"/>
+    </target>
     <target name="javatest" depends="javatest-basepath,importest"
-            description="run all the JUnit tests">
+      description="run all the JUnit tests">
     </target>
     <target name="javatest-basepath" depends="developer-build">
-        <mkdir dir="${junit.reports}"/>
-        <junit fork="true" printsummary="true">
-            <formatter type="xml"/>
-            <sysproperty key="python.home" value="${dist.dir}"/>
-            <sysproperty key="python.test.source.dir" value="${test.source.dir}"/>
-            <classpath refid="test.classpath"/>
-            <batchtest todir="${junit.reports}">
-                <fileset dir="${test.source.dir}" includes="**/*Test*.java">
-                    <exclude name="javatests/**/*" />
-                    <exclude name="**/InterpTestCase.java" />
-                    <exclude name="**/jythonTest*" /> <!-- Must run interactively -->
-                    <exclude name="org/python/antlr/**" />
-                    <exclude name="org/python/tests/imp/**" /> <!-- See importest -->
-                    <exclude name=".classpath" />
-                    <exclude name=".project" />
-                </fileset>
-            </batchtest>
-        </junit>
+      <mkdir dir="${junit.reports}"/>
+      <junit fork="true" printsummary="true">
+        <formatter type="xml"/>
+        <sysproperty key="python.home" value="${dist.dir}"/>
+        <sysproperty key="python.test.source.dir" value="${test.source.dir}"/>
+        <classpath refid="test.classpath"/>
+        <batchtest todir="${junit.reports}">
+          <fileset dir="${test.source.dir}" includes="**/*Test*.java">
+            <exclude name="javatests/**/*" />
+            <exclude name="**/InterpTestCase.java" />
+            <exclude name="**/jythonTest*" /> <!-- Must run interactively -->
+            <exclude name="org/python/antlr/**" />
+            <exclude name="org/python/tests/imp/**" /> <!-- See importest -->
+            <exclude name=".classpath" />
+            <exclude name=".project" />
+          </fileset>
+        </batchtest>
+      </junit>
     </target>
     <target name="importest" depends="developer-build" description="run all the JUnit tests that need tests/python in the path.">
-        <mkdir dir="${junit.reports}"/>
-        <junit fork="true" printsummary="true">
-            <formatter type="xml"/>
-            <sysproperty key="python.home" value="${dist.dir}"/>
-            <sysproperty key="python.test.source.dir" value="${test.source.dir}"/>
-            <classpath refid="test.classpath"/>
-            <classpath refid="test.classpath"/>
-            <classpath>
-                <pathelement location="${jython.base.dir}/tests/python"/>
-            </classpath>
-            <batchtest todir="${junit.reports}">
-                <fileset dir="${test.source.dir}" includes="org/python/tests/imp/*Test*.java">
-                </fileset>
-            </batchtest>
-        </junit>
+      <mkdir dir="${junit.reports}"/>
+      <junit fork="true" printsummary="true">
+        <formatter type="xml"/>
+        <sysproperty key="python.home" value="${dist.dir}"/>
+        <sysproperty key="python.test.source.dir" value="${test.source.dir}"/>
+        <classpath refid="test.classpath"/>
+        <classpath refid="test.classpath"/>
+        <classpath>
+          <pathelement location="${jython.base.dir}/tests/python"/>
+        </classpath>
+        <batchtest todir="${junit.reports}">
+          <fileset dir="${test.source.dir}" includes="org/python/tests/imp/*Test*.java">
+          </fileset>
+        </batchtest>
+      </junit>
     </target>
     <target name="idxtest" depends="developer-build">
-        <mkdir dir="${junit.reports}"/>
-        <junit fork="true" printsummary="true" showoutput="true">
-            <formatter type="xml"/>
-            <sysproperty key="python.home" value="${dist.dir}"/>
-            <sysproperty key="python.test.source.dir" value="${test.source.dir}"/>
-            <classpath refid="test.classpath"/>
-            <batchtest todir="${junit.reports}">
-                <fileset dir="${test.source.dir}" includes="**/*Test*.java">
-                    <exclude name="javatests/**/*" />
-                    <exclude name="**/InterpTestCase.java" />
-                    <exclude name="org/python/antlr/**" />
-                    <exclude name="org/python/core/**" />
-                    <exclude name="org/python/expose/**" />
-                    <exclude name="org/python/jsr223/**" />
-                    <exclude name="org/python/tests/**" />
-                    <exclude name="org/python/util/**" />
-                </fileset>
-            </batchtest>
-        </junit>
+      <mkdir dir="${junit.reports}"/>
+      <junit fork="true" printsummary="true" showoutput="true">
+        <formatter type="xml"/>
+        <sysproperty key="python.home" value="${dist.dir}"/>
+        <sysproperty key="python.test.source.dir" value="${test.source.dir}"/>
+        <classpath refid="test.classpath"/>
+        <batchtest todir="${junit.reports}">
+          <fileset dir="${test.source.dir}" includes="**/*Test*.java">
+            <exclude name="javatests/**/*" />
+            <exclude name="**/InterpTestCase.java" />
+            <exclude name="org/python/antlr/**" />
+            <exclude name="org/python/core/**" />
+            <exclude name="org/python/expose/**" />
+            <exclude name="org/python/jsr223/**" />
+            <exclude name="org/python/tests/**" />
+            <exclude name="org/python/util/**" />
+          </fileset>
+        </batchtest>
+      </junit>
     </target>
     <!-- XXX: how do I share common stuff with "idxtest" target? -->
     <target name="idxtest-debug" depends="developer-build">
-        <mkdir dir="${junit.reports}"/>
-        <junit fork="true" printsummary="true">
-            <formatter type="xml"/>
-            <sysproperty key="python.home" value="${dist.dir}"/>
-            <sysproperty key="python.test.source.dir" value="${test.source.dir}"/>
-            <classpath refid="test.classpath"/>
-            <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5000"/>
-            <batchtest todir="${junit.reports}">
-                <fileset dir="${test.source.dir}" includes="**/*Test*.java">
-                    <exclude name="javatests/**/*" />
-                    <exclude name="**/InterpTestCase.java" />
-                    <exclude name="org/python/antlr/**" />
-                    <exclude name="org/python/core/**" />
-                    <exclude name="org/python/expose/**" />
-                    <exclude name="org/python/jsr223/**" />
-                    <exclude name="org/python/tests/**" />
-                    <exclude name="org/python/util/**" />
-                </fileset>
-            </batchtest>
-        </junit>
+      <mkdir dir="${junit.reports}"/>
+      <junit fork="true" printsummary="true">
+        <formatter type="xml"/>
+        <sysproperty key="python.home" value="${dist.dir}"/>
+        <sysproperty key="python.test.source.dir" value="${test.source.dir}"/>
+        <classpath refid="test.classpath"/>
+        <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5000"/>
+        <batchtest todir="${junit.reports}">
+          <fileset dir="${test.source.dir}" includes="**/*Test*.java">
+            <exclude name="javatests/**/*" />
+            <exclude name="**/InterpTestCase.java" />
+            <exclude name="org/python/antlr/**" />
+            <exclude name="org/python/core/**" />
+            <exclude name="org/python/expose/**" />
+            <exclude name="org/python/jsr223/**" />
+            <exclude name="org/python/tests/**" />
+            <exclude name="org/python/util/**" />
+          </fileset>
+        </batchtest>
+      </junit>
     </target>
     <target name="modjytest" depends="developer-build">
-        <ant dir="tests/modjy">
-            <property name="jython_home" value="${dist.dir}"/>
-            <property name="mockrunner_home" value="${extlibs.dir}/mockrunner-0.4.1"/>
-        </ant>
+      <ant dir="tests/modjy">
+        <property name="jython_home" value="${dist.dir}"/>
+        <property name="mockrunner_home" value="${extlibs.dir}/mockrunner-0.4.1"/>
+      </ant>
     </target>
     <target name="launchertest" depends="developer-build" if="os.family.unix">
       <exec executable="${test.shell.dir}/test-jython.sh">
@@ -1026,14 +1026,14 @@ The readme text for the next release will be like:
     <target name="regrtest" depends="developer-build,regrtest-unix,regrtest-windows" description="run Python tests expected to work on Jython"/>
     <target name="regrtest-unix" if="os.family.unix">
       <exec executable="${dist.dir}/bin/jython">
-	<env key="JAVA_OPTS" value="-Duser.language=en -Duser.region=US"/>
+        <env key="JAVA_OPTS" value="-Duser.language=en -Duser.region=US"/>
         <arg value="${dist.dir}/Lib/test/regrtest.py"/>
         <!-- Only run the tests that are expected to work on Jython -->
         <arg value="--expected"/>
         <arg value="-j"/>
         <arg value="${junit.reports}"/>
         <arg value="--use"/>
-	<arg value="network,subprocess"/>
+        <arg value="network,subprocess"/>
       </exec>
     </target>
     <target name="regrtest-windows" if="os.family.windows">
@@ -1044,61 +1044,61 @@ The readme text for the next release will be like:
         <arg value="-j"/>
         <arg value="${junit.reports}"/>
         <arg value="--use"/>
-	<arg value="network,subprocess"/>
+        <arg value="network,subprocess"/>
       </exec>
     </target>
 
     <target name="regrtest-html-report" depends="init" description="generates HTML output out of regrtest JUnit XML">
-        <mkdir dir="${junit.htmlreports}/html"/>
-        <junitreport todir="${junit.htmlreports}">
-            <fileset dir="${junit.reports}">
-                <include name="TEST-*.xml"/>
-            </fileset>
-            <report format="frames" todir="${junit.htmlreports}/html"/>
-        </junitreport>
+      <mkdir dir="${junit.htmlreports}/html"/>
+      <junitreport todir="${junit.htmlreports}">
+        <fileset dir="${junit.reports}">
+          <include name="TEST-*.xml"/>
+        </fileset>
+        <report format="frames" todir="${junit.htmlreports}/html"/>
+      </junitreport>
     </target>
 
     <!-- run bugtests, create a config if necessary -->
     <target name="bugtest" depends="create-bugtest-config">
-         <java classname="org.python.util.jython" fork="true" dir="${bugtests.dir}">
-            <classpath>
-                <pathelement location="${dist.dir}/${jython.dev.jar}"/>
-                <fileset dir="${dist.dir}/javalib"/>
-            </classpath>
-            <jvmarg value="-Dpython.home=${dist.dir}"/>
-            <arg value="driver.py"/>
-         	<!-- uncomment if you want to run only one test: -->
-         	<!--
-         	<arg value="386"/>
-         	-->
+      <java classname="org.python.util.jython" fork="true" dir="${bugtests.dir}">
+        <classpath>
+          <pathelement location="${dist.dir}/${jython.dev.jar}"/>
+          <fileset dir="${dist.dir}/javalib"/>
+        </classpath>
+        <jvmarg value="-Dpython.home=${dist.dir}"/>
+        <arg value="driver.py"/>
+        <!-- uncomment if you want to run only one test: -->
+        <!--
+          <arg value="386"/>
+          -->
         </java>
-    </target>
+      </target>
 
-    <!-- create support_config.py in the bugtset directory only if it doesn't already exist -->
-    <target name="create-bugtest-config" depends="init, check-bugtest-config" unless="have_bugtest_config">
+      <!-- create support_config.py in the bugtset directory only if it doesn't already exist -->
+      <target name="create-bugtest-config" depends="init, check-bugtest-config" unless="have_bugtest_config">
         <!-- doesn't seem to be a direct way to get at the path to javac,
         java.home points to the jre folder. The following assumes a standard
         jdk layout. Alternative is to try something like:
 
             <property environment="env"/>
             <property name="jdk.home" value="${env.JAVA_HOME}" />
-  
+
         or set jdk.home explicitly
         -->
         <echo>creating ${bugtests.dir}/support_config.py</echo>
         <property name="jdk.home" value="${java.home}/.." />
         <echo file="${bugtests.dir}/support_config.py">
-# this configuration was auto-generated by ant build script,
-# safe to edit by hand (won't be overwritten)
-java_home="${jdk.home}"
-jython_home="${dist.dir}" 
+          # this configuration was auto-generated by ant build script,
+          # safe to edit by hand (won't be overwritten)
+          java_home="${jdk.home}"
+          jython_home="${dist.dir}" 
 classpath="${dist.dir}/${jython.dev.jar}${path.separator}classes"
         </echo>
-    </target>
+      </target>
 
-    <!-- set property have_bugtest_config if support_config.py already exists in the bugtest directory -->
-    <target name="check-bugtest-config">
+      <!-- set property have_bugtest_config if support_config.py already exists in the bugtest directory -->
+      <target name="check-bugtest-config">
         <available property="have_bugtest_config" file="${bugtests.dir}/support_config.py"/>
-    </target>
+      </target>
 
-</project>
+    </project>
