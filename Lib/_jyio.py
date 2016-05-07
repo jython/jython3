@@ -1014,7 +1014,7 @@ class TextIOWrapper(_TextIOBase):
     def __init__(self, buffer, encoding=None, errors=None, newline=None,
                  line_buffering=False):
         self._ok = False    # Jython: to forbid use in an invalid state
-        if newline is not None and not isinstance(newline, str):
+        if newline is not None and not isinstance(newline, bytes):
             raise TypeError("illegal newline type: %r" % (type(newline),))
         if newline not in (None, "", "\n", "\r", "\r\n"):
             raise ValueError("illegal newline value: %r" % (newline,))

@@ -5,7 +5,7 @@ import sys
 import time
 import traceback
 import unittest
-from StringIO import StringIO
+from io import StringIO
 from xml.sax import saxutils
 
 # Invalid XML characters (control chars)

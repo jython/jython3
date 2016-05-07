@@ -8,6 +8,7 @@ distutils/**
 email/**
 encodings/**
 ensurepip/**
+http/**
 importlib/*
 logging/*
 test/**
@@ -17,6 +18,7 @@ json/**
 
 # Lib files, in alphabetical order:
 __future__.py
+_collections_abc.py
 _dummy_thread.py
 _LWPCookieJar.py
 _MozillaCookieJar.py
@@ -66,9 +68,8 @@ dis.py
 DocXMLRPCServer.py
 dospath.py
 dumbdbm.py
-dummy_thread.py
 dummy_threading.py
-exceptions.py
+enum.py
 filecmp.py
 fnmatch.py
 formatter.py
@@ -87,7 +88,6 @@ hmac.py
 htmlentitydefs.py
 htmllib.py
 HTMLParser.py
-httplib.py
 ihooks.py
 imaplib.py
 imghdr.py
@@ -169,13 +169,10 @@ tokenize.py
 trace.py
 traceback.py
 tty.py
+types.py
 tzparse.py
-urllib2.py
-urlparse.py
+urllib/*.py
 user.py
-UserDict.py
-UserList.py
-UserString.py
 uu.py
 uuid.py
 warnings.py
