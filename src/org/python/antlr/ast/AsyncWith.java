@@ -27,9 +27,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@ExposedType(name = "_ast.With", base = stmt.class)
-public class With extends stmt {
-public static final PyType TYPE = PyType.fromClass(With.class);
+@ExposedType(name = "_ast.AsyncWith", base = stmt.class)
+public class AsyncWith extends stmt {
+public static final PyType TYPE = PyType.fromClass(AsyncWith.class);
     private java.util.List<withitem> items;
     public java.util.List<withitem> getInternalItems() {
         return items;
@@ -67,16 +67,16 @@ public static final PyType TYPE = PyType.fromClass(With.class);
     @ExposedGet(name = "_attributes")
     public PyString[] get_attributes() { return attributes; }
 
-    public With(PyType subType) {
+    public AsyncWith(PyType subType) {
         super(subType);
     }
-    public With() {
+    public AsyncWith() {
         this(TYPE);
     }
     @ExposedNew
     @ExposedMethod
-    public void With___init__(PyObject[] args, String[] keywords) {
-        ArgParser ap = new ArgParser("With", args, keywords, new String[]
+    public void AsyncWith___init__(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("AsyncWith", args, keywords, new String[]
             {"items", "body", "lineno", "col_offset"}, 2, true);
         setItems(ap.getPyObject(0, Py.None));
         setBody(ap.getPyObject(1, Py.None));
@@ -92,12 +92,12 @@ public static final PyType TYPE = PyType.fromClass(With.class);
 
     }
 
-    public With(PyObject items, PyObject body) {
+    public AsyncWith(PyObject items, PyObject body) {
         setItems(items);
         setBody(body);
     }
 
-    public With(Token token, java.util.List<withitem> items, java.util.List<stmt> body) {
+    public AsyncWith(Token token, java.util.List<withitem> items, java.util.List<stmt> body) {
         super(token);
         this.items = items;
         if (items == null) {
@@ -115,8 +115,8 @@ public static final PyType TYPE = PyType.fromClass(With.class);
         }
     }
 
-    public With(Integer ttype, Token token, java.util.List<withitem> items, java.util.List<stmt>
-    body) {
+    public AsyncWith(Integer ttype, Token token, java.util.List<withitem> items,
+    java.util.List<stmt> body) {
         super(ttype, token);
         this.items = items;
         if (items == null) {
@@ -134,7 +134,7 @@ public static final PyType TYPE = PyType.fromClass(With.class);
         }
     }
 
-    public With(PythonTree tree, java.util.List<withitem> items, java.util.List<stmt> body) {
+    public AsyncWith(PythonTree tree, java.util.List<withitem> items, java.util.List<stmt> body) {
         super(tree);
         this.items = items;
         if (items == null) {
@@ -154,11 +154,11 @@ public static final PyType TYPE = PyType.fromClass(With.class);
 
     @ExposedGet(name = "repr")
     public String toString() {
-        return "With";
+        return "AsyncWith";
     }
 
     public String toStringTree() {
-        StringBuffer sb = new StringBuffer("With(");
+        StringBuffer sb = new StringBuffer("AsyncWith(");
         sb.append("items=");
         sb.append(dumpThis(items));
         sb.append(",");
@@ -170,7 +170,7 @@ public static final PyType TYPE = PyType.fromClass(With.class);
     }
 
     public <R> R accept(VisitorIF<R> visitor) throws Exception {
-        return visitor.visitWith(this);
+        return visitor.visitAsyncWith(this);
     }
 
     public void traverse(VisitorIF<?> visitor) throws Exception {

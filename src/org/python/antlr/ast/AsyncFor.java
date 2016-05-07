@@ -27,20 +27,33 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@ExposedType(name = "_ast.With", base = stmt.class)
-public class With extends stmt {
-public static final PyType TYPE = PyType.fromClass(With.class);
-    private java.util.List<withitem> items;
-    public java.util.List<withitem> getInternalItems() {
-        return items;
+@ExposedType(name = "_ast.AsyncFor", base = stmt.class)
+public class AsyncFor extends stmt {
+public static final PyType TYPE = PyType.fromClass(AsyncFor.class);
+    private expr target;
+    public expr getInternalTarget() {
+        return target;
     }
-    @ExposedGet(name = "items")
-    public PyObject getItems() {
-        return new AstList(items, AstAdapters.withitemAdapter);
+    @ExposedGet(name = "target")
+    public PyObject getTarget() {
+        return target;
     }
-    @ExposedSet(name = "items")
-    public void setItems(PyObject items) {
-        this.items = AstAdapters.py2withitemList(items);
+    @ExposedSet(name = "target")
+    public void setTarget(PyObject target) {
+        this.target = AstAdapters.py2expr(target);
+    }
+
+    private expr iter;
+    public expr getInternalIter() {
+        return iter;
+    }
+    @ExposedGet(name = "iter")
+    public PyObject getIter() {
+        return iter;
+    }
+    @ExposedSet(name = "iter")
+    public void setIter(PyObject iter) {
+        this.iter = AstAdapters.py2expr(iter);
     }
 
     private java.util.List<stmt> body;
@@ -56,9 +69,23 @@ public static final PyType TYPE = PyType.fromClass(With.class);
         this.body = AstAdapters.py2stmtList(body);
     }
 
+    private java.util.List<stmt> orelse;
+    public java.util.List<stmt> getInternalOrelse() {
+        return orelse;
+    }
+    @ExposedGet(name = "orelse")
+    public PyObject getOrelse() {
+        return new AstList(orelse, AstAdapters.stmtAdapter);
+    }
+    @ExposedSet(name = "orelse")
+    public void setOrelse(PyObject orelse) {
+        this.orelse = AstAdapters.py2stmtList(orelse);
+    }
+
 
     private final static PyString[] fields =
-    new PyString[] {new PyString("items"), new PyString("body")};
+    new PyString[] {new PyString("target"), new PyString("iter"), new PyString("body"), new
+                     PyString("orelse")};
     @ExposedGet(name = "_fields")
     public PyString[] get_fields() { return fields; }
 
@@ -67,45 +94,47 @@ public static final PyType TYPE = PyType.fromClass(With.class);
     @ExposedGet(name = "_attributes")
     public PyString[] get_attributes() { return attributes; }
 
-    public With(PyType subType) {
+    public AsyncFor(PyType subType) {
         super(subType);
     }
-    public With() {
+    public AsyncFor() {
         this(TYPE);
     }
     @ExposedNew
     @ExposedMethod
-    public void With___init__(PyObject[] args, String[] keywords) {
-        ArgParser ap = new ArgParser("With", args, keywords, new String[]
-            {"items", "body", "lineno", "col_offset"}, 2, true);
-        setItems(ap.getPyObject(0, Py.None));
-        setBody(ap.getPyObject(1, Py.None));
-        int lin = ap.getInt(2, -1);
+    public void AsyncFor___init__(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("AsyncFor", args, keywords, new String[]
+            {"target", "iter", "body", "orelse", "lineno", "col_offset"}, 4, true);
+        setTarget(ap.getPyObject(0, Py.None));
+        setIter(ap.getPyObject(1, Py.None));
+        setBody(ap.getPyObject(2, Py.None));
+        setOrelse(ap.getPyObject(3, Py.None));
+        int lin = ap.getInt(4, -1);
         if (lin != -1) {
             setLineno(lin);
         }
 
-        int col = ap.getInt(3, -1);
+        int col = ap.getInt(5, -1);
         if (col != -1) {
             setLineno(col);
         }
 
     }
 
-    public With(PyObject items, PyObject body) {
-        setItems(items);
+    public AsyncFor(PyObject target, PyObject iter, PyObject body, PyObject orelse) {
+        setTarget(target);
+        setIter(iter);
         setBody(body);
+        setOrelse(orelse);
     }
 
-    public With(Token token, java.util.List<withitem> items, java.util.List<stmt> body) {
+    public AsyncFor(Token token, expr target, expr iter, java.util.List<stmt> body,
+    java.util.List<stmt> orelse) {
         super(token);
-        this.items = items;
-        if (items == null) {
-            this.items = new ArrayList<withitem>();
-        }
-        for(PythonTree t : this.items) {
-            addChild(t);
-        }
+        this.target = target;
+        addChild(target);
+        this.iter = iter;
+        addChild(iter);
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
@@ -113,75 +142,101 @@ public static final PyType TYPE = PyType.fromClass(With.class);
         for(PythonTree t : this.body) {
             addChild(t);
         }
+        this.orelse = orelse;
+        if (orelse == null) {
+            this.orelse = new ArrayList<stmt>();
+        }
+        for(PythonTree t : this.orelse) {
+            addChild(t);
+        }
     }
 
-    public With(Integer ttype, Token token, java.util.List<withitem> items, java.util.List<stmt>
-    body) {
+    public AsyncFor(Integer ttype, Token token, expr target, expr iter, java.util.List<stmt> body,
+    java.util.List<stmt> orelse) {
         super(ttype, token);
-        this.items = items;
-        if (items == null) {
-            this.items = new ArrayList<withitem>();
-        }
-        for(PythonTree t : this.items) {
-            addChild(t);
-        }
+        this.target = target;
+        addChild(target);
+        this.iter = iter;
+        addChild(iter);
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
         }
         for(PythonTree t : this.body) {
+            addChild(t);
+        }
+        this.orelse = orelse;
+        if (orelse == null) {
+            this.orelse = new ArrayList<stmt>();
+        }
+        for(PythonTree t : this.orelse) {
             addChild(t);
         }
     }
 
-    public With(PythonTree tree, java.util.List<withitem> items, java.util.List<stmt> body) {
+    public AsyncFor(PythonTree tree, expr target, expr iter, java.util.List<stmt> body,
+    java.util.List<stmt> orelse) {
         super(tree);
-        this.items = items;
-        if (items == null) {
-            this.items = new ArrayList<withitem>();
-        }
-        for(PythonTree t : this.items) {
-            addChild(t);
-        }
+        this.target = target;
+        addChild(target);
+        this.iter = iter;
+        addChild(iter);
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
         }
         for(PythonTree t : this.body) {
+            addChild(t);
+        }
+        this.orelse = orelse;
+        if (orelse == null) {
+            this.orelse = new ArrayList<stmt>();
+        }
+        for(PythonTree t : this.orelse) {
             addChild(t);
         }
     }
 
     @ExposedGet(name = "repr")
     public String toString() {
-        return "With";
+        return "AsyncFor";
     }
 
     public String toStringTree() {
-        StringBuffer sb = new StringBuffer("With(");
-        sb.append("items=");
-        sb.append(dumpThis(items));
+        StringBuffer sb = new StringBuffer("AsyncFor(");
+        sb.append("target=");
+        sb.append(dumpThis(target));
+        sb.append(",");
+        sb.append("iter=");
+        sb.append(dumpThis(iter));
         sb.append(",");
         sb.append("body=");
         sb.append(dumpThis(body));
+        sb.append(",");
+        sb.append("orelse=");
+        sb.append(dumpThis(orelse));
         sb.append(",");
         sb.append(")");
         return sb.toString();
     }
 
     public <R> R accept(VisitorIF<R> visitor) throws Exception {
-        return visitor.visitWith(this);
+        return visitor.visitAsyncFor(this);
     }
 
     public void traverse(VisitorIF<?> visitor) throws Exception {
-        if (items != null) {
-            for (PythonTree t : items) {
+        if (target != null)
+            target.accept(visitor);
+        if (iter != null)
+            iter.accept(visitor);
+        if (body != null) {
+            for (PythonTree t : body) {
                 if (t != null)
                     t.accept(visitor);
             }
         }
-        if (body != null) {
-            for (PythonTree t : body) {
+        if (orelse != null) {
+            for (PythonTree t : orelse) {
                 if (t != null)
                     t.accept(visitor);
             }

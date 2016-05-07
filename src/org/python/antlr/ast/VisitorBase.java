@@ -55,6 +55,12 @@ public abstract class VisitorBase<R> implements VisitorIF<R> {
         return ret;
     }
 
+    public R visitAsyncFunctionDef(AsyncFunctionDef node) throws Exception {
+        R ret = unhandled_node(node);
+        traverse(node);
+        return ret;
+    }
+
     public R visitClassDef(ClassDef node) throws Exception {
         R ret = unhandled_node(node);
         traverse(node);
@@ -97,6 +103,12 @@ public abstract class VisitorBase<R> implements VisitorIF<R> {
         return ret;
     }
 
+    public R visitAsyncFor(AsyncFor node) throws Exception {
+        R ret = unhandled_node(node);
+        traverse(node);
+        return ret;
+    }
+
     public R visitWhile(While node) throws Exception {
         R ret = unhandled_node(node);
         traverse(node);
@@ -110,6 +122,12 @@ public abstract class VisitorBase<R> implements VisitorIF<R> {
     }
 
     public R visitWith(With node) throws Exception {
+        R ret = unhandled_node(node);
+        traverse(node);
+        return ret;
+    }
+
+    public R visitAsyncWith(AsyncWith node) throws Exception {
         R ret = unhandled_node(node);
         traverse(node);
         return ret;
@@ -254,6 +272,12 @@ public abstract class VisitorBase<R> implements VisitorIF<R> {
     }
 
     public R visitGeneratorExp(GeneratorExp node) throws Exception {
+        R ret = unhandled_node(node);
+        traverse(node);
+        return ret;
+    }
+
+    public R visitAwait(Await node) throws Exception {
         R ret = unhandled_node(node);
         traverse(node);
         return ret;
