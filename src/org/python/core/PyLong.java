@@ -958,7 +958,7 @@ public class PyLong extends PyObject {
         if (other instanceof PyLong) {
             return Py.newBoolean(value.compareTo(((PyLong) other).getValue()) < 0);
         }
-        throw Py.TypeError(String.format("unorderable types: %s < %s", getType(), other.getType()));
+        return other.__gt__(this);
     }
 
     @Override
