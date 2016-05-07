@@ -3922,14 +3922,6 @@ public class PyString extends PyBaseString implements BufferProtocol {
         return codecs.encode(this, encoding, errors);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_encode_doc)
-    final String bytes_encode(PyObject[] args, String[] keywords) {
-        ArgParser ap = new ArgParser("encode", args, keywords, "encoding", "errors");
-        String encoding = ap.getString(0, null);
-        String errors = ap.getString(1, null);
-        return encode(encoding, errors);
-    }
-
     public PyObject decode() {
         return decode(null, null);
     }
@@ -3942,14 +3934,14 @@ public class PyString extends PyBaseString implements BufferProtocol {
         return codecs.decode(this, encoding, errors);
     }
 
-//    @ExposedMethod(doc = BuiltinDocs.str_decode_doc)
-//    final PyObject str_decode(PyObject[] args, String[] keywords) {
-//        ArgParser ap = new ArgParser("decode", args, keywords, "encoding", "errors");
-//        String encoding = ap.getString(0, null);
-//        String errors = ap.getString(1, null);
-//        return decode(encoding, errors);
-//    }
-//
+    @ExposedMethod(doc = BuiltinDocs.bytes_decode_doc)
+    final PyObject bytes_decode(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("decode", args, keywords, "encoding", "errors");
+        String encoding = ap.getString(0, "UTF-8");
+        String errors = ap.getString(1, null);
+        return decode(encoding, errors);
+    }
+
     @ExposedMethod(doc = ""/*BuiltinDocs.str__formatter_parser_doc*/)
     final PyObject bytes__formatter_parser() {
         return new MarkupIterator(this);
