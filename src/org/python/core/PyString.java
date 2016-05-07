@@ -746,7 +746,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
     @Override
     protected PyObject pyget(int i) {
         // Method is overridden in PyUnicode, so definitely a PyString
-        return Py.makeCharacter(string.charAt(i));
+        return new PyLong(string.charAt(i));
     }
 
     public int getInt(int i) {
@@ -3951,17 +3951,17 @@ public class PyString extends PyBaseString implements BufferProtocol {
 //    }
 //
     @ExposedMethod(doc = ""/*BuiltinDocs.str__formatter_parser_doc*/)
-    final PyObject str__formatter_parser() {
+    final PyObject bytes__formatter_parser() {
         return new MarkupIterator(this);
     }
 
     @ExposedMethod(doc = ""/*BuiltinDocs.str__formatter_field_name_split_doc*/)
-    final PyObject str__formatter_field_name_split() {
+    final PyObject bytes__formatter_field_name_split() {
         FieldNameIterator iterator = new FieldNameIterator(this);
         return new PyTuple(iterator.pyHead(), iterator);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.str_format_doc)
+    @ExposedMethod(doc = BuiltinDocs.bytes___format___doc)
     final PyObject bytes_format(PyObject[] args, String[] keywords) {
         try {
             return new PyString(buildFormattedString(args, keywords, null, null));
