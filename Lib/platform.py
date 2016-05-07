@@ -208,7 +208,7 @@ def _dist_try_harder(distname,version,id):
         info = open('/var/adm/inst-log/info').readlines()
         distname = 'SuSE'
         for line in info:
-            tv = string.split(line)
+            tv = line.split()
             if len(tv) == 2:
                 tag,value = tv
             else:
@@ -216,7 +216,7 @@ def _dist_try_harder(distname,version,id):
             if tag == 'MIN_DIST_VERSION':
                 version = string.strip(value)
             elif tag == 'DIST_IDENT':
-                values = string.split(value,'-')
+                values = value.split('-')
                 id = values[2]
         return distname,version,id
 
@@ -224,7 +224,7 @@ def _dist_try_harder(distname,version,id):
         # Caldera OpenLinux has some infos in that file (thanks to Colin Kong)
         info = open('/etc/.installed').readlines()
         for line in info:
-            pkg = string.split(line,'-')
+            pkg = line.split('-')
             if len(pkg) >= 2 and pkg[0] == 'OpenLinux':
                 # XXX does Caldera support non Intel platforms ? If yes,
                 #     where can we find the needed id ?
@@ -284,7 +284,7 @@ def _parse_release_file(firstline):
         return tuple(m.groups())
 
     # Unkown format... take the first two words
-    l = string.split(string.strip(firstline))
+    l = firstline.strip().split()
     if l:
         version = l[0]
         if len(l) > 1:
@@ -457,7 +457,7 @@ def _norm_version(version, build=''):
     """ Normalize the version and build strings and return a single
         version string using the format major.minor.build (or patchlevel).
     """
-    l = string.split(version,'.')
+    l = version.split('.')
     if build:
         l.append(build)
     try:
@@ -888,7 +888,7 @@ def system_alias(system,release,version):
             # These releases use the old name SunOS
             return system,release,version
         # Modify release (marketing release = SunOS release - 3)
-        l = string.split(release,'.')
+        l = release.split('.')
         if l:
             try:
                 major = int(l[0])
@@ -1474,10 +1474,10 @@ def _sys_version(sys_version=None):
         revision = ''
 
     # Add the patchlevel version if missing
-    l = string.split(version, '.')
+    l = version.join('.')
     if len(l) == 2:
         l.append('0')
-        version = string.join(l, '.')
+        version = ".".join(l)
 
     # Build and cache the result
     result = (name, version, branch, revision, buildno, builddate, compiler)

@@ -1,11 +1,12 @@
 """Supporting definitions for the Python regression tests."""
 
-if __name__ != 'test.test_support':
-    raise ImportError('test_support must be imported from the test package')
+if __name__ != 'test.support':
+    raise ImportError('test.support must be imported from the test package')
 
 import contextlib
 import errno
 import functools
+import collections.abc
 import gc
 import socket
 import sys
@@ -15,7 +16,6 @@ import shutil
 import warnings
 import unittest
 import importlib
-import UserDict
 import re
 import time
 import struct
@@ -774,7 +774,7 @@ class CleanImport(object):
         sys.modules.update(self.original_modules)
 
 
-class EnvironmentVarGuard(UserDict.DictMixin):
+class EnvironmentVarGuard(collections.abc.MutableMapping):
 
     """Class to help protect the environment variable properly.  Can be used as
     a context manager."""

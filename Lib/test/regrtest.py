@@ -174,7 +174,7 @@ if sys.platform == 'darwin':
         resource.setrlimit(resource.RLIMIT_STACK, (newsoft, hard))
 
 import test as _test
-from test import test_support
+from test import support
 
 RESOURCE_NAMES = ('audio', 'curses', 'largefile', 'network', 'bsddb',
                   'decimal', 'compiler', 'subprocess', 'urlfetch')
@@ -213,7 +213,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
     values that would normally be set by flags on the command line.
     """
 
-    test_support.record_original_stdout(sys.stdout)
+    support.record_original_stdout(sys.stdout)
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'hvqxsSrf:lu:t:TD:NLR:wM:em:j:',
                                    ['help', 'verbose', 'quiet', 'exclude',
@@ -287,7 +287,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
             if len(huntrleaks[2]) == 0:
                 huntrleaks[2] = "reflog.txt"
         elif o in ('-M', '--memlimit'):
-            test_support.set_memlimit(a)
+            support.set_memlimit(a)
         elif o in ('-u', '--use'):
             u = [x.lower() for x in a.split(',')]
             for r in u:
@@ -319,7 +319,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
 
     if findleaks:
         try:
-            if test_support.is_jython:
+            if support.is_jython:
                 raise ImportError()
             import gc
         except ImportError:
@@ -378,9 +378,9 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
                              trace=False, count=True)
 
     test_times = []
-    test_support.verbose = verbose      # Tell tests to be moderately quiet
-    test_support.use_resources = use_resources
-    test_support.junit_xml_dir = junit_xml
+    support.verbose = verbose      # Tell tests to be moderately quiet
+    support.use_resources = use_resources
+    support.junit_xml_dir = junit_xml
     save_modules = list(sys.modules.keys())
 
     skips = _ExpectedSkips()
@@ -440,7 +440,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
         # Unload the newly imported modules (best effort finalization)
         for module in list(sys.modules.keys()):
             if module not in save_modules and module.startswith("test."):
-                test_support.unload(module)
+                support.unload(module)
                 module = module[5:]
                 if hasattr(_test, module):
                     delattr(_test, module)
@@ -468,7 +468,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
             print("Re-running test %r in verbose mode" % test)
             sys.stdout.flush()
             try:
-                test_support.verbose = True
+                support.verbose = True
                 ok = runtest(test, True, quiet, test_times, testdir,
                              huntrleaks)
             except KeyboardInterrupt:
@@ -525,7 +525,7 @@ STDTESTS = [
    ]
 
 NOTTESTS = {
-    'test_support',
+    'support',
     'test_future1',
     'test_future2',
 }
@@ -569,7 +569,7 @@ def runtest(test, verbose, quiet, test_times,
 
 def runtest_inner(test, verbose, quiet, test_times,
                   testdir=None, huntrleaks=False, junit_xml_dir=None):
-    test_support.unload(test)
+    support.unload(test)
     if not testdir:
         testdir = findtestdir()
     if verbose:
@@ -619,7 +619,7 @@ def runtest_inner(test, verbose, quiet, test_times,
             if junit_xml_dir:
                 sys.stderr = save_stderr
                 test_time = time.time() - start_time
-    except test_support.ResourceDenied as msg:
+    except support.ResourceDenied as msg:
         if not quiet:
             print(test, "skipped --", msg)
             sys.stdout.flush()
@@ -641,7 +641,7 @@ def runtest_inner(test, verbose, quiet, test_times,
         return -1
     except KeyboardInterrupt:
         raise
-    except test_support.TestFailed as msg:
+    except support.TestFailed as msg:
         print("test", test, "failed --", msg)
         sys.stdout.flush()
         if junit_xml_dir and indirect_test is None:
@@ -686,7 +686,7 @@ def cleanup_test_droppings(testname, verbose):
     # since if a test leaves a file open, it cannot be deleted by name (while
     # there's nothing we can do about that here either, we can display the
     # name of the offending test, which is a real help).
-    for name in (test_support.TESTFN,
+    for name in (support.TESTFN,
                  "db_home",
                 ):
         if not os.path.exists(name):
@@ -694,7 +694,7 @@ def cleanup_test_droppings(testname, verbose):
 
         # work around tests depending on refcounting files,
         # but this doesn't work with respect to Windows
-        test_support.gc_collect()
+        support.gc_collect()
 
         if os.path.isdir(name):
             kind, nuker = "directory", shutil.rmtree
@@ -764,7 +764,7 @@ def dash_R(the_module, test, indirect_test, huntrleaks):
 def dash_R_cleanup(fs, ps, pic, abcs):
     import gc, copyreg
     import _strptime, linecache
-    dircache = test_support.import_module('dircache', deprecated=True)
+    dircache = support.import_module('dircache', deprecated=True)
     import urllib.parse, urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error, urllib.parse, mimetypes, doctest
     import struct, filecmp
     from distutils.dir_util import _path_created
@@ -1406,7 +1406,7 @@ class _ExpectedSkips:
             if not sys.py3kwarning:
                 self.expected.add('test_py3kwarn')
 
-            if test_support.is_jython:
+            if support.is_jython:
                 if os._name != 'posix':
                     self.expected.update([
                             'test_grp', 'test_mhlib', 'test_posix', 'test_pwd',
@@ -1471,10 +1471,10 @@ def savememo(memo,good,bad,skipped):
 if __name__ == '__main__':
     # Remove regrtest.py's own directory from the module search path.  This
     # prevents relative imports from working, and relative imports will screw
-    # up the testing framework.  E.g. if both test.test_support and
-    # test_support are imported, they will not contain the same globals, and
+    # up the testing framework.  E.g. if both test.support and
+    # support are imported, they will not contain the same globals, and
     # much of the testing framework relies on the globals in the
-    # test.test_support module.
+    # test.support module.
     mydir = os.path.abspath(os.path.normpath(os.path.dirname(sys.argv[0])))
     i = len(sys.path)
     while i >= 0:
