@@ -40,7 +40,7 @@ public class PySuper extends PyObject implements Traverseproc {
         if (keywords.length != 0 || !PyBuiltinCallable.DefaultInfo.check(args.length, 1, 2)) {
             PyFrame frame = Py.getThreadState().frame;
             obj = frame.getlocal(0);
-            type = obj.getType();
+            type = (PyType) frame.getLocals().__finditem__("__class__");
         } else {
             if (!(args[0] instanceof PyType)) {
                 throw Py.TypeError("super: argument 1 must be type");

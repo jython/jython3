@@ -2476,7 +2476,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     @Override
     public Object visitClassDef(ClassDef node) throws Exception {
         ScopeInfo scope = module.getScopeInfo(node);
-        String clsName = getName(node.getInternalName());
+        String clsName = node.getInternalName();
         String inner = clsName;
 
         setline(node);
@@ -2497,8 +2497,6 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             code.invokespecial(p(PyDictionary.class), "<init>",
                     sig(Void.TYPE));
 
-            scope.setup_closure();
-            scope.dump();
             node.setName(new PyString(inner));
             java.util.List<stmt> bod = new ArrayList<stmt>();
             bod.add(node);
@@ -2508,19 +2506,35 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             bod.add(assign);
             Return _ret = new Return(node.getToken(), innerName);
             bod.add(_ret);
-            String vararg = "__args__";
-            String kwarg = "__kw__";
+            String vararg = "__(args)__";
+            String kwarg = "__(kw)__";
             arguments args = new arguments(node, new ArrayList<expr>(),
                 vararg, new ArrayList<String>(), new ArrayList<expr>(), kwarg, new ArrayList<expr>());
             FunctionDef funcdef = new FunctionDef(node.getToken(), outer, args, bod, new ArrayList<expr>());
+
+            ScopeInfo funcScope = scope.up;
+            funcScope.setup_closure();
+            funcScope.dump();
+
             module.codeConstant(new Suite(funcdef, bod), outer, true, className, false, false,
-                    node.getLine(), scope, cflags).get(code);
+                    node.getLine(), funcScope, cflags).get(code);
+
+            code.aconst_null();
+            if (!makeClosure(funcScope)) {
+                code.invokespecial(p(PyFunction.class), "<init>",
+                        sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class));
+            } else {
+                code.invokespecial(
+                        p(PyFunction.class),
+                        "<init>",
+                        sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class,
+                                PyObject[].class));
+            }
 
             int genExp = storeTop();
 
             code.aload(genExp);
             code.freeLocal(genExp);
-            code.swap();
             loadThreadState();
 
             java.util.List<expr> actualArgs = node.getInternalBases();
@@ -2539,7 +2553,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
             code.invokevirtual(p(PyObject.class), "__call__",
                     sig(PyObject.class, ThreadState.class, PyObject[].class, String[].class));
-            set(new Name(node, node.getInternalName(), expr_contextType.Store));
+            set(new Name(node, clsName, expr_contextType.Store));
             freeArray(emptyArray);
 
             return null;
@@ -2580,7 +2594,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         applyDecorators(node.getInternalDecorator_list());
 
         // Assign this new class to the given name
-        set(new Name(node, node.getInternalName(), expr_contextType.Store));
+        set(new Name(node, inner, expr_contextType.Store));
         freeArray(baseArray);
         return null;
     }

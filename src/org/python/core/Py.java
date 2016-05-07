@@ -1913,13 +1913,18 @@ public final class Py {
         }
 
         if (metaclass == null) {
-            if (bases.length != 0) {
-                PyObject base = bases[0];
-                metaclass = base.__findattr__("__class__");
-                if (metaclass == null) {
-                    metaclass = base.getType();
+            // metaclass resolution
+            for (PyObject base : bases) {
+                PyObject meta = base.__findattr__("__class__");
+                if (meta == null) {
+                    meta = base.getType();
                 }
-            } else {
+                // FIXME Py.isSubclass running to stackoverflow if both parameters are the same
+                if (metaclass == null || (meta != metaclass && Py.isSubClass(meta, metaclass))) {
+                    metaclass = meta;
+                }
+            }
+            if (metaclass == null) {
                 metaclass = PyType.TYPE;
             }
         }
@@ -1927,8 +1932,7 @@ public final class Py {
         PyString clsname = new PyString(name);
         PyObject basesArray = new PyTuple(bases);
         if (prepare != null) {
-            ThreadState state = getThreadState();
-            PyDictionary map = (PyDictionary) prepare.__call__(state, clsname, basesArray);
+            PyDictionary map = (PyDictionary) prepare.__call__(clsname, basesArray);
             map.update(dict);
             dict = map;
         }

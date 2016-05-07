@@ -9,7 +9,6 @@ import org.python.antlr.base.expr;
 import org.python.antlr.base.stmt;
 import org.python.core.ParserFacade;
 
-import java.io.CharArrayReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -59,9 +58,10 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         int dist = 1;
         ScopeInfo referenceable = up;
         for (int i = scopes.size() - 1; i >= 0
-                && referenceable.kind == CLASSSCOPE; i--, dist++) {
+                && referenceable.kind == CLASSSCOPE;i--,dist++) {
             referenceable = (scopes.get(i));
         }
+
         cur.cook(referenceable, dist, code_compiler);
         cur.dump(); // debug
         cur = up;
@@ -240,12 +240,27 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         String inner = "<inner" + clsname +">";
         Name innerName = new Name(node.getToken(), inner, expr_contextType.Store);
         def(outer);
+        String vararg = "__(args)__";
+        String kwarg = "__(kw)__";
+        List<stmt> bod = new ArrayList<>();
+        bod.add(node);
+        Assign assign = new Assign(node.getToken(), Arrays.<expr>asList(new Name(node.getToken(), "__class__", expr_contextType.Store)), innerName);
+        bod.add(assign);
+        Return _ret = new Return(node.getToken(), innerName);
+        bod.add(_ret);
+
+        arguments args = new arguments(node, new ArrayList<expr>(),
+                vararg, new ArrayList<String>(), new ArrayList<expr>(), kwarg, new ArrayList<expr>());
+        FunctionDef funcdef = new FunctionDef(node.getToken(), outer, args, bod, new ArrayList<expr>());
+
         ArgListCompiler ac = new ArgListCompiler();
-        String vararg = "__args__";
-        String kwarg = "__kw__";
-        ac.visitArgs(new arguments(node, new ArrayList<expr>(),
-                vararg, new ArrayList<String>(), new ArrayList<expr>(), kwarg, new ArrayList<expr>()));
-        beginScope(outer, FUNCSCOPE, node, ac);
+        ac.visitArgs(args);
+
+        int n = node.getInternalBases().size();
+        for (int i = 0; i < n; i++) {
+            visit(node.getInternalBases().get(i));
+        }
+        beginScope(outer, FUNCSCOPE, funcdef, ac);
         cur.addParam(vararg);
         cur.addParam(kwarg);
         cur.markFromParam();
@@ -255,17 +270,13 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
             visit(decs.get(i));
         }
         def(inner);
-        int n = node.getInternalBases().size();
-        for (int i = 0; i < n; i++) {
-            visit(node.getInternalBases().get(i));
-        }
+
         beginScope(inner, CLASSSCOPE, node, null);
         cur.needs_class_closure = true;
         suite(node.getInternalBody());
         endScope();
 
         def("__class__");
-        Return _ret = new Return(node.getToken(), innerName);
         visit(_ret);
         endScope();
         def(clsname);
@@ -276,6 +287,9 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
     @Override
     public Object visitName(Name node) throws Exception {
         String name = node.getInternalId();
+        if (node.getInternalCtx() == expr_contextType.Load && name.equals("super")) {
+            cur.addUsed("__class__");
+        }
         if (node.getInternalCtx() != expr_contextType.Load) {
             if (name.equals("__debug__")) {
                 code_compiler.error("can not assign to __debug__", true, node);
@@ -308,31 +322,7 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         return visitInternalGenerators(node, node.getInternalElt(), node.getInternalGenerators());
     }
 
-    private void cookOuterClsScope(ClassDef node) throws Exception {
-        String outer = "_outer_" + node.getInternalName();
-        expr clsname = (expr) node.getName();
-        Name inner = new Name(node.getToken(), "_inner_" + node.getInternalName(), expr_contextType.Store);
-        def(outer);
-        ArgListCompiler ac = new ArgListCompiler();
-        String vararg = "__args__";
-        String kwarg = "__kw__";
-        ac.visitArgs(new arguments(node, new ArrayList<expr>(),
-                vararg, new ArrayList<String>(), new ArrayList<expr>(), kwarg, new ArrayList<expr>()));
-        beginScope(outer, FUNCSCOPE, node, ac);
-        cur.addParam(vararg);
-        cur.addParam(kwarg);
-        cur.markFromParam();
-        Name __class__ = new Name(node.getToken(), "__class__", expr_contextType.Store);
-        traverse(node);
-        Assign assign = new Assign(node.getToken(), Arrays.<expr>asList(__class__), inner);
-        visit(assign);
-        Return _ret = new Return(node.getToken(), inner);
-        visit(_ret);
-        endScope();
-        visit(new Assign(node.getToken(), Arrays.<expr>asList(clsname), new Name(node.getToken(), outer, expr_contextType.Load)));
-    }
-
-    @Override
+   @Override
     public Object visitYieldFrom(YieldFrom node) throws Exception {
         String bound_exp = "_(x)";
         String tmp = "_(" + node.getLine() + "_" + node.getCharPositionInLine()
