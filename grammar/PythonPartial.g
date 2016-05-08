@@ -888,22 +888,6 @@ argument
       | test)
     ;
 
-//list_iter: list_for | list_if
-list_iter
-    : list_for
-    | list_if
-    ;
-
-//list_for: 'for' exprlist 'in' testlist_safe [list_iter]
-list_for
-    : FOR exprlist IN testlist (list_iter)?
-    ;
-
-//list_if: 'if' test [list_iter]
-list_if
-    : IF test (list_iter)?
-    ;
-
 //comp_iter: comp_for | comp_if
 comp_iter
     : comp_for

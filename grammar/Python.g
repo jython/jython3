@@ -1968,7 +1968,7 @@ atom
         {
             etype = $yield_expr.etype;
         }
-      | testlist_comp
+      | testlist_comp[$LPAREN]
      -> testlist_comp
       |
         {
@@ -1977,7 +1977,7 @@ atom
       )
       RPAREN
     | LBRACK
-      (testlist_comp
+      (testlist_comp[$LBRACK]
      -> testlist_comp
       |
        {
@@ -2028,31 +2028,8 @@ atom
        }
      ;
 
-//listmaker: test ( list_for | (',' test)* [','] )
-listmaker[Token lbrack]
-@init {
-    List gens = new ArrayList();
-    expr etype = null;
-}
-@after {
-   $listmaker.tree = etype;
-}
-    : t+=test_or_star_expr[$expr::ctype]
-        (list_for[gens]
-         {
-             Collections.reverse(gens);
-             List<comprehension> c = gens;
-             etype = new ListComp($listmaker.start, actions.castExpr($t.get(0)), c);
-         }
-        | (options {greedy=true;}:COMMA t+=test_or_star_expr[$expr::ctype])*
-           {
-               etype = new org.python.antlr.ast.List($lbrack, actions.castExprs($t), $expr::ctype);
-           }
-        ) (COMMA)?
-    ;
-
 //testlist_comp: (test|star_expr) ( comp_for | (',' (test|star_expr))* [','] )
-testlist_comp
+testlist_comp[Token lpar]
 @init {
     expr etype = null;
     List gens = new ArrayList();
@@ -2066,7 +2043,11 @@ testlist_comp
         ( (options {k=2;}: c1=COMMA t+=test_or_star_expr[$expr::ctype])* (c2=COMMA)?
          { $c1 != null || $c2 != null }?
            {
-               etype = new Tuple($testlist_comp.start, actions.castExprs($t), $expr::ctype);
+               if ($lpar.getText().equals("(")) {
+                  etype = new Tuple($lpar, actions.castExprs($t), $expr::ctype);
+               } else {
+                  etype = new org.python.antlr.ast.List($lpar, actions.castExprs($t), $expr::ctype);
+               }
            }
         | -> test_or_star_expr
         | (comp_for[gens]
@@ -2077,7 +2058,12 @@ testlist_comp
                if (e instanceof Context) {
                    ((Context)e).setContext(expr_contextType.Load);
                }
-               etype = new GeneratorExp($testlist_comp.start, actions.castExpr($t.get(0)), c);
+
+               if ($lpar.getText().equals("(")) {
+                  etype = new GeneratorExp($testlist_comp.start, e, c);
+               } else {
+                  etype = new ListComp($testlist_comp.start, e, c);
+               }
            }
           )
         )
@@ -2381,33 +2367,6 @@ argument
           exprs.add(null);
           exprs.add(actions.castExpr($k.tree));
           $keywords.add(exprs);
-      }
-    ;
-
-
-//list_iter: list_for | list_if
-list_iter [List gens, List ifs]
-    : list_for[gens]
-    | list_if[gens, ifs]
-    ;
-
-//list_for: 'for' exprlist 'in' testlist_safe [list_iter]
-list_for [List gens]
-@init {
-    List ifs = new ArrayList();
-}
-    : FOR exprlist[expr_contextType.Store] IN testlist[expr_contextType.Load] (list_iter[gens, ifs])?
-      {
-          Collections.reverse(ifs);
-          gens.add(new comprehension($FOR, $exprlist.etype, actions.castExpr($testlist.tree), ifs));
-      }
-    ;
-
-//list_if: 'if' test [list_iter]
-list_if[List gens, List ifs]
-    : IF test[expr_contextType.Load] (list_iter[gens, ifs])?
-      {
-        ifs.add(actions.castExpr($test.tree));
       }
     ;
 
