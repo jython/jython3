@@ -748,20 +748,20 @@ atom_expr
     : AWAIT? atom trailer*
     ;
 
-//atom: ('(' [yield_expr|testlist_gexp] ')' |
-//       '[' [listmaker] ']' |
+//atom: ('(' [yield_expr|testlist_comp] ')' |
+//       '[' [testlist_comp] ']' |
 //       '{' [dictorsetmaker] '}' |
 //       '`' testlist1 '`' |
 //       NAME | NUMBER | STRING+)
 atom
     : LPAREN
       ( yield_expr
-      | testlist_gexp
+      | testlist_comp
       |
       )
       RPAREN
     | LBRACK
-      (listmaker
+      (testlist_comp
       |
       )
       RBRACK
@@ -783,21 +783,15 @@ atom
      | STRINGPART TRAILBACKSLASH
      ;
 
-//listmaker: test ( list_for | (',' test)* [','] )
-listmaker
+//testlist_comp: (test|star_expr) ( comp_for | (',' (test|star_expr))* [','] )
+testlist_comp
     : test
-        (list_for
-        | (options {greedy=true;}:COMMA test)*
-        ) (COMMA)?
-    ;
-
-//testlist_gexp: test ( comp_for | (',' test)* [','] )
-testlist_gexp
-    : test
-        ( ((options {k=2;}: COMMA test)* (COMMA)?
-          )
-        | (comp_for
-          )
+        ( (options {k=2;}: COMMA (test | star_expr))* COMMA?
+        | comp_for
+        )
+    | star_expr
+        ( (options {k=2;}: COMMA (test | star_expr))* COMMA?
+        | comp_for
         )
     ;
 
