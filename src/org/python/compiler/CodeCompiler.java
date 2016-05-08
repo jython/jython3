@@ -1310,8 +1310,8 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
             if (handler.getInternalName() != null) {
                 code.aload(exc);
-                code.ldc(handler.getInternalName());
-                code.putfield(p(PyException.class), "value", ci(PyObject.class));
+                code.getfield(p(PyException.class), "value", ci(PyObject.class));
+                set(new Name(handler, handler.getInternalName(), expr_contextType.Store));
             }
 
             // do exception body
