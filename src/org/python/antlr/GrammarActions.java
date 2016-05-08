@@ -9,7 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
+import org.python.antlr.ast.AsyncFor;
 import org.python.antlr.ast.AsyncFunctionDef;
+import org.python.antlr.ast.AsyncWith;
 import org.python.antlr.ast.Attribute;
 import org.python.antlr.ast.BinOp;
 import org.python.antlr.ast.BoolOp;
@@ -259,6 +261,11 @@ public class GrammarActions {
         return new While(t, test, b, o);
     }
 
+    stmt makeAsyncWith(Token t, Object stmt) {
+        With with = (With) castStmt(stmt);
+        return new AsyncWith(t, with.getInternalItems(), with.getInternalBody());
+    }
+
     stmt makeWith(Token t, List<withitem> items, List<stmt> body) {
         int last = items.size() - 1;
         With result = null;
@@ -271,6 +278,12 @@ public class GrammarActions {
             result = new With(current.getToken(), Arrays.asList(current), body);
         }
         return result;
+    }
+
+    stmt makeAsyncFor(Token t, Object stmt) {
+        For forStmt = (For) castStmt(stmt);
+        return new AsyncFor(t, forStmt.getInternalTarget(), forStmt.getInternalIter(),
+                forStmt.getInternalBody(), forStmt.getInternalOrelse());
     }
 
     stmt makeFor(Token t, expr target, expr iter, List body, List orelse) {

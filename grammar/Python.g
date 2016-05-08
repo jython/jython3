@@ -512,7 +512,7 @@ async_funcdef
     }
     ;
 
-//decorated: decorators (classdef | funcdef)
+//decorated: decorators (classdef | funcdef | async_funcdef)
 decorated
 @init {
     stmt stype = null;
@@ -531,6 +531,11 @@ decorated
         {
             stype = actions.castStmt($funcdef.tree);
             ((FunctionDef) stype).setDecorator_list(actions.castExprs($decorators.etypes));
+        }
+        | async_funcdef
+        {
+            stype = actions.castStmt($funcdef.tree);
+            ((AsyncFunctionDef) stype).setDecorator_list(actions.castExprs($decorators.etypes));
         }
         )
     ;
@@ -1265,7 +1270,7 @@ assert_stmt
       }
     ;
 
-//compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated
+//compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated | async_stmt
 compound_stmt
     : if_stmt
     | while_stmt
@@ -1275,6 +1280,31 @@ compound_stmt
     | funcdef
     | classdef
     | decorated
+    | async_stmt
+    ;
+
+//async_stmt: ASYNC (funcdef | with_stmt | for_stmt)
+async_stmt
+@init {
+    stmt stype = null;
+}
+@after {
+   $async_stmt.tree = stype;
+}
+    : ASYNC
+        ( funcdef
+        {
+            stype = actions.makeAsyncFuncdef($ASYNC, $funcdef.tree);
+        }
+        | with_stmt
+        {
+            stype = actions.makeAsyncWith($ASYNC, $with_stmt.tree);
+        }
+        | for_stmt
+        {
+            stype = actions.makeAsyncFor($ASYNC, $for_stmt.tree);
+        }
+        )
     ;
 
 //if_stmt: 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite]
@@ -1425,7 +1455,10 @@ except_clause
 }
     : EXCEPT (t1=test[expr_contextType.Load] (AS NAME)?)? COLON suite[!$suite.isEmpty() && $suite::continueIllegal]
       {
-          String name = $NAME == null ? "" : $NAME.getText();
+          String name = null;
+          if ($NAME != null) {
+              name = $NAME.getText();
+          }
           extype = new ExceptHandler($EXCEPT, actions.castExpr($t1.tree), name,
               actions.castStmts($suite.stypes));
       }
@@ -2446,6 +2479,7 @@ yield_arg
 //START OF LEXER RULES
 AS        : 'as' ;
 ASSERT    : 'assert' ;
+ASYNC     : 'async' ;
 BREAK     : 'break' ;
 CLASS     : 'class' ;
 CONTINUE  : 'continue' ;

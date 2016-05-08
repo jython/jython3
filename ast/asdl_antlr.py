@@ -707,7 +707,41 @@ def main(outdir, grammar="Python.asdl"):
                         VisitorVisitor(outdir))
     c.visit(mod)
 
-indexer_support = {"Attribute": """    // Support for indexer below
+indexer_support = {
+"AsyncFunctionDef": """    // Support for indexer below
+
+    private Name nameNode;
+    public Name getInternalNameNode() {
+        return nameNode;
+    }
+    public AsyncFunctionDef(Token token, Name name, arguments args, java.util.List<stmt> body) {
+        super(token);
+        this.name = name.getText();
+        this.nameNode = name;
+        this.args = args;
+        this.body = body;
+        if (body == null) {
+            this.body = new ArrayList<stmt>();
+        }
+        for(PythonTree t : this.body) {
+            addChild(t);
+        }
+        this.decorator_list = new ArrayList<>();
+    }
+
+    public void setDecorator_list(java.util.List<expr> decorator_list) {
+        if (decorator_list != null) {
+            this.decorator_list = decorator_list;
+        }
+
+        for(PythonTree t : this.decorator_list) {
+            addChild(t);
+        }
+    }
+    // End indexer support
+""",
+
+"Attribute": """    // Support for indexer below
 
     private Name attrName;
     public Name getInternalAttrName() {

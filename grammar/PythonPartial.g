@@ -26,7 +26,7 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-/** Python 2.3.3 Grammar
+/** Python 3.5.1 Grammar
  *
  *  Terence Parr and Loring Craymer
  *  February 2004
@@ -250,9 +250,9 @@ decorators
     : decorator+
     ;
 
-//decorated: decorators (classdef | funcdef)
+//decorated: decorators (classdef | funcdef | async_funcdef)
 decorated
-    : decorators (classdef | funcdef)
+    : decorators (classdef | funcdef | async_funcdef)
     ;
 
 //async_funcdef: ASYNC funcdef
@@ -515,7 +515,7 @@ assert_stmt
     : ASSERT test (COMMA test)?
     ;
 
-//compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated
+//compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated | async_stmt
 compound_stmt
     : if_stmt
     | while_stmt
@@ -738,9 +738,14 @@ factor
     | TRAILBACKSLASH
     ;
 
-//power: atom trailer* ['**' factor]
+//power: atom_expr ['**' factor]
 power
-    : atom (trailer)* (options {greedy=true;}:DOUBLESTAR factor)?
+    : atom_expr (options {greedy=true;}:DOUBLESTAR factor)?
+    ;
+
+//atom_expr: [AWAIT] atom trailer*
+atom_expr
+    : AWAIT? atom trailer*
     ;
 
 //atom: ('(' [yield_expr|testlist_gexp] ')' |
