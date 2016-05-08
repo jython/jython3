@@ -26,7 +26,7 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-/** Python 2.3.3 Grammar
+/** Python 3.5.1 Grammar
  *
  *  Terence Parr and Loring Craymer
  *  February 2004
@@ -62,6 +62,7 @@
  *  like this:
  *
  *  Python source->Python.g->AST (org/python/parser/ast/*)->CodeCompiler(ASM)->.class
+ *  May 2016 Modified by Isaiah Peng to match Python 3.5.1 syntax
  */
 
 grammar Python;
@@ -87,8 +88,12 @@ import org.python.antlr.ast.alias;
 import org.python.antlr.ast.arguments;
 import org.python.antlr.ast.Assert;
 import org.python.antlr.ast.Assign;
+import org.python.antlr.ast.AsyncFor;
+import org.python.antlr.ast.AsyncFunctionDef;
+import org.python.antlr.ast.AsyncWith;
 import org.python.antlr.ast.Attribute;
 import org.python.antlr.ast.AugAssign;
+import org.python.antlr.ast.Await;
 import org.python.antlr.ast.BinOp;
 import org.python.antlr.ast.BoolOp;
 import org.python.antlr.ast.boolopType;
@@ -148,6 +153,7 @@ import org.python.antlr.ast.unaryopType;
 import org.python.antlr.ast.UnaryOp;
 import org.python.antlr.ast.While;
 import org.python.antlr.ast.With;
+import org.python.antlr.ast.withitem;
 import org.python.antlr.ast.Yield;
 import org.python.antlr.ast.YieldFrom;
 import org.python.antlr.base.excepthandler;
@@ -489,6 +495,11 @@ decorators
       {
           $etypes = $d;
       }
+    ;
+
+//async_funcdef: ASYNC funcdef
+async_funcdef
+    : ASYNC funcdef
     ;
 
 //decorated: decorators (classdef | funcdef)

@@ -255,6 +255,11 @@ decorated
     : decorators (classdef | funcdef)
     ;
 
+//async_funcdef: ASYNC funcdef
+async_funcdef
+    : ASYNC funcdef
+    ;
+
 //funcdef: 'def' NAME parameters ':' suite
 funcdef
     : DEF NAME parameters COLON suite
@@ -443,10 +448,9 @@ yield_stmt
     : yield_expr
     ;
 
-//raise_stmt: 'raise' [test [',' test [',' test]]]
+//raise_stmt: 'raise' [test ['from' test]]
 raise_stmt
-    : RAISE (test (COMMA test
-        (COMMA test)?)?)?
+    : RAISE (test (FROM test)?)?
     ;
 
 //import_stmt: import_name | import_from
@@ -521,6 +525,12 @@ compound_stmt
     | funcdef
     | classdef
     | decorated
+    | async_stmt
+    ;
+
+//async_stmt: ASYNC (funcdef | with_stmt | for_stmt)
+async_stmt
+    : ASYNC (funcdef | with_stmt | for_stmt)
     ;
 
 //if_stmt: 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite]
@@ -918,6 +928,8 @@ yield_expr
 
 AS        : 'as' ;
 ASSERT    : 'assert' ;
+ASYNC     : 'async' ;
+AWAIT     : 'await' ;
 BREAK     : 'break' ;
 CLASS     : 'class' ;
 CONTINUE  : 'continue' ;
