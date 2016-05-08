@@ -23,7 +23,7 @@ import synchronize
 
 from java.io import File
 
-from modjy_exceptions import *
+from .modjy_exceptions import *
 
 class modjy_publisher:
 
@@ -105,7 +105,7 @@ class modjy_publisher:
             imported = __import__(module_path, globals(), locals(), [from_name])
             imported = getattr(imported, from_name)
             return imported, instantiable, method_name
-        except (ImportError, AttributeError), aix:
+        except (ImportError, AttributeError) as aix:
             self.log.fatal("Import error import application callable '%s': %s\n" % (name, str(aix)))
             self.raise_exc(ApplicationNotFound, "Failed to import app callable '%s': %s" % (name, str(aix)))
 
@@ -115,7 +115,7 @@ class modjy_publisher:
         if not self.params['cache_callables']:
             self.log.debug("Caching of callables disabled")
             return self.load_object(source_filename, callable_name)
-        if not self.cache.has_key( (source_filename, callable_name) ):
+        if (source_filename, callable_name) not in self.cache:
             self.log.debug("Callable object not in cache: %s#%s" % (source_filename, callable_name) )
             return self.load_object(source_filename, callable_name)
         app_callable, last_mod = self.cache.get( (source_filename, callable_name) )
@@ -129,15 +129,15 @@ class modjy_publisher:
 
     def load_object(self, path, callable_name):
         try:
-            app_ns = {} ; execfile(path, app_ns)
+            app_ns = {} ; exec(compile(open(path).read(), path, 'exec'), app_ns)
             app_callable = app_ns[callable_name]
             f = File(path)
             self.cache[ (path, callable_name) ] = (app_callable, f.lastModified())
             return app_callable
-        except IOError, ioe:
+        except IOError as ioe:
             self.raise_exc(ApplicationNotFound, "Application filename not found: %s" % path)
-        except KeyError, k:
+        except KeyError as k:
             self.raise_exc(NoCallable, "No callable named '%s' in %s" % (callable_name, path))
-        except Exception, x:
+        except Exception as x:
             self.raise_exc(NoCallable, "Error loading jython callable '%s': %s" % (callable_name, str(x)) )
 

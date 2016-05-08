@@ -39,8 +39,7 @@ def spawn(cmd, search_path=1, verbose=0, dry_run=0):
     elif os.name == 'java':
         _spawn_java(cmd, search_path, dry_run=dry_run)
     else:
-        raise DistutilsPlatformError, \
-              "don't know how to spawn programs on platform '%s'" % os.name
+        raise DistutilsPlatformError("don't know how to spawn programs on platform '%s'" % os.name)
 
 def _nt_quote_args(args):
     """Quote command-line arguments for DOS/Windows conventions.
@@ -69,14 +68,12 @@ def _spawn_nt(cmd, search_path=1, verbose=0, dry_run=0):
         # spawn for NT requires a full path to the .exe
         try:
             rc = os.spawnv(os.P_WAIT, executable, cmd)
-        except OSError, exc:
+        except OSError as exc:
             # this seems to happen when the command isn't found
-            raise DistutilsExecError, \
-                  "command '%s' failed: %s" % (cmd[0], exc[-1])
+            raise DistutilsExecError("command '%s' failed: %s" % (cmd[0], exc[-1]))
         if rc != 0:
             # and this reflects the command running but failing
-            raise DistutilsExecError, \
-                  "command '%s' failed with exit status %d" % (cmd[0], rc)
+            raise DistutilsExecError("command '%s' failed with exit status %d" % (cmd[0], rc))
 
 def _spawn_os2(cmd, search_path=1, verbose=0, dry_run=0):
     executable = cmd[0]
@@ -88,15 +85,13 @@ def _spawn_os2(cmd, search_path=1, verbose=0, dry_run=0):
         # spawnv for OS/2 EMX requires a full path to the .exe
         try:
             rc = os.spawnv(os.P_WAIT, executable, cmd)
-        except OSError, exc:
+        except OSError as exc:
             # this seems to happen when the command isn't found
-            raise DistutilsExecError, \
-                  "command '%s' failed: %s" % (cmd[0], exc[-1])
+            raise DistutilsExecError("command '%s' failed: %s" % (cmd[0], exc[-1]))
         if rc != 0:
             # and this reflects the command running but failing
             log.debug("command '%s' failed with exit status %d" % (cmd[0], rc))
-            raise DistutilsExecError, \
-                  "command '%s' failed with exit status %d" % (cmd[0], rc)
+            raise DistutilsExecError("command '%s' failed with exit status %d" % (cmd[0], rc))
 
 
 def _spawn_posix(cmd, search_path=1, verbose=0, dry_run=0):
@@ -109,7 +104,7 @@ def _spawn_posix(cmd, search_path=1, verbose=0, dry_run=0):
     if pid == 0:  # in the child
         try:
             exec_fn(cmd[0], cmd)
-        except OSError, e:
+        except OSError as e:
             sys.stderr.write("unable to execute %s: %s\n" %
                              (cmd[0], e.strerror))
             os._exit(1)
@@ -122,33 +117,29 @@ def _spawn_posix(cmd, search_path=1, verbose=0, dry_run=0):
         while 1:
             try:
                 pid, status = os.waitpid(pid, 0)
-            except OSError, exc:
+            except OSError as exc:
                 import errno
                 if exc.errno == errno.EINTR:
                     continue
-                raise DistutilsExecError, \
-                      "command '%s' failed: %s" % (cmd[0], exc[-1])
+                raise DistutilsExecError("command '%s' failed: %s" % (cmd[0], exc[-1]))
             if os.WIFSIGNALED(status):
-                raise DistutilsExecError, \
-                      "command '%s' terminated by signal %d" % \
-                      (cmd[0], os.WTERMSIG(status))
+                raise DistutilsExecError("command '%s' terminated by signal %d" % \
+                      (cmd[0], os.WTERMSIG(status)))
 
             elif os.WIFEXITED(status):
                 exit_status = os.WEXITSTATUS(status)
                 if exit_status == 0:
                     return   # hey, it succeeded!
                 else:
-                    raise DistutilsExecError, \
-                          "command '%s' failed with exit status %d" % \
-                          (cmd[0], exit_status)
+                    raise DistutilsExecError("command '%s' failed with exit status %d" % \
+                          (cmd[0], exit_status))
 
             elif os.WIFSTOPPED(status):
                 continue
 
             else:
-                raise DistutilsExecError, \
-                      "unknown error executing '%s': termination status %d" % \
-                      (cmd[0], status)
+                raise DistutilsExecError("unknown error executing '%s': termination status %d" % \
+                      (cmd[0], status))
 
 def _spawn_java(cmd,
                 search_path=1,
@@ -160,15 +151,13 @@ def _spawn_java(cmd,
     if not dry_run:
         try:
             rc = os.system(cmd) >> 8
-        except OSError, exc:
+        except OSError as exc:
             # this seems to happen when the command isn't found
-            raise DistutilsExecError, \
-                  "command '%s' failed: %s" % (executable, exc[-1])
+            raise DistutilsExecError("command '%s' failed: %s" % (executable, exc[-1]))
         if rc != 0:
             # and this reflects the command running but failing
-            print("command '%s' failed with exit status %d" % (executable, rc))
-            raise DistutilsExecError, \
-                  "command '%s' failed with exit status %d" % (executable, rc)
+            print(("command '%s' failed with exit status %d" % (executable, rc)))
+            raise DistutilsExecError("command '%s' failed with exit status %d" % (executable, rc))
 
 
 def find_executable(executable, path=None):

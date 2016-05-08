@@ -54,7 +54,7 @@ class modjy_param_mgr(UserDict):
     def __init__(self, param_types):
         UserDict.__init__(self)
         self.param_types = param_types
-        for pname in self.param_types.keys():
+        for pname in list(self.param_types.keys()):
             typ, default = self.param_types[pname]
             self.__setitem__(pname, default)
 
@@ -65,7 +65,7 @@ class modjy_param_mgr(UserDict):
         self.data[name] = self._convert_value(name, value)
 
     def _convert_value(self, name, value):
-        if self.param_types.has_key(name):
+        if name in self.param_types:
             typ, default = self.param_types[name]
             typ_str, typ_func = typ
             if typ_func:
@@ -76,9 +76,9 @@ class modjy_param_mgr(UserDict):
         return value
 
     def _get_defaulted_value(self, name):
-        if self.data.has_key(name):
+        if name in self.data:
             return self.data[name]
-        if self.param_types.has_key(name):
+        if name in self.param_types:
             typ, default = self.param_types[name]
             return default
         raise KeyError(name)

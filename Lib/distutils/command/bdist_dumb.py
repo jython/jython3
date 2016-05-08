@@ -73,9 +73,8 @@ class bdist_dumb (Command):
             try:
                 self.format = self.default_format[os.name]
             except KeyError:
-                raise DistutilsPlatformError, \
-                      ("don't know how to create dumb built distributions " +
-                       "on platform %s") % os.name
+                raise DistutilsPlatformError(("don't know how to create dumb built distributions " +
+                       "on platform %s") % os.name)
 
         self.set_undefined_options('bdist',
                                    ('dist_dir', 'dist_dir'),
@@ -109,8 +108,7 @@ class bdist_dumb (Command):
         else:
             if (self.distribution.has_ext_modules() and
                 (install.install_base != install.install_platbase)):
-                raise DistutilsPlatformError, \
-                      ("can't make a dumb built distribution where "
+                raise DistutilsPlatformError("can't make a dumb built distribution where "
                        "base and platbase are different (%s, %s)"
                        % (repr(install.install_base),
                           repr(install.install_platbase)))

@@ -570,7 +570,7 @@ for_stmt
 //           'finally' ':' suite))
 try_stmt
     : TRY COLON suite
-      ( except_clause+ (ORELSE COLON suite)? (FINALLY COLON suite)?
+      ( (except_clause COLON suite)+ (ORELSE COLON suite)? (FINALLY COLON suite)?
       | FINALLY COLON suite
       )?
       ;
@@ -585,9 +585,9 @@ with_item
     : test (AS expr)?
     ;
 
-//except_clause: 'except' [test [('as' | ',') test]]
+//except_clause: 'except' [test ['as' NAME]]
 except_clause
-    : EXCEPT (test ((COMMA | AS) test)?)? COLON suite
+    : EXCEPT (test (COMMA NAME)?)?
     ;
 
 //suite: simple_stmt | NEWLINE INDENT stmt+ DEDENT

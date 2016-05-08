@@ -5,7 +5,9 @@ import org.python.antlr.base.*;
 import org.python.antlr.op.*;
 import org.python.core.*;
 
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
+
 /**
  * AstAdapter turns Python and Java objects into ast nodes.
  */
@@ -19,6 +21,7 @@ public class AstAdapters {
     public final static KeywordAdapter keywordAdapter = new KeywordAdapter();
     public final static SliceAdapter sliceAdapter = new SliceAdapter();
     public final static StmtAdapter stmtAdapter = new StmtAdapter();
+    public static AstAdapter withitemAdapter = new WithitemAdapter();
 
     public static java.util.List<alias> py2aliasList(PyObject o) {
         return (java.util.List<alias>)aliasAdapter.iter2ast(o);
@@ -311,5 +314,9 @@ public class AstAdapters {
             }
         }
         return unaryopType.UNDEFINED;
+    }
+
+    public static List<withitem> py2withitemList(PyObject items) {
+        return (java.util.List<withitem>)withitemAdapter.iter2ast(items);
     }
 }

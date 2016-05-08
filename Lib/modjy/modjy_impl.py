@@ -21,17 +21,18 @@
 import types
 import sys
 
-from modjy_exceptions import *
+from .modjy_exceptions import *
+import collections
 
 class modjy_impl:
 
     def deal_with_app_return(self, environ, start_response_callable, app_return):
         self.log.debug("Processing app return type: %s" % str(type(app_return)))
-        if isinstance(app_return, types.StringTypes):
+        if isinstance(app_return, str):
             raise ReturnNotIterable("Application returned object that was not an iterable: %s" % str(type(app_return)))
         if type(app_return) is types.FileType:
             pass # TBD: What to do here? can't call fileno()
-        if hasattr(app_return, '__len__') and callable(app_return.__len__):
+        if hasattr(app_return, '__len__') and isinstance(app_return.__len__, collections.Callable):
             expected_pieces = app_return.__len__()
         else:
             expected_pieces = -1
@@ -39,7 +40,7 @@ class modjy_impl:
             try:
                 ix = 0
                 for next_piece in app_return:
-                    if not isinstance(next_piece, types.StringTypes):
+                    if not isinstance(next_piece, str):
                         raise NonStringOutput("Application returned iterable containing non-strings: %s" % str(type(next_piece)))
                     if ix == 0:
                         # The application may have called start_response in the first iteration
@@ -56,19 +57,19 @@ class modjy_impl:
                         break
                 if expected_pieces != -1 and ix != expected_pieces:
                     raise WrongLength("Iterator len() was wrong. Expected %d pieces: got %d" % (expected_pieces, ix) )
-            except AttributeError, ax:
+            except AttributeError as ax:
                 if str(ax) == "__getitem__":
                     raise ReturnNotIterable("Application returned object that was not an iterable: %s" % str(type(app_return)))
                 else:
                     raise ax
-            except TypeError, tx:
+            except TypeError as tx:
                 raise ReturnNotIterable("Application returned object that was not an iterable: %s" % str(type(app_return)))
-            except ModjyException, mx:
+            except ModjyException as mx:
                 raise mx
-            except Exception, x:
+            except Exception as x:
                 raise ApplicationException(x)
         finally:
-            if hasattr(app_return, 'close') and callable(app_return.close):
+            if hasattr(app_return, 'close') and isinstance(app_return.close, collections.Callable):
                 app_return.close()
 
     def init_impl(self):

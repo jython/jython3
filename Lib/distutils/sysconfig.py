@@ -302,7 +302,7 @@ def parse_makefile(fn, g=None):
 
     # do variable interpolation here
     while notdone:
-        for name in notdone.keys():
+        for name in list(notdone.keys()):
             value = notdone[name]
             m = _findvar1_rx.search(value) or _findvar2_rx.search(value)
             if m:
@@ -375,7 +375,7 @@ def _init_posix():
     try:
         filename = get_makefile_filename()
         parse_makefile(filename, g)
-    except IOError, msg:
+    except IOError as msg:
         my_msg = "invalid Python installation: unable to open %s" % filename
         if hasattr(msg, "strerror"):
             my_msg = my_msg + " (%s)" % msg.strerror
@@ -386,7 +386,7 @@ def _init_posix():
     try:
         filename = get_config_h_filename()
         parse_config_h(file(filename), g)
-    except IOError, msg:
+    except IOError as msg:
         my_msg = "invalid Python installation: unable to open %s" % filename
         if hasattr(msg, "strerror"):
             my_msg = my_msg + " (%s)" % msg.strerror
@@ -403,7 +403,7 @@ def _init_posix():
         if cur_target == '':
             cur_target = cfg_target
             os.putenv('MACOSX_DEPLOYMENT_TARGET', cfg_target)
-        elif map(int, cfg_target.split('.')) > map(int, cur_target.split('.')):
+        elif list(map(int, cfg_target.split('.'))) > list(map(int, cur_target.split('.'))):
             my_msg = ('$MACOSX_DEPLOYMENT_TARGET mismatch: now "%s" but "%s" during configure'
                 % (cur_target, cfg_target))
             raise DistutilsPlatformError(my_msg)

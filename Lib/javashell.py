@@ -55,9 +55,9 @@ class _ShellEnv:
 
         env = self._formatEnvironment( self.environment )
         try:
-            p = Runtime.getRuntime().exec( shellCmd, env, File(os.getcwd()) )
+            p = Runtime.getRuntime().exec(shellCmd, env, File(os.getcwd()))
             return p
-        except IOException, ex:
+        except IOException as ex:
             raise OSError(
                 0,
                 "Failed to execute command (%s): %s" % ( shellCmd, ex )
@@ -72,7 +72,7 @@ class _ShellEnv:
                      " Failed command=%s"
             raise OSError( 0, msgFmt % ( os._name, cmd ))
 
-        if isinstance(cmd, basestring):
+        if isinstance(cmd, str):
             shellCmd = self.cmd + [cmd]
         else:
             shellCmd = cmd
@@ -82,7 +82,7 @@ class _ShellEnv:
     def _formatEnvironment( self, env ):
         """Format enviroment in lines suitable for Runtime.exec"""
         lines = []
-        for keyValue in env.items():
+        for keyValue in list(env.items()):
             lines.append( "%s=%s" % keyValue )
         return lines
 
