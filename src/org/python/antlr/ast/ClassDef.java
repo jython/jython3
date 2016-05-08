@@ -360,8 +360,9 @@ public static final PyType TYPE = PyType.fromClass(ClassDef.class);
     public Name getInternalNameNode() {
         return nameNode;
     }
-    public ClassDef(Token token, Name name, java.util.List<expr> bases, java.util.List<stmt>
-    body, java.util.List<expr> decorator_list) {
+
+    public ClassDef(Token token, Name name, java.util.List<expr> bases,
+                    java.util.List<keyword> keywords, java.util.List<stmt> body) {
         super(token);
         this.name = name.getText();
         this.nameNode = name;
@@ -372,6 +373,15 @@ public static final PyType TYPE = PyType.fromClass(ClassDef.class);
         for(PythonTree t : this.bases) {
             addChild(t);
         }
+
+        this.keywords = keywords;
+        if (keywords == null) {
+            this.keywords = new ArrayList<keyword>();
+        }
+        for(PythonTree t : this.keywords) {
+            addChild(t);
+        }
+
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
@@ -379,10 +389,14 @@ public static final PyType TYPE = PyType.fromClass(ClassDef.class);
         for(PythonTree t : this.body) {
             addChild(t);
         }
-        this.decorator_list = decorator_list;
-        if (decorator_list == null) {
-            this.decorator_list = new ArrayList<expr>();
+        this.decorator_list = new ArrayList<>();
+    }
+
+    public void setDecorator_list(java.util.List<expr> decorator_list) {
+        if (decorator_list != null) {
+            this.decorator_list = decorator_list;
         }
+
         for(PythonTree t : this.decorator_list) {
             addChild(t);
         }

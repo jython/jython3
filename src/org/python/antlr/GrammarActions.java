@@ -301,7 +301,7 @@ public class GrammarActions {
         return new TryFinally(t, b, f);
     }
 
-    stmt makeFuncdef(Token t, Token nameToken, arguments args, List funcStatements, List decorators) {
+    stmt makeFuncdef(Token t, Token nameToken, arguments args, List funcStatements) {
         if (nameToken == null) {
             return errorHandler.errorStmt(new PythonTree(t));
         }
@@ -315,8 +315,7 @@ public class GrammarActions {
                     new ArrayList<Name>(), new ArrayList<expr>(), new ArrayList<expr>());
         }
         List<stmt> s = castStmts(funcStatements);
-        List<expr> d = castExprs(decorators);
-        return new FunctionDef(t, n, a, s, d);
+        return new FunctionDef(t, n, a, s);
     }
 
     List<expr> makeAssignTargets(expr lhs, List rhs) {
@@ -575,13 +574,12 @@ public class GrammarActions {
         return makeCall(t, func, args, keywords);
     }
 
-    stmt makeClass(Token t, Token nameToken, List args, List ktypes, List stypes, List dtypes) {
+    stmt makeClass(Token t, Token nameToken, List args, List ktypes, List stypes) {
         String name = cantBeNone(nameToken);
         List<expr> bases = castExprs(args);
         List<stmt> statements = castStmts(stypes);
         List<keyword> keywords = makeKeywords(ktypes);
-        List<expr> decorators = castExprs(dtypes);
-        return new ClassDef(t, name, bases, keywords, statements, decorators);
+        return new ClassDef(t, name, bases, keywords, statements, new ArrayList<expr>());
     }
 
     expr negate(Token t, expr o) {

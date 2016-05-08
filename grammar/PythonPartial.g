@@ -250,9 +250,14 @@ decorators
     : decorator+
     ;
 
-//funcdef: [decorators] 'def' NAME parameters ':' suite
+//decorated: decorators (classdef | funcdef)
+decorated
+    : decorators (classdef | funcdef)
+    ;
+
+//funcdef: 'def' NAME parameters ':' suite
 funcdef
-    : decorators? DEF NAME parameters COLON suite
+    : DEF NAME parameters COLON suite
     ;
 
 //parameters: '(' [typedargslist] ')'
@@ -506,16 +511,16 @@ assert_stmt
     : ASSERT test (COMMA test)?
     ;
 
-//compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | funcdef | classdef
+//compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated
 compound_stmt
     : if_stmt
     | while_stmt
     | for_stmt
     | try_stmt
     | with_stmt
-    | (decorators? DEF) => funcdef
-    | (decorators? CLASS) => classdef
-    | decorators
+    | funcdef
+    | classdef
+    | decorated
     ;
 
 //if_stmt: 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite]
@@ -853,7 +858,7 @@ dictorsetmaker
 
 //classdef: 'class' NAME ['(' [arglist] ')'] ':' suite
 classdef
-    : decorators? CLASS NAME (LPAREN arglist? RPAREN)? COLON suite
+    : CLASS NAME (LPAREN arglist? RPAREN)? COLON suite
     ;
 
 //arglist: argument (',' argument)*  [',']

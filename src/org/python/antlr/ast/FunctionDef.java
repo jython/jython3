@@ -289,8 +289,7 @@ public static final PyType TYPE = PyType.fromClass(FunctionDef.class);
     public Name getInternalNameNode() {
         return nameNode;
     }
-    public FunctionDef(Token token, Name name, arguments args, java.util.List<stmt> body,
-            java.util.List<expr> decorator_list) {
+    public FunctionDef(Token token, Name name, arguments args, java.util.List<stmt> body) {
         super(token);
         this.name = name.getText();
         this.nameNode = name;
@@ -302,10 +301,14 @@ public static final PyType TYPE = PyType.fromClass(FunctionDef.class);
         for(PythonTree t : this.body) {
             addChild(t);
         }
-        this.decorator_list = decorator_list;
-        if (decorator_list == null) {
-            this.decorator_list = new ArrayList<expr>();
+        this.decorator_list = new ArrayList<>();
+    }
+
+    public void setDecorator_list(java.util.List<expr> decorator_list) {
+        if (decorator_list != null) {
+            this.decorator_list = decorator_list;
         }
+
         for(PythonTree t : this.decorator_list) {
             addChild(t);
         }
