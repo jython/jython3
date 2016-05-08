@@ -112,6 +112,7 @@ import org.python.antlr.ast.Expression;
 import org.python.antlr.ast.expr_contextType;
 import org.python.antlr.ast.ExtSlice;
 import org.python.antlr.ast.For;
+import org.python.antlr.ast.FunctionDef;
 import org.python.antlr.ast.GeneratorExp;
 import org.python.antlr.ast.Global;
 import org.python.antlr.ast.If;
@@ -491,7 +492,27 @@ decorators
     ;
 
 //decorated: decorators (classdef | funcdef)
-//XXX: refactor to use decorated. Hopefully this will elimated the predicate in compound_stmt.
+decorated
+@init {
+    stmt stype = null;
+}
+
+@after {
+    $decorated.tree = stype;
+}
+    : decorators
+        ( classdef
+            {
+                stype = actions.castStmt($classdef.tree);
+                ((ClassDef) stype).setDecorator_list(actions.castExprs($decorators.etypes));
+            }
+        | funcdef
+            {
+                stype = actions.castStmt($funcdef.tree);
+                ((FunctionDef) stype).setDecorator_list(actions.castExprs($decorators.etypes));
+            }
+        )
+    ;
 
 //FIXME implement -> AST support.
 //funcdef: 'def' NAME parameters ['->' test] ':' suite
@@ -503,13 +524,9 @@ funcdef
 @after {
     $funcdef.tree = stype;
 }
-    : decorators? DEF name_or_print parameters (ARROW test[null])? COLON suite[false]
+    : DEF name_or_print parameters (ARROW test[null])? COLON suite[false]
     {
-        Token t = $DEF;
-        if ($decorators.start != null) {
-            t = $decorators.start;
-        }
-        stype = actions.makeFuncdef(t, $name_or_print.start, $parameters.args, $suite.stypes, $decorators.etypes);
+        stype = actions.makeFuncdef($DEF, $name_or_print.start, $parameters.args, $suite.stypes);
     }
     ;
 
@@ -1229,8 +1246,6 @@ assert_stmt
       }
     ;
 
-//compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef
-//XXX: refactor to use decorated like:
 //compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated
 compound_stmt
     : if_stmt
@@ -1238,8 +1253,9 @@ compound_stmt
     | for_stmt
     | try_stmt
     | with_stmt
-    | (decorators? DEF) => funcdef
+    | funcdef
     | classdef
+    | decorated
     ;
 
 //if_stmt: 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite]
@@ -2234,17 +2250,12 @@ classdef
 @after {
    $classdef.tree = stype;
 }
-    : decorators? CLASS NAME (LPAREN arglist? RPAREN)? COLON suite[false]
+    : CLASS NAME (LPAREN arglist? RPAREN)? COLON suite[false]
       {
-          Token t = $CLASS;
-          if ($decorators.start != null) {
-              t = $decorators.start;
-          }
-          stype = actions.makeClass(t, $NAME,
+          stype = actions.makeClass($CLASS, $NAME,
                                     $arglist.args,
                                     $arglist.keywords,
-                                    $suite.stypes,
-                                    $decorators.etypes);
+                                    $suite.stypes);
       }
     ;
 
