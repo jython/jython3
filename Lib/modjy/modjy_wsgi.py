@@ -27,8 +27,8 @@ except ImportError:
     from org.python.core import PyFile
     create_py_file = PyFile
 
-from modjy_exceptions import *
-from modjy_input import modjy_input_object
+from .modjy_exceptions import *
+from .modjy_input import modjy_input_object
 
 server_name = "modjy"
 server_param_prefix = "%s.param" % server_name
@@ -42,7 +42,7 @@ class modjy_wsgi:
     #    WSGI constants
     #
 
-    empty_pystring = u""
+    empty_pystring = ""
     wsgi_version = (1,0)
 
     #
@@ -65,16 +65,16 @@ class modjy_wsgi:
         if value == default_value:
             value = self.empty_pystring
         else:
-            value = unicode(value)
+            value = str(value)
         self.set_string_envvar(dict, name, value)
 
     def set_container_specific_wsgi_vars(self, req, resp, dict, params):
         dict["%s.version" % server_name] = self.modjy_version
-        for pname in params.keys():
+        for pname in list(params.keys()):
             dict["%s.%s" % (server_param_prefix, pname)] = params[pname]
 
     def set_j2ee_specific_wsgi_vars(self, dict, j2ee_ns):
-        for p in j2ee_ns.keys():
+        for p in list(j2ee_ns.keys()):
             dict["%s.%s" % (j2ee_ns_prefix, p)] = j2ee_ns[p]
 
     def set_required_cgi_environ (self, req, resp, dict):
@@ -128,7 +128,7 @@ class modjy_wsgi:
         try:
             dict["wsgi.input"]  = modjy_input_object(req.getInputStream())
             dict["wsgi.errors"] = create_py_file(System.err)
-        except IOException, iox:
+        except IOException as iox:
             raise ModjyIOException(iox)
 
     def set_wsgi_classes(self, req, resp, dict):
@@ -136,7 +136,7 @@ class modjy_wsgi:
         pass
 
     def set_user_specified_environment(self, req, resp, wsgi_environ, params):
-        if not params.has_key('initial_env') or not params['initial_env']:
+        if 'initial_env' not in params or not params['initial_env']:
             return
         user_env_string = params['initial_env']
         for l in user_env_string.split('\n'):

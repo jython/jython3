@@ -4,10 +4,12 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
+import org.python.antlr.ast.AsyncFunctionDef;
 import org.python.antlr.ast.Attribute;
 import org.python.antlr.ast.BinOp;
 import org.python.antlr.ast.BoolOp;
@@ -44,6 +46,7 @@ import org.python.antlr.ast.expr_contextType;
 import org.python.antlr.ast.keyword;
 import org.python.antlr.ast.operatorType;
 import org.python.antlr.ast.unaryopType;
+import org.python.antlr.ast.withitem;
 import org.python.antlr.base.excepthandler;
 import org.python.antlr.base.expr;
 import org.python.antlr.base.slice;
@@ -256,16 +259,16 @@ public class GrammarActions {
         return new While(t, test, b, o);
     }
 
-    stmt makeWith(Token t, List<With> items, List<stmt> body) {
+    stmt makeWith(Token t, List<withitem> items, List<stmt> body) {
         int last = items.size() - 1;
         With result = null;
         for (int i = last; i>=0; i--) {
-            With current = items.get(i);
+            withitem current = items.get(i);
             if (i != last) {
                 body = new ArrayList<stmt>();
                 body.add(result);
             }
-            result = new With(current.getToken(), current.getInternalContext_expr(), current.getInternalOptional_vars(), body);
+            result = new With(current.getToken(), Arrays.asList(current), body);
         }
         return result;
     }
@@ -299,6 +302,11 @@ public class GrammarActions {
         List<stmt> b = castStmts(body);
         List<stmt> f = castStmts(finBody);
         return new TryFinally(t, b, f);
+    }
+
+    stmt makeAsyncFuncdef(Token t, Object def) {
+        FunctionDef func = (FunctionDef) castStmt(def);
+        return new AsyncFunctionDef(t, func.getInternalName(), func.getInternalArgs(), func.getInternalBody(), func.getInternalDecorator_list());
     }
 
     stmt makeFuncdef(Token t, Token nameToken, arguments args, List funcStatements) {

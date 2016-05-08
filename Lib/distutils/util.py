@@ -166,7 +166,7 @@ def get_platform ():
                 # On OSX the machine type returned by uname is always the
                 # 32-bit variant, even if the executable architecture is
                 # the 64-bit variant
-                if sys.maxint >= 2**32:
+                if sys.maxsize >= 2**32:
                     machine = 'x86_64'
 
             elif machine in ('PowerPC', 'Power_Macintosh'):
@@ -174,7 +174,7 @@ def get_platform ():
                 machine = 'ppc'
 
                 # See 'i386' case
-                if sys.maxint >= 2**32:
+                if sys.maxsize >= 2**32:
                     machine = 'ppc64'
 
     return "%s-%s-%s" % (osname, release, machine)
@@ -196,9 +196,9 @@ def convert_path (pathname):
     if not pathname:
         return pathname
     if pathname[0] == '/':
-        raise ValueError, "path '%s' cannot be absolute" % pathname
+        raise ValueError("path '%s' cannot be absolute" % pathname)
     if pathname[-1] == '/':
-        raise ValueError, "path '%s' cannot end with '/'" % pathname
+        raise ValueError("path '%s' cannot end with '/'" % pathname)
 
     paths = string.split(pathname, '/')
     while '.' in paths:
@@ -245,8 +245,7 @@ def change_root (new_root, pathname):
             return os.path.join(new_root, pathname)
 
     else:
-        raise DistutilsPlatformError, \
-              "nothing known about platform '%s'" % os_name
+        raise DistutilsPlatformError("nothing known about platform '%s'" % os_name)
 
 
 _environ_checked = 0
@@ -291,8 +290,8 @@ def subst_vars (s, local_vars):
 
     try:
         return re.sub(r'\$([a-zA-Z_][a-zA-Z_0-9]*)', _subst, s)
-    except KeyError, var:
-        raise ValueError, "invalid variable '$%s'" % var
+    except KeyError as var:
+        raise ValueError("invalid variable '$%s'" % var)
 
 # subst_vars ()
 
@@ -370,12 +369,10 @@ def split_quoted (s):
             elif s[end] == '"':         # slurp doubly-quoted string
                 m = _dquote_re.match(s, end)
             else:
-                raise RuntimeError, \
-                      "this can't happen (bad char '%c')" % s[end]
+                raise RuntimeError("this can't happen (bad char '%c')" % s[end])
 
             if m is None:
-                raise ValueError, \
-                      "bad string (mismatched %s quotes?)" % s[end]
+                raise ValueError("bad string (mismatched %s quotes?)" % s[end])
 
             (beg, end) = m.span()
             s = s[:beg] + s[beg+1:end-1] + s[end:]
@@ -422,7 +419,7 @@ def strtobool (val):
     elif val in ('n', 'no', 'f', 'false', 'off', '0'):
         return 0
     else:
-        raise ValueError, "invalid truth value %r" % (val,)
+        raise ValueError("invalid truth value %r" % (val,))
 
 
 def byte_compile (py_files,
@@ -510,7 +507,7 @@ files = [
             #if prefix:
             #    prefix = os.path.abspath(prefix)
 
-            script.write(string.join(map(repr, py_files), ",\n") + "]\n")
+            script.write(string.join(list(map(repr, py_files)), ",\n") + "]\n")
             script.write("""
 byte_compile(files, optimize=%r, force=%r,
              prefix=%r, base_dir=%r,
@@ -552,8 +549,7 @@ byte_compile(files, optimize=%r, force=%r,
             dfile = file
             if prefix:
                 if file[:len(prefix)] != prefix:
-                    raise ValueError, \
-                          ("invalid prefix: filename %r doesn't start with %r"
+                    raise ValueError("invalid prefix: filename %r doesn't start with %r"
                            % (file, prefix))
                 dfile = dfile[len(prefix):]
             if base_dir:

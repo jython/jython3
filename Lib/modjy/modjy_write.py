@@ -20,7 +20,7 @@
 
 import types
 
-from modjy_exceptions import *
+from .modjy_exceptions import *
 
 class write_object:
 
@@ -29,7 +29,7 @@ class write_object:
         self.num_writes = 0
 
     def __call__(self, *args, **keywords):
-        if len(args) != 1 or not isinstance(args[0], types.StringTypes):
+        if len(args) != 1 or not isinstance(args[0], str):
             raise NonStringOutput("Invocation of write callable requires exactly one string argument")
         try:
             self.ostream.write(args[0]) # Jython implicitly converts the (binary) string to a byte array
@@ -39,5 +39,5 @@ class write_object:
             # code ever be ported to another platform.
             self.ostream.flush()
             self.num_writes += 1
-        except Exception, x:
+        except Exception as x:
             raise ModjyIOException(x)

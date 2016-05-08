@@ -499,7 +499,17 @@ decorators
 
 //async_funcdef: ASYNC funcdef
 async_funcdef
+@init {
+    stmt stype = null;
+}
+
+@after {
+    $async_funcdef.tree = stype;
+}
     : ASYNC funcdef
+    {
+        stype = actions.makeAsyncFuncdef($ASYNC, $funcdef.tree);
+    }
     ;
 
 //decorated: decorators (classdef | funcdef)
@@ -513,15 +523,15 @@ decorated
 }
     : decorators
         ( classdef
-            {
-                stype = actions.castStmt($classdef.tree);
-                ((ClassDef) stype).setDecorator_list(actions.castExprs($decorators.etypes));
-            }
+        {
+            stype = actions.castStmt($classdef.tree);
+            ((ClassDef) stype).setDecorator_list(actions.castExprs($decorators.etypes));
+        }
         | funcdef
-            {
-                stype = actions.castStmt($funcdef.tree);
-                ((FunctionDef) stype).setDecorator_list(actions.castExprs($decorators.etypes));
-            }
+        {
+            stype = actions.castStmt($funcdef.tree);
+            ((FunctionDef) stype).setDecorator_list(actions.castExprs($decorators.etypes));
+        }
         )
     ;
 
@@ -1050,11 +1060,10 @@ yield_stmt
       }
     ;
 
-//FIXME: for now, allow old python2 style exceptions.
-//raise_stmt: 'raise' [test [',' test [',' test]]]
-//
-//FIXME: when we fully switch to python3 this is the rule:
 //raise_stmt: 'raise' [test ['from' test]]
+raise_stmt
+    ;
+
 raise_stmt
 @init {
     stmt stype = null;
@@ -1062,11 +1071,10 @@ raise_stmt
 @after {
    $raise_stmt.tree = stype;
 }
-    : RAISE (t1=test[expr_contextType.Load] (FROM t4=test[expr_contextType.Load])? (COMMA t2=test[expr_contextType.Load]
-        (COMMA t3=test[expr_contextType.Load])?)?)?
-      {
-          stype = new Raise($RAISE, actions.castExpr($t1.tree), actions.castExpr($t2.tree), actions.castExpr($t3.tree));
-      }
+    : RAISE (t1=test[expr_contextType.Load] (FROM t2=test[expr_contextType.Load])?)?
+    {
+        stype = new Raise($RAISE, actions.castExpr($t1.tree), actions.castExpr($t2.tree));
+    }
     ;
 
 //import_stmt: import_name | import_from
@@ -1382,15 +1390,15 @@ with_stmt
    $with_stmt.tree = stype;
 }
     : WITH w+=with_item (options {greedy=true;}:COMMA w+=with_item)* COLON suite[false]
-      {
-          stype = actions.makeWith($WITH, $w, $suite.stypes);
-      }
+    {
+        stype = actions.makeWith($WITH, $w, $suite.stypes);
+    }
     ;
 
 //with_item: test ['as' expr]
 with_item
 @init {
-    stmt stype = null;
+    withitem stype = null;
 }
 @after {
    $with_item.tree = stype;
@@ -1403,11 +1411,11 @@ with_item
               var = actions.castExpr($expr.tree);
               actions.checkAssign(var);
           }
-          stype = new With($test.start, item, var, null);
+          stype = new withitem($test.start, item, var);
       }
     ;
 
-//except_clause: 'except' [test [('as' | ',') test]]
+//except_clause: 'except' [test ['as' NAME]]
 except_clause
 @init {
     excepthandler extype = null;
@@ -1415,9 +1423,10 @@ except_clause
 @after {
    $except_clause.tree = extype;
 }
-    : EXCEPT (t1=test[expr_contextType.Load] ((COMMA | AS) t2=test[expr_contextType.Store])?)? COLON suite[!$suite.isEmpty() && $suite::continueIllegal]
+    : EXCEPT (t1=test[expr_contextType.Load] (AS NAME)?)? COLON suite[!$suite.isEmpty() && $suite::continueIllegal]
       {
-          extype = new ExceptHandler($EXCEPT, actions.castExpr($t1.tree), actions.castExpr($t2.tree),
+          String name = $NAME == null ? "" : $NAME.getText();
+          extype = new ExceptHandler($EXCEPT, actions.castExpr($t1.tree), name,
               actions.castStmts($suite.stypes));
       }
     ;

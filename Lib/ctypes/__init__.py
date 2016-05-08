@@ -91,7 +91,7 @@ class _StructLayoutBuilder(object):
 class _AggregateMetaClass(type):
     @staticmethod
     def __new_aggregate__(cls, name, bases, dict, union = False):
-        if dict.has_key('_fields_'):
+        if '_fields_' in dict:
             layout = dict['_jffi_type'] = _StructLayoutBuilder(union).add_fields(dict['_fields_']).build()
             # make all fields accessible via .foo
             for f in dict['_fields_']:
@@ -99,9 +99,9 @@ class _AggregateMetaClass(type):
             dict['__fields_'] = dict['_fields_']
         else:
             dict['__fields_'] = []
-        if dict.has_key('_pack_'):
+        if '_pack_' in dict:
             raise NotImplementedError("struct packing not implemented")
-        if dict.has_key('_anonymous_'):
+        if '_anonymous_' in dict:
             raise NotImplementedError("anonymous fields not implemented")
 
         return type.__new__(cls, name, bases, dict)
@@ -160,7 +160,7 @@ memset = jffi.memset
 _pointer_type_cache = {}
 def POINTER(ctype):
     # If a pointer class for the C type has been created, re-use it
-    if _pointer_type_cache.has_key(ctype):
+    if ctype in _pointer_type_cache:
         return _pointer_type_cache[ctype]
 
     # Create a new class for this particular C type
@@ -263,7 +263,7 @@ class CDLL:
 
     def __getattr__(self, name):
         if name.startswith('__') and name.endswith('__'):
-            raise AttributeError, name
+            raise AttributeError(name)
         func = self.__getitem__(name)
         setattr(self, name, func)
         return func

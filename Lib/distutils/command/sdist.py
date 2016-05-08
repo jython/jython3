@@ -24,7 +24,7 @@ def show_formats ():
     from distutils.fancy_getopt import FancyGetopt
     from distutils.archive_util import ARCHIVE_FORMATS
     formats=[]
-    for format in ARCHIVE_FORMATS.keys():
+    for format in list(ARCHIVE_FORMATS.keys()):
         formats.append(("formats=" + format, None,
                         ARCHIVE_FORMATS[format][2]))
     formats.sort()
@@ -115,14 +115,12 @@ class sdist (Command):
             try:
                 self.formats = [self.default_format[os.name]]
             except KeyError:
-                raise DistutilsPlatformError, \
-                      "don't know how to create source distributions " + \
-                      "on platform %s" % os.name
+                raise DistutilsPlatformError("don't know how to create source distributions " + \
+                      "on platform %s" % os.name)
 
         bad_format = archive_util.check_archive_formats(self.formats)
         if bad_format:
-            raise DistutilsOptionError, \
-                  "unknown archive format '%s'" % bad_format
+            raise DistutilsOptionError("unknown archive format '%s'" % bad_format)
 
         if self.dist_dir is None:
             self.dist_dir = "dist"
@@ -289,7 +287,7 @@ class sdist (Command):
 
         optional = ['test/test*.py', 'setup.cfg']
         for pattern in optional:
-            files = filter(os.path.isfile, glob(pattern))
+            files = list(filter(os.path.isfile, glob(pattern)))
             if files:
                 self.filelist.extend(files)
 
@@ -334,7 +332,7 @@ class sdist (Command):
 
             try:
                 self.filelist.process_template_line(line)
-            except DistutilsTemplateError, msg:
+            except DistutilsTemplateError as msg:
                 self.warn("%s, line %d: %s" % (template.filename,
                                                template.current_line,
                                                msg))

@@ -60,6 +60,7 @@ import org.python.antlr.ast.comprehension;
 import org.python.antlr.ast.keyword;
 import org.python.antlr.ast.operatorType;
 import org.python.antlr.ast.unaryopType;
+import org.python.antlr.ast.withitem;
 import org.python.antlr.base.excepthandler;
 import org.python.antlr.base.expr;
 import org.python.antlr.base.stmt;
@@ -430,7 +431,7 @@ public class AstConverter extends Visitor {
 
     @Override
     public Object visitExceptHandler(ExceptHandler n) throws Exception {
-        return new NExceptHandler(convExpr(n.getInternalName()),
+        return new NExceptHandler(new NStr(n.getInternalName()),
                                   convExpr(n.getInternalType()),
                                   convertListStmt(n.getInternalBody()),
                                   start(n), stop(n));
@@ -598,9 +599,9 @@ public class AstConverter extends Visitor {
 
     @Override
     public Object visitRaise(Raise n) throws Exception {
-        return new NRaise(convExpr(n.getInternalType()),
-                          convExpr(n.getInternalInst()),
-                          convExpr(n.getInternalTback()),
+        return new NRaise(convExpr(n.getInternalExc()),
+                          convExpr(n.getInternalCause()),
+                          null,
                           start(n), stop(n));
     }
 
@@ -671,8 +672,9 @@ public class AstConverter extends Visitor {
 
     @Override
     public Object visitWith(With n) throws Exception {
-        return new NWith(convExpr(n.getInternalOptional_vars()),
-                         convExpr(n.getInternalContext_expr()),
+        withitem item = n.getInternalItems().get(0);
+        return new NWith(convExpr(item.getInternalOptional_vars()),
+                         convExpr(item.getInternalContext_expr()),
                          convertListStmt(n.getInternalBody()),
                          start(n), stop(n));
     }

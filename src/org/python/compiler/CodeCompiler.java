@@ -909,31 +909,24 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     @Override
     public Object visitRaise(Raise node) throws Exception {
         setline(node);
-        if (node.getInternalType() != null) {
-            visit(node.getInternalType());
+        if (node.getInternalExc() != null) {
+            visit(node.getInternalExc());
             stackProduce();
         }
-        if (node.getInternalInst() != null) {
-            visit(node.getInternalInst());
+        if (node.getInternalCause() != null) {
+            visit(node.getInternalCause());
             stackProduce();
         }
-        if (node.getInternalTback() != null) {
-            visit(node.getInternalTback());
-            stackProduce();
-        }
-        if (node.getInternalType() == null) {
+
+        if (node.getInternalExc() == null) {
             code.invokestatic(p(Py.class), "makeException", sig(PyException.class));
-        } else if (node.getInternalInst() == null) {
+        } else if (node.getInternalCause() == null) {
             stackConsume();
             code.invokestatic(p(Py.class), "makeException", sig(PyException.class, PyObject.class));
-        } else if (node.getInternalTback() == null) {
+        } else {
             stackConsume(2);
             code.invokestatic(p(Py.class), "makeException",
                     sig(PyException.class, PyObject.class, PyObject.class));
-        } else {
-            stackConsume(3);
-            code.invokestatic(p(Py.class), "makeException",
-                    sig(PyException.class, PyObject.class, PyObject.class, PyObject.class));
         }
         code.athrow();
         return Exit;
@@ -1317,8 +1310,8 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
             if (handler.getInternalName() != null) {
                 code.aload(exc);
-                code.getfield(p(PyException.class), "value", ci(PyObject.class));
-                set(handler.getInternalName());
+                code.ldc(handler.getInternalName());
+                code.putfield(p(PyException.class), "value", ci(PyObject.class));
             }
 
             // do exception body
@@ -2912,10 +2905,8 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
     @Override
     public Object visitWith(With node) throws Exception {
-        if (!module.getFutures().withStatementSupported()) {
-            throw new ParseException("'with' will become a reserved keyword in Python 2.6", node);
-        }
-
+        // AST is converted such that every context only has one item
+        withitem item = node.getInternalItems().get(0);
         final Label label_body_start = new Label();
         final Label label_body_end = new Label();
         final Label label_catch = new Label();
@@ -2929,7 +2920,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
                 Method.getMethod("boolean __exit__ (org.python.core.ThreadState,org.python.core.PyException)");
 
         // mgr = (EXPR)
-        visit(node.getInternalContext_expr());
+        visit(item.getInternalContext_expr());
 
         // wrap the manager with the ContextGuard (or get it directly if it
         // supports the ContextManager interface)
@@ -2981,8 +2972,8 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         // VAR = value # Only if "as VAR" is present
         code.label(label_body_start);
-        if (node.getInternalOptional_vars() != null) {
-            set(node.getInternalOptional_vars(), value_tmp);
+        if (item.getInternalOptional_vars() != null) {
+            set(item.getInternalOptional_vars(), value_tmp);
         }
         code.freeLocal(value_tmp);
 
