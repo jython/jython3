@@ -62,7 +62,7 @@ class modjy_impl:
                     raise ReturnNotIterable("Application returned object that was not an iterable: %s" % str(type(app_return)))
                 else:
                     raise ax
-            except TypeError as tx:
+            except TypeError:
                 raise ReturnNotIterable("Application returned object that was not an iterable: %s" % str(type(app_return)))
             except ModjyException as mx:
                 raise mx

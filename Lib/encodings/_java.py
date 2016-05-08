@@ -193,7 +193,7 @@ def _process_decode_errors(encoding, input, result, error_function, input_buffer
             input_buffer.position() + result.length(),
             'illegal multibyte sequence')
         replacement, pos = error_function(e)
-        if not isinstance(replacement, unicode):
+        if not isinstance(replacement, str):
             raise TypeError()
         pos = int(pos)
         if pos < 0:
@@ -213,7 +213,7 @@ def _process_incomplete_decode(encoding, input, error_function, input_buffer, bu
             input_buffer.limit(),
             'illegal multibyte sequence')
         replacement, pos = error_function(e)
-        if not isinstance(replacement, unicode):
+        if not isinstance(replacement, str):
             raise TypeError()
         pos = int(pos)
         if pos < 0:
@@ -237,7 +237,7 @@ def _process_encode_errors(encoding, input, result, error_function, input_buffer
             input_buffer.position() + result.length(),
             'illegal multibyte sequence')
         replacement, pos = error_function(e)
-        if not isinstance(replacement, unicode):
+        if not isinstance(replacement, str):
             raise TypeError()
         pos = int(pos)
         if pos < 0:
