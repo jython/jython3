@@ -1945,8 +1945,8 @@ power
       }
     ;
 
-//atom: ('(' [yield_expr|testlist_gexp] ')' |
-//       '[' [listmaker] ']' |
+//atom: ('(' [yield_expr|testlist_comp] ')' |
+//       '[' [testlist_comp] ']' |
 //       '{' [dictorsetmaker] '}' |
 //       '`' testlist1 '`' |
 //       NAME | NUMBER | STRING+ | '...' | 'True' | 'False' | 'None')
@@ -1968,8 +1968,8 @@ atom
         {
             etype = $yield_expr.etype;
         }
-      | testlist_gexp
-     -> testlist_gexp
+      | testlist_comp
+     -> testlist_comp
       |
         {
             etype = new Tuple($LPAREN, new ArrayList<expr>(), $expr::ctype);
@@ -1977,8 +1977,8 @@ atom
       )
       RPAREN
     | LBRACK
-      (listmaker[$LBRACK]
-     -> listmaker
+      (testlist_comp
+     -> testlist_comp
       |
        {
            etype = new org.python.antlr.ast.List($LBRACK, new ArrayList<expr>(), $expr::ctype);
@@ -2051,23 +2051,22 @@ listmaker[Token lbrack]
         ) (COMMA)?
     ;
 
-//XXX: rename to testlist_comp when further down the 3.x path.
 //testlist_comp: (test|star_expr) ( comp_for | (',' (test|star_expr))* [','] )
-testlist_gexp
+testlist_comp
 @init {
     expr etype = null;
     List gens = new ArrayList();
 }
 @after {
     if (etype != null) {
-        $testlist_gexp.tree = etype;
+        $testlist_comp.tree = etype;
     }
 }
     : t+=test_or_star_expr[$expr::ctype]
         ( (options {k=2;}: c1=COMMA t+=test_or_star_expr[$expr::ctype])* (c2=COMMA)?
-         { $c1 != null || $c2 != null }? 
+         { $c1 != null || $c2 != null }?
            {
-               etype = new Tuple($testlist_gexp.start, actions.castExprs($t), $expr::ctype);
+               etype = new Tuple($testlist_comp.start, actions.castExprs($t), $expr::ctype);
            }
         | -> test_or_star_expr
         | (comp_for[gens]
@@ -2078,7 +2077,7 @@ testlist_gexp
                if (e instanceof Context) {
                    ((Context)e).setContext(expr_contextType.Load);
                }
-               etype = new GeneratorExp($testlist_gexp.start, actions.castExpr($t.get(0)), c);
+               etype = new GeneratorExp($testlist_comp.start, actions.castExpr($t.get(0)), c);
            }
           )
         )
