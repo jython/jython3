@@ -429,4 +429,12 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         return null;
     }
 
+    public Object visitExceptHandler(ExceptHandler node) throws Exception {
+        traverse(node);
+        if (node.getInternalName() != null) {
+            cur.addBound(node.getInternalName());
+        }
+        return null;
+    }
+
 }
