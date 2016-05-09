@@ -1,5 +1,6 @@
 import io
 import types
+import re
 
 def print_doc(out, obj, meth):
     if meth == '__doc__':
@@ -56,6 +57,8 @@ types.CodeType,
 types.SimpleNamespace,
 types.FrameType,
 types.TracebackType,
+type(re.compile("f")),
+type(re.compile("f").match("f")),
 io.TextIOBase
 ]
 

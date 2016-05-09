@@ -19,7 +19,10 @@ package org.python.modules.sre;
 import java.util.*;
 import org.python.core.*;
 import org.python.core.util.StringUtil;
+import org.python.expose.ExposedMethod;
+import org.python.expose.ExposedType;
 
+@ExposedType(name = "_sre.SRE_Pattern", doc = BuiltinDocs.SRE_Pattern_doc)
 public class PatternObject extends PyObject implements Traverseproc {
     int[] code; /* link to the code string object */
     public PyString pattern; /* link to the pattern source (or None) */
@@ -43,8 +46,9 @@ public class PatternObject extends PyObject implements Traverseproc {
         this.indexgroup = indexgroup;
     }
 
+    @ExposedMethod(doc = BuiltinDocs.SRE_Pattern_match_doc)
     public MatchObject match(PyObject[] args, String[] kws) {
-        ArgParser ap = new ArgParser("search", args, kws,
+        ArgParser ap = new ArgParser("match", args, kws,
                                      "pattern", "pos", "endpos");
         PyString string = extractPyString(ap, 0);
         int start = ap.getInt(1, 0);
@@ -53,6 +57,26 @@ public class PatternObject extends PyObject implements Traverseproc {
 
         state.ptr = state.start;
         int status = state.SRE_MATCH(code, 0, 1);
+
+        return _pattern_new_match(state, string, status);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.SRE_Pattern_fullmatch_doc)
+    public MatchObject fullmatch(PyObject[] args, String[] kws) {
+        ArgParser ap = new ArgParser("match", args, kws,
+                "pattern", "pos", "endpos");
+        PyString string = extractPyString(ap, 0);
+                int start = ap.getInt(1, 0);
+        int end = ap.getInt(2, string.__len__());
+        SRE_STATE state = new SRE_STATE(string, start, end, flags);
+
+        state.ptr = state.start;
+        int status = state.SRE_MATCH(code, 0, 1);
+        if (status > 0) {
+            if (state.pos - state.endpos < string.__len__()) {
+                return null;
+            }
+        }
 
         return _pattern_new_match(state, string, status);
     }
