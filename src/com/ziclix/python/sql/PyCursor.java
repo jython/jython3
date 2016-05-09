@@ -324,7 +324,7 @@ public class PyCursor extends PyObject implements ClassDictInit, WarningListener
     public PyObject next() {
         PyObject row = __iternext__();
         if (row == null) {
-            throw Py.StopIteration("");
+            throw Py.StopIteration();
         }
         return row;
     }
