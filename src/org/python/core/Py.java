@@ -160,6 +160,16 @@ public final class Py {
         return new PyException(Py.OSError, args);
     }
 
+    public static PyObject ConnectionError;
+    public static PyException ConnectionError() {
+        return new PyException(Py.ConnectionError);
+    }
+
+    public static PyObject ConnectionResetError;
+    public static PyException ConnectionResetError() {
+        return new PyException(Py.ConnectionResetError);
+    }
+
     public static PyObject NotImplementedError;
     public static PyException NotImplementedError(String message) {
         return new PyException(Py.NotImplementedError, message);
@@ -846,6 +856,8 @@ public final class Py {
         EnvironmentError = initExc("EnvironmentError", exc, dict);
         IOError = initExc("IOError", exc, dict);
         OSError = initExc("OSError", exc, dict);
+        ConnectionError = initExc("ConnectionError", exc, dict);
+        ConnectionResetError = initExc("ConnectionResetError", exc, dict);
         EOFError = initExc("EOFError", exc, dict);
         RuntimeError = initExc("RuntimeError", exc, dict);
         NotImplementedError = initExc("NotImplementedError", exc, dict);
