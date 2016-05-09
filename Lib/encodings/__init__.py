@@ -30,7 +30,6 @@ Written by Marc-Andre Lemburg (mal@lemburg.com).
 
 import codecs
 from . import aliases, _java
-import collections
 
 _cache = {}
 _unknown = '--unknown--'
@@ -111,6 +110,16 @@ def search_function(encoding):
         mod = None
 
     if mod is None:
+        # First, see if we can load the encoding using java.nio.Charset;
+        # FIXME this could include encodings not known to Python, so we should test that out as well
+        entry, codecaliases = _java._java_factory(encoding)
+        if entry is not None:
+            _cache[encoding] = entry
+            for alias in codecaliases:
+                if alias not in _aliases:
+                    _aliases[alias] = modname
+            return entry
+
         # Cache misses
         _cache[encoding] = None
         return None
@@ -121,11 +130,11 @@ def search_function(encoding):
         if not 4 <= len(entry) <= 7:
             raise CodecRegistryError('module "%s" (%s) failed to register'
                                      % (mod.__name__, mod.__file__))
-        if not isinstance(entry[0], collections.Callable) or not isinstance(entry[1], collections.Callable) or \
-           (entry[2] is not None and not isinstance(entry[2], collections.Callable)) or \
-           (entry[3] is not None and not isinstance(entry[3], collections.Callable)) or \
-           (len(entry) > 4 and entry[4] is not None and not isinstance(entry[4], collections.Callable)) or \
-           (len(entry) > 5 and entry[5] is not None and not isinstance(entry[5], collections.Callable)):
+        if not callable(entry[0]) or not callable(entry[1]) or \
+           (entry[2] is not None and not callable(entry[2])) or \
+           (entry[3] is not None and not callable(entry[3])) or \
+           (len(entry) > 4 and entry[4] is not None and not callable(entry[4])) or \
+           (len(entry) > 5 and entry[5] is not None and not callable(entry[5])):
             raise CodecRegistryError('incompatible codecs in module "%s" (%s)'
                                      % (mod.__name__, mod.__file__))
         if len(entry)<7 or entry[6] is None:

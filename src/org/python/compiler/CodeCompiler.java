@@ -442,9 +442,23 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     }
 
     @Override
-    public Object visitFunctionDef(FunctionDef node) throws Exception {
-        String name = getName(node.getInternalName());
+    public Object visitAsyncFunctionDef(AsyncFunctionDef node) throws Exception {
+        String name = node.getInternalName();
+        java.util.List<expr> decs = node.getInternalDecorator_list();
+        java.util.List<stmt> body = node.getInternalBody();
+        return compileFunction(name, decs, body, node);
+    }
 
+    @Override
+    public Object visitFunctionDef(FunctionDef node) throws Exception {
+        String name = node.getInternalName();
+        java.util.List<expr> decs = node.getInternalDecorator_list();
+        java.util.List<stmt> body = node.getInternalBody();
+        return compileFunction(name, decs, body, node);
+    }
+
+    private Object compileFunction(String internalName, java.util.List<expr> decs, java.util.List<stmt> body, stmt node) throws Exception {
+        String name = getName(internalName);
         setline(node);
 
         ScopeInfo scope = module.getScopeInfo(node);
@@ -473,10 +487,10 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         scope.setup_closure();
         scope.dump();
-        module.codeConstant(new Suite(node, node.getInternalBody()), name, true, className, false,
+        module.codeConstant(new Suite(node, body), name, true, className, false,
                 false, node.getLine(), scope, cflags).get(code);
 
-        Str docStr = getDocStr(node.getInternalBody());
+        Str docStr = getDocStr(body);
         if (docStr != null) {
             visit(docStr);
         } else {
@@ -494,9 +508,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
                             PyObject[].class));
         }
 
-        applyDecorators(node.getInternalDecorator_list());
+        applyDecorators(decs);
 
-        set(new Name(node, node.getInternalName(), expr_contextType.Store));
+        set(new Name(node, internalName, expr_contextType.Store));
         return null;
     }
 
@@ -2223,22 +2237,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     @Override
     public Object visitListComp(ListComp node) throws Exception {
         code.new_(p(PyList.class));
-
         code.dup();
-        code.invokespecial(p(PyList.class), "<init>", sig(Void.TYPE));
-
-        code.dup();
-
-        code.ldc("append");
-
-        code.invokevirtual(p(PyObject.class), "__getattr__", sig(PyObject.class, String.class));
-        String tmp_append = "_[" + node.getLine() + "_" + node.getCharPositionInLine() + "]";
-
-        java.util.List<expr> args = new ArrayList<expr>();
-        args.add(node.getInternalElt());
-
-        finishComp(node, args, node.getInternalGenerators(), tmp_append);
-
+        visitInternalGenerators(node, node.getInternalElt(), node.getInternalGenerators());
+        code.invokespecial(p(PyList.class), "<init>", sig(Void.TYPE, PyObject.class));
         return null;
     }
 

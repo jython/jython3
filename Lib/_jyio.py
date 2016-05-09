@@ -18,8 +18,6 @@ will progressively be replaced with imports from _io. Eventually we should imple
 all this in Java, remove this module and revert io.py to its CPython original.
 """
 
-from __future__ import (print_function, unicode_literals)
-
 import _io  # Java implementations to replace this module
 
 import os
