@@ -68,6 +68,8 @@ public class exceptions extends PyObject implements ClassDictInit {
         buildClass(dict, "IOError", "EnvironmentError", "I/O operation failed.");
 
         buildClass(dict, "OSError", "EnvironmentError", "OS system call failed.");
+        buildClass(dict, "ConnectionError", "OSError", "Connection Error");
+        buildClass(dict, "ConnectionResetError", "ConnectionError", "Connection Reset");
 
         buildClass(dict, "RuntimeError", "StandardError", "Unspecified run-time error.");
 
