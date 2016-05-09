@@ -534,7 +534,7 @@ decorated
         }
         | async_funcdef
         {
-            stype = actions.castStmt($funcdef.tree);
+            stype = actions.castStmt($async_funcdef.tree);
             ((AsyncFunctionDef) stype).setDecorator_list(actions.castExprs($decorators.etypes));
         }
         )
@@ -2049,7 +2049,12 @@ testlist_comp[Token lpar]
                   etype = new org.python.antlr.ast.List($lpar, actions.castExprs($t), $expr::ctype);
                }
            }
-        | -> test_or_star_expr
+        |
+           {
+               if ($lpar.getText().equals("[")) {
+                  etype = new org.python.antlr.ast.List($lpar, actions.castExprs($t), $expr::ctype);
+               }
+           }
         | (comp_for[gens]
            {
                Collections.reverse(gens);
