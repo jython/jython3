@@ -4229,6 +4229,269 @@ public class BuiltinDocs {
     public final static String memoryview_tolist_doc = 
         "Return the data in the buffer as a list of elements.";
 
+    // Docs for <class 'generator'>
+    public final static String generator___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String generator___del___doc = 
+        "";
+
+    public final static String generator___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String generator___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String generator_doc = 
+        "";
+
+    public final static String generator___eq___doc = 
+        "Return self==value.";
+
+    public final static String generator___format___doc = 
+        "default object formatter";
+
+    public final static String generator___ge___doc = 
+        "Return self>=value.";
+
+    public final static String generator___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String generator___gt___doc = 
+        "Return self>value.";
+
+    public final static String generator___hash___doc = 
+        "Return hash(self).";
+
+    public final static String generator___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String generator___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String generator___le___doc = 
+        "Return self<=value.";
+
+    public final static String generator___lt___doc = 
+        "Return self<value.";
+
+    public final static String generator___name___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String generator___ne___doc = 
+        "Return self!=value.";
+
+    public final static String generator___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String generator___next___doc = 
+        "Implement next(self).";
+
+    public final static String generator___qualname___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String generator___reduce___doc = 
+        "helper for pickle";
+
+    public final static String generator___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String generator___repr___doc = 
+        "Return repr(self).";
+
+    public final static String generator___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String generator___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String generator___str___doc = 
+        "Return str(self).";
+
+    public final static String generator___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String generator_close_doc = 
+        "close() -> raise GeneratorExit inside generator.";
+
+    public final static String generator_gi_code_doc = 
+        "";
+
+    public final static String generator_gi_frame_doc = 
+        "";
+
+    public final static String generator_gi_running_doc = 
+        "";
+
+    public final static String generator_gi_yieldfrom_doc = 
+        "object being iterated by yield from, or None";
+
+    public final static String generator_send_doc = 
+        "send(arg) -> send 'arg' into generator,\n" + 
+        "return next yielded value or raise StopIteration.";
+
+    public final static String generator_throw_doc = 
+        "throw(typ[,val[,tb]]) -> raise exception in generator,\n" + 
+        "return next yielded value or raise StopIteration.";
+
+    // Docs for <class 'coroutine'>
+    public final static String coroutine___await___doc = 
+        "Return an iterator to be used in await expression.";
+
+    public final static String coroutine___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String coroutine___del___doc = 
+        "";
+
+    public final static String coroutine___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String coroutine___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String coroutine_doc = 
+        "";
+
+    public final static String coroutine___eq___doc = 
+        "Return self==value.";
+
+    public final static String coroutine___format___doc = 
+        "default object formatter";
+
+    public final static String coroutine___ge___doc = 
+        "Return self>=value.";
+
+    public final static String coroutine___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String coroutine___gt___doc = 
+        "Return self>value.";
+
+    public final static String coroutine___hash___doc = 
+        "Return hash(self).";
+
+    public final static String coroutine___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String coroutine___le___doc = 
+        "Return self<=value.";
+
+    public final static String coroutine___lt___doc = 
+        "Return self<value.";
+
+    public final static String coroutine___name___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String coroutine___ne___doc = 
+        "Return self!=value.";
+
+    public final static String coroutine___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String coroutine___qualname___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String coroutine___reduce___doc = 
+        "helper for pickle";
+
+    public final static String coroutine___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String coroutine___repr___doc = 
+        "Return repr(self).";
+
+    public final static String coroutine___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String coroutine___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String coroutine___str___doc = 
+        "Return str(self).";
+
+    public final static String coroutine___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String coroutine_close_doc = 
+        "close() -> raise GeneratorExit inside coroutine.";
+
+    public final static String coroutine_cr_await_doc = 
+        "object being awaited on, or None";
+
+    public final static String coroutine_cr_code_doc = 
+        "";
+
+    public final static String coroutine_cr_frame_doc = 
+        "";
+
+    public final static String coroutine_cr_running_doc = 
+        "";
+
+    public final static String coroutine_send_doc = 
+        "send(arg) -> send 'arg' into coroutine,\n" + 
+        "return next iterated value or raise StopIteration.";
+
+    public final static String coroutine_throw_doc = 
+        "throw(typ[,val[,tb]]) -> raise exception in coroutine,\n" + 
+        "return next iterated value or raise StopIteration.";
+
     // Docs for <class 'function'>
     public final static String function___annotations___doc = 
         "";

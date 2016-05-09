@@ -37,7 +37,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         return generator_send(value);
     }
 
-    @ExposedMethod
+    @ExposedMethod(doc = BuiltinDocs.generator_send_doc)
     final PyObject generator_send(PyObject value) {
         if (gi_frame == null) {
             throw Py.StopIteration("");
@@ -53,7 +53,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         return generator_throw$(type, value, tb);
     }
 
-    @ExposedMethod(names="throw", defaults={"null", "null"})
+    @ExposedMethod(names="throw", defaults={"null", "null"}, doc = BuiltinDocs.generator_throw_doc)
     final PyObject generator_throw$(PyObject type, PyObject value, PyObject tb) {
         if (tb == Py.None) {
             tb = null;
@@ -67,7 +67,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         return generator_close();
     }
 
-    @ExposedMethod
+    @ExposedMethod(doc = BuiltinDocs.generator_close_doc)
     final PyObject generator_close() {
         try {
             raiseException(Py.makeException(Py.GeneratorExit));
@@ -95,7 +95,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         return generator___iter__();
     }
 
-    @ExposedMethod
+    @ExposedMethod(doc = BuiltinDocs.generator___iter___doc)
     final PyObject generator___iter__() {
         return this;
     }
