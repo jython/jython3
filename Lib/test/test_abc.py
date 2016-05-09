@@ -26,8 +26,7 @@ class TestABC(unittest.TestCase):
         def bar(self): pass
         self.assertFalse(hasattr(bar, "__isabstractmethod__"))
 
-        class C:
-            __metaclass__ = abc.ABCMeta
+        class C(metaclass=abc.ABCMeta):
             @abc.abstractproperty
             def foo(self): return 3
         class D(C):
@@ -37,8 +36,7 @@ class TestABC(unittest.TestCase):
 
     def test_abstractmethod_integration(self):
         for abstractthing in [abc.abstractmethod, abc.abstractproperty]:
-            class C:
-                __metaclass__ = abc.ABCMeta
+            class C(metaclass=abc.ABCMeta):
                 @abstractthing
                 def foo(self): pass  # abstract
                 def bar(self): pass  # concrete
@@ -63,16 +61,16 @@ class TestABC(unittest.TestCase):
             self.assertTrue(isabstract(F))
 
     def test_subclass_oldstyle_class(self):
-        class A:
-            __metaclass__ = abc.ABCMeta
+        class A(metaclass=abc.ABCMeta):
+            pass
         class OldstyleClass:
             pass
         self.assertFalse(issubclass(OldstyleClass, A))
         self.assertFalse(issubclass(A, OldstyleClass))
 
     def test_isinstance_class(self):
-        class A:
-            __metaclass__ = abc.ABCMeta
+        class A(metaclass=abc.ABCMeta):
+            pass
         class OldstyleClass:
             pass
         self.assertFalse(isinstance(OldstyleClass, A))
@@ -82,8 +80,8 @@ class TestABC(unittest.TestCase):
         # self.assertTrue(isinstance(A, abc.ABCMeta))
 
     def test_registration_basics(self):
-        class A:
-            __metaclass__ = abc.ABCMeta
+        class A(metaclass=abc.ABCMeta):
+            pass
         class B(object):
             pass
         b = B()
@@ -105,8 +103,8 @@ class TestABC(unittest.TestCase):
         self.assertIsInstance(c, (A,))
 
     def test_isinstance_invalidation(self):
-        class A:
-            __metaclass__ = abc.ABCMeta
+        class A(metaclass=abc.ABCMeta):
+            pass
         class B(object):
             pass
         b = B()
@@ -117,8 +115,8 @@ class TestABC(unittest.TestCase):
         self.assertTrue(isinstance(b, (A,)))
 
     def test_registration_builtins(self):
-        class A:
-            __metaclass__ = abc.ABCMeta
+        class A(metaclass=abc.ABCMeta):
+            pass
         A.register(int)
         self.assertIsInstance(42, A)
         self.assertIsInstance(42, (A,))
@@ -133,8 +131,8 @@ class TestABC(unittest.TestCase):
         self.assertTrue(issubclass(str, (A,)))
 
     def test_registration_edge_cases(self):
-        class A:
-            __metaclass__ = abc.ABCMeta
+        class A(metaclass=abc.ABCMeta):
+            pass
         A.register(A)  # should pass silently
         class A1(A):
             pass
@@ -150,24 +148,24 @@ class TestABC(unittest.TestCase):
         C.register(B)  # ok
 
     def test_register_non_class(self):
-        class A(object):
-            __metaclass__ = abc.ABCMeta
+        class A(object, metaclass=abc.ABCMeta):
+            pass
         self.assertRaisesRegexp(TypeError, "Can only register classes",
                                 A.register, 4)
 
     def test_registration_transitiveness(self):
-        class A:
-            __metaclass__ = abc.ABCMeta
+        class A(metaclass=abc.ABCMeta):
+            pass
         self.assertTrue(issubclass(A, A))
         self.assertTrue(issubclass(A, (A,)))
-        class B:
-            __metaclass__ = abc.ABCMeta
+        class B(metaclass=abc.ABCMeta):
+            pass
         self.assertFalse(issubclass(A, B))
         self.assertFalse(issubclass(A, (B,)))
         self.assertFalse(issubclass(B, A))
         self.assertFalse(issubclass(B, (A,)))
-        class C:
-            __metaclass__ = abc.ABCMeta
+        class C(metaclass=abc.ABCMeta):
+            pass
         A.register(B)
         class B1(B):
             pass
@@ -195,8 +193,8 @@ class TestABC(unittest.TestCase):
         self.assertIsInstance(42, (A,))
 
     def test_all_new_methods_are_called(self):
-        class A:
-            __metaclass__ = abc.ABCMeta
+        class A(metaclass=abc.ABCMeta):
+            pass
         class B(object):
             counter = 0
             def __new__(cls):
@@ -211,8 +209,7 @@ class TestABC(unittest.TestCase):
     @test_support.cpython_only
     def test_cache_leak(self):
         # See issue #2521.
-        class A(object):
-            __metaclass__ = abc.ABCMeta
+        class A(object, metaclass=abc.ABCMeta):
             @abc.abstractmethod
             def f(self):
                 pass

@@ -1827,21 +1827,24 @@ public final class Py {
 
     // XXX: The following two makeClass overrides are *only* for the
     // old compiler, they should be removed when the newcompiler hits
-    public static PyObject makeClass(String name, PyObject[] bases, PyCode code) {
-        return makeClass(name, bases, code, null);
+    public static PyObject makeClass(String name, PyObject[] bases, PyObject metaclass, PyCode code) {
+        return makeClass(name, bases, metaclass, code, null);
     }
 
-    public static PyObject makeClass(String name, PyObject[] bases, PyCode code,
+    public static PyObject makeClass(String name, PyObject[] bases, PyObject metaclass, PyCode code,
                                      PyObject[] closure_cells) {
         ThreadState state = getThreadState();
         PyObject dict = code.call(state, Py.EmptyObjects, Py.NoKeywords,
                 state.frame.f_globals, Py.EmptyObjects, new PyTuple(closure_cells));
-        return makeClass(name, bases, dict);
+        return makeClass(name, bases, dict, metaclass);
+    }
+    public static PyObject makeClass(String name, PyObject base, PyObject dict) {
+        return makeClass(name, base, dict, null);
     }
 
-    public static PyObject makeClass(String name, PyObject base, PyObject dict) {
+    public static PyObject makeClass(String name, PyObject base, PyObject dict, PyObject metaclass) {
         PyObject[] bases = base == null ? EmptyObjects : new PyObject[] {base};
-        return makeClass(name, bases, dict);
+        return makeClass(name, bases, dict, metaclass);
     }
 
     /**
@@ -1854,8 +1857,10 @@ public final class Py {
      * @return a new Python Class PyObject
      */
     public static PyObject makeClass(String name, PyObject[] bases, PyObject dict) {
-        PyObject metaclass = dict.__finditem__("__metaclass__");
+        return makeClass(name, bases, dict, null);
+    }
 
+    public static PyObject makeClass(String name, PyObject[] bases, PyObject dict, PyObject metaclass) {
         if (metaclass == null) {
             if (bases.length != 0) {
                 PyObject base = bases[0];

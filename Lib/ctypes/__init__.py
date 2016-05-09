@@ -47,10 +47,10 @@ class _CData(object):
     def size(self):
         return self._jffi_type.size()
 
-class _ScalarCData(jffi.ScalarCData, _CData):
-    __metaclass__ = _CTypeMetaClass
+class _ScalarCData(jffi.ScalarCData, _CData, metaclass=_CTypeMetaClass):
+    pass
 
-    
+
 class _ArrayCData(object):
     def __len__(self):
         return self._jffi_type.length
@@ -130,11 +130,11 @@ class _UnionMetaClass(_AggregateMetaClass):
     def __new__(cls, name, bases, dict):
         return _AggregateMetaClass.__new_aggregate__(cls, name, bases, dict, union = True)
 
-class Structure(jffi.Structure, _CData):
-    __metaclass__ = _StructMetaClass
+class Structure(jffi.Structure, _CData, metaclass=_StructMetaClass):
+    pass
 
-class Union(jffi.Structure, _CData):
-    __metaclass__ = _UnionMetaClass
+class Union(jffi.Structure, _CData, metaclass=_UnionMetaClass):
+    pass
 
 def sizeof(type):
     if hasattr(type, '_jffi_type'):

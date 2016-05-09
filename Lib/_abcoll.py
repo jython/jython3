@@ -30,8 +30,7 @@ def _hasattr(C, attr):
         return hasattr(C, attr)
 
 
-class Hashable:
-    __metaclass__ = ABCMeta
+class Hashable(metaclass=ABCMeta):
 
     @abstractmethod
     def __hash__(self):
@@ -53,8 +52,7 @@ class Hashable:
         return NotImplemented
 
 
-class Iterable:
-    __metaclass__ = ABCMeta
+class Iterable(metaclass=ABCMeta):
 
     @abstractmethod
     def __iter__(self):
@@ -88,8 +86,7 @@ class Iterator(Iterable):
         return NotImplemented
 
 
-class Sized:
-    __metaclass__ = ABCMeta
+class Sized(metaclass=ABCMeta):
 
     @abstractmethod
     def __len__(self):
@@ -103,8 +100,7 @@ class Sized:
         return NotImplemented
 
 
-class Container:
-    __metaclass__ = ABCMeta
+class Container(metaclass=ABCMeta):
 
     @abstractmethod
     def __contains__(self, x):
@@ -118,8 +114,7 @@ class Container:
         return NotImplemented
 
 
-class Callable:
-    __metaclass__ = ABCMeta
+class Callable(metaclass=ABCMeta):
 
     @abstractmethod
     def __call__(self, *args, **kwds):

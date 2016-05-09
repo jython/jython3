@@ -440,8 +440,7 @@ class TestOneTrickPonyABCs(ABCTestCase):
 
     def test_registration(self):
         for B in Hashable, Iterable, Iterator, Sized, Container, Callable:
-            class C:
-                __metaclass__ = type
+            class C(metaclass=type):
                 __hash__ = None  # Make sure it isn't hashable by default
             self.assertFalse(issubclass(C, B), B.__name__)
             B.register(C)

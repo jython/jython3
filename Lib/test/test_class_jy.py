@@ -169,8 +169,8 @@ class ClassGeneralTestCase(unittest.TestCase):
             __slots__ = 'foo'
         # A regression up until 2.5a3: Defining Bar would cause a
         # TypeError "mro() returned base with unsuitable layout ('Bar')"
-        class Bar(SlottedBase):
-            __metaclass__ = Meta
+        class Bar(SlottedBase, metaclass=Meta):
+            pass
 
     def test_slotted_diamond_problem_bug(self):
         class A(object):
@@ -199,8 +199,8 @@ class ClassGeneralTestCase(unittest.TestCase):
             def __init__(cls, name, bases, attrs):
                 cls.counter += 1
 
-        class Base(object):
-            __metaclass__ = Meta
+        class Base(object, metaclass=Meta):
+            pass
         Foo = type('Foo', (Base,), {})
         # Previously we called the wrong __new__
         self.assertEqual(Foo.spam, 'Foo')
@@ -292,8 +292,7 @@ class ClassLocalsTestCase(unittest.TestCase):
         class SomeClass(object):
             pass
 
-        class MyFields(object):
-            __metaclass__ = FieldGathererMeta
+        class MyFields(object, metaclass=FieldGathererMeta):
             jython = 'foo'
             java = ('bar', SomeClass())
         # Technically SomeClass and FieldGathererMeta are actually
@@ -301,8 +300,7 @@ class ClassLocalsTestCase(unittest.TestCase):
         # them to be omitted from its class_dict
         self.assertEqual(MyFields.fields, ['JAVA', 'JYTHON'])
 
-        class MyFields2(object):
-            __metaclass__ = FieldGathererMeta
+        class MyFields2(object, metaclass=FieldGathererMeta):
             jython = 'foo'
             java = ('bar', SomeClass())
             locals()
@@ -372,16 +370,15 @@ class ClassMetaclassRepr(unittest.TestCase):
             def __new__(cls, name, bases, attrs):
                 return super(FooMetaclass, cls).__new__(cls, name, bases, attrs)
 
-        class Foo(object):
-            __metaclass__ = FooMetaclass
+        class Foo(object, metaclass=FooMetaclass):
+            pass
         self.assertEqual("<class '%s.Foo'>" % __name__, repr(Foo))
 
     def test_metaclass_str(self):
         class Foo(type):
             def __repr__(cls):
                 return 'foo'
-        class Bar(object):
-            __metaclass__ = Foo
+        class Bar(object, metaclass=Foo):
         self.assertEqual(repr(Bar), 'foo')
         # type.__str__ previously broke this
         self.assertEqual(str(Bar), 'foo')
