@@ -5035,6 +5035,266 @@ public class BuiltinDocs {
     public final static String traceback_tb_next_doc = 
         "";
 
+    // Docs for <class '_sre.SRE_Pattern'>
+    public final static String SRE_Pattern___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String SRE_Pattern___copy___doc = 
+        "";
+
+    public final static String SRE_Pattern___deepcopy___doc = 
+        "";
+
+    public final static String SRE_Pattern___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String SRE_Pattern___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String SRE_Pattern_doc = 
+        "Compiled regular expression objects";
+
+    public final static String SRE_Pattern___eq___doc = 
+        "Return self==value.";
+
+    public final static String SRE_Pattern___format___doc = 
+        "default object formatter";
+
+    public final static String SRE_Pattern___ge___doc = 
+        "Return self>=value.";
+
+    public final static String SRE_Pattern___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String SRE_Pattern___gt___doc = 
+        "Return self>value.";
+
+    public final static String SRE_Pattern___hash___doc = 
+        "Return hash(self).";
+
+    public final static String SRE_Pattern___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String SRE_Pattern___le___doc = 
+        "Return self<=value.";
+
+    public final static String SRE_Pattern___lt___doc = 
+        "Return self<value.";
+
+    public final static String SRE_Pattern___ne___doc = 
+        "Return self!=value.";
+
+    public final static String SRE_Pattern___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String SRE_Pattern___reduce___doc = 
+        "helper for pickle";
+
+    public final static String SRE_Pattern___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String SRE_Pattern___repr___doc = 
+        "Return repr(self).";
+
+    public final static String SRE_Pattern___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String SRE_Pattern___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String SRE_Pattern___str___doc = 
+        "Return str(self).";
+
+    public final static String SRE_Pattern___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String SRE_Pattern_findall_doc = 
+        "Return a list of all non-overlapping matches of pattern in string.";
+
+    public final static String SRE_Pattern_finditer_doc = 
+        "Return an iterator over all non-overlapping matches for the RE pattern in string.\n" + 
+        "\n" + 
+        "For each match, the iterator returns a match object.";
+
+    public final static String SRE_Pattern_flags_doc = 
+        "";
+
+    public final static String SRE_Pattern_fullmatch_doc = 
+        "Matches against all of the string";
+
+    public final static String SRE_Pattern_groupindex_doc = 
+        "A dictionary mapping group names to group numbers.";
+
+    public final static String SRE_Pattern_groups_doc = 
+        "";
+
+    public final static String SRE_Pattern_match_doc = 
+        "Matches zero or more characters at the beginning of the string.";
+
+    public final static String SRE_Pattern_pattern_doc = 
+        "";
+
+    public final static String SRE_Pattern_scanner_doc = 
+        "";
+
+    public final static String SRE_Pattern_search_doc = 
+        "Scan through string looking for a match, and return a corresponding match object instance.\n" + 
+        "\n" + 
+        "Return None if no position in the string matches.";
+
+    public final static String SRE_Pattern_split_doc = 
+        "Split string by the occurrences of pattern.";
+
+    public final static String SRE_Pattern_sub_doc = 
+        "Return the string obtained by replacing the leftmost non-overlapping occurrences of pattern in string by the replacement repl.";
+
+    public final static String SRE_Pattern_subn_doc = 
+        "Return the tuple (new_string, number_of_subs_made) found by replacing the leftmost non-overlapping occurrences of pattern with the replacement repl.";
+
+    // Docs for <class '_sre.SRE_Match'>
+    public final static String SRE_Match___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String SRE_Match___copy___doc = 
+        "";
+
+    public final static String SRE_Match___deepcopy___doc = 
+        "";
+
+    public final static String SRE_Match___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String SRE_Match___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String SRE_Match_doc = 
+        "The result of re.match() and re.search().\n" + 
+        "Match objects always have a boolean value of True.";
+
+    public final static String SRE_Match___eq___doc = 
+        "Return self==value.";
+
+    public final static String SRE_Match___format___doc = 
+        "default object formatter";
+
+    public final static String SRE_Match___ge___doc = 
+        "Return self>=value.";
+
+    public final static String SRE_Match___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String SRE_Match___gt___doc = 
+        "Return self>value.";
+
+    public final static String SRE_Match___hash___doc = 
+        "Return hash(self).";
+
+    public final static String SRE_Match___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String SRE_Match___le___doc = 
+        "Return self<=value.";
+
+    public final static String SRE_Match___lt___doc = 
+        "Return self<value.";
+
+    public final static String SRE_Match___ne___doc = 
+        "Return self!=value.";
+
+    public final static String SRE_Match___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String SRE_Match___reduce___doc = 
+        "helper for pickle";
+
+    public final static String SRE_Match___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String SRE_Match___repr___doc = 
+        "Return repr(self).";
+
+    public final static String SRE_Match___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String SRE_Match___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String SRE_Match___str___doc = 
+        "Return str(self).";
+
+    public final static String SRE_Match___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String SRE_Match_end_doc = 
+        "Return index of the end of the substring matched by group.";
+
+    public final static String SRE_Match_endpos_doc = 
+        "";
+
+    public final static String SRE_Match_expand_doc = 
+        "Return the string obtained by doing backslash substitution on the string template, as done by the sub() method.";
+
+    public final static String SRE_Match_group_doc = 
+        "group([group1, ...]) -> str or tuple.\n" + 
+        "    Return subgroup(s) of the match by indices or names.\n" + 
+        "    For 0 returns the entire match.";
+
+    public final static String SRE_Match_groupdict_doc = 
+        "Return a dictionary containing all the named subgroups of the match, keyed by the subgroup name.\n" + 
+        "\n" + 
+        "  default\n" + 
+        "    Is used for groups that did not participate in the match.";
+
+    public final static String SRE_Match_groups_doc = 
+        "Return a tuple containing all the subgroups of the match, from 1.\n" + 
+        "\n" + 
+        "  default\n" + 
+        "    Is used for groups that did not participate in the match.";
+
+    public final static String SRE_Match_lastgroup_doc = 
+        "";
+
+    public final static String SRE_Match_lastindex_doc = 
+        "";
+
+    public final static String SRE_Match_pos_doc = 
+        "";
+
+    public final static String SRE_Match_re_doc = 
+        "";
+
+    public final static String SRE_Match_regs_doc = 
+        "";
+
+    public final static String SRE_Match_span_doc = 
+        "For MatchObject m, return the 2-tuple (m.start(group), m.end(group)).";
+
+    public final static String SRE_Match_start_doc = 
+        "Return index of the start of the substring matched by group.";
+
+    public final static String SRE_Match_string_doc = 
+        "";
+
     // Docs for <class 'io.TextIOBase'>
     public final static String TextIOBase___abstractmethods___doc = 
         "";

@@ -16,6 +16,7 @@
 package org.python.modules.sre;
 
 import org.python.core.ArgParser;
+import org.python.core.BuiltinDocs;
 import org.python.core.Py;
 import org.python.core.PyDictionary;
 import org.python.core.PyInteger;
@@ -25,8 +26,10 @@ import org.python.core.PyTuple;
 import org.python.core.Traverseproc;
 import org.python.core.Visitproc;
 import org.python.core.imp;
+import org.python.expose.ExposedType;
 
 
+@ExposedType(name = "_sre.SRE_Match", doc = BuiltinDocs.SRE_Match_doc)
 public class MatchObject extends PyObject implements Traverseproc {
     public PyString string; /* link to the target string */
     public PyObject regs; /* cached list of matching spans */
