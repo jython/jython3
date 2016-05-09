@@ -36,7 +36,7 @@ public abstract class BaseSet extends PyObject implements Set, Traverseproc {
      * Update the underlying set with the contents of the iterable.
      */
     protected static Set<PyObject> _update(Set<PyObject> set, PyObject data) {
-        if (data == null) {
+        if (data == null || data == Py.None) {
             return set;
         }
         if (data instanceof BaseSet) {

@@ -153,9 +153,12 @@ smtpd.py
 smtplib.py
 sndhdr.py
 socketserver.py
-sre*.py
+sre_compile.py
+sre_constants.py
+sre_parse.py
 stat.py
 string.py
+stringprep.py
 StringIO.py
 symbol.py
 sysconfig.py
@@ -171,6 +174,7 @@ traceback.py
 tty.py
 types.py
 tzparse.py
+unicodedata.py
 urllib/*.py
 user.py
 uu.py

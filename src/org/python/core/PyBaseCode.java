@@ -122,6 +122,8 @@ public abstract class PyBaseCode extends PyCode {
         PyFrame frame = new PyFrame(this, globals);
         if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR)) {
             return new PyGenerator(frame, closure);
+        } else if (co_flags.isFlagSet(CodeFlag.CO_COROUTINE)) {
+            return new PyCoroutine(frame, closure);
         }
         return call(state, frame, closure);
     }
@@ -137,6 +139,8 @@ public abstract class PyBaseCode extends PyCode {
         frame.f_fastlocals[0] = arg1;
         if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR)) {
             return new PyGenerator(frame, closure);
+        } else if (co_flags.isFlagSet(CodeFlag.CO_COROUTINE)) {
+            return new PyCoroutine(frame, closure);
         }
         return call(state, frame, closure);
     }
@@ -153,6 +157,8 @@ public abstract class PyBaseCode extends PyCode {
         frame.f_fastlocals[1] = arg2;
         if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR)) {
             return new PyGenerator(frame, closure);
+        } else if (co_flags.isFlagSet(CodeFlag.CO_COROUTINE)) {
+            return new PyCoroutine(frame, closure);
         }
         return call(state, frame, closure);
     }
@@ -171,6 +177,8 @@ public abstract class PyBaseCode extends PyCode {
         frame.f_fastlocals[2] = arg3;
         if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR)) {
             return new PyGenerator(frame, closure);
+        } else if (co_flags.isFlagSet(CodeFlag.CO_COROUTINE)) {
+            return new PyCoroutine(frame, closure);
         }
         return call(state, frame, closure);
     }
@@ -189,6 +197,8 @@ public abstract class PyBaseCode extends PyCode {
         frame.f_fastlocals[3] = arg4;
         if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR)) {
             return new PyGenerator(frame, closure);
+        } else if (co_flags.isFlagSet(CodeFlag.CO_COROUTINE)) {
+            return new PyCoroutine(frame, closure);
         }
         return call(state, frame, closure);
     }
@@ -334,6 +344,8 @@ public abstract class PyBaseCode extends PyCode {
 
         if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR)) {
             return new PyGenerator(frame, closure);
+        } else if (co_flags.isFlagSet(CodeFlag.CO_COROUTINE)) {
+            return new PyCoroutine(frame, closure);
         }
         return call(state, frame, closure);
     }
