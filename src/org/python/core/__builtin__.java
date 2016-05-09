@@ -451,7 +451,7 @@ public class __builtin__ {
     public static PyObject dir(PyObject o) {
         PyObject ret = o.__dir__();
         if (!Py.isInstance(ret, PyList.TYPE)) {
-            throw Py.TypeError("__dir__() must return a list, not " + ret.getType().fastGetName());
+            ret = new PyList(ret);
         }
         ((PyList)ret).sort();
         return ret;
