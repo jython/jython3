@@ -7,7 +7,7 @@ import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedType;
 
-@ExposedType(name = "generator", base = PyObject.class, isBaseType = false)
+@ExposedType(name = "generator", base = PyObject.class, isBaseType = false, doc = BuiltinDocs.generator_doc)
 public class PyGenerator extends PyIterator implements FinalizableBuiltin {
 
     public static final PyType TYPE = PyType.fromClass(PyGenerator.class);
@@ -40,7 +40,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
     @ExposedMethod(doc = BuiltinDocs.generator_send_doc)
     final PyObject generator_send(PyObject value) {
         if (gi_frame == null) {
-            throw Py.StopIteration("");
+            throw Py.StopIteration();
         }
         if (gi_frame.f_lasti == 0 && value != Py.None) {
             throw Py.TypeError("can't send non-None value to a just-started generator");

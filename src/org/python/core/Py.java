@@ -312,8 +312,11 @@ public final class Py {
     }
     public static PyObject StopIteration;
 
-    public static PyException StopIteration(String message) {
-        return new PyException(Py.StopIteration, message);
+    public static PyException StopIteration() {
+        return new PyException(Py.StopIteration);
+    }
+    public static PyException StopIteration(PyObject value) {
+        return new PyException(Py.StopIteration, value);
     }
     public static PyObject GeneratorExit;
 

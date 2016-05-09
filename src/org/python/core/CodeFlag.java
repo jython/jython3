@@ -35,7 +35,14 @@ public enum CodeFlag {
      */
     CO_NESTED(0x0010),
     /**
+     *  The CO_COROUTINE flag is set for coroutine functions (defined with
+     *  ``async def`` keywords)
+     */
+    CO_COROUTINE(0x0080),
+    CO_ITERABLE_COROUTINE(0x0100),
+    /**
      * Denotes that generators are enabled in the code block.
+     * No longer used.
      */
     CO_GENERATOR_ALLOWED(0x1000),
     /**
@@ -58,7 +65,9 @@ public enum CodeFlag {
     /**
      * unicode literals.
      */
-    CO_FUTURE_UNICODE_LITERALS(0x20000);
+    CO_FUTURE_UNICODE_LITERALS(0x20000),
+
+    CO_FUTURE_GENERATOR_STOP(0x80000);
 
 
     public final int flag;

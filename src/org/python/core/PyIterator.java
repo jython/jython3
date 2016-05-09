@@ -52,7 +52,7 @@ public abstract class PyIterator extends PyObject implements Iterable<Object>, T
                 stopException = null;
                 throw toThrow;
             }
-            throw Py.StopIteration("");
+            throw Py.StopIteration();
         }
         return ret;
     }

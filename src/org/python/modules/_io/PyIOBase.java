@@ -667,7 +667,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
         // Implement directly. Calling __iternext__() fails when PyIOBaseDerived is considered.
         PyObject line = invoke("readline");
         if (!line.__bool__()) {
-            throw Py.StopIteration("");
+            throw Py.StopIteration();
         }
         return line;
     }

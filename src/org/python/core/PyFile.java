@@ -421,7 +421,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
     final PyObject file_next() {
         PyObject ret = file___iternext__();
         if (ret == null) {
-            throw Py.StopIteration("");
+            throw Py.StopIteration();
         }
         return ret;
     }
