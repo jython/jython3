@@ -3,24 +3,24 @@
 def test(x):
     return x
 
-assert 7 == apply(test, (7,))
-assert 7 == apply(test, (), {'x': 7})
+assert 7 == test(*(7,))
+assert 7 == test(*(), **{'x': 7})
 
 try:
-    apply(test, (1,), 7)
-    print 'TypeError expected'
+    test(*(1,), **7)
+    print('TypeError expected')
 except TypeError:
     pass
 
 try:
-    apply(test, (1,), {7:3})
-    print 'TypeError expected'
+    test(*(1,), **{7:3})
+    print('TypeError expected')
 except TypeError:
     pass
 
 try:
-    apply(test, (1,), None)
-    print 'TypeError expected'
+    test(*(1,), **None)
+    print('TypeError expected')
 except TypeError:
     pass
 

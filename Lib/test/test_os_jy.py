@@ -41,11 +41,11 @@ class OSFileTestCase(unittest.TestCase):
 
     def test_issue1825(self):
         os.remove(test_support.TESTFN)
-        testfnu = unicode(test_support.TESTFN)
+        testfnu = str(test_support.TESTFN)
         try:
             os.open(testfnu, os.O_RDONLY)
-        except OSError, e:
-            self.assertTrue(isinstance(e.filename, unicode))
+        except OSError as e:
+            self.assertTrue(isinstance(e.filename, str))
             self.assertEqual(e.filename, testfnu)
         else:
             self.assertTrue(False)
@@ -55,8 +55,8 @@ class OSFileTestCase(unittest.TestCase):
         for fn in (os.rmdir,):
             try:
                 fn(testfnu)
-            except OSError, e:
-                self.assertTrue(isinstance(e.filename, unicode))
+            except OSError as e:
+                self.assertTrue(isinstance(e.filename, str))
                 self.assertEqual(e.filename, testfnu)
             else:
                 self.assertTrue(False)
@@ -183,7 +183,7 @@ class OSWriteTestCase(unittest.TestCase):
 
     def test_write_buffer(self): # Issue 2062
         s = b"Big Red Book"
-        for type2test in (str, buffer, bytearray, (lambda x : array.array('b',x))) :
+        for type2test in (str, buffer, bytearray, (lambda x : array.array('b', x))) :
             self.do_write(type2test(s))
 
         with memoryview(s) as m :
@@ -197,18 +197,18 @@ class OSWriteTestCase(unittest.TestCase):
 class UnicodeTestCase(unittest.TestCase):
 
     def test_env(self):
-        with test_support.temp_cwd(name=u"tempcwd-中文"):
+        with test_support.temp_cwd(name="tempcwd-中文"):
             newenv = os.environ.copy()
-            newenv["TEST_HOME"] = u"首页"
+            newenv["TEST_HOME"] = "首页"
             p = subprocess.Popen([sys.executable, "-c",
                                   'import sys,os;' \
                                   'sys.stdout.write(os.getenv("TEST_HOME").encode("utf-8"))'],
                                  stdout=subprocess.PIPE,
                                  env=newenv)
-            self.assertEqual(p.stdout.read().decode("utf-8"), u"首页")
+            self.assertEqual(p.stdout.read().decode("utf-8"), "首页")
     
     def test_getcwd(self):
-        with test_support.temp_cwd(name=u"tempcwd-中文") as temp_cwd:
+        with test_support.temp_cwd(name="tempcwd-中文") as temp_cwd:
             p = subprocess.Popen([sys.executable, "-c",
                                   'import sys,os;' \
                                   'sys.stdout.write(os.getcwd().encode("utf-8"))'],
@@ -221,9 +221,9 @@ class UnicodeTestCase(unittest.TestCase):
         with test_support.temp_cwd() as new_cwd:
             unicode_path = os.path.join(".", "unicode")
             self.assertIs(type(unicode_path), str)
-            chinese_path = os.path.join(unicode_path, u"中文")
-            self.assertIs(type(chinese_path), unicode)
-            home_path = os.path.join(chinese_path, u"首页")
+            chinese_path = os.path.join(unicode_path, "中文")
+            self.assertIs(type(chinese_path), str)
+            home_path = os.path.join(chinese_path, "首页")
             os.makedirs(home_path)
             
             with open(os.path.join(home_path, "test.txt"), "w") as test_file:
@@ -231,34 +231,34 @@ class UnicodeTestCase(unittest.TestCase):
 
             # Verify works with str paths, returning Unicode as necessary
             entries = os.listdir(unicode_path)
-            self.assertIn(u"中文", entries)
+            self.assertIn("中文", entries)
 
             # Verify works with Unicode paths
             entries = os.listdir(chinese_path)
-            self.assertIn(u"首页", entries)
+            self.assertIn("首页", entries)
            
             # glob.glob builds on os.listdir; note that we don't use
             # Unicode paths in the arg to glob
             self.assertEqual(
                 glob.glob(os.path.join("unicode", "*")),
-                [os.path.join(u"unicode", u"中文")])
+                [os.path.join("unicode", "中文")])
             self.assertEqual(
                 glob.glob(os.path.join("unicode", "*", "*")),
-                [os.path.join(u"unicode", u"中文", u"首页")])
+                [os.path.join("unicode", "中文", "首页")])
             self.assertEqual(
                 glob.glob(os.path.join("unicode", "*", "*", "*")),
-                [os.path.join(u"unicode", u"中文", u"首页", "test.txt")])
+                [os.path.join("unicode", "中文", "首页", "test.txt")])
 
             # Now use a Unicode path as well as in the glob arg
             self.assertEqual(
-                glob.glob(os.path.join(u"unicode", "*")),
-                [os.path.join(u"unicode", u"中文")])
+                glob.glob(os.path.join("unicode", "*")),
+                [os.path.join("unicode", "中文")])
             self.assertEqual(
-                glob.glob(os.path.join(u"unicode", "*", "*")),
-                [os.path.join(u"unicode", u"中文", u"首页")])
+                glob.glob(os.path.join("unicode", "*", "*")),
+                [os.path.join("unicode", "中文", "首页")])
             self.assertEqual(
-                glob.glob(os.path.join(u"unicode", "*", "*", "*")),
-                [os.path.join(u"unicode", u"中文", u"首页", "test.txt")])
+                glob.glob(os.path.join("unicode", "*", "*", "*")),
+                [os.path.join("unicode", "中文", "首页", "test.txt")])
  
             # Verify Java integration. But we will need to construct
             # an absolute path since chdir doesn't work with Java
@@ -421,8 +421,8 @@ class SymbolicLinkTestCase(unittest.TestCase):
             source = os.path.join(new_cwd, "source")
             os.symlink(target, source)
             self.assertEqual(os.readlink(source), target)
-            self.assertEqual(os.readlink(unicode(source)), unicode(target))
-            self.assertIsInstance(os.readlink(unicode(source)), unicode)
+            self.assertEqual(os.readlink(str(source)), str(target))
+            self.assertIsInstance(os.readlink(str(source)), str)
             
     def test_readlink_non_symlink(self):
         """os.readlink of a non symbolic link should raise an error"""

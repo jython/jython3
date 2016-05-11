@@ -1,5 +1,5 @@
 def test():
-    print noname
+    print(noname)
 
 def foo():
     try:

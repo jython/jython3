@@ -40,7 +40,7 @@ class ThreadingLocalTest(unittest.TestCase):
         local.someothervar = None
         gc.collect()
         deadlist = [weak for weak in weaklist if weak() is None]
-        self.assert_(len(deadlist) in (n-1, n), (n, len(deadlist)))
+        self.assertTrue(len(deadlist) in (n-1, n), (n, len(deadlist)))
 
     def test_derived(self):
         # Issue 3088: if there is a threads switch inside the __init__
@@ -114,7 +114,7 @@ def test_main():
     suite.addTest(unittest.makeSuite(ThreadingLocalTest))
 
     try:
-        from thread import _local
+        from _thread import _local
     except ImportError:
         pass
     else:

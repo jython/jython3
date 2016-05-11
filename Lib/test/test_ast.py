@@ -3,7 +3,7 @@ from test import test_support
 import ast
 
 def to_tuple(t):
-    if t is None or isinstance(t, (basestring, int, long, complex)):
+    if t is None or isinstance(t, (str, int, complex)):
         return t
     elif isinstance(t, list):
         return [to_tuple(e) for e in t]
@@ -136,7 +136,7 @@ class AST_Tests(unittest.TestCase):
             return
         if isinstance(ast_node, (ast.expr, ast.stmt, ast.excepthandler)):
             node_pos = (ast_node.lineno, ast_node.col_offset)
-            self.assert_(node_pos >= parent_pos)
+            self.assertTrue(node_pos >= parent_pos)
             parent_pos = (ast_node.lineno, ast_node.col_offset)
         for name in ast_node._fields:
             value = getattr(ast_node, name)
@@ -150,27 +150,27 @@ class AST_Tests(unittest.TestCase):
         for input, output, kind in ((exec_tests, exec_results, "exec"),
                                     (single_tests, single_results, "single"),
                                     (eval_tests, eval_results, "eval")):
-            for i, o in itertools.izip(input, output):
+            for i, o in zip(input, output):
                 ast_tree = compile(i, "?", kind, ast.PyCF_ONLY_AST)
-                self.assertEquals(to_tuple(ast_tree), o)
+                self.assertEqual(to_tuple(ast_tree), o)
                 self._assert_order(ast_tree, (0, 0))
 
     def test_nodeclasses(self):
         x = ast.BinOp(1, 2, 3, lineno=0)
-        self.assertEquals(x.left.n, 1)
-        self.assertEquals(int(x.op), 2)
-        self.assertEquals(x.right.n, 3)
-        self.assertEquals(x.lineno, 0)
+        self.assertEqual(x.left.n, 1)
+        self.assertEqual(int(x.op), 2)
+        self.assertEqual(x.right.n, 3)
+        self.assertEqual(x.lineno, 0)
 
         # node raises exception when not given enough arguments
         self.assertRaises(TypeError, ast.BinOp, 1, 2)
 
         # can set attributes through kwargs too
         x = ast.BinOp(left=1, op=2, right=3, lineno=0)
-        self.assertEquals(x.left.n, 1)
-        self.assertEquals(int(x.op), 2)
-        self.assertEquals(x.right.n, 3)
-        self.assertEquals(x.lineno, 0)
+        self.assertEqual(x.left.n, 1)
+        self.assertEqual(int(x.op), 2)
+        self.assertEqual(x.right.n, 3)
+        self.assertEqual(x.lineno, 0)
 
         # this used to fail because Sub._fields was None
         x = ast.Sub()
@@ -179,7 +179,7 @@ class AST_Tests(unittest.TestCase):
         import pickle
         mods = [pickle]
         try:
-            import cPickle
+            import pickle
             mods.append(cPickle)
         except ImportError:
             pass
@@ -188,7 +188,7 @@ class AST_Tests(unittest.TestCase):
             for protocol in protocols:
                 for ast in (compile(i, "?", "exec", 0x400) for i in exec_tests):
                     ast2 = mod.loads(mod.dumps(ast, protocol))
-                    self.assertEquals(to_tuple(ast2), to_tuple(ast))
+                    self.assertEqual(to_tuple(ast2), to_tuple(ast))
 
 
 class ASTHelpers_Test(unittest.TestCase):
@@ -275,7 +275,7 @@ class ASTHelpers_Test(unittest.TestCase):
         self.assertEqual(iterator.next().id, 'spam')
         self.assertEqual(iterator.next().n, 23)
         self.assertEqual(iterator.next().n, 42)
-        self.assertEqual(ast.dump(iterator.next()),
+        self.assertEqual(ast.dump(next(iterator)),
             "keyword(arg='eggs', value=Str(s='leek'))"
         )
 
@@ -303,11 +303,11 @@ def main():
     if sys.argv[1:] == ['-g']:
         for statements, kind in ((exec_tests, "exec"), (single_tests, "single"),
                                  (eval_tests, "eval")):
-            print kind+"_results = ["
+            print(kind+"_results = [")
             for s in statements:
-                print repr(to_tuple(compile(s, "?", kind, 0x400)))+","
-            print "]"
-        print "main()"
+                print(repr(to_tuple(compile(s, "?", kind, 0x400)))+",")
+            print("]")
+        print("main()")
         raise SystemExit
     test_main()
 
@@ -356,7 +356,7 @@ eval_results = [
 ('Expression', ('Compare', (1, 0), ('Num', (1, 0), 1), [('Lt',), ('Lt',)], [('Num', (1, 4), 2), ('Num', (1, 8), 3)])),
 ('Expression', ('Call', (1, 0), ('Name', (1, 0), 'f', ('Load',)), [('Num', (1, 2), 1), ('Num', (1, 4), 2)], [('keyword', 'c', ('Num', (1, 8), 3))], ('Name', (1, 11), 'd', ('Load',)), ('Name', (1, 15), 'e', ('Load',)))),
 ('Expression', ('Repr', (1, 0), ('Name', (1, 1), 'v', ('Load',)))),
-('Expression', ('Num', (1, 0), 10L)),
+('Expression', ('Num', (1, 0), 10)),
 ('Expression', ('Str', (1, 0), 'string')),
 ('Expression', ('Attribute', (1, 0), ('Name', (1, 0), 'a', ('Load',)), 'b', ('Load',))),
 ('Expression', ('Subscript', (1, 0), ('Name', (1, 0), 'a', ('Load',)), ('Slice', ('Name', (1, 2), 'b', ('Load',)), ('Name', (1, 4), 'c', ('Load',)), None), ('Load',))),

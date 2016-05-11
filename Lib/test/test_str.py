@@ -20,7 +20,7 @@ class StrTest(
     def test_basic_creation(self):
         self.assertEqual(str(''), '')
         self.assertEqual(str(0), '0')
-        self.assertEqual(str(0L), '0')
+        self.assertEqual(str(0), '0')
         self.assertEqual(str(()), '()')
         self.assertEqual(str([]), '[]')
         self.assertEqual(str({}), '{}')
@@ -39,7 +39,7 @@ class StrTest(
         # Make sure __str__() behaves properly
         class Foo0:
             def __unicode__(self):
-                return u"foo"
+                return "foo"
 
         class Foo1:
             def __str__(self):
@@ -51,28 +51,28 @@ class StrTest(
 
         class Foo3(object):
             def __str__(self):
-                return u"foo"
+                return "foo"
 
-        class Foo4(unicode):
+        class Foo4(str):
             def __str__(self):
-                return u"foo"
+                return "foo"
 
         class Foo5(str):
             def __str__(self):
-                return u"foo"
+                return "foo"
 
         class Foo6(str):
             def __str__(self):
                 return "foos"
 
             def __unicode__(self):
-                return u"foou"
+                return "foou"
 
-        class Foo7(unicode):
+        class Foo7(str):
             def __str__(self):
                 return "foos"
             def __unicode__(self):
-                return u"foou"
+                return "foou"
 
         class Foo8(str):
             def __new__(cls, content=""):
@@ -96,15 +96,15 @@ class StrTest(
         self.assertEqual(str(Foo7("bar")), "foos")
         self.assertEqual(str(Foo8("foo")), "foofoo")
         self.assertEqual(str(Foo9("foo")), "string")
-        self.assertEqual(unicode(Foo9("foo")), u"not unicode")
+        self.assertEqual(str(Foo9("foo")), "not unicode")
 
     def test_expandtabs_overflows_gracefully(self):
         # This test only affects 32-bit platforms because expandtabs can only take
         # an int as the max value, not a 64-bit C long.  If expandtabs is changed
         # to take a 64-bit long, this test should apply to all platforms.
-        if sys.maxint > (1 << 32) or struct.calcsize('P') != 4:
+        if sys.maxsize > (1 << 32) or struct.calcsize('P') != 4:
             return
-        self.assertRaises(OverflowError, 't\tt\t'.expandtabs, sys.maxint)
+        self.assertRaises(OverflowError, 't\tt\t'.expandtabs, sys.maxsize)
 
     def test__format__(self):
         def test(value, format, expected):
@@ -420,9 +420,9 @@ class StrTest(
     if not test_support.is_jython:
         def test_startswith_endswith_errors(self):
             with self.assertRaises(UnicodeDecodeError):
-                '\xff'.startswith(u'x')
+                '\xff'.startswith('x')
             with self.assertRaises(UnicodeDecodeError):
-                '\xff'.endswith(u'x')
+                '\xff'.endswith('x')
             for meth in ('foo'.startswith, 'foo'.endswith):
                 with self.assertRaises(TypeError) as cm:
                     meth(['f'])

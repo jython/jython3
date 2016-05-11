@@ -108,7 +108,7 @@ class PlatformTest(unittest.TestCase):
                  "")
             }
         for (version_tag, subversion, sys_platform), info in \
-                sys_versions.iteritems():
+                sys_versions.items():
             sys.version = version_tag
             if subversion is None:
                 if hasattr(sys, "subversion"):

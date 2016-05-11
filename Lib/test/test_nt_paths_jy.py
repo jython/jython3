@@ -2,7 +2,7 @@
 
 Made for Jython.
 """
-from __future__ import with_statement
+
 import os
 import unittest
 from test import test_support

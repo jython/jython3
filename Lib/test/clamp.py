@@ -39,7 +39,7 @@ class SerializableProxies(CustomMaker):
         try:
             # If already defined on CLASSPATH, simply return this class
             cls = java.lang.Class.forName(self.myClass)
-            print "Class defined on CLASSPATH", cls
+            print(("Class defined on CLASSPATH", cls))
         except:
             # Otherwise build it
             cls = CustomMaker.makeClass(self)

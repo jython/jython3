@@ -82,7 +82,7 @@ class TestOsOpenTestCase(unittest.TestCase):
     def test_open(self):
         # XXX: assert the mode of the file
         self.fd = os.open(self.filename, os.O_WRONLY | os.O_CREAT)
-        self.assert_(os.path.exists(self.filename))
+        self.assertTrue(os.path.exists(self.filename))
         os.write(self.fd, 'jython')
         os.close(self.fd)
 
@@ -90,7 +90,7 @@ class TestOsOpenTestCase(unittest.TestCase):
         os.write(self.fd, ' filenos')
         os.close(self.fd)
         fp = open(self.filename)
-        self.assertEquals(fp.read(), 'jython filenos')
+        self.assertEqual(fp.read(), 'jython filenos')
         fp.close()
 
         # falls back to read only without O_WRONLY/O_RDWR
@@ -98,20 +98,20 @@ class TestOsOpenTestCase(unittest.TestCase):
         raises(OSError, 9, os.write, self.fd, 'new')
         # Acts as append on windows (seeks to the end)
         os.lseek(self.fd, 0, 0)
-        self.assertEquals(os.read(self.fd, len('jython filenos')), 'jython filenos')
+        self.assertEqual(os.read(self.fd, len('jython filenos')), 'jython filenos')
         os.close(self.fd)
 
         # falls back to read only without O_WRONLY/O_RDWR
         self.fd = os.open(self.filename, os.O_CREAT)
         raises(OSError, 9, os.write, self.fd, 'new')
-        self.assertEquals(os.read(self.fd, len('jython filenos')), 'jython filenos')
+        self.assertEqual(os.read(self.fd, len('jython filenos')), 'jython filenos')
         os.close(self.fd)
 
         # interpreted as RDWR
         self.fd = os.open(self.filename, os.O_RDONLY | os.O_RDWR)
         os.write(self.fd, 'test')
         os.lseek(self.fd, 0, 0)
-        self.assertEquals(os.read(self.fd, 4), 'test')
+        self.assertEqual(os.read(self.fd, 4), 'test')
         os.close(self.fd)
 
     def test_open_truncate(self):
@@ -119,22 +119,22 @@ class TestOsOpenTestCase(unittest.TestCase):
         fp.write('hello')
         fp.close()
 
-        self.assertEquals(os.path.getsize(self.filename), 5)
+        self.assertEqual(os.path.getsize(self.filename), 5)
         self.fd = os.open(self.filename, os.O_TRUNC | os.O_RDWR)
-        self.assertEquals(os.path.getsize(self.filename), 0)
+        self.assertEqual(os.path.getsize(self.filename), 0)
         os.write(self.fd, 'truncated')
         os.lseek(self.fd, 0, 0)
-        self.assertEquals(os.read(self.fd, len('truncated')), 'truncated')
+        self.assertEqual(os.read(self.fd, len('truncated')), 'truncated')
         os.close(self.fd)
 
         self.fd = os.open(self.filename, os.O_TRUNC | os.O_WRONLY)
-        self.assertEquals(os.path.getsize(self.filename), 0)
+        self.assertEqual(os.path.getsize(self.filename), 0)
         os.write(self.fd, 'write only truncated')
         raises(OSError, 9, os.read, self.fd, 99)
         os.close(self.fd)
 
         fd = open(self.filename)
-        self.assertEquals(fd.read(), 'write only truncated')
+        self.assertEqual(fd.read(), 'write only truncated')
         fd.close()
 
         # Both fail on Windows, errno 22
@@ -164,16 +164,16 @@ class TestOsOpenTestCase(unittest.TestCase):
         """
 
     def test_open_exclusive(self):
-        self.assert_(not os.path.exists(self.filename))
+        self.assertTrue(not os.path.exists(self.filename))
         # fails without O_CREAT
         raises(OSError, (2, self.filename), os.open, self.filename, os.O_EXCL)
-        self.assert_(not os.path.exists(self.filename))
+        self.assertTrue(not os.path.exists(self.filename))
 
         # creates, read only
         self.fd = os.open(self.filename, os.O_EXCL | os.O_CREAT)
-        self.assert_(os.path.exists(self.filename))
+        self.assertTrue(os.path.exists(self.filename))
         raises(OSError, 9, os.write, self.fd, 'jython')
-        self.assertEquals(os.read(self.fd, 99), '')
+        self.assertEqual(os.read(self.fd, 99), '')
         os.close(self.fd)
 
         # not exclusive unless creating
@@ -189,7 +189,7 @@ class TestOsOpenTestCase(unittest.TestCase):
         self.fd = os.open(self.filename, os.O_EXCL | os.O_RDWR | os.O_CREAT)
         os.write(self.fd, 'exclusive')
         os.lseek(self.fd, 0, 0)
-        self.assertEquals(os.read(self.fd, len('exclusive')), 'exclusive')
+        self.assertEqual(os.read(self.fd, len('exclusive')), 'exclusive')
 
     def test_open_sync(self):
         if not hasattr(os, 'O_SYNC'):
@@ -197,17 +197,17 @@ class TestOsOpenTestCase(unittest.TestCase):
 
         # Just ensure this works
         self.fd = os.open(self.filename, os.O_SYNC | os.O_WRONLY | os.O_CREAT)
-        self.assert_(os.path.exists(self.filename))
+        self.assertTrue(os.path.exists(self.filename))
         os.write(self.fd, 'jython')
         raises(OSError, 9, os.read, self.fd, 99)
         os.close(self.fd)
         os.remove(self.filename)
 
         self.fd = os.open(self.filename, os.O_SYNC | os.O_RDWR | os.O_CREAT)
-        self.assert_(os.path.exists(self.filename))
+        self.assertTrue(os.path.exists(self.filename))
         os.write(self.fd, 'jython')
         os.lseek(self.fd, 0, 0)
-        self.assertEquals(os.read(self.fd, len('jython')), 'jython')
+        self.assertEqual(os.read(self.fd, len('jython')), 'jython')
         os.close(self.fd)
 
     def test_open_sync_dir(self):
@@ -217,7 +217,7 @@ class TestOsOpenTestCase(unittest.TestCase):
         self.dir = tempfile.mkdtemp()
         try:
             self.fd = os.open(self.dir, os.O_SYNC | os.O_RDWR)
-        except OSError, ose:
+        except OSError as ose:
             assert ose.errno == errno.EISDIR, ose.errno
 
     def test_bad_open(self):
@@ -272,7 +272,7 @@ class TestOsFdopenTestCase(unittest.TestCase):
         fp.close()
 
         fp = os.fdopen(origr)
-        self.assertEquals(fp.read(), 'fdopen')
+        self.assertEqual(fp.read(), 'fdopen')
         # Windows CPython raises IOError [Errno 0] Error
         #raises(IOError, '[Errno 9] Bad file descriptor',
         #       fp.write, 'test')
@@ -326,7 +326,7 @@ def raises(exc, expected, callable, *args):
                 msg += ': %r' % expected[1]
     try:
         callable(*args)
-    except exc, val:
+    except exc as val:
         if expected and str(val) != msg:
             raise test_support.TestFailed(
                 "Message %r, expected %r" % (str(val), msg))

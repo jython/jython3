@@ -277,11 +277,11 @@ def test_main(verbose=None):
     if verbose and hasattr(sys, "gettotalrefcount"):
         import gc
         counts = [None] * 5
-        for i in xrange(len(counts)):
+        for i in range(len(counts)):
             test_support.run_doctest(test_genexps, verbose)
             gc.collect()
             counts[i] = sys.gettotalrefcount()
-        print counts
+        print(counts)
 
 if __name__ == "__main__":
     test_main(verbose=True)

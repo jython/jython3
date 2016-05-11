@@ -80,7 +80,7 @@ class TestSubclasses(unittest.TestCase):
             def __str__(self):
                 return "hi"
 
-        self.assertEqual(Spam(), 0L)
+        self.assertEqual(Spam(), 0)
         self.assertEqual(str(Spam()), "hi")
 
     def test_tuple(self):
@@ -102,7 +102,7 @@ class TestSubclasses(unittest.TestCase):
         self.assertEqual(Spam().eggs(), "I am eggs.")
 
     def test_unicode(self):
-        class Spam(unicode):
+        class Spam(str):
             def eggs(self):
                 return "I am eggs."
 
@@ -187,7 +187,7 @@ class TestSubclasses(unittest.TestCase):
 
         self.picklecheck(myint(4))
         self.picklecheck(mystr('x'))
-        self.picklecheck(mytuple([1,2]))
+        self.picklecheck(mytuple([1, 2]))
 
 
 def test_main():

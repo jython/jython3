@@ -2,8 +2,8 @@
 # Matt Shelton <matt@mattshelton.com>
 #
 
-from SimpleXMLRPCServer import SimpleXMLRPCServer
-import threading, xmlrpclib, unittest
+from xmlrpc.server import SimpleXMLRPCServer
+import threading, xmlrpc.client, unittest
 
 HOST = "127.0.0.1"
 PORT = 7218
@@ -44,11 +44,11 @@ class SimpleXMLRPCServerTestCase(unittest.TestCase):
         """Expose a lambda function via XML-RPC."""
         # Create a server instance.
         server = SimpleXMLRPCServer((HOST, PORT))
-        server.register_function(lambda x,y: x+y, 'add')
+        server.register_function(lambda x, y: x+y, 'add')
         ServerThread(server).start()
 
         # Access the exposed service.
-        client = xmlrpclib.ServerProxy("http://%s:%d" % (HOST, PORT))
+        client = xmlrpc.client.ServerProxy("http://%s:%d" % (HOST, PORT))
         self.assertEqual(client.add(10, 20), 30)
 
     def test_exposeFunction1(self):
@@ -58,7 +58,7 @@ class SimpleXMLRPCServerTestCase(unittest.TestCase):
         ServerThread(server).start()
 
         # Access the exposed service.
-        client = xmlrpclib.ServerProxy("http://%s:%d" % (HOST, PORT + 1))
+        client = xmlrpc.client.ServerProxy("http://%s:%d" % (HOST, PORT + 1))
         self.assertEqual(client.multiply(5, 10), 50)
 
     def test_exposeFunction2(self):
@@ -68,7 +68,7 @@ class SimpleXMLRPCServerTestCase(unittest.TestCase):
         ServerThread(server).start()
 
         # Access the exposed service.
-        client = xmlrpclib.ServerProxy("http://%s:%d" % (HOST, PORT + 2))
+        client = xmlrpc.client.ServerProxy("http://%s:%d" % (HOST, PORT + 2))
         self.assertEqual(client.mult(7, 11), 77)
 
     def test_exposeClass(self):
@@ -78,7 +78,7 @@ class SimpleXMLRPCServerTestCase(unittest.TestCase):
         ServerThread(server).start()
 
         # Access the exposed service.
-        client = xmlrpclib.ServerProxy("http://%s:%d" % (HOST, PORT + 3))
+        client = xmlrpc.client.ServerProxy("http://%s:%d" % (HOST, PORT + 3))
         self.assertEqual(client.squared(10), 100)
 
 

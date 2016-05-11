@@ -11,24 +11,24 @@ class ReTest(unittest.TestCase):
     def test_bug_1140_addendum(self):
         result = re.sub('', lambda match : None, 'foo')
         self.assertEqual(result, 'foo')
-        self.assert_(isinstance(result, str))
+        self.assertTrue(isinstance(result, str))
 
     def test_sub_with_subclasses(self):
-        class Foo(unicode):
+        class Foo(str):
             def join(self, items):
-                return Foo(unicode.join(self, items))
+                return Foo(str.join(self, items))
         result = re.sub('bar', 'baz', Foo('bar'))
-        self.assertEqual(result, u'baz')
-        self.assertEqual(type(result), unicode)
+        self.assertEqual(result, 'baz')
+        self.assertEqual(type(result), str)
 
-        class Foo2(unicode):
+        class Foo2(str):
             def join(self, items):
-                return Foo2(unicode.join(self, items))
+                return Foo2(str.join(self, items))
             def __getslice__(self, start, stop):
-                return Foo2(unicode.__getslice__(self, start, stop))
+                return Foo2(str.__getslice__(self, start, stop))
         result = re.sub('bar', 'baz', Foo2('bar'))
         self.assertEqual(result, Foo2('baz'))
-        self.assert_(isinstance(result, Foo2))
+        self.assertTrue(isinstance(result, Foo2))
 
     def test_unkown_groupname(self):
         self.assertRaises(IndexError,
@@ -40,14 +40,14 @@ class ReTest(unittest.TestCase):
         ws_re = re.compile(r'\s')
         not_ws_re = re.compile(r'\S')
         cpython_ascii_whitespace = set(' \t\n\r\f\v')
-        for i in xrange(256):
+        for i in range(256):
             c = chr(i)
             if c in cpython_ascii_whitespace:
-                self.assertRegexpMatches(c, ws_re)
+                self.assertRegex(c, ws_re)
                 self.assertNotRegexpMatches(c, not_ws_re)
             else:
                 self.assertNotRegexpMatches(c, ws_re)
-                self.assertRegexpMatches(c, not_ws_re)
+                self.assertRegex(c, not_ws_re)
 
     def test_unicode_whitespace(self):
         # Test for http://bugs.jython.org/issue2226
@@ -57,19 +57,19 @@ class ReTest(unittest.TestCase):
         separators = {chr(c) for c in [28, 29, 30, 31]}
         special = set([
             unicodedata.lookup('MONGOLIAN VOWEL SEPARATOR'),
-            u'\u0085', # NEXT LINE (NEL)
+            '\u0085', # NEXT LINE (NEL)
             ])
         cpython_whitespace = set(' \t\n\r\f\v') | separators | special
-        for i in xrange(0xFFFF): # could test to sys.maxunicode, but does not appear to be necessary
+        for i in range(0xFFFF): # could test to sys.maxunicode, but does not appear to be necessary
             if i >= 0xD800 and i <= 0xDFFF:
                 continue
-            c = unichr(i)
+            c = chr(i)
             if c in cpython_whitespace or category(c) in separator_categories:
-                self.assertRegexpMatches(c, ws_re)
+                self.assertRegex(c, ws_re)
                 self.assertNotRegexpMatches(c, not_ws_re)
             else:
                 self.assertNotRegexpMatches(c, ws_re)
-                self.assertRegexpMatches(c, not_ws_re)
+                self.assertRegex(c, not_ws_re)
 
 
 def test_main():

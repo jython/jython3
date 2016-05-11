@@ -19,8 +19,8 @@
 # test both implementations. This file has lots of examples.
 ################################################################################
 
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
 
 import os
 import sys
@@ -34,7 +34,7 @@ import signal
 import errno
 from itertools import cycle, count
 from collections import deque
-from UserList import UserList
+from collections import UserList
 from test import test_support as support
 import contextlib
 
@@ -520,7 +520,7 @@ class IOTest(unittest.TestCase):
             self.assertEqual(f.read(), b"xxx")
 
     def test_array_writes(self):
-        a = array.array(b'i', range(10))
+        a = array.array(b'i', list(range(10)))
         n = len(a.tostring())
         with self.open(support.TESTFN, "wb", 0) as f:
             self.assertEqual(f.write(a), n)
@@ -1047,7 +1047,7 @@ class CBufferedReaderTest(BufferedReaderTest, SizeofTest):
     # When implemented in Python, the error message is about __init__, even on CPython
     def test_args_error(self):
         # Issue #17275
-        with self.assertRaisesRegexp(TypeError, "BufferedReader"):
+        with self.assertRaisesRegex(TypeError, "BufferedReader"):
             self.tp(io.BytesIO(), 1024, 1024, 1024)
 
 
@@ -1102,7 +1102,7 @@ class BufferedWriterTest(unittest.TestCase, CommonBufferedTests):
 
     def check_writes(self, intermediate_func):
         # Lots of writes, test the flushed output is as expected.
-        contents = bytes(range(256)) * 1000
+        contents = bytes(list(range(256))) * 1000
         n = 0
         writer = self.MockRawIO()
         bufio = self.tp(writer, 13)
@@ -1239,7 +1239,7 @@ class BufferedWriterTest(unittest.TestCase, CommonBufferedTests):
             # Write out many bytes from many threads and test they were
             # all flushed.
             N = 1000
-            contents = bytes(range(256)) * N
+            contents = bytes(list(range(256))) * N
             sizes = cycle([1, 19])
             n = 0
             queue = deque()
@@ -1349,7 +1349,7 @@ class CBufferedWriterTest(BufferedWriterTest, SizeofTest):
     # When implemented in Python, the error message is about __init__, even on CPython
     def test_args_error(self):
         # Issue #17275
-        with self.assertRaisesRegexp(TypeError, "BufferedWriter"):
+        with self.assertRaisesRegex(TypeError, "BufferedWriter"):
             self.tp(io.BytesIO(), 1024, 1024, 1024)
 
 
@@ -1732,7 +1732,7 @@ class CBufferedRandomTest(CBufferedReaderTest, CBufferedWriterTest,
     # When implemented in Python, the error message is about __init__, even on CPython
     def test_args_error(self):
         # Issue #17275
-        with self.assertRaisesRegexp(TypeError, "BufferedRandom"):
+        with self.assertRaisesRegex(TypeError, "BufferedRandom"):
             self.tp(io.BytesIO(), 1024, 1024, 1024)
 
 
@@ -2794,7 +2794,7 @@ class MiscIOTest(unittest.TestCase):
         self.assertRaises(TypeError, self.BlockingIOError, 1, "", None)
         b = self.BlockingIOError(1, "")
         self.assertEqual(b.characters_written, 0)
-        class C(unicode):
+        class C(str):
             pass
         c = C("")
         b = self.BlockingIOError(1, c)
@@ -2999,7 +2999,7 @@ class SignalsTest(unittest.TestCase):
             # Either the reentrant call to wio.write() fails with RuntimeError,
             # or the signal handler raises ZeroDivisionError.
             with self.assertRaises((ZeroDivisionError, RuntimeError)) as cm:
-                while 1:
+                while True:
                     for i in range(100):
                         wio.write(data)
                         wio.flush()
@@ -3150,10 +3150,10 @@ def test_main():
     py_io_ns["open"] = pyio.OpenWrapper
     for test in tests:
         if test.__name__.startswith("C"):
-            for name, obj in c_io_ns.items():
+            for name, obj in list(c_io_ns.items()):
                 setattr(test, name, obj)
         elif test.__name__.startswith("Py"):
-            for name, obj in py_io_ns.items():
+            for name, obj in list(py_io_ns.items()):
                 setattr(test, name, obj)
 
     support.run_unittest(*tests)

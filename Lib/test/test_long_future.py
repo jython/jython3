@@ -1,4 +1,4 @@
-from __future__ import division
+
 # When true division is the default, get rid of this and add it to
 # test_long.py instead.  In the meantime, it's too obscure to try to
 # trick just part of test_long into using future division.
@@ -52,16 +52,16 @@ def truediv(a, b):
 
 class TrueDivisionTests(unittest.TestCase):
     def test(self):
-        huge = 1L << 40000
+        huge = 1 << 40000
         mhuge = -huge
         self.assertEqual(huge / huge, 1.0)
         self.assertEqual(mhuge / mhuge, 1.0)
         self.assertEqual(huge / mhuge, -1.0)
         self.assertEqual(mhuge / huge, -1.0)
         self.assertEqual(1 / huge, 0.0)
-        self.assertEqual(1L / huge, 0.0)
+        self.assertEqual(1 / huge, 0.0)
         self.assertEqual(1 / mhuge, 0.0)
-        self.assertEqual(1L / mhuge, 0.0)
+        self.assertEqual(1 / mhuge, 0.0)
         self.assertEqual((666 * huge + (huge >> 1)) / huge, 666.5)
         self.assertEqual((666 * mhuge + (mhuge >> 1)) / mhuge, 666.5)
         self.assertEqual((666 * huge + (huge >> 1)) / mhuge, -666.5)
@@ -94,7 +94,7 @@ class TrueDivisionTests(unittest.TestCase):
         comparing it with a pure Python implementation of correctly
         rounded division.  b should be nonzero."""
 
-        a, b = long(a), long(b)
+        a, b = int(a), int(b)
 
         # skip check for small a and b: in this case, the current
         # implementation converts the arguments to float directly and

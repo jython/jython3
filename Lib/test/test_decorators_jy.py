@@ -14,7 +14,7 @@ def funcattrs(**kwds):
 
 def classattrs(**kwds):
     def decorate(cls):
-        for k, v in kwds.iteritems():
+        for k, v in kwds.items():
             setattr(cls, k, v)
         return cls
     return decorate

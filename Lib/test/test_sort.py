@@ -14,7 +14,7 @@ def check(tag, expected, raw, compare=None):
     global nerrors
 
     if verbose:
-        print "    checking", tag
+        print("    checking", tag)
 
     orig = raw[:]   # save input in case of error
     if compare:
@@ -23,22 +23,22 @@ def check(tag, expected, raw, compare=None):
         raw.sort()
 
     if len(expected) != len(raw):
-        print "error in", tag
-        print "length mismatch;", len(expected), len(raw)
-        print expected
-        print orig
-        print raw
+        print("error in", tag)
+        print("length mismatch;", len(expected), len(raw))
+        print(expected)
+        print(orig)
+        print(raw)
         nerrors += 1
         return
 
     for i, good in enumerate(expected):
         maybe = raw[i]
         if good is not maybe:
-            print "error in", tag
-            print "out of order at index", i, good, maybe
-            print expected
-            print orig
-            print raw
+            print("error in", tag)
+            print("out of order at index", i, good, maybe)
+            print(expected)
+            print(orig)
+            print(raw)
             nerrors += 1
             return
 
@@ -48,7 +48,7 @@ class TestBase(unittest.TestCase):
         sizes = [0]
         for power in range(1, 10):
             n = 2 ** power
-            sizes.extend(range(n-1, n+2))
+            sizes.extend(list(range(n-1, n+2)))
         sizes.extend([10, 100, 1000])
 
         class Complains(object):
@@ -60,7 +60,7 @@ class TestBase(unittest.TestCase):
             def __lt__(self, other):
                 if Complains.maybe_complain and random.random() < 0.001:
                     if verbose:
-                        print "        complaining at", self, other
+                        print("        complaining at", self, other)
                     raise RuntimeError
                 return self.i < other.i
 
@@ -80,9 +80,9 @@ class TestBase(unittest.TestCase):
                 return "Stable(%d, %d)" % (self.key, self.index)
 
         for n in sizes:
-            x = range(n)
+            x = list(range(n))
             if verbose:
-                print "Testing size", n
+                print("Testing size", n)
 
             s = x[:]
             check("identity", x, s)
@@ -101,8 +101,8 @@ class TestBase(unittest.TestCase):
             check("reversed via function", y, s, lambda a, b: cmp(b, a))
 
             if verbose:
-                print "    Checking against an insane comparison function."
-                print "        If the implementation isn't careful, this may segfault."
+                print("    Checking against an insane comparison function.")
+                print("        If the implementation isn't careful, this may segfault.")
             s = x[:]
 
             if test_support.is_jython:
@@ -127,9 +127,8 @@ class TestBase(unittest.TestCase):
                 Complains.maybe_complain = False
                 check("exception during sort left some permutation", x, s)
 
-            s = [Stable(random.randrange(10), i) for i in xrange(n)]
-            augmented = [(e, e.index) for e in s]
-            augmented.sort()    # forced stable because ties broken by index
+            s = [Stable(random.randrange(10), i) for i in range(n)]
+            augmented = sorted([(e, e.index) for e in s])
             x = [e for e, i in augmented] # a stable sort of s
             check("stability", x, s)
 
@@ -156,10 +155,10 @@ class TestBugs(unittest.TestCase):
     def test_cmpNone(self):
         # Testing None as a comparison function.
 
-        L = range(50)
+        L = list(range(50))
         random.shuffle(L)
         L.sort(None)
-        self.assertEqual(L, range(50))
+        self.assertEqual(L, list(range(50)))
 
     def test_undetected_mutation(self):
         # Python 2.4a1 did not always detect mutation
@@ -169,7 +168,7 @@ class TestBugs(unittest.TestCase):
                 L.append(3)
                 L.pop()
                 return cmp(x, y)
-            L = [1,2]
+            L = [1, 2]
             self.assertRaises(ValueError, L.sort, mutating_cmp)
             def mutating_cmp(x, y):
                 L.append(3)
@@ -187,14 +186,14 @@ class TestDecorateSortUndecorate(unittest.TestCase):
         copy = data[:]
         random.shuffle(data)
         data.sort(key=str.lower)
-        copy.sort(cmp=lambda x,y: cmp(x.lower(), y.lower()))
+        copy.sort(cmp=lambda x, y: cmp(x.lower(), y.lower()))
 
     def test_baddecorator(self):
         data = 'The quick Brown fox Jumped over The lazy Dog'.split()
-        self.assertRaises(TypeError, data.sort, None, lambda x,y: 0)
+        self.assertRaises(TypeError, data.sort, None, lambda x, y: 0)
 
     def test_stability(self):
-        data = [(random.randrange(100), i) for i in xrange(200)]
+        data = [(random.randrange(100), i) for i in range(200)]
         copy = data[:]
         data.sort(key=lambda x: x[0])   # sort on the random first field
         copy.sort()                     # sort using both fields
@@ -216,7 +215,7 @@ class TestDecorateSortUndecorate(unittest.TestCase):
 
     def test_key_with_exception(self):
         # Verify that the wrapper has been removed
-        data = range(-2,2)
+        data = list(range(-2, 2))
         dup = data[:]
         self.assertRaises(ZeroDivisionError, data.sort, None, lambda x: 1 // x)
         self.assertEqual(data, dup)
@@ -227,10 +226,10 @@ class TestDecorateSortUndecorate(unittest.TestCase):
     @unittest.skipIf(test_support.is_jython,
             "Jython has a different implementation of MergeSort")
     def test_key_with_mutation(self):
-        data = range(10)
+        data = list(range(10))
         def k(x):
             del data[:]
-            data[:] = range(20)
+            data[:] = list(range(20))
             return x
         self.assertRaises(ValueError, data.sort, key=k)
  
@@ -239,13 +238,13 @@ class TestDecorateSortUndecorate(unittest.TestCase):
     # long as it is invoked(e.g. __del__ in SortKiller). so skipping for now.
     @unittest.skipIf(test_support.is_jython, "Doesn't work for Jython")
     def test_key_with_mutating_del(self):
-        data = range(10)
+        data = list(range(10))
         class SortKiller(object):
             def __init__(self, x):
                 pass
             def __del__(self):
                 del data[:]
-                data[:] = range(20)
+                data[:] = list(range(20))
         self.assertRaises(ValueError, data.sort, key=SortKiller)
 
     # The function passed to the "key" argument changes the data upon which
@@ -253,7 +252,7 @@ class TestDecorateSortUndecorate(unittest.TestCase):
     # long as it is invoked(e.g. __del__ in SortKiller). so skipping for now.
     @unittest.skipIf(test_support.is_jython, "Doesn't work for Jython")
     def test_key_with_mutating_del_and_exception(self):
-        data = range(10)
+        data = list(range(10))
         ## dup = data[:]
         class SortKiller(object):
             def __init__(self, x):
@@ -261,7 +260,7 @@ class TestDecorateSortUndecorate(unittest.TestCase):
                     raise RuntimeError
             def __del__(self):
                 del data[:]
-                data[:] = range(20)
+                data[:] = list(range(20))
         self.assertRaises(RuntimeError, data.sort, key=SortKiller)
         ## major honking subtlety: we *can't* do:
         ##
@@ -273,18 +272,18 @@ class TestDecorateSortUndecorate(unittest.TestCase):
         ## date (this cost some brain cells to figure out...).
 
     def test_reverse(self):
-        data = range(100)
+        data = list(range(100))
         random.shuffle(data)
         data.sort(reverse=True)
-        self.assertEqual(data, range(99,-1,-1))
+        self.assertEqual(data, list(range(99, -1, -1)))
         self.assertRaises(TypeError, data.sort, "wrong type")
 
     def test_reverse_stability(self):
-        data = [(random.randrange(100), i) for i in xrange(200)]
+        data = [(random.randrange(100), i) for i in range(200)]
         copy1 = data[:]
         copy2 = data[:]
-        data.sort(cmp=lambda x,y: cmp(x[0],y[0]), reverse=True)
-        copy1.sort(cmp=lambda x,y: cmp(y[0],x[0]))
+        data.sort(cmp=lambda x, y: cmp(x[0], y[0]), reverse=True)
+        copy1.sort(cmp=lambda x, y: cmp(y[0], x[0]))
         self.assertEqual(data, copy1)
         copy2.sort(key=lambda x: x[0], reverse=True)
         self.assertEqual(data, copy2)
@@ -306,11 +305,11 @@ def test_main(verbose=None):
         if verbose and hasattr(sys, "gettotalrefcount"):
             import gc
             counts = [None] * 5
-            for i in xrange(len(counts)):
+            for i in range(len(counts)):
                 test_support.run_unittest(*test_classes)
                 gc.collect()
                 counts[i] = sys.gettotalrefcount()
-            print counts
+            print(counts)
 
 if __name__ == "__main__":
     test_main(verbose=True)

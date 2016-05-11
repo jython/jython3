@@ -1,6 +1,6 @@
 # test asynchat -- requires threading
 
-import thread # If this fails, we can't test this module
+import _thread # If this fails, we can't test this module
 import asyncore, asynchat, socket, threading, time
 import unittest
 from test import test_support
@@ -77,7 +77,7 @@ class TestAsynchat(unittest.TestCase):
         s = echo_server()
         s.start()
         time.sleep(1) # Give server time to initialize
-        c = echo_client(6L)
+        c = echo_client(6)
         c.push("hello ")
         c.push("world\n")
         asyncore.loop()

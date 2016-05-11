@@ -54,25 +54,25 @@ class ArgsTestCase(unittest.TestCase):
             ref = weakref.ref(obj, sentinel.append)
             weakrefs.append(ref)
 
-        self.assert_(not sentinel)
+        self.assertTrue(not sentinel)
 
         thunk1 = lambda: None
         watch(thunk1)
-        self.assert_(not sentinel)
+        self.assertTrue(not sentinel)
 
         del thunk1
         extra_collect()
-        self.assert_(sentinel)
+        self.assertTrue(sentinel)
 
         del sentinel[:]
 
         thunk2 = lambda: None
         watch(thunk2, kwarg=True)  # <--- only difference: called with a kwarg
-        self.assert_(not sentinel)
+        self.assertTrue(not sentinel)
 
         del thunk2
         extra_collect()
-        self.assert_(sentinel)
+        self.assertTrue(sentinel)
 
 
 

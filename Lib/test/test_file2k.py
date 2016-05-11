@@ -12,7 +12,7 @@ except ImportError:
 
 from test import test_support
 from test.test_support import TESTFN, run_unittest
-from UserList import UserList
+from collections import UserList
 
 class AutoFileTests(unittest.TestCase):
     # file tests for which a test file is automatically set up
@@ -78,7 +78,7 @@ class AutoFileTests(unittest.TestCase):
 
     def testWritelinesIntegersUserList(self):
         # verify writelines with integers in UserList
-        l = UserList([1,2,3])
+        l = UserList([1, 2, 3])
         self.assertRaises(TypeError, self.f.writelines, l)
 
     def testWritelinesNonString(self):
@@ -236,7 +236,7 @@ class OtherFileTests(unittest.TestCase):
 
         # Some invalid modes fail on Windows, but pass on Unix
         # Issue3965: avoid a crash on Windows when filename is unicode
-        for name in (TESTFN, unicode(TESTFN), unicode(TESTFN + '\t')):
+        for name in (TESTFN, str(TESTFN), str(TESTFN + '\t')):
             try:
                 self.f = f = open(name, "rr")
             except (IOError, ValueError):
@@ -249,14 +249,14 @@ class OtherFileTests(unittest.TestCase):
         if sys.platform != 'osf1V5':
             self.assertRaises(IOError, sys.stdin.seek, -1)
         else:
-            print >>sys.__stdout__, (
+            print((
                 '  Skipping sys.stdin.seek(-1), it may crash the interpreter.'
-                ' Test manually.')
+                ' Test manually.'), file=sys.__stdout__)
         self.assertRaises(IOError, sys.stdin.truncate)
 
     def testUnicodeOpen(self):
         # verify repr works for unicode too
-        self.f = f = open(unicode(TESTFN), "w")
+        self.f = f = open(str(TESTFN), "w")
         self.assertTrue(repr(f).startswith("<open file u'" + TESTFN))
         f.close()
         os.unlink(TESTFN)
@@ -266,7 +266,7 @@ class OtherFileTests(unittest.TestCase):
         bad_mode = "qwerty"
         try:
             self.f = f = open(TESTFN, bad_mode)
-        except ValueError, msg:
+        except ValueError as msg:
             if msg.args[0] != 0:
                 s = str(msg)
                 if TESTFN in s or bad_mode not in s:
@@ -290,7 +290,7 @@ class OtherFileTests(unittest.TestCase):
                 d = int(f.read())
                 f.close()
                 f.close()
-            except IOError, msg:
+            except IOError as msg:
                 self.fail('error setting buffer size %d: %s' % (s, str(msg)))
             self.assertEqual(d, s)
 
@@ -303,7 +303,7 @@ class OtherFileTests(unittest.TestCase):
             f.write('12345678901')   # 11 bytes
             f.close()
 
-            self.f = f = open(TESTFN,'rb+')
+            self.f = f = open(TESTFN, 'rb+')
             data = f.read(5)
             if data != '12345':
                 self.fail("Read on file opened for update failed %r" % data)
@@ -359,7 +359,7 @@ class OtherFileTests(unittest.TestCase):
             # Test for appropriate errors mixing read* and iteration
             for methodname, args in methods:
                 self.f = f = open(TESTFN)
-                if f.next() != filler:
+                if next(f) != filler:
                     self.fail, "Broken testfile"
                 meth = getattr(f, methodname)
                 try:
@@ -380,7 +380,7 @@ class OtherFileTests(unittest.TestCase):
             # between 4 and 16384 (inclusive).
             self.f = f = open(TESTFN)
             for i in range(nchunks):
-                f.next()
+                next(f)
             testline = testlines.pop(0)
             try:
                 line = f.readline()
@@ -459,19 +459,19 @@ class OtherFileTests(unittest.TestCase):
 
         # Test for appropriate results mixing read* and iteration
         self.f = f = open(TESTFN)
-        self.assertEqual(f.next(), sheep[0])
+        self.assertEqual(next(f), sheep[0])
         self.assertEqual(f.readline(), sheep[1])
-        self.assertEqual(f.next(), sheep[2])
+        self.assertEqual(next(f), sheep[2])
         self.assertEqual(f.read(5), sheep[3][:5])
 
         r = array('c', "1234567")
         f.readinto(r)
         self.assertEqual(r, array('c', sheep[3][5:12]))
 
-        self.assertEqual(f.next(), sheep[3][12:])
+        self.assertEqual(next(f), sheep[3][12:])
         r = f.readlines()
         self.assertEqual(r, sheep[4:])
-        self.assertRaises(StopIteration, f.next)
+        self.assertRaises(StopIteration, f.__next__)
 
         f.close()
 
@@ -553,12 +553,12 @@ class FileThreadingTests(unittest.TestCase):
                 t = threading.Thread(target=func)
                 t.start()
                 threads.append(t)
-            for _ in xrange(100):
+            for _ in range(100):
                 time.sleep(duration/100)
                 with self._count_lock:
                     if self.close_count-self.close_success_count > nb_workers+1:
                         if test_support.verbose:
-                            print 'Q',
+                            print('Q', end=' ')
                         break
             time.sleep(duration)
         finally:
@@ -587,7 +587,7 @@ class FileThreadingTests(unittest.TestCase):
         self._run_workers(worker, nb_workers)
         if self.exc_info:
             # Some worker saved an exception: re-raise it now
-            raise self.exc_info[0], self.exc_info[1], self.exc_info[2]
+            raise self.exc_info[0](self.exc_info[1]).with_traceback(self.exc_info[2])
 
         if test_support.verbose:
             # Useful verbose statistics when tuning this test to take
@@ -597,7 +597,7 @@ class FileThreadingTests(unittest.TestCase):
             percent = 100.
             if self.close_count > 0:
                 percent -= 100.*self.close_success_count/self.close_count
-            print self.close_count, ('%.4f ' % percent),
+            print(self.close_count, ('%.4f ' % percent), end=' ')
 
     # Each test function defines an operation on the worker's file object
 
@@ -623,13 +623,13 @@ class FileThreadingTests(unittest.TestCase):
 
     def test_close_open_print(self):
         def io_func(f):
-            print >> f, ''
+            print('', file=f)
         self._test_close_open_io(io_func)
 
     def test_close_open_print_buffered(self):
         self.use_buffering = True
         def io_func(f):
-            print >> f, ''
+            print('', file=f)
         self._test_close_open_io(io_func)
 
     def test_close_open_read(self):
@@ -693,7 +693,7 @@ class StdoutTests(unittest.TestCase):
 
         try:
             sys.stdout = File()
-            print "some text"
+            print("some text")
         finally:
             sys.stdout = save_stdout
 
@@ -703,7 +703,7 @@ class StdoutTests(unittest.TestCase):
         save_stdout = sys.stdout
         del sys.stdout
         try:
-            print
+            print()
         except RuntimeError as e:
             self.assertEqual(str(e), "lost sys.stdout")
         else:
@@ -732,14 +732,14 @@ class StdoutTests(unittest.TestCase):
             self.assertEqual(stdout, expected)
 
         # test the encoding
-        check_message(u'15\u20ac', "iso-8859-15", "15\xa4")
-        check_message(u'15\u20ac', "utf-8", '15\xe2\x82\xac')
-        check_message(u'15\u20ac', "utf-16-le", '1\x005\x00\xac\x20')
+        check_message('15\u20ac', "iso-8859-15", "15\xa4")
+        check_message('15\u20ac', "utf-8", '15\xe2\x82\xac')
+        check_message('15\u20ac', "utf-16-le", '1\x005\x00\xac\x20')
 
         # test the error handler
-        check_message(u'15\u20ac', "iso-8859-1:ignore", "15")
-        check_message(u'15\u20ac', "iso-8859-1:replace", "15?")
-        check_message(u'15\u20ac', "iso-8859-1:backslashreplace", "15\\u20ac")
+        check_message('15\u20ac', "iso-8859-1:ignore", "15")
+        check_message('15\u20ac', "iso-8859-1:replace", "15?")
+        check_message('15\u20ac', "iso-8859-1:backslashreplace", "15\\u20ac")
 
         # test the buffer API
         for objtype in ('buffer', 'bytearray'):

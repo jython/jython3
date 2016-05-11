@@ -10,8 +10,8 @@ from test.test_support import verbose
 p = cmath.pi
 e = cmath.e
 if verbose:
-    print 'PI = ', abs(p)
-    print 'E = ', abs(e)
+    print('PI = ', abs(p))
+    print('E = ', abs(e))
 
 
 class CmathTestCase(unittest.TestCase):

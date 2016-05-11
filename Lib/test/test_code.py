@@ -91,7 +91,7 @@ def dump(co):
     """Print out a text representation of a code object."""
     for attr in ["name", "argcount", "varnames", "cellvars",
                  "freevars", "nlocals"]:
-        print "%s: %s" % (attr, getattr(co, "co_" + attr))
+        print("%s: %s" % (attr, getattr(co, "co_" + attr)))
 
 
 class CodeTest(unittest.TestCase):
@@ -112,7 +112,7 @@ class CodeWeakRefTest(unittest.TestCase):
         # Create a code object in a clean environment so that we know we have
         # the only reference to it left.
         namespace = {}
-        exec "def f(): pass" in globals(), namespace
+        exec("def f(): pass", globals(), namespace)
         f = namespace["f"]
         del namespace
 

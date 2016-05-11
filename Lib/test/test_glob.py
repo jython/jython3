@@ -74,9 +74,9 @@ class GlobTests(unittest.TestCase):
         #
         # But for developers playing with things, we should not have
         # it fail either
-        self.assertLessEqual({type(r) for r in res}, {str, unicode})
+        self.assertLessEqual({type(r) for r in res}, {str, str})
         res = glob.glob(os.path.join(os.curdir, '*'))
-        self.assertLessEqual({type(r) for r in res}, {str, unicode})
+        self.assertLessEqual({type(r) for r in res}, {str, str})
 
         res = glob.glob(b'*')
         self.assertEqual({type(r) for r in res}, {bytes})
@@ -85,12 +85,12 @@ class GlobTests(unittest.TestCase):
 
     def test_glob_one_directory(self):
         eq = self.assertSequencesEqual_noorder
-        eq(self.glob('a*'), map(self.norm, ['a', 'aab', 'aaa']))
-        eq(self.glob('*a'), map(self.norm, ['a', 'aaa']))
-        eq(self.glob('.*'), map(self.norm, ['.aa', '.bb']))
-        eq(self.glob('?aa'), map(self.norm, ['aaa']))
-        eq(self.glob('aa?'), map(self.norm, ['aaa', 'aab']))
-        eq(self.glob('aa[ab]'), map(self.norm, ['aaa', 'aab']))
+        eq(self.glob('a*'), list(map(self.norm, ['a', 'aab', 'aaa'])))
+        eq(self.glob('*a'), list(map(self.norm, ['a', 'aaa'])))
+        eq(self.glob('.*'), list(map(self.norm, ['.aa', '.bb'])))
+        eq(self.glob('?aa'), list(map(self.norm, ['aaa'])))
+        eq(self.glob('aa?'), list(map(self.norm, ['aaa', 'aab'])))
+        eq(self.glob('aa[ab]'), list(map(self.norm, ['aaa', 'aab'])))
         eq(self.glob('*q'), [])
 
     def test_glob_nested_directory(self):
@@ -223,7 +223,7 @@ class GlobTests(unittest.TestCase):
                      ('sym3', 'efg', 'ha'),
                     ]
         eq(self.rglob('**'), self.joins(('',), *full))
-        eq(self.rglob('.', '**'), self.joins(('.',''),
+        eq(self.rglob('.', '**'), self.joins(('.', ''),
             *(('.',) + i for i in full)))
         dirs = [('a', ''), ('a', 'bcd', ''), ('a', 'bcd', 'efg', ''),
                 ('aaa', ''), ('aab', '')]
@@ -255,7 +255,7 @@ class GlobTests(unittest.TestCase):
             eq(glob.glob('**', recursive=True), [join(*i) for i in full])
             eq(glob.glob(join('**', ''), recursive=True),
                 [join(*i) for i in dirs])
-            eq(glob.glob(join('**','zz*F'), recursive=True),
+            eq(glob.glob(join('**', 'zz*F'), recursive=True),
                 [join('aaa', 'zzzF')])
             eq(glob.glob('**zz*F', recursive=True), [])
             expect = [join('a', 'bcd', 'EF')]

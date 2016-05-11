@@ -14,7 +14,7 @@ class FloatTestCase(unittest.TestCase):
     def test_float_repr(self):
         self.assertEqual(repr(12345678.000000005), '12345678.000000006')
         self.assertEqual(repr(12345678.0000000005), '12345678.0')
-        self.assertRegexpMatches(repr(math.pi**-100), '1.927581416056020[0-9]e-50')
+        self.assertRegex(repr(math.pi**-100), '1.927581416056020[0-9]e-50')
         self.assertEqual(repr(-1.0), '-1.0')
         self.assertEqual(repr(-9876.543210), '-9876.54321')
         self.assertEqual(repr(0.123456789e+35), '1.23456789e+34')
@@ -67,10 +67,10 @@ class FloatTestCase(unittest.TestCase):
 
     def test_nan(self):
         nan = float('nan')
-        self.assert_(type(nan), float)
+        self.assertTrue(type(nan), float)
         if jython:
             # support Java syntax
-            self.assert_(type(float('NaN')), float)
+            self.assertTrue(type(float('NaN')), float)
 
         self.assertNotEqual(nan, float('nan'))
         self.assertNotEqual(nan, nan)
@@ -81,16 +81,16 @@ class FloatTestCase(unittest.TestCase):
             self.assertEqual(cmp(i, nan), 1)
 
     def test_infinity(self):
-        self.assert_(type(float('Infinity')), float)
-        self.assert_(type(float('inf')), float)
-        self.assertRaises(OverflowError, long, float('Infinity'))
+        self.assertTrue(type(float('Infinity')), float)
+        self.assertTrue(type(float('inf')), float)
+        self.assertRaises(OverflowError, int, float('Infinity'))
 
     def test_minus_zero(self):
         # Some operations confused by -0.0
         mz = float('-0.0')
-        self.assertEquals(mz, 0.)
-        self.assertEquals(repr(mz)[0], '-')
-        self.assertEquals(repr(abs(mz))[0], '0')
+        self.assertEqual(mz, 0.)
+        self.assertEqual(repr(mz)[0], '-')
+        self.assertEqual(repr(abs(mz))[0], '0')
 
     def test_float_none(self):
         self.assertRaises(TypeError, float, None)

@@ -10,7 +10,7 @@ class ThreadSafetyTestCase(unittest.TestCase):
 
     def run_threads(self, f, num=10):
         threads = []
-        for i in xrange(num):
+        for i in range(num):
             t = threading.Thread(target=f)
             t.start()
             threads.append(t)
@@ -56,7 +56,7 @@ class ThreadSafetyTestCase(unittest.TestCase):
         self.assertEqual(d, deque())
 
     def test_count_reverse(self):
-        d = deque([0,1,2,3,4,5,6,7,8,9,10,0])
+        d = deque([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0])
         def tester():
             ct = threading.currentThread()
             for i in range(1000):
@@ -65,7 +65,7 @@ class ThreadSafetyTestCase(unittest.TestCase):
                     time.sleep(0.0001)
                 d.reverse()
                 self.assertEqual(d.count(0), 2)
-                self.assert_(d[1] in (1,10))
+                self.assertTrue(d[1] in (1, 10))
         self.run_threads(tester)
 
 

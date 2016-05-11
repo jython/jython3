@@ -76,7 +76,7 @@ def _run_object_doctest(obj, module):
     finally:
         sys.stdout = save_stdout
     if verbose:
-        print 'doctest (%s) ... %d tests with zero failures' % (module.__name__, t)
+        print('doctest (%s) ... %d tests with zero failures' % (module.__name__, t))
     return f, t
 
 
@@ -138,12 +138,12 @@ class ZipSupportTests(ImportHooksBaseTestCase):
             zip_name, run_name = make_zip_script(d, 'test_zip',
                                                 script_name)
             z = zipfile.ZipFile(zip_name, 'a')
-            for mod_name, src in sample_sources.items():
+            for mod_name, src in list(sample_sources.items()):
                 z.writestr(mod_name + ".py", src)
             z.close()
             if verbose:
                 zip_file = zipfile.ZipFile(zip_name, 'r')
-                print 'Contents of %r:' % zip_name
+                print('Contents of %r:' % zip_name)
                 zip_file.printdir()
                 zip_file.close()
             os.remove(script_name)
@@ -226,18 +226,18 @@ class ZipSupportTests(ImportHooksBaseTestCase):
             exit_code, data = run_python(script_name)
             expected = pattern % (script_name, "__main__.Test")
             if verbose:
-                print "Expected line", expected
-                print "Got stdout:"
-                print data
+                print("Expected line", expected)
+                print("Got stdout:")
+                print(data)
             self.assertIn(expected, data)
             zip_name, run_name = make_zip_script(d, "test_zip",
                                                 script_name, '__main__.py')
             exit_code, data = run_python(zip_name)
             expected = pattern % (run_name, "__main__.Test")
             if verbose:
-                print "Expected line", expected
-                print "Got stdout:"
-                print data
+                print("Expected line", expected)
+                print("Got stdout:")
+                print(data)
             self.assertIn(expected, data)
 
     def test_pdb_issue4201(self):

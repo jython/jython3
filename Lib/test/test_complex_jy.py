@@ -5,7 +5,7 @@ Made for Jython.
 import unittest
 from test import test_support
 
-INF, NINF, NAN = map(float, ("inf", "-inf", "nan"))
+INF, NINF, NAN = list(map(float, ("inf", "-inf", "nan")))
 
 class ComplexTest(unittest.TestCase):
 
@@ -30,19 +30,19 @@ class ComplexTest(unittest.TestCase):
                     complex( 1.119e+308, 1.403e+308),
                     complex(-3.992e+307, 1.749e+308),
                     complex(-1.617e+308, 7.785e+307),
-                    complex(-1.617e+308,-7.785e+307),
-                    complex(-3.992e+307,-1.749e+308) ]
+                    complex(-1.617e+308, -7.785e+307),
+                    complex(-3.992e+307, -1.749e+308) ]
         # These are a little bigger and do overflow
         over =  [   complex( 1.130e+308, 1.417e+308),
                     complex(-4.032e+307, 1.767e+308),
                     complex(-1.633e+308, 7.863e+307),
-                    complex(-1.633e+308,-7.863e+307),
-                    complex(-4.032e+307,-1.767e+308) ]
+                    complex(-1.633e+308, -7.863e+307),
+                    complex(-4.032e+307, -1.767e+308) ]
         # If you start with infinity, the return is infinity, no overflow
         infinities = [ complex(INF, 1), complex(NINF, 2), complex(3, INF), complex(4, NINF) ]
 
         for z in close :
-            self.assertAlmostEquals(abs(z), 1.794e+308, delta=0.01e+308)
+            self.assertAlmostEqual(abs(z), 1.794e+308, delta=0.01e+308)
         for z in over :
             self.assertRaises(OverflowError, abs, z)
         for z in infinities :

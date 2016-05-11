@@ -1,6 +1,6 @@
-import cPickle
+import pickle
 import unittest
-from cStringIO import StringIO
+from io import StringIO
 from test.pickletester import AbstractPickleTests, AbstractPickleModuleTests
 from test import test_support
 
@@ -27,10 +27,10 @@ class ApproxFloat(unittest.TestCase):
 class cPickleTests(ApproxFloat, AbstractPickleTests, AbstractPickleModuleTests):
 
     def setUp(self):
-        self.dumps = cPickle.dumps
-        self.loads = cPickle.loads
+        self.dumps = pickle.dumps
+        self.loads = pickle.loads
 
-    error = cPickle.BadPickleGet
+    error = pickle.BadPickleGet
     module = cPickle
 
     @unittest.skipIf(test_support.is_jython, "FIXME: not working on Jython")
@@ -46,17 +46,17 @@ class cPicklePicklerTests(ApproxFloat, AbstractPickleTests):
 
     def dumps(self, arg, proto=0):
         f = StringIO()
-        p = cPickle.Pickler(f, proto)
+        p = pickle.Pickler(f, proto)
         p.dump(arg)
         f.seek(0)
         return f.read()
 
     def loads(self, buf):
         f = StringIO(buf)
-        p = cPickle.Unpickler(f)
+        p = pickle.Unpickler(f)
         return p.load()
 
-    error = cPickle.BadPickleGet
+    error = pickle.BadPickleGet
 
     @unittest.skipIf(test_support.is_jython, "FIXME: not working on Jython")
     def test_dynamic_class(self):
@@ -66,22 +66,22 @@ class cPicklePicklerTests(ApproxFloat, AbstractPickleTests):
 class cPickleListPicklerTests(AbstractPickleTests):
 
     def dumps(self, arg, proto=0):
-        p = cPickle.Pickler(proto)
+        p = pickle.Pickler(proto)
         p.dump(arg)
         return p.getvalue()
 
     def loads(self, *args):
         f = StringIO(args[0])
-        p = cPickle.Unpickler(f)
+        p = pickle.Unpickler(f)
         return p.load()
 
-    error = cPickle.BadPickleGet
+    error = pickle.BadPickleGet
 
 class cPickleFastPicklerTests(ApproxFloat, AbstractPickleTests):
 
     def dumps(self, arg, proto=0):
         f = StringIO()
-        p = cPickle.Pickler(f, proto)
+        p = pickle.Pickler(f, proto)
         p.fast = 1
         p.dump(arg)
         f.seek(0)
@@ -89,10 +89,10 @@ class cPickleFastPicklerTests(ApproxFloat, AbstractPickleTests):
 
     def loads(self, *args):
         f = StringIO(args[0])
-        p = cPickle.Unpickler(f)
+        p = pickle.Unpickler(f)
         return p.load()
 
-    error = cPickle.BadPickleGet
+    error = pickle.BadPickleGet
 
     def test_recursive_list(self):
         self.assertRaises(ValueError,

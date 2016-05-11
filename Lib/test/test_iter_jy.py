@@ -16,14 +16,14 @@ class IterTestCase(unittest.TestCase):
         class MyTuple(tuple):
             def __getitem__(self, index):
                 return str(index) + '!'
-        self.assertEqual(iter(MyList(['a', 'b'])).next(), 'a')
-        self.assertEqual(iter(MyTuple(['a', 'b'])).next(), 'a')
+        self.assertEqual(next(iter(MyList(['a', 'b']))), 'a')
+        self.assertEqual(next(iter(MyTuple(['a', 'b']))), 'a')
 
     def test_slowiter(self):
         class MyStr(str):
             def __getitem__(self, index):
                 return str(index) + '!'
-        self.assertEqual(iter(MyStr('ab')).next(), '0!')
+        self.assertEqual(next(iter(MyStr('ab'))), '0!')
 
     def test_chain(self):
         self.assertEqual(list(itertools.chain([], [], ['foo'])), ['foo'])
@@ -103,9 +103,9 @@ class ChainedIterationTest(unittest.TestCase):
             "List unique elements, preserving order. Remember only the element just seen."
             # unique_justseen('AAAABBBCCDAABBB') --> A B C D A B
             # unique_justseen('ABBCcAD', str.lower) --> A B C A D
-            return itertools.imap(
+            return map(
                 next, 
-                itertools.imap(operator.itemgetter(1),
+                map(operator.itemgetter(1),
                                itertools.groupby(iterable, key)))
 
         class TestGroupBy(object):
@@ -126,9 +126,9 @@ class ChainedIterationTest(unittest.TestCase):
                 self.pred = pred
                 self.data = data
             def __iter__(self):
-                return itertools.ifilter(self.pred, self.data)
+                return filter(self.pred, self.data)
 
-        obj = TestIFilter(lambda x: x%2, range(10))
+        obj = TestIFilter(lambda x: x%2, list(range(10)))
         self.assertEqual(list(obj), [1, 3, 5, 7, 9])
         self.assertEqual(list(obj), list(obj.__iter__()))
 
@@ -139,9 +139,9 @@ class ChainedIterationTest(unittest.TestCase):
                 self.pred = pred
                 self.data = data
             def __iter__(self):
-                return itertools.ifilterfalse(self.pred, self.data)
+                return itertools.filterfalse(self.pred, self.data)
 
-        obj = TestIFilterFalse(lambda x: x%2, range(10))
+        obj = TestIFilterFalse(lambda x: x%2, list(range(10)))
         self.assertEqual(list(obj), [0, 2, 4, 6, 8])
         self.assertEqual(list(obj), list(obj.__iter__()))
 
@@ -167,9 +167,9 @@ class ChainedIterationTest(unittest.TestCase):
                 self.p = p
                 self.q = q
             def __iter__(self):
-                return itertools.imap(self.func, self.p, self.q)
+                return map(self.func, self.p, self.q)
 
-        obj = TestImap(pow, (2,3,10), (5,2,3))
+        obj = TestImap(pow, (2, 3, 10), (5, 2, 3))
         self.assertEqual(list(obj), [32, 9, 1000])
         self.assertEqual(list(obj), list(obj.__iter__()))
 
@@ -182,7 +182,7 @@ class ChainedIterationTest(unittest.TestCase):
             def __iter__(self):
                 return itertools.starmap(self.func, self.seq)
 
-        obj = TestStarmap(pow, [(2,5), (3,2), (10,3)])
+        obj = TestStarmap(pow, [(2, 5), (3, 2), (10, 3)])
         self.assertEqual(list(obj), [32, 9, 1000])
         self.assertEqual(list(obj), list(obj.__iter__()))
 
@@ -205,7 +205,7 @@ class ChainedIterationTest(unittest.TestCase):
             "s -> (s0,s1), (s1,s2), (s2, s3), ..."
             a, b = itertools.tee(iterable)
             next(b, None)
-            return itertools.izip(a, b)
+            return zip(a, b)
 
         class TestTee(object):
             def __init__(self, func, it):
@@ -214,7 +214,7 @@ class ChainedIterationTest(unittest.TestCase):
             def __iter__(self):
                 return self.func(self.it)
 
-        obj = TestTee(pairwise, range(6))
+        obj = TestTee(pairwise, list(range(6)))
         self.assertEqual(list(obj), [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
         self.assertEqual(list(obj), list(obj.__iter__()))
 
@@ -225,7 +225,7 @@ class ChainedIterationTest(unittest.TestCase):
                 self.p = p
                 self.q = q
             def __iter__(self):
-                return itertools.izip(self.p, self.q)
+                return zip(self.p, self.q)
 
         obj = TestIzip('ABCD', 'xy')
         self.assertEqual(list(obj), [('A', 'x'), ('B', 'y')])
@@ -238,7 +238,7 @@ class ChainedIterationTest(unittest.TestCase):
                 self.p = p
                 self.q = q
             def __iter__(self):
-                return itertools.izip_longest(self.p, self.q, fillvalue='-')
+                return itertools.zip_longest(self.p, self.q, fillvalue='-')
 
         obj = TestIzipLongest('ABCD', 'xy')
         self.assertEqual(list(obj), [('A', 'x'), ('B', 'y'), ('C', '-'), ('D', '-')])

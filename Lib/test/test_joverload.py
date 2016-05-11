@@ -13,39 +13,39 @@ from org.python.core import PyReflectedFunction
 
 class PyReflFuncEnvl:
 
-    def __init__(self,name,meths):
+    def __init__(self, name, meths):
         self.reflfunc = PyReflectedFunction(meths)
 
-    def __call__(self,inst,args):
+    def __call__(self, inst, args):
         return self.reflfunc(inst,*args)
 
-def extract_ov_meths(jcl,envl_class):
+def extract_ov_meths(jcl, envl_class):
     meths = java.lang.Class.getDeclaredMethods(jcl)
     names = [ m.name for m in meths]
     meth_dict = {}
     for name in names:
-        if name.startswith('ov_') and not meth_dict.has_key(name):
-            meth_dict[name] = envl_class(name,[ m for m in meths if m.name == name ])
+        if name.startswith('ov_') and name not in meth_dict:
+            meth_dict[name] = envl_class(name, [ m for m in meths if m.name == name ])
     return meth_dict
 
 jo = JOverload()
 
-to_test = [extract_ov_meths(JOverload,PyReflFuncEnvl)]
+to_test = [extract_ov_meths(JOverload, PyReflFuncEnvl)]
 
 class OverloadedDispatchTests(unittest.TestCase):
 
-    def check(self,lbl,rng,args,expected):
+    def check(self, lbl, rng, args, expected):
         expected = expected.split()
         for meth_dict in to_test:
-            for i,expect in zip(rng,expected):
-                self.assertEqual(meth_dict['ov_%s%s' % (lbl,i)](jo,args),expect)
+            for i, expect in zip(rng, expected):
+                self.assertEqual(meth_dict['ov_%s%s' % (lbl, i)](jo, args), expect)
 
     def test_posprec(self):
-        self.check('posprec',[1,2],[0,0],
+        self.check('posprec', [1, 2], [0, 0],
                    "(int,long) (long,int)")
 
     def test_scal_int_zero(self):
-        self.check('scal',xrange(1,15),[0],
+        self.check('scal', range(1, 15), [0],
                    """
 (long)
 (int)
@@ -64,7 +64,7 @@ class OverloadedDispatchTests(unittest.TestCase):
                    """)
 
     def test_scal_string(self):
-        self.check('scal',xrange(1,15),['str'],
+        self.check('scal', range(1, 15), ['str'],
                    """
 (java.lang.String)
 (java.lang.String)
@@ -83,7 +83,7 @@ class OverloadedDispatchTests(unittest.TestCase):
                    """)
 
     def test_scal_char(self):
-        self.check('scal',xrange(1,15),['c'],
+        self.check('scal', range(1, 15), ['c'],
                    """
 (char)
 (char)
@@ -102,7 +102,7 @@ class OverloadedDispatchTests(unittest.TestCase):
                    """)
 
     def test_scal_float_one(self):
-        self.check('scal',xrange(1,15),[1.0],
+        self.check('scal', range(1, 15), [1.0],
                    """
 (double)
 (double)
@@ -142,16 +142,16 @@ class VarargsDispatchTests(unittest.TestCase):
 
     def test_lists(self):
         t = Reflection.ListVarargs()
-        self.assertEqual(t.test(ArrayList([1,2,3]), ArrayList([4,5,6])),
+        self.assertEqual(t.test(ArrayList([1, 2, 3]), ArrayList([4, 5, 6])),
                          "List...:[[1, 2, 3], [4, 5, 6]]")
-        self.assertEqual(t.test(ArrayList([1,2,3])),
+        self.assertEqual(t.test(ArrayList([1, 2, 3])),
                          "List...:[[1, 2, 3]]")
         self.assertEqual(t.test(),
                          "List...:[]")
 
-        self.assertEqual(t.test([ArrayList([1,2,3]), ArrayList([4,5,6])]),
+        self.assertEqual(t.test([ArrayList([1, 2, 3]), ArrayList([4, 5, 6])]),
                          "List...:[[1, 2, 3], [4, 5, 6]]")
-        self.assertEqual(t.test([ArrayList([1,2,3])]),
+        self.assertEqual(t.test([ArrayList([1, 2, 3])]),
                          "List...:[[1, 2, 3]]")
         self.assertEqual(t.test([]),
                          "List...:[]")
@@ -166,9 +166,9 @@ class ComplexOverloadingTests(unittest.TestCase):
 
 
 
-def printout(meth_dict,lbl,rng,args):
+def printout(meth_dict, lbl, rng, args):
     for i in rng:
-        print meth_dict['ov_%s%s' % (lbl,i)](jo,args)
+        print(meth_dict['ov_%s%s' % (lbl, i)](jo, args))
 
 
 if __name__ == '__main__' and not sys.argv[1:] == ['break-out']:

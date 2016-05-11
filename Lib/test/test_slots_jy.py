@@ -15,18 +15,18 @@ class SlottedTestCase(unittest.TestCase):
     def test_slotted(self):
         class Foo(object):
             __slots__ = 'bar'
-        self.assert_('__dict__' not in Foo.__dict__)
+        self.assertTrue('__dict__' not in Foo.__dict__)
         foo = Foo()
-        self.assert_(not hasattr(foo, '__dict__'))
+        self.assertTrue(not hasattr(foo, '__dict__'))
         foo.bar = 'hello bar'
         self.assertEqual(foo.bar, 'hello bar')
         self.assertRaises(AttributeError, setattr, foo, 'foo', 'hello foo')
 
         class Baz(object):
             __slots__ = ['python', 'jython']
-        self.assert_('__dict__' not in Baz.__dict__)
+        self.assertTrue('__dict__' not in Baz.__dict__)
         baz = Baz()
-        self.assert_(not hasattr(baz, '__dict__'))
+        self.assertTrue(not hasattr(baz, '__dict__'))
         baz.python = 'hello python'
         baz.jython = 'hello jython'
         self.assertEqual(baz.python, 'hello python')
@@ -41,9 +41,9 @@ class SlottedWithDictTestCase(unittest.TestCase):
             pass
         class Foo(Base):
             __slots__ = 'bar'
-        self.assert_('__dict__' not in Foo.__dict__)
+        self.assertTrue('__dict__' not in Foo.__dict__)
         foo = Foo()
-        self.assert_(hasattr(foo, '__dict__'))
+        self.assertTrue(hasattr(foo, '__dict__'))
         foo.bar = 'hello bar'
         foo.foo = 'hello foo'
         self.assertEqual(foo.bar, 'hello bar')
@@ -57,10 +57,10 @@ class SlottedWithDictTestCase(unittest.TestCase):
         class Foo(Slotted, Base):
             __slots__ = 'bar'
         if strict:
-            self.assert_('__dict__' in Foo.__dict__)
+            self.assertTrue('__dict__' in Foo.__dict__)
             self.assertEqual(Foo.__dict__['__dict__'].__objclass__, Foo)
         foo = Foo()
-        self.assert_(hasattr(foo, '__dict__'))
+        self.assertTrue(hasattr(foo, '__dict__'))
         foo.bar = 'hello bar'
         foo.baz = 'hello baz'
         foo.foo = 'hello foo'
@@ -71,10 +71,10 @@ class SlottedWithDictTestCase(unittest.TestCase):
         class Bar(Slotted, Base):
             pass
         if strict:
-            self.assert_('__dict__' in Bar.__dict__)
+            self.assertTrue('__dict__' in Bar.__dict__)
             self.assertEqual(Bar.__dict__['__dict__'].__objclass__, Bar)
         bar = Bar()
-        self.assert_(hasattr(bar, '__dict__'))
+        self.assertTrue(hasattr(bar, '__dict__'))
         bar.bar = 'hello bar'
         bar.baz = 'hello baz'
         bar.foo = 'hello foo'
@@ -88,10 +88,10 @@ class SlottedWithDictTestCase(unittest.TestCase):
         class Foo(OldBase, object):
             __slots__ = 'bar'
         if strict:
-            self.assert_('__dict__' in Foo.__dict__)
+            self.assertTrue('__dict__' in Foo.__dict__)
             self.assertEqual(Foo.__dict__['__dict__'].__objclass__, Foo)
         foo = Foo()
-        self.assert_(hasattr(foo, '__dict__'))
+        self.assertTrue(hasattr(foo, '__dict__'))
         foo.bar = 'hello bar'
         foo.foo = 'hello foo'
         self.assertEqual(foo.bar, 'hello bar')
@@ -99,10 +99,10 @@ class SlottedWithDictTestCase(unittest.TestCase):
 
         class Bar(OldBase, object):
             __slots__ = '__dict__'
-        self.assert_('__dict__' in Bar.__dict__)
+        self.assertTrue('__dict__' in Bar.__dict__)
         self.assertEqual(Bar.__dict__['__dict__'].__objclass__, Bar)
         bar = Bar()
-        self.assert_(hasattr(bar, '__dict__'))
+        self.assertTrue(hasattr(bar, '__dict__'))
         bar.bar = 'hello bar'
         bar.foo = 'hello foo'
         self.assertEqual(bar.bar, 'hello bar')
@@ -115,9 +115,9 @@ class SlottedWithDictTestCase(unittest.TestCase):
             pass
         class Baz(NewBase, OldBase):
             __slots__ = 'baz'
-        self.assert_('__dict__' not in Baz.__dict__)
+        self.assertTrue('__dict__' not in Baz.__dict__)
         baz = Baz()
-        self.assert_(hasattr(baz, '__dict__'))
+        self.assertTrue(hasattr(baz, '__dict__'))
         baz.baz = 'hello baz'
         baz.bar = 'hello bar'
         self.assertEqual(baz.baz, 'hello baz')
@@ -132,7 +132,7 @@ class SlottedWithWeakrefTestCase(unittest.TestCase):
             pass
         class Foo(OldBase, object):
             __slots__ = '__dict__'
-        self.assert_(hasattr(Foo, '__weakref__'))
+        self.assertTrue(hasattr(Foo, '__weakref__'))
 
 
 class SpecialSlotsBaseTestCase(unittest.TestCase):
@@ -164,7 +164,7 @@ class SpecialSlotsBaseTestCase(unittest.TestCase):
         self.assertEqual(c.__dict__.get("x"), 42)
         self.assertEqual(c.x, 42)
         self.assertEqual(c.y, 47)
-        with self.assertRaisesRegexp(AttributeError, r"'C' object has no attribute 'z'"):
+        with self.assertRaisesRegex(AttributeError, r"'C' object has no attribute 'z'"):
             c.z
 
     def test_dict_slot_str(self):
@@ -179,7 +179,7 @@ class SpecialSlotsBaseTestCase(unittest.TestCase):
         self.assertEqual(c.__dict__.get("x"), 42)
         self.assertEqual(c.x, 42)
         self.assertEqual(c.y, 47)
-        with self.assertRaisesRegexp(AttributeError, r"'C' object has no attribute 'z'"):
+        with self.assertRaisesRegex(AttributeError, r"'C' object has no attribute 'z'"):
             c.z
 
     def test_dict_slot_subclass(self):
@@ -196,7 +196,7 @@ class SpecialSlotsBaseTestCase(unittest.TestCase):
         self.assertEqual(c.__dict__.get("x"), 42)
         self.assertEqual(c.x, 42)
         self.assertEqual(c.y, 47)
-        with self.assertRaisesRegexp(AttributeError, r"'C' object has no attribute 'z'"):
+        with self.assertRaisesRegex(AttributeError, r"'C' object has no attribute 'z'"):
             c.z
         self.assertEqual(c.w, 23)
 
@@ -205,7 +205,7 @@ class SpecialSlotsBaseTestCase(unittest.TestCase):
         # has everything in a HashMap, including Python semantic equivalence
         c = C({"a": 1, "b": 2})
         self.assertTrue(c.containsKey("a"))
-        self.assertEqual(sorted(c.iteritems()), [("a", 1), ("b", 2)])
+        self.assertEqual(sorted(c.items()), [("a", 1), ("b", 2)])
         # but also has a __dict__ slot for further interesting ;) possibilities
         self.assertIn("__dict__", dir(c))
         self.assertIn("x", dir(c))
@@ -213,7 +213,7 @@ class SpecialSlotsBaseTestCase(unittest.TestCase):
         self.assertEqual(c.__dict__.get("x"), 42)
         self.assertEqual(c.x, 42)
         self.assertEqual(c.y, 47)
-        with self.assertRaisesRegexp(AttributeError, r"'C' object has no attribute 'z'"):
+        with self.assertRaisesRegex(AttributeError, r"'C' object has no attribute 'z'"):
             c.z
 
     def test_weakref_slot(self):

@@ -1,2 +1,2 @@
 def spam():
-    print 'spam'
+    print('spam')

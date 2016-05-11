@@ -62,11 +62,11 @@ class TestSysConfig(unittest.TestCase):
         os.path.isabs = self.isabs
         os.path.splitdrive = self.splitdrive
         sysconfig._CONFIG_VARS = copy(self._config_vars)
-        for key, value in self.old_environ.items():
+        for key, value in list(self.old_environ.items()):
             if os.environ.get(key) != value:
                 os.environ[key] = value
 
-        for key in os.environ.keys():
+        for key in list(os.environ.keys()):
             if key not in self.old_environ:
                 del os.environ[key]
 
@@ -92,9 +92,8 @@ class TestSysConfig(unittest.TestCase):
         scheme = get_paths()
         default_scheme = _get_default_scheme()
         wanted = _expand_vars(default_scheme, None)
-        wanted = wanted.items()
-        wanted.sort()
-        scheme = scheme.items()
+        wanted = sorted(list(wanted.items()))
+        scheme = list(scheme.items())
         scheme.sort()
         self.assertEqual(scheme, wanted)
 
@@ -146,14 +145,14 @@ class TestSysConfig(unittest.TestCase):
         get_config_vars()['CFLAGS'] = ('-fno-strict-aliasing -DNDEBUG -g '
                                        '-fwrapv -O3 -Wall -Wstrict-prototypes')
 
-        maxint = sys.maxint
+        maxint = sys.maxsize
         try:
-            sys.maxint = 2147483647
+            sys.maxsize = 2147483647
             self.assertEqual(get_platform(), 'macosx-10.3-ppc')
-            sys.maxint = 9223372036854775807
+            sys.maxsize = 9223372036854775807
             self.assertEqual(get_platform(), 'macosx-10.3-ppc64')
         finally:
-            sys.maxint = maxint
+            sys.maxsize = maxint
 
 
         self._set_uname(('Darwin', 'macziade', '8.11.1',
@@ -165,14 +164,14 @@ class TestSysConfig(unittest.TestCase):
         get_config_vars()['CFLAGS'] = ('-fno-strict-aliasing -DNDEBUG -g '
                                        '-fwrapv -O3 -Wall -Wstrict-prototypes')
 
-        maxint = sys.maxint
+        maxint = sys.maxsize
         try:
-            sys.maxint = 2147483647
+            sys.maxsize = 2147483647
             self.assertEqual(get_platform(), 'macosx-10.3-i386')
-            sys.maxint = 9223372036854775807
+            sys.maxsize = 9223372036854775807
             self.assertEqual(get_platform(), 'macosx-10.3-x86_64')
         finally:
-            sys.maxint = maxint
+            sys.maxsize = maxint
 
         # macbook with fat binaries (fat, universal or fat64)
         get_config_vars()['MACOSX_DEPLOYMENT_TARGET'] = '10.4'

@@ -19,7 +19,7 @@ class TestUsingInitializer(unittest.TestCase):
             # SystemRoot is needed to remote debug the subprocess JVM
             env['SystemRoot'] = os.environ.get('SystemRoot', '')
 
-        self.assertEquals(0, subprocess.call([sys.executable, fn], env=env))
+        self.assertEqual(0, subprocess.call([sys.executable, fn], env=env))
 
 def test_main():
     test_support.run_unittest(TestUsingInitializer)

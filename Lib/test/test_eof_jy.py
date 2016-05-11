@@ -12,44 +12,44 @@ class TestEof(unittest.TestCase):
     def test_indented_no_newline(self):
         try:
             import eof_fodder1
-        except ImportError, cause:
+        except ImportError as cause:
             self.fail(cause)
 
     def test_trailing_ws_no_newline(self):
         try:
             import eof_fodder2
-        except ImportError, cause:
+        except ImportError as cause:
             self.fail(cause)
 
     def test_trailing_ws(self):
         try:
             import eof_fodder3
-        except ImportError, cause:
+        except ImportError as cause:
             self.fail(cause)
 
     def test_empty(self):
         try:
             import eof_fodder4
-        except ImportError, cause:
+        except ImportError as cause:
             self.fail(cause)
 
     def test_just_a_comment_no_newline(self):
         try:
             import eof_fodder5
-        except ImportError, cause:
+        except ImportError as cause:
             self.fail(cause)
 
     def test_junky_ws_after_indent(self):
         try:
             import eof_fodder6
-        except ImportError, cause:
+        except ImportError as cause:
             self.fail(cause)
 
     def test_trailing_paren(self):
         try:
             import badsyntax_eof1
-        except SyntaxError, cause:
-            self.assertEquals(cause.lineno, 5)
+        except SyntaxError as cause:
+            self.assertEqual(cause.lineno, 5)
 
 #==============================================================================
 

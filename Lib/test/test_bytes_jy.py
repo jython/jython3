@@ -23,7 +23,7 @@ class SimpleOperationsTest(unittest.TestCase):
             # Check in-place multiplication (repeats)
             b = bytearray(a)
             b *= n
-            self.assertEquals(b, bytearray(a*n))
+            self.assertEqual(b, bytearray(a*n))
 
         def irepeat_export(a, n) :
             # In-place multiplication with export mostly raises BufferError
@@ -31,7 +31,7 @@ class SimpleOperationsTest(unittest.TestCase):
             with memoryview(b) as m:
                 b *= n
             # If it doesn't raise, it gets the right answer
-            self.assertEquals(b, bytearray(a*n))
+            self.assertEqual(b, bytearray(a*n))
 
         for a in [b'', b'a', b'hello'] :
             check_irepeat(a, 7)

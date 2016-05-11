@@ -45,7 +45,7 @@ class BaseTestCase(unittest.TestCase):
     def test_subclasses(self):
         r = list(range(10))
         self.assertEqual(r[TrapInt(5):TrapInt(10)], r[5:10])
-        self.assertEqual(slice(TrapInt()).indices(0), (0,0,1))
+        self.assertEqual(slice(TrapInt()).indices(0), (0, 0, 1))
 
     def test_error(self):
         self.o.ind = 'dumb'
@@ -161,7 +161,7 @@ class SeqTestCase:
 
 
 class ListTestCase(SeqTestCase, unittest.TestCase):
-    seq = [0,10,20,30,40,50]
+    seq = [0, 10, 20, 30, 40, 50]
 
     def test_setdelitem(self):
         self.o.ind = -2
@@ -217,7 +217,7 @@ class NewSeq:
 
 
 class TupleTestCase(SeqTestCase, unittest.TestCase):
-    seq = (0,10,20,30,40,50)
+    seq = (0, 10, 20, 30, 40, 50)
 
 class ByteArrayTestCase(SeqTestCase, unittest.TestCase):
     seq = bytearray(b"this is a test")
@@ -229,7 +229,7 @@ class StringTestCase(SeqTestCase, unittest.TestCase):
     seq = "this is a test"
 
 class NewSeqTestCase(SeqTestCase, unittest.TestCase):
-    seq = NewSeq((0,10,20,30,40,50))
+    seq = NewSeq((0, 10, 20, 30, 40, 50))
 
 
     #FIXME: This test not working in Jython on NewSeqDeprecated.
@@ -242,8 +242,8 @@ class RangeTestCase(unittest.TestCase):
     def test_range(self):
         n = newstyle()
         n.ind = 5
-        self.assertEqual(range(1, 20)[n], 6)
-        self.assertEqual(range(1, 20).__getitem__(n), 6)
+        self.assertEqual(list(range(1, 20))[n], 6)
+        self.assertEqual(list(range(1, 20)).__getitem__(n), 6)
 
 
 class OverflowTestCase(unittest.TestCase):

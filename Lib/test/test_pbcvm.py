@@ -34,9 +34,9 @@ fib = make_fib_function()
 class PyBytecodeTest(unittest.TestCase):
 
     def test_fib(self):
-        expected_fib = [1,1,2,3,5,8,13,21,34,55]
+        expected_fib = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
         for i in range(10):
-            self.assertEquals(fib(i), expected_fib[i])
+            self.assertEqual(fib(i), expected_fib[i])
 
 class AdhocRegrtest(unittest.TestCase):
 
@@ -55,7 +55,7 @@ class AdhocRegrtest(unittest.TestCase):
             'test_exceptions_pyc'):
             test_times = []
             ok = runtest(test, False, True, test_times)
-            print "got", ok
+            print("got", ok)
             self.assertTrue(ok > 0)
 
     def tearDown(self):

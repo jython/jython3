@@ -12,22 +12,22 @@ if test_support.is_jython:
 class ListTestCase(unittest.TestCase):
 
     def test_recursive_list_slices(self):
-        x = [1,2,3,4,5]
+        x = [1, 2, 3, 4, 5]
         x[1:] = x
-        self.assertEquals(x, [1, 1, 2, 3, 4, 5],
+        self.assertEqual(x, [1, 1, 2, 3, 4, 5],
                           "Recursive assignment to list slices failed")
 
     def test_subclass_richcmp(self):
         # http://bugs.jython.org/issue1115
         class Foo(list):
             def __init__(self, dotstring):
-                list.__init__(self, map(int, dotstring.split(".")))
+                list.__init__(self, list(map(int, dotstring.split("."))))
         bar1 = Foo('1.2.3')
         bar2 = Foo('1.2.4')
-        self.assert_(bar1 < bar2)
-        self.assert_(bar1 <= bar2)
-        self.assert_(bar2 > bar1)
-        self.assert_(bar2 >= bar1)
+        self.assertTrue(bar1 < bar2)
+        self.assertTrue(bar1 <= bar2)
+        self.assertTrue(bar2 > bar1)
+        self.assertTrue(bar2 >= bar1)
 
     def test_setget_override(self):
         if not test_support.is_jython:
@@ -46,9 +46,9 @@ class ListTestCase(unittest.TestCase):
 
         glmt = GoofyListMapThing()
         glmt['my-key'] = String('el1')
-        self.assertEquals(glmt.silly, "spam")
+        self.assertEqual(glmt.silly, "spam")
         glmt['my-key']
-        self.assertEquals(glmt.silly, "eggs")
+        self.assertEqual(glmt.silly, "eggs")
 
     def test_tuple_equality(self):
         self.assertEqual([(1,), [1]].count([1]), 1) # http://bugs.jython.org/issue1317
@@ -56,7 +56,7 @@ class ListTestCase(unittest.TestCase):
     def test_big_list(self):
         """Verify that fairly large collection literals of primitives can be constructed."""
         # use \n to separate to avoid parser problems
-        lst = eval("[" + ",\n".join((str(x) for x in xrange(64000))) +"]")
+        lst = eval("[" + ",\n".join((str(x) for x in range(64000))) +"]")
         self.assertEqual(len(lst), 64000)
         self.assertEqual(sum(lst), 2047968000)
 
@@ -64,7 +64,7 @@ class ThreadSafetyTestCase(unittest.TestCase):
 
     def run_threads(self, f, num=10):
         threads = []
-        for i in xrange(num):
+        for i in range(num):
             t = threading.Thread(target=f)
             t.start()
             threads.append(t)
@@ -100,7 +100,7 @@ class ThreadSafetyTestCase(unittest.TestCase):
         self.assertEqual(lst, [])
 
     def test_count_reverse(self):
-        lst = [0,1,2,3,4,5,6,7,8,9,10,0]
+        lst = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0]
         def tester():
             ct = threading.currentThread()
             for i in range(1000):
@@ -109,7 +109,7 @@ class ThreadSafetyTestCase(unittest.TestCase):
                     time.sleep(0.0001)
                 lst.reverse()
                 self.assertEqual(lst.count(0), 2)
-                self.assert_(lst[1] in (1,10))
+                self.assertTrue(lst[1] in (1, 10))
         self.run_threads(tester)
 
 class ExtendedSliceTestCase(unittest.TestCase):
@@ -123,10 +123,10 @@ class ExtendedSliceTestCase(unittest.TestCase):
         # This contributed to the release of http://bugs.jython.org/issue1873 .
         # This is a supplementary test focused on correct stopping.
 
-        initial =                  [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13]
-        expected1 = self.type2test([ 0, 1, 2, 3, 4, 5,            10,11,12,13])
-        expected2 = self.type2test([ 0, 1, 2,    4,    6,    8,   10,   12,13])
-        expected4 = self.type2test([ 0, 1,    3, 4, 5,    7, 8, 9,   11,12,13])
+        initial =                  [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+        expected1 = self.type2test([ 0, 1, 2, 3, 4, 5,            10, 11, 12, 13])
+        expected2 = self.type2test([ 0, 1, 2,    4,    6,    8,   10,   12, 13])
+        expected4 = self.type2test([ 0, 1,    3, 4, 5,    7, 8, 9,   11, 12, 13])
 
         # Positive step
         a = self.type2test(initial)
@@ -168,11 +168,11 @@ class ExtendedSliceTestCase(unittest.TestCase):
         # This is a supplementary test focused on correct stopping.
 
         aa, bb, cc = 91, 92, 93
-        src = self.type2test([aa,bb,cc])
-        initial =                  [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13]
-        expected1 = self.type2test([ 0, 1, 2, 3, 4, 5,aa,bb,cc, 9,10,11,12,13])
-        expected2 = self.type2test([ 0, 1, 2,aa, 4,bb, 6,cc, 8, 9,10,11,12,13])
-        expected4 = self.type2test([ 0, 1,aa, 3, 4, 5,bb, 7, 8, 9,cc,11,12,13])
+        src = self.type2test([aa, bb, cc])
+        initial =                  [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+        expected1 = self.type2test([ 0, 1, 2, 3, 4, 5, aa, bb, cc, 9, 10, 11, 12, 13])
+        expected2 = self.type2test([ 0, 1, 2, aa, 4, bb, 6, cc, 8, 9, 10, 11, 12, 13])
+        expected4 = self.type2test([ 0, 1, aa, 3, 4, 5, bb, 7, 8, 9, cc, 11, 12, 13])
 
         # Positive step
         a = self.type2test(initial)
@@ -230,10 +230,10 @@ class JavaListTestCase(test_list.ListTest):
 
     def test_extend_java_ArrayList(self):
         jl = ArrayList([])
-        jl.extend([1,2])
-        self.assertEqual(jl, ArrayList([1,2]))
-        jl.extend(ArrayList([3,4]))
-        self.assertEqual(jl, [1,2,3,4])
+        jl.extend([1, 2])
+        self.assertEqual(jl, ArrayList([1, 2]))
+        jl.extend(ArrayList([3, 4]))
+        self.assertEqual(jl, [1, 2, 3, 4])
 
 
 def test_main():

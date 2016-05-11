@@ -11,7 +11,7 @@ from test import test_support
 import time
 import gc
 import weakref
-from Queue import Queue
+from queue import Queue
 
 try:
     from java.lang import System, Runnable, Class

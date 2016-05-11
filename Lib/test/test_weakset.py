@@ -33,7 +33,7 @@ class SomeClass(object):
     def __init__(self, value):
         self.value = value
     def __eq__(self, other):
-        if type(other) != type(self):
+        if not isinstance(other, type(self)):
             return False
         return other.value == self.value
 

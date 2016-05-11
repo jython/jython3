@@ -1,5 +1,5 @@
 """Jython bug with cell variables and yield"""
-from __future__ import generators
+
 
 def single_closure_single_value():
     value = 0
@@ -34,9 +34,9 @@ for name in dir():
     if 'closure' in name:
         test = eval(name)
         if name.endswith('single_value'):
-            expected = [0,0]
+            expected = [0, 0]
         else:
-            expected = [0,1]
+            expected = [0, 1]
         tests[test] = expected
 
 def test_main(verbose=None):

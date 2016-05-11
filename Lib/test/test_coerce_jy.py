@@ -12,8 +12,8 @@ class CoerceTestCase(unittest.TestCase):
         self.assertRaises(TypeError, int.__coerce__, None, 1)
 
     def test_long_coerce__(self):
-        self.assertEqual(long.__coerce__(1L, None), NotImplemented)
-        self.assertRaises(TypeError, long.__coerce__, None, 1)
+        self.assertEqual(int.__coerce__(1, None), NotImplemented)
+        self.assertRaises(TypeError, int.__coerce__, None, 1)
 
     def test_float_coerce__(self):
         self.assertRaises(TypeError, float.__coerce__, None, 1)

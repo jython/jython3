@@ -10,9 +10,9 @@ class SortTest(unittest.TestCase):
         a_sorted_set = set(a_sorted)
 
         if a_sorted_set != a_set:
-            print 'list elements changed during sort:'
-            print 'removed', tuple(a_set - a_sorted_set)
-            print 'added', tuple(a_sorted_set - a_set)
+            print('list elements changed during sort:')
+            print('removed', tuple(a_set - a_sorted_set))
+            print('added', tuple(a_sorted_set - a_set))
 
         assert len(a_set - a_sorted_set) == len(a_sorted_set - a_set) == 0
 

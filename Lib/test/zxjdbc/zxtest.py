@@ -20,12 +20,12 @@ class zxCoreTestCase(runner.SQLTestCase):
 
     def connect(self):
         factory = runner.__imp__(self.factory.classname)
-        args = map(lambda x: x[1], self.factory.arguments)
+        args = [x[1] for x in self.factory.arguments]
         connect = getattr(factory, self.factory.method)
-        return apply(connect, args, self.factory.keywords)
+        return connect(*args, **self.factory.keywords)
 
     def cursor(self, *args, **kws):
-        c = apply(self.db.cursor, args, kws)
+        c = self.db.cursor(*args, **kws)
         if hasattr(self, "datahandler"):
             c.datahandler = self.datahandler(c.datahandler)
         return c
@@ -80,9 +80,9 @@ class zxAPITestCase(zxJDBCTestCase):
         """testing autocommit functionality"""
         if self.db.__connection__.getMetaData().supportsTransactions():
             self.db.autocommit = 1
-            self.assertEquals(1, self.db.__connection__.getAutoCommit())
+            self.assertEqual(1, self.db.__connection__.getAutoCommit())
             self.db.autocommit = 0
-            self.assertEquals(0, self.db.__connection__.getAutoCommit())
+            self.assertEqual(0, self.db.__connection__.getAutoCommit())
 
     def testSimpleQuery(self):
         """testing simple queries with cursor.execute(), no parameters"""
@@ -113,7 +113,7 @@ class zxAPITestCase(zxJDBCTestCase):
             for i in range(1, 8):
                 c.execute(p, (i,))
                 data = c.fetchall()
-                self.assertEquals(1, len(data))
+                self.assertEqual(1, len(data))
             assert not p.closed
             p.close()
             assert p.closed
@@ -149,16 +149,16 @@ class zxAPITestCase(zxJDBCTestCase):
                 rstype=zxJDBC.TYPE_SCROLL_INSENSITIVE,
                 rsconcur=zxJDBC.CONCUR_READ_ONLY
         )
-        self._test_cursorkeywords(1,zxJDBC.TYPE_SCROLL_INSENSITIVE,zxJDBC.CONCUR_READ_ONLY)
+        self._test_cursorkeywords(1, zxJDBC.TYPE_SCROLL_INSENSITIVE, zxJDBC.CONCUR_READ_ONLY)
         self.assertRaises(TypeError, self.cursor, 1, zxJDBC.TYPE_SCROLL_INSENSITIVE)
 
     def testFileLikeCursor(self):
         """testing the cursor as a file-like object"""
         c = self.cursor()
         try:
-            print >> c, "insert into zxtesting (id, name, state) values (100, 'test100', 'wa')"
-            print >> c, "insert into zxtesting (id, name, state) values (101, 'test101', 'co')"
-            print >> c, "insert into zxtesting (id, name, state) values (102, 'test102', 'or')"
+            print("insert into zxtesting (id, name, state) values (100, 'test100', 'wa')", file=c)
+            print("insert into zxtesting (id, name, state) values (101, 'test101', 'co')", file=c)
+            print("insert into zxtesting (id, name, state) values (102, 'test102', 'or')", file=c)
             self.db.commit()
         finally:
             c.close()
@@ -167,7 +167,7 @@ class zxAPITestCase(zxJDBCTestCase):
         try:
             c.execute("select * from zxtesting where id in (100, 101, 102)")
             f = c.fetchall()
-            self.assertEquals(3, len(f))
+            self.assertEqual(3, len(f))
         finally:
             c.close()
 
@@ -179,19 +179,19 @@ class zxAPITestCase(zxJDBCTestCase):
             cnt = 0
             c.execute("select * from zxtesting")
             for a in c:
-                self.assertEquals(3, len(a))
+                self.assertEqual(3, len(a))
                 cnt += 1
-            self.assertEquals(7, cnt)
+            self.assertEqual(7, cnt)
             # then with a while loop
             cnt = 0
             c.execute("select * from zxtesting")
-            while 1:
+            while True:
                 try:
-                    self.assertEquals(3, len(c.next()))
+                    self.assertEqual(3, len(next(c)))
                 except StopIteration:
                     break
                 cnt += 1
-            self.assertEquals(7, cnt)
+            self.assertEqual(7, cnt)
         finally:
             c.close()
 
@@ -236,11 +236,11 @@ class zxAPITestCase(zxJDBCTestCase):
                     break
             assert found, "expected to find 'zxtesting'"
             c.tables(None, None, "zxtesting", None)
-            self.assertEquals(1, len(c.fetchall()))
+            self.assertEqual(1, len(c.fetchall()))
             c.tables(None, None, "zxtesting", ("TABLE",))
-            self.assertEquals(1, len(c.fetchall()))
+            self.assertEqual(1, len(c.fetchall()))
             c.tables(None, None, "zxtesting", ("table",))
-            self.assertEquals(1, len(c.fetchall()))
+            self.assertEqual(1, len(c.fetchall()))
         finally:
             c.close()
 
@@ -252,18 +252,18 @@ class zxAPITestCase(zxJDBCTestCase):
 
             c.columns(None, None, "zxtesting", None)
             f = c.fetchall()
-            self.assertEquals(3, c.rowcount)
+            self.assertEqual(3, c.rowcount)
             f.sort(lambda x, y: cmp(x[3], y[3]))
-            self.assertEquals("name", f[1][3].lower())
+            self.assertEqual("name", f[1][3].lower())
 
             # if the db engine handles mixed case, then don't ask about a different
             #  case because it will fail
             if not self.db.__connection__.getMetaData().storesMixedCaseIdentifiers():
                 c.columns(None, None, "ZXTESTING", None)
                 f = c.fetchall()
-                self.assertEquals(3, c.rowcount)
+                self.assertEqual(3, c.rowcount)
                 f.sort(lambda x, y: cmp(x[3], y[3]))
-                self.assertEquals("name", f[1][3].lower())
+                self.assertEqual("name", f[1][3].lower())
         finally:
             c.close()
 
@@ -275,7 +275,7 @@ class zxAPITestCase(zxJDBCTestCase):
             c.bestrow(None, None, "zxtesting")
             f = c.fetchall()
             if f: # we might as well see that it worked
-                self.assertEquals(1, len(f))
+                self.assertEqual(1, len(f))
         finally:
             c.close()
 
@@ -305,21 +305,21 @@ class zxAPITestCase(zxJDBCTestCase):
         try:
             # set everything up
             c.execute("select id, name, state from zxtesting order by id")
-            self.assertEquals(1, c.fetchone()[0])
-            self.assertEquals(2, c.fetchone()[0])
-            self.assertEquals(3, c.fetchone()[0])
+            self.assertEqual(1, c.fetchone()[0])
+            self.assertEqual(2, c.fetchone()[0])
+            self.assertEqual(3, c.fetchone()[0])
             # move back two and fetch the row again
             c.scroll(-2)
-            self.assertEquals(2, c.fetchone()[0])
+            self.assertEqual(2, c.fetchone()[0])
             # move to the fifth row (0-based indexing)
             c.scroll(4, "absolute")
-            self.assertEquals(5, c.fetchone()[0])
+            self.assertEqual(5, c.fetchone()[0])
             # move back to the start
             c.scroll(-5)
-            self.assertEquals(1, c.fetchone()[0])
+            self.assertEqual(1, c.fetchone()[0])
             # move to the end
             c.scroll(6, "absolute")
-            self.assertEquals(7, c.fetchone()[0])
+            self.assertEqual(7, c.fetchone()[0])
             # make sure we get an IndexError
             self.assertRaises(IndexError, c.scroll, 1, "relative")
             self.assertRaises(IndexError, c.scroll, -1, "absolute")
@@ -349,22 +349,22 @@ class zxAPITestCase(zxJDBCTestCase):
                 # a dynamic cursor doesn't know if any rows really exist
                 # maybe the 'possibility' of rows should change .rownumber to 0?
                 c.execute("select * from zxtesting where 1=0")
-                self.assertEquals(0, c.rownumber)
+                self.assertEqual(0, c.rownumber)
             c.execute("select * from zxtesting")
-            self.assertEquals(0, c.rownumber)
-            c.next()
-            self.assertEquals(1, c.rownumber)
-            c.next()
-            self.assertEquals(2, c.rownumber)
+            self.assertEqual(0, c.rownumber)
+            next(c)
+            self.assertEqual(1, c.rownumber)
+            next(c)
+            self.assertEqual(2, c.rownumber)
             c.scroll(-1)
-            self.assertEquals(1, c.rownumber)
+            self.assertEqual(1, c.rownumber)
             c.scroll(2, "absolute")
-            self.assertEquals(2, c.rownumber)
+            self.assertEqual(2, c.rownumber)
             c.scroll(6, "absolute")
-            self.assertEquals(6, c.rownumber)
+            self.assertEqual(6, c.rownumber)
         finally:
             c.close()
-        self.assertEquals(None, c.rownumber)
+        self.assertEqual(None, c.rownumber)
 
     def testStaticRownumber(self):
         """testing a static cursor's rownumber"""
@@ -385,21 +385,21 @@ class zxAPITestCase(zxJDBCTestCase):
 
         try:
             c.execute("select * from zxtesting")
-            c.next()
-            c.next()
-            c.next()
+            next(c)
+            next(c)
+            next(c)
             if dynamic:
                 # dynamic cursors only know about the number of rows encountered
-                self.assertEquals(3, c.rowcount)
+                self.assertEqual(3, c.rowcount)
             else:
-                self.assertEquals(7, c.rowcount)
+                self.assertEqual(7, c.rowcount)
             c.scroll(-1)
             # make sure they don't change just because we scrolled backwards
             if dynamic:
                 # dynamic cursors only know about the number of rows encountered
-                self.assertEquals(3, c.rowcount)
+                self.assertEqual(3, c.rowcount)
             else:
-                self.assertEquals(7, c.rowcount)
+                self.assertEqual(7, c.rowcount)
         finally:
             c.close()
 
@@ -488,7 +488,7 @@ class zxAPITestCase(zxJDBCTestCase):
                 assert len(f) == 1, "expected [1] row, got [%d]" % (len(f))
                 assert len(f[0][0]) == len(data), "expected [%d], got [%d]" % (len(data), len(f[0][0]))
                 assert data == f[0][0], "failed to retrieve the same text as inserted"
-            except Exception, e:
+            except Exception as e:
                 raise e
         finally:
             c.execute("drop table %s" % (self.table("texttable")[0]))
@@ -508,7 +508,7 @@ class zxAPITestCase(zxJDBCTestCase):
         # Java uses milliseconds and Python uses seconds, so adjust the time accordingly
         # seeded with Java
         c = self.calendar()
-        o = zxJDBC.DateFromTicks(c.getTime().getTime() / 1000L)
+        o = zxJDBC.DateFromTicks(c.getTime().getTime() / 1000)
         v = zxJDBC.Date(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DATE))
         assert o.equals(v), "incorrect date conversion using java, got [%ld], expected [%ld]" % (v.getTime(), o.getTime())
 
@@ -526,7 +526,7 @@ class zxAPITestCase(zxJDBCTestCase):
 
         # seeded with Java
         c = self.calendar()
-        o = zxJDBC.TimeFromTicks(c.getTime().getTime() / 1000L)
+        o = zxJDBC.TimeFromTicks(c.getTime().getTime() / 1000)
         v = zxJDBC.Time(c.get(Calendar.HOUR), c.get(Calendar.MINUTE), c.get(Calendar.SECOND))
         assert o.equals(v), "incorrect date conversion using java, got [%ld], expected [%ld]" % (v.getTime(), o.getTime())
 
@@ -544,7 +544,7 @@ class zxAPITestCase(zxJDBCTestCase):
 
         # seeded with Java
         c = self.calendar()
-        o = zxJDBC.TimestampFromTicks(c.getTime().getTime() / 1000L)
+        o = zxJDBC.TimestampFromTicks(c.getTime().getTime() / 1000)
         v = zxJDBC.Timestamp(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DATE),
                 c.get(Calendar.HOUR), c.get(Calendar.MINUTE), c.get(Calendar.SECOND))
         assert o.equals(v), "incorrect date conversion using java, got [%ld], expected [%ld]" % (v.getTime(), o.getTime())
@@ -556,8 +556,9 @@ class zxAPITestCase(zxJDBCTestCase):
         #v = zxJDBC.Timestamp(l[0], l[1], l[2], l[3], l[4], l[5])
         #assert o.equals(v), "incorrect date conversion using python, got [%ld], expected [%ld]" % (v.getTime(), o.getTime())
 
-    def _test_precision(self, (tabname, sql), diff, values, attr):
+    def _test_precision(self, xxx_todo_changeme, diff, values, attr):
 
+        (tabname, sql) = xxx_todo_changeme
         try:
             c = self.cursor()
             try:
@@ -571,7 +572,7 @@ class zxAPITestCase(zxJDBCTestCase):
         try:
             c = self.cursor()
             c.execute(sql)
-            c.execute("insert into %s (a, b) values (?, ?)" % (tabname), map(lambda x: (0, x), values))
+            c.execute("insert into %s (a, b) values (?, ?)" % (tabname), [(0, x) for x in values])
             c.execute("select a, b from %s" % (tabname))
             f = c.fetchall()
             assert len(values) == len(f), "mismatched result set length"
@@ -648,23 +649,24 @@ class zxAPITestCase(zxJDBCTestCase):
             c.execute("insert into zxtesting values (?, ?, ?)", [(500, 'bz', 'or')])
             assert c.updatecount == 1, "expected [1], got [%d]" % (c.updatecount)
             c.execute("select * from zxtesting")
-            self.assertEquals(None, c.updatecount)
+            self.assertEqual(None, c.updatecount)
             # there's a *feature* in the mysql engine where it returns 0 for delete if there is no
             #  where clause, regardless of the actual value.  using a where clause forces it to calculate
             #  the appropriate value
             c.execute("delete from zxtesting where 1>0")
             assert c.updatecount == 8, "expected [8], got [%d]" % (c.updatecount)
             c.execute("update zxtesting set name = 'nothing'")
-            self.assertEquals(0, c.updatecount)
+            self.assertEqual(0, c.updatecount)
         finally:
             c.close()
 
-    def _test_time(self, (tabname, sql), factory, values, _type, _cmp=cmp, datahandler=None):
+    def _test_time(self, xxx_todo_changeme1, factory, values, _type, _cmp=cmp, datahandler=None):
+        (tabname, sql) = xxx_todo_changeme1
         c = self.cursor()
         if datahandler: c.datahandler = datahandler(c.datahandler)
         try:
             c.execute(sql)
-            dates = map(lambda x, f=factory: apply(f, x), values)
+            dates = list(map(lambda x, f=factory: f(*x), values))
             for a in dates:
                 c.execute("insert into %s values (1, ?)" % (tabname), [(a,)], {0:_type})
             self.db.commit()
@@ -679,7 +681,7 @@ class zxAPITestCase(zxJDBCTestCase):
 
             c.execute("select * from %s" % (tabname))
             f = c.fetchall()
-            self.assertEquals(len(f), len(dates) - 1)
+            self.assertEqual(len(f), len(dates) - 1)
         finally:
             c.execute("drop table %s" % (tabname))
             c.close()
@@ -759,17 +761,17 @@ class zxAPITestCase(zxJDBCTestCase):
         try:
 
             c.execute("select * from zxtesting", maxrows=3)
-            self.assertEquals(3, len(c.fetchall()))
+            self.assertEqual(3, len(c.fetchall()))
 
             c.execute("select * from zxtesting where id > ?", (1,), maxrows=3)
-            self.assertEquals(3, len(c.fetchall()))
+            self.assertEqual(3, len(c.fetchall()))
 
             c.execute("select count(*) from zxtesting")
             f = c.fetchall()
             num = f[0][0]
 
             c.execute("select * from zxtesting", maxrows=0)
-            self.assertEquals(num, len(c.fetchall()))
+            self.assertEqual(num, len(c.fetchall()))
 
         finally:
             c.close()
@@ -799,7 +801,7 @@ class zxAPITestCase(zxJDBCTestCase):
             f = c.fetchall()
             assert f is not None, "expected some values"
             # filter out any indicies with name None
-            f = filter(lambda x: x[5], f)
+            f = [x for x in f if x[5]]
             assert len(f) == 1, "expected [1], got [%d]" % (len(f))
         finally:
             c.close()
@@ -809,13 +811,13 @@ class zxAPITestCase(zxJDBCTestCase):
         try:
             # make sure None if the result is an empty result set
             c.execute("select * from zxtesting where 1<0")
-            self.assertEquals(None, c.fetchone())
+            self.assertEqual(None, c.fetchone())
             # make sure an empty sequence if the result is an empty result set
             c.execute("select * from zxtesting where 1<0")
-            self.assertEquals([], c.fetchmany())
+            self.assertEqual([], c.fetchmany())
             # make sure an empty sequence if the result is an empty result set
             c.execute("select * from zxtesting where 1<0")
-            self.assertEquals([], c.fetchall())
+            self.assertEqual([], c.fetchall())
             # test some arraysize features
             c.execute("select * from zxtesting")
             f = c.fetchmany()
@@ -845,7 +847,7 @@ class zxAPITestCase(zxJDBCTestCase):
         try:
             try:
                 c.fetchall()
-            except zxJDBC.Error, e:
+            except zxJDBC.Error as e:
                 pass
             else:
                 self.fail("excepted exception calling fetchall() prior to execute()")
@@ -892,7 +894,7 @@ class zxAPITestCase(zxJDBCTestCase):
                 for idx in range(c.lastrowid + 1, c.lastrowid + 25):
                     c.execute("insert into %s (b) values (?)" % (tabname), [(idx,)])
                     assert c.lastrowid is not None, "lastrowid is None"
-                    self.assertEquals(idx, c.lastrowid)
+                    self.assertEqual(idx, c.lastrowid)
             except:
                 self.db.rollback()
 
@@ -933,12 +935,12 @@ class zxAPITestCase(zxJDBCTestCase):
             fetch.add(rs)
 
             if not dynamic:
-                self.assertEquals(4, fetch.getRowCount())
+                self.assertEqual(4, fetch.getRowCount())
             assert fetch.fetchone()
             assert fetch.fetchmany(2)
             assert fetch.fetchall()
             assert not fetch.fetchall()
-            self.assertEquals(4, fetch.getRowCount())
+            self.assertEqual(4, fetch.getRowCount())
             assert fetch.removeWarningListener(wl)
             fetch.close()
             stmt.close()

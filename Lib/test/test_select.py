@@ -61,7 +61,7 @@ class TestSelectInvalidParameters(unittest.TestCase):
                     rfd, wfd, xfd = select.select(args[0], args[1], args[2], timeout)
                 except (select.error, TypeError):
                     pass
-                except Exception, x:
+                except Exception as x:
                     self.fail("Selecting on '%s' raised wrong exception %s" % (str(bad_select_set), str(x)))
                 else:
                     self.fail("Selecting on '%s' should have raised TypeError" % str(bad_select_set))
@@ -82,7 +82,7 @@ class TestSelectInvalidParameters(unittest.TestCase):
             try:
                 timeout = 0 # Can't wait forever
                 rfd, wfd, xfd = select.select([bad_selectable], [], [], timeout)
-            except (TypeError, select.error), x:
+            except (TypeError, select.error) as x:
                 pass
             else:
                 self.fail("Selecting on '%s' should have raised TypeError or select.error" % str(bad_selectable))
@@ -115,14 +115,14 @@ class TestSelectClientSocket(unittest.TestCase):
             timeout = 0 # Can't wait forever
             rfd, wfd, xfd = select.select(args[0], args[1], args[2], timeout)
             for s in sockets:
-                self.failIf(s in rfd)
-                self.failIf(s in wfd)
+                self.assertFalse(s in rfd)
+                self.assertFalse(s in wfd)
 
 class TestPollClientSocket(unittest.TestCase):
 
     def testEventConstants(self):
         for event_name in ['IN', 'OUT', 'PRI', 'ERR', 'HUP', 'NVAL', ]:
-            self.failUnless(hasattr(select, 'POLL%s' % event_name))
+            self.assertTrue(hasattr(select, 'POLL%s' % event_name))
 
     def testUnregisterRaisesKeyError(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -166,7 +166,7 @@ class ThreadedPollClientSocket(test_socket.SocketConnectedTest):
         return
         try:
             rfd, wfd, xfd = select.select([self.cli.fileno()], [], [], 1)
-        except Exception, x:
+        except Exception as x:
             self.fail("Selecting on socket.fileno() should not have raised exception: %s" % str(x))
 
 class TestJythonSelect(unittest.TestCase):

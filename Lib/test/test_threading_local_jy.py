@@ -21,7 +21,7 @@ class TestThread(threading.Thread):
         self.errors = []
 
     def run(self):
-        for i in xrange(10):
+        for i in range(10):
             try:
                 self.stuff.stuff = self.name
                 myStuff = self.stuff.stuff
@@ -30,7 +30,7 @@ class TestThread(threading.Thread):
                     self.errors.append("myStuff should equal self.stuff.stuff")
                 if self.stuff.foo != 1:
                     self.errors.append("foo should be 1")
-            except TypeError, te:
+            except TypeError as te:
                 self.errors.append("TypeError: %s" % te)
             except:
                 self.errors.append("unexpected error: %s" % sys.exc_info()[0] )
@@ -44,13 +44,13 @@ class ThreadLocalConstructorTestCase(unittest.TestCase):
         """Ensures that constructing a local can have arguments"""
         stuff = LocalStuff("main stuff")
         threads = []
-        for i in xrange(20):
+        for i in range(20):
             threads.append(TestThread(stuff, name=("thread-%d" % i)))
             threads[i].start()
-        for i in xrange(20):
+        for i in range(20):
             threads[i].join()
             errors = threads[i].getErrors()
-            self.assertEquals(0, len(errors), errors)
+            self.assertEqual(0, len(errors), errors)
 
 
 def test_main():

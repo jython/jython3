@@ -90,7 +90,7 @@ class ProxyDebugDirectoryTest(unittest.TestCase):
         proxy_classes = glob.glob(os.path.join(proxy_dir, "*.class")) + \
                         glob.glob(os.path.join(proxy_dir, "test", "*.class"))
         self.assertEqual(len(proxy_classes), 1, "Only one proxy class is generated")
-        self.assertRegexpMatches(
+        self.assertRegex(
             proxy_classes[0],
             r'\$C\$\d+.class$')
         

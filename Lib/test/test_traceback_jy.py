@@ -34,7 +34,7 @@ class TracebackTestCase(unittest.TestCase):
 
     def test_reraise(self):
         def raiser():
-            raise Exception(), None, tb
+            raise Exception().with_traceback(tb)
         try:
             # Jython previously added raiser's frame to the traceback
             raiser()
@@ -57,7 +57,7 @@ class TracebackTestCase(unittest.TestCase):
             except_in_raising_code.foo()
         except NameError:
             tb = sys.exc_info()[2]
-            self.assertEquals(6, tb.tb_next.tb_lineno)
+            self.assertEqual(6, tb.tb_next.tb_lineno)
         else:
             self.fail("Should've raised a NameError")
 

@@ -2,7 +2,7 @@
 
 Made for Jython.
 """
-from __future__ import with_statement
+
 import os
 import unittest
 from test import test_support
@@ -34,11 +34,11 @@ class FileTestCase(unittest.TestCase):
             self.assertEqual(fp.read(), 'test1\n')
 
     def test_issue1825(self):
-        testfnu = unicode(test_support.TESTFN)
+        testfnu = str(test_support.TESTFN)
         try:
             open(testfnu)
-        except IOError, e:
-            self.assertTrue(isinstance(e.filename, unicode))
+        except IOError as e:
+            self.assertTrue(isinstance(e.filename, str))
             self.assertEqual(e.filename, testfnu)
         else:
             self.assertTrue(False)
