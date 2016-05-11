@@ -24,7 +24,11 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
     private PyObject closure;
 
     public PyGenerator(PyFrame frame, PyObject closure) {
-        super(TYPE);
+        this(TYPE, frame, closure);
+    }
+
+    public PyGenerator(PyType subType, PyFrame frame, PyObject closure) {
+        super(subType);
         gi_frame = frame;
         if (gi_frame != null) {
             gi_code = gi_frame.f_code;
@@ -40,7 +44,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
     @ExposedMethod(doc = BuiltinDocs.generator_send_doc)
     final PyObject generator_send(PyObject value) {
         if (gi_frame == null) {
-            throw Py.StopIteration();
+            throw Py.StopIteration(value);
         }
         if (gi_frame.f_lasti == 0 && value != Py.None) {
             throw Py.TypeError("can't send non-None value to a just-started generator");
@@ -82,11 +86,11 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
 
     @Override
     public PyObject next() {
-        return generator_next();
+        return generator___next__();
     }
 
     @ExposedMethod(doc="x.next() -> the next value, or raise StopIteration")
-    final PyObject generator_next() {
+    final PyObject generator___next__() {
         return super.next();
     }
 

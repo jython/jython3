@@ -4492,6 +4492,100 @@ public class BuiltinDocs {
         "throw(typ[,val[,tb]]) -> raise exception in coroutine,\n" + 
         "return next iterated value or raise StopIteration.";
 
+    // Docs for <class 'coroutine_wrapper'>
+    public final static String coroutine_wrapper___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String coroutine_wrapper___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String coroutine_wrapper___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String coroutine_wrapper_doc = 
+        "A wrapper object implementing __await__ for coroutines.";
+
+    public final static String coroutine_wrapper___eq___doc = 
+        "Return self==value.";
+
+    public final static String coroutine_wrapper___format___doc = 
+        "default object formatter";
+
+    public final static String coroutine_wrapper___ge___doc = 
+        "Return self>=value.";
+
+    public final static String coroutine_wrapper___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String coroutine_wrapper___gt___doc = 
+        "Return self>value.";
+
+    public final static String coroutine_wrapper___hash___doc = 
+        "Return hash(self).";
+
+    public final static String coroutine_wrapper___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String coroutine_wrapper___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String coroutine_wrapper___le___doc = 
+        "Return self<=value.";
+
+    public final static String coroutine_wrapper___lt___doc = 
+        "Return self<value.";
+
+    public final static String coroutine_wrapper___ne___doc = 
+        "Return self!=value.";
+
+    public final static String coroutine_wrapper___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String coroutine_wrapper___next___doc = 
+        "Implement next(self).";
+
+    public final static String coroutine_wrapper___reduce___doc = 
+        "helper for pickle";
+
+    public final static String coroutine_wrapper___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String coroutine_wrapper___repr___doc = 
+        "Return repr(self).";
+
+    public final static String coroutine_wrapper___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String coroutine_wrapper___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String coroutine_wrapper___str___doc = 
+        "Return str(self).";
+
+    public final static String coroutine_wrapper___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String coroutine_wrapper_close_doc = 
+        "close() -> raise GeneratorExit inside coroutine.";
+
+    public final static String coroutine_wrapper_send_doc = 
+        "send(arg) -> send 'arg' into coroutine,\n" + 
+        "return next iterated value or raise StopIteration.";
+
+    public final static String coroutine_wrapper_throw_doc = 
+        "throw(typ[,val[,tb]]) -> raise exception in coroutine,\n" + 
+        "return next iterated value or raise StopIteration.";
+
     // Docs for <class 'function'>
     public final static String function___annotations___doc = 
         "";

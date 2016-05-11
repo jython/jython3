@@ -25,6 +25,11 @@ def print_doc(out, obj, meth):
 
 format = lambda line: line.replace('\\', '\\\\').replace('"', r'\"')
 
+async def foo(): pass
+
+coro = foo()
+coro.close()
+
 types_list = [
 object,
 type,
@@ -51,6 +56,7 @@ bytearray,
 memoryview,
 types.GeneratorType,
 types.CoroutineType,
+type(coro.__await__()),
 types.FunctionType,
 #types.MemberDescriptorType,
 types.CodeType,

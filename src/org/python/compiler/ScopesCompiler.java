@@ -335,28 +335,15 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         return visitInternalGenerators(node, node.getInternalElt(), node.getInternalGenerators());
     }
 
-   @Override
-    public Object visitYieldFrom(YieldFrom node) throws Exception {
-        String bound_exp = "_(x)";
-        String tmp = "_(" + node.getLine() + "_" + node.getCharPositionInLine()
-                + ")";
-        def(tmp);
-        ArgListCompiler ac = new ArgListCompiler();
-        List<expr> args = new ArrayList<expr>();
-        args.add(new Name(node.getToken(), bound_exp, expr_contextType.Param));
-
-        String vararg = null;
-        List<String> kwonlyargs = new ArrayList<>();
-        List<expr> kw_defaults = new ArrayList<>();
-        String kwarg = null;
-        List<expr> defaults = new ArrayList<>();
-        ac.visitArgs(new arguments(node, args, vararg, kwonlyargs, kw_defaults, kwarg, defaults));
-        beginScope(tmp, FUNCSCOPE, node, ac);
-        cur.addParam(bound_exp);
-        cur.markFromParam();
-
+    @Override
+    public Object visitAwait(Await node) throws Exception {
         traverse(node);
-        endScope();
+        return null;
+    }
+
+    @Override
+    public Object visitYieldFrom(YieldFrom node) throws Exception {
+        traverse(node);
         return null;
     }
 

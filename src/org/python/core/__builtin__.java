@@ -1762,8 +1762,10 @@ class NextFunction extends PyBuiltinFunction {
 
         PyObject next;
         if ((next = it.__findattr__("next")) == null) {
-            throw Py.TypeError(String.format("'%.200s' object is not an iterator",
-                                             it.getType().fastGetName()));
+            if ((next = it.__findattr__("__next__")) == null) {
+                throw Py.TypeError(String.format("'%.200s' object is not an iterator",
+                        it.getType().fastGetName()));
+            }
         }
 
         try {

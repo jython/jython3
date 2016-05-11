@@ -649,66 +649,28 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
 
     @Override
+    public Object visitAwait(Await node) throws Exception {
+        setline(node);
+        expr iterable = node.getInternalValue();
+        visit(iterable);
+        code.invokestatic(p(Py.class), "getAwaitable", sig(PyObject.class, PyObject.class));
+        loadFrame();
+        code.invokevirtual(p(PyFrame.class), "getGeneratorInput", sig(Object.class));
+        code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyObject.class, Object.class));
+        code.areturn();
+        return null;
+    }
+
+    @Override
     public Object visitYieldFrom(YieldFrom node) throws Exception {
         setline(node);
-
-        code.new_(p(PyFunction.class));
-        code.dup();
+        expr iterable = node.getInternalValue();
+        visit(iterable);
+        code.invokestatic(p(Py.class), "getYieldFromIter", sig(PyObject.class, PyObject.class));
         loadFrame();
-        code.getfield(p(PyFrame.class), "f_globals", ci(PyObject.class));
-
-        ScopeInfo scope = module.getScopeInfo(node);
-
-        int emptyArray = makeArray(new ArrayList<expr>());
-        code.aload(emptyArray);
-
-        code.new_(p(PyDictionary.class));
-        code.dup();
-        code.invokespecial(p(PyDictionary.class), "<init>",
-                sig(Void.TYPE));
-
-        scope.setup_closure();
-        scope.dump();
-        expr elt = new Name(node, "_(y)", expr_contextType.Load);
-
-        stmt n = new Expr(node, new Yield(node, elt));
-        java.util.List<stmt> bod = new ArrayList<stmt>();
-        bod.add(n);
-
-        expr iter = node.getInternalValue();
-
-        n = new For(node, elt, iter, bod, //
-                new ArrayList<stmt>());
-
-        bod = new ArrayList<stmt>();
-        bod.add(n);
-        module.codeConstant(new Suite(node, bod), "<genexpr>", true, className, false, false,
-                node.getLine(), scope, cflags).get(code);
-
-        code.aconst_null();
-        if (!makeClosure(scope)) {
-            code.invokespecial(p(PyFunction.class), "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class));
-        } else {
-            code.invokespecial(
-                    p(PyFunction.class),
-                    "<init>",
-                    sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject.class,
-                            PyObject[].class));
-        }
-        int genExp = storeTop();
-
-        visit(iter);
-        code.aload(genExp);
-        code.freeLocal(genExp);
-        code.swap();
-        code.invokevirtual(p(PyObject.class), "__iter__", sig(PyObject.class));
-        loadThreadState();
-        code.swap();
-        code.invokevirtual(p(PyObject.class), "__call__",
-                sig(PyObject.class, ThreadState.class, PyObject.class));
-        freeArray(emptyArray);
-
+        code.invokevirtual(p(PyFrame.class), "getGeneratorInput", sig(Object.class));
+        code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyObject.class, Object.class));
+        code.areturn();
         return null;
     }
 

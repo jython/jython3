@@ -769,7 +769,7 @@ class _realsocket(object):
             log.debug("Syncing on future %s for %s", future, reason, extra={"sock": self})
             return future.sync()
         elif self.timeout:
-            self._handle_timeout(future.await, reason)
+            self._handle_timeout(future.awaitUninterruptibly, reason)
             if not future.isSuccess():
                 log.debug("Got this failure %s during %s", future.cause(), reason, extra={"sock": self})
                 print("Got this failure %s during %s (%s)" % (future.cause(), reason, self))
@@ -1397,7 +1397,7 @@ class ChildSocket(_realsocket):
 
     def _wait_on_latch(self):
         log.debug("Waiting for activity", extra={"sock": self})
-        self.active_latch.await()
+        self.active_latch.awaitUninterruptibly()
         log.debug("Latch released, can now proceed", extra={"sock": self})
 
     # FIXME raise exception for accept, listen, bind, connect, connect_ex
