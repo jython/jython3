@@ -1030,10 +1030,8 @@
         <arg value="${dist.dir}/Lib/test/regrtest.py"/>
         <!-- Only run the tests that are expected to work on Jython -->
         <arg value="--expected"/>
-        <arg value="-j"/>
-        <arg value="${junit.reports}"/>
         <arg value="--use"/>
-        <arg value="network,subprocess"/>
+        <arg value="all"/>
       </exec>
     </target>
     <target name="regrtest-windows" if="os.family.windows">

@@ -1907,13 +1907,31 @@ factor
       }
     ;
 
-//power: atom trailer* ['**' factor]
+//power: atom_expr ['**' factor]
 power
     returns [expr etype, Token lparen = null]
 @after {
     $power.tree = $etype;
 }
-    : atom (t+=trailer[$atom.start, $atom.tree])* (options {greedy=true;}:d=DOUBLESTAR factor)?
+    : atom_expr (options {greedy=true;}:d=DOUBLESTAR factor)?
+      {
+          $lparen = $atom_expr.lparen;
+          $etype = actions.castExpr($atom_expr.tree);
+          if ($d != null) {
+              List right = new ArrayList();
+              right.add($factor.tree);
+              $etype = actions.makeBinOp($atom_expr.start, $etype, operatorType.Pow, right);
+          }
+      }
+    ;
+
+//atom_expr: [AWAIT] atom trailer*
+atom_expr
+    returns [expr etype, Token lparen = null]
+@after {
+    $atom_expr.tree = $etype;
+}
+    : AWAIT? atom (t+=trailer[$atom.start, $atom.tree])*
       {
           $lparen = $atom.lparen;
           //XXX: This could be better.
@@ -1937,10 +1955,8 @@ power
                   }
               }
           }
-          if ($d != null) {
-              List right = new ArrayList();
-              right.add($factor.tree);
-              $etype = actions.makeBinOp($atom.start, $etype, operatorType.Pow, right);
+          if ($AWAIT != null) {
+              $etype = new Await($AWAIT, $etype);
           }
       }
     ;
@@ -2443,6 +2459,7 @@ yield_arg
 AS        : 'as' ;
 ASSERT    : 'assert' ;
 ASYNC     : 'async' ;
+AWAIT     : 'await' ;
 BREAK     : 'break' ;
 CLASS     : 'class' ;
 CONTINUE  : 'continue' ;

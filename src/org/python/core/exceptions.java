@@ -20,7 +20,9 @@ public class exceptions extends PyObject implements ClassDictInit {
             + "inherit from Exception.  See the documentation for the exception\n"
             + "inheritance hierarchy.\n";
 
-    /** <i>Internal use only. Do not call this method explicit.</i> */
+    /**
+     * <i>Internal use only. Do not call this method explicit.</i>
+     */
     public static void classDictInit(PyObject dict) {
         dict.invoke("clear");
         dict.__setitem__("__name__", new PyString("exceptions"));
@@ -42,19 +44,19 @@ public class exceptions extends PyObject implements ClassDictInit {
         }
         ts.frame = frame;
 
-        dict.__setitem__("BaseException",  PyBaseException.TYPE);
+        dict.__setitem__("BaseException", PyBaseException.TYPE);
 
         buildClass(dict, "KeyboardInterrupt", "BaseException", "Program interrupted by user.");
 
         buildClass(dict, "SystemExit", "BaseException", SystemExit(),
-                   "Request to exit from the interpreter.");
+                "Request to exit from the interpreter.");
 
         buildClass(dict, "Exception", "BaseException",
-                   "Common base class for all non-exit exceptions.");
+                "Common base class for all non-exit exceptions.");
 
         buildClass(dict, "StandardError", "Exception",
-                   "Base class for all standard Python exceptions that do not represent\n"
-                   + "interpreter exiting.");
+                "Base class for all standard Python exceptions that do not represent\n"
+                        + "interpreter exiting.");
 
         buildClass(dict, "SyntaxError", "StandardError", SyntaxError(), "Invalid syntax.");
 
@@ -63,7 +65,7 @@ public class exceptions extends PyObject implements ClassDictInit {
         buildClass(dict, "TabError", "IndentationError", "Improper mixture of spaces and tabs.");
 
         buildClass(dict, "EnvironmentError", "StandardError", EnvironmentError(),
-                   "Base class for I/O related errors.");
+                "Base class for I/O related errors.");
 
         buildClass(dict, "IOError", "EnvironmentError", "I/O operation failed.");
 
@@ -74,52 +76,52 @@ public class exceptions extends PyObject implements ClassDictInit {
         buildClass(dict, "RuntimeError", "StandardError", "Unspecified run-time error.");
 
         buildClass(dict, "NotImplementedError", "RuntimeError",
-                   "Method or function hasn't been implemented yet.");
+                "Method or function hasn't been implemented yet.");
 
         buildClass(dict, "SystemError", "StandardError",
-                   "Internal error in the Python interpreter.\n\n"
-                   + "Please report this to the Python maintainer, "
-                   + "along with the traceback,\n"
-                   + "the Python version, and the hardware/OS "
-                   + "platform and version.");
+                "Internal error in the Python interpreter.\n\n"
+                        + "Please report this to the Python maintainer, "
+                        + "along with the traceback,\n"
+                        + "the Python version, and the hardware/OS "
+                        + "platform and version.");
 
         buildClass(dict, "ReferenceError", "StandardError",
-                   "Weak ref proxy used after referent went away.");
+                "Weak ref proxy used after referent went away.");
 
         buildClass(dict, "EOFError", "StandardError", "Read beyond end of file.");
 
         buildClass(dict, "ImportError", "StandardError", ImportError(),
-                   "Import can't find module, or can't find name in module.");
+                "Import can't find module, or can't find name in module.");
 
         buildClass(dict, "TypeError", "StandardError", "Inappropriate argument type.");
 
         buildClass(dict, "ValueError", "StandardError",
-                   "Inappropriate argument value (of correct type).");
+                "Inappropriate argument value (of correct type).");
 
         buildClass(dict, "UnicodeError", "ValueError", "Unicode related error.");
 
         buildClass(dict, "UnicodeEncodeError", "UnicodeError", UnicodeEncodeError(),
-                   "Unicode encoding error.");
+                "Unicode encoding error.");
 
         buildClass(dict, "UnicodeDecodeError", "UnicodeError", UnicodeDecodeError(),
-                   "Unicode decoding error.");
+                "Unicode decoding error.");
 
         buildClass(dict, "UnicodeTranslateError", "UnicodeError", UnicodeTranslateError(),
-                   "Unicode translation error.");
+                "Unicode translation error.");
 
         buildClass(dict, "AssertionError", "StandardError", "Assertion failed.");
 
         buildClass(dict, "ArithmeticError", "StandardError", "Base class for arithmetic errors.");
 
         buildClass(dict, "OverflowError", "ArithmeticError",
-                   "Result too large to be represented.");
+                "Result too large to be represented.");
 
         buildClass(dict, "FloatingPointError", "ArithmeticError",
-                   "Floating point operation failed.");
+                "Floating point operation failed.");
 
         buildClass(dict, "ZeroDivisionError", "ArithmeticError",
-                   "Second argument to a division or modulo operation "
-                   + "was zero.");
+                "Second argument to a division or modulo operation "
+                        + "was zero.");
 
         buildClass(dict, "LookupError", "StandardError", "Base class for lookup errors.");
 
@@ -132,52 +134,52 @@ public class exceptions extends PyObject implements ClassDictInit {
         buildClass(dict, "NameError", "StandardError", "Name not found globally.");
 
         buildClass(dict, "UnboundLocalError", "NameError",
-                   "Local name referenced but not bound to a value.");
+                "Local name referenced but not bound to a value.");
 
         buildClass(dict, "MemoryError", "StandardError", "Out of memory.");
 
         buildClass(dict, "BufferError", "StandardError", "Buffer error.");
 
-        buildClass(dict, "StopIteration", "Exception",
-                   "Signal the end from iterator.next().");
+        buildClass(dict, "StopIteration", "Exception", StopIteration(),
+                "Signal the end from iterator.next().");
 
         buildClass(dict, "GeneratorExit", "BaseException", "Request that a generator exit.");
 
         buildClass(dict, "Warning", "Exception", "Base class for warning categories.");
 
         buildClass(dict, "UserWarning", "Warning",
-                   "Base class for warnings generated by user code.");
+                "Base class for warnings generated by user code.");
 
         buildClass(dict, "DeprecationWarning", "Warning",
-                   "Base class for warnings about deprecated features.");
+                "Base class for warnings about deprecated features.");
 
         buildClass(dict, "PendingDeprecationWarning", "Warning",
-                   "Base class for warnings about features which will be deprecated\n"
-                   + "in the future.");
+                "Base class for warnings about features which will be deprecated\n"
+                        + "in the future.");
 
         buildClass(dict, "SyntaxWarning", "Warning",
-                   "Base class for warnings about dubious syntax.");
+                "Base class for warnings about dubious syntax.");
 
         buildClass(dict, "ResourceWarning", "Warning",
-                   "Base class for warnings about resource usage.");
+                "Base class for warnings about resource usage.");
 
         buildClass(dict, "RuntimeWarning", "Warning",
-                   "Base class for warnings about dubious runtime behavior.");
+                "Base class for warnings about dubious runtime behavior.");
 
         buildClass(dict, "FutureWarning", "Warning",
-                   "Base class for warnings about constructs that will change semantically\n"
-                   + "in the future.");
+                "Base class for warnings about constructs that will change semantically\n"
+                        + "in the future.");
 
         buildClass(dict, "ImportWarning", "Warning",
-                   "Base class for warnings about probable mistakes in module imports");
+                "Base class for warnings about probable mistakes in module imports");
 
         buildClass(dict, "UnicodeWarning", "Warning",
-                   "Base class for warnings about Unicode related problems, mostly\n"
-                   + "related to conversion problems.");
+                "Base class for warnings about Unicode related problems, mostly\n"
+                        + "related to conversion problems.");
 
         buildClass(dict, "BytesWarning", "Warning",
-                   "Base class for warnings about bytes and buffer related problems, mostly\n"
-                   + "related to conversion from str or comparing to str.");
+                "Base class for warnings about bytes and buffer related problems, mostly\n"
+                        + "related to conversion from str or comparing to str.");
 
         // Initialize ZipImportError here, where it's safe to; it's
         // needed immediately
@@ -222,13 +224,13 @@ public class exceptions extends PyObject implements ClassDictInit {
         boolean haveName = name instanceof PyString;
         boolean havePath = path instanceof PyInteger;
         if (!haveName && !havePath) {
-            return (PyString)str;
+            return (PyString) str;
         }
 
         String result;
         if (haveName && havePath) {
             result = String.format("%s (%s, path %s)", str, basename(name.toString()),
-                                   path.toString());
+                    path.toString());
         } else if (haveName) {
             result = String.format("%s (%s)", str, basename(name.toString()));
         } else {
@@ -236,6 +238,29 @@ public class exceptions extends PyObject implements ClassDictInit {
         }
 
         return Py.newString(result);
+    }
+
+    public static PyObject StopIteration(){
+        PyObject __dict__ = new PyStringMap();
+        defineSlots(__dict__, "value");
+        __dict__.__setitem__("__init__", bindStaticJavaMethod("__init__", "StopIteration__init__"));
+        __dict__.__setitem__("__str__", bindStaticJavaMethod("__str__", "StopIteration__str__"));
+        return __dict__;
+    }
+
+    public static void StopIteration__init__(PyObject self, PyObject[] args, String[] kwargs) {
+        PyBaseException.TYPE.invoke("__init__", self, args, kwargs);
+        initSlots(self);
+        if (args.length > 0) {
+            self.__setattr__("value", args[0]);
+        }
+    }
+
+    public static PyString StopIteration__str__(PyObject self, PyObject[] args, String[] kwargs) {
+        PyObject value = self.__getattr__("value");
+        PyObject str = value.__str__();
+        String result = String.format("StopIteration: %s", str.toString());
+        return new PyString(result);
     }
 
     public static PyObject SyntaxError() {

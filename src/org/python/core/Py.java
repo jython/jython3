@@ -326,7 +326,7 @@ public final class Py {
         return new PyException(Py.StopIteration);
     }
     public static PyException StopIteration(PyObject value) {
-        return new PyException(Py.StopIteration, value);
+        return new PyException(Py.StopIteration, new PyTuple(value));
     }
     public static PyObject GeneratorExit;
 
@@ -1015,9 +1015,41 @@ public final class Py {
     // statements can trigger static initializers
     private static Class<?> loadAndInitClass(String name, ClassLoader loader) throws ClassNotFoundException {
         return Class.forName(name, true, loader);
-    } 
- 
-    
+    }
+
+    public static PyObject getYieldFromIter(PyObject iter) {
+        return iter.__iter__();
+    }
+
+    public static PyObject getAwaitable(PyObject iter) {
+        return ((PyCoroutine) iter).__await__();
+    }
+
+    public static PyObject yieldFrom(PyObject iter, Object val) {
+        PyObject value = (PyObject) val;
+        PyObject retval;
+        try {
+            // coroutine or generator
+            if (iter instanceof PyGenerator) {
+                retval = ((PyGenerator) iter).send(value);
+            } else {
+                if (value == Py.None) {
+                    retval = iter.__iternext__();
+                } else {
+                    PyObject send = iter.__finditem__("send");
+                    retval = send.__call__(value);
+                }
+            }
+        } catch (PyException e) {
+            if (e.match(Py.StopIteration)) {
+                retval = e.value;
+            } else {
+                throw e;
+            }
+        }
+        return retval;
+    }
+
     public static void initProxy(PyProxy proxy, String module, String pyclass, Object[] args)
     {
         if (proxy._getPyInstance() != null)
