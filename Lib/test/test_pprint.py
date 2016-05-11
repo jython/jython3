@@ -72,7 +72,7 @@ class QueryTestCase(unittest.TestCase):
     def test_basic(self):
         # Verify .isrecursive() and .isreadable() w/o recursion
         pp = pprint.PrettyPrinter()
-        for safe in (2, 2.0, 2j, "abc", [3], (2,2), {3: 3}, "yaddayadda",
+        for safe in (2, 2.0, 2j, "abc", [3], (2, 2), {3: 3}, "yaddayadda",
                      self.a, self.b):
             # module-level convenience functions
             self.assertFalse(pprint.isrecursive(safe),
@@ -150,13 +150,13 @@ class QueryTestCase(unittest.TestCase):
                        {}, dict2(), dict3(),
                        self.assertTrue, pprint,
                        -6, -6, -6-6j, -1.5, "x", b"x", (3,), [3], {3: 6},
-                       (1,2), [3,4], {5: 6},
-                       tuple2((1,2)), tuple3((1,2)), tuple3(range(100)),
-                       [3,4], list2([3,4]), list3([3,4]), list3(range(100)),
+                       (1, 2), [3, 4], {5: 6},
+                       tuple2((1, 2)), tuple3((1, 2)), tuple3(list(range(100))),
+                       [3, 4], list2([3, 4]), list3([3, 4]), list3(list(range(100))),
                        set({7}), set2({7}), set3({7}),
                        frozenset({8}), frozenset2({8}), frozenset3({8}),
                        dict2({5: 6}), dict3({5: 6}),
-                       range(10, -11, -1)
+                       list(range(10, -11, -1))
                       ):
             native = repr(simple)
             self.assertEqual(pprint.pformat(simple), native)
@@ -184,7 +184,7 @@ class QueryTestCase(unittest.TestCase):
         for type in [dict, dict2]:
             self.assertEqual(pprint.pformat(type(o)), exp)
 
-        o = range(100)
+        o = list(range(100))
         exp = '[%s]' % ',\n '.join(map(str, o))
         for type in [list, list2]:
             self.assertEqual(pprint.pformat(type(o)), exp)
@@ -195,7 +195,7 @@ class QueryTestCase(unittest.TestCase):
             self.assertEqual(pprint.pformat(type(o)), exp)
 
         # indent parameter
-        o = range(100)
+        o = list(range(100))
         exp = '[   %s]' % ',\n    '.join(map(str, o))
         for type in [list, list2]:
             self.assertEqual(pprint.pformat(type(o), indent=4), exp)
@@ -277,7 +277,7 @@ class QueryTestCase(unittest.TestCase):
         d = collections.OrderedDict([])
         self.assertEqual(pprint.pformat(d, width=1), 'OrderedDict()')
         words = 'the quick brown fox jumped over a lazy dog'.split()
-        d = collections.OrderedDict(zip(words, itertools.count()))
+        d = collections.OrderedDict(list(zip(words, itertools.count())))
         self.assertEqual(pprint.pformat(d),
 """\
 OrderedDict([('the', 0),
@@ -292,7 +292,7 @@ OrderedDict([('the', 0),
 
     def test_mapping_proxy(self):
         words = 'the quick brown fox jumped over a lazy dog'.split()
-        d = dict(zip(words, itertools.count()))
+        d = dict(list(zip(words, itertools.count())))
         m = types.MappingProxyType(d)
         self.assertEqual(pprint.pformat(m), """\
 mappingproxy({'a': 6,
@@ -304,7 +304,7 @@ mappingproxy({'a': 6,
               'over': 5,
               'quick': 1,
               'the': 0})""")
-        d = collections.OrderedDict(zip(words, itertools.count()))
+        d = collections.OrderedDict(list(zip(words, itertools.count())))
         m = types.MappingProxyType(d)
         self.assertEqual(pprint.pformat(m), """\
 mappingproxy(OrderedDict([('the', 0),
@@ -338,7 +338,7 @@ mappingproxy(OrderedDict([('the', 0),
  4,
  5,
  6}''')
-        self.assertEqual(pprint.pformat(set2(range(7)), width=20), '''\
+        self.assertEqual(pprint.pformat(set2(list(range(7))), width=20), '''\
 set2({0,
       1,
       2,
@@ -346,13 +346,13 @@ set2({0,
       4,
       5,
       6})''')
-        self.assertEqual(pprint.pformat(set3(range(7)), width=20),
+        self.assertEqual(pprint.pformat(set3(list(range(7))), width=20),
                          'set3({0, 1, 2, 3, 4, 5, 6})')
 
         self.assertEqual(pprint.pformat(frozenset()), 'frozenset()')
-        self.assertEqual(pprint.pformat(frozenset(range(3))),
+        self.assertEqual(pprint.pformat(frozenset(list(range(3)))),
                          'frozenset({0, 1, 2})')
-        self.assertEqual(pprint.pformat(frozenset(range(7)), width=20), '''\
+        self.assertEqual(pprint.pformat(frozenset(list(range(7))), width=20), '''\
 frozenset({0,
            1,
            2,
@@ -360,7 +360,7 @@ frozenset({0,
            4,
            5,
            6})''')
-        self.assertEqual(pprint.pformat(frozenset2(range(7)), width=20), '''\
+        self.assertEqual(pprint.pformat(frozenset2(list(range(7))), width=20), '''\
 frozenset2({0,
             1,
             2,
@@ -368,7 +368,7 @@ frozenset2({0,
             4,
             5,
             6})''')
-        self.assertEqual(pprint.pformat(frozenset3(range(7)), width=20),
+        self.assertEqual(pprint.pformat(frozenset3(list(range(7))), width=20),
                          'frozenset3({0, 1, 2, 3, 4, 5, 6})')
 
     @unittest.expectedFailure
@@ -604,7 +604,7 @@ frozenset2({0,
         keys = [Unorderable() for i in range(n)]
         random.shuffle(keys)
         skeys = sorted(keys, key=id)
-        clean = lambda s: s.replace(' ', '').replace('\n','')
+        clean = lambda s: s.replace(' ', '').replace('\n', '')
 
         self.assertEqual(clean(pprint.pformat(set(keys))),
             '{' + ','.join(map(repr, skeys)) + '}')
@@ -702,7 +702,7 @@ frozenset2({0,
             o = [o]
         for w in range(levels * 2 + 1, levels + 3 * number - 1):
             lines = pprint.pformat(o, width=w, compact=True).splitlines()
-            maxwidth = max(map(len, lines))
+            maxwidth = max(list(map(len, lines)))
             self.assertLessEqual(maxwidth, w)
             self.assertGreater(maxwidth, w - 3)
 
@@ -722,7 +722,7 @@ frozenset2({0,
 (b'abcdefghijkl'
  b'mnopqrstuvwx'
  b'yz')""")
-        special = bytes(range(16))
+        special = bytes(list(range(16)))
         self.assertEqual(pprint.pformat(special, width=61), repr(special))
         self.assertEqual(pprint.pformat(special, width=48), """\
 (b'\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\t\\n\\x0b'
@@ -778,7 +778,7 @@ bytearray(b'abcdefghijkl'
 bytearray(b'abcdefghijkl'
           b'mnopqrstuvwx'
           b'yz')""")
-        special = bytearray(range(16))
+        special = bytearray(list(range(16)))
         self.assertEqual(pprint.pformat(special, width=72), repr(special))
         self.assertEqual(pprint.pformat(special, width=57), """\
 bytearray(b'\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\t\\n\\x0b'

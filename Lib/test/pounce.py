@@ -5,5 +5,5 @@ class Cat(Callable, Serializable):
     def whoami(self):
         return "Socks"
     def call(self):
-        print "meow"  # force use of PySystemState
+        print("meow")  # force use of PySystemState
 

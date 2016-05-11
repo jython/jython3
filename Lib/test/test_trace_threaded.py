@@ -46,9 +46,9 @@ class TracePerThreadTest(unittest.TestCase):
         untraced.join()
         traced.join()
 
-        self.assertEquals(10, called.count('tracedcall'),
+        self.assertEqual(10, called.count('tracedcall'),
                 "10 tracedcall should be in %s" % called)
-        self.assert_('untracedcall' not in called,
+        self.assertTrue('untracedcall' not in called,
                 "untracedcall shouldn't be in %s" % called)
 
 def test_main():

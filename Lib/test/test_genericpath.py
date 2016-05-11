@@ -218,17 +218,17 @@ class CommonTest(GenericTest):
 
     def test_normpath_issue5827(self):
         # Make sure normpath preserves unicode
-        for path in (u'', u'.', u'/', u'\\', u'///foo/.//bar//'):
-            self.assertIsInstance(self.pathmodule.normpath(path), unicode)
+        for path in ('', '.', '/', '\\', '///foo/.//bar//'):
+            self.assertIsInstance(self.pathmodule.normpath(path), str)
 
     def test_abspath_issue3426(self):
         # Check that abspath returns unicode when the arg is unicode
         # with both ASCII and non-ASCII cwds.
         abspath = self.pathmodule.abspath
-        for path in (u'', u'fuu', u'f\xf9\xf9', u'/fuu', u'U:\\'):
-            self.assertIsInstance(abspath(path), unicode)
+        for path in ('', 'fuu', 'f\xf9\xf9', '/fuu', 'U:\\'):
+            self.assertIsInstance(abspath(path), str)
 
-        unicwd = u'\xe7w\xf0'
+        unicwd = '\xe7w\xf0'
         try:
             fsencoding = test_support.TESTFN_ENCODING or "ascii"
             unicwd.encode(fsencoding)
@@ -237,8 +237,8 @@ class CommonTest(GenericTest):
             pass
         else:
             with test_support.temp_cwd(unicwd):
-                for path in (u'', u'fuu', u'f\xf9\xf9', u'/fuu', u'U:\\'):
-                    self.assertIsInstance(abspath(path), unicode)
+                for path in ('', 'fuu', 'f\xf9\xf9', '/fuu', 'U:\\'):
+                    self.assertIsInstance(abspath(path), str)
 
     @unittest.skipIf(sys.platform == 'darwin' or test_support.is_jython,
         "Both Mac OS X and Java deny the creation of a directory with an invalid utf8 name")

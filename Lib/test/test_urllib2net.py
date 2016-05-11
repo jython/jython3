@@ -5,7 +5,7 @@ from test import test_support
 from test.test_urllib2 import sanepathname2url
 
 import socket
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import os
 import sys
 
@@ -16,7 +16,7 @@ def _retry_thrice(func, exc, *args, **kwargs):
     for i in range(3):
         try:
             return func(*args, **kwargs)
-        except exc, last_exc:
+        except exc as last_exc:
             continue
         except:
             raise
@@ -29,7 +29,7 @@ def _wrap_with_retry_thrice(func, exc):
 
 # Connecting to remote hosts is flaky.  Make it more robust by retrying
 # the connection several times.
-_urlopen_with_retry = _wrap_with_retry_thrice(urllib2.urlopen, urllib2.URLError)
+_urlopen_with_retry = _wrap_with_retry_thrice(urllib.request.urlopen, urllib.error.URLError)
 
 
 class AuthTests(unittest.TestCase):
@@ -74,7 +74,7 @@ class AuthTests(unittest.TestCase):
 class CloseSocketTest(unittest.TestCase):
 
     def test_close(self):
-        import httplib
+        import http.client
 
         # calling .close() on urllib2's response objects should close the
         # underlying socket
@@ -84,7 +84,7 @@ class CloseSocketTest(unittest.TestCase):
         abused_fileobject = response.fp
         self.assertTrue(abused_fileobject.__class__ is socket._fileobject)
         httpresponse = abused_fileobject._sock
-        self.assertTrue(httpresponse.__class__ is httplib.HTTPResponse)
+        self.assertTrue(httpresponse.__class__ is http.client.HTTPResponse)
         fileobject = httpresponse.fp
         self.assertTrue(fileobject.__class__ is socket._fileobject)
 
@@ -120,13 +120,13 @@ class OtherNetworkTests(unittest.TestCase):
             f.close()
             urls = [
                 'file:'+sanepathname2url(os.path.abspath(TESTFN)),
-                ('file:///nonsensename/etc/passwd', None, urllib2.URLError),
+                ('file:///nonsensename/etc/passwd', None, urllib.error.URLError),
                 ]
             self._test_urls(urls, self._extra_handlers(), retry=True)
         finally:
             os.remove(TESTFN)
 
-        self.assertRaises(ValueError, urllib2.urlopen,'./relative_path/to/file')
+        self.assertRaises(ValueError, urllib.request.urlopen, './relative_path/to/file')
 
     # XXX Following test depends on machine configurations that are internal
     # to CNRI.  Need to set up a public server with the right authentication
@@ -159,14 +159,14 @@ class OtherNetworkTests(unittest.TestCase):
     def test_urlwithfrag(self):
         urlwith_frag = "https://docs.python.org/2/glossary.html#glossary"
         with test_support.transient_internet(urlwith_frag):
-            req = urllib2.Request(urlwith_frag)
-            res = urllib2.urlopen(req)
+            req = urllib.request.Request(urlwith_frag)
+            res = urllib.request.urlopen(req)
             self.assertEqual(res.geturl(),
                     "https://docs.python.org/2/glossary.html#glossary")
 
     def test_fileno(self):
-        req = urllib2.Request("http://www.python.org")
-        opener = urllib2.build_opener()
+        req = urllib.request.Request("http://www.python.org")
+        opener = urllib.request.build_opener()
         res = opener.open(req)
         try:
             res.fileno()
@@ -178,15 +178,15 @@ class OtherNetworkTests(unittest.TestCase):
     def test_custom_headers(self):
         url = "http://www.example.com"
         with test_support.transient_internet(url):
-            opener = urllib2.build_opener()
-            request = urllib2.Request(url)
+            opener = urllib.request.build_opener()
+            request = urllib.request.Request(url)
             self.assertFalse(request.header_items())
             opener.open(request)
             self.assertTrue(request.header_items())
             self.assertTrue(request.has_header('User-agent'))
-            request.add_header('User-Agent','Test-Agent')
+            request.add_header('User-Agent', 'Test-Agent')
             opener.open(request)
-            self.assertEqual(request.get_header('User-agent'),'Test-Agent')
+            self.assertEqual(request.get_header('User-agent'), 'Test-Agent')
 
     def test_sites_no_connection_close(self):
         # Some sites do not send Connection: close header.
@@ -194,7 +194,7 @@ class OtherNetworkTests(unittest.TestCase):
 
         URL = 'http://www.imdb.com' # No Connection:close
         with test_support.transient_internet(URL):
-            req = urllib2.urlopen(URL)
+            req = urllib.request.urlopen(URL)
             res = req.read()
             self.assertTrue(res)
 
@@ -203,9 +203,9 @@ class OtherNetworkTests(unittest.TestCase):
         import logging
         debug = logging.getLogger("test_urllib2").debug
 
-        urlopen = urllib2.build_opener(*handlers).open
+        urlopen = urllib.request.build_opener(*handlers).open
         if retry:
-            urlopen = _wrap_with_retry_thrice(urlopen, urllib2.URLError)
+            urlopen = _wrap_with_retry_thrice(urlopen, urllib.error.URLError)
 
         for url in urls:
             if isinstance(url, tuple):
@@ -222,9 +222,9 @@ class OtherNetworkTests(unittest.TestCase):
                         msg = ("Didn't get expected error(s) %s for %s %s, got %s: %s" %
                                (expected_err, url, req, type(err), err))
                         self.assertIsInstance(err, expected_err, msg)
-                except urllib2.URLError as err:
+                except urllib.error.URLError as err:
                     if isinstance(err[0], socket.timeout):
-                        print >>sys.stderr, "<timeout: %s>" % url
+                        print("<timeout: %s>" % url, file=sys.stderr)
                         continue
                     else:
                         raise
@@ -234,7 +234,7 @@ class OtherNetworkTests(unittest.TestCase):
                             buf = f.read()
                             debug("read %d bytes" % len(buf))
                     except socket.timeout:
-                        print >>sys.stderr, "<timeout: %s>" % url
+                        print("<timeout: %s>" % url, file=sys.stderr)
                     f.close()
             debug("******** next url coming up...")
             time.sleep(0.1)
@@ -242,7 +242,7 @@ class OtherNetworkTests(unittest.TestCase):
     def _extra_handlers(self):
         handlers = []
 
-        cfh = urllib2.CacheFTPHandler()
+        cfh = urllib.request.CacheFTPHandler()
         self.addCleanup(cfh.clear_cache)
         cfh.setTimeout(1)
         handlers.append(cfh)

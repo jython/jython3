@@ -59,7 +59,7 @@ class FileTests(unittest.TestCase):
 
     @test_support.cpython_only
     def test_rename(self):
-        path = unicode(test_support.TESTFN)
+        path = str(test_support.TESTFN)
         if not test_support.is_jython:
             old = sys.getrefcount(path)
         self.assertRaises(TypeError, os.rename, path, 0)
@@ -128,14 +128,14 @@ class TemporaryFileTests(unittest.TestCase):
                     os.remove(name)
                 try:
                     fp = open(name, 'w')
-                except IOError, first:
+                except IOError as first:
                     # open() failed, assert tmpfile() fails in the same way.
                     # Although open() raises an IOError and os.tmpfile() raises an
                     # OSError(), 'args' will be (13, 'Permission denied') in both
                     # cases.
                     try:
                         fp = os.tmpfile()
-                    except OSError, second:
+                    except OSError as second:
                         self.assertEqual(first.args, second.args)
                     else:
                         self.fail("expected os.tmpfile() to raise OSError")
@@ -148,7 +148,7 @@ class TemporaryFileTests(unittest.TestCase):
 
             fp = os.tmpfile()
             fp.write("foobar")
-            fp.seek(0,0)
+            fp.seek(0, 0)
             s = fp.read()
             fp.close()
             self.assertTrue(s == "foobar")
@@ -254,7 +254,7 @@ class StatAttributeTests(unittest.TestCase):
 
         # Use the constructr with a too-long tuple.
         try:
-            result2 = os.stat_result((0,1,2,3,4,5,6,7,8,9,10,11,12,13,14))
+            result2 = os.stat_result((0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))
         except TypeError:
             pass
 
@@ -265,7 +265,7 @@ class StatAttributeTests(unittest.TestCase):
 
         try:
             result = os.statvfs(self.fname)
-        except OSError, e:
+        except OSError as e:
             # On AtheOS, glibc always returns ENOSYS
             if e.errno == errno.ENOSYS:
                 return
@@ -301,7 +301,7 @@ class StatAttributeTests(unittest.TestCase):
 
         # Use the constructr with a too-long tuple.
         try:
-            result2 = os.statvfs_result((0,1,2,3,4,5,6,7,8,9,10,11,12,13,14))
+            result2 = os.statvfs_result((0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))
         except TypeError:
             pass
 
@@ -340,7 +340,7 @@ class StatAttributeTests(unittest.TestCase):
             # Verify that an open file can be stat'ed
             try:
                 os.stat(r"c:\pagefile.sys")
-            except WindowsError, e:
+            except WindowsError as e:
                 if e.errno == 2: # file does not exist; cannot run test
                     return
                 self.fail("Could not stat pagefile.sys")

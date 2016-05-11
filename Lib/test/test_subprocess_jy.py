@@ -72,7 +72,7 @@ class PidTest(unittest.TestCase):
         p = Popen(['python', '-c', 'import os; print os.getpid()'],
                   stdout=PIPE)
         p.wait()
-        self.assertEquals(int(p.stdout.read()), p.pid)
+        self.assertEqual(int(p.stdout.read()), p.pid)
 
     def testNonExistingField(self):
         # Test we don't crash if Process class doesn't have field we need.
@@ -88,7 +88,7 @@ class EnvironmentInheritanceTest(unittest.TestCase):
         p1 = Popen([sys.executable, "-c",
                     'import os, sys; sys.stdout.write(os.environ["foo"])'],
                    stdout=PIPE)
-        self.assertEquals('something', p1.stdout.read())
+        self.assertEqual('something', p1.stdout.read())
 
 
 class JythonOptsTest(unittest.TestCase):
@@ -102,7 +102,7 @@ class JythonOptsTest(unittest.TestCase):
         p1 = Popen([sys.executable, "-c",
                     'import os, sys; sys.stdout.write(os.environ["JYTHON_OPTS"])'],
                    stdout=PIPE)
-        self.assertEquals('', p1.stdout.read())
+        self.assertEqual('', p1.stdout.read())
 
     def testExistingJythonOpts(self):
         options = '-Qold -Qwarn'
@@ -110,7 +110,7 @@ class JythonOptsTest(unittest.TestCase):
         p1 = Popen([sys.executable, "-c",
                     'import os, sys; sys.stdout.write(os.environ["JYTHON_OPTS"])'],
                    stdout=PIPE)
-        self.assertEquals(options, p1.stdout.read())
+        self.assertEqual(options, p1.stdout.read())
 
 
 class Cmdline2ListTestCase(unittest.TestCase):
@@ -139,7 +139,7 @@ class Cmdline2ListTestCase(unittest.TestCase):
     }
 
     def test_cmdline2list(self):
-        for cmdline, argv in self.cmdlines.iteritems():
+        for cmdline, argv in self.cmdlines.items():
             self.assertEqual(_cmdline2list(cmdline), argv)
 
 

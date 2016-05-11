@@ -73,7 +73,7 @@ class ProcessTestCase(unittest.TestCase):
         try:
             subprocess.check_call([sys.executable, "-c",
                                    "import sys; sys.exit(47)"])
-        except subprocess.CalledProcessError, e:
+        except subprocess.CalledProcessError as e:
             self.assertEqual(e.returncode, 47)
         else:
             self.fail("Expected CalledProcessError")
@@ -245,7 +245,7 @@ class ProcessTestCase(unittest.TestCase):
         cmd = r"import sys, os; sys.exit(os.write(sys.stdout.fileno(), '.\n'))"
         rc = subprocess.call([sys.executable, "-c", cmd],
                              stdout=sys.__stdout__.fileno())
-        self.assertEquals(rc, 2)
+        self.assertEqual(rc, 2)
 
     def test_cwd(self):
         tmpdir = tempfile.gettempdir()
@@ -296,7 +296,7 @@ class ProcessTestCase(unittest.TestCase):
         self.assertEqual(stdout, None)
         # When running with a pydebug build, the # of references is outputted
         # to stderr, so just check if stderr at least started with "pinapple"
-        self.assert_(stderr.startswith("pineapple"))
+        self.assertTrue(stderr.startswith("pineapple"))
 
     def test_communicate(self):
         p = subprocess.Popen([sys.executable, "-c",
@@ -461,7 +461,7 @@ class ProcessTestCase(unittest.TestCase):
         # but, based on system scheduling we can't control, it's possible
         # poll() never returned None.  It "should be" very rare that it
         # didn't go around at least twice.
-        self.assert_(count >= 2)
+        self.assertTrue(count >= 2)
         # Subsequent invocations should just return the returncode
         self.assertEqual(p.poll(), 0)
 
@@ -493,7 +493,7 @@ class ProcessTestCase(unittest.TestCase):
             try:
                 p = subprocess.Popen([sys.executable, "-c", ""],
                                  cwd="/this/path/does/not/exist")
-            except OSError, e:
+            except OSError as e:
                 # The attribute child_traceback should contain "os.chdir"
                 # somewhere.
                 self.assertNotEqual(e.child_traceback.find("os.chdir"), -1)
@@ -507,7 +507,7 @@ class ProcessTestCase(unittest.TestCase):
             try:
                 import resource
                 old_limit = resource.getrlimit(resource.RLIMIT_CORE)
-                resource.setrlimit(resource.RLIMIT_CORE, (0,0))
+                resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
                 return old_limit
             except (ImportError, ValueError, resource.error):
                 return None
@@ -549,7 +549,7 @@ class ProcessTestCase(unittest.TestCase):
             os.write(f, "exec %s -c 'import sys; sys.exit(47)'\n" %
                         sys.executable)
             os.close(f)
-            os.chmod(fname, 0700)
+            os.chmod(fname, 0o700)
             p = subprocess.Popen(fname)
             p.wait()
             os.remove(fname)
@@ -591,7 +591,7 @@ class ProcessTestCase(unittest.TestCase):
             os.write(f, "exec %s -c 'import sys; sys.exit(47)'\n" %
                         sys.executable)
             os.close(f)
-            os.chmod(fname, 0700)
+            os.chmod(fname, 0o700)
             rc = subprocess.call(fname)
             os.remove(fname)
             self.assertEqual(rc, 47)

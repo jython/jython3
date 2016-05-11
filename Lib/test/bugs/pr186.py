@@ -7,4 +7,4 @@ ameth = a.index
 bmeth = b.index
 
 if ameth.__self__ is bmeth.__self__:
-    print 'method selves are bogus!'
+    print('method selves are bogus!')

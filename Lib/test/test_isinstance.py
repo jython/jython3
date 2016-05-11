@@ -242,9 +242,9 @@ class TestIsInstanceIsSubclass(unittest.TestCase):
         self.assertEqual(False, issubclass(NewChild, ()))
         self.assertEqual(True, issubclass(NewSuper, (NewChild, (NewSuper,))))
 
-        self.assertEqual(True, issubclass(int, (long, (float, int))))
+        self.assertEqual(True, issubclass(int, (int, (float, int))))
         if test_support.have_unicode:
-            self.assertEqual(True, issubclass(str, (unicode, (Child, NewChild, basestring))))
+            self.assertEqual(True, issubclass(str, (str, (Child, NewChild, str))))
 
     def test_subclass_recursion_limit(self):
         # make sure that issubclass raises RuntimeError before the C stack is

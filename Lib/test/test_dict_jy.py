@@ -14,7 +14,7 @@ class DictInitTest(unittest.TestCase):
         """
         class Subdict(dict):
             def __init__(self):
-                super(Subdict, self).__init__([('a',1)])
+                super(Subdict, self).__init__([('a', 1)])
                 self.createdInInit = 1
 
             def __setitem__(self, key, value):
@@ -24,7 +24,7 @@ class DictInitTest(unittest.TestCase):
 
         s = Subdict()
         s[7] = 'called'
-        self.assertEquals('called', s.createdInInit)
+        self.assertEqual('called', s.createdInInit)
 
     def testUnhashableKeys(self):
         try:
@@ -60,7 +60,7 @@ class DictCmpTest(unittest.TestCase):
         # have exception raised when checking for equality...
         class non_comparable_dict(dict):
             def __cmp__(self, other):
-                raise TypeError, "I always raise TypeError"
+                raise TypeError("I always raise TypeError")
         self.assertRaises(TypeError, lambda: non_comparable_dict() == '')
         self.assertRaises(TypeError, non_comparable_dict().__cmp__, '')
         # ...unless you compare it with other dicts:
@@ -89,11 +89,11 @@ class DictCmpTest(unittest.TestCase):
 class DictMiscTest(unittest.TestCase):
     def test_pop_key_error(self):
         # tests http://bugs.jython.org/issue2247
-        with self.assertRaisesRegexp(KeyError, r"^1$"):
+        with self.assertRaisesRegex(KeyError, r"^1$"):
             {}.pop(1)
-        with self.assertRaisesRegexp(KeyError, r"^\(\)$"):
+        with self.assertRaisesRegex(KeyError, r"^\(\)$"):
             {}.pop(())
-        with self.assertRaisesRegexp(KeyError, r"^frozenset\(\[\]\)$"):
+        with self.assertRaisesRegex(KeyError, r"^frozenset\(\[\]\)$"):
             {}.pop(frozenset())
 
 class DerivedDictTest(unittest.TestCase):
@@ -110,15 +110,15 @@ class DerivedDictTest(unittest.TestCase):
         #See http://bugs.jython.org/issue1676
         x=defaultdict()
         #This formerly caused an NPE.
-        self.assertEqual(None, x.pop(None,None))
+        self.assertEqual(None, x.pop(None, None))
 
     def test_big_dict(self):
         """Verify that fairly large collection literals of primitives can be constructed."""
         # use \n to separate to avoid parser problems
 
-        d = eval("{" + ",\n".join(("'key{}': {}".format(x, x) for x in xrange(16000))) +"}")
+        d = eval("{" + ",\n".join(("'key{}': {}".format(x, x) for x in range(16000))) +"}")
         self.assertEqual(len(d), 16000)
-        self.assertEqual(sum(d.itervalues()), 127992000)
+        self.assertEqual(sum(d.values()), 127992000)
 
 
 class JavaIntegrationTest(unittest.TestCase):
@@ -128,15 +128,15 @@ class JavaIntegrationTest(unittest.TestCase):
         x.put('a', 1)
         x.put('b', 2)
         x.put('c', 3)
-        x.put((1,2), "xyz")
+        x.put((1, 2), "xyz")
         y = dict(x)
-        self.assertEqual(set(y.items()), set([('a', 1), ('b', 2), ('c', 3), ((1,2), "xyz")]))
+        self.assertEqual(set(y.items()), set([('a', 1), ('b', 2), ('c', 3), ((1, 2), "xyz")]))
 
     def test_hashmap_builtin_pymethods(self):
         x = HashMap()
         x['a'] = 1
         x[(1, 2)] = 'xyz'
-        self.assertEqual({tup for tup in x.iteritems()}, {('a', 1), ((1, 2), 'xyz')})
+        self.assertEqual({tup for tup in x.items()}, {('a', 1), ((1, 2), 'xyz')})
         self.assertEqual(str(x), repr(x))
         self.assertEqual(type(str(x)), type(repr(x)))
 
@@ -157,9 +157,9 @@ class JavaIntegrationTest(unittest.TestCase):
         x.put('a', 1)
         x.put('b', 2)
         x.put('c', 3)
-        x.put((1,2), "xyz")
+        x.put((1, 2), "xyz")
         y = dict(x)
-        self.assertEqual(set(y.items()), set([('a', 1), ('b', 2), ('c', 3), ((1,2), "xyz")]))
+        self.assertEqual(set(y.items()), set([('a', 1), ('b', 2), ('c', 3), ((1, 2), "xyz")]))
 
 
 class JavaDictTest(test_dict.DictTest):
@@ -213,32 +213,32 @@ class JavaDictTest(test_dict.DictTest):
         self.assert_property(self.assertLessEqual, {1: 2}, {1: 2})
         self.assert_not_property(self.assertLessEqual, {1: 2, 3: 4}, {1: 2})
         self.assert_property(self.assertLessEqual, {}, {1: 2})
-        self.assertLessEqual(self._make_dict({1: 2}), {1L: 2L, 3L: 4L})
-        self.assertLessEqual({1L: 2L}, self._make_dict({1: 2, 3L: 4L}))
+        self.assertLessEqual(self._make_dict({1: 2}), {1: 2, 3: 4})
+        self.assertLessEqual({1: 2}, self._make_dict({1: 2, 3: 4}))
 
     def test_lt(self):
         self.assert_not_property(self.assertLess, {}, {})
         self.assert_not_property(self.assertLess, {1: 2}, {1: 2})
         self.assert_not_property(self.assertLessEqual, {1: 2, 3: 4}, {1: 2})
         self.assert_property(self.assertLessEqual, {}, {1: 2})
-        self.assertLess(self._make_dict({1: 2}), {1L: 2L, 3L: 4L})
-        self.assertLess({1L: 2L}, self._make_dict({1: 2, 3L: 4L}))
+        self.assertLess(self._make_dict({1: 2}), {1: 2, 3: 4})
+        self.assertLess({1: 2}, self._make_dict({1: 2, 3: 4}))
 
     def test_ge(self):
         self.assert_property(self.assertGreaterEqual, {}, {})
         self.assert_property(self.assertGreaterEqual, {1: 2}, {1: 2})
         self.assert_not_property(self.assertLessEqual, {1: 2, 3: 4}, {1: 2})
         self.assert_property(self.assertLessEqual, {}, {1: 2})
-        self.assertGreaterEqual(self._make_dict({1: 2, 3: 4}), {1L: 2L})
-        self.assertGreaterEqual({1L: 2L, 3L: 4L}, self._make_dict({1: 2}))
+        self.assertGreaterEqual(self._make_dict({1: 2, 3: 4}), {1: 2})
+        self.assertGreaterEqual({1: 2, 3: 4}, self._make_dict({1: 2}))
 
     def test_gt(self):
         self.assert_not_property(self.assertGreater, {}, {})
         self.assert_not_property(self.assertGreater, {1: 2}, {1: 2})
         self.assert_not_property(self.assertLessEqual, {1: 2, 3: 4}, {1: 2})
         self.assert_property(self.assertLessEqual, {}, {1: 2})
-        self.assertGreater(self._make_dict({1: 2, 3: 4}), {1L: 2L})
-        self.assertGreater({1L: 2L, 3L: 4L}, self._make_dict({1: 2}))
+        self.assertGreater(self._make_dict({1: 2, 3: 4}), {1: 2})
+        self.assertGreater({1: 2, 3: 4}, self._make_dict({1: 2}))
 
 
 class PyStringMapTest(test_dict.DictTest):

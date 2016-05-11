@@ -383,8 +383,7 @@ class TestShutil(unittest.TestCase):
     def _tarinfo(self, path):
         tar = tarfile.open(path)
         try:
-            names = tar.getnames()
-            names.sort()
+            names = sorted(tar.getnames())
             return tuple(names)
         finally:
             tar.close()
@@ -491,7 +490,7 @@ class TestShutil(unittest.TestCase):
             group = owner = 'root'
 
         base_dir, root_dir, base_name =  self._create_files()
-        base_name = os.path.join(self.mkdtemp() , 'archive')
+        base_name = os.path.join(self.mkdtemp(), 'archive')
         res = make_archive(base_name, 'zip', root_dir, base_dir, owner=owner,
                            group=group)
         self.assertTrue(os.path.exists(res))

@@ -43,13 +43,13 @@ class whrandom:
     #
     def seed(self, x = 0, y = 0, z = 0):
         if not type(x) == type(y) == type(z) == type(0):
-            raise TypeError, 'seeds must be integers'
+            raise TypeError('seeds must be integers')
         if not (0 <= x < 256 and 0 <= y < 256 and 0 <= z < 256):
-            raise ValueError, 'seeds must be in range(0, 256)'
+            raise ValueError('seeds must be in range(0, 256)')
         if 0 == x == y == z:
             # Initialize from current time
             import time
-            t = long(time.time() * 256)
+            t = int(time.time() * 256)
             t = int((t&0xffffff) ^ (t>>24))
             t, x = divmod(t, 256)
             t, y = divmod(t, 256)

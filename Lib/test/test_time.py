@@ -24,8 +24,8 @@ class TimeTestCase(unittest.TestCase):
     def test_conversions(self):
         self.assertTrue(time.ctime(self.t)
                      == time.asctime(time.localtime(self.t)))
-        self.assertTrue(long(time.mktime(time.localtime(self.t)))
-                     == long(self.t))
+        self.assertTrue(int(time.mktime(time.localtime(self.t)))
+                     == int(self.t))
 
     def test_sleep(self):
         time.sleep(1.2)
@@ -162,7 +162,7 @@ class TimeTestCase(unittest.TestCase):
         victoria = 'AEST-10AEDT-11,M10.5.0,M3.5.0'
         utc='UTC+0'
 
-        org_TZ = environ.get('TZ',None)
+        org_TZ = environ.get('TZ', None)
         try:
             # Make sure we can switch to UTC time and results are correct
             # Note that unknown timezones default to UTC.
@@ -207,7 +207,7 @@ class TimeTestCase(unittest.TestCase):
             # rely on it.
             if org_TZ is not None:
                 environ['TZ'] = org_TZ
-            elif environ.has_key('TZ'):
+            elif 'TZ' in environ:
                 del environ['TZ']
             time.tzset()
 

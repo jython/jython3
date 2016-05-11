@@ -64,7 +64,7 @@ def __del__I(self):
     global resurrectedObject_I
     finalizeMsgList.append(str(self)+" finalized (ResurrectableDummyClass)")
     if verbose:
-        print str(self)+" finalized (ResurrectableDummyClass)"
+        print(str(self)+" finalized (ResurrectableDummyClass)")
     if self.doResurrection:
         resurrectedObject_I = self
 
@@ -72,7 +72,7 @@ def __del__J(self):
     global resurrectedObject_J
     finalizeMsgList.append(str(self)+" finalized (ResurrectableDummyClass)")
     if verbose:
-        print str(self)+" finalized (ResurrectableDummyClass)"
+        print(str(self)+" finalized (ResurrectableDummyClass)")
     if self.doResurrection:
         resurrectedObject_J = self
 
@@ -80,7 +80,7 @@ def __del__K(self):
     global resurrectedObject_K
     finalizeMsgList.append(str(self)+" finalized (ResurrectableDummyClass)")
     if verbose:
-        print str(self)+" finalized (ResurrectableDummyClass)"
+        print(str(self)+" finalized (ResurrectableDummyClass)")
     if self.doResurrection:
         resurrectedObject_K = self
 
@@ -88,7 +88,7 @@ def __del__L(self):
     global resurrectedObject_L
     finalizeMsgList.append(str(self)+" finalized (ResurrectableDummyClass)")
     if verbose:
-        print str(self)+" finalized (ResurrectableDummyClass)"
+        print(str(self)+" finalized (ResurrectableDummyClass)")
     if self.doResurrection:
         resurrectedObject_L = self
 
@@ -96,7 +96,7 @@ def __del__M(self):
     global resurrectedObject_M
     finalizeMsgList.append(str(self)+" finalized (ResurrectableDummyClass)")
     if verbose:
-        print str(self)+" finalized (ResurrectableDummyClass)"
+        print(str(self)+" finalized (ResurrectableDummyClass)")
     if self.doResurrection:
         resurrectedObject_M = self
 
@@ -104,7 +104,7 @@ def __del__N(self):
     global resurrectedObject_N
     finalizeMsgList.append(str(self)+" finalized (ResurrectableDummyClass)")
     if verbose:
-        print str(self)+" finalized (ResurrectableDummyClass)"
+        print(str(self)+" finalized (ResurrectableDummyClass)")
     if self.doResurrection:
         resurrectedObject_N = self
 
@@ -136,7 +136,7 @@ class DummyClassDel():
     def __del__(self):
         finalizeMsgList.append(str(self)+" finalized (DummyClassDel)")
         if verbose:
-            print str(self)+" finalized (DummyClassDel)"
+            print(str(self)+" finalized (DummyClassDel)")
 
 
 class DummyClassNew(object):
@@ -158,7 +158,7 @@ class DummyClassDelNew(object):
     def __del__(self):
         finalizeMsgList.append(str(self)+" finalized (DummyClassDelNew)")
         if verbose:
-            print str(self)+" finalized (DummyClassDelNew)"
+            print(str(self)+" finalized (DummyClassDelNew)")
 
 class DummyFileClassNew(file):
     
@@ -171,23 +171,23 @@ class DummyFileClassNew(file):
     def __del__(self):
         finalizeMsgList.append(str(self)+" finalized (DummyFileClassNew)")
         if verbose:
-            print str(self)+" finalized (DummyFileClassNew)"
+            print(str(self)+" finalized (DummyFileClassNew)")
 
 
 def __del__class(self):
     finalizeMsgList.append(str(self)+" finalized (acquired by class)")
     if verbose:
-        print str(self)+" finalized (acquired by class)"
+        print(str(self)+" finalized (acquired by class)")
 
 def __del__object(self):
     finalizeMsgList.append(str(self)+" finalized (acquired by object)")
     if verbose:
-        print str(self)+" finalized (acquired by object)"
+        print(str(self)+" finalized (acquired by object)")
 
 def __del__object0():
     finalizeMsgList.append("_ finalized (acquired by object)")
     if verbose:
-        print "_ finalized (acquired by object)"
+        print("_ finalized (acquired by object)")
 
 delClass = __del__class
 delObject = __del__object

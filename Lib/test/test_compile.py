@@ -9,8 +9,8 @@ class TestSpecifics(unittest.TestCase):
     def test_debug_assignment(self):
         # catch assignments to __debug__
         self.assertRaises(SyntaxError, compile, '__debug__ = 1', '?', 'single')
-        import __builtin__
-        prev = __builtin__.__debug__
+        import builtins
+        prev = builtins.__debug__
         setattr(__builtin__, '__debug__', 'sure')
         setattr(__builtin__, '__debug__', prev)
 
@@ -20,17 +20,17 @@ class TestSpecifics(unittest.TestCase):
         self.assertRaises(SyntaxError, eval, 'lambda a,a=1:0')
         self.assertRaises(SyntaxError, eval, 'lambda a=1,a=1:0')
         try:
-            exec 'def f(a, a): pass'
+            exec('def f(a, a): pass')
             self.fail("duplicate arguments")
         except SyntaxError:
             pass
         try:
-            exec 'def f(a = 0, a = 1): pass'
+            exec('def f(a = 0, a = 1): pass')
             self.fail("duplicate keyword arguments")
         except SyntaxError:
             pass
         try:
-            exec 'def f(a): global a; a = 1'
+            exec('def f(a): global a; a = 1')
             self.fail("variable is global and local")
         except SyntaxError:
             pass
@@ -43,7 +43,7 @@ class TestSpecifics(unittest.TestCase):
 
     def test_duplicate_global_local(self):
         try:
-            exec 'def f(a): global a; a = 1'
+            exec('def f(a): global a; a = 1')
             self.fail("variable is global and local")
         except SyntaxError:
             pass
@@ -63,22 +63,22 @@ class TestSpecifics(unittest.TestCase):
 
         m = M()
         g = globals()
-        exec 'z = a' in g, m
+        exec('z = a', g, m)
         self.assertEqual(m.results, ('z', 12))
         try:
-            exec 'z = b' in g, m
+            exec('z = b', g, m)
         except NameError:
             pass
         else:
             self.fail('Did not detect a KeyError')
-        exec 'z = dir()' in g, m
+        exec('z = dir()', g, m)
         self.assertEqual(m.results, ('z', list('xyz')))
-        exec 'z = globals()' in g, m
+        exec('z = globals()', g, m)
         self.assertEqual(m.results, ('z', g))
-        exec 'z = locals()' in g, m
+        exec('z = locals()', g, m)
         self.assertEqual(m.results, ('z', m))
         try:
-            exec 'z = b' in m
+            exec('z = b', m)
         except TypeError:
             pass
         #XXX: Jython calls this a NameError
@@ -92,7 +92,7 @@ class TestSpecifics(unittest.TestCase):
             pass
         m = A()
         try:
-            exec 'z = a' in g, m
+            exec('z = a', g, m)
         except TypeError:
             pass
         #XXX: Jython calls this an AttributeError
@@ -108,7 +108,7 @@ class TestSpecifics(unittest.TestCase):
                     return 12
                 return dict.__getitem__(self, key)
         d = D()
-        exec 'z = a' in g, d
+        exec('z = a', g, d)
         self.assertEqual(d['z'], 12)
 
     def test_extended_arg(self):
@@ -133,14 +133,14 @@ def f(x):
 ''' % ((longexpr,)*10)
         #Exceeds 65535 byte limit on methods in the JVM.
         if not test_support.is_jython:
-            exec code
+            exec(code)
             self.assertEqual(f(5), 0)
 
     def test_complex_args(self):
 
         with test_support.check_py3k_warnings(
                 ("tuple parameter unpacking has been removed", SyntaxWarning)):
-            exec textwrap.dedent('''
+            exec(textwrap.dedent('''
         def comp_args((a, b)):
             return a,b
         self.assertEqual(comp_args((1, 2)), (1, 2))
@@ -158,11 +158,11 @@ def f(x):
             return a, b, c
         self.assertEqual(comp_args(1, (2, 3)), (1, 2, 3))
         self.assertEqual(comp_args(), (2, 3, 4))
-        ''')
+        '''))
 
     def test_argument_order(self):
         try:
-            exec 'def f(a=1, (b, c)): pass'
+            exec('def f(a=1, (b, c)): pass')
             self.fail("non-default args after default")
         except SyntaxError:
             pass
@@ -238,16 +238,16 @@ if 1:
 
     def test_unary_minus(self):
         # Verify treatment of unary minus on negative numbers SF bug #660455
-        if sys.maxint == 2147483647:
+        if sys.maxsize == 2147483647:
             # 32-bit machine
             all_one_bits = '0xffffffff'
-            self.assertEqual(eval(all_one_bits), 4294967295L)
-            self.assertEqual(eval("-" + all_one_bits), -4294967295L)
-        elif sys.maxint == 9223372036854775807:
+            self.assertEqual(eval(all_one_bits), 4294967295)
+            self.assertEqual(eval("-" + all_one_bits), -4294967295)
+        elif sys.maxsize == 9223372036854775807:
             # 64-bit machine
             all_one_bits = '0xffffffffffffffff'
-            self.assertEqual(eval(all_one_bits), 18446744073709551615L)
-            self.assertEqual(eval("-" + all_one_bits), -18446744073709551615L)
+            self.assertEqual(eval(all_one_bits), 18446744073709551615)
+            self.assertEqual(eval("-" + all_one_bits), -18446744073709551615)
         else:
             self.fail("How many bits *does* this machine have???")
         # Verify treatment of contant folding on -(sys.maxint+1)
@@ -256,10 +256,10 @@ if 1:
         # fairly easy and moderately worthwhile to implement.  Still it is low
         # on the list, so leaving it out of jython for now.
         if not test_support.is_jython:
-            self.assertTrue(isinstance(eval("%s" % (-sys.maxint - 1)), int))
-            self.assertTrue(isinstance(eval("%s" % (-sys.maxint - 2)), long))
+            self.assertTrue(isinstance(eval("%s" % (-sys.maxsize - 1)), int))
+            self.assertTrue(isinstance(eval("%s" % (-sys.maxsize - 2)), int))
 
-    if sys.maxint == 9223372036854775807:
+    if sys.maxsize == 9223372036854775807:
         def test_32_63_bit_values(self):
             a = +4294967296  # 1 << 32
             b = -4294967296  # 1 << 32
@@ -270,13 +270,13 @@ if 1:
             g = +9223372036854775807  # 1 << 63 - 1
             h = -9223372036854775807  # 1 << 63 - 1
 
-            for variable in self.test_32_63_bit_values.func_code.co_consts:
+            for variable in self.test_32_63_bit_values.__code__.co_consts:
                 if variable is not None:
                     self.assertTrue(isinstance(variable, int))
 
     def test_sequence_unpacking_error(self):
         # Verify sequence packing/unpacking with "or".  SF bug #757818
-        i,j = (1, -1) or (-1, 1)
+        i, j = (1, -1) or (-1, 1)
         self.assertEqual(i, 1)
         self.assertEqual(j, -1)
 
@@ -352,10 +352,10 @@ if 1:
             f2 = lambda x=2: x
             return f1, f2
         f1, f2 = f()
-        self.assertNotEqual(id(f1.func_code), id(f2.func_code))
+        self.assertNotEqual(id(f1.__code__), id(f2.__code__))
 
     def test_unicode_encoding(self):
-        code = u"# -*- coding: utf-8 -*-\npass\n"
+        code = "# -*- coding: utf-8 -*-\npass\n"
         self.assertRaises(SyntaxError, compile, code, "tmp", "exec")
 
     def test_subscripts(self):
@@ -442,7 +442,7 @@ if 1:
         #self.assert_("_A__mangled" in A.f.func_code.co_varnames)
         #self.assert_("__not_mangled__" in A.f.func_code.co_varnames)
         #self.assert_("_A__mangled_mod" in A.f.func_code.co_varnames)
-        self.assert_("__package__" in A.f.func_code.co_varnames)
+        self.assertTrue("__package__" in A.f.__code__.co_varnames)
 
     def test_compile_ast(self):
         fname = __file__
@@ -466,7 +466,7 @@ if 1:
         for fname, code in sample_code:
             co1 = compile(code, '%s1' % fname, 'exec')
             ast = compile(code, '%s2' % fname, 'exec', _ast.PyCF_ONLY_AST)
-            self.assert_(type(ast) == _ast.Module)
+            self.assertTrue(isinstance(ast, _ast.Module))
             co2 = compile(ast, '%s3' % fname, 'exec')
             if not test_support.is_jython:
                 self.assertEqual(co1, co2)

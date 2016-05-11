@@ -17,16 +17,16 @@ del base
 
 def confirm(test, testname = "Test"):
     if not test:
-        print "Failed " + testname
+        print("Failed " + testname)
         raise Exception
 
 Node._debug = 1
 
 def testParseFromFile():
-    from StringIO import StringIO
+    from io import StringIO
     dom = parse(StringIO(open(tstfile).read()))
     dom.unlink()
-    confirm(isinstance(dom,Document))
+    confirm(isinstance(dom, Document))
 
 def testGetElementsByTagName():
     dom = parse(tstfile)
@@ -106,7 +106,7 @@ def testInsertBeforeFragment():
 
 def testAppendChild():
     dom = parse(tstfile)
-    dom.documentElement.appendChild(dom.createComment(u"Hello"))
+    dom.documentElement.appendChild(dom.createComment("Hello"))
     confirm(dom.documentElement.childNodes[-1].nodeName == "#comment")
     confirm(dom.documentElement.childNodes[-1].data == "Hello")
     dom.unlink()
@@ -136,29 +136,29 @@ def testLegalChildren():
     try: dom.appendChild(text)
     except HierarchyRequestErr: pass
     else:
-        print "dom.appendChild didn't raise HierarchyRequestErr"
+        print("dom.appendChild didn't raise HierarchyRequestErr")
 
     dom.appendChild(elem)
     try: dom.insertBefore(text, elem)
     except HierarchyRequestErr: pass
     else:
-        print "dom.appendChild didn't raise HierarchyRequestErr"
+        print("dom.appendChild didn't raise HierarchyRequestErr")
 
     try: dom.replaceChild(text, elem)
     except HierarchyRequestErr: pass
     else:
-        print "dom.appendChild didn't raise HierarchyRequestErr"
+        print("dom.appendChild didn't raise HierarchyRequestErr")
 
     nodemap = elem.attributes
     try: nodemap.setNamedItem(text)
     except HierarchyRequestErr: pass
     else:
-        print "NamedNodeMap.setNamedItem didn't raise HierarchyRequestErr"
+        print("NamedNodeMap.setNamedItem didn't raise HierarchyRequestErr")
 
     try: nodemap.setNamedItemNS(text)
     except HierarchyRequestErr: pass
     else:
-        print "NamedNodeMap.setNamedItemNS didn't raise HierarchyRequestErr"
+        print("NamedNodeMap.setNamedItemNS didn't raise HierarchyRequestErr")
 
     elem.appendChild(text)
     dom.unlink()
@@ -317,7 +317,7 @@ def testGetElementsByTagNameNS():
     <minidom:myelem/>
     </foo>"""
     dom = parseString(d)
-    elem = dom.getElementsByTagNameNS("http://pyxml.sf.net/minidom","myelem")
+    elem = dom.getElementsByTagNameNS("http://pyxml.sf.net/minidom", "myelem")
     confirm(len(elem) == 1)
     dom.unlink()
 
@@ -334,7 +334,7 @@ def testElementReprAndStr():
 # commented out until Fredrick's fix is checked in
 def _testElementReprAndStrUnicode():
     dom = Document()
-    el = dom.appendChild(dom.createElement(u"abc"))
+    el = dom.appendChild(dom.createElement("abc"))
     string1 = repr(el)
     string2 = str(el)
     confirm(string1 == string2)
@@ -344,7 +344,7 @@ def _testElementReprAndStrUnicode():
 def _testElementReprAndStrUnicodeNS():
     dom = Document()
     el = dom.appendChild(
-        dom.createElementNS(u"http://www.slashdot.org", u"slash:abc"))
+        dom.createElementNS("http://www.slashdot.org", "slash:abc"))
     string1 = repr(el)
     string2 = str(el)
     confirm(string1 == string2)
@@ -353,7 +353,7 @@ def _testElementReprAndStrUnicodeNS():
 
 def testAttributeRepr():
     dom = Document()
-    el = dom.appendChild(dom.createElement(u"abc"))
+    el = dom.appendChild(dom.createElement("abc"))
     node = el.setAttribute("abc", "def")
     confirm(str(node) == repr(node))
     dom.unlink()
@@ -385,8 +385,8 @@ def testTooManyDocumentElements():
     except HierarchyRequestErr:
         pass
     else:
-        print "Failed to catch expected exception when" \
-              " adding extra document element."
+        print("Failed to catch expected exception when" \
+              " adding extra document element.")
     elem.unlink()
     doc.unlink()
 
@@ -469,8 +469,8 @@ def _setupCloneElement(deep):
 def _testCloneElementCopiesAttributes(e1, e2, test):
     attrs1 = e1.attributes
     attrs2 = e2.attributes
-    keys1 = attrs1.keys()
-    keys2 = attrs2.keys()
+    keys1 = list(attrs1.keys())
+    keys2 = list(attrs2.keys())
     keys1.sort()
     keys2.sort()
     confirm(keys1 == keys2, "clone of element has same attribute keys")
@@ -539,7 +539,7 @@ def testNormalizedAfterLoad():
     num_lines = 2
     # Up to 16K lines should be enough to guarantee failure without normalization
     while num_lines <= 2**14:
-        doc_content = "\n".join( ("Line %d" % i for i in xrange(num_lines)) )
+        doc_content = "\n".join( ("Line %d" % i for i in range(num_lines)) )
         doc_text = "<document>%s</document>" % doc_content
         dom = parseString(doc_text)
         node_content = dom.getElementsByTagName("document")[0].childNodes[0].nodeValue
@@ -625,8 +625,7 @@ def testSAX2DOM():
 
 # --- MAIN PROGRAM
 
-names = globals().keys()
-names.sort()
+names = sorted(list(globals().keys()))
 
 failed = []
 
@@ -642,13 +641,13 @@ else:
         confirm(len(Node.allnodes) == 0,
                 "assertion: len(Node.allnodes) == 0")
         if len(Node.allnodes):
-            print "Garbage left over:"
+            print("Garbage left over:")
             if verbose:
-                print Node.allnodes.items()[0:10]
+                print(list(Node.allnodes.items())[0:10])
             else:
                 # Don't print specific nodes if repeatable results
                 # are needed
-                print len(Node.allnodes)
+                print(len(Node.allnodes))
         Node.allnodes = {}
 
 for name in names:
@@ -659,13 +658,13 @@ for name in names:
             check_allnodes()
         except:
             failed.append(name)
-            print "Test Failed: ", name
+            print("Test Failed: ", name)
             sys.stdout.flush()
             traceback.print_exception(*sys.exc_info())
-            print `sys.exc_info()[1]`
+            print(repr(sys.exc_info()[1]))
             Node.allnodes = {}
 
 if failed:
-    print "\n\n\n**** Check for failures in these tests:"
+    print("\n\n\n**** Check for failures in these tests:")
     for name in failed:
-        print "  " + name
+        print("  " + name)

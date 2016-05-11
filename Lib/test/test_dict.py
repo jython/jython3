@@ -38,39 +38,38 @@ class DictTest(unittest.TestCase):
 
     def test_keys(self):
         d = self._make_dict({})
-        self.assertEqual(d.keys(), [])
+        self.assertEqual(list(d.keys()), [])
         d = {'a': 1, 'b': 2}
-        k = d.keys()
-        self.assertTrue(d.has_key('a'))
-        self.assertTrue(d.has_key('b'))
+        k = list(d.keys())
+        self.assertTrue('a' in d)
+        self.assertTrue('b' in d)
 
         self.assertRaises(TypeError, d.keys, None)
 
     def test_values(self):
         d = self._make_dict({})
-        self.assertEqual(d.values(), [])
+        self.assertEqual(list(d.values()), [])
 
         d = self._make_dict({1:2})
-        self.assertEqual(d.values(), [2])
+        self.assertEqual(list(d.values()), [2])
 
         self.assertRaises(TypeError, d.values, None)
 
     def test_items(self):
         d = self._make_dict({})
-        self.assertEqual(d.items(), [])
+        self.assertEqual(list(d.items()), [])
 
         d = self._make_dict({1:2})
-        self.assertEqual(d.items(), [(1, 2)])
+        self.assertEqual(list(d.items()), [(1, 2)])
 
         self.assertRaises(TypeError, d.items, None)
 
     def test_has_key(self):
         d = self._make_dict({})
-        self.assertFalse(d.has_key('a'))
+        self.assertFalse('a' in d)
 
         d = self._make_dict({'a': 1, 'b': 2})
-        k = d.keys()
-        k.sort()
+        k = sorted(list(d.keys()))
         self.assertEqual(k, ['a', 'b'])
 
         self.assertRaises(TypeError, d.has_key)
@@ -156,7 +155,7 @@ class DictTest(unittest.TestCase):
             def __init__(self):
                 self.d = {1:1, 2:2, 3:3}
             def keys(self):
-                return self.d.keys()
+                return list(self.d.keys())
             def __getitem__(self, i):
                 return self.d[i]
         d.clear()
@@ -178,7 +177,7 @@ class DictTest(unittest.TestCase):
                         self.i = 1
                     def __iter__(self):
                         return self
-                    def next(self):
+                    def __next__(self):
                         if self.i:
                             self.i = 0
                             return 'a'
@@ -195,7 +194,7 @@ class DictTest(unittest.TestCase):
                         self.i = ord('a')
                     def __iter__(self):
                         return self
-                    def next(self):
+                    def __next__(self):
                         if self.i <= ord('z'):
                             rtn = chr(self.i)
                             self.i += 1
@@ -209,7 +208,7 @@ class DictTest(unittest.TestCase):
         class badseq(object):
             def __iter__(self):
                 return self
-            def next(self):
+            def __next__(self):
                 raise Exc()
 
         d = self._make_dict({})
@@ -221,7 +220,7 @@ class DictTest(unittest.TestCase):
         d = self._make_dict({})
         self.assertIsNot(d.fromkeys('abc'), d)
         self.assertEqual(d.fromkeys('abc'), {'a':None, 'b':None, 'c':None})
-        self.assertEqual(d.fromkeys((4,5),0), {4:0, 5:0})
+        self.assertEqual(d.fromkeys((4, 5), 0), {4:0, 5:0})
         self.assertEqual(d.fromkeys([]), {})
         def g():
             yield 1
@@ -251,7 +250,7 @@ class DictTest(unittest.TestCase):
         class BadSeq(object):
             def __iter__(self):
                 return self
-            def next(self):
+            def __next__(self):
                 raise Exc()
 
         self.assertRaises(Exc, dict.fromkeys, BadSeq())
@@ -263,8 +262,8 @@ class DictTest(unittest.TestCase):
         self.assertRaises(Exc, baddict2.fromkeys, [1])
 
         # test fast path for dictionary inputs
-        d = dict(zip(range(6), range(6)))
-        self.assertEqual(dict.fromkeys(d, 0), dict(zip(range(6), [0]*6)))
+        d = dict(list(zip(list(range(6)), list(range(6)))))
+        self.assertEqual(dict.fromkeys(d, 0), dict(list(zip(list(range(6)), [0]*6))))
 
     def test_copy(self):
         d = self._make_dict({1:1, 2:2, 3:3})
@@ -379,7 +378,7 @@ class DictTest(unittest.TestCase):
 
         # verify longs/ints get same value when key > 32 bits
         # (for 64-bit archs).  See SF bug #689659.
-        x = 4503599627370496L
+        x = 4503599627370496
         y = 4503599627370496
         h = self._make_dict({x: 'anything', y: 'something else'})
         self.assertEqual(h[x], h[y])
@@ -435,7 +434,7 @@ class DictTest(unittest.TestCase):
 
     def test_le(self):
         self.assertFalse(self._make_dict({}) < {})
-        self.assertFalse(self._make_dict({1: 2}) < {1L: 2L})
+        self.assertFalse(self._make_dict({1: 2}) < {1: 2})
 
         class Exc(Exception): pass
 
@@ -467,7 +466,7 @@ class DictTest(unittest.TestCase):
         self.assertEqual(d[1], 2)
         self.assertEqual(d[3], 4)
         self.assertNotIn(2, d)
-        self.assertNotIn(2, d.keys())
+        self.assertNotIn(2, list(d.keys()))
         self.assertEqual(d[2], 42)
 
         class E(dict):
@@ -528,7 +527,7 @@ class DictTest(unittest.TestCase):
                      'd.pop(x2)',
                      'd.update({x2: 2})']:
             with self.assertRaises(CustomException):
-                exec stmt in locals()
+                exec(stmt, locals())
 
     def test_resize1(self):
         # Dict resizing bug, found by Jack Jansen in 2.2 CVS development.
@@ -695,7 +694,7 @@ class DictTest(unittest.TestCase):
     def test_list_equality(self):
         class A(dict): pass
         for dtype in (A, dict):
-            self.assertEquals([dtype()], [dict()])
+            self.assertEqual([dtype()], [dict()])
 
 
 from test import mapping_tests

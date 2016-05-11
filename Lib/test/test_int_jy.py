@@ -9,12 +9,12 @@ from test import test_support
 class IntTestCase(unittest.TestCase):
 
     def test_type_matches(self):
-        self.assert_(isinstance(1, types.IntType))
+        self.assertTrue(isinstance(1, int))
 
     def test_int_pow(self):
-        self.assertEquals(pow(10, 10, None), 10000000000L)
-        self.assertEquals(int.__pow__(10, 10, None), 10000000000L)
-        self.assertEquals((10).__pow__(10, None), 10000000000L)
+        self.assertEqual(pow(10, 10, None), 10000000000)
+        self.assertEqual(int.__pow__(10, 10, None), 10000000000)
+        self.assertEqual((10).__pow__(10, None), 10000000000)
 
 def test_main():
     test_support.run_unittest(IntTestCase)

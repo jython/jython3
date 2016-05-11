@@ -2,7 +2,7 @@
 import unittest
 from test.test_support import run_unittest, gc_collect
 
-import StringIO  # Jython: sub this for sys, given the special status of PySystemState
+import io  # Jython: sub this for sys, given the special status of PySystemState
 ModuleType = type(StringIO)
 
 class ModuleTests(unittest.TestCase):
@@ -38,15 +38,15 @@ class ModuleTests(unittest.TestCase):
 
     def test_unicode_docstring(self):
         # Unicode docstring
-        foo = ModuleType("foo", u"foodoc\u1234")
+        foo = ModuleType("foo", "foodoc\u1234")
         self.assertEqual(foo.__name__, "foo")
-        self.assertEqual(foo.__doc__, u"foodoc\u1234")
+        self.assertEqual(foo.__doc__, "foodoc\u1234")
         self.assertEqual(foo.__dict__,
-                         {"__name__": "foo", "__doc__": u"foodoc\u1234"})
+                         {"__name__": "foo", "__doc__": "foodoc\u1234"})
 
     def test_reinit(self):
         # Reinitialization should not replace the __dict__
-        foo = ModuleType("foo", u"foodoc\u1234")
+        foo = ModuleType("foo", "foodoc\u1234")
         foo.bar = 42
         d = foo.__dict__
         foo.__init__("foo", "foodoc")

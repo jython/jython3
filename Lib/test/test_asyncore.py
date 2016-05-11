@@ -11,7 +11,7 @@ import struct
 
 from test import test_support
 from test.test_support import TESTFN, run_unittest, unlink, is_jython
-from StringIO import StringIO
+from io import StringIO
 
 try:
     import threading
@@ -315,7 +315,7 @@ class DispatcherTests(unittest.TestCase):
         d = asyncore.dispatcher(socket.socket())
         # make sure the error message no longer refers to the socket
         # object but the dispatcher instance instead
-        self.assertRaisesRegexp(AttributeError, 'dispatcher instance',
+        self.assertRaisesRegex(AttributeError, 'dispatcher instance',
                                 getattr, d, 'foo')
         # cheap inheritance with the underlying socket is supposed
         # to still work but a DeprecationWarning is expected
@@ -723,7 +723,7 @@ class BaseTestAPI(unittest.TestCase):
         t = threading.Thread(target=lambda: asyncore.loop(timeout=0.1, count=500))
         t.start()
 
-        for x in xrange(20):
+        for x in range(20):
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(.2)
             s.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER,

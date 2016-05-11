@@ -2,4 +2,4 @@
 # overflow.
 
 g = globals()
-print g
+print(g)

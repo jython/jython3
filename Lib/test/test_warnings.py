@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 import linecache
 import os
-import StringIO
+import io
 import sys
 import unittest
 import subprocess
@@ -102,7 +102,7 @@ class FilterTests(object):
             self.module.resetwarnings()
             self.module.filterwarnings("default", category=UserWarning)
             message = UserWarning("FilterTests.test_default")
-            for x in xrange(2):
+            for x in range(2):
                 self.module.warn(message, UserWarning)
                 if x == 0:
                     self.assertEqual(w[-1].message, message)
@@ -582,7 +582,7 @@ class WarningsDisplayTests(unittest.TestCase):
         expected_file_line = linecache.getline(file_name, line_num).strip()
         message = 'msg'
         category = Warning
-        file_object = StringIO.StringIO()
+        file_object = io.StringIO()
         expect = self.module.formatwarning(message, category, file_name,
                                             line_num)
         self.module.showwarning(message, category, file_name, line_num,
@@ -592,7 +592,7 @@ class WarningsDisplayTests(unittest.TestCase):
         expected_file_line += "for the win!"
         expect = self.module.formatwarning(message, category, file_name,
                                             line_num, expected_file_line)
-        file_object = StringIO.StringIO()
+        file_object = io.StringIO()
         self.module.showwarning(message, category, file_name, line_num,
                                 file_object, expected_file_line)
         self.assertEqual(expect, file_object.getvalue())
@@ -629,7 +629,7 @@ class CatchWarningTests(BaseTest):
         # Ensure warnings are recorded when requested
         with wmod.catch_warnings(module=wmod, record=True) as w:
             self.assertEqual(w, [])
-            self.assertTrue(type(w) is list)
+            self.assertTrue(isinstance(w, list))
             wmod.simplefilter("always")
             wmod.warn("foo")
             self.assertEqual(str(w[-1].message), "foo")

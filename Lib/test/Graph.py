@@ -11,7 +11,7 @@ class Graph(awt.Canvas):
             return self.error(g)
 
         sz = self.size
-        xs = range(0, sz.width, 2)
+        xs = list(range(0, sz.width, 2))
 
         xscale = 4*pi/sz.width
         xoffset = -2*pi
@@ -57,6 +57,6 @@ if __name__ == '__main__':
     p.add(expression, 'South')
 
     import pawt
-    pawt.test(p, size=(300,300))
+    pawt.test(p, size=(300, 300))
 
     enter(None)

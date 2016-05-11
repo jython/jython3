@@ -107,7 +107,7 @@ class test__RandomNameSequence(TC):
 
     def test_get_six_char_str(self):
         # _RandomNameSequence returns a six-character string
-        s = self.r.next()
+        s = next(self.r)
         self.nameCheck(s, '', '', '')
 
     def test_many(self):
@@ -115,8 +115,8 @@ class test__RandomNameSequence(TC):
 
         dict = {}
         r = self.r
-        for i in xrange(TEST_FILES):
-            s = r.next()
+        for i in range(TEST_FILES):
+            s = next(r)
             self.nameCheck(s, '', '', '')
             self.assertNotIn(s, dict)
             dict[s] = 1
@@ -178,7 +178,7 @@ class test__candidate_tempdir_list(TC):
 
         self.assertFalse(len(cand) == 0)
         for c in cand:
-            self.assertIsInstance(c, basestring)
+            self.assertIsInstance(c, str)
 
     def test_wanted_dirs(self):
         # _candidate_tempdir_list contains the expected directories
@@ -323,7 +323,7 @@ class test__mkstemp_inner(TC):
 
     def test_basic_many(self):
         # _mkstemp_inner can create many files (stochastic)
-        extant = range(TEST_FILES)
+        extant = list(range(TEST_FILES))
         for i in extant:
             extant[i] = self.do_create(pre="aa")
         # XXX: Ensure mkstemped files are deleted (can't rely on Java's
@@ -347,7 +347,7 @@ class test__mkstemp_inner(TC):
 
         file = self.do_create()
         mode = stat.S_IMODE(os.stat(file.name).st_mode)
-        expected = 0600
+        expected = 0o600
         if sys.platform in ('win32', 'os2emx', 'mac'):
             # There's no distinction among 'user', 'group' and 'world';
             # replicate the 'user' bits.
@@ -411,7 +411,7 @@ class test_gettempprefix(TC):
         # gettempprefix returns a nonempty prefix string
         p = tempfile.gettempprefix()
 
-        self.assertIsInstance(p, basestring)
+        self.assertIsInstance(p, str)
         self.assertTrue(len(p) > 0)
 
     def test_usable_template(self):
@@ -556,13 +556,13 @@ class test_mkdtemp(TC):
 
     def test_basic_many(self):
         # mkdtemp can create many directories (stochastic)
-        extant = range(TEST_FILES)
+        extant = list(range(TEST_FILES))
         try:
             for i in extant:
                 extant[i] = self.do_create(pre="aa")
         finally:
             for i in extant:
-                if(isinstance(i, basestring)):
+                if(isinstance(i, str)):
                     os.rmdir(i)
 
     def test_choose_directory(self):
@@ -584,8 +584,8 @@ class test_mkdtemp(TC):
         dir = self.do_create()
         try:
             mode = stat.S_IMODE(os.stat(dir).st_mode)
-            mode &= 0777 # Mask off sticky bits inherited from /tmp
-            expected = 0700
+            mode &= 0o777 # Mask off sticky bits inherited from /tmp
+            expected = 0o700
             if (sys.platform in ('win32', 'os2emx', 'mac') or
                 support.is_jython and os._name == 'nt'):
                 # There's no distinction among 'user', 'group' and 'world';
@@ -620,7 +620,7 @@ class test_mktemp(TC):
             self.name = tempfile.mktemp(dir=dir, prefix=pre, suffix=suf)
             # Create the file.  This will raise an exception if it's
             # mysteriously appeared in the meanwhile.
-            os.close(os.open(self.name, self._bflags, 0600))
+            os.close(os.open(self.name, self._bflags, 0o600))
             # XXX: test_mktemp.tearDown expects the file to have been deleted
             # (via __del__) by the time it's called, which is CPython specific
             # garbage collection behavior. We need to delete it now in Jython
@@ -648,7 +648,7 @@ class test_mktemp(TC):
 
     def test_many(self):
         # mktemp can choose many usable file names (stochastic)
-        extant = range(TEST_FILES)
+        extant = list(range(TEST_FILES))
         for i in extant:
             extant[i] = self.do_create(pre="aa")
 
@@ -828,11 +828,11 @@ class test_SpooledTemporaryFile(TC):
         f.write(b'abc\n' * 5)
         f.seek(0)
         self.assertFalse(f._rolled)
-        self.assertEqual(list(f.xreadlines()), [b'abc\n'] * 5)
+        self.assertEqual(list(f), [b'abc\n'] * 5)
         f.write(b'x\ny')
         self.assertTrue(f._rolled)
         f.seek(0)
-        self.assertEqual(list(f.xreadlines()), [b'abc\n'] * 5 + [b'x\n', b'y'])
+        self.assertEqual(list(f), [b'abc\n'] * 5 + [b'x\n', b'y'])
 
     def test_sparse(self):
         # A SpooledTemporaryFile that is written late in the file will extend

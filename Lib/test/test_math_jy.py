@@ -34,9 +34,9 @@ class MathTestCase(unittest.TestCase):
         self.assertEqual(-1e-100, math.fmod(-1e-100, 1e100))
 
     def test_hypot(self):
-        self.assert_(math.isnan(math.hypot(nan, nan)))
-        self.assert_(math.isnan(math.hypot(4, nan)))
-        self.assert_(math.isnan(math.hypot(nan, 4)))
+        self.assertTrue(math.isnan(math.hypot(nan, nan)))
+        self.assertTrue(math.isnan(math.hypot(4, nan)))
+        self.assertTrue(math.isnan(math.hypot(nan, 4)))
         self.assertEqual(inf, math.hypot(inf, 4))
         self.assertEqual(inf, math.hypot(4, inf))
         self.assertEqual(inf, math.hypot(ninf, 4))

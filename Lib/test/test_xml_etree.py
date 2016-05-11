@@ -38,11 +38,11 @@ def sanity():
 
 def check_method(method):
     if not hasattr(method, '__call__'):
-        print method, "not callable"
+        print(method, "not callable")
 
 def serialize(ET, elem, encoding=None):
-    import StringIO
-    file = StringIO.StringIO()
+    import io
+    file = io.StringIO()
     tree = ET.ElementTree(elem)
     if encoding:
         tree.write(file, encoding)
@@ -54,7 +54,7 @@ def summarize(elem):
     return elem.tag
 
 def summarize_list(seq):
-    return map(summarize, seq)
+    return list(map(summarize, seq))
 
 def interface():
     """

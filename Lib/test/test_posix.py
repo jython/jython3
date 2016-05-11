@@ -387,7 +387,7 @@ class PosixTester(unittest.TestCase):
                     try:
                         os.mkdir(dirname)
                     except:
-                        raise unittest.SkipTest, "mkdir cannot create directory sufficiently deep for getcwd test"
+                        raise unittest.SkipTest("mkdir cannot create directory sufficiently deep for getcwd test")
 
                     os.chdir(dirname)
                     try:
@@ -457,7 +457,7 @@ class PosixGroupsTester(unittest.TestCase):
     @unittest.skipUnless(hasattr(posix, 'setgroups'),
                          "test needs posix.setgroups()")
     def test_setgroups(self):
-        for groups in [[0], range(16)]:
+        for groups in [[0], list(range(16))]:
             posix.setgroups(groups)
             self.assertListEqual(groups, posix.getgroups())
 

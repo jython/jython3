@@ -1009,11 +1009,11 @@ def flat_conjoin(gs):  # rename to conjoin to run tests with this instead
     iters  = [None] * n
     _StopIteration = StopIteration  # make local because caught a *lot*
     i = 0
-    while 1:
+    while True:
         # Descend.
         try:
             while i < n:
-                it = iters[i] = gs[i]().next
+                it = iters[i] = gs[i]().__next__
                 values[i] = it()
                 i += 1
         except _StopIteration:
@@ -1042,7 +1042,7 @@ def flat_conjoin(gs):  # rename to conjoin to run tests with this instead
 class Queens:
     def __init__(self, n):
         self.n = n
-        rangen = range(n)
+        rangen = list(range(n))
 
         # Assign a unique int to each column and diagonal.
         # columns:  n of those, range(n).
@@ -1057,9 +1057,9 @@ class Queens:
         # generates the possiblities for the columns in that row.
         self.rowgenerators = []
         for i in rangen:
-            rowuses = [(1L << j) |                  # column ordinal
-                       (1L << (n + i-j + n-1)) |    # NW-SE ordinal
-                       (1L << (n + 2*n-1 + i+j))    # NE-SW ordinal
+            rowuses = [(1 << j) |                  # column ordinal
+                       (1 << (n + i-j + n-1)) |    # NW-SE ordinal
+                       (1 << (n + 2*n-1 + i+j))    # NE-SW ordinal
                             for j in rangen]
 
             def rowgen(rowuses=rowuses):
@@ -1082,12 +1082,12 @@ class Queens:
         n = self.n
         assert n == len(row2col)
         sep = "+" + "-+" * n
-        print sep
+        print(sep)
         for i in range(n):
             squares = [" " for j in range(n)]
             squares[row2col[i]] = "Q"
-            print "|" + "|".join(squares) + "|"
-            print sep
+            print("|" + "|".join(squares) + "|")
+            print(sep)
 
 # A conjoin-based Knight's Tour solver.  This is pretty sophisticated
 # (e.g., when used with flat_conjoin above, and passing hard=1 to the
@@ -1251,7 +1251,7 @@ class Knights:
 
         offsets = [( 1,  2), ( 2,  1), ( 2, -1), ( 1, -2),
                    (-1, -2), (-2, -1), (-2,  1), (-1,  2)]
-        rangen = range(n)
+        rangen = list(range(n))
         for i in range(m):
             for j in rangen:
                 s = [c2i(i+io, j+jo) for io, jo in offsets
@@ -1279,11 +1279,11 @@ class Knights:
             k += 1
 
         sep = "+" + ("-" * w + "+") * n
-        print sep
+        print(sep)
         for i in range(m):
             row = squares[i]
-            print "|" + "|".join(row) + "|"
-            print sep
+            print("|" + "|".join(row) + "|")
+            print(sep)
 
 conjoin_tests = """
 

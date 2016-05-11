@@ -105,16 +105,16 @@ class dbextsTestCase(runner.SQLTestCase):
 
         self._insertInto("one", 45)
         self.db.raw("delete from one where a > ?", [(12,)])
-        self.assertEquals(32, self.db.updatecount)
+        self.assertEqual(32, self.db.updatecount)
 
     def testQueryWithMaxRows(self):
         """testing query with max rows"""
 
         self._insertInto("one", 45)
         self.db.raw("select * from one", maxrows=3)
-        self.assertEquals(3, len(self.db.results))
+        self.assertEqual(3, len(self.db.results))
         self.db.raw("select * from one where a > ?", [(12,)], maxrows=3)
-        self.assertEquals(3, len(self.db.results))
+        self.assertEqual(3, len(self.db.results))
 
     def testBulkcopy(self):
         """testing bcp"""
@@ -126,7 +126,7 @@ class dbextsTestCase(runner.SQLTestCase):
 
         bcp = self.db.bulkcopy("dbexts_test", "two", include=['a', 'b', 'c'], exclude=['a'])
         assert len(bcp.columns) == 2, "expected two columns, found [%d]" % (len(bcp.columns))
-        a = filter(lambda x, c=bcp.columns: x in c, ['b', 'c'])
+        a = list(filter(lambda x, c=bcp.columns: x in c, ['b', 'c']))
         assert a, "expecting ['b', 'c'], found %s" % (str(a))
 
         class _executor:
@@ -178,12 +178,12 @@ class dbextsTestCase(runner.SQLTestCase):
         """testing dbexts.table(tabname)"""
         self.db.table("one")
         assert self.db.results is not None, "results were None"
-        self.assertEquals(3, len(self.db.results))
+        self.assertEqual(3, len(self.db.results))
         self.db.table()
         found = 0
         for a in self.db.results:
             if a[2].lower() in ("one", "two"): found += 1
-        self.assertEquals(2, found)
+        self.assertEqual(2, found)
 
     def testOut(self):
         """testing dbexts.out"""
@@ -206,9 +206,9 @@ class dbextsTestCase(runner.SQLTestCase):
         """testing result set wrapper"""
         from dbexts import ResultSet
         self._insertInto("two", 30)
-        h, r = self.db.raw("select * from two where a in (?, ?, ?, ?) order by a", [(12,15,17,8)])
+        h, r = self.db.raw("select * from two where a in (?, ?, ?, ?) order by a", [(12, 15, 17, 8)])
         assert len(r) == 4, "expected [4], got [%d]" % (len(r))
-        rs = ResultSet(map(lambda x: x[0], h), r)
+        rs = ResultSet([x[0] for x in h], r)
         assert len(rs[0]) == 3, "expected [3], got [%d]" % (len(rs[0]))
         assert rs[0]['a'] == 8, "expected [8], got [%s]" % (rs[0]['a'])
         assert rs[0]['A'] == 8, "expected [8], got [%s]" % (rs[0]['A'])
@@ -219,10 +219,10 @@ class dbextsTestCase(runner.SQLTestCase):
         """testing multiple result sets with some resulting in None"""
         self._insertInto("two", 30)
         # first is non None
-        h, r = self.db.raw("select * from two where a = ?", [(12,),(8001,),(15,),(17,),(8,),(9001,)])
+        h, r = self.db.raw("select * from two where a = ?", [(12,), (8001,), (15,), (17,), (8,), (9001,)])
         assert len(r) == 4, "expected [4], got [%d]" % (len(r))
         # first is None
-        h, r = self.db.raw("select * from two where a = ?", [(1200,),(8001,),(15,),(17,),(8,),(9001,)])
+        h, r = self.db.raw("select * from two where a = ?", [(1200,), (8001,), (15,), (17,), (8,), (9001,)])
         assert len(r) == 3, "expected [3], got [%d]" % (len(r))
 
     def testBulkcopyWithDynamicColumns(self):
@@ -232,7 +232,7 @@ class dbextsTestCase(runner.SQLTestCase):
 
         bcp = self.db.bulkcopy("dbexts_test", "two", exclude=['a'])
         assert len(bcp.columns) == 2, "expected two columns, found [%d]" % (len(bcp.columns))
-        a = filter(lambda x, c=bcp.columns: x in c, ['b', 'c'])
+        a = list(filter(lambda x, c=bcp.columns: x in c, ['b', 'c']))
         assert a == ['b', 'c'], "expecting ['b', 'c'], found %s" % (str(a))
 
         bcp = self.db.bulkcopy("dbexts_test", "two")
@@ -245,13 +245,13 @@ class dbextsTestCase(runner.SQLTestCase):
             self.db.autocommit = u
             try:
                 self.db.isql("select * from one")
-            except Exception, e:
+            except Exception as e:
                 fail("failed autocommit query with u=[%d], v=[%d]" % (u, v))
             for v in (0, 1):
                 self.db.db.autocommit = v
                 try:
                     self.db.isql("select * from one")
-                except Exception, e:
+                except Exception as e:
                     self.fail("failed autocommit query with u=[%d], v=[%d]" % (u, v))
 
     def testPrepare(self):

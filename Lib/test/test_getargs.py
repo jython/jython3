@@ -21,6 +21,6 @@ import marshal
 #since this tests getargs.c impl, ignore for jython.
 if not is_jython:
     try:
-        marshal.loads(u"\222")
+        marshal.loads("\222")
     except UnicodeError:
         pass

@@ -36,7 +36,7 @@ class AsynchronousServer:
         self.server_addr = self.server_socket.getsockname()
         try:
             self.server_socket.accept()
-        except socket.error, e:
+        except socket.error as e:
             pass  # at this point, always gets EWOULDBLOCK - nothing to accept
 
     def select_acceptable(self):
@@ -77,7 +77,7 @@ class AsynchronousHandler:
         Returns the number of bytes written
         """
         total_bytes = 0
-        while 1:
+        while True:
             try:
                 if self.select_writable():
                     bytes_sent = self.socket.send(DATA_CHUNK)
@@ -87,7 +87,7 @@ class AsynchronousHandler:
                         return total_bytes
                 else:
                     return total_bytes
-            except socket.error, se:
+            except socket.error as se:
                 if se.value == 10035:
                     continue
                 raise se
@@ -101,7 +101,7 @@ class AsynchronousHandler:
         """
         results = ""
         start = time.time()
-        while 1:
+        while True:
             if self.select_readable():
                 recvd_bytes = self.socket.recv(expected - len(results))
                 if len(recvd_bytes):

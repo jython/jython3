@@ -5,7 +5,7 @@ try:
 except TypeError:
     pass
 else:
-    print 'Should not be able to use a list as a dict key!'
+    print('Should not be able to use a list as a dict key!')
 
 a = {}
 try:
@@ -13,4 +13,4 @@ try:
 except TypeError:
     pass
 else:
-    print 'Should not be able to use a dict as a dict key!'
+    print('Should not be able to use a dict as a dict key!')

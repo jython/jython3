@@ -1,1 +1,1 @@
-print type(KeyError())
+print(type(KeyError()))

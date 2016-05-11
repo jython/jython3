@@ -43,11 +43,11 @@ class PyclasspathImporterTestCase(unittest.TestCase):
     def setUp(self):
         self.orig_context = Thread.currentThread().contextClassLoader
         self.temp_dir = tempfile.mkdtemp()
-        self.modules = sys.modules.keys()
+        self.modules = list(sys.modules.keys())
 
     def tearDown(self):
         Thread.currentThread().contextClassLoader = self.orig_context
-        for module in sys.modules.keys():
+        for module in list(sys.modules.keys()):
             if module not in self.modules:
                 del sys.modules[module]
         try:
@@ -86,12 +86,12 @@ class PyclasspathImporterTestCase(unittest.TestCase):
 
     def checkImports(self, prefix, compiled):
         import flat_in_jar
-        self.assertEquals(flat_in_jar.value, 7)
+        self.assertEqual(flat_in_jar.value, 7)
         import jar_pkg
-        self.assertEquals(prefix + '/jar_pkg/__init__.py', jar_pkg.__file__)
+        self.assertEqual(prefix + '/jar_pkg/__init__.py', jar_pkg.__file__)
         from jar_pkg import prefer_compiled
-        self.assertEquals(prefix + '/jar_pkg/' + compiled, prefer_compiled.__file__)
-        self.assert_(prefer_compiled.compiled)
+        self.assertEqual(prefix + '/jar_pkg/' + compiled, prefer_compiled.__file__)
+        self.assertTrue(prefer_compiled.compiled)
         self.assertRaises(NameError, __import__, 'flat_bad')
         self.assertRaises(NameError, __import__, 'jar_pkg.bad')
 
@@ -127,19 +127,19 @@ class PyclasspathImporterTestCase(unittest.TestCase):
 
         # flat_in_jar contains the assignment value = 7
         code = loader.get_code('flat_in_jar')
-        exec code in space
-        self.assertEquals(space['value'], 7)
+        exec(code, space)
+        self.assertEqual(space['value'], 7)
 
         # jar_pkg.prefer_compiled contains the assignment compiled = False
         code = loader.get_code('jar_pkg.prefer_compiled')
-        exec code in space
-        self.assertEquals(space['compiled'], False)
+        exec(code, space)
+        self.assertEqual(space['compiled'], False)
 
         # Compile a new one containing the assignment compiled = True
         self.compileToJar(jar)
         code = loader.get_code('jar_pkg.prefer_compiled')
-        exec code in space
-        self.assertEquals(space['compiled'], True)
+        exec(code, space)
+        self.assertEqual(space['compiled'], True)
 
     def test_pkgutil_get_data(self):
         # Test loader.get_data used via pkgutil

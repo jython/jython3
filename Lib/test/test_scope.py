@@ -175,7 +175,7 @@ class ScopeTests(unittest.TestCase):
             if x >= 0:
                 return fact(x)
             else:
-                raise ValueError, "x must be >= 0"
+                raise ValueError("x must be >= 0")
 
         self.assertEqual(f(6), 720)
 
@@ -232,7 +232,7 @@ def f():
 
         # and verify a few cases that should work
 
-        exec """
+        exec("""
 def noproblem1():
     from string import *
     f = lambda x:x
@@ -247,7 +247,7 @@ def noproblem3():
     def f(x):
         global y
         y = x
-"""
+""")
 
     def testLambdas(self):
 
@@ -276,7 +276,7 @@ def noproblem3():
     def testUnboundLocal(self):
 
         def errorInOuter():
-            print y
+            print(y)
             def inner():
                 return y
             y = 1
@@ -302,7 +302,7 @@ def noproblem3():
             self.fail()
 
         # test for bug #1501934: incorrect LOAD/STORE_GLOBAL generation
-        exec """
+        exec("""
 global_x = 1
 def f():
     global_x += 1
@@ -312,7 +312,7 @@ except UnboundLocalError:
     pass
 else:
     fail('scope of global_x not correctly determined')
-""" in {'fail': self.fail}
+""", {'fail': self.fail})
 
     def testComplexDefinitions(self):
 
@@ -321,7 +321,7 @@ else:
                 return lst
             return returner
 
-        self.assertEqual(makeReturner(1,2,3)(), (1,2,3))
+        self.assertEqual(makeReturner(1, 2, 3)(), (1, 2, 3))
 
         def makeReturner2(**kwargs):
             def returner():
@@ -332,19 +332,19 @@ else:
 
         with check_py3k_warnings(("tuple parameter unpacking has been removed",
                                   SyntaxWarning)):
-            exec """\
+            exec("""\
 def makeAddPair((a, b)):
     def addPair((c, d)):
         return (a + c, b + d)
     return addPair
-""" in locals()
-        self.assertEqual(makeAddPair((1, 2))((100, 200)), (101,202))
+""", locals())
+        self.assertEqual(makeAddPair((1, 2))((100, 200)), (101, 202))
 
     @unittest.skip("FIXME: broken")
     def testScopeOfGlobalStmt(self):
 # Examples posted by Samuele Pedroni to python-dev on 3/1/2001
 
-        exec """\
+        exec("""\
 # I
 x = 7
 def f():
@@ -423,7 +423,7 @@ g = Global()
 self.assertEqual(g.get(), 13)
 g.set(15)
 self.assertEqual(g.get(), 13)
-"""
+""")
 
     def testLeaks(self):
 
@@ -454,7 +454,7 @@ self.assertEqual(g.get(), 13)
 
     def testClassAndGlobal(self):
 
-        exec """\
+        exec("""\
 def test(x):
     class Foo:
         global x
@@ -475,7 +475,7 @@ class X:
     passed = looked_up_by_load_name
 
 self.assert_(X.passed)
-"""
+""")
 
     def testLocalsFunction(self):
 
@@ -524,8 +524,8 @@ self.assert_(X.passed)
             return C
 
         varnames = f(1).z
-        self.assert_("x" not in varnames)
-        self.assert_("y" in varnames)
+        self.assertTrue("x" not in varnames)
+        self.assertTrue("y" in varnames)
 
     def testLocalsClass_WithTrace(self):
         # Issue23728: after the trace function returns, the locals()
@@ -533,7 +533,7 @@ self.assert_(X.passed)
         # include free variables. But in class statements, free
         # variables are not inserted...
         import sys
-        sys.settrace(lambda a,b,c:None)
+        sys.settrace(lambda a, b, c:None)
         try:
             x = 12
 
@@ -541,7 +541,7 @@ self.assert_(X.passed)
                 def f(self):
                     return x
 
-            self.assertEquals(x, 12) # Used to raise UnboundLocalError
+            self.assertEqual(x, 12) # Used to raise UnboundLocalError
         finally:
             sys.settrace(None)
 
@@ -561,7 +561,7 @@ self.assert_(X.passed)
     def testInteractionWithTraceFunc(self):
 
         import sys
-        def tracer(a,b,c):
+        def tracer(a, b, c):
             return tracer
 
         def adaptgetter(name, klass, getter):
@@ -586,10 +586,10 @@ self.assert_(X.passed)
             return lambda: x + 1
 
         g = f(3)
-        self.assertRaises(TypeError, eval, g.func_code)
+        self.assertRaises(TypeError, eval, g.__code__)
 
         try:
-            exec g.func_code in {}
+            exec(g.__code__, {})
         except TypeError:
             pass
         else:
@@ -598,18 +598,18 @@ self.assert_(X.passed)
     def testListCompLocalVars(self):
 
         try:
-            print bad
+            print(bad)
         except NameError:
             pass
         else:
-            print "bad should not be defined"
+            print("bad should not be defined")
 
         def x():
             [bad for s in 'a b' for bad in s.split()]
 
         x()
         try:
-            print bad
+            print(bad)
         except NameError:
             pass
 
@@ -662,7 +662,7 @@ result2 = h()
 """
         local_ns = {}
         global_ns = {}
-        exec CODE in local_ns, global_ns
+        exec(CODE, local_ns, global_ns)
         self.assertEqual(2, global_ns["result2"])
         self.assertEqual(9, global_ns["result9"])
 

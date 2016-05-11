@@ -36,22 +36,21 @@ def foo():
 
 def test32():
     'return in finally clause causes java.lang.VerifyError at compile time'
-    exec code32
+    exec(code32)
 
-print 'Bug Fixes'
-print 'From 1.0.1 to 1.0.2'
+print('Bug Fixes')
+print('From 1.0.1 to 1.0.2')
 
-items = locals().items()
-items.sort()
+items = sorted(list(locals().items()))
 
 errors = 0
 for name, value in items:
     if name[:4] == 'test':
-        print value.__doc__+' #'+name[4:]
+        print(value.__doc__+' #'+name[4:])
         try:
             value()
         except:
-            print 'Error!', sys.exc_type, sys.exc_value
+            print('Error!', sys.exc_info()[0], sys.exc_info()[1])
             errors = errors+1
 
-print errors, 'errors'
+print(errors, 'errors')

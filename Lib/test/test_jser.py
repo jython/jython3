@@ -49,12 +49,12 @@ class JavaSerializationTests(unittest.TestCase):
         iobject4 = fin.readObject()
         fin.close()
 
-        self.assertEquals(iobject1, object1)
-        self.assertEquals(iobject2, object2)
-        self.assertEquals(iobject3.baz, 99)
-        self.assertEquals(iobject3.bar(), 'bar')
-        self.assertEquals(iobject3.__class__, Foo)
-        self.assertEquals(iobject4, object4)
+        self.assertEqual(iobject1, object1)
+        self.assertEqual(iobject2, object2)
+        self.assertEqual(iobject3.baz, 99)
+        self.assertEqual(iobject3.bar(), 'bar')
+        self.assertEqual(iobject3.__class__, Foo)
+        self.assertEqual(iobject4, object4)
 
 
 def test_main():

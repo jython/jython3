@@ -56,7 +56,7 @@ class TestTimezone(unittest.TestCase):
                 return timedelta(hours=1)
             def dst(self, dt):
                 return timedelta(0)
-            def tzname(self,dt):
+            def tzname(self, dt):
                 return "Europe/Prague"
 
         self.assertTrue(hasattr(datetime, "__tojava__"))
@@ -77,7 +77,7 @@ class TestTimezone(unittest.TestCase):
                 return timedelta(hours=1, minutes=15)
             def dst(self, dt):
                 return timedelta(seconds=-900)
-            def tzname(self,dt):
+            def tzname(self, dt):
                 return "Foo/Bar"
 
         self.assertTrue(hasattr(datetime, "__tojava__"))

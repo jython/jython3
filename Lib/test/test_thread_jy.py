@@ -1,16 +1,17 @@
-import thread
+import _thread
 import synchronize
 import unittest
 import test.test_support
 from java.lang import Runnable, Thread
 from java.util.concurrent import CountDownLatch
+import collections
 
 class AllocateLockTest(unittest.TestCase):
 
     def test_lock_type(self):
         """thread.LockType should exist"""
-        t = thread.LockType
-        self.assertEquals(t, type(thread.allocate_lock()),
+        t = _thread.LockType
+        self.assertEqual(t, type(_thread.allocate_lock()),
             "thread.LockType has wrong value")
 
 class SynchronizeTest(unittest.TestCase):
@@ -24,13 +25,13 @@ class SynchronizeTest(unittest.TestCase):
                 doneSignal.countDown()
             run = synchronize.make_synchronized(run)
         runner = SynchedRunnable()
-        for _ in xrange(10):
+        for _ in range(10):
             Thread(runner).start()
         doneSignal.await()
-        self.assertEquals(10, runner.i)
+        self.assertEqual(10, runner.i)
 
     def test_synchronized_callable(self):
-        self.assertTrue(callable(synchronize.make_synchronized(lambda: None)))
+        self.assertTrue(isinstance(synchronize.make_synchronized(lambda: None), collections.Callable))
 
 
 def test_main():

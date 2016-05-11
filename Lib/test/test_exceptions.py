@@ -3,11 +3,12 @@
 import os
 import sys
 import unittest
-import pickle, cPickle
+import pickle, pickle
 
 from test.test_support import (TESTFN, unlink, run_unittest, captured_output,
                                check_warnings, cpython_only, is_jython)
 from test.test_pep352 import ignore_deprecation_warnings
+import imp
 
 # XXX This is not really enough, each *operation* should be tested!
 
@@ -19,18 +20,18 @@ class ExceptionTests(unittest.TestCase):
         try:
             from imp import reload
             import exceptions
-            reload(exceptions)
-        except ImportError, e:
+            imp.reload(exceptions)
+        except ImportError as e:
             self.fail("reloading exceptions: %s" % e)
 
     def raise_catch(self, exc, excname):
         try:
-            raise exc, "spam"
-        except exc, err:
+            raise exc("spam")
+        except exc as err:
             buf1 = str(err)
         try:
             raise exc("spam")
-        except exc, err:
+        except exc as err:
             buf2 = str(err)
         self.assertEqual(buf1, buf2)
         self.assertEqual(exc.__name__, excname)
@@ -47,7 +48,7 @@ class ExceptionTests(unittest.TestCase):
         try:
             try:
                 sys.stdin = fp
-                x = raw_input()
+                x = input()
             except EOFError:
                 pass
         finally:
@@ -85,7 +86,7 @@ class ExceptionTests(unittest.TestCase):
         self.raise_catch(RuntimeError, "RuntimeError")
 
         self.raise_catch(SyntaxError, "SyntaxError")
-        try: exec '/\n'
+        try: exec('/\n')
         except SyntaxError: pass
 
         self.raise_catch(IndentationError, "IndentationError")
@@ -114,7 +115,7 @@ class ExceptionTests(unittest.TestCase):
 
         self.raise_catch(Exception, "Exception")
         try: x = 1 // 0
-        except Exception, e: pass
+        except Exception as e: pass
 
     def testSyntaxErrorMessage(self):
         # make sure the right exception message is raised for each of
@@ -123,7 +124,7 @@ class ExceptionTests(unittest.TestCase):
         def ckmsg(src, msg):
             try:
                 compile(src, '<fragment>', 'exec')
-            except SyntaxError, e:
+            except SyntaxError as e:
                 if e.msg != msg:
                     self.fail("expected %s, got %s" % (msg, e.msg))
             else:
@@ -154,13 +155,13 @@ class ExceptionTests(unittest.TestCase):
 
         class BadException:
             def __init__(self_):
-                raise RuntimeError, "can't instantiate BadException"
+                raise RuntimeError("can't instantiate BadException")
 
         def test_capi1():
             import _testcapi
             try:
                 _testcapi.raise_exception(BadException, 1)
-            except TypeError, err:
+            except TypeError as err:
                 exc, err, tb = sys.exc_info()
                 co = tb.tb_frame.f_code
                 self.assertEqual(co.co_name, "test_capi1")
@@ -172,7 +173,7 @@ class ExceptionTests(unittest.TestCase):
             import _testcapi
             try:
                 _testcapi.raise_exception(BadException, 0)
-            except RuntimeError, err:
+            except RuntimeError as err:
                 exc, err, tb = sys.exc_info()
                 co = tb.tb_frame.f_code
                 self.assertEqual(co.co_name, "__init__")
@@ -251,20 +252,20 @@ class ExceptionTests(unittest.TestCase):
                            'textStr', 'print_file_and_lineStr'),
                  'print_file_and_line' : None, 'msg' : 'msgStr',
                  'filename' : None, 'lineno' : None, 'offset' : None}),
-            (UnicodeError, (), {'message' : '', 'args' : (),}),
-            (UnicodeEncodeError, ('ascii', u'a', 0, 1, 'ordinal not in range'),
-                {'message' : '', 'args' : ('ascii', u'a', 0, 1,
+            (UnicodeError, (), {'message': '', 'args': (),}),
+            (UnicodeEncodeError, ('ascii', 'a', 0, 1, 'ordinal not in range'),
+                {'message' : '', 'args' : ('ascii', 'a', 0, 1,
                                            'ordinal not in range'),
-                 'encoding' : 'ascii', 'object' : u'a',
+                 'encoding' : 'ascii', 'object' : 'a',
                  'start' : 0, 'reason' : 'ordinal not in range'}),
             (UnicodeDecodeError, ('ascii', '\xff', 0, 1, 'ordinal not in range'),
                 {'message' : '', 'args' : ('ascii', '\xff', 0, 1,
                                            'ordinal not in range'),
                  'encoding' : 'ascii', 'object' : '\xff',
                  'start' : 0, 'reason' : 'ordinal not in range'}),
-            (UnicodeTranslateError, (u"\u3042", 0, 1, "ouch"),
-                {'message' : '', 'args' : (u'\u3042', 0, 1, 'ouch'),
-                 'object' : u'\u3042', 'reason' : 'ouch',
+            (UnicodeTranslateError, ("\u3042", 0, 1, "ouch"),
+                {'message' : '', 'args' : ('\u3042', 0, 1, 'ouch'),
+                 'object' : '\u3042', 'reason' : 'ouch',
                  'start' : 0, 'end' : 1}),
         ]
         try:
@@ -280,8 +281,8 @@ class ExceptionTests(unittest.TestCase):
         for exc, args, expected in exceptionList:
             try:
                 raise exc(*args)
-            except BaseException, e:
-                if type(e) is not exc:
+            except BaseException as e:
+                if not isinstance(e, exc):
                     raise
                 # Verify module name
                 self.assertEqual(type(e).__module__, 'exceptions')
@@ -389,15 +390,15 @@ class ExceptionTests(unittest.TestCase):
         # Make sure both instances and classes have a str and unicode
         # representation.
         self.assertTrue(str(Exception))
-        self.assertTrue(unicode(Exception))
+        self.assertTrue(str(Exception))
         self.assertTrue(str(Exception('a')))
-        self.assertTrue(unicode(Exception(u'a')))
-        self.assertTrue(unicode(Exception(u'\xe1')))
+        self.assertTrue(str(Exception('a')))
+        self.assertTrue(str(Exception('\xe1')))
 
     def testUnicodeChangeAttributes(self):
         # See issue 7309. This was a crasher.
 
-        u = UnicodeEncodeError('baz', u'xxxxx', 1, 5, 'foo')
+        u = UnicodeEncodeError('baz', 'xxxxx', 1, 5, 'foo')
         self.assertEqual(str(u), "'baz' codec can't encode characters in position 1-4: foo")
         u.end = 2
         self.assertEqual(str(u), "'baz' codec can't encode character u'\\x78' in position 1: foo")
@@ -421,7 +422,7 @@ class ExceptionTests(unittest.TestCase):
         u.start = 1000
         self.assertEqual(str(u), "'4000' codec can't decode bytes in position 1000-4: 965230951443685724997")
 
-        u = UnicodeTranslateError(u'xxxx', 1, 5, 'foo')
+        u = UnicodeTranslateError('xxxx', 1, 5, 'foo')
         self.assertEqual(str(u), "can't translate characters in position 1-4: foo")
         u.end = 2
         self.assertEqual(str(u), "can't translate character u'\\x78' in position 1: foo")
@@ -444,7 +445,7 @@ class ExceptionTests(unittest.TestCase):
         with captured_output("stderr") as stderr:
             try:
                 raise KeyError()
-            except MyException, e:
+            except MyException as e:
                 self.fail("exception should not be a MyException")
             except KeyError:
                 pass
@@ -497,7 +498,7 @@ class TestSameStrAndUnicodeMsg(unittest.TestCase):
     def check_same_msg(self, exc, msg):
         """Helper function that checks if str(exc) == unicode(exc) == msg"""
         self.assertEqual(str(exc), msg)
-        self.assertEqual(str(exc), unicode(exc))
+        self.assertEqual(str(exc), str(exc))
 
     def test_builtin_exceptions(self):
         """Check same msg for built-in exceptions"""
@@ -510,11 +511,11 @@ class TestSameStrAndUnicodeMsg(unittest.TestCase):
             KeyError('both should have the same quotes'),
             UnicodeDecodeError('ascii', '\xc3\xa0', 0, 1,
                                'ordinal not in range(128)'),
-            UnicodeEncodeError('ascii', u'\u1234', 0, 1,
+            UnicodeEncodeError('ascii', '\u1234', 0, 1,
                                'ordinal not in range(128)')
         ]
         for exception in exceptions:
-            self.assertEqual(str(exception), unicode(exception))
+            self.assertEqual(str(exception), str(exception))
 
     def test_0_args(self):
         """Check same msg for Exception with 0 args"""
@@ -528,47 +529,47 @@ class TestSameStrAndUnicodeMsg(unittest.TestCase):
         """Check same msg for exceptions with 0 args and overridden __str__"""
         # str() and unicode() on an exception with overridden __str__ that
         # returns an ascii-only string should return the same string
-        for msg in ('foo', u'foo'):
+        for msg in ('foo', 'foo'):
             self.check_same_msg(ExcWithOverriddenStr(msg=msg), msg)
 
         # if __str__ returns a non-ascii unicode string str() should fail
         # but unicode() should return the unicode string
-        e = ExcWithOverriddenStr(msg=u'f\xf6\xf6') # no args
+        e = ExcWithOverriddenStr(msg='f\xf6\xf6') # no args
         self.assertRaises(UnicodeEncodeError, str, e)
-        self.assertEqual(unicode(e), u'f\xf6\xf6')
+        self.assertEqual(str(e), 'f\xf6\xf6')
 
     def test_1_arg(self):
         """Check same msg for Exceptions with 1 arg"""
-        for arg in ('foo', u'foo'):
+        for arg in ('foo', 'foo'):
             self.check_same_msg(Exception(arg), arg)
 
         # if __str__ is not overridden and self.args[0] is a non-ascii unicode
         # string, str() should try to return str(self.args[0]) and fail.
         # unicode() should return unicode(self.args[0]) and succeed.
-        e = Exception(u'f\xf6\xf6')
+        e = Exception('f\xf6\xf6')
         self.assertRaises(UnicodeEncodeError, str, e)
-        self.assertEqual(unicode(e), u'f\xf6\xf6')
+        self.assertEqual(str(e), 'f\xf6\xf6')
 
     @unittest.skipIf(is_jython, "FIXME: not working in Jython")
     def test_1_arg_with_overridden___str__(self):
         """Check same msg for exceptions with overridden __str__ and 1 arg"""
         # when __str__ is overridden and __unicode__ is not implemented
         # unicode(e) returns the same as unicode(e.__str__()).
-        for msg in ('foo', u'foo'):
+        for msg in ('foo', 'foo'):
             self.check_same_msg(ExcWithOverriddenStr('arg', msg=msg), msg)
 
         # if __str__ returns a non-ascii unicode string, str() should fail
         # but unicode() should succeed.
-        e = ExcWithOverriddenStr('arg', msg=u'f\xf6\xf6') # 1 arg
+        e = ExcWithOverriddenStr('arg', msg='f\xf6\xf6') # 1 arg
         self.assertRaises(UnicodeEncodeError, str, e)
-        self.assertEqual(unicode(e), u'f\xf6\xf6')
+        self.assertEqual(str(e), 'f\xf6\xf6')
 
     def test_many_args(self):
         """Check same msg for Exceptions with many args"""
         argslist = [
             (3, 'foo'),
-            (1, u'foo', 'bar'),
-            (4, u'f\xf6\xf6', u'bar', 'baz')
+            (1, 'foo', 'bar'),
+            (4, 'f\xf6\xf6', 'bar', 'baz')
         ]
         # both str() and unicode() should return a repr() of the args
         for args in argslist:
@@ -579,16 +580,16 @@ class TestSameStrAndUnicodeMsg(unittest.TestCase):
         """Check same msg for exceptions with overridden __str__ and many args"""
         # if __str__ returns an ascii string / ascii unicode string
         # both str() and unicode() should succeed
-        for msg in ('foo', u'foo'):
-            e = ExcWithOverriddenStr('arg1', u'arg2', u'f\xf6\xf6', msg=msg)
+        for msg in ('foo', 'foo'):
+            e = ExcWithOverriddenStr('arg1', 'arg2', 'f\xf6\xf6', msg=msg)
             self.check_same_msg(e, msg)
 
         # if __str__ returns a non-ascii unicode string, str() should fail
         # but unicode() should succeed
-        e = ExcWithOverriddenStr('arg1', u'f\xf6\xf6', u'arg3', # 3 args
-                                 msg=u'f\xf6\xf6')
+        e = ExcWithOverriddenStr('arg1', 'f\xf6\xf6', 'arg3', # 3 args
+                                 msg='f\xf6\xf6')
         self.assertRaises(UnicodeEncodeError, str, e)
-        self.assertEqual(unicode(e), u'f\xf6\xf6')
+        self.assertEqual(str(e), 'f\xf6\xf6')
 
     @cpython_only
     def test_exception_with_doc(self):

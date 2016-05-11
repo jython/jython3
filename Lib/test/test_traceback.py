@@ -1,10 +1,11 @@
 """Test cases for traceback module"""
 
-from __future__ import with_statement
+
 import unittest
 from test.test_support import run_unittest, is_jython
 
 import traceback
+import imp
 
 class TracebackCases(unittest.TestCase):
     # For now, a very minimal set of tests.  I want to be sure that
@@ -13,10 +14,10 @@ class TracebackCases(unittest.TestCase):
     def get_exception_format(self, func, exc):
         try:
             func()
-        except exc, value:
+        except exc as value:
             return traceback.format_exception_only(exc, value)
         else:
-            raise ValueError, "call did not raise exception"
+            raise ValueError("call did not raise exception")
 
     def syntax_error_with_caret(self):
         compile("def fact(x):\n\treturn x!\n", "?", "exec")
@@ -32,10 +33,10 @@ class TracebackCases(unittest.TestCase):
     def test_caret(self):
         err = self.get_exception_format(self.syntax_error_with_caret,
                                         SyntaxError)
-        self.assert_(len(err) == 4)
-        self.assert_(err[1].strip() == "return x!")
-        self.assert_("^" in err[2]) # third line has caret
-        self.assert_(err[1].find("!") == err[2].find("^")) # in the right place
+        self.assertTrue(len(err) == 4)
+        self.assertTrue(err[1].strip() == "return x!")
+        self.assertTrue("^" in err[2]) # third line has caret
+        self.assertTrue(err[1].find("!") == err[2].find("^")) # in the right place
 
     def test_nocaret(self):
         if is_jython:
@@ -43,18 +44,18 @@ class TracebackCases(unittest.TestCase):
             return
         err = self.get_exception_format(self.syntax_error_without_caret,
                                         SyntaxError)
-        self.assert_(len(err) == 3)
-        self.assert_(err[1].strip() == "[x for x in x] = x")
+        self.assertTrue(len(err) == 3)
+        self.assertTrue(err[1].strip() == "[x for x in x] = x")
 
     def test_bad_indentation(self):
         err = self.get_exception_format(self.syntax_error_bad_indentation,
                                         IndentationError)
-        self.assert_(len(err) == 4)
-        self.assert_(err[1].strip() == "print 2")
-        self.assert_("^" in err[2])
+        self.assertTrue(len(err) == 4)
+        self.assertTrue(err[1].strip() == "print 2")
+        self.assertTrue("^" in err[2])
         # Antlr thinks the error is at the indentation, while CPython points at
         # the end of the line.  I am agreeing with Antlr over CPython here.
-        self.assert_(err[1].find("p") -1 == err[2].find("^"))
+        self.assertTrue(err[1].find("p") -1 == err[2].find("^"))
 
     def test_bug737473(self):
         import sys, os, tempfile, time
@@ -65,9 +66,9 @@ class TracebackCases(unittest.TestCase):
             sys.path.insert(0, testdir)
             testfile = os.path.join(testdir, 'test_bug737473.py')
             with open(testfile, 'w') as fp:
-                print >> fp, """
+                print("""
 def test():
-    raise ValueError"""
+    raise ValueError""", file=fp)
 
             if 'test_bug737473' in sys.modules:
                 del sys.modules['test_bug737473']
@@ -77,7 +78,7 @@ def test():
                 test_bug737473.test()
             except ValueError:
                 # this loads source code to linecache
-                traceback.extract_tb(sys.exc_traceback)
+                traceback.extract_tb(sys.exc_info()[2])
 
             # If this test runs too quickly, test_bug737473.py's mtime
             # attribute will remain unchanged even if the file is rewritten.
@@ -88,15 +89,15 @@ def test():
             time.sleep(4)
 
             with open(testfile, 'w') as fp:
-                print >> fp, """
+                print("""
 def test():
-    raise NotImplementedError"""
-            reload(test_bug737473)
+    raise NotImplementedError""", file=fp)
+            imp.reload(test_bug737473)
             try:
                 test_bug737473.test()
             except NotImplementedError:
-                src = traceback.extract_tb(sys.exc_traceback)[-1][-1]
-                self.failUnlessEqual(src, 'raise NotImplementedError')
+                src = traceback.extract_tb(sys.exc_info()[2])[-1][-1]
+                self.assertEqual(src, 'raise NotImplementedError')
         finally:
             sys.path[:] = savedpath
             for f in os.listdir(testdir):

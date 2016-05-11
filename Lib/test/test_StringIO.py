@@ -1,8 +1,8 @@
 # Tests StringIO and cStringIO
 
 import unittest
-import StringIO
-import cStringIO
+import io
+import io
 import types
 import array
 import sys
@@ -102,7 +102,7 @@ class TestGenericStringIO(unittest.TestCase):
             i += 1
         eq(i, 5)
         self._fp.close()
-        self.assertRaises(ValueError, self._fp.next)
+        self.assertRaises(ValueError, self._fp.__next__)
 
     def test_getvalue(self):
         self._fp.close()
@@ -161,18 +161,18 @@ class TestStringIO(TestGenericStringIO):
         f = self.MODULE.StringIO()
         f.write(self._line[:6])
         f.seek(3)
-        f.write(unicode(self._line[20:26]))
-        f.write(unicode(self._line[52]))
+        f.write(str(self._line[20:26]))
+        f.write(str(self._line[52]))
         s = f.getvalue()
-        self.assertEqual(s, unicode('abcuvwxyz!'))
-        self.assertEqual(type(s), types.UnicodeType)
+        self.assertEqual(s, str('abcuvwxyz!'))
+        self.assertEqual(type(s), str)
 
 class TestcStringIO(TestGenericStringIO):
     MODULE = cStringIO
 
     def test_array_support(self):
         # Issue #1730114: cStringIO should accept array objects
-        a = array.array('B', [0,1,2])
+        a = array.array('B', [0, 1, 2])
         f = self.MODULE.StringIO(a)
         self.assertEqual(f.getvalue(), '\x00\x01\x02')
 
@@ -185,12 +185,12 @@ class TestcStringIO(TestGenericStringIO):
         # Check that this works.
 
         f = self.MODULE.StringIO()
-        f.write(u'abcde')
+        f.write('abcde')
         s = f.getvalue()
         self.assertEqual(s, 'abcde')
         self.assertEqual(type(s), str)
 
-        f = self.MODULE.StringIO(u'abcde')
+        f = self.MODULE.StringIO('abcde')
         s = f.getvalue()
         self.assertEqual(s, 'abcde')
         self.assertEqual(type(s), str)
@@ -199,7 +199,7 @@ class TestcStringIO(TestGenericStringIO):
             # On Jython, this should raise UnicodeEncodeError, however, we
             # have to do more work on preventing inadvertent mixing of Unicode
             # into String-supporting objects like StringBuilder
-            self.assertRaises(UnicodeEncodeError, self.MODULE.StringIO, u'\xf4')
+            self.assertRaises(UnicodeEncodeError, self.MODULE.StringIO, '\xf4')
 
 
 import sys

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 
-from __future__ import with_statement
+
 from test import test_support
 import marshal
 import sys
@@ -23,7 +23,7 @@ def roundtrip(item):
 class IntTestCase(unittest.TestCase):
     def test_ints(self):
         # Test the full range of Python ints.
-        n = sys.maxint
+        n = sys.maxsize
         while n:
             for expected in (-n, n):
                 s = marshal.dumps(expected)
@@ -44,7 +44,7 @@ class IntTestCase(unittest.TestCase):
                 value >>= 8
             return ''.join(bytes)
 
-        maxint64 = (1L << 63) - 1
+        maxint64 = (1 << 63) - 1
         minint64 = -maxint64-1
 
         for base in maxint64, minint64, -maxint64, -(minint64 >> 1):
@@ -70,7 +70,7 @@ class FloatTestCase(unittest.TestCase):
     def test_floats(self):
         # Test a few floats
         small = 1e-25
-        n = sys.maxint * 3.7e250
+        n = sys.maxsize * 3.7e250
         while n > small:
             for expected in (-n, n):
                 f = float(expected)
@@ -90,7 +90,7 @@ class FloatTestCase(unittest.TestCase):
         got = marshal.loads(s)
         self.assertEqual(f, got)
 
-        n = sys.maxint * 3.7e-250
+        n = sys.maxsize * 3.7e-250
         while n < small:
             for expected in (-n, n):
                 f = float(expected)
@@ -118,7 +118,7 @@ class FloatTestCase(unittest.TestCase):
 
 class StringTestCase(unittest.TestCase):
     def test_unicode(self):
-        for s in [u"", u"Andrè Previn", u"abc", u" "*10000]:
+        for s in ["", "Andrè Previn", "abc", " "*10000]:
             new = marshal.loads(marshal.dumps(s))
             self.assertEqual(s, new)
             self.assertEqual(type(s), type(new))
@@ -155,7 +155,7 @@ class ExceptionTestCase(unittest.TestCase):
 class CodeTestCase(unittest.TestCase):
     if not test_support.is_jython: # XXX - need to use the PBC compilation backend, which doesn't exist yet
         def test_code(self):
-            co = ExceptionTestCase.test_exceptions.func_code
+            co = ExceptionTestCase.test_exceptions.__code__
             new = marshal.loads(marshal.dumps(co))
             self.assertEqual(co, new)
 
@@ -163,11 +163,11 @@ class ContainerTestCase(unittest.TestCase):
     d = {'astring': 'foo@bar.baz.spam',
          'afloat': 7283.43,
          'anint': 2**20,
-         'ashortlong': 2L,
+         'ashortlong': 2,
          'alist': ['.zyx.41'],
          'atuple': ('.zyx.41',)*10,
          'aboolean': False,
-         'aunicode': u"Andrè Previn"
+         'aunicode': "Andrè Previn"
          }
     def test_dict(self):
         new = marshal.loads(marshal.dumps(self.d))
@@ -177,7 +177,7 @@ class ContainerTestCase(unittest.TestCase):
         os.unlink(test_support.TESTFN)
 
     def test_list(self):
-        lst = self.d.items()
+        lst = list(self.d.items())
         new = marshal.loads(marshal.dumps(lst))
         self.assertEqual(lst, new)
         new = roundtrip(lst)
@@ -194,10 +194,10 @@ class ContainerTestCase(unittest.TestCase):
 
     def test_sets(self):
         for constructor in (set, frozenset):
-            t = constructor(self.d.keys())
+            t = constructor(list(self.d.keys()))
             new = marshal.loads(marshal.dumps(t))
             self.assertEqual(t, new)
-            self.assert_(isinstance(new, constructor))
+            self.assertTrue(isinstance(new, constructor))
             self.assertNotEqual(id(t), id(new))
             new = roundtrip(t)
             self.assertEqual(t, new)
@@ -211,12 +211,12 @@ class BugsTestCase(unittest.TestCase):
     def test_patch_873224(self):
         self.assertRaises(Exception, marshal.loads, '0')
         self.assertRaises(Exception, marshal.loads, 'f')
-        self.assertRaises(Exception, marshal.loads, marshal.dumps(5L)[:-1])
+        self.assertRaises(Exception, marshal.loads, marshal.dumps(5)[:-1])
 
     def test_version_argument(self):
         # Python 2.4.0 crashes for any call to marshal.dumps(x, y)
-        self.assertEquals(marshal.loads(marshal.dumps(5, 0)), 5)
-        self.assertEquals(marshal.loads(marshal.dumps(5, 1)), 5)
+        self.assertEqual(marshal.loads(marshal.dumps(5, 0)), 5)
+        self.assertEqual(marshal.loads(marshal.dumps(5, 1)), 5)
 
     def test_fuzz(self):
         # simple test that it's at least not *totally* trivial to

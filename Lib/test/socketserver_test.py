@@ -12,12 +12,12 @@
 
 import socket
 import threading
-import SocketServer
+import socketserver
 import time
 from java.lang import Runtime
 from java.util.concurrent import Executors, ExecutorCompletionService
 
-class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
+class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         data = self.request.recv(1024)
@@ -25,7 +25,7 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
         response = "%s: %s" % (cur_thread.getName(), data)
         self.request.send(response)
 
-class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     "mix together"
 
 def client(ip, port, message):
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     # create a client pool to run all client requests
     pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1)
     ecs = ExecutorCompletionService(pool)
-    for i in xrange(4000): # empirically, this will exhaust heap when run with 16m heap
+    for i in range(4000): # empirically, this will exhaust heap when run with 16m heap
         ecs.submit(lambda: client(ip, port, "Hello World %i" % i))
         ecs.take() # wait until we have a thread available in the pool
     pool.shutdown()

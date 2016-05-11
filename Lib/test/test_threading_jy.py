@@ -2,7 +2,7 @@
 
 Made for Jython.
 """
-from __future__ import with_statement
+
 
 import random
 import subprocess
@@ -71,7 +71,7 @@ class JavaIntegrationTestCase(unittest.TestCase):
                 while not JThread.currentThread().isInterrupted():
                     try:
                         cv.wait()
-                    except InterruptedException, e:
+                    except InterruptedException as e:
                         break
 
         num_threads = 5
@@ -81,7 +81,7 @@ class JavaIntegrationTestCase(unittest.TestCase):
                 name="thread #%d" % i,
                 target=wait_until_interrupted,
                 args=(unfair_condition,)) 
-            for i in xrange(num_threads)]
+            for i in range(num_threads)]
 
         for thread in threads:
             thread.start()

@@ -50,14 +50,14 @@ class BaseBytesTest(unittest.TestCase):
         self.assertEqual(len(b), 0)
         self.assertRaises(IndexError, lambda: b[0])
         self.assertRaises(IndexError, lambda: b[1])
-        self.assertRaises(IndexError, lambda: b[sys.maxint])
-        self.assertRaises(IndexError, lambda: b[sys.maxint+1])
+        self.assertRaises(IndexError, lambda: b[sys.maxsize])
+        self.assertRaises(IndexError, lambda: b[sys.maxsize+1])
         self.assertRaises(IndexError, lambda: b[10**100])
         self.assertRaises(IndexError, lambda: b[-1])
         self.assertRaises(IndexError, lambda: b[-2])
-        self.assertRaises(IndexError, lambda: b[-sys.maxint])
-        self.assertRaises(IndexError, lambda: b[-sys.maxint-1])
-        self.assertRaises(IndexError, lambda: b[-sys.maxint-2])
+        self.assertRaises(IndexError, lambda: b[-sys.maxsize])
+        self.assertRaises(IndexError, lambda: b[-sys.maxsize-1])
+        self.assertRaises(IndexError, lambda: b[-sys.maxsize-2])
         self.assertRaises(IndexError, lambda: b[-10**100])
 
     def test_from_list(self):
@@ -95,14 +95,14 @@ class BaseBytesTest(unittest.TestCase):
 
     def test_constructor_value_errors(self):
         self.assertRaises(ValueError, self.type2test, [-1])
-        self.assertRaises(ValueError, self.type2test, [-sys.maxint])
-        self.assertRaises(ValueError, self.type2test, [-sys.maxint-1])
-        self.assertRaises(ValueError, self.type2test, [-sys.maxint-2])
+        self.assertRaises(ValueError, self.type2test, [-sys.maxsize])
+        self.assertRaises(ValueError, self.type2test, [-sys.maxsize-1])
+        self.assertRaises(ValueError, self.type2test, [-sys.maxsize-2])
         self.assertRaises(ValueError, self.type2test, [-10**100])
         self.assertRaises(ValueError, self.type2test, [256])
         self.assertRaises(ValueError, self.type2test, [257])
-        self.assertRaises(ValueError, self.type2test, [sys.maxint])
-        self.assertRaises(ValueError, self.type2test, [sys.maxint+1])
+        self.assertRaises(ValueError, self.type2test, [sys.maxsize])
+        self.assertRaises(ValueError, self.type2test, [sys.maxsize+1])
         self.assertRaises(ValueError, self.type2test, [10**100])
 
     def test_compare(self):
@@ -132,12 +132,12 @@ class BaseBytesTest(unittest.TestCase):
     def test_compare_to_str(self):
         # Byte comparisons with unicode should always fail!
         # Test this for all expected byte orders and Unicode character sizes
-        self.assertEqual(self.type2test(b"\0a\0b\0c") == u"abc", False)
-        self.assertEqual(self.type2test(b"\0\0\0a\0\0\0b\0\0\0c") == u"abc", False)
-        self.assertEqual(self.type2test(b"a\0b\0c\0") == u"abc", False)
-        self.assertEqual(self.type2test(b"a\0\0\0b\0\0\0c\0\0\0") == u"abc", False)
-        self.assertEqual(self.type2test() == unicode(), False)
-        self.assertEqual(self.type2test() != unicode(), True)
+        self.assertEqual(self.type2test(b"\0a\0b\0c") == "abc", False)
+        self.assertEqual(self.type2test(b"\0\0\0a\0\0\0b\0\0\0c") == "abc", False)
+        self.assertEqual(self.type2test(b"a\0b\0c\0") == "abc", False)
+        self.assertEqual(self.type2test(b"a\0\0\0b\0\0\0c\0\0\0") == "abc", False)
+        self.assertEqual(self.type2test() == str(), False)
+        self.assertEqual(self.type2test() != str(), True)
 
     def test_reversed(self):
         input = list(map(ord, "Hello"))
@@ -148,7 +148,7 @@ class BaseBytesTest(unittest.TestCase):
 
     def test_getslice(self):
         def by(s):
-            return self.type2test(map(ord, s))
+            return self.type2test(list(map(ord, s)))
         b = by("Hello, world")
 
         self.assertEqual(b[:5], by("Hello"))
@@ -191,11 +191,11 @@ class BaseBytesTest(unittest.TestCase):
 #        self.assertEqual(b, self.type2test(sample[:-4], "utf-8"))
 
     def test_decode(self):
-        sample = u"Hello world\n\u1234\u5678\u9abc\def0\def0"
+        sample = "Hello world\n\u1234\u5678\u9abc\def0\def0"
         for enc in ("utf8", "utf16"):
             b = self.type2test(sample, enc)
             self.assertEqual(b.decode(enc), sample)
-        sample = u"Hello world\n\x80\x81\xfe\xff"
+        sample = "Hello world\n\x80\x81\xfe\xff"
         b = self.type2test(sample, "latin1")
         self.assertRaises(UnicodeDecodeError, b.decode, "utf8")
         self.assertEqual(b.decode("utf8", "ignore"), "Hello world\n")
@@ -216,8 +216,8 @@ class BaseBytesTest(unittest.TestCase):
         self.assertEqual(b1 + b2, b"abcdef")
         self.assertEqual(b1 + bytes(b"def"), b"abcdef")
         self.assertEqual(bytes(b"def") + b1, b"defabc")
-        self.assertRaises(TypeError, lambda: b1 + u"def")
-        self.assertRaises(TypeError, lambda: u"abc" + b2)
+        self.assertRaises(TypeError, lambda: b1 + "def")
+        self.assertRaises(TypeError, lambda: "abc" + b2)
 
     def test_repeat(self):
         for b in b"abc", self.type2test(b"abc"):
@@ -242,7 +242,7 @@ class BaseBytesTest(unittest.TestCase):
         self.assertRaises(ValueError, lambda: -1 in b)
         self.assertRaises(TypeError, lambda: None in b)
         self.assertRaises(TypeError, lambda: float(ord('a')) in b)
-        self.assertRaises(TypeError, lambda: u"a" in b)
+        self.assertRaises(TypeError, lambda: "a" in b)
         for f in bytes, bytearray:
             self.assertIn(f(b""), b)
             self.assertIn(f(b"a"), b)
@@ -259,16 +259,16 @@ class BaseBytesTest(unittest.TestCase):
     def test_fromhex(self):
         self.assertRaises(TypeError, self.type2test.fromhex)
         self.assertRaises(TypeError, self.type2test.fromhex, 1)
-        self.assertEqual(self.type2test.fromhex(u''), self.type2test())
+        self.assertEqual(self.type2test.fromhex(''), self.type2test())
         b = bytearray([0x1a, 0x2b, 0x30, 0xca, 0xfe, 0xba, 0xbe]) # challenging signs
-        self.assertEqual(self.type2test.fromhex(u'1a2B30CafEBabe'), b)
-        self.assertEqual(self.type2test.fromhex(u'  1A 2B  30 CafeBabe   '), b)
-        self.assertEqual(self.type2test.fromhex(u'0000'), b'\0\0')
-        self.assertRaises(ValueError, self.type2test.fromhex, u'a')
-        self.assertRaises(ValueError, self.type2test.fromhex, u'rt')
-        self.assertRaises(ValueError, self.type2test.fromhex, u'1a b cd')
-        self.assertRaises(ValueError, self.type2test.fromhex, u'\x00')
-        self.assertRaises(ValueError, self.type2test.fromhex, u'12   \x00   34')
+        self.assertEqual(self.type2test.fromhex('1a2B30CafEBabe'), b)
+        self.assertEqual(self.type2test.fromhex('  1A 2B  30 CafeBabe   '), b)
+        self.assertEqual(self.type2test.fromhex('0000'), b'\0\0')
+        self.assertRaises(ValueError, self.type2test.fromhex, 'a')
+        self.assertRaises(ValueError, self.type2test.fromhex, 'rt')
+        self.assertRaises(ValueError, self.type2test.fromhex, '1a b cd')
+        self.assertRaises(ValueError, self.type2test.fromhex, '\x00')
+        self.assertRaises(ValueError, self.type2test.fromhex, '12   \x00   34')
 
     def test_join(self):
         self.assertEqual(self.type2test(b"").join([]), b"")
@@ -368,7 +368,7 @@ class BaseBytesTest(unittest.TestCase):
         self.assertEqual(self.type2test(b'  a  bb  c  ').split(None, 3), [b'a', b'bb', b'c'])
 
     def test_split_string_error(self):
-        self.assertRaises(TypeError, self.type2test(b'a b').split, u' ')
+        self.assertRaises(TypeError, self.type2test(b'a b').split, ' ')
 
     def test_split_unicodewhitespace(self):
         b = self.type2test(b"\x09\x0A\x0B\x0C\x0D\x1C\x1D\x1E\x1F")
@@ -397,7 +397,7 @@ class BaseBytesTest(unittest.TestCase):
         self.assertEqual(self.type2test(b'  a  bb  c  ').rsplit(None, 3), [b'a', b'bb', b'c'])
 
     def test_rsplit_string_error(self):
-        self.assertRaises(TypeError, self.type2test(b'a b').rsplit, u' ')
+        self.assertRaises(TypeError, self.type2test(b'a b').rsplit, ' ')
 
     def test_rsplit_unicodewhitespace(self):
         b = self.type2test(b"\x09\x0A\x0B\x0C\x0D\x1C\x1D\x1E\x1F")
@@ -463,9 +463,9 @@ class BaseBytesTest(unittest.TestCase):
         self.assertEqual(self.type2test(b'abc').rstrip(memoryview(b'ac')), b'ab')
 
     def test_strip_string_error(self):
-        self.assertRaises(TypeError, self.type2test(b'abc').strip, u'b')
-        self.assertRaises(TypeError, self.type2test(b'abc').lstrip, u'b')
-        self.assertRaises(TypeError, self.type2test(b'abc').rstrip, u'b')
+        self.assertRaises(TypeError, self.type2test(b'abc').strip, 'b')
+        self.assertRaises(TypeError, self.type2test(b'abc').lstrip, 'b')
+        self.assertRaises(TypeError, self.type2test(b'abc').rstrip, 'b')
 
     def test_ord(self):
         b = self.type2test(b'\0A\x7f\x80\xff')
@@ -519,25 +519,25 @@ class BaseBytesTest(unittest.TestCase):
         # issue 11828
         b = self.type2test(b'hello')
         x = self.type2test(b'x')
-        self.assertRaisesRegexp(TypeError, r'\bfind\b', b.find,
+        self.assertRaisesRegex(TypeError, r'\bfind\b', b.find,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'\brfind\b', b.rfind,
+        self.assertRaisesRegex(TypeError, r'\brfind\b', b.rfind,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'\bindex\b', b.index,
+        self.assertRaisesRegex(TypeError, r'\bindex\b', b.index,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'\brindex\b', b.rindex,
+        self.assertRaisesRegex(TypeError, r'\brindex\b', b.rindex,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'\bcount\b', b.count,
+        self.assertRaisesRegex(TypeError, r'\bcount\b', b.count,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'\bstartswith\b', b.startswith,
+        self.assertRaisesRegex(TypeError, r'\bstartswith\b', b.startswith,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'\bendswith\b', b.endswith,
+        self.assertRaisesRegex(TypeError, r'\bendswith\b', b.endswith,
                                 x, None, None, None)
 
     def test_translate(self):
         # adapted from AssortedBytesTest.test_translate
         b = self.type2test(b'hello')
-        rosetta = self.type2test().join(map(chr,range(256)))
+        rosetta = self.type2test().join(map(chr, list(range(256))))
         rosetta[ord('o')] = ord('e')
         c = b.translate(rosetta, b'l')
         self.assertEqual(b, b'hello')
@@ -546,7 +546,7 @@ class BaseBytesTest(unittest.TestCase):
         self.assertEqual(c, b'hllo')
         c = b.translate(None, b'the larch')
         self.assertEqual(c, b'o')
-        stone = self.type2test(''.join(map(chr,range(1,256))))
+        stone = self.type2test(''.join(map(chr, list(range(1, 256)))))
         self.assertRaises(ValueError, b.translate, stone, b'short')
         self.assertRaises(TypeError, b.translate, rosetta, None)
         self.assertRaises(TypeError, b.translate, None, None)
@@ -599,7 +599,7 @@ class ByteArrayTest(BaseBytesTest):
 
     def test_regexps(self):
         def by(s):
-            return bytearray(map(ord, s))
+            return bytearray(list(map(ord, s)))
         b = by("Hello, world")
         self.assertEqual(re.findall(r"\w+", b), [by("Hello"), by("world")])
 
@@ -638,16 +638,16 @@ class ByteArrayTest(BaseBytesTest):
             pass
 
     def test_delitem(self):
-        b = bytearray(range(10))
+        b = bytearray(list(range(10)))
         del b[0]
-        self.assertEqual(b, bytearray(range(1, 10)))
+        self.assertEqual(b, bytearray(list(range(1, 10))))
         del b[-1]
-        self.assertEqual(b, bytearray(range(1, 9)))
+        self.assertEqual(b, bytearray(list(range(1, 9))))
         del b[4]
         self.assertEqual(b, bytearray([1, 2, 3, 4, 6, 7, 8]))
 
     def test_setslice(self):
-        b = bytearray(range(10))
+        b = bytearray(list(range(10)))
         self.assertEqual(list(b), list(range(10)))
 
         b[0:5] = bytearray([1, 1, 1, 1, 1])
@@ -657,13 +657,13 @@ class ByteArrayTest(BaseBytesTest):
         self.assertEqual(b, bytearray([5, 6, 7, 8, 9]))
 
         b[0:0] = bytearray([0, 1, 2, 3, 4])
-        self.assertEqual(b, bytearray(range(10)))
+        self.assertEqual(b, bytearray(list(range(10))))
 
         b[-7:-3] = bytearray([100, 101])
         self.assertEqual(b, bytearray([0, 1, 2, 100, 101, 7, 8, 9]))
 
         b[3:5] = [3, 4, 5, 6]
-        self.assertEqual(b, bytearray(range(10)))
+        self.assertEqual(b, bytearray(list(range(10))))
 
         b[3:0] = [42, 42, 42]
         self.assertEqual(b, bytearray([0, 1, 2, 42, 42, 42, 3, 4, 5, 6, 7, 8, 9]))
@@ -691,7 +691,7 @@ class ByteArrayTest(BaseBytesTest):
     def test_setslice_trap(self):
         # This test verifies that we correctly handle assigning self
         # to a slice of self (the old Lambert Meertens trap).
-        b = bytearray(range(256))
+        b = bytearray(list(range(256)))
         b[8:] = b
         self.assertEqual(b, bytearray(list(range(8)) + list(range(256))))
 
@@ -705,7 +705,7 @@ class ByteArrayTest(BaseBytesTest):
         b += b"xyz"
         self.assertEqual(b, b"abcdefxyz")
         try:
-            b += u""
+            b += ""
         except TypeError:
             pass
         else:
@@ -747,7 +747,7 @@ class ByteArrayTest(BaseBytesTest):
         self.assertEqual(a[5:], orig)
         a = bytearray(b'')
         # Test iterators that don't have a __length_hint__
-        a.extend(map(ord, orig * 25))
+        a.extend(list(map(ord, orig * 25)))
         a.extend(ord(x) for x in orig * 25)
         self.assertEqual(a, orig * 50)
         self.assertEqual(a[-5:], orig)
@@ -775,12 +775,12 @@ class ByteArrayTest(BaseBytesTest):
         self.assertEqual(b, b'heo')
         self.assertRaises(ValueError, lambda: b.remove(ord('l')))
         self.assertRaises(ValueError, lambda: b.remove(400))
-        self.assertRaises(TypeError, lambda: b.remove(u'e'))
+        self.assertRaises(TypeError, lambda: b.remove('e'))
         # remove first and last
         b.remove(ord('o'))
         b.remove(ord('h'))
         self.assertEqual(b, b'e')
-        self.assertRaises(TypeError, lambda: b.remove(u'e'))
+        self.assertRaises(TypeError, lambda: b.remove('e'))
         b.remove(Indexable(ord('e')))
         self.assertEqual(b, b'')
 
@@ -805,7 +805,7 @@ class ByteArrayTest(BaseBytesTest):
         b = bytearray()
         b.append(ord('A'))
         self.assertEqual(len(b), 1)
-        self.assertRaises(TypeError, lambda: b.append(u'o'))
+        self.assertRaises(TypeError, lambda: b.append('o'))
         b = bytearray()
         b.append(Indexable(ord('A')))
         self.assertEqual(b, b'A')
@@ -859,10 +859,10 @@ class ByteArrayTest(BaseBytesTest):
         # if it wouldn't reallocate the underlying buffer.
         # Furthermore, no destructive changes to the buffer may be applied
         # before raising the error.
-        b = bytearray(range(10))
+        b = bytearray(list(range(10)))
         v = memoryview(b)
         def resize(n):
-            b[1:-1] = range(n + 1, 2*n - 1)
+            b[1:-1] = list(range(n + 1, 2*n - 1))
         resize(10)
         orig = b[:]
         self.assertRaises(BufferError, resize, 11)
@@ -980,7 +980,7 @@ class AssortedBytesTest(unittest.TestCase):
     def test_translate(self):
         b = b'hello'
         ba = bytearray(b)
-        rosetta = bytearray(range(0, 256))
+        rosetta = bytearray(list(range(0, 256)))
         rosetta[ord('o')] = ord('e')
         c = b.translate(rosetta, b'l')
         self.assertEqual(b, b'hello')
@@ -1102,11 +1102,11 @@ class ByteArraySubclassTest(unittest.TestCase):
         s1 = ByteArraySubclass(b"abcd")
         s2 = bytearray().join([s1])
         self.assertTrue(s1 is not s2)
-        self.assertTrue(type(s2) is bytearray, type(s2))
+        self.assertTrue(isinstance(s2, bytearray), type(s2))
 
         # Test reverse, calling join on subclass
         s3 = s1.join([b"abcd"])
-        self.assertTrue(type(s3) is bytearray)
+        self.assertTrue(isinstance(s3, bytearray))
 
     def test_pickle(self):
         a = ByteArraySubclass(b"abcd")

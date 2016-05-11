@@ -3,7 +3,7 @@
 
 Made for Jython.
 """
-from __future__ import with_statement
+
 import imp
 import os
 import shutil
@@ -38,8 +38,8 @@ class MislabeledImportTestCase(unittest.TestCase):
         compiled = module + COMPILED_SUFFIX
         # Compile to bytecode
         module_obj = __import__(module)
-        self.assertEquals(module_obj.test, 'imported')
-        self.assert_(os.path.exists(compiled))
+        self.assertEqual(module_obj.test, 'imported')
+        self.assertTrue(os.path.exists(compiled))
 
         # Rename the bytecode
         compiled_moved = safe_mktemp(dir=self.dir, suffix=COMPILED_SUFFIX)
@@ -48,8 +48,8 @@ class MislabeledImportTestCase(unittest.TestCase):
         # Ensure we can still import the renamed bytecode
         moved_module = os.path.basename(compiled_moved)[:-len(COMPILED_SUFFIX)]
         module_obj = __import__(moved_module)
-        self.assertEquals(module_obj.__file__, os.path.basename(compiled_moved))
-        self.assertEquals(module_obj.test, 'imported')
+        self.assertEqual(module_obj.__file__, os.path.basename(compiled_moved))
+        self.assertEqual(module_obj.test, 'imported')
 
     def test_dunder_init(self):
         os.mkdir('dunder_init_test')
@@ -61,11 +61,11 @@ class MislabeledImportTestCase(unittest.TestCase):
         fp.write("bar = 'test'")
         fp.close()
         module_obj = __import__('dunder_init_test')
-        self.assertEquals(module_obj.__file__, init)
-        self.assertEquals(module_obj.bar, 'test')
+        self.assertEqual(module_obj.__file__, init)
+        self.assertEqual(module_obj.bar, 'test')
 
         init_compiled = init[:-3] + COMPILED_SUFFIX
-        self.assert_(os.path.exists(init_compiled))
+        self.assertTrue(os.path.exists(init_compiled))
         bytecode = read(init_compiled)
 
         # trigger an abnormal import of dunder_init_test.__init__; ask for it
@@ -75,24 +75,24 @@ class MislabeledImportTestCase(unittest.TestCase):
                  "init_file = __init__.__file__")
         fp.close()
         module_obj = __import__('dunder_init_test.test')
-        self.assertEquals(module_obj.test.baz, 'testtest')
+        self.assertEqual(module_obj.test.baz, 'testtest')
         self.assertEqual(module_obj.test.init_file,
                          os.path.join('dunder_init_test',
                                       '__init__' + COMPILED_SUFFIX))
 
         # Ensure a recompile of __init__$py.class wasn't triggered to
         # satisfy the abnormal import
-        self.assertEquals(bytecode, read(init_compiled),
+        self.assertEqual(bytecode, read(init_compiled),
                           'bytecode was recompiled')
 
         # Ensure load_module can still load it as dunder_init_test (doesn't
         # recompile)
         module_obj = imp.load_module('dunder_init_test',
                                      *imp.find_module('dunder_init_test'))
-        self.assertEquals(module_obj.bar, 'test')
+        self.assertEqual(module_obj.bar, 'test')
 
         # Again ensure we didn't recompile
-        self.assertEquals(bytecode, read(init_compiled),
+        self.assertEqual(bytecode, read(init_compiled),
                           'bytecode was recompiled')
 
     def test_corrupt_bytecode(self):
@@ -104,9 +104,9 @@ class OverrideBuiltinsImportTestCase(unittest.TestCase):
     def test_override(self):
         modname = os.path.__name__
         tests = [
-            ("import os.path"         , "('os.path', None, -1, 'os')"),
+            ("import os.path", "('os.path', None, -1, 'os')"),
             ("import os.path as path2", "('os.path', None, -1, 'os')"),
-            ("from os.path import *"  ,
+            ("from os.path import *",
              "('os.path', ('*',), -1, '%s')" % modname),
             ("from os.path import join",
                  "('os.path', ('join',), -1, '%s')" % modname),
@@ -118,26 +118,26 @@ class OverrideBuiltinsImportTestCase(unittest.TestCase):
 
         import sys
         # Replace __builtin__.__import__ to trace the calls
-        import __builtin__
-        oldimp = __builtin__.__import__
+        import builtins
+        oldimp = builtins.__import__
         try:
             def __import__(name, globs, locs, fromlist, level=-1):
                 mod = oldimp(name, globs, locs, fromlist, level)
                 globs["result"] = str((name, fromlist, level, mod.__name__))
                 raise ImportError
 
-            __builtin__.__import__ = __import__
+            builtins.__import__ = __import__
             failed = 0
             for statement, expected in tests:
                 try:
                     c = compile(statement, "<unknown>", "exec")
-                    exec c in locals(), globals()
+                    exec(c, locals(), globals())
                     raise Exception("ImportError expected.")
                 except ImportError:
                     pass
-                self.assertEquals(expected, result)
+                self.assertEqual(expected, result)
         finally:
-            __builtin__.__import__ = oldimp
+            builtins.__import__ = oldimp
 
 class ImpTestCase(unittest.TestCase):
 
@@ -173,14 +173,14 @@ class ImpTestCase(unittest.TestCase):
         self.assertRaises(Exception, getattr, anygui, 'abc')
 
     def test_import_star(self):
-        self.assertEquals(subprocess.call([sys.executable,
+        self.assertEqual(subprocess.call([sys.executable,
         test_support.findfile("import_star_from_java.py")]), 0)
 
     def test_selfreferential_classes(self):
         from org.python.tests.inbred import Metis
         from org.python.tests.inbred import Zeus
-        self.assertEquals(Metis, Zeus.Athena.__bases__[0])
-        self.assertEquals(Zeus, Metis.__bases__[0])
+        self.assertEqual(Metis, Zeus.Athena.__bases__[0])
+        self.assertEqual(Zeus, Metis.__bases__[0])
 
     def test_sys_modules_deletion(self):
         self.assertRaises(ZeroDivisionError, __import__, 'test.module_deleter')
@@ -200,7 +200,7 @@ class ImpTestCase(unittest.TestCase):
                 os.symlink(test_support.TESTFN, sym)
                 module = os.path.basename(sym)
                 module_obj = __import__(module)
-                self.assertEquals(module_obj.test, 'imported')
+                self.assertEqual(module_obj.test, 'imported')
 
             finally:
                 shutil.rmtree(test_support.TESTFN)

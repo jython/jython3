@@ -9,4 +9,4 @@ hello''', re.VERBOSE)
 
 # test it
 if not cre.match('0123hello'):
-    print 're.VERBOSE did not work'
+    print('re.VERBOSE did not work')

@@ -16,13 +16,13 @@ class CmpGeneralTestCase(unittest.TestCase):
 class UnicodeDerivedCmp(unittest.TestCase):
     "Test for http://bugs.jython.org/issue1889394"
     def testCompareWithString(self):
-        class Test(unicode):
+        class Test(str):
             pass
         test = Test('{1:1}')
         self.assertNotEqual(test, {1:1})
     def testCompareEmptyDerived(self):
-        class A(unicode): pass
-        class B(unicode): pass
+        class A(str): pass
+        class B(str): pass
         self.assertEqual(A(), B())
 
 

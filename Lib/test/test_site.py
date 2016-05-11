@@ -7,7 +7,7 @@ executing have not been removed.
 import unittest
 from test.test_support import run_unittest, TESTFN, EnvironmentVarGuard
 from test.test_support import captured_output, is_jython
-import __builtin__
+import builtins
 import os
 import sys
 import re
@@ -112,27 +112,27 @@ class HelperFunctionsTests(unittest.TestCase):
         pth_dir, pth_fn = self.make_pth("import bad)syntax\n")
         with captured_output("stderr") as err_out:
             site.addpackage(pth_dir, pth_fn, set())
-        self.assertRegexpMatches(err_out.getvalue(), "line 1")
-        self.assertRegexpMatches(err_out.getvalue(),
+        self.assertRegex(err_out.getvalue(), "line 1")
+        self.assertRegex(err_out.getvalue(),
             re.escape(os.path.join(pth_dir, pth_fn)))
         # XXX: the previous two should be independent checks so that the
         # order doesn't matter.  The next three could be a single check
         # but my regex foo isn't good enough to write it.
-        self.assertRegexpMatches(err_out.getvalue(), 'Traceback')
-        self.assertRegexpMatches(err_out.getvalue(), r'import bad\)syntax')
-        self.assertRegexpMatches(err_out.getvalue(), 'SyntaxError')
+        self.assertRegex(err_out.getvalue(), 'Traceback')
+        self.assertRegex(err_out.getvalue(), r'import bad\)syntax')
+        self.assertRegex(err_out.getvalue(), 'SyntaxError')
 
     def test_addpackage_import_bad_exec(self):
         # Issue 10642
         pth_dir, pth_fn = self.make_pth("randompath\nimport nosuchmodule\n")
         with captured_output("stderr") as err_out:
             site.addpackage(pth_dir, pth_fn, set())
-        self.assertRegexpMatches(err_out.getvalue(), "line 2")
-        self.assertRegexpMatches(err_out.getvalue(),
+        self.assertRegex(err_out.getvalue(), "line 2")
+        self.assertRegex(err_out.getvalue(),
             re.escape(os.path.join(pth_dir, pth_fn)))
         # XXX: ditto previous XXX comment.
-        self.assertRegexpMatches(err_out.getvalue(), 'Traceback')
-        self.assertRegexpMatches(err_out.getvalue(), 'ImportError')
+        self.assertRegex(err_out.getvalue(), 'Traceback')
+        self.assertRegex(err_out.getvalue(), 'ImportError')
 
     @unittest.skipIf(is_jython, "Jython does not raise an error for file "
                       "paths containing null characters")
@@ -143,12 +143,12 @@ class HelperFunctionsTests(unittest.TestCase):
         pth_dir, pth_fn = self.make_pth("abc\x00def\n")
         with captured_output("stderr") as err_out:
             site.addpackage(pth_dir, pth_fn, set())
-        self.assertRegexpMatches(err_out.getvalue(), "line 1")
-        self.assertRegexpMatches(err_out.getvalue(),
+        self.assertRegex(err_out.getvalue(), "line 1")
+        self.assertRegex(err_out.getvalue(),
             re.escape(os.path.join(pth_dir, pth_fn)))
         # XXX: ditto previous XXX comment.
-        self.assertRegexpMatches(err_out.getvalue(), 'Traceback')
-        self.assertRegexpMatches(err_out.getvalue(), 'TypeError')
+        self.assertRegex(err_out.getvalue(), 'Traceback')
+        self.assertRegex(err_out.getvalue(), 'TypeError')
 
     def test_addsitedir(self):
         # Same tests for test_addpackage since addsitedir() essentially just
@@ -287,11 +287,11 @@ class PthFile(object):
         """
         FILE = open(self.file_path, 'w')
         try:
-            print>>FILE, "#import @bad module name"
-            print>>FILE, "\n"
-            print>>FILE, "import %s" % self.imported
-            print>>FILE, self.good_dirname
-            print>>FILE, self.bad_dirname
+            print("#import @bad module name", file=FILE)
+            print("\n", file=FILE)
+            print("import %s" % self.imported, file=FILE)
+            print(self.good_dirname, file=FILE)
+            print(self.bad_dirname, file=FILE)
         finally:
             FILE.close()
         os.mkdir(self.good_dir_path)
@@ -372,7 +372,7 @@ class ImportSideEffectTests(unittest.TestCase):
         if sys.platform == "win32":
             import locale
             if locale.getdefaultlocale()[1].startswith('cp'):
-                for value in encodings.aliases.aliases.itervalues():
+                for value in encodings.aliases.aliases.values():
                     if value == "mbcs":
                         break
                 else:

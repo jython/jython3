@@ -4,7 +4,7 @@ Common tests shared by test_str, test_unicode, test_userstring and test_string.
 
 import unittest, string, sys, struct
 from test import test_support
-from UserList import UserList
+from collections import UserList
 
 class Sequence:
     def __init__(self, seq='wxyz'): self.seq = seq
@@ -12,7 +12,7 @@ class Sequence:
     def __getitem__(self, i): return self.seq[i]
 
 class BadSeq1(Sequence):
-    def __init__(self): self.seq = [7, 'hello', 123L]
+    def __init__(self): self.seq = [7, 'hello', 123]
 
 class BadSeq2(Sequence):
     def __init__(self): self.seq = ['a', 'b', 'c']
@@ -40,7 +40,7 @@ class CommonTest(unittest.TestCase):
         elif isinstance(obj, dict):
             return dict([
                (self.fixtype(key), self.fixtype(value))
-               for (key, value) in obj.iteritems()
+               for (key, value) in obj.items()
             ])
         else:
             return obj
@@ -91,8 +91,8 @@ class CommonTest(unittest.TestCase):
 
     def test_capitalize(self):
         self.checkequal(' hello ', ' hello ', 'capitalize')
-        self.checkequal('Hello ', 'Hello ','capitalize')
-        self.checkequal('Hello ', 'hello ','capitalize')
+        self.checkequal('Hello ', 'Hello ', 'capitalize')
+        self.checkequal('Hello ', 'hello ', 'capitalize')
         self.checkequal('Aaaa', 'aaaa', 'capitalize')
         self.checkequal('Aaaa', 'AaAa', 'capitalize')
 
@@ -122,11 +122,11 @@ class CommonTest(unittest.TestCase):
 
         self.checkequal(1, '', 'count', '')
         self.checkequal(0, '', 'count', '', 1, 1)
-        self.checkequal(0, '', 'count', '', sys.maxint, 0)
+        self.checkequal(0, '', 'count', '', sys.maxsize, 0)
 
         self.checkequal(0, '', 'count', 'xx')
         self.checkequal(0, '', 'count', 'xx', 1, 1)
-        self.checkequal(0, '', 'count', 'xx', sys.maxint, 0)
+        self.checkequal(0, '', 'count', 'xx', sys.maxsize, 0)
 
         self.checkraises(TypeError, 'hello', 'count')
         self.checkraises(TypeError, 'hello', 'count', 42)
@@ -138,9 +138,9 @@ class CommonTest(unittest.TestCase):
         digits = 7
         base = len(charset)
         teststrings = set()
-        for i in xrange(base ** digits):
+        for i in range(base ** digits):
             entry = []
-            for j in xrange(digits):
+            for j in range(digits):
                 i, m = divmod(i, base)
                 entry.append(charset[m])
             teststrings.add(''.join(entry))
@@ -205,11 +205,11 @@ class CommonTest(unittest.TestCase):
 
         self.checkequal(0, '', 'find', '')
         self.checkequal(-1, '', 'find', '', 1, 1)
-        self.checkequal(-1, '', 'find', '', sys.maxint, 0)
+        self.checkequal(-1, '', 'find', '', sys.maxsize, 0)
 
         self.checkequal(-1, '', 'find', 'xx')
         self.checkequal(-1, '', 'find', 'xx', 1, 1)
-        self.checkequal(-1, '', 'find', 'xx', sys.maxint, 0)
+        self.checkequal(-1, '', 'find', 'xx', sys.maxsize, 0)
 
         # For a variety of combinations,
         #    verify that str.find() matches __contains__
@@ -218,9 +218,9 @@ class CommonTest(unittest.TestCase):
         digits = 5
         base = len(charset)
         teststrings = set()
-        for i in xrange(base ** digits):
+        for i in range(base ** digits):
             entry = []
-            for j in xrange(digits):
+            for j in range(digits):
                 i, m = divmod(i, base)
                 entry.append(charset[m])
             teststrings.add(''.join(entry))
@@ -284,9 +284,9 @@ class CommonTest(unittest.TestCase):
         digits = 5
         base = len(charset)
         teststrings = set()
-        for i in xrange(base ** digits):
+        for i in range(base ** digits):
             entry = []
-            for j in xrange(digits):
+            for j in range(digits):
                 i, m = divmod(i, base)
                 entry.append(charset[m])
             teststrings.add(''.join(entry))
@@ -388,9 +388,9 @@ class CommonTest(unittest.TestCase):
 
         self.checkraises(TypeError, 'hello', 'expandtabs', 42, 42)
         # This test is only valid when sizeof(int) == sizeof(void*) == 4.
-        if sys.maxint < (1 << 32) and struct.calcsize('P') == 4:
+        if sys.maxsize < (1 << 32) and struct.calcsize('P') == 4:
             self.checkraises(OverflowError,
-                             '\ta\n\tb', 'expandtabs', sys.maxint)
+                             '\ta\n\tb', 'expandtabs', sys.maxsize)
 
     def test_split(self):
         self.checkequal(['this', 'is', 'the', 'split', 'function'],
@@ -403,7 +403,7 @@ class CommonTest(unittest.TestCase):
         self.checkequal(['a', 'b', 'c', 'd'], 'a b c d', 'split', None, 3)
         self.checkequal(['a', 'b', 'c', 'd'], 'a b c d', 'split', None, 4)
         self.checkequal(['a', 'b', 'c', 'd'], 'a b c d', 'split', None,
-                        sys.maxint-1)
+                        sys.maxsize-1)
         self.checkequal(['a b c d'], 'a b c d', 'split', None, 0)
         self.checkequal(['a b c d'], '  a b c d', 'split', None, 0)
         self.checkequal(['a', 'b', 'c  d'], 'a  b  c  d', 'split', None, 2)
@@ -428,7 +428,7 @@ class CommonTest(unittest.TestCase):
         self.checkequal(['a', 'b', 'c', 'd'], 'a|b|c|d', 'split', '|', 3)
         self.checkequal(['a', 'b', 'c', 'd'], 'a|b|c|d', 'split', '|', 4)
         self.checkequal(['a', 'b', 'c', 'd'], 'a|b|c|d', 'split', '|',
-                        sys.maxint-2)
+                        sys.maxsize-2)
         self.checkequal(['a|b|c|d'], 'a|b|c|d', 'split', '|', 0)
         self.checkequal(['a', '', 'b||c||d'], 'a||b||c||d', 'split', '|', 2)
         self.checkequal(['endcase ', ''], 'endcase |', 'split', '|')
@@ -447,7 +447,7 @@ class CommonTest(unittest.TestCase):
         self.checkequal(['a', 'b', 'c', 'd'], 'a//b//c//d', 'split', '//', 3)
         self.checkequal(['a', 'b', 'c', 'd'], 'a//b//c//d', 'split', '//', 4)
         self.checkequal(['a', 'b', 'c', 'd'], 'a//b//c//d', 'split', '//',
-                        sys.maxint-10)
+                        sys.maxsize-10)
         self.checkequal(['a//b//c//d'], 'a//b//c//d', 'split', '//', 0)
         self.checkequal(['a', '', 'b////c////d'], 'a////b////c////d', 'split', '//', 2)
         self.checkequal(['endcase ', ''], 'endcase test', 'split', 'test')
@@ -481,7 +481,7 @@ class CommonTest(unittest.TestCase):
                 self.checkequal(['a', 'b', 'c//d'], 'a//b//c//d', 'split', target, 2)
 
         # mixed use of str and unicode
-        self.checkequal([u'a', u'b', u'c d'], 'a b c d', 'split', u' ', 2)
+        self.checkequal(['a', 'b', 'c d'], 'a b c d', 'split', ' ', 2)
 
         # argument type
         self.checkraises(TypeError, 'hello', 'split', 42, 42, 42)
@@ -501,7 +501,7 @@ class CommonTest(unittest.TestCase):
         self.checkequal(['a', 'b', 'c', 'd'], 'a b c d', 'rsplit', None, 3)
         self.checkequal(['a', 'b', 'c', 'd'], 'a b c d', 'rsplit', None, 4)
         self.checkequal(['a', 'b', 'c', 'd'], 'a b c d', 'rsplit', None,
-                        sys.maxint-20)
+                        sys.maxsize-20)
         self.checkequal(['a b c d'], 'a b c d', 'rsplit', None, 0)
         self.checkequal(['a b c d'], 'a b c d  ', 'rsplit', None, 0)
         self.checkequal(['a  b', 'c', 'd'], 'a  b  c  d', 'rsplit', None, 2)
@@ -510,7 +510,7 @@ class CommonTest(unittest.TestCase):
         self.checkequal(['a'], '  a    ', 'rsplit')
         self.checkequal(['a', 'b'], '  a    b   ', 'rsplit')
         self.checkequal(['  a', 'b'], '  a    b   ', 'rsplit', None, 1)
-        self.checkequal(['  a    b','c'], '  a    b   c   ', 'rsplit',
+        self.checkequal(['  a    b', 'c'], '  a    b   c   ', 'rsplit',
                         None, 1)
         self.checkequal(['  a', 'b', 'c'], '  a    b   c   ', 'rsplit',
                         None, 2)
@@ -528,7 +528,7 @@ class CommonTest(unittest.TestCase):
         self.checkequal(['a', 'b', 'c', 'd'], 'a|b|c|d', 'rsplit', '|', 3)
         self.checkequal(['a', 'b', 'c', 'd'], 'a|b|c|d', 'rsplit', '|', 4)
         self.checkequal(['a', 'b', 'c', 'd'], 'a|b|c|d', 'rsplit', '|',
-                        sys.maxint-100)
+                        sys.maxsize-100)
         self.checkequal(['a|b|c|d'], 'a|b|c|d', 'rsplit', '|', 0)
         self.checkequal(['a||b||c', '', 'd'], 'a||b||c||d', 'rsplit', '|', 2)
         self.checkequal(['', ' begincase'], '| begincase', 'rsplit', '|')
@@ -548,7 +548,7 @@ class CommonTest(unittest.TestCase):
         self.checkequal(['a', 'b', 'c', 'd'], 'a//b//c//d', 'rsplit', '//', 3)
         self.checkequal(['a', 'b', 'c', 'd'], 'a//b//c//d', 'rsplit', '//', 4)
         self.checkequal(['a', 'b', 'c', 'd'], 'a//b//c//d', 'rsplit', '//',
-                        sys.maxint-5)
+                        sys.maxsize-5)
         self.checkequal(['a//b//c//d'], 'a//b//c//d', 'rsplit', '//', 0)
         self.checkequal(['a////b////c', '', 'd'], 'a////b////c////d', 'rsplit', '//', 2)
         self.checkequal(['', ' begincase'], 'test begincase', 'rsplit', 'test')
@@ -582,7 +582,7 @@ class CommonTest(unittest.TestCase):
                 self.checkequal(['a//b', 'c', 'd'], 'a//b//c//d', 'rsplit', target, 2)
 
         # mixed use of str and unicode
-        self.checkequal([u'a b', u'c', u'd'], 'a b c d', 'rsplit', u' ', 2)
+        self.checkequal(['a b', 'c', 'd'], 'a b c d', 'rsplit', ' ', 2)
 
         # argument type
         self.checkraises(TypeError, 'hello', 'rsplit', 42, 42, 42)
@@ -611,12 +611,12 @@ class CommonTest(unittest.TestCase):
 
         # strip/lstrip/rstrip with unicode arg
         if test_support.have_unicode:
-            self.checkequal(unicode('hello', 'ascii'), 'xyzzyhelloxyzzy',
-                 'strip', unicode('xyz', 'ascii'))
-            self.checkequal(unicode('helloxyzzy', 'ascii'), 'xyzzyhelloxyzzy',
-                 'lstrip', unicode('xyz', 'ascii'))
-            self.checkequal(unicode('xyzzyhello', 'ascii'), 'xyzzyhelloxyzzy',
-                 'rstrip', unicode('xyz', 'ascii'))
+            self.checkequal(str('hello', 'ascii'), 'xyzzyhelloxyzzy',
+                 'strip', str('xyz', 'ascii'))
+            self.checkequal(str('helloxyzzy', 'ascii'), 'xyzzyhelloxyzzy',
+                 'lstrip', str('xyz', 'ascii'))
+            self.checkequal(str('xyzzyhello', 'ascii'), 'xyzzyhelloxyzzy',
+                 'rstrip', str('xyz', 'ascii'))
             # Not a Jython skip: str passes but bytearray fails this check
             # in both Jython 2.7 and CPython 2.7.5
             #self.checkequal(unicode('hello', 'ascii'), 'hello',
@@ -679,7 +679,7 @@ class CommonTest(unittest.TestCase):
         EQ("", "", "replace", "A", "")
         EQ("", "", "replace", "A", "A")
         EQ("", "", "replace", "", "", 100)
-        EQ("", "", "replace", "", "", sys.maxint)
+        EQ("", "", "replace", "", "", sys.maxsize)
 
         # interleave (from=="", 'to' gets inserted everywhere)
         EQ("A", "A", "replace", "", "")
@@ -688,7 +688,7 @@ class CommonTest(unittest.TestCase):
         EQ("*-#A*-#", "A", "replace", "", "*-#")
         EQ("*-A*-A*-", "AA", "replace", "", "*-")
         EQ("*-A*-A*-", "AA", "replace", "", "*-", -1)
-        EQ("*-A*-A*-", "AA", "replace", "", "*-", sys.maxint)
+        EQ("*-A*-A*-", "AA", "replace", "", "*-", sys.maxsize)
         EQ("*-A*-A*-", "AA", "replace", "", "*-", 4)
         EQ("*-A*-A*-", "AA", "replace", "", "*-", 3)
         EQ("*-A*-A", "AA", "replace", "", "*-", 2)
@@ -699,7 +699,7 @@ class CommonTest(unittest.TestCase):
         EQ("", "A", "replace", "A", "")
         EQ("", "AAA", "replace", "A", "")
         EQ("", "AAA", "replace", "A", "", -1)
-        EQ("", "AAA", "replace", "A", "", sys.maxint)
+        EQ("", "AAA", "replace", "A", "", sys.maxsize)
         EQ("", "AAA", "replace", "A", "", 4)
         EQ("", "AAA", "replace", "A", "", 3)
         EQ("A", "AAA", "replace", "A", "", 2)
@@ -708,7 +708,7 @@ class CommonTest(unittest.TestCase):
         EQ("", "AAAAAAAAAA", "replace", "A", "")
         EQ("BCD", "ABACADA", "replace", "A", "")
         EQ("BCD", "ABACADA", "replace", "A", "", -1)
-        EQ("BCD", "ABACADA", "replace", "A", "", sys.maxint)
+        EQ("BCD", "ABACADA", "replace", "A", "", sys.maxsize)
         EQ("BCD", "ABACADA", "replace", "A", "", 5)
         EQ("BCD", "ABACADA", "replace", "A", "", 4)
         EQ("BCDA", "ABACADA", "replace", "A", "", 3)
@@ -731,7 +731,7 @@ class CommonTest(unittest.TestCase):
         EQ("thaet", "thaet", "replace", "the", "")
         EQ("here and re", "here and there", "replace", "the", "")
         EQ("here and re and re", "here and there and there",
-           "replace", "the", "", sys.maxint)
+           "replace", "the", "", sys.maxsize)
         EQ("here and re and re", "here and there and there",
            "replace", "the", "", -1)
         EQ("here and re and re", "here and there and there",
@@ -756,7 +756,7 @@ class CommonTest(unittest.TestCase):
         # single character replace in place (len(from)==len(to)==1)
         EQ("Who goes there?", "Who goes there?", "replace", "o", "o")
         EQ("WhO gOes there?", "Who goes there?", "replace", "o", "O")
-        EQ("WhO gOes there?", "Who goes there?", "replace", "o", "O", sys.maxint)
+        EQ("WhO gOes there?", "Who goes there?", "replace", "o", "O", sys.maxsize)
         EQ("WhO gOes there?", "Who goes there?", "replace", "o", "O", -1)
         EQ("WhO gOes there?", "Who goes there?", "replace", "o", "O", 3)
         EQ("WhO gOes there?", "Who goes there?", "replace", "o", "O", 2)
@@ -773,7 +773,7 @@ class CommonTest(unittest.TestCase):
 
         # substring replace in place (len(from)==len(to) > 1)
         EQ("Th** ** a t**sue", "This is a tissue", "replace", "is", "**")
-        EQ("Th** ** a t**sue", "This is a tissue", "replace", "is", "**", sys.maxint)
+        EQ("Th** ** a t**sue", "This is a tissue", "replace", "is", "**", sys.maxsize)
         EQ("Th** ** a t**sue", "This is a tissue", "replace", "is", "**", -1)
         EQ("Th** ** a t**sue", "This is a tissue", "replace", "is", "**", 4)
         EQ("Th** ** a t**sue", "This is a tissue", "replace", "is", "**", 3)
@@ -787,7 +787,7 @@ class CommonTest(unittest.TestCase):
         # replace single character (len(from)==1, len(to)>1)
         EQ("ReyKKjaviKK", "Reykjavik", "replace", "k", "KK")
         EQ("ReyKKjaviKK", "Reykjavik", "replace", "k", "KK", -1)
-        EQ("ReyKKjaviKK", "Reykjavik", "replace", "k", "KK", sys.maxint)
+        EQ("ReyKKjaviKK", "Reykjavik", "replace", "k", "KK", sys.maxsize)
         EQ("ReyKKjaviKK", "Reykjavik", "replace", "k", "KK", 2)
         EQ("ReyKKjavik", "Reykjavik", "replace", "k", "KK", 1)
         EQ("Reykjavik", "Reykjavik", "replace", "k", "KK", 0)
@@ -799,7 +799,7 @@ class CommonTest(unittest.TestCase):
         EQ("ham, ham, eggs and ham", "spam, spam, eggs and spam",
            "replace", "spam", "ham")
         EQ("ham, ham, eggs and ham", "spam, spam, eggs and spam",
-           "replace", "spam", "ham", sys.maxint)
+           "replace", "spam", "ham", sys.maxsize)
         EQ("ham, ham, eggs and ham", "spam, spam, eggs and spam",
            "replace", "spam", "ham", -1)
         EQ("ham, ham, eggs and ham", "spam, spam, eggs and spam",
@@ -887,7 +887,7 @@ class CommonTest(unittest.TestCase):
 
     def test_replace_overflow(self):
         # Check for overflow checking on 32 bit machines
-        if sys.maxint != 2147483647 or struct.calcsize("P") > 4:
+        if sys.maxsize != 2147483647 or struct.calcsize("P") > 4:
             return
         A2_16 = "A" * (2**16)
         self.checkraises(OverflowError, A2_16, "replace", "", A2_16)
@@ -1150,13 +1150,13 @@ class MixinStrUnicodeUserStringTest:
         self.checkequal(False, '', '__contains__', 'asdf')
 
     def test_subscript(self):
-        self.checkequal(u'a', 'abc', '__getitem__', 0)
-        self.checkequal(u'c', 'abc', '__getitem__', -1)
-        self.checkequal(u'a', 'abc', '__getitem__', 0L)
-        self.checkequal(u'abc', 'abc', '__getitem__', slice(0, 3))
-        self.checkequal(u'abc', 'abc', '__getitem__', slice(0, 1000))
-        self.checkequal(u'a', 'abc', '__getitem__', slice(0, 1))
-        self.checkequal(u'', 'abc', '__getitem__', slice(0, 0))
+        self.checkequal('a', 'abc', '__getitem__', 0)
+        self.checkequal('c', 'abc', '__getitem__', -1)
+        self.checkequal('a', 'abc', '__getitem__', 0)
+        self.checkequal('abc', 'abc', '__getitem__', slice(0, 3))
+        self.checkequal('abc', 'abc', '__getitem__', slice(0, 1000))
+        self.checkequal('a', 'abc', '__getitem__', slice(0, 1))
+        self.checkequal('', 'abc', '__getitem__', slice(0, 0))
 
         self.checkraises(TypeError, 'abc', '__getitem__', 'def')
 
@@ -1182,7 +1182,7 @@ class MixinStrUnicodeUserStringTest:
                 # Skip step 0 (invalid)
                 for step in indices[1:]:
                     L = list(s)[start:stop:step]
-                    self.checkequal(u"".join(L), s, '__getitem__',
+                    self.checkequal("".join(L), s, '__getitem__',
                                     slice(start, stop, step))
 
     def test_mul(self):
@@ -1213,11 +1213,11 @@ class MixinStrUnicodeUserStringTest:
         self.checkequal('abc', 'a', 'join', ('abc',))
         self.checkequal('z', 'a', 'join', UserList(['z']))
         if test_support.have_unicode:
-            self.checkequal(unicode('a.b.c'), unicode('.'), 'join', ['a', 'b', 'c'])
-            self.checkequal(unicode('a.b.c'), '.', 'join', [unicode('a'), 'b', 'c'])
-            self.checkequal(unicode('a.b.c'), '.', 'join', ['a', unicode('b'), 'c'])
-            self.checkequal(unicode('a.b.c'), '.', 'join', ['a', 'b', unicode('c')])
-            self.checkraises(TypeError, '.', 'join', ['a', unicode('b'), 3])
+            self.checkequal(str('a.b.c'), str('.'), 'join', ['a', 'b', 'c'])
+            self.checkequal(str('a.b.c'), '.', 'join', [str('a'), 'b', 'c'])
+            self.checkequal(str('a.b.c'), '.', 'join', ['a', str('b'), 'c'])
+            self.checkequal(str('a.b.c'), '.', 'join', ['a', 'b', str('c')])
+            self.checkraises(TypeError, '.', 'join', ['a', str('b'), 3])
         for i in [5, 25, 125]:
             self.checkequal(((('a' * i) + '-') * i)[:-1], '-', 'join',
                  ['a' * i] * i)
@@ -1229,12 +1229,12 @@ class MixinStrUnicodeUserStringTest:
 
         self.checkraises(TypeError, ' ', 'join')
         self.checkraises(TypeError, ' ', 'join', 7)
-        self.checkraises(TypeError, ' ', 'join', Sequence([7, 'hello', 123L]))
+        self.checkraises(TypeError, ' ', 'join', Sequence([7, 'hello', 123]))
         try:
             def f():
                 yield 4 + ""
             self.fixtype(' ').join(f())
-        except TypeError, e:
+        except TypeError as e:
             if '+' not in str(e):
                 self.fail('join() ate exception message')
         else:
@@ -1254,11 +1254,11 @@ class MixinStrUnicodeUserStringTest:
             # unicode raises ValueError, str raises OverflowError
             self.checkraises((ValueError, OverflowError), '%c', '__mod__', ordinal)
 
-        longvalue = sys.maxint + 10L
+        longvalue = sys.maxsize + 10
         slongvalue = str(longvalue)
-        if slongvalue[-1] in ("L","l"): slongvalue = slongvalue[:-1]
+        if slongvalue[-1] in ("L", "l"): slongvalue = slongvalue[:-1]
         self.checkequal(' 42', '%3ld', '__mod__', 42)
-        self.checkequal('42', '%d', '__mod__', 42L)
+        self.checkequal('42', '%d', '__mod__', 42)
         self.checkequal('42', '%d', '__mod__', 42.0)
         self.checkequal(slongvalue, '%d', '__mod__', longvalue)
         self.checkcall('%d', '__mod__', float(longvalue))
@@ -1286,10 +1286,10 @@ class MixinStrUnicodeUserStringTest:
 
     def test_floatformatting(self):
         # float formatting
-        for prec in xrange(100):
+        for prec in range(100):
             format = '%%.%if' % prec
             value = 0.01
-            for x in xrange(60):
+            for x in range(60):
                 value = value * 3.14159265359 / 3.0 * 10.0
                 self.checkcall(format, "__mod__", value)
 
@@ -1328,12 +1328,12 @@ class MixinStrUnicodeUserStringTest:
         self.checkraises(TypeError, S, 'partition', None)
 
         # mixed use of str and unicode
-        self.assertEqual('a/b/c'.partition(u'/'), ('a', '/', 'b/c'))
+        self.assertEqual('a/b/c'.partition('/'), ('a', '/', 'b/c'))
 
         # with buffer arg (Jython addition)
         b = buffer('ti')
-        if self.__class__.type2test is unicode:
-            self.checkequal(('this is the par', u'ti', 'tion method'),
+        if self.__class__.type2test is str:
+            self.checkequal(('this is the par', 'ti', 'tion method'),
                 'this is the partition method', 'partition', b)
         else:
             self.checkequal(('this is the par', b, 'tion method'),
@@ -1343,8 +1343,8 @@ class MixinStrUnicodeUserStringTest:
         if test_support.is_jython:
             # CPython does not support until v3.2
             with memoryview('ti') as m:
-                if self.__class__.type2test is unicode:
-                    self.checkequal(('this is the par', u'ti', 'tion method'),
+                if self.__class__.type2test is str:
+                    self.checkequal(('this is the par', 'ti', 'tion method'),
                         'this is the partition method', 'partition', m)
                 else:
                     self.checkequal(('this is the par', m, 'tion method'),
@@ -1366,12 +1366,12 @@ class MixinStrUnicodeUserStringTest:
         self.checkraises(TypeError, S, 'rpartition', None)
 
         # mixed use of str and unicode
-        self.assertEqual('a/b/c'.rpartition(u'/'), ('a/b', '/', 'c'))
+        self.assertEqual('a/b/c'.rpartition('/'), ('a/b', '/', 'c'))
 
         # with buffer arg (Jython addition)
         b = buffer('ti')
-        if self.__class__.type2test is unicode:
-            self.checkequal(('this is the parti', u'ti', 'on method'),
+        if self.__class__.type2test is str:
+            self.checkequal(('this is the parti', 'ti', 'on method'),
                 'this is the partition method', 'rpartition', b)
         else:
             self.checkequal(('this is the parti', b, 'on method'),
@@ -1381,8 +1381,8 @@ class MixinStrUnicodeUserStringTest:
         if test_support.is_jython:
             # CPython does not support until v3.2
             with memoryview('ti') as m:
-                if self.__class__.type2test is unicode:
-                    self.checkequal(('this is the parti', u'ti', 'on method'),
+                if self.__class__.type2test is str:
+                    self.checkequal(('this is the parti', 'ti', 'on method'),
                         'this is the partition method', 'rpartition', m)
                 else:
                     self.checkequal(('this is the parti', m, 'on method'),
@@ -1430,19 +1430,19 @@ class MixinStrUnicodeUserStringTest:
         # issue 11828
         s = 'hello'
         x = 'x'
-        self.assertRaisesRegexp(TypeError, r'\bfind\b', s.find,
+        self.assertRaisesRegex(TypeError, r'\bfind\b', s.find,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'\brfind\b', s.rfind,
+        self.assertRaisesRegex(TypeError, r'\brfind\b', s.rfind,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'\bindex\b', s.index,
+        self.assertRaisesRegex(TypeError, r'\bindex\b', s.index,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'\brindex\b', s.rindex,
+        self.assertRaisesRegex(TypeError, r'\brindex\b', s.rindex,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'^count\(', s.count,
+        self.assertRaisesRegex(TypeError, r'^count\(', s.count,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'^startswith\(', s.startswith,
+        self.assertRaisesRegex(TypeError, r'^startswith\(', s.startswith,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'^endswith\(', s.endswith,
+        self.assertRaisesRegex(TypeError, r'^endswith\(', s.endswith,
                                 x, None, None, None)
 
 class MixinStrStringUserStringTest:
@@ -1451,7 +1451,7 @@ class MixinStrStringUserStringTest:
 
     def test_maketrans(self):
         self.assertEqual(
-           ''.join(map(chr, xrange(256))).replace('abc', 'xyz'),
+           ''.join(map(chr, range(256))).replace('abc', 'xyz'),
            string.maketrans('abc', 'xyz')
         )
         self.assertRaises(ValueError, string.maketrans, 'abc', 'xyzw')
@@ -1518,18 +1518,18 @@ class MixinStrUnicodeTest:
         s1 = subclass("abcd")
         s2 = t().join([s1])
         self.assertTrue(s1 is not s2)
-        self.assertTrue(type(s2) is t)
+        self.assertTrue(isinstance(s2, t))
 
         s1 = t("abcd")
         s2 = t().join([s1])
         self.assertTrue(s1 is s2)
 
         # Should also test mixed-type join.
-        if t is unicode:
+        if t is str:
             s1 = subclass("abcd")
             s2 = "".join([s1])
             self.assertTrue(s1 is not s2)
-            self.assertTrue(type(s2) is t)
+            self.assertTrue(isinstance(s2, t))
 
             s1 = t("abcd")
             s2 = "".join([s1])
@@ -1537,14 +1537,14 @@ class MixinStrUnicodeTest:
 
         elif t is str:
             s1 = subclass("abcd")
-            s2 = u"".join([s1])
+            s2 = "".join([s1])
             self.assertTrue(s1 is not s2)
-            self.assertTrue(type(s2) is unicode) # promotes!
+            self.assertTrue(isinstance(s2, str)) # promotes!
 
             s1 = t("abcd")
-            s2 = u"".join([s1])
+            s2 = "".join([s1])
             self.assertTrue(s1 is not s2)
-            self.assertTrue(type(s2) is unicode) # promotes!
+            self.assertTrue(isinstance(s2, str)) # promotes!
 
         else:
             self.fail("unexpected type for MixinStrUnicodeTest %r" % t)
