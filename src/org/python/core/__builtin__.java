@@ -461,11 +461,10 @@ public class __builtin__ {
         PyObject l = locals();
         PyList ret;
         PyObject retObj = l.invoke("keys");
-        try {
+        if (retObj instanceof PyList) {
             ret = (PyList) retObj;
-        } catch (ClassCastException e) {
-            throw Py.TypeError(String.format("Expected keys() to be a list, not '%s'",
-                                             retObj.getType().fastGetName()));
+        } else {
+            ret = new PyList(retObj);
         }
         ret.sort();
         return ret;

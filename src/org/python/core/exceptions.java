@@ -253,6 +253,8 @@ public class exceptions extends PyObject implements ClassDictInit {
         initSlots(self);
         if (args.length > 0) {
             self.__setattr__("value", args[0]);
+        } else {
+            self.__setattr__("value", Py.None);
         }
     }
 
