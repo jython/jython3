@@ -1391,8 +1391,8 @@ public final class Py {
     // XXX: the following 4 are backwards compat. for the
     // oldcompiler. newcompiler should just call doRaise instead
     public static PyException makeException(PyObject type, PyObject value,
-                                            PyObject traceback) {
-        return PyException.doRaise(type, value, traceback);
+                                            PyObject cause) {
+        return PyException.doRaise(type, value, cause);
     }
 
     public static PyException makeException(PyObject type, PyObject value) {

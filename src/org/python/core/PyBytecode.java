@@ -697,7 +697,9 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                                 PyTraceback tb = (PyTraceback) (stack.pop());
                                 PyObject value = stack.pop();
                                 PyObject type = stack.pop();
-                                throw PyException.doRaise(type, value, tb);
+                                PyException pye = PyException.doRaise(type, value);
+                                pye.traceback = tb;
+                                throw pye;
                             }
                             case 2: {
                                 PyObject value = stack.pop();

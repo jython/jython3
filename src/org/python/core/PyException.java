@@ -20,6 +20,16 @@ public class PyException extends RuntimeException implements Traverseproc
      */
     public PyObject value = Py.None;
 
+    /**
+     * The cause of the exception for implicitly chained exceptions
+     */
+    public PyBaseException context;
+
+    /**
+     * The cause of the exception for explicitly chained exceptions
+     */
+    public PyBaseException cause;
+
     /** The exception traceback object. */
     public PyTraceback traceback;
 
@@ -43,9 +53,8 @@ public class PyException extends RuntimeException implements Traverseproc
         this(type, value, null);
     }
 
-    public PyException(PyObject type, PyObject value, PyTraceback traceback) {
-        this.type = type;
-        this.value = value;
+    public PyException(PyObject type, PyObject value, PyObject cause, PyTraceback traceback) {
+        this(type, value, cause);
         if (traceback != null) {
             this.traceback = traceback;
             isReRaise = true;
@@ -54,6 +63,15 @@ public class PyException extends RuntimeException implements Traverseproc
             if (frame != null && frame.tracefunc != null) {
                 frame.tracefunc = frame.tracefunc.traceException(frame, this);
             }
+        }
+    }
+
+    public PyException(PyObject type, PyObject value, PyObject cause) {
+        this.type = type;
+        this.value = value;
+        if (cause != null) {
+            this.cause = (PyBaseException) cause;
+            isReRaise = true;
         }
     }
 
@@ -125,7 +143,7 @@ public class PyException extends RuntimeException implements Traverseproc
                 } else if (value instanceof PyTuple && type != Py.KeyError) {
                     args = ((PyTuple)value).getArray();
                 } else {
-                    args = new PyObject[] {value};
+                    args = new PyObject[] {value, cause};
                 }
 
                 value = type.__call__(args);
@@ -162,27 +180,29 @@ public class PyException extends RuntimeException implements Traverseproc
         isReRaise = isFinally;
     }
 
+    public static PyException doRaise(PyObject type, PyObject value) {
+        return doRaise(type, value, null);
+    }
+
     /**
      * Logic for the raise statement
      *
      * @param type the first arg to raise, a type or an instance
      * @param value the second arg, the instance of the class or arguments to its
      * constructor
-     * @param traceback a traceback object
+     * @param cause the chained exception
      * @return a PyException wrapper
      */
-    public static PyException doRaise(PyObject type, PyObject value, PyObject traceback) {
+    public static PyException doRaise(PyObject type, PyObject value, PyObject cause) {
         if (type == null) {
             ThreadState state = Py.getThreadState();
             type = state.exception.type;
             value = state.exception.value;
-            traceback = state.exception.traceback;
+            cause = state.exception.cause;
         }
 
-        if (traceback == Py.None) {
-            traceback = null;
-        } else if (traceback != null && !(traceback instanceof PyTraceback)) {
-            throw Py.TypeError("raise: arg 3 must be a traceback or None");
+        if (cause == Py.None) {
+            cause = null;
         }
 
         if (value == null) {
@@ -195,7 +215,7 @@ public class PyException extends RuntimeException implements Traverseproc
         }
 
         if (isExceptionClass(type)) {
-            PyException pye = new PyException(type, value, (PyTraceback)traceback);
+            PyException pye = new PyException(type, value, cause);
             pye.normalize();
             if (!isExceptionInstance(pye.value)) {
                 throw Py.TypeError(String.format(
@@ -223,7 +243,7 @@ public class PyException extends RuntimeException implements Traverseproc
             Py.DeprecationWarning("exceptions must derive from BaseException in 3.x");
         }
 
-        return new PyException(type, value, (PyTraceback)traceback);
+        return new PyException(type, value, cause);
     }
 
     /**

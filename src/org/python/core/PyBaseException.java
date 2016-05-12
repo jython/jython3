@@ -26,6 +26,18 @@ public class PyBaseException extends PyObject implements Traverseproc {
     /** Exception's underlying dictionary, lazily created. */
     public PyObject __dict__;
 
+    @ExposedGet(doc = BuiltinDocs.BaseException___cause___doc)
+    public PyObject __cause__;
+
+    @ExposedGet(doc = BuiltinDocs.BaseException___suppress_context___doc)
+    public PyObject __suppress_context__;
+
+    @ExposedGet(doc = BuiltinDocs.BaseException___context___doc)
+    public PyObject __context__;
+
+    @ExposedGet(doc = BuiltinDocs.BaseException___traceback___doc)
+    public PyObject __traceback__;
+
     public PyBaseException() {
         super();
     }
@@ -47,6 +59,14 @@ public class PyBaseException extends PyObject implements Traverseproc {
         if (args.length == 1) {
             message = args[0];
         }
+        if (args.length > 1) {
+            __cause__ = args[1];
+            __suppress_context__ = Py.True;
+        } else {
+            __cause__ = Py.None;
+            __suppress_context__ = Py.False;
+        }
+        __context__ = Py.None;
     }
 
     @Override
