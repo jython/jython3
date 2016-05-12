@@ -20,11 +20,15 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
 
     public static final PyType TYPE = PyType.fromClass(PyFunction.class);
 
-    /** The writable name, also available via func_name. */
+    /** The writable name */
     @ExposedGet
     public String __name__;
 
-    /** The writable doc string, also available via func_doc. */
+    /** The qualified name */
+    @ExposedGet
+    public String __qualname__;
+
+    /** The writable doc string. */
     @ExposedGet
     @ExposedSet
     public PyObject __doc__;
@@ -156,6 +160,7 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
                                              ? null : ((PyTuple)closure).getArray());
         if (name != Py.None) {
             function.__name__ = name.toString();
+            function.__qualname__ = name.toString();
         }
         return function;
     }
@@ -168,42 +173,6 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
     @ExposedDelete(name = "__name__")
     public void delName() {
         throw Py.TypeError("__name__ must be set to a string object");
-    }
-
-    @Deprecated
-    @ExposedGet(name = "func_name")
-    public String getFuncName() {
-        return __name__;
-    }
-
-    @Deprecated
-    @ExposedSet(name = "func_name")
-    public void setFuncName(String func_name) {
-        setName(func_name);
-    }
-
-    @Deprecated
-    @ExposedDelete(name = "func_name")
-    public void delFuncName() {
-        delName();
-    }
-
-    @Deprecated
-    @ExposedGet(name = "func_doc")
-    public PyObject getFuncDoc() {
-        return __doc__;
-    }
-
-    @Deprecated
-    @ExposedSet(name = "func_doc")
-    public void setFuncDoc(PyObject func_doc) {
-        __doc__ = func_doc;
-    }
-
-    @Deprecated
-    @ExposedDelete(name = "func_doc")
-    public void delFuncDoc() {
-        delDoc();
     }
 
     @ExposedDelete(name = "__doc__")
@@ -230,36 +199,6 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
     @ExposedDelete(name = "__defaults__")
     public void delDefaults() {
         __defaults__ = null;
-    }
-
-    @Deprecated
-    @ExposedGet(name = "func_defaults")
-    public PyObject getFuncDefaults() {
-        return getDefaults();
-    }
-
-    @Deprecated
-    @ExposedSet(name = "func_defaults")
-    public void setFuncDefaults(PyObject func_defaults) {
-        setDefaults(func_defaults);
-    }
-
-    @Deprecated
-    @ExposedDelete(name = "func_defaults")
-    public void delFuncDefaults(    ) {
-        delDefaults();
-    }
-
-    @Deprecated
-    @ExposedGet(name = "func_code")
-    public PyCode getFuncCode() {
-        return __code__;
-    }
-
-    @Deprecated
-    @ExposedSet(name = "func_code")
-    public void setFuncCode(PyCode code) {
-        setCode(code);
     }
 
     @ExposedSet(name = "__code__")
@@ -306,24 +245,6 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
         throw Py.TypeError("function's dictionary may not be deleted");
     }
 
-    @Deprecated
-    @ExposedGet(name = "func_dict")
-    public PyObject getFuncDict() {
-        return getDict();
-    }
-
-    @Deprecated
-    @ExposedSet(name = "func_dict")
-    public void setFuncDict(PyObject value) {
-        setDict(value);
-    }
-
-    @Deprecated
-    @ExposedDelete(name = "func_dict")
-    public void delFuncDict() {
-        delDict();
-    }
-
     @ExposedSet(name = "__globals__")
     public void setGlobals(PyObject value) {
         throw Py.TypeError("readonly attribute");
@@ -334,23 +255,6 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
         throw Py.TypeError("readonly attribute");
     }
 
-    @Deprecated
-    @ExposedGet(name = "func_globals")
-    public PyObject getFuncGlobals() {
-        return __globals__;
-    }
-
-    @Deprecated
-    @ExposedSet(name = "func_globals")
-    public void setFuncGlobals(PyObject value) {
-        setGlobals(value);
-    }
-
-    @Deprecated
-    @ExposedDelete(name = "func_globals")
-    public void delFuncGlobals() {
-        delGlobals();
-    }
 
     @ExposedSet(name = "__closure__")
     public void setClosure(PyObject value) {
@@ -360,24 +264,6 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
     @ExposedDelete(name = "__closure__")
     public void delClosure() {
         throw Py.TypeError("readonly attribute");
-    }
-
-    @Deprecated
-    @ExposedGet(name = "func_closure")
-    public PyObject getFuncClosure() {
-        return __closure__;
-    }
-
-    @Deprecated
-    @ExposedSet(name = "func_closure")
-    public void setFuncClosure(PyObject value) {
-        setClosure(value);
-    }
-
-    @Deprecated
-    @ExposedDelete(name = "func_closure")
-    public void delFuncClosure() {
-        delClosure();
     }
 
     private void ensureDict() {
