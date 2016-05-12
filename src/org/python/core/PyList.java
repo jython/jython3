@@ -964,6 +964,12 @@ public class PyList extends PySequenceList implements List {
         return addAll(0, c);
     }
 
+    @ExposedMethod(doc = BuiltinDocs.list_clear_doc)
+    final PyObject list_clear() {
+        clear();
+        return Py.None;
+    }
+
     @Override
     public synchronized void clear() {
         list.clear();
