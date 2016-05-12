@@ -313,9 +313,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
     @Override
     public Object visitExpression(Expression node) throws Exception {
-        if (my_scope.generator && node.getInternalBody() != null) {
-            module.error("'return' with argument inside generator", true, node);
-        }
+//        if (my_scope.generator && node.getInternalBody() != null) {
+//            module.error("'return' with argument inside generator", true, node);
+//        }
         return visitReturn(new Return(node, node.getInternalBody()), true);
     }
 
@@ -862,9 +862,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         }
         int tmp = 0;
         if (node.getInternalValue() != null) {
-            if (my_scope.generator && !(node instanceof LambdaSyntheticReturn)) {
-                throw new ParseException("'return' with argument " + "inside generator", node);
-            }
+//            if (my_scope.generator && !(node instanceof LambdaSyntheticReturn)) {
+//                throw new ParseException("'return' with argument inside generator", node);
+//            }
             visit(node.getInternalValue());
             tmp = code.getReturnLocal();
             code.astore(tmp);

@@ -19,6 +19,7 @@ json/**
 # Lib files, in alphabetical order:
 __future__.py
 _collections_abc.py
+_compat_pickle.py
 _dummy_thread.py
 _LWPCookieJar.py
 _MozillaCookieJar.py
