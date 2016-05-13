@@ -337,6 +337,19 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         return fileioMode.toString();
     }
 
+    public PyString read1() {
+        return file_read(-1);
+    }
+
+    public PyString read1(int size) {
+        return file_read1(size);
+    }
+
+    @ExposedMethod
+    final synchronized PyString file_read1(int size) {
+        return file_read(size);
+    }
+
     @ExposedMethod(defaults = {"-1"}, doc = BuiltinDocs.TextIOBase_read_doc)
     final synchronized PyString file_read(int size) {
         checkClosed();
@@ -450,6 +463,24 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         return file_self();
     }
 
+    public PyObject readable() {
+        return file_readable();
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.TextIOBase_readable_doc)
+    final PyObject file_readable() {
+        return Py.newBoolean(reading || universal);
+    }
+
+    public PyObject writable() {
+        return file_writable();
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.TextIOBase_writable_doc)
+    final PyObject file_writable() {
+        return Py.newBoolean(writing || appending || universal);
+    }
+
     @ExposedMethod(doc = BuiltinDocs.TextIOBase_write_doc)
     final void file_write(PyObject obj) {
         file_write(asWritable(obj, null));
@@ -525,6 +556,15 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
 
     public long tell() {
         return file_tell();
+    }
+
+    public PyObject seekable() {
+        return file_seekable();
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.TextIOBase_seekable_doc)
+    final PyObject file_seekable() {
+        return Py.True;
     }
 
     @ExposedMethod(defaults = {"0"}, doc = BuiltinDocs.TextIOBase_seek_doc)
@@ -730,7 +770,6 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         }
 
     }
-
 
     /* Traverseproc implementation */
     @Override

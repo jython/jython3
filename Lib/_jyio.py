@@ -977,7 +977,7 @@ def _check_decoded_chars(chars):
 
 def _check_buffered_bytes(b, context="read"):
     """Check buffer has returned bytes"""
-    if not isinstance(b, str):
+    if not isinstance(b, bytes):
         raise TypeError("underlying %s() should have returned a bytes object, not '%s'" %
                         (context, type(b)))
 
