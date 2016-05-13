@@ -230,10 +230,11 @@ public abstract class PyBaseCode extends PyCode {
             final PyObject[] fastlocals = frame.f_fastlocals;
             if (varkwargs) {
                 kwdict = new PyDictionary();
-                i = co_argcount;
+                i = co_argcount + co_kwonlyargcount;
                 if (varargs) {
                     i++;
                 }
+
                 fastlocals[i] = kwdict;
             }
             if (argcount > co_argcount) {
