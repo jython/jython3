@@ -674,11 +674,11 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                         PySystemState.displayhook(stack.pop());
                         break;
 
-                    case Opcode.PRINT_ITEM_TO:
-                        Py.printComma(stack.pop(), stack.pop());
+                    case Opcode.GET_AWAITABLE:
+                        Py.getAwaitable(stack.pop());
                         break;
 
-                    case Opcode.PRINT_ITEM:
+                    case Opcode.LOAD_BUILD_CLASS:
                         Py.printComma(stack.pop());
                         break;
 
@@ -686,8 +686,8 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                         Py.printlnv(stack.pop());
                         break;
 
-                    case Opcode.PRINT_NEWLINE:
-                        Py.println();
+                    case Opcode.YIELD_FROM:
+                        Py.yieldFrom(stack.pop());
                         break;
 
                     case Opcode.RAISE_VARARGS:

@@ -260,9 +260,7 @@ public class exceptions extends PyObject implements ClassDictInit {
 
     public static PyString StopIteration__str__(PyObject self, PyObject[] args, String[] kwargs) {
         PyObject value = self.__getattr__("value");
-        PyObject str = value.__str__();
-        String result = String.format("StopIteration: %s", str.toString());
-        return new PyString(result);
+        return value.__str__();
     }
 
     public static PyObject SyntaxError() {
