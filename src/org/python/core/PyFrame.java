@@ -9,6 +9,8 @@ import org.python.expose.ExposedGet;
 import org.python.expose.ExposedSet;
 import org.python.expose.ExposedType;
 
+import java.util.LinkedList;
+
 /**
  * A Python frame object.
  */
@@ -16,6 +18,9 @@ import org.python.expose.ExposedType;
 public class PyFrame extends PyObject implements Traverseproc {
 
     public static final PyType TYPE = PyType.fromClass(PyFrame.class);
+
+    /** yield from generator */
+    public PyObject f_yieldfrom;
 
     /** Previous frame or null. */
     @ExposedGet

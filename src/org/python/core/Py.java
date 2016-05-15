@@ -1018,6 +1018,11 @@ public final class Py {
     }
 
     public static PyObject getYieldFromIter(PyObject iter) {
+        if (iter instanceof PyCoroutine) {
+            throw Py.TypeError("cannot 'yield from' a coroutine object in a non-coroutine generator");
+        } else if (iter instanceof PyGenerator) {
+            return iter;
+        }
         return iter.__iter__();
     }
 
@@ -1025,20 +1030,14 @@ public final class Py {
         return ((PyCoroutine) iter).__await__();
     }
 
-    public static PyObject yieldFrom(PyObject iter, Object val) {
-        PyObject value = (PyObject) val;
+    public static PyObject yieldFrom(PyObject iter) {
         PyObject retval;
         try {
             // coroutine or generator
             if (iter instanceof PyGenerator) {
-                retval = ((PyGenerator) iter).send(value);
+                retval = ((PyGenerator) iter).send(null);
             } else {
-                if (value == Py.None) {
-                    retval = iter.__iternext__();
-                } else {
-                    PyObject send = iter.__finditem__("send");
-                    retval = send.__call__(value);
-                }
+                retval = iter.__iternext__();
             }
         } catch (PyException e) {
             if (e.match(Py.StopIteration)) {

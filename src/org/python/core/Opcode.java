@@ -48,9 +48,9 @@ public class Opcode {
     public static final int INPLACE_POWER = 67;
     public static final int GET_ITER = 68;
     public static final int PRINT_EXPR = 70;
-    public static final int PRINT_ITEM = 71;
-    public static final int PRINT_NEWLINE = 72;
-    public static final int PRINT_ITEM_TO = 73;
+    public static final int LOAD_BUILD_CLASS = 71;
+    public static final int YIELD_FROM = 72;
+    public static final int GET_AWAITABLE = 73;
     public static final int PRINT_NEWLINE_TO = 74;
     public static final int INPLACE_LSHIFT = 75;
     public static final int INPLACE_RSHIFT = 76;

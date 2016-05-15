@@ -26,6 +26,8 @@ import org.python.antlr.base.stmt;
 import org.python.core.CompilerFlags;
 import org.python.core.ContextGuard;
 import org.python.core.ContextManager;
+import org.python.core.PyGenerator;
+import org.python.core.imp;
 import org.python.core.Py;
 import org.python.core.PyCode;
 import org.python.core.PyComplex;
@@ -78,6 +80,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     private Stack<Label> continueLabels, breakLabels;
     private Stack<ExceptionHandler> exceptionHandlers;
     private Vector<Label> yields = new Vector<Label>();
+    private boolean yieldedFrom = false;
 
     /*
      * break/continue finally's level. This is the lowest level in the exceptionHandlers which
@@ -115,6 +118,10 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         loadFrame();
         code.iconst(idx);
         code.putfield(p(PyFrame.class), "f_lasti", "I");
+    }
+
+    public void getLastI() {
+        code.getfield(p(PyFrame.class), "f_lasti", "I");
     }
 
     private void loadf_back() throws Exception {
@@ -289,7 +296,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             code.label(genswitch);
 
             code.aload(1);
-            code.getfield(p(PyFrame.class), "f_lasti", "I");
+            getLastI();
             Label[] y = new Label[yields.size() + 1];
 
             y[0] = start;
@@ -542,7 +549,11 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         if (print_results) {
             code.invokestatic(p(Py.class), "printResult", sig(Void.TYPE, PyObject.class));
         } else {
-            code.pop();
+            if (yieldedFrom) {
+                yieldedFrom = false;
+            } else {
+                code.pop();
+            }
         }
         return null;
     }
@@ -661,16 +672,55 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         return null;
     }
 
+    /**
+     * use the same mechanism as yield, but use two labels to guard the execution, e.g.
+     * #1 print(a)
+     * #2 yield from b
+     * #3 print(x)
+     * vtable f_lasti
+     * 0 goto #1
+     * 1 goto #2
+     * 2 goto #3
+     *
+     * so it can return to yield from repeatly, until f_lasti is modified by the generator
+     */
     @Override
     public Object visitYieldFrom(YieldFrom node) throws Exception {
         setline(node);
-        expr iterable = node.getInternalValue();
-        visit(iterable);
+        if (!fast_locals) {
+            throw new ParseException("'yield from' outside function", node);
+        }
+
+        int stackState = saveStack();
+        visit(node.getInternalValue());
+
+        if (yield_count > 0) {
+            yield_count++;
+        }
+        yield_count++;
+        setLastI(yield_count);
         code.invokestatic(p(Py.class), "getYieldFromIter", sig(PyObject.class, PyObject.class));
         loadFrame();
-        code.invokevirtual(p(PyFrame.class), "getGeneratorInput", sig(Object.class));
-        code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyObject.class, Object.class));
+        code.swap();
+        code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
+        saveLocals();
+
+        Label restart = new Label();
+        yields.addElement(restart);
+        code.label(restart);
+        restoreLocals();
+        restoreStack(stackState);
+        loadFrame();
+        code.getfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
+        code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyObject.class));
         code.areturn();
+        yieldedFrom = true;
+        Label nonYieldSection = new Label();
+        yields.addElement(nonYieldSection);
+        code.label(nonYieldSection);
+        restoreLocals();
+        restoreStack(stackState);
+
         return null;
     }
 
@@ -683,8 +733,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         int stackState = saveStack();
 
-        if (node.getInternalValue() != null) {
-            visit(node.getInternalValue());
+        expr value = node.getInternalValue();
+        if (value != null) {
+            visit(value);
         } else {
             getNone();
         }
@@ -873,10 +924,11 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         }
         int tmp = 0;
         if (node.getInternalValue() != null) {
-//            if (my_scope.generator && !(node instanceof LambdaSyntheticReturn)) {
-//                throw new ParseException("'return' with argument inside generator", node);
-//            }
             visit(node.getInternalValue());
+            if (my_scope.generator && !(node instanceof LambdaSyntheticReturn)) {
+                code.invokestatic(p(Py.class), "StopIteration", sig(PyException.class, PyObject.class));
+                code.athrow();
+            }
             tmp = code.getReturnLocal();
             code.astore(tmp);
         }

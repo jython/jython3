@@ -337,12 +337,14 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
 
     @Override
     public Object visitAwait(Await node) throws Exception {
+        cur.defineAsGenerator(node);
         traverse(node);
         return null;
     }
 
     @Override
     public Object visitYieldFrom(YieldFrom node) throws Exception {
+        cur.defineAsGenerator(node);
         traverse(node);
         return null;
     }
