@@ -1307,7 +1307,7 @@ class Popen(object):
                 # NOTE: CPython posix (execv) will str() any unicode
                 # args first, maybe we should do the same on
                 # posix. Windows passes unicode through, however
-                if any(not isinstance(arg, (str, str)) for arg in args):
+                if any(not isinstance(arg, (bytes, str)) for arg in args):
                     raise TypeError('args must contain only strings')
             args = _escape_args(args)
 

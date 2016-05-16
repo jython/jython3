@@ -2057,15 +2057,17 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     public PyList splitlines() {
-        return bytes_splitlines(false);
+        return splitlines(false);
     }
 
     public PyList splitlines(boolean keepends) {
-        return bytes_splitlines(keepends);
+        return bytes_splitlines(new PyObject[]{Py.newBoolean(keepends)}, new String[]{});
     }
 
-    @ExposedMethod(defaults = "false", doc = BuiltinDocs.bytes_splitlines_doc)
-    final PyList bytes_splitlines(boolean keepends) {
+    @ExposedMethod(doc = BuiltinDocs.bytes_splitlines_doc)
+    final PyList bytes_splitlines(PyObject[] args, String[] keywords) {
+        ArgParser arg = new ArgParser("splitlines", args, keywords, "keepends");
+        boolean keepends = arg.getPyObject(0, Py.False).__bool__();
         PyList list = new PyList();
 
         char[] chars = getString().toCharArray();
