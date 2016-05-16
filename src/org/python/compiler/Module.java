@@ -26,6 +26,7 @@ import org.python.core.CodeFlag;
 import org.python.core.CodeLoader;
 import org.python.core.CompilerFlags;
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyCode;
 import org.python.core.PyComplex;
 import org.python.core.PyException;
@@ -145,7 +146,38 @@ class PyComplexConstant extends Constant implements ClassConstants, Opcodes {
     }
 }
 
+class PyBytesConstant extends Constant implements ClassConstants, Opcodes {
+    final String value;
 
+    PyBytesConstant(String value) {
+        this.value = value;
+    }
+
+    @Override
+    void get(Code c) throws IOException {
+        c.ldc(value);
+        c.invokestatic(p(PyBytes.class), "fromStringConstant", sig(PyBytes.class, String.class));
+    }
+
+    @Override
+    void put(Code c) throws IOException {}
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof PyBytesConstant) {
+            return ((PyBytesConstant)o).value.equals(value);
+        } else {
+            return false;
+        }
+    }
+}
+
+// TODO: remove
 class PyStringConstant extends Constant implements ClassConstants, Opcodes {
 
     final String value;
@@ -485,6 +517,10 @@ public class Module implements Opcodes, ClassConstants, CompilationContext {
 
     Constant stringConstant(String value) {
         return findConstant(new PyStringConstant(value));
+    }
+
+    Constant bytesConstant(String value) {
+        return findConstant(new PyBytesConstant(value));
     }
 
     Constant unicodeConstant(String value) {

@@ -109,6 +109,8 @@ public final class Py {
     public final static PyBoolean True = new PyBoolean(true);
     /** A zero-length Python byte string **/
     public final static PyString EmptyString = new PyString("");
+    /** A zero-length Python bytes **/
+    public final static PyBytes EmptyBytes = new PyBytes();
     /** A zero-length Python Unicode string **/
     public final static PyUnicode EmptyUnicode = new PyUnicode("");
     /** A Python string containing '\n' **/
