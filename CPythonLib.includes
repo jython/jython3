@@ -188,3 +188,5 @@ wsgiref/*.py
 xdrlib.py
 xmllib.py
 xmlrpclib.py
+zipapp.py
+zipfile.py
