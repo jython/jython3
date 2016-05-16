@@ -1406,11 +1406,12 @@ public class PyUnicode extends PyString implements Iterable {
             return _rsplit(null, maxsplit);
         }
     }
-
-    @ExposedMethod(defaults = "false", doc = BuiltinDocs.str_splitlines_doc)
-    final PyList str_splitlines(boolean keepends) {
+    @ExposedMethod(doc = BuiltinDocs.str_splitlines_doc)
+    final PyList str_splitlines(PyObject[] args, String[] keywords) {
+        ArgParser arg = new ArgParser("splitlines", args, keywords, "keepends");
+        boolean keepends = arg.getPyObject(0, Py.False).__bool__();
         if (isBasicPlane()) {
-            return bytes_splitlines(keepends);
+            return bytes_splitlines(args, keywords);
         }
         return new PyList(new LineSplitIterator(keepends));
 
