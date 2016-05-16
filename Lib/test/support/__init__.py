@@ -266,6 +266,20 @@ def rmtree(path):
         if e.errno not in (errno.ENOENT, errno.ESRCH):
             raise
 
+def make_legacy_pyc(source):
+    """Move a PEP 3147/488 pyc file to its legacy pyc location.
+
+    :param source: The file system path to the source file.  The source file
+        does not need to exist, however the PEP 3147/488 pyc file must exist.
+    :return: The file system path to the legacy pyc file.
+    """
+    pyc_file = importlib.util.cache_from_source(source)
+    up_one = os.path.dirname(os.path.abspath(source))
+    legacy_pyc = os.path.join(up_one, source + 'c')
+    os.rename(pyc_file, legacy_pyc)
+    return legacy_pyc
+
+
 def forget(modname):
     '''"Forget" a module was ever imported by removing it from sys.modules and
     deleting any .pyc and .pyo files.'''

@@ -6,6 +6,7 @@ package org.python.core;
 
 import org.python.expose.ExposedDelete;
 import org.python.expose.ExposedGet;
+import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedSet;
 import org.python.expose.ExposedType;
 
@@ -339,6 +340,16 @@ public class PyFrame extends PyObject implements Traverseproc {
             }
             throw pye;
         }
+    }
+
+    public PyObject clear() {
+        return frame_clear();
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.frame_clear_doc)
+    final PyObject frame_clear() {
+        // XXX clean associated generator?
+        return Py.None;
     }
 
     // nested scopes helpers
