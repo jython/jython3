@@ -131,6 +131,12 @@ public class PyFrame extends PyObject implements Traverseproc {
 
     void setGeneratorInput(Object value) {
         generatorInput = value;
+        if (f_yieldfrom != null && f_yieldfrom instanceof PyGenerator) {
+            PyFrame yf_frame = ((PyGenerator) f_yieldfrom).gi_frame;
+            if (yf_frame != null) {
+                yf_frame.setGeneratorInput(value);
+            }
+        }
     }
 
     public Object getGeneratorInput() {

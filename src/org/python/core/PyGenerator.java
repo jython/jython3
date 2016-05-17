@@ -46,14 +46,15 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         if (gi_frame == null) {
             return value;
         }
-        if (value == null) {
-            value = Py.None;
-        }
-        if (gi_frame.f_lasti == 0 && value != Py.None) {
+
+        if (gi_frame.f_lasti == 0 && value != Py.None && value != null) {
             throw Py.TypeError("can't send non-None value to a just-started generator");
         }
-        gi_frame.setGeneratorInput(value);
-        return send_gen_exp(Py.getThreadState(), value);
+        PyObject ret = send_gen_exp(Py.getThreadState(), value);
+        if (ret == null) {
+            throw Py.StopIteration();
+        }
+        return ret;
     }
 
     public PyObject throw$(PyObject type, PyObject value, PyObject tb) {
@@ -79,8 +80,13 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
     @ExposedMethod(doc = BuiltinDocs.generator_close_doc)
     final PyObject generator_close() {
         try {
-            raiseException(Py.makeException(Py.GeneratorExit));
-            throw Py.RuntimeError("generator ignored GeneratorExit");
+            PyGenerator yf = (PyGenerator) gi_frame.f_yieldfrom;
+            if (yf != null) {
+                yf.close();
+            } else {
+                raiseException(Py.makeException(Py.GeneratorExit));
+                throw Py.RuntimeError("generator ignored GeneratorExit");
+            }
         } catch (PyException e) {
             if (!(e.type == Py.StopIteration || e.type == Py.GeneratorExit)) {
                 throw e;
@@ -118,8 +124,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         if (yf != null) {
             return ((PyGenerator) yf).raiseException(ex);
         } else {
-            gi_frame.setGeneratorInput(ex);
-            return next();
+            return send_gen_exp(Py.getThreadState(), ex);
         }
     }
     
@@ -152,7 +157,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         return send_gen_exp(Py.getThreadState(), Py.None);
     }
 
-    private PyObject send_gen_exp(ThreadState state, PyObject value) {
+    private PyObject send_gen_exp(ThreadState state, Object value) {
         if (gi_running) {
             throw Py.ValueError("generator already executing");
         }
@@ -163,6 +168,10 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         if (gi_frame.f_lasti == -1) {
             gi_frame = null;
             return null;
+        }
+        // if value is null, means the input is passed implicitly by frame, don't reset to None
+        if (value != null) {
+            gi_frame.setGeneratorInput(value);
         }
         gi_running = true;
         PyObject result = null;
@@ -176,11 +185,11 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
                 if (gi_frame.f_yieldfrom != null) {
                     gi_frame.f_yieldfrom = null;
                     gi_frame.f_lasti++;
-                    return __iternext__();
+                    return send_gen_exp(state, value);
                 }
                 stopException = pye;
                 gi_frame = null;
-                return null;
+                throw pye;
             }
         } finally {
             gi_running = false;
@@ -188,8 +197,9 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         if (result == null && gi_frame.f_yieldfrom != null) {
             gi_frame.f_yieldfrom = null;
             gi_frame.f_lasti++;
-            return __iternext__();
+            return send_gen_exp(state, value);
         }
+
         if (result == Py.None && gi_frame.f_lasti == -1) {
             gi_frame = null;
             return null;
