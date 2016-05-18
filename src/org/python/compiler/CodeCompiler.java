@@ -69,7 +69,6 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     private Stack<Label> continueLabels, breakLabels;
     private Stack<ExceptionHandler> exceptionHandlers;
     private Vector<Label> yields = new Vector<Label>();
-    private boolean yieldedFrom = false;
 
     /*
      * break/continue finally's level. This is the lowest level in the exceptionHandlers which
@@ -538,11 +537,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         if (print_results) {
             code.invokestatic(p(Py.class), "printResult", sig(Void.TYPE, PyObject.class));
         } else {
-            if (yieldedFrom) {
-                yieldedFrom = false;
-            } else {
-                code.pop();
-            }
+            code.pop();
         }
         return null;
     }
@@ -697,17 +692,18 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         restoreStack(stackState);
 
         loadFrame();
-        code.getfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
-        code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyObject.class));
+        code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyFrame.class));
         code.areturn();
         yield_count++;
-        yieldedFrom = true;
         Label nonYieldSection = new Label();
         yields.addElement(nonYieldSection);
         code.label(nonYieldSection);
         restoreLocals();
         restoreStack(stackState);
 
+        // restore return value from subgenerator
+        loadFrame();
+        code.invokevirtual(p(PyFrame.class), "getf_stacktop", sig(PyObject.class));
         return null;
     }
 
@@ -913,11 +909,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         if (node.getInternalValue() != null) {
             visit(node.getInternalValue());
             if (my_scope.generator) { //&& !(node instanceof LambdaSyntheticReturn)) {
-                if (node.getInternalValue() instanceof YieldFrom) {
-                    code.invokestatic(p(Py.class), "StopIteration", sig(PyException.class));
-                } else {
-                    code.invokestatic(p(Py.class), "StopIteration", sig(PyException.class, PyObject.class));
-                }
+                code.invokestatic(p(Py.class), "StopIteration", sig(PyException.class, PyObject.class));
                 code.athrow();
             } else {
                 tmp = code.getReturnLocal();

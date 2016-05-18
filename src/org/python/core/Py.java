@@ -326,7 +326,7 @@ public final class Py {
         return new PyException(Py.StopIteration);
     }
     public static PyException StopIteration(PyObject value) {
-        return new PyException(Py.StopIteration, new PyTuple(value));
+        return new PyException(Py.StopIteration, value);
     }
     public static PyObject GeneratorExit;
 
@@ -1030,7 +1030,8 @@ public final class Py {
         return ((PyCoroutine) iter).__await__();
     }
 
-    public static PyObject yieldFrom(PyObject iter) {
+    public static PyObject yieldFrom(PyFrame frame) {
+        PyObject iter = frame.f_yieldfrom;
         PyObject retval;
         try {
             // coroutine or generator
@@ -1042,16 +1043,16 @@ public final class Py {
         } catch (PyException e) {
             if (e.match(Py.StopIteration)) {
                 retval = e.value;
-                // if subgenerator exit, continue
                 if (retval instanceof PyBaseException) {
                     if (((PyBaseException) retval).TYPE == Py.GeneratorExit) {
                         throw e;
                     }
-                    retval = null;
                 }
-            } else {
-                throw e;
+                // if subgenerator exit, continue for next subgenerator
+                frame.f_stacktop = retval;
+                return null;
             }
+            throw e;
         }
         return retval;
     }
