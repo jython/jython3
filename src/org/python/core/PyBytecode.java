@@ -687,7 +687,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                         break;
 
                     case Opcode.YIELD_FROM:
-                        Py.yieldFrom(stack.pop());
+                        Py.yieldFrom(f);
                         break;
 
                     case Opcode.RAISE_VARARGS:

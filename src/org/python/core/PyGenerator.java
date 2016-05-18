@@ -50,7 +50,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         if (gi_frame.f_lasti == 0 && value != Py.None && value != null) {
             throw Py.TypeError("can't send non-None value to a just-started generator");
         }
-        PyObject ret = send_gen_exp(Py.getThreadState(), value);
+        PyObject ret = gen_send_ex(Py.getThreadState(), value);
         if (ret == null) {
             throw Py.StopIteration();
         }
@@ -70,7 +70,14 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         }
         PyException pye = Py.makeException(type, value);
         pye.traceback = (PyTraceback) tb;
-        return raiseException(pye);
+        PyObject yf = gi_frame.f_yieldfrom;
+        if (yf != null) {
+            if (pye.match(Py.GeneratorExit)) {
+                gen_close_iter(yf);
+            }
+            return gen_send_ex(Py.getThreadState(), pye);
+        }
+        throw pye;
     }
 
     public PyObject close() {
@@ -79,19 +86,35 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
 
     @ExposedMethod(doc = BuiltinDocs.generator_close_doc)
     final PyObject generator_close() {
-        try {
-            PyGenerator yf = (PyGenerator) gi_frame.f_yieldfrom;
-            if (yf != null) {
-                yf.close();
-            } else {
-                raiseException(Py.makeException(Py.GeneratorExit));
-                throw Py.RuntimeError("generator ignored GeneratorExit");
-            }
-        } catch (PyException e) {
-            if (!(e.type == Py.StopIteration || e.type == Py.GeneratorExit)) {
-                throw e;
+        PyObject retval;
+        PyObject yf = gi_frame.f_yieldfrom;
+        if (yf != null) {
+            gi_running = true;
+            try {
+                gi_frame.f_yieldfrom = null;
+                gen_close_iter(yf);
+            } catch (PyException e) {
+                if (e.match(Py.StopIteration) || e.match(Py.GeneratorExit)) {
+                    return Py.None;
+                }
+            } finally {
+                gi_running = false;
             }
         }
+        PyException pye = stopException = Py.makeException(Py.GeneratorExit);
+        try {
+            // clean up
+            retval = gen_send_ex(Py.getThreadState(), pye);
+        } catch (PyException e) {
+            if (e.match(Py.StopIteration) || e.match(Py.GeneratorExit)) {
+                return Py.None;
+            }
+            throw e;
+        }
+        if (retval != null || retval != Py.None) {
+            throw Py.RuntimeError("generator ignored GeneratorExit");
+        }
+        // not reachable
         return Py.None;
     }
 
@@ -122,10 +145,9 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         }
         PyObject yf = gi_frame.f_yieldfrom;
         if (yf != null) {
-            return ((PyGenerator) yf).raiseException(ex);
-        } else {
-            return send_gen_exp(Py.getThreadState(), ex);
+            ((PyGenerator) yf).raiseException(ex);
         }
+        return gen_send_ex(Py.getThreadState(), ex);
     }
     
     @Override
@@ -154,10 +176,19 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
 
     @Override
     public PyObject __iternext__() {
-        return send_gen_exp(Py.getThreadState(), Py.None);
+        try {
+            return gen_send_ex(Py.getThreadState(), Py.None);
+        } catch (PyException e) {
+            // for iteration use null as stop iteration
+            if (e.match(Py.StopIteration)) {
+                return null;
+            }
+            throw e;
+        }
     }
 
-    private PyObject send_gen_exp(ThreadState state, Object value) {
+    private PyObject gen_send_ex(ThreadState state, Object value) {
+        if (stopException != null) throw stopException;
         if (gi_running) {
             throw Py.ValueError("generator already executing");
         }
@@ -178,26 +209,16 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         try {
             result = gi_frame.f_code.call(state, gi_frame, closure);
         } catch (PyException pye) {
-            if (!(pye.type == Py.StopIteration || pye.type == Py.GeneratorExit)) {
-                gi_frame = null;
-                throw pye;
-            } else {
-                if (gi_frame.f_yieldfrom != null) {
-                    gi_frame.f_yieldfrom = null;
-                    gi_frame.f_lasti++;
-                    return send_gen_exp(state, value);
-                }
-                stopException = pye;
-                gi_frame = null;
-                throw pye;
-            }
+            stopException = pye;
+            gi_frame = null;
+            throw pye;
         } finally {
             gi_running = false;
         }
         if (result == null && gi_frame.f_yieldfrom != null) {
             gi_frame.f_yieldfrom = null;
             gi_frame.f_lasti++;
-            return send_gen_exp(state, value);
+            return gen_send_ex(state, value);
         }
 
         if (result == Py.None && gi_frame.f_lasti == -1) {
@@ -207,6 +228,18 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         return result;
     }
 
+    private void gen_close_iter(PyObject iter) {
+        if (iter instanceof PyGenerator) {
+            ((PyGenerator) iter).close();
+            return;
+        }
+        try {
+            PyObject closeMeth = iter.__finditem__("close");
+            closeMeth.__call__();
+        } catch (PyException e) {
+            if (! e.match(Py.AttributeError)) throw e;
+        }
+    }
 
     /* Traverseproc implementation */
     @Override

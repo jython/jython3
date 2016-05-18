@@ -23,6 +23,12 @@ public class PyFrame extends PyObject implements Traverseproc {
     /** yield from generator */
     public PyObject f_yieldfrom;
 
+    /**
+     *  unused value, normally because yield from subgenerator
+     *  has to return before the stack top is handled
+     */
+    public PyObject f_stacktop = Py.None;
+
     /** Previous frame or null. */
     @ExposedGet
     public PyFrame f_back;
@@ -143,6 +149,12 @@ public class PyFrame extends PyObject implements Traverseproc {
         Object input = generatorInput;
         generatorInput = Py.None;
         return input;
+    }
+
+    public PyObject getf_stacktop() {
+        PyObject ret = f_stacktop;
+        f_stacktop = Py.None;
+        return ret;
     }
 
     public Object checkGeneratorInput() {
@@ -354,6 +366,7 @@ public class PyFrame extends PyObject implements Traverseproc {
 
     @ExposedMethod(doc = BuiltinDocs.frame_clear_doc)
     final PyObject frame_clear() {
+        f_locals = null;
         // XXX clean associated generator?
         return Py.None;
     }
