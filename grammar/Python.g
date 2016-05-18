@@ -418,6 +418,9 @@ name_or_print
     : NAME {
         $tok = $name_or_print.start;
     }
+    | ASYNC {
+        $tok = $name_or_print.start;
+    }
     | {printFunction}? => PRINT {
         $tok = $name_or_print.start;
     }
@@ -432,6 +435,8 @@ attr
     | AND
     | AS
     | ASSERT
+    | ASYNC
+    | AWAIT
     | BREAK
     | CLASS
     | CONTINUE

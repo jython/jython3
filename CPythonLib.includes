@@ -2,8 +2,10 @@
 # used as fileset in build.xml (target copy-full)
 
 # Lib directories, in alphabetical order:
+asyncio/*
 collections/**
 compiler/**
+concurrent/*
 distutils/**
 email/**
 encodings/**
@@ -11,6 +13,7 @@ ensurepip/**
 http/**
 importlib/*
 logging/*
+multiprocessing/*
 test/**
 unittest/**
 xml/etree/**
@@ -143,6 +146,7 @@ robotparser.py
 runpy.py
 sched.py
 sha.py
+selectors.py
 sets.py
 sgmllib.py
 shelve.py

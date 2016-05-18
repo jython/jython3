@@ -1043,11 +1043,6 @@ public final class Py {
         } catch (PyException e) {
             if (e.match(Py.StopIteration)) {
                 retval = e.value;
-                if (retval instanceof PyBaseException) {
-                    if (((PyBaseException) retval).TYPE == Py.GeneratorExit) {
-                        throw e;
-                    }
-                }
                 // if subgenerator exit, continue for next subgenerator
                 frame.f_stacktop = retval;
                 return null;
