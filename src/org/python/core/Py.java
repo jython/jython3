@@ -326,7 +326,7 @@ public final class Py {
         return new PyException(Py.StopIteration);
     }
     public static PyException StopIteration(PyObject value) {
-        return new PyException(Py.StopIteration, value);
+        return new PyException(Py.StopIteration, new PyTuple(value));
     }
     public static PyObject GeneratorExit;
 
