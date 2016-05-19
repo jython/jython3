@@ -8,7 +8,7 @@ import pprint
 import sys
 import unittest
 
-from test import test_support
+from test import support
 
 class TestGetProfile(unittest.TestCase):
     def setUp(self):
@@ -363,7 +363,7 @@ def capture_events(callable, p=None):
     except TypeError:
         pass
     else:
-        raise test_support.TestFailed(
+        raise support.TestFailed(
             'sys.setprofile() did not raise TypeError')
 
     if p is None:
@@ -380,7 +380,7 @@ def show_events(callable):
 
 
 def test_main():
-    if test_support.is_jython:
+    if support.is_jython:
         del ProfileHookTestCase.test_distant_exception
         del ProfileHookTestCase.test_exception
         del ProfileHookTestCase.test_exception_in_except_clause
@@ -394,7 +394,7 @@ def test_main():
         del ProfileSimulatorTestCase.test_basic_exception
         del ProfileSimulatorTestCase.test_distant_exception
 
-    test_support.run_unittest(
+    support.run_unittest(
         TestGetProfile,
         ProfileHookTestCase,
         ProfileSimulatorTestCase

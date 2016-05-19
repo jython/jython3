@@ -4,7 +4,7 @@ Made for Jython.
 """
 import itertools
 import operator
-from test import test_support
+from test import support
 import unittest
 
 class IterTestCase(unittest.TestCase):
@@ -294,7 +294,7 @@ class ChainedIterationTest(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(IterTestCase, ChainedIterationTest)
+    support.run_unittest(IterTestCase, ChainedIterationTest)
 
 
 if __name__ == '__main__':

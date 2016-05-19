@@ -1,4 +1,4 @@
-import test.test_support, unittest
+import test.support, unittest
 import sys, codecs, html.entities, unicodedata
 
 class PosReturn:
@@ -298,7 +298,7 @@ class CodecCallbackTest(unittest.TestCase):
         for uni in [ s*l for s in ("x", "\u3042", "a\xe4") ]:
             encodings = ["ascii", "latin-1", "iso-8859-1", "iso-8859-15",
                          "utf-8", "utf-7", "utf-16"]
-            if not test.test_support.is_jython: 
+            if not test.support.is_jython: 
                 encodings.append("utf-32")
             for enc in encodings:
                 for err in errors:
@@ -801,10 +801,10 @@ class CodecCallbackTest(unittest.TestCase):
             text.translate(charmap)
 
 def test_main():
-    if test.test_support.is_jython:
+    if test.support.is_jython:
         del CodecCallbackTest.test_decodeunicodeinternal # PyUnicode/PyString share the same internal rep, so n/a
 
-    test.test_support.run_unittest(CodecCallbackTest)
+    test.support.run_unittest(CodecCallbackTest)
 
 if __name__ == "__main__":
     test_main()

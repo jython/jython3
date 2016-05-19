@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 
 from datetime import timedelta
 from datetime import tzinfo
@@ -122,7 +122,7 @@ class TestSQL(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         TestCalendar,
         TestSQL,
         TestTimezone)

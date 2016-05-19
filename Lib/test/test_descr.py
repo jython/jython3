@@ -1,6 +1,6 @@
 # Test enhancements related to descriptors and new-style classes
 
-from test.test_support import verify, vereq, verbose, TestFailed, TESTFN, get_original_stdout, is_jython
+from test.support import verify, vereq, verbose, TestFailed, TESTFN, get_original_stdout, is_jython
 from copy import deepcopy
 import warnings
 import types

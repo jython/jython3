@@ -1,7 +1,7 @@
 import unittest
 import sys
 import _ast
-from test import test_support
+from test import support
 import textwrap
 
 class TestSpecifics(unittest.TestCase):
@@ -132,13 +132,13 @@ def f(x):
     return x
 ''' % ((longexpr,)*10)
         #Exceeds 65535 byte limit on methods in the JVM.
-        if not test_support.is_jython:
+        if not support.is_jython:
             exec(code)
             self.assertEqual(f(5), 0)
 
     def test_complex_args(self):
 
-        with test_support.check_py3k_warnings(
+        with support.check_py3k_warnings(
                 ("tuple parameter unpacking has been removed", SyntaxWarning)):
             exec(textwrap.dedent('''
         def comp_args((a, b)):
@@ -187,7 +187,7 @@ if 1:
     # the first line of code starts after 256, correct line numbers
     # in tracebacks are still produced.
     def test_leading_newlines(self):
-        if not test_support.is_jython:
+        if not support.is_jython:
             s256 = "".join(["\n"] * 256 + ["spam"])
             co = compile(s256, 'fn', 'exec')
             self.assertEqual(co.co_firstlineno, 257)
@@ -255,7 +255,7 @@ if 1:
         # XXX: I'd call this an implementation detail, but one that should be
         # fairly easy and moderately worthwhile to implement.  Still it is low
         # on the list, so leaving it out of jython for now.
-        if not test_support.is_jython:
+        if not support.is_jython:
             self.assertTrue(isinstance(eval("%s" % (-sys.maxsize - 1)), int))
             self.assertTrue(isinstance(eval("%s" % (-sys.maxsize - 2)), int))
 
@@ -468,7 +468,7 @@ if 1:
             ast = compile(code, '%s2' % fname, 'exec', _ast.PyCF_ONLY_AST)
             self.assertTrue(isinstance(ast, _ast.Module))
             co2 = compile(ast, '%s3' % fname, 'exec')
-            if not test_support.is_jython:
+            if not support.is_jython:
                 self.assertEqual(co1, co2)
             # the code object's filename comes from the second compilation step
             self.assertEqual(co2.co_filename, '%s3' % fname)
@@ -489,7 +489,7 @@ if 1:
 
 
 def test_main():
-    test_support.run_unittest(TestSpecifics)
+    support.run_unittest(TestSpecifics)
 
 if __name__ == "__main__":
     test_main()

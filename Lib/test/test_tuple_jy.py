@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 
 
 class TupleTestCase(unittest.TestCase):
@@ -12,7 +12,7 @@ class TupleTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(TupleTestCase)
+    support.run_unittest(TupleTestCase)
 
 
 if __name__ == '__main__':

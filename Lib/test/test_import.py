@@ -11,7 +11,7 @@ import unittest
 import textwrap
 import shutil
 
-from test.test_support import (unlink, TESTFN, unload, run_unittest, rmtree,
+from test.support import (unlink, TESTFN, unload, run_unittest, rmtree,
                                is_jython, check_warnings, EnvironmentVarGuard)
 from test import symlink_support
 from test import script_helper
@@ -169,7 +169,7 @@ class ImportTests(unittest.TestCase):
     def test_imp_module(self):
         # Verify that the imp module can correctly load and find .py files
 
-        # XXX (ncoghlan): It would be nice to use test_support.CleanImport
+        # XXX (ncoghlan): It would be nice to use support.CleanImport
         # here, but that breaks because the os module registers some
         # handlers in copy_reg on import. Since CleanImport doesn't
         # revert that registration, the module is left in a broken
@@ -283,13 +283,13 @@ class ImportTests(unittest.TestCase):
     def test_import_name_binding(self):
         # import x.y.z binds x in the current namespace.
         import test as x
-        import test.test_support
+        import test.support
         self.assertIs(x, test, x.__name__)
-        self.assertTrue(hasattr(test.test_support, "__file__"))
+        self.assertTrue(hasattr(test.support, "__file__"))
 
         # import x.y.z as w binds z as w.
-        import test.test_support as y
-        self.assertIs(y, test.test_support, y.__name__)
+        import test.support as y
+        self.assertIs(y, test.support, y.__name__)
 
     def test_import_initless_directory_warning(self):
         # NOTE: to test this, we have to remove Jython's JavaImporter

@@ -3,7 +3,7 @@
 Made for Jython.
 """
 import unittest
-import test.test_support
+import test.support
 
 class StrUnicodeConcatTestCase(unittest.TestCase):
 
@@ -83,7 +83,7 @@ class StrUnicodeConcatOverridesTestCase(unittest.TestCase):
 
 
 def test_main():
-    test.test_support.run_unittest(StrUnicodeConcatTestCase,
+    test.support.run_unittest(StrUnicodeConcatTestCase,
                                    StrUnicodeConcatOverridesTestCase)
 
 if __name__ == "__main__":

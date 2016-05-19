@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 
 from test_userdict import TestMappingProtocol
 from org.python.core import PyStringMap
@@ -74,7 +74,7 @@ class PyStringMapTest(StringMapTest):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         ClassDictTests,
         InstanceDictTests,
         PyStringMapTest

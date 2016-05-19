@@ -2,7 +2,7 @@
 
 import platform
 import unittest
-from test.test_support import fcmp, have_unicode, TESTFN, unlink, \
+from test.support import fcmp, have_unicode, TESTFN, unlink, \
                               run_unittest, check_py3k_warnings, is_jython
 import warnings
 from operator import neg

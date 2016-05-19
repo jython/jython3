@@ -7,7 +7,7 @@ import time
 import threading
 import unittest
 from collections import defaultdict
-from test import test_support
+from test import support
 from random import randint
 
 from java.util.concurrent.atomic import AtomicInteger
@@ -20,7 +20,7 @@ class PickleTestCase(unittest.TestCase):
             self.assertEqual(pickle.loads(pickle.dumps(d, proto)), d)
 
 
-# TODO push into test_support or some other common module - run_threads
+# TODO push into support or some other common module - run_threads
 # is originally from test_list_jy.py
 
 class ThreadSafetyTestCase(unittest.TestCase):
@@ -151,7 +151,7 @@ class OverrideMissingTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(PickleTestCase, ThreadSafetyTestCase, GetVariantsTestCase, OverrideMissingTestCase)
+    support.run_unittest(PickleTestCase, ThreadSafetyTestCase, GetVariantsTestCase, OverrideMissingTestCase)
 
 
 if __name__ == '__main__':

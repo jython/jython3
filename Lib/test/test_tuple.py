@@ -1,5 +1,5 @@
 import unittest
-from test import test_support, seq_tests
+from test import support, seq_tests
 
 class TupleTest(seq_tests.CommonTest):
     type2test = tuple
@@ -95,7 +95,7 @@ class TupleTest(seq_tests.CommonTest):
         self.assertRaises(TypeError, operator.setitem, (1, 2), 0, 0)
 
 def test_main():
-    test_support.run_unittest(TupleTest)
+    support.run_unittest(TupleTest)
 
 if __name__=="__main__":
     test_main()

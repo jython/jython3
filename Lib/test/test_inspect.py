@@ -8,7 +8,7 @@ import datetime
 from collections import UserList
 from UserDict import UserDict
 
-from test.test_support import run_unittest, check_py3k_warnings, is_jython
+from test.support import run_unittest, check_py3k_warnings, is_jython
 
 with check_py3k_warnings(
         ("tuple parameter unpacking has been removed", SyntaxWarning),

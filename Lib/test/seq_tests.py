@@ -5,9 +5,9 @@ Tests common to tuple, list and UserList.UserList
 import unittest
 import sys
 
-from test import test_support
+from test import support
 
-if test_support.is_jython:
+if support.is_jython:
     from java.util import List as JList
 
 # Various iterables
@@ -116,7 +116,7 @@ class CommonTest(unittest.TestCase):
                 return len(self.__data)
             def __getitem__(self, i):
                 return self.__data[i]
-        if not (test_support.is_jython and issubclass(self.type2test, JList)):
+        if not (support.is_jython and issubclass(self.type2test, JList)):
             # Jython does not currently support in reflected args
             # converting List-like objects to Lists. This lack of
             # support should be fixed, but it's tricky.
@@ -129,7 +129,7 @@ class CommonTest(unittest.TestCase):
         self.assertEqual(len(vv), len(s))
 
 
-        if test_support.is_jython and issubclass(self.type2test, JList):
+        if support.is_jython and issubclass(self.type2test, JList):
             # Ditto from above, we need to skip the rest of the test
             return
 
@@ -210,7 +210,7 @@ class CommonTest(unittest.TestCase):
         self.assertEqual(a[ -pow(2, 128): 3 ], self.type2test([0, 1, 2]))
         self.assertEqual(a[ 3: pow(2, 145) ], self.type2test([3, 4]))
 
-        if not (test_support.is_jython and issubclass(self.type2test, JList)):
+        if not (support.is_jython and issubclass(self.type2test, JList)):
             # no support for __getslice__ on Jython for
             # java.util.List, given that method deprecated since 2.0!
             self.assertRaises(TypeError, u.__getslice__)

@@ -9,7 +9,7 @@
 
 import unittest
 import sys
-from test import test_support
+from test import support
 from javax.script import ScriptEngine, ScriptEngineManager
 
 
@@ -43,7 +43,7 @@ class JSR223TestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         JSR223TestCase)
 
 

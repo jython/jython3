@@ -1,4 +1,4 @@
-from test import test_support
+from test import support
 from jythonlib import bytecodetools as tools 
 from java.util.concurrent import Callable
 from org.python.core import Options
@@ -72,7 +72,7 @@ class ProxyDebugDirectoryTest(unittest.TestCase):
         self.tmpdir = tempfile.mkdtemp()
 
     def tearDown(self):
-        test_support.rmtree(self.tmpdir)
+        support.rmtree(self.tmpdir)
 
     def test_set_debug_directory(self):
         """Verify that proxy debug directory can be set at runtime"""
@@ -96,7 +96,7 @@ class ProxyDebugDirectoryTest(unittest.TestCase):
         
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         BytecodeCallbackTest,
         ProxyDebugDirectoryTest
     )

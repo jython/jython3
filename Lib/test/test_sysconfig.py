@@ -7,7 +7,7 @@ import shutil
 import subprocess
 from copy import copy, deepcopy
 
-from test.test_support import (run_unittest, TESTFN, unlink, get_attribute,
+from test.support import (run_unittest, TESTFN, unlink, get_attribute,
                                is_jython)
 
 import sysconfig

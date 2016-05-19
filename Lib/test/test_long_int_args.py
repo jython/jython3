@@ -5,7 +5,7 @@ Made for Jython.
 import array
 import io
 import tempfile
-from test import test_support
+from test import support
 import unittest
 import io
 
@@ -55,7 +55,7 @@ class LongIntArgsTestCase(unittest.TestCase):
         assert test_file.readlines(3) == ['hon']
 
 def test_main():
-    test_support.run_unittest(LongIntArgsTestCase)
+    support.run_unittest(LongIntArgsTestCase)
 
 if __name__ == '__main__':
     test_main()

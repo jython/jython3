@@ -2,7 +2,7 @@
 
 Made for Jython.
 """
-from test import test_support
+from test import support
 import unittest
 
 class MyLong(long):
@@ -34,7 +34,7 @@ class LongTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(LongTestCase)
+    support.run_unittest(LongTestCase)
 
 if __name__ == '__main__':
     test_main()

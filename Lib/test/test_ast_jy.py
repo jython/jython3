@@ -3,7 +3,7 @@ future"""
 
 import unittest
 import ast
-from test import test_support
+from test import support
 
 def srcExprToTree(source, kind='exec'):
     return compile(source, '<module>', kind, ast.PyCF_ONLY_AST)
@@ -150,7 +150,7 @@ class TestCompile(unittest.TestCase):
 
 def test_main(verbose=None):
     test_classes = [TestCompile]
-    test_support.run_unittest(*test_classes)
+    support.run_unittest(*test_classes)
 
 if __name__ == "__main__":
     test_main(verbose=True)

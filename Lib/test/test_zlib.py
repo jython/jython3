@@ -1,8 +1,8 @@
 import unittest
-from test.test_support import TESTFN, run_unittest, import_module, unlink, requires
+from test.support import TESTFN, run_unittest, import_module, unlink, requires
 import binascii
 import random
-from test.test_support import precisionbigmemtest, _1G, _4G, is_jython
+from test.support import precisionbigmemtest, _1G, _4G, is_jython
 import sys
 
 try:
@@ -194,7 +194,7 @@ class CompressTestCase(BaseCompressTestCase, unittest.TestCase):
         """
         This is NOT testing for a 'size=_1G + 1024 * 1024', because of the definition of 
         the precisionbigmemtest decorator, which resets the value to 5147, based on 
-        the definition of test_support.real_max_memuse == 0
+        the definition of support.real_max_memuse == 0
         This is the case on my windows installation of python 2.7.3.
         Python 2.7.3 (default, Apr 10 2012, 23:31:26) [MSC v.1500 32 bit (Intel)] on win32
         And on my build of jython 2.7
@@ -523,7 +523,7 @@ class CompressObjectTestCase(BaseCompressTestCase, unittest.TestCase):
         """
         This is NOT testing for a 'size=_1G + 1024 * 1024', because of the definition of 
         the precisionbigmemtest decorator, which resets the value to 5147, based on 
-        the definition of test_support.real_max_memuse == 0
+        the definition of support.real_max_memuse == 0
         This is the case on my windows installation of python 2.7.3.
         Python 2.7.3 (default, Apr 10 2012, 23:31:26) [MSC v.1500 32 bit (Intel)] on win32
         And on my build of jython 2.7

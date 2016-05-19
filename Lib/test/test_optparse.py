@@ -16,7 +16,7 @@ import types
 import unittest
 
 from io import StringIO
-from test import test_support
+from test import support
 
 
 from optparse import make_option, Option, IndentedHelpFormatter, \
@@ -1017,10 +1017,10 @@ class TestExtendAddTypes(BaseTest):
         self.parser.add_option("-f", "--file", type="file", dest="file")
 
     def tearDown(self):
-        if os.path.isdir(test_support.TESTFN):
-            os.rmdir(test_support.TESTFN)
-        elif os.path.isfile(test_support.TESTFN):
-            os.unlink(test_support.TESTFN)
+        if os.path.isdir(support.TESTFN):
+            os.rmdir(support.TESTFN)
+        elif os.path.isfile(support.TESTFN):
+            os.unlink(support.TESTFN)
 
     class MyOption (Option):
         def check_file(option, opt, value):
@@ -1035,21 +1035,21 @@ class TestExtendAddTypes(BaseTest):
         TYPE_CHECKER["file"] = check_file
 
     def test_filetype_ok(self):
-        open(test_support.TESTFN, "w").close()
-        self.assertParseOK(["--file", test_support.TESTFN, "-afoo"],
-                           {'file': test_support.TESTFN, 'a': 'foo'},
+        open(support.TESTFN, "w").close()
+        self.assertParseOK(["--file", support.TESTFN, "-afoo"],
+                           {'file': support.TESTFN, 'a': 'foo'},
                            [])
 
     def test_filetype_noexist(self):
-        self.assertParseFail(["--file", test_support.TESTFN, "-afoo"],
+        self.assertParseFail(["--file", support.TESTFN, "-afoo"],
                              "%s: file does not exist" %
-                             test_support.TESTFN)
+                             support.TESTFN)
 
     def test_filetype_notfile(self):
-        os.mkdir(test_support.TESTFN)
-        self.assertParseFail(["--file", test_support.TESTFN, "-afoo"],
+        os.mkdir(support.TESTFN)
+        self.assertParseFail(["--file", support.TESTFN, "-afoo"],
                              "%s: not a regular file" %
-                             test_support.TESTFN)
+                             support.TESTFN)
 
 
 class TestExtendAddActions(BaseTest):
@@ -1461,7 +1461,7 @@ class TestHelp(BaseTest):
         # we must restore its original value -- otherwise, this test
         # screws things up for other tests when it's part of the Python
         # test suite.
-        with test_support.EnvironmentVarGuard() as env:
+        with support.EnvironmentVarGuard() as env:
             env.set('COLUMNS', str(columns))
             return InterceptingOptionParser(option_list=options)
 
@@ -1490,7 +1490,7 @@ class TestHelp(BaseTest):
         self.assertHelpEquals(_expected_help_long_opts_first)
 
     def test_help_title_formatter(self):
-        with test_support.EnvironmentVarGuard() as env:
+        with support.EnvironmentVarGuard() as env:
             env.set("COLUMNS", "80")
             self.parser.formatter = TitledHelpFormatter()
             self.assertHelpEquals(_expected_help_title_formatter)
@@ -1619,7 +1619,7 @@ def test_main():
     is_jython = sys.platform.startswith("java")
     if is_jython:
         del TestOptionParser.test_refleak
-    test_support.run_unittest(__name__)
+    support.run_unittest(__name__)
 
 if __name__ == '__main__':
     test_main()

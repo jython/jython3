@@ -1,4 +1,4 @@
-from test.test_support import findfile, run_unittest, TESTFN, is_jython
+from test.support import findfile, run_unittest, TESTFN, is_jython
 import unittest
 import os
 import io

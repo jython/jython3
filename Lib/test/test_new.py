@@ -1,7 +1,7 @@
 import unittest
-from test import test_support
+from test import support
 import sys
-new = test_support.import_module('new', deprecated=True)
+new = support.import_module('new', deprecated=True)
 
 class NewTest(unittest.TestCase):
     def test_spam(self):
@@ -26,13 +26,13 @@ class NewTest(unittest.TestCase):
         o = new.instance(C)
 
         # __dict__ is a non dict mapping in Jython
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertEqual(len(o.__dict__), 0, "new __dict__ should be empty")
         else:
             self.assertEqual(o.__dict__, {}, "new __dict__ should be empty")
         del o
         o = new.instance(C, None)
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertEqual(len(o.__dict__), 0, "new __dict__ should be empty")
         else:
             self.assertEqual(o.__dict__, {}, "new __dict__ should be empty")
@@ -109,7 +109,7 @@ class NewTest(unittest.TestCase):
         test_closure(g, (1, 1), ValueError) # closure is wrong size
         test_closure(f, g.__closure__, ValueError) # no closure needed
 
-    if hasattr(new, 'code') and not test_support.is_jython:
+    if hasattr(new, 'code') and not support.is_jython:
         def test_code(self):
             # bogus test of new.code()
             def f(a): pass
@@ -164,7 +164,7 @@ class NewTest(unittest.TestCase):
             self.assertTrue(isinstance(t[0], S), "eek, tuple changed under us!")
 
 def test_main():
-    test_support.run_unittest(NewTest)
+    support.run_unittest(NewTest)
 
 if __name__ == "__main__":
     test_main()

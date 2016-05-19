@@ -18,7 +18,7 @@ except ImportError:
     # Most of this module can then still be used.
     pass
 
-from test.test_support import strip_python_stderr
+from test.support import strip_python_stderr
 
 # Executing the interpreter in a subprocess
 def _assert_python(expected_success, *args, **env_vars):
@@ -124,7 +124,7 @@ def make_zip_script(zip_dir, zip_basename, script_name, name_in_zip=None):
         name_in_zip = os.path.basename(script_name)
     zip_file.write(script_name, name_in_zip)
     zip_file.close()
-    #if test.test_support.verbose:
+    #if test.support.verbose:
     #    zip_file = zipfile.ZipFile(zip_name, 'r')
     #    print 'Contents of %r:' % zip_name
     #    zip_file.printdir()
@@ -159,7 +159,7 @@ def make_zip_pkg(zip_dir, zip_basename, pkg_name, script_basename,
     zip_file.close()
     for name in unlink:
         os.unlink(name)
-    #if test.test_support.verbose:
+    #if test.support.verbose:
     #    zip_file = zipfile.ZipFile(zip_name, 'r')
     #    print 'Contents of %r:' % zip_name
     #    zip_file.printdir()

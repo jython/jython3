@@ -1,4 +1,4 @@
-from test.test_support import run_unittest, verbose
+from test.support import run_unittest, verbose
 from test.test_math import parse_testfile, test_file
 import unittest
 import cmath, math

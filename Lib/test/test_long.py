@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 import sys
 
 import random
@@ -57,7 +57,7 @@ L = [
         (' ', ValueError),
         ('  \t\t  ', ValueError)
 ]
-if test_support.have_unicode:
+if support.have_unicode:
     L += [
         (str('0'), 0),
         (str('1'), 1),
@@ -323,11 +323,11 @@ class LongTest(unittest.TestCase):
         self.assertEqual(int("0b10", 2), 2)
         self.assertEqual(int("0o10", 8), 8)
         self.assertEqual(int("0x10", 16), 16)
-        if test_support.have_unicode:
+        if support.have_unicode:
             self.assertEqual(int(str("-3")), -3)
         # Different base:
         self.assertEqual(int("10", 16), 16)
-        if test_support.have_unicode:
+        if support.have_unicode:
             self.assertEqual(int(str("10"), 16), 16)
         # Check conversions from string (same test set as for int(), and then some)
         LL = [
@@ -335,7 +335,7 @@ class LongTest(unittest.TestCase):
                 ('1' + '0'*100, 10**100)
         ]
         L2 = L[:]
-        if test_support.have_unicode:
+        if support.have_unicode:
             L2 += [
                 (str('1') + str('0')*20, 10**20),
                 (str('1') + str('0')*100, 10**100),
@@ -457,7 +457,7 @@ class LongTest(unittest.TestCase):
         # Test __long__()
         class ClassicMissingMethods:
             pass
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertRaises(TypeError, int, ClassicMissingMethods())
         else:
             self.assertRaises(AttributeError, int, ClassicMissingMethods())
@@ -533,7 +533,7 @@ class LongTest(unittest.TestCase):
                 try:
                     int(TruncReturnsNonIntegral())
                 except TypeError as e:
-                    if not test_support.is_jython:
+                    if not support.is_jython:
                         self.assertEqual(str(e),
                                          "__trunc__ returned non-Integral"
                                          " (type NonIntegral)")
@@ -598,7 +598,7 @@ class LongTest(unittest.TestCase):
             def __getslice__(self, i, j):
                 return i, j
 
-        with test_support.check_py3k_warnings():
+        with support.check_py3k_warnings():
             self.assertEqual(X()[-5:7], (-5, 7))
             # use the clamping effect to test the smallest and largest longs
             # that fit a Py_ssize_t
@@ -657,7 +657,7 @@ class LongTest(unittest.TestCase):
                 checkit(x, '*', y)
 
                 if y:
-                    with test_support.check_py3k_warnings():
+                    with support.check_py3k_warnings():
                         expected = longx / longy
                         got = x / y
                     checkit(x, '/', y)
@@ -724,7 +724,7 @@ class LongTest(unittest.TestCase):
         self.assertEqual(float(long_dbl_max), DBL_MAX)
         self.assertEqual(float(long_dbl_max+1), DBL_MAX)
         #XXX: Most or all of these fail on Jython ATM - needs investigation.
-        if not test_support.is_jython:
+        if not support.is_jython:
             self.assertEqual(float(halfway-1), DBL_MAX)
             self.assertRaises(OverflowError, float, halfway)
             self.assertEqual(float(1-halfway), -DBL_MAX)
@@ -914,7 +914,7 @@ class LongTest(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(LongTest)
+    support.run_unittest(LongTest)
 
 if __name__ == "__main__":
     test_main()

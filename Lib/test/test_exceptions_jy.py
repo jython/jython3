@@ -5,7 +5,7 @@ Made for Jython.
 import sys
 import unittest
 from javatests import StackOverflowErrorTest
-from test import test_support
+from test import support
 
 
 class C:
@@ -68,17 +68,17 @@ class ExceptionsTestCase(unittest.TestCase):
             str(cm.exception),
             "'ascii' codec can't encode character u'\\u2615' in position 6: ordinal not in range(128)")
         # But the exception hook, via Py#displayException, does not fail when attempting to __str__ the exception args
-        with test_support.captured_stderr() as s:
+        with support.captured_stderr() as s:
             sys.excepthook(RuntimeError, "Drink \u2615", None)
         self.assertEqual(s.getvalue(), "RuntimeError\n")  
         # It is fine with ascii values, of course
-        with test_support.captured_stderr() as s:
+        with support.captured_stderr() as s:
             sys.excepthook(RuntimeError, "Drink java", None)
         self.assertEqual(s.getvalue(), "RuntimeError: Drink java\n")  
 
 
 def test_main():
-    test_support.run_unittest(ExceptionsTestCase)
+    support.run_unittest(ExceptionsTestCase)
 
 if __name__ == '__main__':
     test_main()

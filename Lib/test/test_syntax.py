@@ -427,7 +427,7 @@ import re
 import unittest
 import warnings
 
-from test import test_support
+from test import support
 
 class SyntaxTestCase(unittest.TestCase):
 
@@ -487,14 +487,14 @@ class SyntaxTestCase(unittest.TestCase):
         self._check_error(source, "nested scope")
 
     def test_unexpected_indent(self):
-        if test_support.is_jython:
+        if support.is_jython:
             self._check_error("foo()\n bar()\n")
         else:
             self._check_error("foo()\n bar()\n", "unexpected indent",
                               subclass=IndentationError)
 
     def test_no_indent(self):
-        if test_support.is_jython:
+        if support.is_jython:
             self._check_error("if 1:\nfoo()")
         else:
             self._check_error("if 1:\nfoo()", "expected an indented block",
@@ -506,15 +506,15 @@ class SyntaxTestCase(unittest.TestCase):
                           subclass=IndentationError)
 
     def test_kwargs_last(self):
-        if test_support.is_jython:
+        if support.is_jython:
             self._check_error("int(base=10, '2')")
         else:
             self._check_error("int(base=10, '2')", "non-keyword arg")
 
 def test_main():
-    test_support.run_unittest(SyntaxTestCase)
+    support.run_unittest(SyntaxTestCase)
     from test import test_syntax
-    test_support.run_doctest(test_syntax, verbosity=True)
+    support.run_doctest(test_syntax, verbosity=True)
 
 if __name__ == "__main__":
     test_main()

@@ -12,24 +12,24 @@ import tempfile
 import unittest
 import socketserver
 
-import test.test_support
-from test.test_support import reap_children, reap_threads, verbose
+import test.support
+from test.support import reap_children, reap_threads, verbose
 try:
     import threading
 except ImportError:
     threading = None
 
-test.test_support.requires("network")
+test.support.requires("network")
 
 TEST_STR = "hello world\n"
-HOST = test.test_support.HOST
+HOST = test.support.HOST
 
 HAVE_UNIX_SOCKETS = hasattr(socket, "AF_UNIX")
 HAVE_FORKING = hasattr(os, "fork") and os.name != "os2"
 
 def signal_alarm(n):
     """Call signal.alarm when it exists (i.e. not on Windows)."""
-    if hasattr(signal, 'alarm') and not test.test_support.is_jython:
+    if hasattr(signal, 'alarm') and not test.support.is_jython:
         signal.alarm(n)
 
 select_fn = select.select
@@ -280,7 +280,7 @@ def test_main():
         # If the import lock is held, the threads will hang
         raise unittest.SkipTest("can't run when import lock is held")
 
-    test.test_support.run_unittest(SocketServerTest)
+    test.support.run_unittest(SocketServerTest)
 
 if __name__ == "__main__":
     test_main()

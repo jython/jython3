@@ -12,7 +12,7 @@ import time
 import unittest
 
 from subprocess import PIPE, Popen
-from test import test_support
+from test import support
 from threading import Condition, Lock, Thread
 from java.lang import Thread as JThread, InterruptedException
 
@@ -126,7 +126,7 @@ class ReprTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         JavaIntegrationTestCase,
         ThreadingTestCase,
         TwistedTestCase)

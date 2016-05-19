@@ -8,7 +8,7 @@ import time
 
 from unittest import TestCase
 
-from test import test_support
+from test import support
 
 
 class DateTimeTests(TestCase):
@@ -252,7 +252,7 @@ class FileCookieJarTests(TestCase):
     def test_lwp_valueless_cookie(self):
         # cookies with no value should be saved and loaded consistently
         from http.cookiejar import LWPCookieJar
-        filename = test_support.TESTFN
+        filename = support.TESTFN
         c = LWPCookieJar()
         interact_netscape(c, "http://www.acme.com/", 'boo')
         self.assertEqual(c._cookies["www.acme.com"]["/"]["boo"].value, None)
@@ -268,7 +268,7 @@ class FileCookieJarTests(TestCase):
     def test_bad_magic(self):
         from http.cookiejar import LWPCookieJar, MozillaCookieJar, LoadError
         # IOErrors (eg. file doesn't exist) are allowed to propagate
-        filename = test_support.TESTFN
+        filename = support.TESTFN
         for cookiejar_class in LWPCookieJar, MozillaCookieJar:
             c = cookiejar_class()
             try:
@@ -374,7 +374,7 @@ class CookieTests(TestCase):
 
         # missing = sign in Cookie: header is regarded by Mozilla as a missing
         # name, and by cookielib as a missing value
-        filename = test_support.TESTFN
+        filename = support.TESTFN
         c = MozillaCookieJar(filename)
         interact_netscape(c, "http://www.acme.com/", 'eggs')
         interact_netscape(c, "http://www.acme.com/", '"spam"; path=/foo/')
@@ -1532,7 +1532,7 @@ class LWPCookieTests(TestCase):
         self.assertEqual(len(c), 6)
 
         # save and restore
-        filename = test_support.TESTFN
+        filename = support.TESTFN
 
         try:
             c.save(filename, ignore_discard=True)
@@ -1574,7 +1574,7 @@ class LWPCookieTests(TestCase):
 
         year_plus_one = time.localtime()[0] + 1
 
-        filename = test_support.TESTFN
+        filename = support.TESTFN
 
         c = MozillaCookieJar(filename,
                              policy=DefaultCookiePolicy(rfc2965=True))
@@ -1750,7 +1750,7 @@ class LWPCookieTests(TestCase):
 
 
 def test_main(verbose=None):
-    test_support.run_unittest(
+    support.run_unittest(
         DateTimeTests,
         HeaderTests,
         CookieTests,

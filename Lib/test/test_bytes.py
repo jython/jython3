@@ -13,7 +13,7 @@ import functools
 import pickle
 import tempfile
 import unittest
-import test.test_support
+import test.support
 import test.string_tests
 import test.buffer_tests
 
@@ -22,7 +22,7 @@ if sys.flags.bytes_warning:
     def check_bytes_warnings(func):
         @functools.wraps(func)
         def wrapper(*args, **kw):
-            with test.test_support.check_warnings(('', BytesWarning)):
+            with test.support.check_warnings(('', BytesWarning)):
                 return func(*args, **kw)
         return wrapper
 else:
@@ -357,7 +357,7 @@ class BaseBytesTest(unittest.TestCase):
             self.assertEqual(b.split(None, 2), [b'arf', b'barf'])
         for b in (b'a\x1Cb', b'a\x1Db', b'a\x1Eb', b'a\x1Fb'):
             b = self.type2test(b)
-            if not test.test_support.is_jython:
+            if not test.support.is_jython:
                 self.assertEqual(b.split(), [b])
             else:
                 # \x1c .. \x1f are whitespace Jython (which follows Java)
@@ -372,7 +372,7 @@ class BaseBytesTest(unittest.TestCase):
 
     def test_split_unicodewhitespace(self):
         b = self.type2test(b"\x09\x0A\x0B\x0C\x0D\x1C\x1D\x1E\x1F")
-        if not test.test_support.is_jython:
+        if not test.support.is_jython:
             self.assertEqual(b.split(), [b'\x1c\x1d\x1e\x1f'])
         else:
             # \x1c .. \x1f are whitespace Jython
@@ -401,7 +401,7 @@ class BaseBytesTest(unittest.TestCase):
 
     def test_rsplit_unicodewhitespace(self):
         b = self.type2test(b"\x09\x0A\x0B\x0C\x0D\x1C\x1D\x1E\x1F")
-        if not test.test_support.is_jython:
+        if not test.support.is_jython:
             self.assertEqual(b.rsplit(), [b'\x1c\x1d\x1e\x1f'])
         else:
             # \x1c .. \x1f are whitespace Jython
@@ -886,7 +886,7 @@ class ByteArrayTest(BaseBytesTest):
         self.assertRaises(BufferError, delslice)
         self.assertEqual(b, orig)
 
-        if test.test_support.is_jython:
+        if test.support.is_jython:
             # Show that releasing v releases the bytearray for size change
             v.release()
             b.pop()
@@ -1144,10 +1144,10 @@ class ByteArraySubclassTest(unittest.TestCase):
         self.assertEqual(x, b"abcd")
 
 def test_main():
-    #test.test_support.run_unittest(BytesTest)
-    #test.test_support.run_unittest(AssortedBytesTest)
-    #test.test_support.run_unittest(BytesAsStringTest)
-    test.test_support.run_unittest(
+    #test.support.run_unittest(BytesTest)
+    #test.support.run_unittest(AssortedBytesTest)
+    #test.support.run_unittest(BytesAsStringTest)
+    test.support.run_unittest(
         ByteArrayTest,
         ByteArrayAsStringTest,
         ByteArraySubclassTest,

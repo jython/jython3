@@ -1,5 +1,5 @@
 import unittest
-from test import test_support, test_set
+from test import support, test_set
 
 import pickle
 import threading
@@ -117,7 +117,7 @@ def test_main():
         TestJavaHashSet,
         TestJavaLinkedHashSet,
     ]
-    test_support.run_unittest(*tests)
+    support.run_unittest(*tests)
 
 
 if __name__ == '__main__':

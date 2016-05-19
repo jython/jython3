@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 
 import re
 
@@ -116,7 +116,7 @@ class JavaShellTest(unittest.TestCase):
         if newValue == "$NEWVARIABLE":
             newValue = os.popen( "echo %NEWVARIABLE%" ).read().strip()
         if newValue == "%NEWVARIABLE%":
-            raise test_support.TestSkipped( "Unable to find a subshell to execute echo" )
+            raise support.TestSkipped( "Unable to find a subshell to execute echo" )
         assert newValue == value, (
             "Expected (%s) to equal value we set (%s)" % (
             newValue, value
@@ -134,7 +134,7 @@ class JavaShellTest(unittest.TestCase):
         self.assertNotEqual(stdout, "", "Redirecting 2>&1 failed with unicode cmd")
 
 def test_main():
-    test_support.run_unittest(JavaShellTest)
+    support.run_unittest(JavaShellTest)
 
 if __name__ == "__main__":
     test_main()

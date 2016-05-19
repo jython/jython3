@@ -1,4 +1,4 @@
-from test import test_support
+from test import support
 from test.test_collections import ABCTestCase
 from collections import (
     Hashable, Iterable, Iterator,
@@ -119,7 +119,7 @@ class TestJavaInterfaces(ABCTestCase):
 
 def test_main():
     test_classes = [TestJavaInterfaces]
-    test_support.run_unittest(*test_classes)
+    support.run_unittest(*test_classes)
 
 if __name__ == "__main__":
     test_main()

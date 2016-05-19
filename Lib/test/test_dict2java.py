@@ -1,5 +1,5 @@
 from javatests import Dict2JavaTest
-import unittest, test.test_support
+import unittest, test.support
 
 # Test the java.util.Map interface of org.python.core.PyDictionary.
 # This tests the functionality of being able to pass a dictionaries
@@ -161,7 +161,7 @@ class JythonMapInJavaTest(unittest.TestCase):
         self.checksize(0)
 
 def test_main():
-    test.test_support.run_unittest(JythonMapInJavaTest)
+    test.support.run_unittest(JythonMapInJavaTest)
 
 if __name__ == '__main__':
     test_main()

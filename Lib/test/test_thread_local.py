@@ -3,7 +3,7 @@
 """
 from _thread import _local as local
 import unittest
-from test import test_support
+from test import support
 import threading
 
 class ThreadLocalTestCase(unittest.TestCase):
@@ -90,7 +90,7 @@ class ThreadLocalTestCase(unittest.TestCase):
         self.assertEqual(mydata.number, 11)
 
 def test_main():
-    test_support.run_unittest(ThreadLocalTestCase)
+    support.run_unittest(ThreadLocalTestCase)
 
 if __name__ == "__main__":
     test_main()

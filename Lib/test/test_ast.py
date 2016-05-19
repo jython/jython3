@@ -1,5 +1,5 @@
 import sys, itertools, unittest
-from test import test_support
+from test import support
 import ast
 
 def to_tuple(t):
@@ -295,7 +295,7 @@ def test_main():
     #XXX: AST pickling is left as a TODO for now.
     del AST_Tests.test_pickling
 
-    test_support.run_unittest(AST_Tests, ASTHelpers_Test)
+    support.run_unittest(AST_Tests, ASTHelpers_Test)
 
 def main():
     if __name__ != '__main__':

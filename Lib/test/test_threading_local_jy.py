@@ -4,7 +4,7 @@ import sys
 import threading
 import time
 import unittest
-from test import test_support
+from test import support
 from threading import local
 
 class LocalStuff(local):
@@ -54,7 +54,7 @@ class ThreadLocalConstructorTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(ThreadLocalConstructorTestCase)
+    support.run_unittest(ThreadLocalConstructorTestCase)
 
 
 if __name__ == "__main__":

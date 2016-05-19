@@ -1,6 +1,6 @@
 import unittest
 from doctest import DocTestSuite
-from test import test_support
+from test import support
 import threading
 import weakref
 import gc
@@ -109,7 +109,7 @@ class ThreadingLocalTest(unittest.TestCase):
 def test_main():
     suite = unittest.TestSuite()
     suite.addTest(DocTestSuite('_threading_local'))
-    if test_support.is_jython:
+    if support.is_jython:
         del ThreadingLocalTest.test_local_refs
     suite.addTest(unittest.makeSuite(ThreadingLocalTest))
 
@@ -128,7 +128,7 @@ def test_main():
                                    setUp=setUp, tearDown=tearDown)
                       )
 
-    test_support.run_unittest(suite)
+    support.run_unittest(suite)
 
 if __name__ == '__main__':
     test_main()

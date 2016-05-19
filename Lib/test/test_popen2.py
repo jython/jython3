@@ -12,7 +12,7 @@ import sys
 import unittest
 import popen2
 
-from test.test_support import run_unittest, reap_children, is_jython
+from test.support import run_unittest, reap_children, is_jython
 
 if sys.platform[:4] == 'beos' or sys.platform[:6] == 'atheos':
     #  Locks get messed up or something.  Generally we're supposed

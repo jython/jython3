@@ -5,9 +5,9 @@ import collections
 import weakref
 import operator
 
-from test import test_support
+from test import support
 
-if test_support.is_jython:
+if support.is_jython:
     import time
 
     def extra_collect():
@@ -219,7 +219,7 @@ class ReferencesTestCase(TestBase):
         p.append(12)
         self.assertEqual(len(L), 1)
         self.assertTrue(p, "proxy for non-empty UserList should be true")
-        with test_support.check_py3k_warnings():
+        with support.check_py3k_warnings():
             p[:] = [2, 3]
         self.assertEqual(len(L), 2)
         self.assertEqual(len(p), 2)
@@ -233,7 +233,7 @@ class ReferencesTestCase(TestBase):
         ## self.assertEqual(repr(L2), repr(p2))
         L3 = collections.UserList(list(range(10)))
         p3 = weakref.proxy(L3)
-        with test_support.check_py3k_warnings():
+        with support.check_py3k_warnings():
             self.assertEqual(L3[:], p3[:])
             self.assertEqual(L3[5:], p3[5:])
             self.assertEqual(L3[:5], p3[:5])
@@ -604,7 +604,7 @@ class ReferencesTestCase(TestBase):
         del c1, c2, C, D
         gc.collect()
 
-    @unittest.skipIf(test_support.is_jython, "Not a valid test for Jython without significant rewriting")
+    @unittest.skipIf(support.is_jython, "Not a valid test for Jython without significant rewriting")
     def test_callback_in_cycle_resurrection(self):
         import gc
 
@@ -651,7 +651,7 @@ class ReferencesTestCase(TestBase):
         gc.collect()
         self.assertEqual(alist, [])
 
-    @unittest.skipIf(test_support.is_jython, "Not a valid test for Jython")
+    @unittest.skipIf(support.is_jython, "Not a valid test for Jython")
     def test_callbacks_on_callback(self):
         import gc
 
@@ -690,15 +690,15 @@ class ReferencesTestCase(TestBase):
         gc.collect()
         self.assertEqual(alist, [])
 
-    @unittest.skipIf(test_support.is_jython, "Not a valid test for Jython")
+    @unittest.skipIf(support.is_jython, "Not a valid test for Jython")
     def test_gc_during_ref_creation(self):
         self.check_gc_during_creation(weakref.ref)
 
-    @unittest.skipIf(test_support.is_jython, "Not a valid test for Jython")
+    @unittest.skipIf(support.is_jython, "Not a valid test for Jython")
     def test_gc_during_proxy_creation(self):
         self.check_gc_during_creation(weakref.proxy)
 
-    @unittest.skipIf(test_support.is_jython, "Not a valid test for Jython")
+    @unittest.skipIf(support.is_jython, "Not a valid test for Jython")
     def check_gc_during_creation(self, makeref):
         thresholds = gc.get_threshold()
         gc.set_threshold(1, 1, 1)
@@ -992,11 +992,11 @@ class MappingTestCase(TestBase):
             self.assertGreaterEqual(n2, 0)
             self.assertLessEqual(n2, n1)
 
-    @unittest.skipIf(test_support.is_jython, "Not a valid test for Jython")
+    @unittest.skipIf(support.is_jython, "Not a valid test for Jython")
     def test_weak_keyed_len_race(self):
         self.check_len_race(weakref.WeakKeyDictionary, lambda k: (k, 1))
 
-    @unittest.skipIf(test_support.is_jython, "Not a valid test for Jython")
+    @unittest.skipIf(support.is_jython, "Not a valid test for Jython")
     def test_weak_valued_len_race(self):
         self.check_len_race(weakref.WeakValueDictionary, lambda k: (1, k))
 
@@ -1006,7 +1006,7 @@ class MappingTestCase(TestBase):
         #
         dict, objects = self.make_weak_valued_dict()
         for o in objects:
-            if not test_support.is_jython:  # Such dictionaries now use MapMaker
+            if not support.is_jython:  # Such dictionaries now use MapMaker
                 self.assertTrue(weakref.getweakrefcount(o) == 1,
                                 "wrong number of weak references to %r!" % o)
             self.assertTrue(o is dict[o.arg],
@@ -1042,7 +1042,7 @@ class MappingTestCase(TestBase):
         #
         dict, objects = self.make_weak_keyed_dict()
         for o in objects:
-            if not test_support.is_jython:  # Such dictionaries now use MapMaker
+            if not support.is_jython:  # Such dictionaries now use MapMaker
                 self.assertTrue(weakref.getweakrefcount(o) == 1,
                                 "wrong number of weak references to %r!" % o)
             self.assertTrue(o.arg is dict[o],
@@ -1283,7 +1283,7 @@ class MappingTestCase(TestBase):
 
     # Using MapMaker means that __eq__ is not called given that such
     # Google Collections based weak maps use identity, not equality.
-    @unittest.skipIf(test_support.is_jython, "Not a valid test for Jython")
+    @unittest.skipIf(support.is_jython, "Not a valid test for Jython")
     def test_weak_keyed_cascading_deletes(self):
         # SF bug 742860.  For some reason, bef1ore 2.3 __delitem__ iterated
         # over the keys via self.data.iterkeys().  If things vanished from
@@ -1435,14 +1435,14 @@ OK
 __test__ = {'libreftest' : libreftest}
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         ReferencesTestCase,
         MappingTestCase,
         WeakValueDictionaryTestCase,
         WeakKeyDictionaryTestCase,
         SubclassableWeakrefTestCase,
         )
-    test_support.run_doctest(sys.modules[__name__])
+    support.run_doctest(sys.modules[__name__])
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 import sys
-from test import test_support, list_tests
+from test import support, list_tests
 
 class ListTest(list_tests.CommonTest):
 
@@ -17,7 +17,7 @@ class ListTest(list_tests.CommonTest):
         self.assertEqual(self.type2test('spam'), ['s', 'p', 'a', 'm'])
 
         #FIXME: too brutal for us ATM.
-        if not test_support.is_jython:
+        if not support.is_jython:
             if sys.maxsize == 0x7fffffff:
                 # This test can currently only work on 32-bit machines.
                 # XXX If/when PySequence_Length() returns a ssize_t, it should be
@@ -64,7 +64,7 @@ class ListTest(list_tests.CommonTest):
         self.assertRaises((MemoryError, OverflowError), imul, lst, n)
 
 def test_main(verbose=None):
-    test_support.run_unittest(ListTest)
+    support.run_unittest(ListTest)
 
     # verify reference counting
     import sys
@@ -72,7 +72,7 @@ def test_main(verbose=None):
         import gc
         counts = [None] * 5
         for i in range(len(counts)):
-            test_support.run_unittest(ListTest)
+            support.run_unittest(ListTest)
             gc.collect()
             counts[i] = sys.gettotalrefcount()
         print(counts)

@@ -4,7 +4,7 @@ import os
 import sys
 import signal
 import time
-from test import test_support
+from test import support
 from subprocess import PIPE, Popen, _cmdline2list
 
 
@@ -144,7 +144,7 @@ class Cmdline2ListTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         TerminationAndSignalTest,
         PidTest,
         EnvironmentInheritanceTest,

@@ -4,7 +4,7 @@ Made for Jython.
 """
 import unittest
 import weakref
-from test import test_support
+from test import support
 from test_weakref import extra_collect
 
 class ReferencesTestCase(unittest.TestCase):
@@ -77,7 +77,7 @@ class ArgsTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(ReferencesTestCase, ArgsTestCase)
+    support.run_unittest(ReferencesTestCase, ArgsTestCase)
 
 
 if __name__ == '__main__':

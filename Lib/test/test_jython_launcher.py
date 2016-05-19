@@ -8,7 +8,7 @@ import subprocess
 import sys
 import unittest
 from collections import OrderedDict
-from test import test_support
+from test import support
 
 launcher = None
 uname = None
@@ -252,7 +252,7 @@ def test_main():
     launcher = get_launcher(sys.executable)
     uname = get_uname()
     is_windows = uname in ("cygwin", "windows")
-    test_support.run_unittest(
+    support.run_unittest(
         TestLauncher)
 
 

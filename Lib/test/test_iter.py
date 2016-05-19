@@ -1,7 +1,7 @@
 # Test iterators.
 
 import unittest
-from test.test_support import run_unittest, TESTFN, unlink, have_unicode, \
+from test.support import run_unittest, TESTFN, unlink, have_unicode, \
                               check_py3k_warnings
 from functools import reduce
 

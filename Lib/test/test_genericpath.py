@@ -3,7 +3,7 @@ Tests common to genericpath, macpath, ntpath and posixpath
 """
 
 import unittest
-from test import test_support
+from test import support
 import os
 import genericpath
 import sys
@@ -73,86 +73,86 @@ class GenericTest(unittest.TestCase):
                     self.assertNotEqual(s1[n:n+1], s2[n:n+1])
 
     def test_getsize(self):
-        f = open(test_support.TESTFN, "wb")
+        f = open(support.TESTFN, "wb")
         try:
             f.write("foo")
             f.close()
-            self.assertEqual(self.pathmodule.getsize(test_support.TESTFN), 3)
+            self.assertEqual(self.pathmodule.getsize(support.TESTFN), 3)
         finally:
             if not f.closed:
                 f.close()
-            test_support.unlink(test_support.TESTFN)
+            support.unlink(support.TESTFN)
 
     def test_time(self):
-        f = open(test_support.TESTFN, "wb")
+        f = open(support.TESTFN, "wb")
         try:
             f.write("foo")
             f.close()
-            f = open(test_support.TESTFN, "ab")
+            f = open(support.TESTFN, "ab")
             f.write("bar")
             f.close()
-            f = open(test_support.TESTFN, "rb")
+            f = open(support.TESTFN, "rb")
             d = f.read()
             f.close()
             self.assertEqual(d, "foobar")
 
             self.assertLessEqual(
-                self.pathmodule.getctime(test_support.TESTFN),
-                self.pathmodule.getmtime(test_support.TESTFN)
+                self.pathmodule.getctime(support.TESTFN),
+                self.pathmodule.getmtime(support.TESTFN)
             )
         finally:
             if not f.closed:
                 f.close()
-            test_support.unlink(test_support.TESTFN)
+            support.unlink(support.TESTFN)
 
     def test_exists(self):
-        self.assertIs(self.pathmodule.exists(test_support.TESTFN), False)
-        f = open(test_support.TESTFN, "wb")
+        self.assertIs(self.pathmodule.exists(support.TESTFN), False)
+        f = open(support.TESTFN, "wb")
         try:
             f.write("foo")
             f.close()
-            self.assertIs(self.pathmodule.exists(test_support.TESTFN), True)
+            self.assertIs(self.pathmodule.exists(support.TESTFN), True)
             if not self.pathmodule == genericpath:
-                self.assertIs(self.pathmodule.lexists(test_support.TESTFN),
+                self.assertIs(self.pathmodule.lexists(support.TESTFN),
                               True)
         finally:
             if not f.close():
                 f.close()
-            test_support.unlink(test_support.TESTFN)
+            support.unlink(support.TESTFN)
 
     def test_isdir(self):
-        self.assertIs(self.pathmodule.isdir(test_support.TESTFN), False)
-        f = open(test_support.TESTFN, "wb")
+        self.assertIs(self.pathmodule.isdir(support.TESTFN), False)
+        f = open(support.TESTFN, "wb")
         try:
             f.write("foo")
             f.close()
-            self.assertIs(self.pathmodule.isdir(test_support.TESTFN), False)
-            os.remove(test_support.TESTFN)
-            os.mkdir(test_support.TESTFN)
-            self.assertIs(self.pathmodule.isdir(test_support.TESTFN), True)
-            os.rmdir(test_support.TESTFN)
+            self.assertIs(self.pathmodule.isdir(support.TESTFN), False)
+            os.remove(support.TESTFN)
+            os.mkdir(support.TESTFN)
+            self.assertIs(self.pathmodule.isdir(support.TESTFN), True)
+            os.rmdir(support.TESTFN)
         finally:
             if not f.close():
                 f.close()
-            test_support.unlink(test_support.TESTFN)
-            safe_rmdir(test_support.TESTFN)
+            support.unlink(support.TESTFN)
+            safe_rmdir(support.TESTFN)
 
     def test_isfile(self):
-        self.assertIs(self.pathmodule.isfile(test_support.TESTFN), False)
-        f = open(test_support.TESTFN, "wb")
+        self.assertIs(self.pathmodule.isfile(support.TESTFN), False)
+        f = open(support.TESTFN, "wb")
         try:
             f.write("foo")
             f.close()
-            self.assertIs(self.pathmodule.isfile(test_support.TESTFN), True)
-            os.remove(test_support.TESTFN)
-            os.mkdir(test_support.TESTFN)
-            self.assertIs(self.pathmodule.isfile(test_support.TESTFN), False)
-            os.rmdir(test_support.TESTFN)
+            self.assertIs(self.pathmodule.isfile(support.TESTFN), True)
+            os.remove(support.TESTFN)
+            os.mkdir(support.TESTFN)
+            self.assertIs(self.pathmodule.isfile(support.TESTFN), False)
+            os.rmdir(support.TESTFN)
         finally:
             if not f.close():
                 f.close()
-            test_support.unlink(test_support.TESTFN)
-            safe_rmdir(test_support.TESTFN)
+            support.unlink(support.TESTFN)
+            safe_rmdir(support.TESTFN)
 
 
 # Following TestCase is not supposed to be run from test_genericpath.
@@ -188,7 +188,7 @@ class CommonTest(GenericTest):
         if self.pathmodule.__name__ == 'macpath':
             self.skipTest('macpath.expandvars is a stub')
         expandvars = self.pathmodule.expandvars
-        with test_support.EnvironmentVarGuard() as env:
+        with support.EnvironmentVarGuard() as env:
             env.clear()
             env["foo"] = "bar"
             env["{foo"] = "baz1"
@@ -230,26 +230,26 @@ class CommonTest(GenericTest):
 
         unicwd = '\xe7w\xf0'
         try:
-            fsencoding = test_support.TESTFN_ENCODING or "ascii"
+            fsencoding = support.TESTFN_ENCODING or "ascii"
             unicwd.encode(fsencoding)
         except (AttributeError, UnicodeEncodeError):
             # FS encoding is probably ASCII
             pass
         else:
-            with test_support.temp_cwd(unicwd):
+            with support.temp_cwd(unicwd):
                 for path in ('', 'fuu', 'f\xf9\xf9', '/fuu', 'U:\\'):
                     self.assertIsInstance(abspath(path), str)
 
-    @unittest.skipIf(sys.platform == 'darwin' or test_support.is_jython,
+    @unittest.skipIf(sys.platform == 'darwin' or support.is_jython,
         "Both Mac OS X and Java deny the creation of a directory with an invalid utf8 name")
     def test_nonascii_abspath(self):
         # Test non-ASCII, non-UTF8 bytes in the path.
-        with test_support.temp_cwd('\xe7w\xf0'):
+        with support.temp_cwd('\xe7w\xf0'):
             self.test_abspath()
 
 
 def test_main():
-    test_support.run_unittest(GenericTest)
+    support.run_unittest(GenericTest)
 
 
 if __name__=="__main__":

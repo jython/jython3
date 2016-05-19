@@ -10,7 +10,7 @@ import datetime
 import unittest
 import subprocess
 
-from test import test_support
+from test import support
 from collections import Hashable
 
 IS_64BIT = (struct.calcsize('l') == 8)
@@ -161,10 +161,10 @@ class HashRandomizationTests(unittest.TestCase):
                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                              env=env)
         out, err = p.communicate()
-        out = test_support.strip_python_stderr(out)
+        out = support.strip_python_stderr(out)
         return int(out.strip())
 
-    @unittest.skipIf(test_support.is_jython, "No randomized hash in Jython")
+    @unittest.skipIf(support.is_jython, "No randomized hash in Jython")
     def test_randomized_hash(self):
         # two runs should return different hashes
         run1 = self.get_hash(self.repr_, seed='random')
@@ -200,21 +200,21 @@ class StringlikeHashRandomizationTests(HashRandomizationTests):
                 h = -1024014457
         self.assertEqual(self.get_hash(self.repr_, seed=42), h)
 
-@unittest.skipIf(test_support.is_jython, "No randomized hash in Jython")
+@unittest.skipIf(support.is_jython, "No randomized hash in Jython")
 class StrHashRandomizationTests(StringlikeHashRandomizationTests):
     repr_ = repr('abc')
 
     def test_empty_string(self):
         self.assertEqual(hash(""), 0)
 
-@unittest.skipIf(test_support.is_jython, "No randomized hash in Jython")
+@unittest.skipIf(support.is_jython, "No randomized hash in Jython")
 class UnicodeHashRandomizationTests(StringlikeHashRandomizationTests):
     repr_ = repr('abc')
 
     def test_empty_string(self):
         self.assertEqual(hash(""), 0)
 
-@unittest.skipIf(test_support.is_jython, "No buffer in Jython")
+@unittest.skipIf(support.is_jython, "No buffer in Jython")
 class BufferHashRandomizationTests(StringlikeHashRandomizationTests):
     repr_ = 'buffer("abc")'
 
@@ -236,7 +236,7 @@ class DatetimeTimeTests(DatetimeTests):
 
 
 def test_main():
-    test_support.run_unittest(HashEqualityTestCase,
+    support.run_unittest(HashEqualityTestCase,
                               HashInheritanceTestCase,
                               HashBuiltinsTestCase,
                               StrHashRandomizationTests,

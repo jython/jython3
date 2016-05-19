@@ -1,4 +1,4 @@
-from test import test_support
+from test import support
 import unittest
 import os
 
@@ -27,14 +27,14 @@ class CodingTest(unittest.TestCase):
             compile(input, "<string>", "exec")
         
         #XXX: really exceptions should not be testing the message content.
-        if not test_support.is_jython:
+        if not support.is_jython:
             expected = "'ascii' codec can't decode byte 0xe2 in position 16: " \
                        "ordinal not in range(128)"
             self.assertTrue(c.exception.args[0].startswith(expected))
 
 
 def test_main():
-    test_support.run_unittest(CodingTest)
+    support.run_unittest(CodingTest)
 
 if __name__ == "__main__":
     test_main()

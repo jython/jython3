@@ -1,6 +1,6 @@
 # Test the module type
 import unittest
-from test.test_support import run_unittest, gc_collect
+from test.support import run_unittest, gc_collect
 
 import io  # Jython: sub this for sys, given the special status of PySystemState
 ModuleType = type(StringIO)

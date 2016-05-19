@@ -9,7 +9,7 @@ import zipfile, os, unittest, sys, shutil
 from io import StringIO
 from tempfile import TemporaryFile
 
-from test.test_support import TESTFN, is_jython, run_unittest
+from test.support import TESTFN, is_jython, run_unittest
 
 TESTFN2 = TESTFN + "2"
 

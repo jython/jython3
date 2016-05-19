@@ -39,7 +39,7 @@ from socketserver import ThreadingTCPServer, StreamRequestHandler
 import struct
 import sys
 import tempfile
-from test.test_support import captured_stdout, run_with_locale, run_unittest
+from test.support import captured_stdout, run_with_locale, run_unittest
 import textwrap
 import time
 import unittest

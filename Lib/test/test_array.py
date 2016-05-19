@@ -4,12 +4,12 @@
 """
 
 import unittest
-from test import test_support
+from test import support
 from weakref import proxy
 import array, io
 from pickle import loads, dumps, HIGHEST_PROTOCOL
 
-if test_support.is_jython:
+if support.is_jython:
     import operator
     from test_weakref import extra_collect
 
@@ -74,7 +74,7 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(bi[1], len(a))
 
     def test_byteswap(self):
-        if test_support.is_jython and self.typecode == 'u':
+        if support.is_jython and self.typecode == 'u':
             # Jython unicodes are already decoded from utf16,
             # so this doesn't make sense
             return
@@ -171,13 +171,13 @@ class BaseTest(unittest.TestCase):
         a = array.array(self.typecode, 2*self.example)
         self.assertRaises(TypeError, a.tofile)
         self.assertRaises(TypeError, a.tofile, io.StringIO())
-        test_support.unlink(test_support.TESTFN)
-        f = open(test_support.TESTFN, 'wb')
+        support.unlink(support.TESTFN)
+        f = open(support.TESTFN, 'wb')
         try:
             a.tofile(f)
             f.close()
             b = array.array(self.typecode)
-            f = open(test_support.TESTFN, 'rb')
+            f = open(support.TESTFN, 'rb')
             self.assertRaises(TypeError, b.fromfile)
             self.assertRaises(
                 TypeError,
@@ -194,27 +194,27 @@ class BaseTest(unittest.TestCase):
         finally:
             if not f.closed:
                 f.close()
-            test_support.unlink(test_support.TESTFN)
+            support.unlink(support.TESTFN)
 
     def test_fromfile_ioerror(self):
         # Issue #5395: Check if fromfile raises a proper IOError
         # instead of EOFError.
         a = array.array(self.typecode)
-        f = open(test_support.TESTFN, 'wb')
+        f = open(support.TESTFN, 'wb')
         try:
             self.assertRaises(IOError, a.fromfile, f, len(self.example))
         finally:
             f.close()
-            test_support.unlink(test_support.TESTFN)
+            support.unlink(support.TESTFN)
 
     def test_filewrite(self):
         a = array.array(self.typecode, 2*self.example)
-        f = open(test_support.TESTFN, 'wb')
+        f = open(support.TESTFN, 'wb')
         try:
             f.write(a)
             f.close()
             b = array.array(self.typecode)
-            f = open(test_support.TESTFN, 'rb')
+            f = open(support.TESTFN, 'rb')
             b.fromfile(f, len(self.example))
             self.assertEqual(b, array.array(self.typecode, self.example))
             self.assertNotEqual(a, b)
@@ -224,7 +224,7 @@ class BaseTest(unittest.TestCase):
         finally:
             if not f.closed:
                 f.close()
-            test_support.unlink(test_support.TESTFN)
+            support.unlink(support.TESTFN)
 
     def test_tofromlist(self):
         a = array.array(self.typecode, 2*self.example)
@@ -247,13 +247,13 @@ class BaseTest(unittest.TestCase):
         if a.itemsize>1 and self.typecode not in ('b', 'B'):
             self.assertRaises(ValueError, b.fromstring, "x")
         # Test from byte string available via buffer API (Jython addition)
-        if test_support.is_jython:
+        if support.is_jython:
             for buftype in (buffer, memoryview, bytearray):
                 b = array.array(self.typecode)
                 b.fromstring(buftype(a.tostring()))
                 self.assertEqual(a, b)
 
-    @unittest.skipUnless(test_support.is_jython, "Jython supports memoryview slices")
+    @unittest.skipUnless(support.is_jython, "Jython supports memoryview slices")
     def test_tofromstring_sliced(self):
         a = array.array(self.typecode, self.example)
         r = bytearray(a.tostring())
@@ -282,12 +282,12 @@ class BaseTest(unittest.TestCase):
 
     def test_filewrite(self):
         a = array.array(self.typecode, 2*self.example)
-        f = open(test_support.TESTFN, 'wb')
+        f = open(support.TESTFN, 'wb')
         try:
             f.write(a)
             f.close()
             b = array.array(self.typecode)
-            f = open(test_support.TESTFN, 'rb')
+            f = open(support.TESTFN, 'rb')
             b.fromfile(f, len(self.example))
             self.assertEqual(b, array.array(self.typecode, self.example))
             self.assertNotEqual(a, b)
@@ -297,7 +297,7 @@ class BaseTest(unittest.TestCase):
         finally:
             if not f.closed:
                 f.close()
-            test_support.unlink(test_support.TESTFN)
+            support.unlink(support.TESTFN)
 
     def test_repr(self):
         a = array.array(self.typecode, 2*self.example)
@@ -355,7 +355,7 @@ class BaseTest(unittest.TestCase):
         )
 
         b = array.array(self.badtypecode())
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertRaises(TypeError, operator.add, a, b)
             self.assertRaises(TypeError, operator.add, a, "bad")
         else:
@@ -379,7 +379,7 @@ class BaseTest(unittest.TestCase):
         )
 
         b = array.array(self.badtypecode())
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertRaises(TypeError, operator.add, a, b)
             self.assertRaises(TypeError, operator.iadd, a, "bad")
         else:
@@ -411,7 +411,7 @@ class BaseTest(unittest.TestCase):
             array.array(self.typecode)
         )
 
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertRaises(TypeError, operator.mul, a, "bad")
         else:
             self.assertRaises(TypeError, a.__mul__, "bad")
@@ -443,7 +443,7 @@ class BaseTest(unittest.TestCase):
         a *= -1
         self.assertEqual(a, array.array(self.typecode))
 
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertRaises(TypeError, operator.imul, a, "bad")
         else:
             self.assertRaises(TypeError, a.__imul__, "bad")
@@ -832,7 +832,7 @@ class BaseTest(unittest.TestCase):
 
     def test_buffer(self):
         a = array.array(self.typecode, self.example)
-        with test_support.check_py3k_warnings():
+        with support.check_py3k_warnings():
             b = buffer(a)
         self.assertEqual(b[0], a.tostring()[0])
 
@@ -841,7 +841,7 @@ class BaseTest(unittest.TestCase):
         p = proxy(s)
         self.assertEqual(p.tostring(), s.tostring())
         s = None
-        if test_support.is_jython:
+        if support.is_jython:
             extra_collect()
         self.assertRaises(ReferenceError, len, p)
 
@@ -859,7 +859,7 @@ class BaseTest(unittest.TestCase):
         # SF bug #1486663 -- this used to erroneously raise a TypeError
         ArraySubclassWithKwargs('b', newarg=1)
 
-    @unittest.skipUnless(test_support.is_jython, "array supports buffer interface in Jython")
+    @unittest.skipUnless(support.is_jython, "array supports buffer interface in Jython")
     def test_resize_forbidden(self):
         # Test that array resizing is forbidden with buffer exports (Jython addition).
         # Test adapted from corresponding one in test_bytes.
@@ -965,7 +965,7 @@ class CharacterTest(StringTest):
 
 tests.append(CharacterTest)
 
-if test_support.have_unicode:
+if support.have_unicode:
     class UnicodeTest(StringTest):
         typecode = 'u'
         example = str(r'\x01\u263a\x00\ufeff', 'unicode-escape')
@@ -1115,7 +1115,7 @@ class UnsignedNumberTest(NumberTest):
         a = array.array(self.typecode)
         lower = 0
         itemsize = a.itemsize
-        if test_support.is_jython:
+        if support.is_jython:
             #  unsigned itemsizes are larger than would be expected
             # in CPython because Jython promotes to the next size
             # (Java has no unsiged integers except for char)
@@ -1221,18 +1221,18 @@ tests.append(DoubleTest)
 def test_main(verbose=None):
     import sys
 
-    if test_support.is_jython:
+    if support.is_jython:
         # CPython specific; returns a memory address
         del BaseTest.test_buffer_info
 
-    test_support.run_unittest(*tests)
+    support.run_unittest(*tests)
 
     # verify reference counting
     if verbose and hasattr(sys, "gettotalrefcount"):
         import gc
         counts = [None] * 5
         for i in range(len(counts)):
-            test_support.run_unittest(*tests)
+            support.run_unittest(*tests)
             gc.collect()
             counts[i] = sys.gettotalrefcount()
         print(counts)

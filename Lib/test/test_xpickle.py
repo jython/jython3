@@ -14,7 +14,7 @@ import sys
 import types
 import unittest
 
-from test import test_support
+from test import support
 
 # Most distro-supplied Pythons don't include the tests
 # or test support files, and some don't include a way to get these back even if
@@ -63,7 +63,7 @@ class DumpCPickle_LoadPickle(ApproxFloat, AbstractPickleTests):
         # Ignore fast
         return pickle.loads(buf)
 
-    @unittest.skipIf(test_support.is_jython, "FIXME: not working on Jython")
+    @unittest.skipIf(support.is_jython, "FIXME: not working on Jython")
     def test_dynamic_class(self):
         pass
 
@@ -82,7 +82,7 @@ class DumpPickle_LoadCPickle(AbstractPickleTests):
 
 def have_python_version(name):
     """Check whether the given name is a valid Python binary and has
-    test.test_support.
+    test.support.
 
     This respects your PATH.
 
@@ -92,7 +92,7 @@ def have_python_version(name):
     Returns:
         True if the name is valid, False otherwise.
     """
-    return os.system(name + " -c 'import test.test_support'") == 0
+    return os.system(name + " -c 'import test.support'") == 0
 
 
 class AbstractCompatTests(AbstractPickleTests):
@@ -182,7 +182,7 @@ class AbstractCompatTests(AbstractPickleTests):
     def test_dynamic_class(self):
         pass
 
-    if test_support.have_unicode:
+    if support.have_unicode:
         # This is a cut-down version of pickletester's test_unicode. Backwards
         # compatibility was explicitly broken in r67934 to fix a bug.
         def test_unicode(self):
@@ -195,7 +195,7 @@ class AbstractCompatTests(AbstractPickleTests):
 
 
 def run_compat_test(python_name):
-    return (test_support.is_resource_enabled("xpickle") and
+    return (support.is_resource_enabled("xpickle") and
             have_python_version(python_name))
 
 
@@ -265,12 +265,12 @@ def worker_main(in_stream, out_stream):
 
 
 def test_main():
-    if not test_support.is_resource_enabled("xpickle"):
+    if not support.is_resource_enabled("xpickle"):
         print("test_xpickle -- skipping backwards compat tests.", file=sys.stderr)
         print("Use 'regrtest.py -u xpickle' to run them.", file=sys.stderr)
         sys.stderr.flush()
 
-    test_support.run_unittest(
+    support.run_unittest(
         DumpCPickle_LoadPickle,
         DumpPickle_LoadCPickle,
         CPicklePython24Compat,

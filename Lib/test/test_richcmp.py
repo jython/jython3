@@ -1,7 +1,7 @@
 # Tests for rich comparisons
 
 import unittest
-from test import test_support
+from test import support
 
 import operator
 
@@ -29,7 +29,7 @@ class Number:
         return self.x >= other
 
     def __cmp__(self, other):
-        raise test_support.TestFailed("Number.__cmp__() should not be called")
+        raise support.TestFailed("Number.__cmp__() should not be called")
 
     def __repr__(self):
         return "Number(%r)" % (self.x, )
@@ -55,7 +55,7 @@ class Vector:
         raise TypeError("Vectors cannot be used in Boolean contexts")
 
     def __cmp__(self, other):
-        raise test_support.TestFailed("Vector.__cmp__() should not be called")
+        raise support.TestFailed("Vector.__cmp__() should not be called")
 
     def __repr__(self):
         return "Vector(%r)" % (self.data, )
@@ -331,11 +331,11 @@ class ListTest(unittest.TestCase):
             self.assertIs(op(x, y), True)
 
 def test_main():
-    if test_support.is_jython:
+    if support.is_jython:
         # A circular implementation of __eq__ returns False instead of
         # True: http://jython.org/bugs/1758280
         del MiscTest.test_recursion
-    test_support.run_unittest(VectorTest, NumberTest, MiscTest, DictTest, ListTest)
+    support.run_unittest(VectorTest, NumberTest, MiscTest, DictTest, ListTest)
 
 if __name__ == "__main__":
     test_main()

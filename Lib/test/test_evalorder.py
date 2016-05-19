@@ -1,5 +1,5 @@
 from unittest import TestCase
-from test import test_support
+from test import support
 from functools import reduce
 
 class Bucket(object):
@@ -60,7 +60,7 @@ class EvaluationOrder(TestCase):
         assert value == (25, 26, 27, 28), "bothvarcalls, got: %s" % (value,)
 
 def test_main():
-    test_support.run_unittest(EvaluationOrder)
+    support.run_unittest(EvaluationOrder)
 
 if __name__ == '__main__':
     test_main()

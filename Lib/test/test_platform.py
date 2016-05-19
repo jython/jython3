@@ -4,8 +4,8 @@ import unittest
 import platform
 import subprocess
 
-from test import test_support
-from test.test_support import is_jython
+from test import support
+from test.support import is_jython
 
 class PlatformTest(unittest.TestCase):
     def test_architecture(self):
@@ -20,7 +20,7 @@ class PlatformTest(unittest.TestCase):
                 p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
                 return p.communicate()
             real = os.path.realpath(sys.executable)
-            link = os.path.abspath(test_support.TESTFN)
+            link = os.path.abspath(support.TESTFN)
             os.symlink(real, link)
             try:
                 self.assertEqual(get(real), get(link))
@@ -52,19 +52,19 @@ class PlatformTest(unittest.TestCase):
 
     def setUp(self):
         # These are readonly in Jython
-        if not test_support.is_jython:
+        if not support.is_jython:
             self.save_version = sys.version
             self.save_subversion = sys.subversion
             self.save_platform = sys.platform
 
     def tearDown(self):
         # These are readonly in Jython
-        if not test_support.is_jython:
+        if not support.is_jython:
             sys.version = self.save_version
             sys.subversion = self.save_subversion
             sys.platform = self.save_platform
 
-    @unittest.skipIf(test_support.is_jython,
+    @unittest.skipIf(support.is_jython,
                      "sys.version and sys.subversion are readonly in Jython.")
     def test_sys_version(self):
         # Old test.
@@ -142,7 +142,7 @@ class PlatformTest(unittest.TestCase):
         # using it, per
         # http://blogs.msdn.com/david.wang/archive/2006/03/26/HOWTO-Detect-Process-Bitness.aspx
         try:
-            with test_support.EnvironmentVarGuard() as environ:
+            with support.EnvironmentVarGuard() as environ:
                 if 'PROCESSOR_ARCHITEW6432' in environ:
                     del environ['PROCESSOR_ARCHITEW6432']
                 environ['PROCESSOR_ARCHITECTURE'] = 'foo'
@@ -257,7 +257,7 @@ class PlatformTest(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         PlatformTest
     )
 

@@ -1,12 +1,12 @@
 # Very rudimentary test of threading module
 
-import test.test_support
-from test.test_support import verbose, is_jython
+import test.support
+from test.support import verbose, is_jython
 import random
 import re
 import sys
-thread = test.test_support.import_module('thread')
-threading = test.test_support.import_module('threading')
+thread = test.support.import_module('thread')
+threading = test.support.import_module('threading')
 import time
 import unittest
 import weakref
@@ -60,11 +60,11 @@ class TestThread(threading.Thread):
 
 class BaseTestCase(unittest.TestCase):
     def setUp(self):
-        self._threads = test.test_support.threading_setup()
+        self._threads = test.support.threading_setup()
 
     def tearDown(self):
-        test.test_support.threading_cleanup(*self._threads)
-        test.test_support.reap_children()
+        test.support.threading_cleanup(*self._threads)
+        test.support.reap_children()
 
 
 class ThreadTests(BaseTestCase):
@@ -745,7 +745,7 @@ class BoundedSemaphoreTests(lock_tests.BoundedSemaphoreTests):
         self.assertEqual(data, expected_output)
 
 def test_main():
-    test.test_support.run_unittest(LockTests, RLockTests, EventTests,
+    test.support.run_unittest(LockTests, RLockTests, EventTests,
                                    ConditionAsRLockTests, ConditionTests,
                                    SemaphoreTests, BoundedSemaphoreTests,
                                    ThreadTests,

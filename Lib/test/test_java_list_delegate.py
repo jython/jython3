@@ -3,7 +3,7 @@ from java.util import ArrayList, List, Vector
 from copy import copy
 
 import unittest
-import test.test_support
+import test.support
 
 class CollectionProxyTest(unittest.TestCase):
     def _perform_op(self, value, op_func):
@@ -232,7 +232,7 @@ class CollectionProxyTest(unittest.TestCase):
 
 
 def test_main():
-    test.test_support.run_unittest(CollectionProxyTest)
+    test.support.run_unittest(CollectionProxyTest)
 
 if __name__ == "__main__":
     test_main()

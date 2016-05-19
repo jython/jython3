@@ -149,7 +149,7 @@ class TestDefaultDict(unittest.TestCase):
         else:
             self.fail("expected KeyError")
 
-    @unittest.skipIf(test_support.is_jython, "FIXME: incorrect formatting of default_factory when it's a bound method")
+    @unittest.skipIf(support.is_jython, "FIXME: incorrect formatting of default_factory when it's a bound method")
     def test_recursive_repr(self):
         # Issue2045: stack overflow when default_factory is a bound method
         class sub(defaultdict):

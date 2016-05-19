@@ -1,6 +1,6 @@
 import os, sys, string, random, tempfile, unittest
 
-from test.test_support import run_unittest, is_jython
+from test.support import run_unittest, is_jython
 
 class TestImport(unittest.TestCase):
 

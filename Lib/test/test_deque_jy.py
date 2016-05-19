@@ -2,7 +2,7 @@ import time
 import random
 import unittest
 import threading
-from test import test_support
+from test import support
 from collections import deque
 
 
@@ -70,7 +70,7 @@ class ThreadSafetyTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(ThreadSafetyTestCase)
+    support.run_unittest(ThreadSafetyTestCase)
 
 if __name__ == "__main__":
     test_main()

@@ -12,12 +12,12 @@ import tempfile
 import unittest
 import zipfile
 import zipimport
-from test import test_support
+from test import support
 
 COMPILED_SUFFIX = [suffix for suffix, mode, type in imp.get_suffixes()
                    if type == imp.PY_COMPILED][0]
 
-WINDOWS = (os._name if test_support.is_jython else os.name) == 'nt'
+WINDOWS = (os._name if support.is_jython else os.name) == 'nt'
 
 CODE1 = """result = 'result is %r' % (100.0 * (3.0 / 5.0))"""
 CODE1_RESULT = 'result is %r' % (100.0 * (3.0 / 5.0))
@@ -703,15 +703,15 @@ def raises(exc, expected, callable, *args):
         if expected is not None:
             if isinstance(expected, str):
                 if str(msg) != expected:
-                    raise test_support.TestFailed(
+                    raise support.TestFailed(
                         "Message %r, expected %r" % (str(msg), expected))
             elif isinstance(expected, int):
                 if msg.errno != expected:
-                    raise test_support.TestFailed(
+                    raise support.TestFailed(
                         "errno %r, expected %r" % (msg, expected))
 
     else:
-        raise test_support.TestFailed("Expected %s" % exc)
+        raise support.TestFailed("Expected %s" % exc)
 
 
 def read(filename):
@@ -747,14 +747,14 @@ def test_main():
         tests.append(WindowsChdirTestCase)
         tests.remove(SymlinkTestCase)       #  os.symlink ... Availability: Unix.
 
-    if test_support.is_jython:
+    if support.is_jython:
         tests.extend((ImportJavaClassTestCase,
                       ImportJarTestCase))
  
-    if test_support.is_resource_enabled('subprocess'):
+    if support.is_resource_enabled('subprocess'):
         tests.append(SubprocessTestCase)
 
-    test_support.run_unittest(*tests)
+    support.run_unittest(*tests)
 
 
 if __name__ == '__main__':

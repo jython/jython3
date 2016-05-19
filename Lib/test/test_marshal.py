@@ -2,20 +2,20 @@
 # -*- coding: iso-8859-1 -*-
 
 
-from test import test_support
+from test import support
 import marshal
 import sys
 import unittest
 import os
 
 # the original had incorrect semantics for non-refcounting GCs:
-#                marshal.dump(expected, file(test_support.TESTFN, "wb"))
-#                got = marshal.load(file(test_support.TESTFN, "rb"))
+#                marshal.dump(expected, file(support.TESTFN, "wb"))
+#                got = marshal.load(file(support.TESTFN, "rb"))
 
 def roundtrip(item):
-    with open(test_support.TESTFN, "wb") as test_file:
+    with open(support.TESTFN, "wb") as test_file:
         marshal.dump(item, test_file)
-    with open(test_support.TESTFN, "rb") as test_file:
+    with open(support.TESTFN, "rb") as test_file:
         got = marshal.load(test_file)
     return got
 
@@ -31,7 +31,7 @@ class IntTestCase(unittest.TestCase):
                 self.assertEqual(expected, got)
                 self.assertEqual(expected, roundtrip(expected))
             n = n >> 1
-        os.unlink(test_support.TESTFN)
+        os.unlink(support.TESTFN)
 
     def test_int64(self):
         # Simulate int marshaling on a 64-bit box.  This is most interesting if
@@ -101,7 +101,7 @@ class FloatTestCase(unittest.TestCase):
 
                 s = marshal.dumps(f, 1)
                 got = marshal.loads(s)
-                if test_support.is_jython:
+                if support.is_jython:
                     self.assertAlmostEqual(f, got)
                 else:
                     self.assertEqual(f, got)
@@ -110,11 +110,11 @@ class FloatTestCase(unittest.TestCase):
                 self.assertEqual(f, got)
 
                 # XXX - not certain what this extra arg to dump is!
-                #marshal.dump(f, file(test_support.TESTFN, "wb"), 1)
-                #got = marshal.load(file(test_support.TESTFN, "rb"))
+                #marshal.dump(f, file(support.TESTFN, "wb"), 1)
+                #got = marshal.load(file(support.TESTFN, "rb"))
                 #self.assertEqual(f, got)
             n *= 123.4567
-        os.unlink(test_support.TESTFN)
+        os.unlink(support.TESTFN)
 
 class StringTestCase(unittest.TestCase):
     def test_unicode(self):
@@ -125,7 +125,7 @@ class StringTestCase(unittest.TestCase):
             new = roundtrip(s)
             self.assertEqual(s, new)
             self.assertEqual(type(s), type(new))
-        os.unlink(test_support.TESTFN)
+        os.unlink(support.TESTFN)
 
     def test_string(self):
         for s in ["", "Andrè Previn", "abc", " "*10000]:
@@ -135,9 +135,9 @@ class StringTestCase(unittest.TestCase):
             new = roundtrip(s)
             self.assertEqual(s, new)
             self.assertEqual(type(s), type(new))
-        os.unlink(test_support.TESTFN)
+        os.unlink(support.TESTFN)
 
-    if not test_support.is_jython:
+    if not support.is_jython:
         def test_buffer(self):
             for s in ["", "Andrè Previn", "abc", " "*10000]:
                 b = buffer(s)
@@ -145,7 +145,7 @@ class StringTestCase(unittest.TestCase):
                 self.assertEqual(s, new)
                 new = roundtrip(b)
                 self.assertEqual(s, new)
-            os.unlink(test_support.TESTFN)
+            os.unlink(support.TESTFN)
 
 class ExceptionTestCase(unittest.TestCase):
     def test_exceptions(self):
@@ -153,7 +153,7 @@ class ExceptionTestCase(unittest.TestCase):
         self.assertEqual(StopIteration, new)
 
 class CodeTestCase(unittest.TestCase):
-    if not test_support.is_jython: # XXX - need to use the PBC compilation backend, which doesn't exist yet
+    if not support.is_jython: # XXX - need to use the PBC compilation backend, which doesn't exist yet
         def test_code(self):
             co = ExceptionTestCase.test_exceptions.__code__
             new = marshal.loads(marshal.dumps(co))
@@ -174,7 +174,7 @@ class ContainerTestCase(unittest.TestCase):
         self.assertEqual(self.d, new)
         new = roundtrip(self.d)
         self.assertEqual(self.d, new)
-        os.unlink(test_support.TESTFN)
+        os.unlink(support.TESTFN)
 
     def test_list(self):
         lst = list(self.d.items())
@@ -182,7 +182,7 @@ class ContainerTestCase(unittest.TestCase):
         self.assertEqual(lst, new)
         new = roundtrip(lst)
         self.assertEqual(lst, new)
-        os.unlink(test_support.TESTFN)
+        os.unlink(support.TESTFN)
 
     def test_tuple(self):
         t = tuple(self.d.keys())
@@ -190,7 +190,7 @@ class ContainerTestCase(unittest.TestCase):
         self.assertEqual(t, new)
         new = roundtrip(t)
         self.assertEqual(t, new)
-        os.unlink(test_support.TESTFN)
+        os.unlink(support.TESTFN)
 
     def test_sets(self):
         for constructor in (set, frozenset):
@@ -201,7 +201,7 @@ class ContainerTestCase(unittest.TestCase):
             self.assertNotEqual(id(t), id(new))
             new = roundtrip(t)
             self.assertEqual(t, new)
-            os.unlink(test_support.TESTFN)
+            os.unlink(support.TESTFN)
 
 class BugsTestCase(unittest.TestCase):
     def test_bug_5888452(self):
@@ -252,7 +252,7 @@ class BugsTestCase(unittest.TestCase):
         self.assertRaises(ValueError, marshal.dumps, head)
 
 def test_main():
-    test_support.run_unittest(IntTestCase,
+    support.run_unittest(IntTestCase,
                               FloatTestCase,
                               StringTestCase,
                               CodeTestCase,

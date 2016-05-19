@@ -3,13 +3,13 @@
 import unittest
 import os
 import os.path
-import test.test_support
+import test.support
 from test.script_helper import (run_python,
                                 temp_dir, make_script, compile_script,
                                 make_pkg, make_zip_script, make_zip_pkg)
-from test.test_support import is_jython
+from test.support import is_jython
 
-verbose = test.test_support.verbose
+verbose = test.support.verbose
 
 
 test_source = """\
@@ -217,8 +217,8 @@ class CmdLineTest(unittest.TestCase):
 
 
 def test_main():
-    test.test_support.run_unittest(CmdLineTest)
-    test.test_support.reap_children()
+    test.support.run_unittest(CmdLineTest)
+    test.support.reap_children()
 
 if __name__ == '__main__':
     test_main()

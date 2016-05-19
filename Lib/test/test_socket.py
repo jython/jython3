@@ -1,7 +1,7 @@
 import java
 
 import unittest
-from test import test_support
+from test import support
 
 import errno
 import gc
@@ -28,7 +28,7 @@ os_name = platform.java_ver()[3][0]
 is_bsd = os_name == 'Mac OS X' or 'BSD' in os_name
 is_solaris = os_name == 'SunOS'
 
-if test_support.is_jython:
+if support.is_jython:
     import _socket
     _socket._NUM_THREADS = 5
 
@@ -155,7 +155,7 @@ class ThreadableTest:
             pending_threads = _check_threadpool_for_pending_threads(group)
             if len(pending_threads) == 0:
                 break
-            test_support.gc_collect()
+            support.gc_collect()
             
         if pending_threads:
             print("Pending threads in Netty msg={} pool={}".format(msg, pprint.pformat(pending_threads)))
@@ -1408,7 +1408,7 @@ class NonBlockingTCPTests(ThreadedTCPSocketTest):
                 self.clientSetUp()
                 cli_port -= 1
             # Make sure we have no tests currently holding open this socket
-            test_support.gc_collect()
+            support.gc_collect()
             if time.time() - start > 5:
                 self.fail("Timed out after 5 seconds")
         bound_host, bound_port = self.cli.getsockname()
@@ -1753,7 +1753,7 @@ used, but if it is on your network this failure is bogus.''' % host)
         self.assertRaises(socket.timeout, raise_timeout,
                               "TCP socket recv failed to generate a timeout exception (TCP)")
 
-    @unittest.skipIf(test_support.is_jython, "This test takes a very long time")
+    @unittest.skipIf(support.is_jython, "This test takes a very long time")
     def testSendTimeout(self):
         def raise_timeout(*args, **kwargs):
             cli_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -2116,7 +2116,7 @@ class TestGetNameInfo(unittest.TestCase):
 # is exercised by nearly every socket usage, along with the
 # corresponding tests.
 
-@unittest.skipIf(test_support.is_jython, "Skip internal tests for address lookup due to underlying OS issues")
+@unittest.skipIf(support.is_jython, "Skip internal tests for address lookup due to underlying OS issues")
 class TestJython_get_jsockaddr(unittest.TestCase):
     "These tests are specific to jython: they test a key internal routine"
 
@@ -2606,7 +2606,7 @@ def test_main():
     if False:
         tests.append(UDPBroadcastTest)
     suites = [unittest.makeSuite(klass, 'test') for klass in tests]
-    test_support._run_suite(unittest.TestSuite(suites))
+    support._run_suite(unittest.TestSuite(suites))
 
 if __name__ == "__main__":
     test_main()

@@ -3,7 +3,7 @@ import threading
 import time
 import unittest
 
-from test import test_support
+from test import support
 
 class UntracedThread(threading.Thread):
     def __init__(self):
@@ -52,7 +52,7 @@ class TracePerThreadTest(unittest.TestCase):
                 "untracedcall shouldn't be in %s" % called)
 
 def test_main():
-    test_support.run_unittest(TracePerThreadTest)
+    support.run_unittest(TracePerThreadTest)
 
 if __name__ == "__main__":
     test_main()

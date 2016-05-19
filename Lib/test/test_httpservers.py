@@ -20,10 +20,10 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from http.server import SimpleHTTPRequestHandler
 from http.server import CGIHTTPRequestHandler
 from io import StringIO
-from test import test_support
+from test import support
 
 
-threading = test_support.import_module('threading')
+threading = support.import_module('threading')
 
 
 class NoLogRequestHandler:
@@ -69,8 +69,8 @@ class TestServerThread(threading.Thread):
 
 class BaseTestCase(unittest.TestCase):
     def setUp(self):
-        self._threads = test_support.threading_setup()
-        os.environ = test_support.EnvironmentVarGuard()
+        self._threads = support.threading_setup()
+        os.environ = support.EnvironmentVarGuard()
         self.server_started = threading.Event()
         self.thread = TestServerThread(self, self.request_handler)
         self.thread.start()
@@ -79,7 +79,7 @@ class BaseTestCase(unittest.TestCase):
     def tearDown(self):
         self.thread.stop()
         os.environ.__exit__()
-        test_support.threading_cleanup(*self._threads)
+        support.threading_cleanup(*self._threads)
 
     def request(self, uri, method='GET', body=None, headers={}):
         self.connection = http.client.HTTPConnection('localhost', self.PORT)
@@ -527,7 +527,7 @@ class SimpleHTTPRequestHandlerTestCase(unittest.TestCase):
 def test_main(verbose=None):
     try:
         cwd = os.getcwd()
-        test_support.run_unittest(BaseHTTPRequestHandlerTestCase,
+        support.run_unittest(BaseHTTPRequestHandlerTestCase,
                                   SimpleHTTPRequestHandlerTestCase,
                                   BaseHTTPServerTestCase,
                                   SimpleHTTPServerTestCase,

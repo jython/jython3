@@ -1,7 +1,7 @@
 
 import struct
 import sys
-from test import test_support, string_tests
+from test import support, string_tests
 
 
 class StrTest(
@@ -294,13 +294,13 @@ class StrTest(
         self.assertEqual('{0!s}'.format(G('data')), 'string is data')
 
         msg = 'object.__format__ with a non-empty format string is deprecated'
-        with test_support.check_warnings((msg, PendingDeprecationWarning)):
+        with support.check_warnings((msg, PendingDeprecationWarning)):
             self.assertEqual('{0:^10}'.format(E('data')), ' E(data)  ')
             self.assertEqual('{0:^10s}'.format(E('data')), ' E(data)  ')
             self.assertEqual('{0:>15s}'.format(G('data')), ' string is data')
 
         #FIXME: not supported in Jython yet:
-        if not test_support.is_jython:
+        if not support.is_jython:
             self.assertEqual("{0:date: %Y-%m-%d}".format(I(year=2007,
                                                            month=8,
                                                            day=27)),
@@ -417,7 +417,7 @@ class StrTest(
                          'Andr\202 x'.decode(encoding='ascii', errors='replace'))
 
     #FIXME: not working in Jython.
-    if not test_support.is_jython:
+    if not support.is_jython:
         def test_startswith_endswith_errors(self):
             with self.assertRaises(UnicodeDecodeError):
                 '\xff'.startswith('x')
@@ -432,7 +432,7 @@ class StrTest(
                 self.assertIn('tuple', exc)
 
 def test_main():
-    test_support.run_unittest(StrTest)
+    support.run_unittest(StrTest)
 
 if __name__ == "__main__":
     test_main()

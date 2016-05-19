@@ -5,7 +5,7 @@ import sys
 import tempfile
 import unittest
 import zipfile
-from test import test_support
+from test import support
 from java.lang import Thread
 
 import pkgutil
@@ -26,13 +26,13 @@ class ClasspathImporterTestCase(unittest.TestCase):
     # with sys.path.append where not getting scanned if they start with a top
     # level package we already have, like the "org" in org.python.*
     def test_bug1239(self):
-        with test_support.DirsOnSysPath("Lib/test/bug1239.jar"):
+        with support.DirsOnSysPath("Lib/test/bug1239.jar"):
             import org.test403javapackage.test403
 
     # different from test_bug1239 in that only a Java package is imported, not
     # a Java class.  I'd also like to get rid of this checked in test jar.
     def test_bug1126(self):
-        with test_support.DirsOnSysPath("Lib/test/bug1126/bug1126.jar"):
+        with support.DirsOnSysPath("Lib/test/bug1126/bug1126.jar"):
             import org.subpackage
 
 
@@ -58,7 +58,7 @@ class PyclasspathImporterTestCase(unittest.TestCase):
 
     def prepareJar(self, orig_jar):
         # Create a new copy of the checked-in test jar
-        orig_jar = test_support.findfile(orig_jar)
+        orig_jar = support.findfile(orig_jar)
         jar = os.path.join(self.temp_dir, os.path.basename(orig_jar))
         shutil.copy(orig_jar, jar)
         return jar
@@ -98,20 +98,20 @@ class PyclasspathImporterTestCase(unittest.TestCase):
     def test_default_pyclasspath(self):
         jar = self.prepareJar('classimport.jar')
         compiled = self.compileToJar(jar)
-        Thread.currentThread().contextClassLoader = test_support.make_jar_classloader(jar)
+        Thread.currentThread().contextClassLoader = support.make_jar_classloader(jar)
         self.checkImports('__pyclasspath__', compiled)
 
     def test_path_in_pyclasspath(self):
         jar = self.prepareJar('classimport_Lib.jar')
         compiled = self.compileToJar(jar, 'Lib')
-        Thread.currentThread().contextClassLoader = test_support.make_jar_classloader(jar)
-        with test_support.DirsOnSysPath():
+        Thread.currentThread().contextClassLoader = support.make_jar_classloader(jar)
+        with support.DirsOnSysPath():
             sys.path = ['__pyclasspath__/Lib']
             self.checkImports('__pyclasspath__/Lib', compiled)
 
     def test_loader_is_package(self):
         jar = self.prepareJar('classimport.jar')
-        Thread.currentThread().contextClassLoader = test_support.make_jar_classloader(jar)
+        Thread.currentThread().contextClassLoader = support.make_jar_classloader(jar)
         mod_name = 'flat_in_jar'
         loader = pkgutil.get_loader(mod_name)
         self.assertFalse(loader.is_package(mod_name))
@@ -121,7 +121,7 @@ class PyclasspathImporterTestCase(unittest.TestCase):
     def test_loader_get_code(self):
         # Execute Python code out of the JAR
         jar = self.prepareJar('classimport.jar')
-        Thread.currentThread().contextClassLoader = test_support.make_jar_classloader(jar)
+        Thread.currentThread().contextClassLoader = support.make_jar_classloader(jar)
         loader = pkgutil.get_loader('jar_pkg')
         space = { 'value':None, 'compiled':None}
 
@@ -145,7 +145,7 @@ class PyclasspathImporterTestCase(unittest.TestCase):
         # Test loader.get_data used via pkgutil
         jar = self.prepareJar('classimport.jar')
         name = self.addResourceToJar(jar)
-        Thread.currentThread().contextClassLoader = test_support.make_jar_classloader(jar)
+        Thread.currentThread().contextClassLoader = support.make_jar_classloader(jar)
         data = pkgutil.get_data('jar_pkg', name)
         self.assertIsInstance(data, bytes)
         self.assertEqual(data, self.RESOURCE_DATA)
@@ -154,7 +154,7 @@ class PyclasspathImporterTestCase(unittest.TestCase):
         # Test loader.get_data used via pkgutil.get_loader
         jar = self.prepareJar('classimport.jar')
         name = self.addResourceToJar(jar)
-        Thread.currentThread().contextClassLoader = test_support.make_jar_classloader(jar)
+        Thread.currentThread().contextClassLoader = support.make_jar_classloader(jar)
         loader = pkgutil.get_loader('jar_pkg')
         # path is a resource path (not file system path using os.path.sep)
         path = 'jar_pkg/' + name
@@ -166,7 +166,7 @@ class PyclasspathImporterTestCase(unittest.TestCase):
         # Test loader.get_data used via pkgutil.get_importer
         jar = self.prepareJar('classimport.jar')
         name = self.addResourceToJar(jar)
-        Thread.currentThread().contextClassLoader = test_support.make_jar_classloader(jar)
+        Thread.currentThread().contextClassLoader = support.make_jar_classloader(jar)
         importer = pkgutil.get_importer('__pyclasspath__/')
         # path is a resource path (may be file system path using os.path.sep)
         path = os.path.join('jar_pkg', name)
@@ -180,7 +180,7 @@ class PyclasspathImporterTestCase(unittest.TestCase):
     def test_importer_get_source(self):
         # Test loader.get_source used via pkgutil.get_importer
         jar = self.prepareJar('classimport.jar')
-        Thread.currentThread().contextClassLoader = test_support.make_jar_classloader(jar)
+        Thread.currentThread().contextClassLoader = support.make_jar_classloader(jar)
         importer = pkgutil.get_importer('__pyclasspath__/')
         # In package
         mod = 'jar_pkg.prefer_compiled'
@@ -190,7 +190,7 @@ class PyclasspathImporterTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
                     ClasspathImporterTestCase,
                     PyclasspathImporterTestCase
     )

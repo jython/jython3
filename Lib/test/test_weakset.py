@@ -11,7 +11,7 @@
 #    test for nonexistent TypeErrors
 
 import unittest
-from test import test_support
+from test import support
 from test.test_weakref import extra_collect
 from weakref import proxy, ref, WeakSet
 import operator
@@ -255,7 +255,7 @@ class TestWeakSet(unittest.TestCase):
         dup = self.s.copy()
         self.s.add(x)
         self.assertEqual(self.s, dup)
-        if not test_support.is_jython:  # Jython/JVM can weakly reference list and other objects
+        if not support.is_jython:  # Jython/JVM can weakly reference list and other objects
             self.assertRaises(TypeError, self.s.add, [])
         self.fs.add(Foo())
         gc.collect()  # CPython assumes Foo() went out of scope and was collected, so ensure the same
@@ -268,7 +268,7 @@ class TestWeakSet(unittest.TestCase):
         self.s.remove(x)
         self.assertNotIn(x, self.s)
         self.assertRaises(KeyError, self.s.remove, x)
-        if not test_support.is_jython:  # Jython/JVM can weakly reference list and other objects
+        if not support.is_jython:  # Jython/JVM can weakly reference list and other objects
             self.assertRaises(TypeError, self.s.remove, [])
 
     def test_discard(self):
@@ -276,7 +276,7 @@ class TestWeakSet(unittest.TestCase):
         self.s.discard(a)
         self.assertNotIn(a, self.s)
         self.s.discard(q)
-        if not test_support.is_jython:  # Jython/JVM can weakly reference list and other objects
+        if not support.is_jython:  # Jython/JVM can weakly reference list and other objects
             self.assertRaises(TypeError, self.s.discard, [])
 
     def test_pop(self):
@@ -328,7 +328,7 @@ class TestWeakSet(unittest.TestCase):
                 self.assertIn(c, self.s)
             else:
                 self.assertNotIn(c, self.s)
-        if not test_support.is_jython:  # Jython/JVM can weakly reference list and other objects
+        if not support.is_jython:  # Jython/JVM can weakly reference list and other objects
             self.assertRaises(TypeError, self.s.difference_update, [[]])
             self.assertRaises(TypeError, self.s.symmetric_difference_update, [[]])
 
@@ -451,7 +451,7 @@ class TestWeakSet(unittest.TestCase):
         self.assertIn(n1, (0, 1))
         self.assertEqual(n2, 0)
 
-    @unittest.skipIf(test_support.is_jython, "GarbageCollection not deterministic in Jython")
+    @unittest.skipIf(support.is_jython, "GarbageCollection not deterministic in Jython")
     def test_len_race(self):
         # Extended sanity checks for len() in the face of cyclic collection
         self.addCleanup(gc.set_threshold, *gc.get_threshold())
@@ -478,7 +478,7 @@ class TestWeakSet(unittest.TestCase):
 
 
 def test_main(verbose=None):
-    test_support.run_unittest(TestWeakSet)
+    support.run_unittest(TestWeakSet)
 
 if __name__ == "__main__":
     test_main(verbose=True)

@@ -3,7 +3,7 @@ import os
 dir = os.path.dirname(sys.argv[0])
 scriptsdir = os.path.normpath(os.path.join(dir, os.pardir, 'scripts'))
 sys.path.append(scriptsdir)
-from test_support import *
+from support import *
 
 def test931():
     '''exec and eval are not thread safe'''

@@ -7,7 +7,7 @@ import subprocess
 import sys
 import textwrap
 import unittest
-from test.test_support import TESTFN, is_jython, run_unittest, temp_cwd
+from test.support import TESTFN, is_jython, run_unittest, temp_cwd
 
 
 class TestMtime(unittest.TestCase):

@@ -7,7 +7,7 @@ import pickle
 import warnings
 from math import log, exp, pi, fsum, sin
 from functools import reduce
-from test import test_support
+from test import support
 
 class TestBasicOps(unittest.TestCase):
     # Superclass with tests common to all generators.
@@ -54,7 +54,7 @@ class TestBasicOps(unittest.TestCase):
         state3 = self.gen.getstate()    # s/b distinct from state2
         self.assertNotEqual(state2, state3)
 
-        with test_support.check_py3k_warnings(quiet=True):
+        with support.check_py3k_warnings(quiet=True):
             self.assertRaises(TypeError, self.gen.jumpahead)  # needs an arg
             self.assertRaises(TypeError, self.gen.jumpahead, 2, 3)  # too many
 
@@ -150,7 +150,7 @@ class TestBasicOps(unittest.TestCase):
                  ("randv2_64.pck", 866),
                  ("randv3.pck", 343)]
         for file, value in files:
-            f = open(test_support.findfile(file), "rb")
+            f = open(support.findfile(file), "rb")
             r = pickle.load(f)
             f.close()
             self.assertEqual(r.randrange(1000), value)
@@ -553,7 +553,7 @@ def test_main(verbose=None):
                       TestDistributions,
                       TestModule]
 
-    if test_support.is_jython:
+    if support.is_jython:
         del MersenneTwister_TestBasicOps.test_genrandbits
         del MersenneTwister_TestBasicOps.test_referenceImplementation
         del MersenneTwister_TestBasicOps.test_setstate_middle_arg
@@ -566,14 +566,14 @@ def test_main(verbose=None):
     else:
         testclasses.append(SystemRandom_TestBasicOps)
 
-    test_support.run_unittest(*testclasses)
+    support.run_unittest(*testclasses)
 
     # verify reference counting
     import sys
     if verbose and hasattr(sys, "gettotalrefcount"):
         counts = [None] * 5
         for i in range(len(counts)):
-            test_support.run_unittest(*testclasses)
+            support.run_unittest(*testclasses)
             counts[i] = sys.gettotalrefcount()
         print(counts)
 

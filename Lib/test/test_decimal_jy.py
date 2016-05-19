@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 
 from decimal import Decimal
 
