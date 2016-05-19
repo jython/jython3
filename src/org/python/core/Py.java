@@ -1042,7 +1042,7 @@ public final class Py {
             }
         } catch (PyException e) {
             if (e.match(Py.StopIteration)) {
-                retval = e.value;
+                retval = e.value.__findattr__("value");
                 // if subgenerator exit, continue for next subgenerator
                 frame.f_stacktop = retval;
                 return null;
