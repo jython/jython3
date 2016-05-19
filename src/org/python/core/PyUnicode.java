@@ -902,12 +902,12 @@ public class PyUnicode extends PyString implements Iterable {
     }
 
     @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.str___mul___doc)
-    final PyObject unicode___mul__(PyObject o) {
+    final PyObject str___mul__(PyObject o) {
         return bytes___mul__(o);
     }
 
     @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.str___rmul___doc)
-    final PyObject unicode___rmul__(PyObject o) {
+    final PyObject str___rmul__(PyObject o) {
         return bytes___rmul__(o);
     }
 
@@ -1125,11 +1125,11 @@ public class PyUnicode extends PyString implements Iterable {
 
     @Override
     public PyTuple partition(PyObject sep) {
-        return unicode_partition(sep);
+        return str_partition(sep);
     }
 
     @ExposedMethod(doc = BuiltinDocs.str_partition_doc)
-    final PyTuple unicode_partition(PyObject sep) {
+    final PyTuple str_partition(PyObject sep) {
         return unicodePartition(coerceToUnicode(sep));
     }
 
