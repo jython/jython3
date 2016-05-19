@@ -12,7 +12,7 @@ import tempfile
 import re
 
 from collections import deque
-from test import test_support
+from test import support
 
 from java.lang import (ClassCastException, ExceptionInInitializerError, String, Runnable, System,
         Runtime, Math, Byte)
@@ -127,11 +127,11 @@ class SysIntegrationTest(unittest.TestCase):
         sys.stdout = self.orig_stdout
 
     def test_stdout_outputstream(self):
-        out = FileOutputStream(test_support.TESTFN)
+        out = FileOutputStream(support.TESTFN)
         sys.stdout = out
         print 'hello',
         out.close()
-        f = open(test_support.TESTFN)
+        f = open(support.TESTFN)
         self.assertEquals('hello', f.read())
         f.close()
 
@@ -477,18 +477,18 @@ class JavaDelegationTest(unittest.TestCase):
 class SecurityManagerTest(unittest.TestCase):
 
     def test_nonexistent_import_with_security(self):
-        script = test_support.findfile("import_nonexistent.py")
+        script = support.findfile("import_nonexistent.py")
         home = os.path.realpath(sys.prefix)
         if not os.path.commonprefix((home, os.path.realpath(script))) == home:
             # script must lie within python.home for this test to work
             return
-        policy = test_support.findfile("python_home.policy")
+        policy = support.findfile("python_home.policy")
         self.assertEquals(subprocess.call([sys.executable,  "-J-Dpython.cachedir.skip=true",
             "-J-Djava.security.manager", "-J-Djava.security.policy=%s" % policy, script]),
             0)
 
     def test_import_signal_fails_with_import_error_using_security(self):
-        policy = test_support.findfile("python_home.policy")
+        policy = support.findfile("python_home.policy")
         with self.assertRaises(subprocess.CalledProcessError) as cm:
             subprocess.check_output(
                 [sys.executable,
@@ -902,7 +902,7 @@ class SingleMethodInterfaceTest(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         BeanPropertyTest,
         BeanTest,
         BigNumberTest,

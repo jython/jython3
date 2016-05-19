@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 from test.test_weakref import extra_collect
 from itertools import *
 from weakref import proxy
@@ -11,7 +11,7 @@ import random
 import copy
 import pickle
 from functools import reduce
-maxsize = test_support.MAX_Py_ssize_t
+maxsize = support.MAX_Py_ssize_t
 minsize = -maxsize-1
 
 def onearg(x):
@@ -138,7 +138,7 @@ class TestBasicOps(unittest.TestCase):
                 self.assertEqual(result, list(combinations2(values, r))) # matches second pure python version
                 self.assertEqual(result, list(combinations3(values, r))) # matches second pure python version
 
-    @test_support.impl_detail("tuple reuse is specific to CPython")
+    @support.impl_detail("tuple reuse is specific to CPython")
     def test_combinations_tuple_reuse(self):
         self.assertEqual(len(set(map(id, combinations('abcde', 3)))), 1)
         self.assertNotEqual(len(set(map(id, list(combinations('abcde', 3))))), 1)
@@ -209,7 +209,7 @@ class TestBasicOps(unittest.TestCase):
                 self.assertEqual(result, list(cwr1(values, r)))         # matches first pure python version
                 self.assertEqual(result, list(cwr2(values, r)))         # matches second pure python version
 
-    @test_support.impl_detail("tuple reuse is specific to CPython")
+    @support.impl_detail("tuple reuse is specific to CPython")
     def test_combinations_with_replacement_tuple_reuse(self):
         cwr = combinations_with_replacement
         self.assertEqual(len(set(map(id, cwr('abcde', 3)))), 1)
@@ -275,7 +275,7 @@ class TestBasicOps(unittest.TestCase):
                     self.assertEqual(result, list(permutations(values, None))) # test r as None
                     self.assertEqual(result, list(permutations(values)))       # test default r
 
-    @test_support.impl_detail("tuple resuse is CPython specific")
+    @support.impl_detail("tuple resuse is CPython specific")
     def test_permutations_tuple_reuse(self):
         self.assertEqual(len(set(map(id, permutations('abcde', 3)))), 1)
         self.assertNotEqual(len(set(map(id, list(permutations('abcde', 3))))), 1)
@@ -536,7 +536,7 @@ class TestBasicOps(unittest.TestCase):
         self.assertEqual([pair for pair in zip('abc', 'def')],
                          list(zip('abc', 'def')))
 
-    @test_support.impl_detail("tuple reuse is specific to CPython")
+    @support.impl_detail("tuple reuse is specific to CPython")
     def test_izip_tuple_resuse(self):
         ids = list(map(id, zip('abc', 'def')))
         self.assertEqual(min(ids), max(ids))
@@ -587,7 +587,7 @@ class TestBasicOps(unittest.TestCase):
         self.assertEqual([pair for pair in zip_longest('abc', 'def')],
                          list(zip('abc', 'def')))
 
-    @test_support.impl_detail("tuple reuse is specific to CPython")
+    @support.impl_detail("tuple reuse is specific to CPython")
     def test_izip_longest_tuple_reuse(self):
         ids = list(map(id, zip_longest('abc', 'def')))
         self.assertEqual(min(ids), max(ids))
@@ -618,7 +618,7 @@ class TestBasicOps(unittest.TestCase):
         def run(r1, r2):
             result = []
             for i, j in zip_longest(r1, r2, fillvalue=0):
-                with test_support.captured_output('stdout'):
+                with support.captured_output('stdout'):
                     print((i, j))
                 result.append((i, j))
             return result
@@ -692,7 +692,7 @@ class TestBasicOps(unittest.TestCase):
             args = list(map(iter, args))
             self.assertEqual(len(list(product(*args))), expected_len)
 
-    @test_support.impl_detail("tuple reuse is specific to CPython")
+    @support.impl_detail("tuple reuse is specific to CPython")
     def test_product_tuple_reuse(self):
         self.assertEqual(len(set(map(id, product('abc', 'def')))), 1)
         self.assertNotEqual(len(set(map(id, list(product('abc', 'def'))))), 1)
@@ -1655,20 +1655,20 @@ def test_main(verbose=None):
     test_classes = (TestBasicOps, TestVariousIteratorArgs, TestGC,
                     RegressionTests, LengthTransparency,
                     SubclassWithKwargsTest, TestExamples)
-    test_support.run_unittest(*test_classes)
+    support.run_unittest(*test_classes)
 
     # verify reference counting
     if verbose and hasattr(sys, "gettotalrefcount"):
         import gc
         counts = [None] * 5
         for i in range(len(counts)):
-            test_support.run_unittest(*test_classes)
+            support.run_unittest(*test_classes)
             gc.collect()
             counts[i] = sys.gettotalrefcount()
         print(counts)
 
     # doctest the examples in the library reference
-    test_support.run_doctest(sys.modules[__name__], verbose)
+    support.run_doctest(sys.modules[__name__], verbose)
 
 if __name__ == "__main__":
     test_main(verbose=True)

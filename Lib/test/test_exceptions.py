@@ -5,7 +5,7 @@ import sys
 import unittest
 import pickle, pickle
 
-from test.test_support import (TESTFN, unlink, run_unittest, captured_output,
+from test.support import (TESTFN, unlink, run_unittest, captured_output,
                                check_warnings, cpython_only, is_jython)
 from test.test_pep352 import ignore_deprecation_warnings
 import imp

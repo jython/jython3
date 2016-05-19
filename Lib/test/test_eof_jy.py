@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 
 class TestEof(unittest.TestCase):
     """
@@ -55,7 +55,7 @@ class TestEof(unittest.TestCase):
 
 def test_main(verbose=None):
     test_classes = [TestEof]
-    test_support.run_unittest(*test_classes)
+    support.run_unittest(*test_classes)
 
 if __name__ == "__main__":
     test_main(verbose=True)

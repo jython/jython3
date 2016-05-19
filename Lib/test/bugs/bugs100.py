@@ -3,7 +3,7 @@ import os
 dir = os.path.dirname(sys.argv[0])
 scriptsdir = os.path.normpath(os.path.join(dir, os.pardir, 'scripts'))
 sys.path.append(scriptsdir)
-from test_support import *
+from support import *
 
 print('Bug Fixes')
 print('From 1.0.0 to 1.0.1')

@@ -72,7 +72,7 @@ nlocals: 0
 
 import unittest
 import weakref
-from test import test_support
+from test import support
 try:
     import _testcapi
 except ImportError:
@@ -106,7 +106,7 @@ class CodeTest(unittest.TestCase):
 
 class CodeWeakRefTest(unittest.TestCase):
 
-    @unittest.skipIf(test_support.is_jython,
+    @unittest.skipIf(support.is_jython,
                      "weakrefs are not deterministic in Jython")
     def test_basic(self):
         # Create a code object in a clean environment so that we know we have
@@ -132,7 +132,7 @@ class CodeWeakRefTest(unittest.TestCase):
 
 
 def test_main(verbose=None):
-    from test.test_support import run_doctest, run_unittest
+    from test.support import run_doctest, run_unittest
     from test import test_code
     run_doctest(test_code, verbose)
     run_unittest(CodeTest, CodeWeakRefTest)

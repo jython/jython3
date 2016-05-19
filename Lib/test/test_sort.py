@@ -1,4 +1,4 @@
-from test import test_support
+from test import support
 import random
 import sys
 import unittest
@@ -7,7 +7,7 @@ try:
 except ImportError:
     pass
 
-verbose = test_support.verbose
+verbose = support.verbose
 nerrors = 0
 
 def check(tag, expected, raw, compare=None):
@@ -105,7 +105,7 @@ class TestBase(unittest.TestCase):
                 print("        If the implementation isn't careful, this may segfault.")
             s = x[:]
 
-            if test_support.is_jython:
+            if support.is_jython:
                 try:
                     s.sort(lambda a, b:  int(random.random() * 3) - 1)
                 except java.lang.IllegalArgumentException:
@@ -223,7 +223,7 @@ class TestDecorateSortUndecorate(unittest.TestCase):
     # for jython, we have a different storage mechanism for this in our
     # implementation of MergeState; given that this is likely to go away,
     # this doesn't seem so important
-    @unittest.skipIf(test_support.is_jython,
+    @unittest.skipIf(support.is_jython,
             "Jython has a different implementation of MergeSort")
     def test_key_with_mutation(self):
         data = list(range(10))
@@ -236,7 +236,7 @@ class TestDecorateSortUndecorate(unittest.TestCase):
     # The function passed to the "key" argument changes the data upon which
     # sort is invoked.  It can not be checked if that function changes data as
     # long as it is invoked(e.g. __del__ in SortKiller). so skipping for now.
-    @unittest.skipIf(test_support.is_jython, "Doesn't work for Jython")
+    @unittest.skipIf(support.is_jython, "Doesn't work for Jython")
     def test_key_with_mutating_del(self):
         data = list(range(10))
         class SortKiller(object):
@@ -250,7 +250,7 @@ class TestDecorateSortUndecorate(unittest.TestCase):
     # The function passed to the "key" argument changes the data upon which
     # sort is invoked.  It can not be checked if that function changes data as
     # long as it is invoked(e.g. __del__ in SortKiller). so skipping for now.
-    @unittest.skipIf(test_support.is_jython, "Doesn't work for Jython")
+    @unittest.skipIf(support.is_jython, "Doesn't work for Jython")
     def test_key_with_mutating_del_and_exception(self):
         data = list(range(10))
         ## dup = data[:]
@@ -297,16 +297,16 @@ def test_main(verbose=None):
         TestBugs,
     )
 
-    with test_support.check_py3k_warnings(
+    with support.check_py3k_warnings(
             ("the cmp argument is not supported", DeprecationWarning)):
-        test_support.run_unittest(*test_classes)
+        support.run_unittest(*test_classes)
 
         # verify reference counting
         if verbose and hasattr(sys, "gettotalrefcount"):
             import gc
             counts = [None] * 5
             for i in range(len(counts)):
-                test_support.run_unittest(*test_classes)
+                support.run_unittest(*test_classes)
                 gc.collect()
                 counts[i] = sys.gettotalrefcount()
             print(counts)

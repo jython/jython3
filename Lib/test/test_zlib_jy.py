@@ -5,7 +5,7 @@ Made for Jython.
 import unittest
 import zlib
 from array import array
-from test import test_support
+from test import support
 
 class ArrayTestCase(unittest.TestCase):
 
@@ -30,7 +30,7 @@ class ArrayTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(ArrayTestCase)
+    support.run_unittest(ArrayTestCase)
 
 
 if __name__ == '__main__':

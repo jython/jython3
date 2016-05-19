@@ -4,7 +4,7 @@ import sys
 import threading
 import unittest
 
-from test import test_support
+from test import support
 
 from java.lang import (Boolean, Class, ClassLoader, Comparable, Integer, Object, Runnable, String,
                        Thread, ThreadGroup, InterruptedException, UnsupportedOperationException)
@@ -626,7 +626,7 @@ class ChooseCorrectToJavaTest(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         InterfaceTest,
         TableModelTest,
         AutoSuperTest,

@@ -4,7 +4,7 @@ Made for Jython.
 """
 import math
 import unittest
-from test import test_support
+from test import support
 from test.test_math import (MathTests, ulps_check,
                             parse_testfile, test_file)
 
@@ -152,7 +152,7 @@ class MathAccuracy(MathTests):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
             MathTestCase,
             MathAccuracy,
         )

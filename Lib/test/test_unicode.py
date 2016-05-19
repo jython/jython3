@@ -7,7 +7,7 @@ Written by Marc-Andre Lemburg (mal@lemburg.com).
 
 """#"
 import unittest, sys, string, codecs, new
-from test import test_support, string_tests
+from test import support, string_tests
 
 class UnicodeTest(
     string_tests.CommonTest,
@@ -709,7 +709,7 @@ class UnicodeTest(
         self.assertEqual(x, y)
 
 def test_main():
-    test_support.run_unittest(UnicodeTest)
+    support.run_unittest(UnicodeTest)
 
 if __name__ == "__main__":
     test_main()

@@ -2,14 +2,14 @@ import os
 import subprocess
 import sys
 import unittest
-from test import test_support
+from test import support
 
 
 class ImportSiteTestCase(unittest.TestCase):
     
     def test_empty_python_home(self):
         # http://bugs.jython.org/issue2283
-        with test_support.temp_cwd() as temp_cwd:
+        with support.temp_cwd() as temp_cwd:
             # using a new directory ensures no Lib/ directory is available
             self.assertEqual(
                 subprocess.check_output(
@@ -20,7 +20,7 @@ class ImportSiteTestCase(unittest.TestCase):
 
     def test_bad_python_home(self):
         # http://bugs.jython.org/issue2283
-        with test_support.temp_cwd() as temp_cwd:
+        with support.temp_cwd() as temp_cwd:
             os.makedirs(os.path.join(temp_cwd, "Lib"))
             with self.assertRaises(subprocess.CalledProcessError) as cm:
                 subprocess.check_output(
@@ -33,7 +33,7 @@ class ImportSiteTestCase(unittest.TestCase):
 
     def test_property_no_site_import(self):
         # only the minimal set of modules are imported
-        with test_support.temp_cwd() as temp_cwd:
+        with support.temp_cwd() as temp_cwd:
             self.assertEqual(
                 subprocess.check_output(
                     [sys.executable, "-Dpython.import.site=false", "-c",
@@ -41,7 +41,7 @@ class ImportSiteTestCase(unittest.TestCase):
                 "['__builtin__', '__main__', 'exceptions', 'sys']")
 
     def test_options_no_site_import(self):
-        with test_support.temp_cwd() as temp_cwd:
+        with support.temp_cwd() as temp_cwd:
             self.assertEqual(
                 subprocess.check_output(
                     [sys.executable, "-S", "-c",
@@ -50,7 +50,7 @@ class ImportSiteTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         ImportSiteTestCase,
     )
 

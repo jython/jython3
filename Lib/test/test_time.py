@@ -1,4 +1,4 @@
-from test import test_support
+from test import support
 import time
 import unittest
 
@@ -46,7 +46,7 @@ class TimeTestCase(unittest.TestCase):
         #of the time tuple (0 is valid for *all* values).
 
         # XXX: Jython supports more dates than CPython
-        if not test_support.is_jython:
+        if not support.is_jython:
             # Check year [1900, max(int)]
             self.assertRaises(ValueError, time.strftime, '',
                               (1899, 1, 1, 0, 0, 0, 0, 1, -1))
@@ -98,7 +98,7 @@ class TimeTestCase(unittest.TestCase):
         # Make sure that using all zeros uses the proper default values.
         # No test for daylight savings since strftime() does not change output
         # based on its value.
-        if not test_support.is_jython:
+        if not support.is_jython:
             expected = "2000 01 01 00 00 00 1 001"
         else:
             # XXX: Jython doesn't support the "two digits years" hack (turned
@@ -253,7 +253,7 @@ class TimeTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(TimeTestCase)
+    support.run_unittest(TimeTestCase)
 
 
 if __name__ == "__main__":

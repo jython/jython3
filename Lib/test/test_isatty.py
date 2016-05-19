@@ -1,4 +1,4 @@
-import test.test_support, unittest
+import test.support, unittest
 import os, popen2, subprocess, sys
 
 def test_isatty(label, thingy):
@@ -47,7 +47,7 @@ class IsattyTest(unittest.TestCase):
 
 if __name__ == '__main__':
     if len(sys.argv) != 4:
-        test.test_support.run_unittest(IsattyTest)
+        test.support.run_unittest(IsattyTest)
         sys.exit(0)
 
     stdin_isatty, stdout_isatty, stderr_isatty = [x == 'True' for x in sys.argv[1:]]

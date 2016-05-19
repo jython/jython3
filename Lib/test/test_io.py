@@ -35,7 +35,7 @@ import errno
 from itertools import cycle, count
 from collections import deque
 from collections import UserList
-from test import test_support as support
+from test import support as support
 import contextlib
 
 import codecs

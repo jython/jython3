@@ -173,8 +173,8 @@ def printout(meth_dict, lbl, rng, args):
 
 if __name__ == '__main__' and not sys.argv[1:] == ['break-out']:
     try:
-        import test_support
+        import support
     except ImportError:
         unittest.main()
     else:
-        test_support.run_unittest(OverloadedDispatchTests, VarargsDispatchTests, ComplexOverloadingTests)
+        support.run_unittest(OverloadedDispatchTests, VarargsDispatchTests, ComplexOverloadingTests)

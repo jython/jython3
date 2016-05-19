@@ -12,7 +12,7 @@
 import io
 import unittest
 from xml.dom import pulldom
-from test import test_support
+from test import support
 
 class UnicodeTests(unittest.TestCase):
 
@@ -79,7 +79,7 @@ class UnicodeTests(unittest.TestCase):
             self.fail("Unexpected exception joining comment data pieces: %s" % str(x))
 
 def test_main():
-    test_support.run_unittest(__name__)
+    support.run_unittest(__name__)
 
 if __name__ == "__main__":
     test_main()

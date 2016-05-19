@@ -492,12 +492,12 @@ class TestImportFunction(unittest.TestCase):
 
 
 try:
-    from test import test_support
+    from test import support
 except ImportError:
     test_main = unittest.main
 else:
     def test_main():
-        test_support.run_unittest(
+        support.run_unittest(
                 TestImportStatement,
                 TestImportFunction,
                 )

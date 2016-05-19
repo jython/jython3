@@ -8,7 +8,7 @@ import sys
 import gc
 import weakref
 import array
-from test import test_support
+from test import support
 import io
 
 
@@ -327,7 +327,7 @@ class AbstractMemoryTests:
         m = self._view(b)
         self.assertRaises(ValueError, hash, m)
 
-    @unittest.skipIf(test_support.is_jython, "GC nondeterministic in Jython")
+    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
     def test_weakref(self):             # Jython borrowed from CPython 3.3
         # Check memoryviews are weakrefable
         for tp in self._types:
@@ -339,7 +339,7 @@ class AbstractMemoryTests:
             wr = weakref.ref(m, callback)
             self.assertIs(wr(), m)
             del m
-            test_support.gc_collect()
+            support.gc_collect()
             self.assertIs(wr(), None)
             self.assertIs(L[0], b)
 
@@ -457,7 +457,7 @@ class BytesMemorySliceSliceTest(unittest.TestCase,
 
 
 def test_main():
-    test_support.run_unittest(__name__)
+    support.run_unittest(__name__)
 
 if __name__ == "__main__":
     test_main()

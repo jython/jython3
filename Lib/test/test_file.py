@@ -5,7 +5,7 @@ import unittest
 from array import array
 from weakref import proxy
 
-from test.test_support import TESTFN, findfile, is_jython, run_unittest
+from test.support import TESTFN, findfile, is_jython, run_unittest
 from collections import UserList
 
 class AutoFileTests(unittest.TestCase):

@@ -11,7 +11,7 @@ import sys
 import tempfile
 import unittest
 import subprocess
-from test import test_support
+from test import support
 from test_chdir import read, safe_mktemp, COMPILED_SUFFIX
 
 class MislabeledImportTestCase(unittest.TestCase):
@@ -174,7 +174,7 @@ class ImpTestCase(unittest.TestCase):
 
     def test_import_star(self):
         self.assertEqual(subprocess.call([sys.executable,
-        test_support.findfile("import_star_from_java.py")]), 0)
+        support.findfile("import_star_from_java.py")]), 0)
 
     def test_selfreferential_classes(self):
         from org.python.tests.inbred import Metis
@@ -191,20 +191,20 @@ class ImpTestCase(unittest.TestCase):
             # Ensure imports work over symlinks.  Did not work in Jython from
             # 2.1 to 2.5.0, fixed in 2.5.1  See
             # http://bugs.jython.org/issue645615.
-            sym = test_support.TESTFN+"1"
+            sym = support.TESTFN+"1"
             try:
-                os.mkdir(test_support.TESTFN)
-                init = os.path.join(test_support.TESTFN, "__init__.py")
+                os.mkdir(support.TESTFN)
+                init = os.path.join(support.TESTFN, "__init__.py")
                 with open(init, 'w') as fp:
                     fp.write("test = 'imported'")
-                os.symlink(test_support.TESTFN, sym)
+                os.symlink(support.TESTFN, sym)
                 module = os.path.basename(sym)
                 module_obj = __import__(module)
                 self.assertEqual(module_obj.test, 'imported')
 
             finally:
-                shutil.rmtree(test_support.TESTFN)
-                test_support.unlink(sym)
+                shutil.rmtree(support.TESTFN)
+                support.unlink(sym)
 
     def test_issue1811(self):
         # Previously this blew out the stack
@@ -228,7 +228,7 @@ class UnicodeNamesTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(MislabeledImportTestCase,
+    support.run_unittest(MislabeledImportTestCase,
                               OverrideBuiltinsImportTestCase,
                               ImpTestCase,
                               UnicodeNamesTestCase)

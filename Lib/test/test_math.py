@@ -1,7 +1,7 @@
 # Python test set -- math module
 # XXXX Should not do tests around zero only
 
-from test.test_support import run_unittest, verbose, is_jython
+from test.support import run_unittest, verbose, is_jython
 import unittest
 import math
 import os

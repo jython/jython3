@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 
 class ListCompTestCase(unittest.TestCase):
 
@@ -17,7 +17,7 @@ class ListCompTestCase(unittest.TestCase):
         self.assertEqual(len(res), 2)
 
 def test_main():
-    test_support.run_unittest(ListCompTestCase)
+    support.run_unittest(ListCompTestCase)
 
 if __name__ == '__main__':
     test_main()

@@ -1,6 +1,6 @@
 import unittest
 
-from test import test_support
+from test import support
 
 from java import io, awt
 import os
@@ -58,7 +58,7 @@ class JavaSerializationTests(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(JavaSerializationTests)
+    support.run_unittest(JavaSerializationTests)
 
 
 if __name__ == "__main__":

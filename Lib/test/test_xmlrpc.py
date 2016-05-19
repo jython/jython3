@@ -12,7 +12,7 @@ import socket
 import io
 import os
 import re
-from test import test_support
+from test import support
 
 try:
     import threading
@@ -26,7 +26,7 @@ except NameError:
 else:
     have_unicode = True
 
-if test_support.is_jython:
+if support.is_jython:
     import _socket
     _socket._NUM_THREADS = 5
 
@@ -150,7 +150,7 @@ class XMLRPCTestCase(unittest.TestCase):
                          xmlrpc.client.loads(strg)[0][0])
         self.assertRaises(TypeError, xmlrpc.client.dumps, (arg1,))
 
-    @unittest.skipIf(test_support.is_jython, "FIXME: #1875 not working in Jython")
+    @unittest.skipIf(support.is_jython, "FIXME: #1875 not working in Jython")
     def test_default_encoding_issues(self):
         # SF bug #1115989: wrong decoding in '_stringify'
         utf8 = """<?xml version='1.0' encoding='iso-8859-1'?>
@@ -174,7 +174,7 @@ class XMLRPCTestCase(unittest.TestCase):
         # but then restore the original copy to avoid messing with
         # other potentially modified sys module attributes
         old_encoding = sys.getdefaultencoding()
-        with test_support.CleanImport('sys'):
+        with support.CleanImport('sys'):
             import sys as temp_sys
             temp_sys.setdefaultencoding("iso-8859-1")
             try:
@@ -882,11 +882,11 @@ class CGIHandlerTestCase(unittest.TestCase):
         self.cgi = None
 
     def test_cgi_get(self):
-        with test_support.EnvironmentVarGuard() as env:
+        with support.EnvironmentVarGuard() as env:
             env['REQUEST_METHOD'] = 'GET'
             # if the method is GET and no request_text is given, it runs handle_get
             # get sysout output
-            with test_support.captured_stdout() as data_out:
+            with support.captured_stdout() as data_out:
                 self.cgi.handle_request()
 
             # parse Status header
@@ -913,9 +913,9 @@ class CGIHandlerTestCase(unittest.TestCase):
         </methodCall>
         """
 
-        with test_support.EnvironmentVarGuard() as env, \
-             test_support.captured_stdout() as data_out, \
-             test_support.captured_stdin() as data_in:
+        with support.EnvironmentVarGuard() as env, \
+             support.captured_stdout() as data_out, \
+             support.captured_stdin() as data_in:
             data_in.write(data)
             data_in.seek(0)
             env['CONTENT_LENGTH'] = str(len(data))
@@ -1027,7 +1027,7 @@ class TransportSubclassTestCase(unittest.TestCase):
         req = self.issue_request(TestTransport)
         self.assertIn("X-Test: test_send_content\r\n", req)
 
-@test_support.reap_threads
+@support.reap_threads
 def test_main():
     xmlrpc_tests = [XMLRPCTestCase, HelperTestCase, DateTimeTestCase,
          BinaryTestCase, FaultTestCase, TransportSubclassTestCase]
@@ -1044,7 +1044,7 @@ def test_main():
     xmlrpc_tests.append(FailingServerTestCase)
     xmlrpc_tests.append(CGIHandlerTestCase)
 
-    test_support.run_unittest(*xmlrpc_tests)
+    support.run_unittest(*xmlrpc_tests)
 
 if __name__ == "__main__":
     test_main()

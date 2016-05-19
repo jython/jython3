@@ -3,7 +3,7 @@
 
 import os
 import unittest
-from test import test_support
+from test import support
 from array import array
 
 class ArrayJyTestCase(unittest.TestCase):
@@ -59,22 +59,22 @@ class ArrayJyTestCase(unittest.TestCase):
 class ToFromfileTestCase(unittest.TestCase):
 
     def tearDown(self):
-        if os.path.exists(test_support.TESTFN):
-            os.remove(test_support.TESTFN)
+        if os.path.exists(support.TESTFN):
+            os.remove(support.TESTFN)
 
     def test_tofromfile(self):
         # http://bugs.jython.org/issue1457
         x = array('i', list(range(5)))
-        with open(test_support.TESTFN, 'wb') as f:
+        with open(support.TESTFN, 'wb') as f:
             x.tofile(f)
 
         x = array('i', [])
-        with open(test_support.TESTFN, 'r+b') as f:
+        with open(support.TESTFN, 'r+b') as f:
             x.fromfile(f, 5)
             x *= 2
             x.tofile(f)
 
-        with open(test_support.TESTFN, 'rb') as f:
+        with open(support.TESTFN, 'rb') as f:
             x.fromfile(f, 10)
             self.assertEqual(x, array('i', list(range(5)) * 4))
 
@@ -94,9 +94,9 @@ class ArrayOpsTestCase(unittest.TestCase):
 
 def test_main():
     tests = [ToFromfileTestCase, ArrayOpsTestCase]
-    if test_support.is_jython:
+    if support.is_jython:
         tests.extend([ArrayJyTestCase])
-    test_support.run_unittest(*tests)
+    support.run_unittest(*tests)
 
 
 if __name__ == "__main__":

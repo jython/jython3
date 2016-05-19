@@ -1,4 +1,4 @@
-from test import test_support as support
+from test import support as support
 # If we end up with a significant number of tests that don't require
 # threading, this test module should be split.  Right now we skip
 # them all if we don't have threading.
@@ -10,7 +10,7 @@ import os.path
 import socketserver
 import time
 
-from test.test_support import reap_threads, verbose, transient_internet, is_jython
+from test.support import reap_threads, verbose, transient_internet, is_jython
 import unittest
 
 try:

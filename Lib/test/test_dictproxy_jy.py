@@ -4,7 +4,7 @@ Made for Jython.
 """
 import sys
 import unittest
-from test import test_support
+from test import support
 
 class DictproxyTestCase(unittest.TestCase):
 
@@ -41,7 +41,7 @@ class DictproxyTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(DictproxyTestCase)
+    support.run_unittest(DictproxyTestCase)
 
 
 if __name__ == '__main__':

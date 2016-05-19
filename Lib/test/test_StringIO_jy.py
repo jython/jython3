@@ -1,6 +1,6 @@
 import unittest
 import io
-from test import test_support
+from test import support
 
 class TestUnicodeInput(unittest.TestCase):
     def test_differences_handling_unicode(self):
@@ -54,9 +54,9 @@ class TestGetValueAfterClose(unittest.TestCase):
             self.fail("cStringIO.StringIO: getvalue() after close() should have raised ValueError")
 
 def test_main():
-    test_support.run_unittest(TestUnicodeInput)
-    test_support.run_unittest(TestWrite)
-    test_support.run_unittest(TestGetValueAfterClose)
+    support.run_unittest(TestUnicodeInput)
+    support.run_unittest(TestWrite)
+    support.run_unittest(TestGetValueAfterClose)
 
 if __name__ == '__main__':
     test_main()

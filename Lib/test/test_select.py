@@ -8,7 +8,7 @@ import socket
 import sys
 import test_socket
 import unittest
-from test import test_support
+from test import support
 
 HOST = test_socket.HOST
 PORT = test_socket.PORT + 100
@@ -140,7 +140,7 @@ class ThreadedPollClientSocket(test_socket.SocketConnectedTest):
     def testSocketRegisteredBeforeConnected(self):
         pass
 
-    @test_support.retry(Exception)
+    @support.retry(Exception)
     def _testSocketRegisteredBeforeConnected(self):
         timeout = 1000 # milliseconds
         poll_object = select.poll()
@@ -185,7 +185,7 @@ def test_main():
              ThreadedPollClientSocket,
              TestJythonSelect]
     suites = [unittest.makeSuite(klass, 'test') for klass in tests]
-    test_support._run_suite(unittest.TestSuite(suites))
+    support._run_suite(unittest.TestSuite(suites))
 
 
 if __name__ == "__main__":

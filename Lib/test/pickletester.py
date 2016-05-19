@@ -6,7 +6,7 @@ import io
 import pickletools
 import copyreg
 
-from test.test_support import (TestFailed, have_unicode, TESTFN, _2G, _1M,
+from test.support import (TestFailed, have_unicode, TESTFN, _2G, _1M,
                                precisionbigmemtest, is_jython)
 
 # Tests that try a number of pickle protocols should have a
@@ -15,7 +15,7 @@ from test.test_support import (TestFailed, have_unicode, TESTFN, _2G, _1M,
 assert pickle.HIGHEST_PROTOCOL == pickle.HIGHEST_PROTOCOL == 2
 protocols = list(range(pickle.HIGHEST_PROTOCOL + 1))
 
-# Copy of test.test_support.run_with_locale. This is needed to support Python
+# Copy of test.support.run_with_locale. This is needed to support Python
 # 2.4, which didn't include it. This is all to support test_xpickle, which
 # bounces pickled objects through older Python versions to test backwards
 # compatibility.

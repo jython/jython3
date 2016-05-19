@@ -6,7 +6,7 @@ from xml.dom import HierarchyRequestErr
 import os
 import sys
 import traceback
-from test_support import verbose
+from support import verbose
 
 if __name__ == "__main__":
     base = sys.argv[0]

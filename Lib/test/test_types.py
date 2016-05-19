@@ -1,8 +1,8 @@
 # Python test set -- part 6, built-in types
 
-from test.test_support import run_unittest, have_unicode, run_with_locale, \
+from test.support import run_unittest, have_unicode, run_with_locale, \
                               check_py3k_warnings
-from test.test_support import is_jython
+from test.support import is_jython
 
 import unittest
 import sys

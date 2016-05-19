@@ -9,8 +9,8 @@ import warnings
 import errno
 import struct
 
-from test import test_support
-from test.test_support import TESTFN, run_unittest, unlink, is_jython
+from test import support
+from test.support import TESTFN, run_unittest, unlink, is_jython
 from io import StringIO
 
 try:
@@ -18,7 +18,7 @@ try:
 except ImportError:
     threading = None
 
-HOST = test_support.HOST
+HOST = support.HOST
 
 class dummysocket:
     def __init__(self):
@@ -353,12 +353,12 @@ class DispatcherWithSendTests(unittest.TestCase):
 
     @unittest.skipIf(is_jython, 'FIXME: Currently not working on jython')
     @unittest.skipUnless(threading, 'Threading required for this test.')
-    @test_support.reap_threads
+    @support.reap_threads
     def test_send(self):
         evt = threading.Event()
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(3)
-        port = test_support.bind_port(sock)
+        port = support.bind_port(sock)
 
         cap = StringIO()
         args = (evt, cap, sock)
@@ -716,7 +716,7 @@ class BaseTestAPI(unittest.TestCase):
             sock.close()
 
     @unittest.skipUnless(threading, 'Threading required for this test.')
-    @test_support.reap_threads
+    @support.reap_threads
     def test_quick_connect(self):
         # see: http://bugs.python.org/issue10340
         server = TCPServer()

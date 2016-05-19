@@ -2,7 +2,7 @@
 
 Made for Jython.
 """
-from test import test_support
+from test import support
 import unittest
 
 class FormatSubclass(unittest.TestCase):
@@ -162,7 +162,7 @@ class FormatMisc(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
             FormatSubclass,
             FormatUnicodeClassic,
             FormatUnicodeModern,

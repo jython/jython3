@@ -15,8 +15,8 @@ from shutil import (_make_tarball, _make_zipfile, make_archive,
 import tarfile
 import warnings
 
-from test import test_support
-from test.test_support import TESTFN, check_warnings, captured_stdout
+from test import support
+from test.support import TESTFN, check_warnings, captured_stdout
 
 TESTFN2 = TESTFN + "2"
 
@@ -83,7 +83,7 @@ class TestShutil(unittest.TestCase):
     # when removing the file
     if (hasattr(os, 'chmod') and sys.platform[:6] != 'cygwin'
         and not (hasattr(os, 'geteuid') and os.geteuid() == 0)
-        and (not test_support.is_jython or os._name != 'nt')):
+        and (not support.is_jython or os._name != 'nt')):
         def test_on_error(self):
             self.errorState = 0
             os.mkdir(TESTFN)
@@ -809,7 +809,7 @@ class TestCopyFile(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(TestShutil, TestMove, TestCopyFile)
+    support.run_unittest(TestShutil, TestMove, TestCopyFile)
 
 if __name__ == '__main__':
     test_main()

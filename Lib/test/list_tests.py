@@ -6,9 +6,9 @@ import sys
 import os
 import unittest
 
-from test import test_support, seq_tests
+from test import support, seq_tests
 
-if test_support.is_jython:
+if support.is_jython:
     from java.util import List as JList
 
 
@@ -45,7 +45,7 @@ class CommonTest(seq_tests.CommonTest):
         self.assertEqual(str(a2), "[0, 1, 2]")
         self.assertEqual(repr(a2), "[0, 1, 2]")
 
-        if not (test_support.is_jython and issubclass(self.type2test, JList)):
+        if not (support.is_jython and issubclass(self.type2test, JList)):
             # Jython does not support shallow copies of object graphs
             # when moving back and forth from Java object space
             a2.append(a2)
@@ -53,14 +53,14 @@ class CommonTest(seq_tests.CommonTest):
             self.assertEqual(str(a2), "[0, 1, 2, [...], 3]")
             self.assertEqual(repr(a2), "[0, 1, 2, [...], 3]")
 
-        if not test_support.is_jython:
+        if not support.is_jython:
             l0 = []
             for i in range(sys.getrecursionlimit() + 100):
                 l0 = [l0]
             self.assertRaises(RuntimeError, repr, l0)
 
     def test_print(self):
-        if test_support.is_jython and issubclass(self.type2test, JList):
+        if support.is_jython and issubclass(self.type2test, JList):
             raise unittest.SkipTest("Jython does not support shallow copies of object graphs")
         d = self.type2test(range(200))
         d.append(d)
@@ -68,12 +68,12 @@ class CommonTest(seq_tests.CommonTest):
         d.append(d)
         d.append(400)
         try:
-            with open(test_support.TESTFN, "wb") as fo:
+            with open(support.TESTFN, "wb") as fo:
                 print(d, end=' ', file=fo)
-            with open(test_support.TESTFN, "rb") as fo:
+            with open(support.TESTFN, "rb") as fo:
                 self.assertEqual(fo.read(), repr(d))
         finally:
-            os.remove(test_support.TESTFN)
+            os.remove(support.TESTFN)
 
     def test_set_subscript(self):
         a = self.type2test(list(range(20)))
@@ -193,13 +193,13 @@ class CommonTest(seq_tests.CommonTest):
         a[:] = tuple(range(10))
         self.assertEqual(a, self.type2test(list(range(10))))
 
-        if not (test_support.is_jython and issubclass(self.type2test, JList)):
+        if not (support.is_jython and issubclass(self.type2test, JList)):
             # no support for __setslice__ on Jython for
             # java.util.List, given that method deprecated since 2.0!
             self.assertRaises(TypeError, a.__setslice__, 0, 1, 5)
         self.assertRaises(TypeError, a.__setitem__, slice(0, 1, 5))
 
-        if not (test_support.is_jython and issubclass(self.type2test, JList)):
+        if not (support.is_jython and issubclass(self.type2test, JList)):
             self.assertRaises(TypeError, a.__setslice__)
         self.assertRaises(TypeError, a.__setitem__)
 
@@ -343,7 +343,7 @@ class CommonTest(seq_tests.CommonTest):
         d = self.type2test(['a', 'b', BadCmp2(), 'c'])
         e = self.type2test(d)
         self.assertRaises(BadExc, d.remove, 'c')
-        if not (test_support.is_jython and issubclass(self.type2test, JList)):
+        if not (support.is_jython and issubclass(self.type2test, JList)):
             # When converting back and forth to Java space, Jython does not
             # maintain object identity
             for x, y in zip(d, e):
@@ -437,7 +437,7 @@ class CommonTest(seq_tests.CommonTest):
         self.assertRaises(TypeError, u.reverse, 42)
 
     def test_sort(self):
-        with test_support.check_py3k_warnings(
+        with support.check_py3k_warnings(
                 ("the cmp argument is not supported", DeprecationWarning)):
             self._test_sort()
 
@@ -494,7 +494,7 @@ class CommonTest(seq_tests.CommonTest):
         u += "eggs"
         self.assertEqual(u, self.type2test("spameggs"))
 
-        if not test_support.is_jython:
+        if not support.is_jython:
             self.assertRaises(TypeError, u.__iadd__, None)
         else:
             import operator

@@ -8,7 +8,7 @@ import os
 import shutil
 import unittest
 
-from test.test_support import run_unittest, check_py3k_warnings
+from test.support import run_unittest, check_py3k_warnings
 from reprlib import repr as r # Don't shadow builtin repr
 from reprlib import Repr
 

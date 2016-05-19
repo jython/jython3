@@ -1,10 +1,10 @@
 # test_codecs.py from CPython 2.7, modified for Jython
-from test import test_support
+from test import support
 import unittest
 import codecs
 import locale
 import sys, io
-if not test_support.is_jython:
+if not support.is_jython:
     import _testcapi
 
 class Queue(object):
@@ -473,10 +473,10 @@ class UTF16Test(ReadTest):
         s1 = 'Hello\r\nworld\r\n'
 
         s = s1.encode(self.encoding)
-        self.addCleanup(test_support.unlink, test_support.TESTFN)
-        with open(test_support.TESTFN, 'wb') as fp:
+        self.addCleanup(support.unlink, support.TESTFN)
+        with open(support.TESTFN, 'wb') as fp:
             fp.write(s)
-        with codecs.open(test_support.TESTFN, 'U', encoding=self.encoding) as reader:
+        with codecs.open(support.TESTFN, 'U', encoding=self.encoding) as reader:
             self.assertEqual(reader.read(), s1)
 
 class UTF16LETest(ReadTest):
@@ -558,7 +558,7 @@ class UTF7Test(ReadTest):
         )
 
     # Jython extra (test supplementary characters)
-    @unittest.skipIf(not test_support.is_jython, "Jython supports surrogate pairs")
+    @unittest.skipIf(not support.is_jython, "Jython supports surrogate pairs")
     def test_partial_supp(self):
         # Check the encoding is what we think it is
         ustr = "x\U00023456.\u0177\U00023456\u017az"
@@ -602,7 +602,7 @@ class UTF16ExTest(unittest.TestCase):
     def test_bad_args(self):
         self.assertRaises(TypeError, codecs.utf_16_ex_decode)
 
-@unittest.skipIf(test_support.is_jython, "Jython has no _codecs.readbuffer_encode method")
+@unittest.skipIf(support.is_jython, "Jython has no _codecs.readbuffer_encode method")
 class ReadBufferTest(unittest.TestCase):
 
     def test_array(self):
@@ -619,7 +619,7 @@ class ReadBufferTest(unittest.TestCase):
         self.assertRaises(TypeError, codecs.readbuffer_encode)
         self.assertRaises(TypeError, codecs.readbuffer_encode, 42)
 
-@unittest.skipIf(test_support.is_jython, "Jython has no _codecs.charbuffer_encode method")
+@unittest.skipIf(support.is_jython, "Jython has no _codecs.charbuffer_encode method")
 class CharBufferTest(unittest.TestCase):
 
     def test_string(self):
@@ -881,7 +881,7 @@ class UnicodeInternalTest(unittest.TestCase):
             try:
                 "\x00\x00\x00\x00\x00\x11\x11\x00".decode("unicode_internal")
             except UnicodeDecodeError as ex:
-                if test_support.is_jython:
+                if support.is_jython:
                     # Jython delegates internally to utf-32be and it shows here
                     self.assertEqual("utf-32", ex.encoding)
                 else:
@@ -1082,9 +1082,9 @@ class NameprepTest(unittest.TestCase):
                 try:
                     self.assertEqual(nameprep(orig), prepped)
                 except Exception as e:
-                    raise test_support.TestFailed("Test 3.%d: %s" % (pos+1, str(e)))
+                    raise support.TestFailed("Test 3.%d: %s" % (pos+1, str(e)))
 
-# @unittest.skipIf(test_support.is_jython, "FIXME: Jython issue 1153 missing support for IDNA")
+# @unittest.skipIf(support.is_jython, "FIXME: Jython issue 1153 missing support for IDNA")
 class IDNACodecTest(unittest.TestCase):
     def test_builtin_decode(self):
         self.assertEqual(str("python.org", "idna"), "python.org")
@@ -1408,7 +1408,7 @@ else:
 
 class BasicUnicodeTest(unittest.TestCase):
 
-    @unittest.skipIf(test_support.is_jython, "_testcapi module not present in Jython")
+    @unittest.skipIf(support.is_jython, "_testcapi module not present in Jython")
     def test_basics(self):
         s = "abc123" # all codecs should be able to encode these
         for encoding in all_unicode_encodings:
@@ -1598,10 +1598,10 @@ class BomTest(unittest.TestCase):
                  "utf-32-le",
                  "utf-32-be",
                  )
-        self.addCleanup(test_support.unlink, test_support.TESTFN)
+        self.addCleanup(support.unlink, support.TESTFN)
         for encoding in tests:
             # Check if the BOM is written only once
-            with codecs.open(test_support.TESTFN, 'w+', encoding=encoding) as f:
+            with codecs.open(support.TESTFN, 'w+', encoding=encoding) as f:
                 f.write(data)
                 f.write(data)
                 f.seek(0)
@@ -1610,7 +1610,7 @@ class BomTest(unittest.TestCase):
                 self.assertEqual(f.read(), data * 2)
 
             # Check that the BOM is written after a seek(0)
-            with codecs.open(test_support.TESTFN, 'w+', encoding=encoding) as f:
+            with codecs.open(support.TESTFN, 'w+', encoding=encoding) as f:
                 f.write(data[0])
                 self.assertNotEqual(f.tell(), 0)
                 f.seek(0)
@@ -1619,7 +1619,7 @@ class BomTest(unittest.TestCase):
                 self.assertEqual(f.read(), data)
 
             # (StreamWriter) Check that the BOM is written after a seek(0)
-            with codecs.open(test_support.TESTFN, 'w+', encoding=encoding) as f:
+            with codecs.open(support.TESTFN, 'w+', encoding=encoding) as f:
                 f.writer.write(data[0])
                 self.assertNotEqual(f.writer.tell(), 0)
                 f.writer.seek(0)
@@ -1629,7 +1629,7 @@ class BomTest(unittest.TestCase):
 
             # Check that the BOM is not written after a seek() at a position
             # different than the start
-            with codecs.open(test_support.TESTFN, 'w+', encoding=encoding) as f:
+            with codecs.open(support.TESTFN, 'w+', encoding=encoding) as f:
                 f.write(data)
                 f.seek(f.tell())
                 f.write(data)
@@ -1638,7 +1638,7 @@ class BomTest(unittest.TestCase):
 
             # (StreamWriter) Check that the BOM is not written after a seek()
             # at a position different than the start
-            with codecs.open(test_support.TESTFN, 'w+', encoding=encoding) as f:
+            with codecs.open(support.TESTFN, 'w+', encoding=encoding) as f:
                 f.writer.write(data)
                 f.writer.seek(f.writer.tell())
                 f.writer.write(data)
@@ -1647,7 +1647,7 @@ class BomTest(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         UTF32Test,
         UTF32LETest,
         UTF32BETest,

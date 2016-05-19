@@ -6,7 +6,7 @@ import errno
 import os
 import sys
 import tempfile
-import test.test_support as test_support
+import test.support as support
 import unittest
 
 class TestFilenoTestCase(unittest.TestCase):
@@ -328,14 +328,14 @@ def raises(exc, expected, callable, *args):
         callable(*args)
     except exc as val:
         if expected and str(val) != msg:
-            raise test_support.TestFailed(
+            raise support.TestFailed(
                 "Message %r, expected %r" % (str(val), msg))
     else:
-        raise test_support.TestFailed("Expected %s" % exc)
+        raise support.TestFailed("Expected %s" % exc)
 
 
 def test_main():
-    test_support.run_unittest(TestFilenoTestCase,
+    support.run_unittest(TestFilenoTestCase,
                               TestOsOpenTestCase,
                               TestOsFdopenTestCase)
 

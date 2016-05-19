@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 
 # xxx - forces a skip in the case we haven't built ctypes_test module in ant (which is not yet a task as of now)
 
@@ -50,7 +50,7 @@ class RawFFITestCase(unittest.TestCase):
 def test_main():
     tests = [RawFFITestCase,
              ]
-    test_support.run_unittest(*tests)
+    support.run_unittest(*tests)
 
 if __name__ == '__main__':
     test_main()

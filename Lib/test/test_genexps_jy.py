@@ -3,7 +3,7 @@
 Made for Jython.
 """
 import unittest
-from test import test_support
+from test import support
 
 locals_test = list(local for local in locals() if not local.startswith('_'))
 
@@ -13,7 +13,7 @@ class GeneratorExpressionsTestCase(unittest.TestCase):
         # NOTE: The locals_test genexp used to cause a 'dictionary
         # changed size during iteration' RuntimeError. If we've gotten
         # this far we've already passed
-        self.assertTrue(sorted(locals_test) == ['test_support', 'unittest'])
+        self.assertTrue(sorted(locals_test) == ['support', 'unittest'])
 
     #http://bugs.jython.org/issue1205 applied to genexps.
     def test_long_genexp(self):
@@ -28,7 +28,7 @@ class GeneratorExpressionsTestCase(unittest.TestCase):
         self.assertEqual(1729, res.next()[0])
 
 def test_main():
-    test_support.run_unittest(GeneratorExpressionsTestCase)
+    support.run_unittest(GeneratorExpressionsTestCase)
 
 if __name__ == '__main__':
     test_main()

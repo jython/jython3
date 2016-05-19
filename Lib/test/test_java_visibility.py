@@ -2,7 +2,7 @@ import array
 import unittest
 import subprocess
 import sys
-from test import test_support
+from test import support
 from java.lang import Byte, Class, Integer
 from java.util import ArrayList, Collections, HashMap, LinkedList, Observable, Observer
 from org.python.tests import (Coercions, HiddenSuper, InterfaceCombination, Invisible, Matryoshka,
@@ -235,7 +235,7 @@ class CoercionTest(unittest.TestCase):
 
 class RespectJavaAccessibilityTest(unittest.TestCase):
     def run_accessibility_script(self, script, error=AttributeError):
-        fn = test_support.findfile(script)
+        fn = support.findfile(script)
         self.assertRaises(error, execfile, fn)
         self.assertEqual(subprocess.call([sys.executable, "-J-Dpython.cachedir.skip=true",
             "-J-Dpython.security.respectJavaAccessibility=false", fn]),
@@ -255,7 +255,7 @@ class RespectJavaAccessibilityTest(unittest.TestCase):
 
 class ClassloaderTest(unittest.TestCase):
     def test_loading_classes_without_import(self):
-        cl = test_support.make_jar_classloader("../callbacker_test.jar")
+        cl = support.make_jar_classloader("../callbacker_test.jar")
         X = cl.loadClass("org.python.tests.Callbacker")
         called = []
         class Blah(X.Callback):
@@ -265,7 +265,7 @@ class ClassloaderTest(unittest.TestCase):
         self.assertEqual(None, called[0])
 
 def test_main():
-    test_support.run_unittest(VisibilityTest,
+    support.run_unittest(VisibilityTest,
             JavaClassTest,
             CoercionTest,
             RespectJavaAccessibilityTest,

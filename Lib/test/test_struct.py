@@ -1,4 +1,4 @@
-from test.test_support import TestFailed, verbose, verify, vereq, is_jython
+from test.support import TestFailed, verbose, verify, vereq, is_jython
 import struct
 import array
 import warnings

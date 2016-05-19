@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from test import test_support
+from test import support
 import java.lang
 import unittest
 
@@ -170,7 +170,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(ord(bar[2]), 110)
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         WrappedStrCmpTest,
         StrConstructorTest,
         StringSlicingTest,

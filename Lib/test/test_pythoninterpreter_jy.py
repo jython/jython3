@@ -5,7 +5,7 @@ import sys
 import traceback
 import types
 import unittest
-import test.test_support
+import test.support
 from org.python.core.util import StringUtil
 from org.python.core import PyFile
 from _codecs import encode
@@ -330,7 +330,7 @@ class StdoutWrapperTest(unittest.TestCase):
 
 
 def test_main():
-    test.test_support.run_unittest(
+    test.support.run_unittest(
             InterpreterTest,
             UnicodeSourceTest,
             InterpreterSetInTest,

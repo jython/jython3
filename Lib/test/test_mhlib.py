@@ -7,7 +7,7 @@
 ###      mhlib.  It should.
 
 import unittest
-from test.test_support import is_jython, run_unittest, TESTFN, import_module
+from test.support import is_jython, run_unittest, TESTFN, import_module
 import os, io
 import sys
 mhlib = import_module('mhlib', deprecated=True)

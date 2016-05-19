@@ -1,5 +1,5 @@
 import unittest
-from test.test_support import (check_syntax_error, check_py3k_warnings,
+from test.support import (check_syntax_error, check_py3k_warnings,
                                check_warnings, is_jython, run_unittest)
 
 

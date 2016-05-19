@@ -1,5 +1,5 @@
 import sys
-from test_support import TestSkipped
+from support import TestSkipped
 
 REPS = 65580
 

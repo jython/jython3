@@ -3,7 +3,7 @@
 # regression as well as integration with Java.
 
 import unittest
-import test.test_support
+import test.support
 
 
 class ByteArraySubclassTest(unittest.TestCase):
@@ -53,7 +53,7 @@ class SimpleOperationsTest(unittest.TestCase):
 
 
 def test_main():
-    test.test_support.run_unittest(
+    test.support.run_unittest(
             ByteArraySubclassTest,
             SimpleOperationsTest,
         )

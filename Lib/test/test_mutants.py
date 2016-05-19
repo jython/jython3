@@ -3,7 +3,7 @@
 # underlying java code, in any event, it's not so interesting right
 # now
 
-from test.test_support import verbose, TESTFN
+from test.support import verbose, TESTFN
 import random
 import os
 

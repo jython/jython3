@@ -233,7 +233,7 @@ class NewSeqTestCase(SeqTestCase, unittest.TestCase):
 
 
     #FIXME: This test not working in Jython on NewSeqDeprecated.
-    if test_support.is_jython:
+    if support.is_jython:
         def test_slice_bug7532(self):
             pass
 

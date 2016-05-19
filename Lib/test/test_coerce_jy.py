@@ -3,7 +3,7 @@
 Made for Jython.
 """
 import unittest
-from test import test_support
+from test import support
 
 class CoerceTestCase(unittest.TestCase):
 
@@ -21,7 +21,7 @@ class CoerceTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(CoerceTestCase)
+    support.run_unittest(CoerceTestCase)
 
 if __name__ == "__main__":
     test_main()

@@ -1,7 +1,7 @@
 import unittest
 import sys
 
-from test import test_support
+from test import support
 
 
 class EnumerateJyTestCase(unittest.TestCase):
@@ -31,7 +31,7 @@ class EnumerateJyTestCase(unittest.TestCase):
 
 def test_main(verbose=None):
     testclasses = (EnumerateJyTestCase,)
-    test_support.run_unittest(*testclasses)
+    support.run_unittest(*testclasses)
 
 
 if __name__ == "__main__":

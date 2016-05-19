@@ -1,4 +1,4 @@
-from test import test_support
+from test import support
 import types
 import unittest
 
@@ -350,7 +350,7 @@ class StaticMethodAttrsTest(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(FunctionPropertiesTest, InstancemethodAttrTest,
+    support.run_unittest(FunctionPropertiesTest, InstancemethodAttrTest,
                               ArbitraryFunctionAttrTest, FunctionDictsTest,
                               FunctionDocstringTest,
                               StaticMethodAttrsTest)

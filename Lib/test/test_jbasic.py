@@ -1,6 +1,6 @@
 import unittest
 
-from test import test_support
+from test import support
 
 from java.awt import Dimension
 from java.awt.event import ActionEvent
@@ -181,7 +181,7 @@ class JythonBasicTests(unittest.TestCase):
         ptt.testAll()
 
 def test_main():
-    test_support.run_unittest(JythonBasicTests)
+    support.run_unittest(JythonBasicTests)
 
 if __name__ == '__main__':
     test_main()

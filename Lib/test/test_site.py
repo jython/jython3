@@ -5,8 +5,8 @@ executing have not been removed.
 
 """
 import unittest
-from test.test_support import run_unittest, TESTFN, EnvironmentVarGuard
-from test.test_support import captured_output, is_jython
+from test.support import run_unittest, TESTFN, EnvironmentVarGuard
+from test.support import captured_output, is_jython
 import builtins
 import os
 import sys

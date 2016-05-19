@@ -4,7 +4,7 @@ Made for Jython.
 """
 import types
 import unittest
-from test import test_support
+from test import support
 
 class Old:
     pass
@@ -194,7 +194,7 @@ class SubclassDescrTestCase(unittest.TestCase):
                         "'foo' + C()"))
         # XXX: There's probably work to be done here besides just emulating this
         # message
-        if test_support.is_jython:
+        if support.is_jython:
             mapping.append((lambda o: 'foo' + o,
                             TypeError, "cannot concatenate 'unicode' and 'B' objects",
                             "u'foo' + C()"))
@@ -311,7 +311,7 @@ class InPlaceTestCase(unittest.TestCase):
                 return [1]
         foo = Foo([2])
         foo *= 3
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertEqual(foo, [2, 2, 2])
         else:
             # CPython ignores list.__imul__ on a subclass with __mul__
@@ -554,7 +554,7 @@ class BinopCombinationsTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(TestDescrTestCase,
+    support.run_unittest(TestDescrTestCase,
                               SubclassDescrTestCase,
                               InPlaceTestCase,
                               DescrExceptionsTestCase,

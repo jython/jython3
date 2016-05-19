@@ -6,7 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from test import test_support
+from test import support
 
 class SysTest(unittest.TestCase):
 
@@ -137,7 +137,7 @@ class ShadowingTest(unittest.TestCase):
 class SyspathResourceTest(unittest.TestCase):
     def setUp(self):
         self.orig_path = sys.path
-        sys.path.insert(0, test_support.findfile("bug1373.jar"))
+        sys.path.insert(0, support.findfile("bug1373.jar"))
 
     def tearDown(self):
         sys.path = self.orig_path
@@ -247,7 +247,7 @@ class SysArgvTest(unittest.TestCase):
     def test_unicode_argv(self):
         """Unicode roundtrips successfully through sys.argv arguments"""
         zhongwen = u'\u4e2d\u6587'
-        with test_support.temp_cwd(name=u"tempcwd-%s" % zhongwen):
+        with support.temp_cwd(name=u"tempcwd-%s" % zhongwen):
             p = subprocess.Popen(
                 [sys.executable, '-c',
                  'import sys;' \
@@ -281,7 +281,7 @@ class InteractivePromptTest(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         SysTest,
         ShadowingTest,
         SyspathResourceTest,

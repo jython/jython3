@@ -10,8 +10,8 @@ try:
 except ImportError:
     threading = None
 
-from test import test_support
-from test.test_support import TESTFN, run_unittest
+from test import support
+from test.support import TESTFN, run_unittest
 from collections import UserList
 
 class AutoFileTests(unittest.TestCase):
@@ -32,7 +32,7 @@ class AutoFileTests(unittest.TestCase):
         self.assertEqual(self.f.tell(), p.tell())
         self.f.close()
         self.f = None
-        if test_support.is_jython: # GC is not immediate: borrow a trick
+        if support.is_jython: # GC is not immediate: borrow a trick
             from test_weakref import extra_collect
             extra_collect()
         self.assertRaises(ReferenceError, getattr, p, 'tell')
@@ -40,13 +40,13 @@ class AutoFileTests(unittest.TestCase):
     def testAttributes(self):
         # verify expected attributes exist
         f = self.f
-        with test_support.check_py3k_warnings():
+        with support.check_py3k_warnings():
             softspace = f.softspace
         f.name     # merely shouldn't blow up
         f.mode     # ditto
         f.closed   # ditto
 
-        with test_support.check_py3k_warnings():
+        with support.check_py3k_warnings():
             # verify softspace is writable
             f.softspace = softspace    # merely shouldn't blow up
 
@@ -93,7 +93,7 @@ class AutoFileTests(unittest.TestCase):
         # verify repr works
         self.assertTrue(repr(self.f).startswith("<open file '" + TESTFN))
         # see issue #14161
-        if sys.platform == "win32" or (test_support.is_jython and os._name == "nt"):
+        if sys.platform == "win32" or (support.is_jython and os._name == "nt"):
             # Windows doesn't like \r\n\t" in the file name, but ' is ok
             fname = "xx'xx"
         else:
@@ -131,7 +131,7 @@ class AutoFileTests(unittest.TestCase):
             method = getattr(self.f, methodname)
             # should raise on closed file
             self.assertRaises((TypeError, ValueError), method)
-        with test_support.check_py3k_warnings():
+        with support.check_py3k_warnings():
             for methodname in deprecated_methods:
                 method = getattr(self.f, methodname)
                 self.assertRaises(ValueError, method)
@@ -324,7 +324,7 @@ class OtherFileTests(unittest.TestCase):
         finally:
             os.unlink(TESTFN)
 
-    @unittest.skipIf(test_support.is_jython, "Specific to CPython")
+    @unittest.skipIf(support.is_jython, "Specific to CPython")
     def testIteration(self):
         # Test the complex interaction when mixing file-iteration and the
         # various read* methods. Ostensibly, the mixture could just be tested
@@ -436,7 +436,7 @@ class OtherFileTests(unittest.TestCase):
         finally:
             os.unlink(TESTFN)
 
-    @unittest.skipUnless(test_support.is_jython, "Applicable to Jython")
+    @unittest.skipUnless(support.is_jython, "Applicable to Jython")
     def testIterationMixes(self):
         # And now for something completely different. An implementation where
         # various read* methods mix happily with iteration over the lines of
@@ -504,7 +504,7 @@ class FileThreadingTests(unittest.TestCase):
     # files. (Open file objects prevent deletion of TESTFN on Windows at least.)
 
     def setUp(self):
-        self._threads = test_support.threading_setup()
+        self._threads = support.threading_setup()
         self.filename = TESTFN
         self.exc_info = None
         with open(self.filename, "w") as f:
@@ -522,7 +522,7 @@ class FileThreadingTests(unittest.TestCase):
             # close, that creates spurious errors in subsequent tests.
             if ee.errno != errno.ENOENT:
                 raise ee
-        test_support.threading_cleanup(*self._threads)
+        support.threading_cleanup(*self._threads)
 
     def _create_file(self):
         if self.use_buffering:
@@ -557,7 +557,7 @@ class FileThreadingTests(unittest.TestCase):
                 time.sleep(duration/100)
                 with self._count_lock:
                     if self.close_count-self.close_success_count > nb_workers+1:
-                        if test_support.verbose:
+                        if support.verbose:
                             print('Q', end=' ')
                         break
             time.sleep(duration)
@@ -589,7 +589,7 @@ class FileThreadingTests(unittest.TestCase):
             # Some worker saved an exception: re-raise it now
             raise self.exc_info[0](self.exc_info[1]).with_traceback(self.exc_info[2])
 
-        if test_support.verbose:
+        if support.verbose:
             # Useful verbose statistics when tuning this test to take
             # less time to run but still ensuring that its still useful.
             #

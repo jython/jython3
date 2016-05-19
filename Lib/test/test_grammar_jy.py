@@ -1,7 +1,7 @@
 """ Extra grammar tests for Jython.
 """
 
-from test import test_support
+from test import support
 import sys
 import unittest
 
@@ -46,8 +46,8 @@ __test__ = dict(pep263=pep263)
 
 
 def test_main(verbose=None):
-    test_support.run_unittest(GrammarTest)
-    test_support.run_doctest(sys.modules[__name__], verbose)
+    support.run_unittest(GrammarTest)
+    support.run_doctest(sys.modules[__name__], verbose)
 
 if __name__ == '__main__':
     test_main(verbose=True)

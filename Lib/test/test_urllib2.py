@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 
 import os
 import socket
@@ -667,14 +667,14 @@ class HandlerTests(unittest.TestCase):
     # This test isn't working on Ubuntu on an Apple Intel powerbook,
     # Jython 2.7b1+ (default:6b4a1088566e, Feb 10 2013, 14:36:47) 
     # [OpenJDK 64-Bit Server VM (Oracle Corporation)] on java1.7.0_09
-    @unittest.skipIf(test_support.is_jython,
+    @unittest.skipIf(support.is_jython,
                      "FIXME: Currently not working on jython")
     def test_file(self):
         import rfc822, socket
         h = urllib.request.FileHandler()
         o = h.parent = MockOpener()
 
-        TESTFN = test_support.TESTFN
+        TESTFN = support.TESTFN
         urlpath = sanepathname2url(os.path.abspath(TESTFN))
         towrite = "hello, world\n"
         urls = [
@@ -1128,7 +1128,7 @@ class HandlerTests(unittest.TestCase):
         opener.add_handler(auth_handler)
         opener.add_handler(http_handler)
         msg = "Basic Auth Realm was unquoted"
-        with test_support.check_warnings((msg, UserWarning)):
+        with support.check_warnings((msg, UserWarning)):
             self._test_basic_auth(opener, auth_handler, "Authorization",
                                   realm, http_handler, password_manager,
                                   "http://acme.example.com/protected",
@@ -1372,14 +1372,14 @@ class RequestTests(unittest.TestCase):
 
 def test_main(verbose=None):
     from test import test_urllib2
-    test_support.run_doctest(test_urllib2, verbose)
-    test_support.run_doctest(urllib2, verbose)
+    support.run_doctest(test_urllib2, verbose)
+    support.run_doctest(urllib2, verbose)
     tests = (TrivialTests,
              OpenerDirectorTests,
              HandlerTests,
              MiscTests,
              RequestTests)
-    test_support.run_unittest(*tests)
+    support.run_unittest(*tests)
 
 if __name__ == "__main__":
     test_main(verbose=True)

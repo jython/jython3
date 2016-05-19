@@ -2,10 +2,10 @@ import unittest
 import random
 import threading
 import time
-from test import test_support
+from test import support
 import test_list
 
-if test_support.is_jython:
+if support.is_jython:
     from java.util import ArrayList
     from java.lang import String
 
@@ -30,7 +30,7 @@ class ListTestCase(unittest.TestCase):
         self.assertTrue(bar2 >= bar1)
 
     def test_setget_override(self):
-        if not test_support.is_jython:
+        if not support.is_jython:
             return
 
         # http://bugs.jython.org/issue600790
@@ -237,7 +237,7 @@ class JavaListTestCase(test_list.ListTest):
 
 
 def test_main():
-    test_support.run_unittest(ListTestCase,
+    support.run_unittest(ListTestCase,
                               ThreadSafetyTestCase,
                               ExtendedSliceTestCase,
                               JavaListTestCase)

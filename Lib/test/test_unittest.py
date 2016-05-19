@@ -7,7 +7,7 @@ Still need testing:
 """
 
 import sys
-from test import test_support
+from test import support
 import unittest
 from unittest import TestCase
 import types
@@ -2238,7 +2238,7 @@ class Test_Assertions(TestCase):
 ######################################################################
 
 def test_main():
-    test_support.run_unittest(Test_TestCase, Test_TestLoader,
+    support.run_unittest(Test_TestCase, Test_TestLoader,
         Test_TestSuite, Test_TestResult, Test_FunctionTestCase,
         Test_Assertions)
 

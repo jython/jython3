@@ -2,7 +2,7 @@
 # The reason for not doing that already is that in Python 3.x the name of a
 # function is stored in func.__name__, in 2.x it's func.func_name
 import unittest
-from test import test_support
+from test import support
 
 class TestClassDecorators(unittest.TestCase):
 
@@ -40,7 +40,7 @@ class TestClassDecorators(unittest.TestCase):
         self.assertEqual(C.extra, 'second')
 
 def test_main():
-    test_support.run_unittest(TestClassDecorators)
+    support.run_unittest(TestClassDecorators)
 
 if __name__ == '__main__':
     test_main()

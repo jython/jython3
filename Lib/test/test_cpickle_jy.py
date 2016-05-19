@@ -8,7 +8,7 @@ import pickle
 import pickle
 import unittest
 from io import StringIO
-from test import test_support
+from test import support
 
 class MyClass(object):
     pass
@@ -92,7 +92,7 @@ class CPickleTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(CPickleTestCase)
+    support.run_unittest(CPickleTestCase)
 
 
 if __name__ == '__main__':

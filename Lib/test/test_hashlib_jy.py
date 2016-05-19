@@ -6,7 +6,7 @@ Made for Jython.
 import hashlib
 import unittest
 from array import array
-from test import test_support
+from test import support
 
 class HashlibTestCase(unittest.TestCase):
 
@@ -24,7 +24,7 @@ class HashlibTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(HashlibTestCase)
+    support.run_unittest(HashlibTestCase)
 
 
 if __name__ == '__main__':

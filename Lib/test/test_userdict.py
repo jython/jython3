@@ -1,6 +1,6 @@
 # Check every path through every method of UserDict
 
-import test.test_support, unittest
+import test.support, unittest
 from sets import Set
 
 import UserDict
@@ -407,7 +407,7 @@ class UserDictMixinTest(TestMappingProtocol):
         self.assertEqual(s, t)
 
 def test_main():
-    test.test_support.run_unittest(
+    test.support.run_unittest(
         TestMappingProtocol,
         UserDictTest,
         UserDictMixinTest

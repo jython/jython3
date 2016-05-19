@@ -18,7 +18,7 @@
 
 # Testing the line trace facility.
 
-from test import test_support
+from test import support
 import unittest
 import sys
 import difflib
@@ -268,7 +268,7 @@ class TraceTestCase(unittest.TestCase):
     # deallocators may be traced as well.
     def setUp(self):
         self.using_gc = gc.isenabled()
-        if not test_support.is_jython:
+        if not support.is_jython:
             gc.disable()
 
     def tearDown(self):
@@ -780,7 +780,7 @@ def test_main():
     tests = [TraceTestCase,
              RaisingTraceFuncTestCase]
 
-    if not test_support.is_jython:
+    if not support.is_jython:
         tests.append(JumpTestCase)
     else:
         del TraceTestCase.test_02_arigo
@@ -794,7 +794,7 @@ def test_main():
         del TraceTestCase.test_14_onliner_if
         del TraceTestCase.test_15_loops
 
-    test_support.run_unittest(*tests)
+    support.run_unittest(*tests)
 
 if __name__ == "__main__":
     test_main()

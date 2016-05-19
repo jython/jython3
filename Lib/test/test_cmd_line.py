@@ -1,5 +1,5 @@
 import os
-import test.test_support, unittest
+import test.support, unittest
 import sys
 import popen2
 import subprocess
@@ -8,7 +8,7 @@ class CmdLineTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        if test.test_support.is_jython:
+        if test.support.is_jython:
             # GC is not immediate, so if Popen.__del__ may be delayed.
             # Try to force any Popen.__del__ errors within scope of test.
             from test_weakref import extra_collect
@@ -62,7 +62,7 @@ class CmdLineTest(unittest.TestCase):
         self.assertTrue('usage' in self.start_python('-h'))
 
     def test_version(self):
-        prefix = 'J' if test.test_support.is_jython else 'P'
+        prefix = 'J' if test.support.is_jython else 'P'
         version = prefix + 'ython %d.%d' % sys.version_info[:2]
         start = self.start_python('-V')
         self.assertTrue(start.startswith(version),
@@ -101,8 +101,8 @@ class CmdLineTest(unittest.TestCase):
 
 
 def test_main():
-    test.test_support.run_unittest(CmdLineTest)
-    test.test_support.reap_children()
+    test.support.run_unittest(CmdLineTest)
+    test.support.reap_children()
 
 if __name__ == "__main__":
     test_main()

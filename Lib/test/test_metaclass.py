@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 
 class MetaclassModuleTestCase(unittest.TestCase):
     def test_module_attribute(self):
@@ -8,7 +8,7 @@ class MetaclassModuleTestCase(unittest.TestCase):
         self.assertTrue(TestClass.__module__.endswith('simpleclass'))
 
 def test_main():
-    test_support.run_unittest(MetaclassModuleTestCase)
+    support.run_unittest(MetaclassModuleTestCase)
 
 if __name__ == '__main__':
     test_main()

@@ -1,4 +1,4 @@
-from test import test_support
+from test import support
 from java.util import HashMap, Hashtable
 import unittest
 from collections import defaultdict
@@ -258,7 +258,7 @@ class PyStringMapTest(test_dict.DictTest):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         DictInitTest,
         DictCmpTest,
         DictMiscTest,

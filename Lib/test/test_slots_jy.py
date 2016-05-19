@@ -2,7 +2,7 @@
 
 Made for Jython.
 """
-from test import test_support
+from test import support
 from java.util import HashMap
 import unittest
 
@@ -230,7 +230,7 @@ class SpecialSlotsBaseTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(SlottedTestCase,
+    support.run_unittest(SlottedTestCase,
                               SlottedWithDictTestCase,
                               SlottedWithWeakrefTestCase,
                               SpecialSlotsBaseTestCase)

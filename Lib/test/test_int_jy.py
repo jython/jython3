@@ -4,7 +4,7 @@ Additional tests for Jython.
 """
 import unittest
 import types
-from test import test_support
+from test import support
 
 class IntTestCase(unittest.TestCase):
 
@@ -17,7 +17,7 @@ class IntTestCase(unittest.TestCase):
         self.assertEqual((10).__pow__(10, None), 10000000000)
 
 def test_main():
-    test_support.run_unittest(IntTestCase)
+    support.run_unittest(IntTestCase)
 
 if __name__ == '__main__':
     test_main()

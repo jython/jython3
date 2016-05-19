@@ -1,6 +1,6 @@
 
 import unittest
-from test import test_support
+from test import support
 import gc
 import weakref
 from test_weakref import extra_collect
@@ -300,17 +300,17 @@ class TestJointOps(unittest.TestCase):
         w = ReprWrapper()
         s = self.thetype([w])
         w.value = s
-        fo = open(test_support.TESTFN, "wb")
+        fo = open(support.TESTFN, "wb")
         try:
             print(s, end=' ', file=fo)
             fo.close()
-            fo = open(test_support.TESTFN, "rb")
+            fo = open(support.TESTFN, "rb")
             self.assertEqual(fo.read(), repr(s))
         finally:
             fo.close()
-            test_support.unlink(test_support.TESTFN)
+            support.unlink(support.TESTFN)
 
-    @unittest.skipIf(test_support.is_jython, "Not meaningful for Jython")
+    @unittest.skipIf(support.is_jython, "Not meaningful for Jython")
     def test_do_not_rehash_dict_keys(self):
         n = 10
         d = dict.fromkeys(list(map(HashCountingInt, range(n))))
@@ -638,7 +638,7 @@ class TestFrozenSet(TestJointOps):
         f = self.thetype('abcdcda')
         self.assertEqual(hash(f), hash(f))
 
-    @unittest.skipIf(test_support.is_jython, "tied to CPython's hash implementation")
+    @unittest.skipIf(support.is_jython, "tied to CPython's hash implementation")
     def test_hash_effectiveness(self):
         n = 13
         hashvalues = set()
@@ -702,15 +702,15 @@ class TestBasicOps(unittest.TestCase):
         self.assertEqual(result, sorted_repr_values)
 
     def test_print(self):
-        fo = open(test_support.TESTFN, "wb")
+        fo = open(support.TESTFN, "wb")
         try:
             print(self.set, end=' ', file=fo)
             fo.close()
-            fo = open(test_support.TESTFN, "rb")
+            fo = open(support.TESTFN, "rb")
             self.assertEqual(fo.read(), repr(self.set))
         finally:
             fo.close()
-            test_support.unlink(test_support.TESTFN)
+            support.unlink(support.TESTFN)
 
     def test_length(self):
         self.assertEqual(len(self.set), self.length)
@@ -784,7 +784,7 @@ class TestBasicOps(unittest.TestCase):
         for v in self.set:
             self.assertIn(v, self.values)
         # XXX: jython does not use length_hint
-        if not test_support.is_jython:
+        if not support.is_jython:
             setiter = iter(self.set)
             # note: __length_hint__ is an internal undocumented API,
             # don't rely on it in your own programs
@@ -889,7 +889,7 @@ class TestBasicOpsMixedStringUnicode(TestBasicOps):
         self.length = 4
 
     def test_repr(self):
-        with test_support.check_warnings():
+        with support.check_warnings():
             self.check_repr_against_values()
 
 #==============================================================================
@@ -916,7 +916,7 @@ class TestExceptionPropagation(unittest.TestCase):
         set('abc')
         set(gooditer())
 
-    @unittest.skipIf(test_support.is_jython, "Jython provides stronger support for concurrent updates")
+    @unittest.skipIf(support.is_jython, "Jython provides stronger support for concurrent updates")
     def test_changingSizeWhileIterating(self):
         s = set([1, 2, 3])
         try:
@@ -1405,7 +1405,7 @@ class TestOnlySetsOperator(TestOnlySetsInBinaryOps):
         self.otherIsIterable = False
 
     def test_ge_gt_le_lt(self):
-        with test_support.check_py3k_warnings():
+        with support.check_py3k_warnings():
             super(TestOnlySetsOperator, self).test_ge_gt_le_lt()
 
 #------------------------------------------------------------------------------
@@ -1822,14 +1822,14 @@ def test_main(verbose=None):
         TestWeirdBugs,
         )
 
-    test_support.run_unittest(*test_classes)
+    support.run_unittest(*test_classes)
 
     # verify reference counting
     if verbose and hasattr(sys, "gettotalrefcount"):
         import gc
         counts = [None] * 5
         for i in range(len(counts)):
-            test_support.run_unittest(*test_classes)
+            support.run_unittest(*test_classes)
             gc.collect()
             counts[i] = sys.gettotalrefcount()
         print(counts)

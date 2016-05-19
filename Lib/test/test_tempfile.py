@@ -10,7 +10,7 @@ import re
 import warnings
 
 import unittest
-from test import test_support as support
+from test import support as support
 
 warnings.filterwarnings("ignore",
                         category=RuntimeWarning,
@@ -121,7 +121,7 @@ class test__RandomNameSequence(TC):
             self.assertNotIn(s, dict)
             dict[s] = 1
 
-    def test_supports_iter(self):
+    def supports_iter(self):
         # _RandomNameSequence supports the iterator protocol
 
         i = 0

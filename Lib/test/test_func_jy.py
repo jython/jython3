@@ -5,7 +5,7 @@ Made for Jython.
 import types
 import unittest
 from java.lang import Object
-from test import test_support
+from test import support
 
 xyz = 123
 
@@ -65,7 +65,7 @@ class SingleMethodInterfaceTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(FunctionTypeTestCase,
+    support.run_unittest(FunctionTypeTestCase,
                               MethodHashCodeTestCase,
                               SingleMethodInterfaceTestCase)
 

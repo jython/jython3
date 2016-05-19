@@ -31,7 +31,7 @@ import pickle, copy
 import unittest
 from decimal import *
 import numbers
-from test.test_support import (run_unittest, run_doctest, is_jython,
+from test.support import (run_unittest, run_doctest, is_jython,
                                is_resource_enabled, check_py3k_warnings)
 import random
 try:

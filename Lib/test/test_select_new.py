@@ -4,7 +4,7 @@ AMAK: 20050515: This module is a brand new test_select module, which gives much 
 
 import errno
 import time
-from test import test_support
+from test import support
 import unittest
 
 import socket
@@ -82,7 +82,7 @@ class AsynchronousHandler:
                 if self.select_writable():
                     bytes_sent = self.socket.send(DATA_CHUNK)
                     total_bytes += bytes_sent
-                    if test_support.is_jython and total_bytes > 10000:
+                    if support.is_jython and total_bytes > 10000:
                         # Netty will buffer indefinitely, so just pick an arbitrary cutoff
                         return total_bytes
                 else:
@@ -172,7 +172,7 @@ class TestSelectOnAccept(unittest.TestCase):
         self.client = AsynchronousClient(self.server.server_addr)
         self.handler = None
 
-    @test_support.retry(Exception)
+    @support.retry(Exception)
     def testSelectOnAccept(self):
         self.server.verify_not_acceptable()
         self.client.start_connect()
@@ -188,7 +188,7 @@ class TestSelectOnAccept(unittest.TestCase):
         self.server.close()
 
 class TestSelect(unittest.TestCase):
-    @test_support.retry(Exception)
+    @support.retry(Exception)
     def setUp(self):
         self.server = AsynchronousServer()
         self.client = AsynchronousClient(self.server.server_addr)
@@ -201,7 +201,7 @@ class TestSelect(unittest.TestCase):
         self.handler.close()
         self.server.close()
 
-    @test_support.retry(Exception)
+    @support.retry(Exception)
     def testClientOut(self):
         self.client.verify_only_writable()
         self.handler.verify_only_writable()
@@ -215,7 +215,7 @@ class TestSelect(unittest.TestCase):
         self.handler.read(written/2)
         self.handler.verify_not_readable()
 
-    @test_support.retry(Exception)
+    @support.retry(Exception)
     def testHandlerOut(self):
         written = self.handler.write()
         self.client.verify_readable()
@@ -226,7 +226,7 @@ class TestSelect(unittest.TestCase):
         self.client.read(written/2)
         self.client.verify_not_readable()
 
-    @test_support.retry(Exception)
+    @support.retry(Exception)
     def testBothOut(self):
         client_written = self.client.write()
         handler_written = self.handler.write()
@@ -244,7 +244,7 @@ class TestSelect(unittest.TestCase):
         self.handler.verify_only_writable()
 
 def test_main():
-    test_support.run_unittest(__name__)    
+    support.run_unittest(__name__)    
 
 if __name__ == "__main__":
     test_main()

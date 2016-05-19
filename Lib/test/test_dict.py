@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 from java.util import Map
 from java.util.concurrent import ConcurrentMap
 
@@ -404,7 +404,7 @@ class DictTest(unittest.TestCase):
         x.fail = True
         self.assertRaises(Exc, d.pop, x)
 
-    @unittest.skipIf(test_support.is_jython, "Weakly consistent iteration is compatible with mutation") 
+    @unittest.skipIf(support.is_jython, "Weakly consistent iteration is compatible with mutation") 
     def test_mutatingiteration(self):
         # changing dict size during iteration
         d = self._make_dict({})
@@ -602,7 +602,7 @@ class DictTest(unittest.TestCase):
         gc.collect()
         self.assertTrue(gc.is_tracked(t), t)
 
-    @test_support.cpython_only
+    @support.cpython_only
     def test_track_literals(self):
         # Test GC-optimization of dict literals
         x, y, z, w = 1.5, "a", (1, None), []
@@ -620,7 +620,7 @@ class DictTest(unittest.TestCase):
         self._tracked({1: {}})
         self._tracked({1: set()})
 
-    @test_support.cpython_only
+    @support.cpython_only
     def test_track_dynamic(self):
         # Test GC-optimization of dynamically-created dicts
         class MyObject(object):
@@ -684,7 +684,7 @@ class DictTest(unittest.TestCase):
         d.update([(x, y), (z, w)])
         self._tracked(d)
 
-    @test_support.cpython_only
+    @support.cpython_only
     def test_track_subtypes(self):
         # Dict subtypes are always tracked
         class MyDict(dict):
@@ -709,10 +709,10 @@ class SubclassMappingTests(mapping_tests.BasicTestMappingProtocol):
     type2test = Dict
 
 def test_main():
-    with test_support.check_py3k_warnings(
+    with support.check_py3k_warnings(
         ('dict(.has_key..| inequality comparisons) not supported in 3.x',
          DeprecationWarning)):
-        test_support.run_unittest(
+        support.run_unittest(
             DictTest,
             GeneralMappingTests,
             SubclassMappingTests,

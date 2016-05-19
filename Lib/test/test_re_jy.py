@@ -1,7 +1,7 @@
 import re
 import sys
 import unittest
-import test.test_support
+import test.support
 import unicodedata
 from unicodedata import category
 
@@ -73,7 +73,7 @@ class ReTest(unittest.TestCase):
 
 
 def test_main():
-    test.test_support.run_unittest(ReTest)
+    test.support.run_unittest(ReTest)
 
 if __name__ == "__main__":
     test_main()

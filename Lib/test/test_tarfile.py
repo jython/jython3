@@ -1759,7 +1759,7 @@ class AppendTestBase:
     # Test append mode (cp. patch #1652681).
 
     def setUp(self):
-        test_support.gc_collect()
+        support.gc_collect()
         self.tarname = tmpname
         if os.path.exists(self.tarname):
             support.unlink(self.tarname)

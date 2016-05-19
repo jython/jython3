@@ -1,7 +1,7 @@
 import subprocess
 import sys
 import unittest
-from test import test_support
+from test import support
 
 class CodecsTestCase(unittest.TestCase):
 
@@ -13,7 +13,7 @@ class CodecsTestCase(unittest.TestCase):
         http://bugs.jython.org/issue1458"""
         subprocess.call([sys.executable, "-J-Dpython.cachedir.skip=true",
             "-J-Dpython.security.respectJavaAccessibility=false",
-            test_support.findfile('print_sans_lib.py')])
+            support.findfile('print_sans_lib.py')])
 
     def test_string_escape_1502(self):
         # http://bugs.jython.org/issue1502
@@ -22,7 +22,7 @@ class CodecsTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(CodecsTestCase)
+    support.run_unittest(CodecsTestCase)
 
 
 if __name__ == "__main__":

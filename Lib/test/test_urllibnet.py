@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import unittest
-from test import test_support
+from test import support
 
 import socket
 import urllib.request, urllib.parse, urllib.error
@@ -9,7 +9,7 @@ import sys
 import os
 import time
 
-mimetools = test_support.import_module("mimetools", deprecated=True)
+mimetools = support.import_module("mimetools", deprecated=True)
 
 
 def _open_with_retry(func, host, *args, **kwargs):
@@ -117,7 +117,7 @@ class urlopenNetworkTests(unittest.TestCase):
             open_url.close()
         self.assertEqual(code, 404)
 
-    @unittest.skipIf(test_support.is_jython, "Sockets cannot be used as file descriptors")
+    @unittest.skipIf(support.is_jython, "Sockets cannot be used as file descriptors")
     def test_fileno(self):
         if (sys.platform in ('win32',) or
                 not hasattr(os, 'fdopen')):
@@ -177,8 +177,8 @@ class urlretrieveNetworkTests(unittest.TestCase):
     def test_specified_path(self):
         # Make sure that specifying the location of the file to write to works.
         file_location, info = self.urlretrieve("http://www.python.org/",
-                                              test_support.TESTFN)
-        self.assertEqual(file_location, test_support.TESTFN)
+                                              support.TESTFN)
+        self.assertEqual(file_location, support.TESTFN)
         self.assertTrue(os.path.exists(file_location))
         FILE = file(file_location)
         try:
@@ -208,10 +208,10 @@ class urlretrieveNetworkTests(unittest.TestCase):
 
 
 def test_main():
-    test_support.requires('network')
-    with test_support.check_py3k_warnings(
+    support.requires('network')
+    with support.check_py3k_warnings(
             ("urllib.urlopen.. has been removed", DeprecationWarning)):
-        test_support.run_unittest(URLTimeoutTest,
+        support.run_unittest(URLTimeoutTest,
                                   urlopenNetworkTests,
                                   urlretrieveNetworkTests)
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import test.test_support, unittest
-from test.test_support import TESTFN, unlink
+import test.support, unittest
+from test.support import TESTFN, unlink
 
 import sys, UserDict
 
@@ -319,7 +319,7 @@ class ModuleNameTest(unittest.TestCase):
 
 
 def test_main():
-    test.test_support.run_unittest(BuiltinTest,
+    test.support.run_unittest(BuiltinTest,
                                    LoopTest,
                                    DebugTest,
                                    GetSliceTest,

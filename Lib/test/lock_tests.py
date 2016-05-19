@@ -8,7 +8,7 @@ from _thread import start_new_thread, get_ident
 import threading
 import unittest
 
-from test import test_support as support
+from test import support as support
 
 
 def _wait():

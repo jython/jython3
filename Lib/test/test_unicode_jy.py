@@ -10,7 +10,7 @@ import string
 import sys
 import unittest
 from io import StringIO
-from test import test_support
+from test import support
 from java.lang import StringBuilder
 
 class UnicodeTestCase(unittest.TestCase):
@@ -131,19 +131,19 @@ class UnicodeTestCase(unittest.TestCase):
             # This default encoding can't handle the encoding the Euro sign.  Skip the test
             return
 
-        f = open(test_support.TESTFN, "w")
+        f = open(support.TESTFN, "w")
         self.assertRaises(UnicodeEncodeError, f, write, EURO_SIGN,
                 "Shouldn't be able to write out a Euro sign without first encoding")
         f.close()
 
-        f = open(test_support.TESTFN, "w")
+        f = open(support.TESTFN, "w")
         f.write(EURO_SIGN.encode('utf-8'))
         f.close()
 
-        f = open(test_support.TESTFN, "r")
+        f = open(support.TESTFN, "r")
         encoded_euro = f.read()
         f.close()
-        os.remove(test_support.TESTFN)
+        os.remove(support.TESTFN)
         self.assertEqual('\xe2\x82\xac', encoded_euro)
         self.assertEqual(EURO_SIGN, encoded_euro.decode('utf-8'))
 
@@ -635,13 +635,13 @@ class UnicodeFormatStrTest(unittest.TestCase):
         self.assertEqual('{0!s}'.format(G('data')), 'string is data')
 
         msg = 'object.__format__ with a non-empty format string is deprecated'
-        with test_support.check_warnings((msg, PendingDeprecationWarning)):
+        with support.check_warnings((msg, PendingDeprecationWarning)):
             self.assertEqual('{0:^10}'.format(E('data')), ' E(data)  ')
             self.assertEqual('{0:^10s}'.format(E('data')), ' E(data)  ')
             self.assertEqual('{0:>15s}'.format(G('data')), ' string is data')
 
         #FIXME: not supported in Jython yet:
-        if not test_support.is_jython:
+        if not support.is_jython:
             self.assertEqual("{0:date: %Y-%m-%d}".format(I(year=2007,
                                                            month=8,
                                                            day=27)),
@@ -847,7 +847,7 @@ class StringModuleUnicodeTest(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
                 UnicodeTestCase,
                 UnicodeIndexMixTest,
                 UnicodeFormatTestCase,

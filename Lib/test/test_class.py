@@ -2,7 +2,7 @@
 
 import unittest
 
-from test import test_support
+from test import support
 
 testmeths = [
 
@@ -335,7 +335,7 @@ class ClassTests(unittest.TestCase):
         #  default.
         callLst[:] = []
         testme[:42]
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertCallStack([('__getitem__', (testme,
                                                    slice(None, 42, None)))])
         else:
@@ -344,7 +344,7 @@ class ClassTests(unittest.TestCase):
 
         callLst[:] = []
         testme[:42] = "The Answer"
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertCallStack([('__setitem__', (testme,
                                                   slice(None, 42, None),
                                                   "The Answer"))])
@@ -354,7 +354,7 @@ class ClassTests(unittest.TestCase):
                                                    "The Answer"))])
         callLst[:] = []
         del testme[:42]
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertCallStack([('__delitem__', (testme,
                                                    slice(None, 42, None)))])
         else:
@@ -367,7 +367,7 @@ class ClassTests(unittest.TestCase):
         AllTests.__delslice__ = delslice
 
 
-    @test_support.cpython_only
+    @support.cpython_only
     def testDelItem(self):
         class A:
             ok = False
@@ -498,7 +498,7 @@ class ClassTests(unittest.TestCase):
     def testDel(self):
         #XXX: gc.collect is not deterministic on Jython, but it would be nice
         #     to find a way to test this.
-        if not test_support.is_jython:
+        if not support.is_jython:
             x = []
 
             class DelTest:
@@ -546,7 +546,7 @@ class ClassTests(unittest.TestCase):
 
         callLst[:] = []
         as_long = int(mixIntAndLong)
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertEqual(type(as_long), int)
         else:
             self.assertEqual(type(as_long), int)
@@ -659,11 +659,11 @@ class ClassTests(unittest.TestCase):
             self.assertRaises(TypeError, type(c).__setattr__, c, [], [])
 
 def test_main():
-    with test_support.check_py3k_warnings(
+    with support.check_py3k_warnings(
             (".+__(get|set|del)slice__ has been removed", DeprecationWarning),
             ("classic int division", DeprecationWarning),
             ("<> not supported", DeprecationWarning)):
-        test_support.run_unittest(ClassTests)
+        support.run_unittest(ClassTests)
 
 if __name__=='__main__':
     test_main()

@@ -3,7 +3,7 @@
 Made for Jython.
 """
 import unittest
-from test import test_support
+from test import support
 
 INF, NINF, NAN = list(map(float, ("inf", "-inf", "nan")))
 
@@ -49,7 +49,7 @@ class ComplexTest(unittest.TestCase):
             self.assertEqual(abs(z), INF)
 
 def test_main():
-    test_support.run_unittest(ComplexTest)
+    support.run_unittest(ComplexTest)
 
 if __name__ == "__main__":
     test_main()

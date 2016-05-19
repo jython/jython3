@@ -2,7 +2,7 @@ import operator
 import unittest
 import inspect
 
-from test import test_support
+from test import support
 import collections
 import numbers
 
@@ -136,7 +136,7 @@ class OperatorTestCase(unittest.TestCase):
         self.assertTrue(operator.concat([1, 2], [3, 4]) == [1, 2, 3, 4])
         self.assertTrue(operator.concat(Seq1([5, 6]), Seq1([7])) == [5, 6, 7])
         self.assertTrue(operator.concat(Seq2([5, 6]), Seq2([7])) == [5, 6, 7])
-        if not test_support.is_jython:
+        if not support.is_jython:
             # Jython concat is add
             self.assertRaises(TypeError, operator.concat, 13, 29)
 
@@ -159,7 +159,7 @@ class OperatorTestCase(unittest.TestCase):
         self.assertRaises(TypeError, operator.delslice, a, None, None)
         self.assertTrue(operator.delslice(a, 2, 8) is None)
         self.assertTrue(a == [0, 1, 8, 9])
-        operator.delslice(a, 0, test_support.MAX_Py_ssize_t)
+        operator.delslice(a, 0, support.MAX_Py_ssize_t)
         self.assertTrue(a == [])
 
     def test_div(self):
@@ -188,7 +188,7 @@ class OperatorTestCase(unittest.TestCase):
         self.assertRaises(TypeError, operator.getslice)
         self.assertRaises(TypeError, operator.getslice, a, None, None)
         self.assertTrue(operator.getslice(a, 4, 6) == [4, 5])
-        b = operator.getslice(a, 0, test_support.MAX_Py_ssize_t)
+        b = operator.getslice(a, 0, support.MAX_Py_ssize_t)
         self.assertTrue(b == a)
 
     def test_indexOf(self):
@@ -208,7 +208,7 @@ class OperatorTestCase(unittest.TestCase):
             pass
         def check(self, o, v):
             self.assertEqual(hasattr(o, '__call__'), v)
-            with test_support.check_py3k_warnings():
+            with support.check_py3k_warnings():
                 self.assertEqual(isinstance(o, collections.Callable), v)
         check(self, 4, 0)
         check(self, operator.isCallable, 1)
@@ -309,7 +309,7 @@ class OperatorTestCase(unittest.TestCase):
         self.assertTrue(operator.mul(a, 2) == [4, 5, 6, 4, 5, 6])
         self.assertTrue(operator.mul(a, 1) == [4, 5, 6])
         self.assertTrue(operator.mul(a, 0) == [])
-        if not test_support.is_jython:
+        if not support.is_jython:
             # Jython repeat is mul
             self.assertRaises(TypeError, operator.repeat, 6, 7)
 
@@ -342,7 +342,7 @@ class OperatorTestCase(unittest.TestCase):
         self.assertRaises(TypeError, operator.setslice, a, None, None, None)
         self.assertTrue(operator.setslice(a, 1, 3, [2, 1]) is None)
         self.assertTrue(a == [0, 2, 1, 3])
-        operator.setslice(a, 0, test_support.MAX_Py_ssize_t, [])
+        operator.setslice(a, 0, support.MAX_Py_ssize_t, [])
         self.assertTrue(a == [])
 
     def test_sub(self):
@@ -532,14 +532,14 @@ def test_main(verbose=None):
         OperatorTestCase,
     )
 
-    test_support.run_unittest(*test_classes)
+    support.run_unittest(*test_classes)
 
     # verify reference counting
     if verbose and hasattr(sys, "gettotalrefcount"):
         import gc
         counts = [None] * 5
         for i in range(len(counts)):
-            test_support.run_unittest(*test_classes)
+            support.run_unittest(*test_classes)
             gc.collect()
             counts[i] = sys.gettotalrefcount()
         print(counts)

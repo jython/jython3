@@ -1,4 +1,4 @@
-from test import test_support
+from test import support
 import unittest
 from java.io import ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream
 from org.python.util import PythonObjectInputStream
@@ -71,7 +71,7 @@ class TestJavaSerialisation(unittest.TestCase):
         self.serialize_and_check(NT('x', 1, 2, 3))
 
 def test_main():
-    test_support.run_unittest(TestJavaSerialisation)
+    support.run_unittest(TestJavaSerialisation)
 
 if __name__ == "__main__":
     test_main()

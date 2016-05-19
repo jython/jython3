@@ -5,7 +5,7 @@ Made for Jython.
 import inspect
 import unittest
 from java.lang import System
-from test import test_support
+from test import support
 
 class InspectTestCase(unittest.TestCase):
 
@@ -14,7 +14,7 @@ class InspectTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(InspectTestCase)
+    support.run_unittest(InspectTestCase)
 
 
 if __name__ == '__main__':

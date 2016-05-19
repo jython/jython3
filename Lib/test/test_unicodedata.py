@@ -10,7 +10,7 @@ import sys
 import unittest
 import hashlib
 import subprocess
-import test.test_support
+import test.support
 
 encoding = 'utf-8'
 
@@ -30,7 +30,7 @@ class UnicodeMethodsTest(unittest.TestCase):
     # update this, if the database changes
     expectedchecksum = '4504dffd035baea02c5b9de82bebc3d65e0e0baf'
 
-    @unittest.skipIf(test.test_support.is_jython, "Jython uses ICU4J, so checksum tests are not meaningful")
+    @unittest.skipIf(test.support.is_jython, "Jython uses ICU4J, so checksum tests are not meaningful")
     def test_method_checksum(self):
         h = hashlib.sha1()
         for i in all_codepoints():
@@ -90,7 +90,7 @@ class UnicodeFunctionsTest(UnicodeDatabaseTest):
     # update this, if the database changes
     expectedchecksum = '6ccf1b1a36460d2694f9b0b0f0324942fe70ede6'
 
-    @unittest.skipIf(test.test_support.is_jython, "Jython uses ICU4J, so checksum tests are not meaningful")
+    @unittest.skipIf(test.support.is_jython, "Jython uses ICU4J, so checksum tests are not meaningful")
     def test_function_checksum(self):
         data = []
         h = hashlib.sha1()
@@ -229,7 +229,7 @@ class UnicodeFunctionsTest(UnicodeDatabaseTest):
 
 class UnicodeMiscTest(UnicodeDatabaseTest):
 
-    @unittest.skipIf(test.test_support.is_jython, "Jython uses a different codepath and will not segfault anyway")
+    @unittest.skipIf(test.support.is_jython, "Jython uses a different codepath and will not segfault anyway")
     def test_failed_import_during_compiling(self):
         # Issue 4367
         # Decoding \N escapes requires the unicodedata module. If it can't be
@@ -278,7 +278,7 @@ class UnicodeMiscTest(UnicodeDatabaseTest):
     def test_bug_1704793(self):
         self.assertEqual(self.db.lookup("GOTHIC LETTER FAIHU"), '\U00010346')
 
-    @unittest.skipIf(test.test_support.is_jython, "Jython uses ICU4J")
+    @unittest.skipIf(test.support.is_jython, "Jython uses ICU4J")
     def test_ucd_510(self):
         import unicodedata
         # In UCD 5.1.0, a mirrored property changed wrt. UCD 3.2.0
@@ -332,7 +332,7 @@ class UnicodeMiscTest(UnicodeDatabaseTest):
                                  r"\u%.4x should not be a linebreak" % i)
 
 def test_main():
-    test.test_support.run_unittest(
+    test.support.run_unittest(
         UnicodeMiscTest,
         UnicodeMethodsTest,
         UnicodeFunctionsTest

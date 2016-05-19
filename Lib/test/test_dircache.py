@@ -4,7 +4,7 @@
 """
 
 import unittest
-from test.test_support import is_jython, run_unittest, TESTFN
+from test.support import is_jython, run_unittest, TESTFN
 import dircache, os, time, sys, tempfile
 
 

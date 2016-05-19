@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-import unittest, test.test_support
+import unittest, test.support
 import sys, io
 
 class SysModuleTest(unittest.TestCase):
@@ -24,7 +24,7 @@ class SysModuleTest(unittest.TestCase):
         self.assertEqual(builtins._, 42)
 
 
-        if not test.test_support.is_jython:
+        if not test.support.is_jython:
             del sys.stdout
             self.assertRaises(RuntimeError, dh, 42)
 
@@ -164,7 +164,7 @@ class SysModuleTest(unittest.TestCase):
             self.fail("no exception")
 
     def test_getdefaultencoding(self):
-        if test.test_support.have_unicode:
+        if test.support.have_unicode:
             self.assertRaises(TypeError, sys.getdefaultencoding, 42)
             # can't check more than the type, as the user might have changed it
             self.assertTrue(isinstance(sys.getdefaultencoding(), str))
@@ -228,7 +228,7 @@ class SysModuleTest(unittest.TestCase):
         )
 
     def test_attributes(self):
-        if not test.test_support.is_jython:
+        if not test.support.is_jython:
             self.assertTrue(isinstance(sys.api_version, int))
         self.assertTrue(isinstance(sys.argv, list))
         self.assertTrue(sys.byteorder in ("little", "big"))
@@ -272,11 +272,11 @@ class SysModuleTest(unittest.TestCase):
 
 
 def test_main():
-    if test.test_support.is_jython:
+    if test.support.is_jython:
         del SysModuleTest.test_lost_displayhook
         del SysModuleTest.test_refcount
         del SysModuleTest.test_setcheckinterval
-    test.test_support.run_unittest(SysModuleTest)
+    test.support.run_unittest(SysModuleTest)
 
 if __name__ == "__main__":
     test_main()

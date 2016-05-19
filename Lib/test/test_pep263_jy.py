@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 
 class BadEncodingTest(unittest.TestCase):
 
@@ -10,7 +10,7 @@ class BadEncodingTest(unittest.TestCase):
         self.assertRaises(SyntaxError, __import__, "test.invalid_utf_8_declared_encoding")
 
 def test_main():
-    test_support.run_unittest(BadEncodingTest)
+    support.run_unittest(BadEncodingTest)
 
 if __name__=="__main__":
     test_main()

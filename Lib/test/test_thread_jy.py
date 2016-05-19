@@ -1,7 +1,7 @@
 import _thread
 import synchronize
 import unittest
-import test.test_support
+import test.support
 from java.lang import Runnable, Thread
 from java.util.concurrent import CountDownLatch
 import collections
@@ -35,7 +35,7 @@ class SynchronizeTest(unittest.TestCase):
 
 
 def test_main():
-    test.test_support.run_unittest(AllocateLockTest, SynchronizeTest)
+    test.support.run_unittest(AllocateLockTest, SynchronizeTest)
 
 if __name__ == "__main__":
     test_main()

@@ -1,7 +1,7 @@
 
 import unittest, doctest, operator
 import inspect
-from test import test_support
+from test import support
 from collections import namedtuple, Counter, OrderedDict
 from test import mapping_tests
 import pickle, pickle, copy
@@ -144,7 +144,7 @@ class TestNamedTuple(unittest.TestCase):
                                   for j in range(10)]) for i in range(n)))
         n = len(names)
         #XXX: currently Jython's classfile limits are exceeded by Big tests.
-        if not test_support.is_jython:
+        if not support.is_jython:
             Big = namedtuple('Big', names)
             b = Big(*list(range(n)))
             self.assertEqual(b, tuple(range(n)))
@@ -189,7 +189,7 @@ class TestNamedTuple(unittest.TestCase):
         self.assertEqual(newt, (10, 20, 30, 40, 50))
 
         # Broader test of all interesting names in a template
-        with test_support.captured_stdout() as template:
+        with support.captured_stdout() as template:
             T = namedtuple('T', 'x', verbose=True)
         words = set(re.findall('[A-Za-z]+', template.getvalue()))
         words -= set(keyword.kwlist)
@@ -244,7 +244,7 @@ class ABCTestCase(unittest.TestCase):
         class C: pass
 
         # XXX: not working in Jython old style classes. Do we care?
-        if not test_support.is_jython:
+        if not support.is_jython:
             setattr(C, name, stub)
             self.assertIsInstance(C(), abc)
             self.assertTrue(issubclass(C, abc))
@@ -620,7 +620,7 @@ class TestCounter(unittest.TestCase):
                          [('a', 3), ('b', 2), ('c', 1)])
         self.assertEqual(c['b'], 2)
         self.assertEqual(c['z'], 0)
-        with test_support.check_py3k_warnings():
+        with support.check_py3k_warnings():
             self.assertEqual('c' in c, True)
             self.assertEqual('z' in c, False)
         self.assertEqual(c.__contains__('c'), True)
@@ -1040,8 +1040,8 @@ def test_main(verbose=None):
     test_classes = [TestNamedTuple, NamedTupleDocs, TestOneTrickPonyABCs,
                     TestCollectionABCs, TestCounter,
                     TestOrderedDict, GeneralMappingTests, SubclassMappingTests]
-    test_support.run_unittest(*test_classes)
-    test_support.run_doctest(collections, verbose)
+    support.run_unittest(*test_classes)
+    support.run_doctest(collections, verbose)
 
 if __name__ == "__main__":
     test_main(verbose=True)

@@ -1,6 +1,6 @@
 import timeit
 import unittest
-import test.test_support
+import test.support
 
 # some uninspired unit tests extracted from the docs for timeit;
 # changed number=10000 so we don't spend too much time testing this
@@ -31,7 +31,7 @@ class TestTimeit(unittest.TestCase):
 
 
 def test_main():
-    test.test_support.run_unittest(TestTimeit)
+    test.support.run_unittest(TestTimeit)
 
 if __name__ == "__main__":
     test_main()

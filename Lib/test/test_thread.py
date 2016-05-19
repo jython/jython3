@@ -1,8 +1,8 @@
 import os
 import unittest
 import random
-from test import test_support
-thread = test_support.import_module('thread')
+from test import support
+thread = support.import_module('thread')
 import time
 import sys
 import weakref
@@ -17,7 +17,7 @@ _print_mutex = thread.allocate_lock()
 
 def verbose_print(arg):
     """Helper function for printing out debugging output."""
-    if test_support.verbose:
+    if support.verbose:
         with _print_mutex:
             print(arg)
 
@@ -104,7 +104,7 @@ class ThreadRunningTests(BasicThreadTest):
 
             thread.stack_size(0)
 
-    @unittest.skipIf(test_support.is_jython,
+    @unittest.skipIf(support.is_jython,
                      "This seems cpython internal, so skip for Jython")
     def test__count(self):
         # Test the _count() function.
@@ -203,10 +203,10 @@ class TestForkInThread(unittest.TestCase):
     def setUp(self):
         self.read_fd, self.write_fd = os.pipe()
 
-    @unittest.skipIf(test_support.is_jython, "Jython does not support os.fork")
+    @unittest.skipIf(support.is_jython, "Jython does not support os.fork")
     @unittest.skipIf(sys.platform.startswith('win'),
                      "This test is only appropriate for POSIX-like systems.")
-    @test_support.reap_threads
+    @support.reap_threads
     def test_forkinthread(self):
         def thread1():
             try:
@@ -238,7 +238,7 @@ class TestForkInThread(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(ThreadRunningTests, BarrierTest, LockTests,
+    support.run_unittest(ThreadRunningTests, BarrierTest, LockTests,
                               TestForkInThread)
 
 if __name__ == "__main__":

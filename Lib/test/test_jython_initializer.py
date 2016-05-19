@@ -2,14 +2,14 @@ import os
 import subprocess
 import sys
 import unittest
-from test import test_support
+from test import support
 
-WINDOWS = (os._name if test_support.is_jython else os.name) == 'nt'
+WINDOWS = (os._name if support.is_jython else os.name) == 'nt'
 
 class TestUsingInitializer(unittest.TestCase):
 
     def test_syspath_initializer(self):
-        fn = test_support.findfile('check_for_initializer_in_syspath.py')
+        fn = support.findfile('check_for_initializer_in_syspath.py')
         env = dict(CLASSPATH='tests/data/initializer',
                    PATH=os.environ.get('PATH', ''))
 
@@ -22,7 +22,7 @@ class TestUsingInitializer(unittest.TestCase):
         self.assertEqual(0, subprocess.call([sys.executable, fn], env=env))
 
 def test_main():
-    test_support.run_unittest(TestUsingInitializer)
+    support.run_unittest(TestUsingInitializer)
 
 if __name__ == "__main__":
     test_main()

@@ -1307,7 +1307,7 @@ def run_doctest(module, verbosity=None):
     """Run doctest on the given module.  Return (#failures, #tests).
 
     If optional argument verbosity is not specified (or is None), pass
-    test_support's belief about verbosity on to doctest.  Else doctest's
+    support's belief about verbosity on to doctest.  Else doctest's
     usual behavior is used (it searches sys.argv for -v).
     """
 

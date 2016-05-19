@@ -40,7 +40,7 @@ for name in dir():
         tests[test] = expected
 
 def test_main(verbose=None):
-    from test.test_support import verify
+    from test.support import verify
     import sys
     for func in tests:
         expected = tests[func]

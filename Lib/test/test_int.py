@@ -1,7 +1,7 @@
 import sys
 
 import unittest
-from test.test_support import run_unittest, have_unicode, is_jython
+from test.support import run_unittest, have_unicode, is_jython
 import math
 
 L = [

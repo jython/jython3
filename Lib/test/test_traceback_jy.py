@@ -5,16 +5,16 @@ Made for Jython.
 import sys
 import traceback
 import unittest
-from test import test_support
+from test import support
 
-if test_support.is_jython:
+if support.is_jython:
     from java.awt import EventQueue
     from java.lang import Runnable
 
 class TracebackTestCase(unittest.TestCase):
 
     def test_tb_across_threads(self):
-        if not test_support.is_jython:
+        if not support.is_jython:
             return
 
         # http://bugs.jython.org/issue1533624
@@ -73,7 +73,7 @@ def tb_info():
 
 
 def test_main():
-    test_support.run_unittest(TracebackTestCase)
+    support.run_unittest(TracebackTestCase)
 
 
 if __name__ == '__main__':

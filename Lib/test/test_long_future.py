@@ -7,7 +7,7 @@ import sys
 import random
 import math
 import unittest
-from test.test_support import run_unittest, cpython_only
+from test.support import run_unittest, cpython_only
 
 # decorator for skipping tests on non-IEEE 754 platforms
 requires_IEEE_754 = unittest.skipUnless(

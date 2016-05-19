@@ -6,11 +6,11 @@ import mailbox
 import os
 import time
 import unittest
-from test import test_support
+from test import support
 
 # cleanup earlier tests
 try:
-    os.unlink(test_support.TESTFN)
+    os.unlink(support.TESTFN)
 except os.error:
     pass
 
@@ -27,7 +27,7 @@ class MaildirTestCase(unittest.TestCase):
 
     def setUp(self):
         # create a new maildir mailbox to work with:
-        self._dir = test_support.TESTFN
+        self._dir = support.TESTFN
         os.mkdir(self._dir)
         os.mkdir(os.path.join(self._dir, "cur"))
         os.mkdir(os.path.join(self._dir, "tmp"))
@@ -71,14 +71,14 @@ class MaildirTestCase(unittest.TestCase):
     def test_empty_maildir(self):
         """Test an empty maildir mailbox"""
         # Test for regression on bug #117490:
-        self.mbox = mailbox.Maildir(test_support.TESTFN)
+        self.mbox = mailbox.Maildir(support.TESTFN)
         self.assertTrue(len(self.mbox) == 0)
         self.assertTrue(next(self.mbox) is None)
         self.assertTrue(next(self.mbox) is None)
 
     def test_nonempty_maildir_cur(self):
         self.createMessage("cur")
-        self.mbox = mailbox.Maildir(test_support.TESTFN)
+        self.mbox = mailbox.Maildir(support.TESTFN)
         self.assertTrue(len(self.mbox) == 1)
         self.assert_and_close(next(self.mbox))
         self.assertTrue(next(self.mbox) is None)
@@ -86,7 +86,7 @@ class MaildirTestCase(unittest.TestCase):
 
     def test_nonempty_maildir_new(self):
         self.createMessage("new")
-        self.mbox = mailbox.Maildir(test_support.TESTFN)
+        self.mbox = mailbox.Maildir(support.TESTFN)
         self.assertTrue(len(self.mbox) == 1)
         self.assert_and_close(next(self.mbox))
         self.assertTrue(next(self.mbox) is None)
@@ -95,7 +95,7 @@ class MaildirTestCase(unittest.TestCase):
     def test_nonempty_maildir_both(self):
         self.createMessage("cur")
         self.createMessage("new")
-        self.mbox = mailbox.Maildir(test_support.TESTFN)
+        self.mbox = mailbox.Maildir(support.TESTFN)
         self.assertTrue(len(self.mbox) == 2)
         self.assert_and_close(next(self.mbox))
         self.assert_and_close(next(self.mbox))
@@ -118,7 +118,7 @@ class MaildirTestCase(unittest.TestCase):
 class MboxTestCase(unittest.TestCase):
     def setUp(self):
         # create a new maildir mailbox to work with:
-        self._path = test_support.TESTFN
+        self._path = support.TESTFN
 
     def tearDown(self):
         os.unlink(self._path)
@@ -155,7 +155,7 @@ body4
 
 
 def test_main():
-    test_support.run_unittest(MaildirTestCase, MboxTestCase)
+    support.run_unittest(MaildirTestCase, MboxTestCase)
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ from xml.sax import saxutils
 from xml.sax import make_parser
 from xml.sax.handler import feature_namespaces
 
-from test import test_support
+from test import support
 
 file = io.StringIO("""<collection>
   <comic title="Sandman" number='62'>
@@ -43,7 +43,7 @@ class SimpleSaxTest(unittest.TestCase):
         parser.parse(file)
         self.assertEqual(1, dh.match)
 def test_main():
-    test_support.run_unittest(SimpleSaxTest)
+    support.run_unittest(SimpleSaxTest)
 
 if __name__ == "__main__":
     test_main()

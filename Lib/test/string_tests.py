@@ -3,7 +3,7 @@ Common tests shared by test_str, test_unicode, test_userstring and test_string.
 """
 
 import unittest, string, sys, struct
-from test import test_support
+from test import support
 from collections import UserList
 
 class Sequence:
@@ -171,7 +171,7 @@ class CommonTest(unittest.TestCase):
         self.checkequal(4, 'aaa', 'count', b, -10)
 
         # Repeat some tests with memoryview argument (Jython addition)
-        if test_support.is_jython:
+        if support.is_jython:
             # CPython does not support until v3.2
             with memoryview('a') as ma:
                 self.checkequal(3, 'aaa', 'count', ma)
@@ -246,7 +246,7 @@ class CommonTest(unittest.TestCase):
         self.checkequal( 2, 'rrarrrrrrrrra', 'find', buffer('a'), None, 6)
 
         # Repeat some tests with memoryview argument (Jython addition)
-        if test_support.is_jython:
+        if support.is_jython:
             # CPython does not support until v3.2
             with memoryview('abc') as m:
                 self.checkequal(0, 'abcdefghiabc', 'find', m)
@@ -313,7 +313,7 @@ class CommonTest(unittest.TestCase):
         self.checkequal( 2, 'rrarrrrrrrrra', 'rfind', buffer('a'), None, 6)
 
         # Repeat some tests with memoryview argument (Jython addition)
-        if test_support.is_jython:
+        if support.is_jython:
             # CPython does not support until v3.2
             self.checkequal(9,  'abcdefghiabc', 'rfind', memoryview('abc'))
             self.checkequal(12, 'abcdefghiabc', 'rfind', memoryview(''))
@@ -474,7 +474,7 @@ class CommonTest(unittest.TestCase):
         self.checkequal(['a', 'b', 'c//d'], 'a//b//c//d', 'split', buffer('//'), 2)
 
         # by memoryview (Jython addition)
-        if test_support.is_jython:
+        if support.is_jython:
             # CPython does not support until v3.2
             with memoryview('//') as target:
                 self.checkequal(['a', 'b', 'c', 'd'], 'a//b//c//d', 'split', target)
@@ -575,7 +575,7 @@ class CommonTest(unittest.TestCase):
         self.checkequal(['a//b', 'c', 'd'], 'a//b//c//d', 'rsplit', buffer('//'), 2)
 
         # by memoryview (Jython addition)
-        if test_support.is_jython:
+        if support.is_jython:
             # CPython does not support until v3.2
             with memoryview('//') as target:
                 self.checkequal(['a', 'b', 'c', 'd'], 'a//b//c//d', 'rsplit', target)
@@ -610,7 +610,7 @@ class CommonTest(unittest.TestCase):
         self.checkequal('hello', 'hello', 'strip', 'xyz')
 
         # strip/lstrip/rstrip with unicode arg
-        if test_support.have_unicode:
+        if support.have_unicode:
             self.checkequal(str('hello', 'ascii'), 'xyzzyhelloxyzzy',
                  'strip', str('xyz', 'ascii'))
             self.checkequal(str('helloxyzzy', 'ascii'), 'xyzzyhelloxyzzy',
@@ -623,7 +623,7 @@ class CommonTest(unittest.TestCase):
             #     'strip', unicode('xyz', 'ascii'))
 
         # strip/lstrip/rstrip with buffer or memoryview arg (Jython addition)
-        if test_support.is_jython and self.__class__.type2test in (str, bytearray):
+        if support.is_jython and self.__class__.type2test in (str, bytearray):
             b = buffer('xyz')
             self.checkequal('hello', 'xyzzyhelloxyzzy', 'strip', b)
             self.checkequal('helloxyzzy', 'xyzzyhelloxyzzy', 'lstrip', b)
@@ -817,7 +817,7 @@ class CommonTest(unittest.TestCase):
         EQ("bobobXbobob", "bobobobXbobobob", "replace", "bobob", "bob")
         EQ("BOBOBOB", "BOBOBOB", "replace", "bob", "bobby")
 
-        with test_support.check_py3k_warnings():
+        with support.check_py3k_warnings():
             ba = buffer('a')
             bb = buffer('b')
         EQ("bbc", "abc", "replace", ba, bb)
@@ -852,7 +852,7 @@ class CommonTest(unittest.TestCase):
         self.checkraises(TypeError, 'hello', 'replace', 'h', 42)
 
         # Repeat some tests including buffer API objects (Jython addition)
-        if test_support.is_jython:
+        if support.is_jython:
             for buftype in (buffer, memoryview, bytearray):
                 # Buffer type as sought argument
                 EQ("", "", "replace", buftype(""), "")
@@ -1059,7 +1059,7 @@ class MixinStrUnicodeUserStringTest:
         self.checkraises(TypeError, 'hello', 'startswith', (42,))
 
         # Repeat some tests including buffer API objects (Jython addition)
-        if test_support.is_jython:
+        if support.is_jython:
             for buftype in (buffer, memoryview, bytearray):
                 self.checkequal(True, 'hello', 'startswith', buftype('he'))
                 self.checkequal(True, 'hello', 'startswith', buftype(''))
@@ -1125,7 +1125,7 @@ class MixinStrUnicodeUserStringTest:
         self.checkraises(TypeError, 'hello', 'endswith', (42,))
 
         # Repeat some tests including buffer API objects (Jython addition)
-        if test_support.is_jython:
+        if support.is_jython:
             for buftype in (buffer, memoryview, bytearray):
                 self.checkequal(True, 'hello', 'endswith', buftype('lo'))
                 self.checkequal(False, 'hello', 'endswith', buftype('he'))
@@ -1194,7 +1194,7 @@ class MixinStrUnicodeUserStringTest:
 
         #FIXME: Jython currently returns a NotImplemented singleton for these.
         #       I'm betting this is *very* outdated behavior.
-        if not test_support.is_jython:
+        if not support.is_jython:
             self.checkraises(TypeError, 'abc', '__mul__', '')
         # XXX: on a 64-bit system, this doesn't raise an overflow error,
         # but either raises a MemoryError, or succeeds (if you have 54TiB)
@@ -1212,7 +1212,7 @@ class MixinStrUnicodeUserStringTest:
         self.checkequal('w x y z', ' ', 'join', Sequence())
         self.checkequal('abc', 'a', 'join', ('abc',))
         self.checkequal('z', 'a', 'join', UserList(['z']))
-        if test_support.have_unicode:
+        if support.have_unicode:
             self.checkequal(str('a.b.c'), str('.'), 'join', ['a', 'b', 'c'])
             self.checkequal(str('a.b.c'), '.', 'join', [str('a'), 'b', 'c'])
             self.checkequal(str('a.b.c'), '.', 'join', ['a', str('b'), 'c'])
@@ -1340,7 +1340,7 @@ class MixinStrUnicodeUserStringTest:
                 'this is the partition method', 'partition', b)
 
         # with memoryview arg (Jython addition)
-        if test_support.is_jython:
+        if support.is_jython:
             # CPython does not support until v3.2
             with memoryview('ti') as m:
                 if self.__class__.type2test is str:
@@ -1378,7 +1378,7 @@ class MixinStrUnicodeUserStringTest:
                 'this is the partition method', 'rpartition', b)
 
         # with memoryview arg (Jython addition)
-        if test_support.is_jython:
+        if support.is_jython:
             # CPython does not support until v3.2
             with memoryview('ti') as m:
                 if self.__class__.type2test is str:
@@ -1461,7 +1461,7 @@ class MixinStrStringUserStringTest:
         self.checkequal('xyzxyz', 'xyzabcdef', 'translate', table, 'def')
 
         # Repeat using buffer API objects (Jython addition)
-        if test_support.is_jython:
+        if support.is_jython:
             for buftype in (buffer, memoryview, bytearray):
                 self.checkequal('xyzxyz', 'xyzabcdef', 'translate', buftype(table), 'def')
                 self.checkequal('xyzxyz', 'xyzabcdef', 'translate', table, buftype('def'))
@@ -1481,7 +1481,7 @@ class MixinStrUserStringTest:
     # Additional tests that only work with
     # 8bit compatible object, i.e. str and UserString
 
-    if test_support.have_unicode:
+    if support.have_unicode:
         def test_encoding_decoding(self):
             codecs = [('rot13', 'uryyb jbeyq'),
                       ('base64', 'aGVsbG8gd29ybGQ=\n'),

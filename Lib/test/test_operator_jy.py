@@ -6,7 +6,7 @@ import collections
 import operator
 import sys
 import unittest
-from test import test_support
+from test import support
 
 class OperatorTestCase(unittest.TestCase):
 
@@ -75,7 +75,7 @@ class OperatorTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(OperatorTestCase)
+    support.run_unittest(OperatorTestCase)
 
 
 if __name__ == "__main__":

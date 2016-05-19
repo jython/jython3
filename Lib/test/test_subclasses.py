@@ -1,4 +1,4 @@
-from test import test_support
+from test import support
 import unittest
 import pickle
 
@@ -191,7 +191,7 @@ class TestSubclasses(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(TestSubclasses)
+    support.run_unittest(TestSubclasses)
 
 if __name__ == "__main__":
     test_main()

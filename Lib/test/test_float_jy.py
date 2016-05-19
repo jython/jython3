@@ -5,9 +5,9 @@ Made for Jython.
 import math
 import sys
 import unittest
-from test import test_support
+from test import support
 
-jython = test_support.is_jython
+jython = support.is_jython
 
 class FloatTestCase(unittest.TestCase):
 
@@ -111,7 +111,7 @@ class FloatTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(FloatTestCase)
+    support.run_unittest(FloatTestCase)
 
 if __name__ == '__main__':
     test_main()
