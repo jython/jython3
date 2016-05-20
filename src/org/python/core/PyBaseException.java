@@ -69,6 +69,16 @@ public class PyBaseException extends PyObject implements Traverseproc {
         __context__ = Py.None;
     }
 
+    public PyObject with_traceback(PyObject tb) {
+        return BaseException_with_traceback(tb);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.BaseException_with_traceback_doc)
+    final PyObject BaseException_with_traceback(PyObject tb) {
+        __traceback__ = tb;
+        return this;
+    }
+
     @Override
     public PyObject __reduce__() {
         return BaseException___reduce__();
