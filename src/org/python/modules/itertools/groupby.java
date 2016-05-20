@@ -66,7 +66,7 @@ public class groupby extends PyIterator {
             PyObject iterator = iterable.__iter__();
             PyObject targetKey = currentKey = currentValue = new PyRange(0);
 
-            public PyObject __iternext__() {
+            public PyObject __next__() {
                 while (currentKey.equals(targetKey)) {
                     currentValue = nextElement(iterator);
                     if (currentValue == null) {
@@ -86,7 +86,7 @@ public class groupby extends PyIterator {
 
                 private boolean completed = false;
 
-                public PyObject __iternext__() {
+                public PyObject __next__() {
                     final PyObject item = currentValue;
                     if (completed) {
                         return null;
@@ -110,14 +110,14 @@ public class groupby extends PyIterator {
         };
     }
 
-    public PyObject __iternext__() {
-        return iter.__iternext__();
+    public PyObject __next__() {
+        return iter.__next__();
     }
 
     @ExposedMethod
     @Override
     public PyObject next() {
-        return doNext(__iternext__());
+        return doNext(__next__());
     }
 
 

@@ -54,14 +54,14 @@ public class ifilter extends PyIterator {
         iter = new itertools.FilterIterator(predicate, iterable, true);
     }
 
-    public PyObject __iternext__() {
-        return iter.__iternext__();
+    public PyObject __next__() {
+        return iter.__next__();
     }
 
     @ExposedMethod
     @Override
     public PyObject next() {
-        return doNext(__iternext__());
+        return doNext(__next__());
     }
 
 

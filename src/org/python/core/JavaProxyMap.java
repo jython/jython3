@@ -211,7 +211,7 @@ class JavaProxyMap {
             final Iterator<Map.Entry<Object, Object>> entrySetIterator = asMap().entrySet().iterator();
             return new PyIterator() {
                 @Override
-                public PyObject __iternext__() {
+                public PyObject __next__() {
                     if (entrySetIterator.hasNext()) {
                         Map.Entry<Object, Object> nextEntry = entrySetIterator.next();
                         // yield a Python tuple object (key, value)
@@ -394,7 +394,7 @@ class JavaProxyMap {
             PyObject pairs = other.__iter__();
             PyObject pair;
 
-            for (int i = 0; (pair = pairs.__iternext__()) != null; i++) {
+            for (int i = 0; (pair = pairs.__next__()) != null; i++) {
                 try {
                     pair = PySequence.fastSequence(pair, "");
                 } catch (PyException pye) {

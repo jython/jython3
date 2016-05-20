@@ -645,7 +645,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
     // _IOBase___iter__ = _IOBase___enter__
 
     @Override
-    public PyObject __iternext__() {
+    public PyObject __next__() {
         PyObject line = invoke("readline");
         return (!line.__bool__()) ? null : line;
     }
@@ -664,7 +664,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
 
     @ExposedMethod(doc = "x.__next__() <==> next(x)")
     final PyObject _IOBase_next() throws PyException {
-        // Implement directly. Calling __iternext__() fails when PyIOBaseDerived is considered.
+        // Implement directly. Calling __next__() fails when PyIOBaseDerived is considered.
         PyObject line = invoke("readline");
         if (!line.__bool__()) {
             throw Py.StopIteration();

@@ -165,7 +165,7 @@ public class ArrayCData extends CData implements Pointer {
 
         private int index = 0;
 
-        public PyObject __iternext__() {
+        public PyObject __next__() {
             if (index >= arrayType.length) {
                 return null;
             }

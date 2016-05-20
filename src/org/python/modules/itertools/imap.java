@@ -69,10 +69,10 @@ public class imap extends PyIterator {
 
             PyObject element = null;
 
-            public PyObject __iternext__() {
+            public PyObject __next__() {
 
                 for (int i = 0; i < n; i++) {
-                    if ((element = iterables[i].__iternext__()) != null) {
+                    if ((element = iterables[i].__next__()) != null) {
                         // collect the arguments for the func
                         args[i] = element;
                     } else {
@@ -95,14 +95,14 @@ public class imap extends PyIterator {
         };
     }
 
-    public PyObject __iternext__() {
-        return iter.__iternext__();
+    public PyObject __next__() {
+        return iter.__next__();
     }
 
     @ExposedMethod
     @Override
     public PyObject next() {
-        return doNext(__iternext__());
+        return doNext(__next__());
     }
 
 

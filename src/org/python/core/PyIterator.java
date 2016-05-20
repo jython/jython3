@@ -8,8 +8,8 @@ import java.util.List;
 
 /**
  * An abstract helper class useful when implementing an iterator object. This implementation supply
- * a correct __iter__() and a next() method based on the __iternext__() implementation. The
- * __iternext__() method must be supplied by the subclass.
+ * a correct __iter__() and a next() method based on the __next__() implementation. The
+ * __next__() method must be supplied by the subclass.
  *
  * If the implementation raises a StopIteration exception, it should be stored in stopException so
  * the correct exception can be thrown to preserve the line numbers in the traceback.
@@ -24,7 +24,7 @@ public abstract class PyIterator extends PyObject implements Iterable<Object>, T
         super(subType);
     }
 
-    public abstract PyObject __iternext__();
+    public abstract PyObject __next__();
 
     public PyObject __iter__() {
         return this;
@@ -37,12 +37,12 @@ public abstract class PyIterator extends PyObject implements Iterable<Object>, T
      * The exposed next method.
      *
      * Note that exposed derivable subclasses of PyIterator should override next to call
-     * doNext(custom___iternext__), as __iternext__ is overridden by the Derived classes.
+     * doNext(custom___next__), as __next__ is overridden by the Derived classes.
      *
      * @return a PyObject result
      */
     public PyObject next() {
-        return doNext(__iternext__());
+        return doNext(__next__());
     }
 
     protected final PyObject doNext(PyObject ret) {

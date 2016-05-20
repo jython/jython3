@@ -76,13 +76,13 @@ public class izipLongest extends PyIterator {
             int unexhausted = iterables.length;
 
             @Override
-            public PyObject __iternext__() {
+            public PyObject __next__() {
                 PyObject item[] = new PyObject[iterables.length];
                 for (int i = 0; i < iterables.length; i++) {
                     if (exhausted[i]) {
                         item[i] = fillvalue;
                     } else {
-                        PyObject elem = iterators[i].__iternext__();
+                        PyObject elem = iterators[i].__next__();
                         if (elem == null) {
                             unexhausted--;
                             exhausted[i] = true;
@@ -101,14 +101,14 @@ public class izipLongest extends PyIterator {
         };
     }
 
-    public PyObject __iternext__() {
-        return iter.__iternext__();
+    public PyObject __next__() {
+        return iter.__next__();
     }
 
     @ExposedMethod
     @Override
     public PyObject next() {
-        return doNext(__iternext__());
+        return doNext(__next__());
     }
 
 

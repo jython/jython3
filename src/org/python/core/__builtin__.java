@@ -770,7 +770,7 @@ public class __builtin__ {
         while (true) {
             boolean any_items = false;
             for (int j = 0; j < n; j++) {
-                if ((element = iters[j].__iternext__()) != null) {
+                if ((element = iters[j].__next__()) != null) {
                     args[j] = element;
                     any_items = true;
                 } else {
@@ -1062,7 +1062,7 @@ public class __builtin__ {
         PyObject result = z;
         PyObject iter = Py.iter(l, "reduce() arg 2 must support iteration");
 
-        for (PyObject item; (item = iter.__iternext__()) != null;) {
+        for (PyObject item; (item = iter.__next__()) != null;) {
             if (result == null) {
                 result = item;
             } else {
@@ -1190,7 +1190,7 @@ public class __builtin__ {
 
             for (int j = 0; j < itemsize; j++) {
                 try {
-                    item = iters[j].__iternext__();
+                    item = iters[j].__next__();
                 } catch (PyException e) {
                     if (e.match(Py.StopIteration)) {
                         return ret;

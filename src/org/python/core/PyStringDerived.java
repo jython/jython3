@@ -871,9 +871,9 @@ public class PyStringDerived extends PyString implements Slotted,FinalizablePyOb
         return new PySequenceIter(this);
     }
 
-    public PyObject __iternext__() {
+    public PyObject __next__() {
         PyType self_type=getType();
-        PyObject impl=self_type.lookup("next");
+        PyObject impl=self_type.lookup("__next__");
         if (impl!=null) {
             try {
                 return impl.__get__(this,self_type).__call__();
@@ -883,7 +883,7 @@ public class PyStringDerived extends PyString implements Slotted,FinalizablePyOb
                 throw exc;
             }
         }
-        return super.__iternext__(); // ???
+        return super.__next__(); // ???
     }
 
     public PyObject __finditem__(PyObject key) { // ???

@@ -5,11 +5,8 @@
 package org.python.core;
 
 import java.util.AbstractSet;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -486,7 +483,7 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
         PyObject pairs = other.__iter__();
         PyObject pair;
 
-        for (int i = 0; (pair = pairs.__iternext__()) != null; i++) {
+        for (int i = 0; (pair = pairs.__next__()) != null; i++) {
             try {
                 pair = PySequence.fastSequence(pair, "");
             } catch(PyException pye) {
@@ -670,7 +667,7 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
         }
 
         @Override
-        public PyObject __iternext__() {
+        public PyObject __next__() {
             if (!iterator.hasNext()) {
                 return null;
             }
@@ -690,7 +687,7 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
         }
 
         @Override
-        public PyObject __iternext__() {
+        public PyObject __next__() {
             if (!iterator.hasNext()) {
                 return null;
             }

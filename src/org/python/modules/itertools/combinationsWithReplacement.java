@@ -65,7 +65,7 @@ public class combinationsWithReplacement extends PyIterator {
             boolean firstthru = true;
 
             @Override
-            public PyObject __iternext__() {
+            public PyObject __next__() {
                 if (firstthru) {
                     firstthru = false;
                     if (n == 0 && r > 0) {
@@ -85,14 +85,14 @@ public class combinationsWithReplacement extends PyIterator {
         };
     }
 
-    public PyObject __iternext__() {
-        return iter.__iternext__();
+    public PyObject __next__() {
+        return iter.__next__();
     }
 
     @ExposedMethod
     @Override
     public PyObject next() {
-        return doNext(__iternext__());
+        return doNext(__next__());
     }
 
 

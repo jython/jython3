@@ -108,7 +108,7 @@ public class islice extends PyIterator {
 
             PyObject iter = iterable.__iter__();
 
-            public PyObject __iternext__() {
+            public PyObject __next__() {
                 PyObject result = null;
 
                 // ensure we never move the underlying iterator past 'stop'
@@ -128,14 +128,14 @@ public class islice extends PyIterator {
         };
     }
 
-    public PyObject __iternext__() {
-        return iter.__iternext__();
+    public PyObject __next__() {
+        return iter.__next__();
     }
 
     @ExposedMethod
     @Override
     public PyObject next() {
-        return doNext(__iternext__());
+        return doNext(__next__());
     }
 
 

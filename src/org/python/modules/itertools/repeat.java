@@ -73,7 +73,7 @@ public class repeat extends PyIterator {
         }
         iter = new PyIterator() {
 
-            public PyObject __iternext__() {
+            public PyObject __next__() {
                 if (counter > 0) {
                     counter--;
                     return object;
@@ -91,7 +91,7 @@ public class repeat extends PyIterator {
         this.object = object;
         counter = -1;
         iter = new PyIterator() {
-            public PyObject __iternext__() {
+            public PyObject __next__() {
                 return object;
             }
         };
@@ -122,14 +122,14 @@ public class repeat extends PyIterator {
         }
     }
 
-    public PyObject __iternext__() {
-        return iter.__iternext__();
+    public PyObject __next__() {
+        return iter.__next__();
     }
 
     @ExposedMethod
     @Override
     public PyObject next() {
-        return doNext(__iternext__());
+        return doNext(__next__());
     }
 
 

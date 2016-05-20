@@ -74,7 +74,7 @@ public class PyFileWriter extends PyObject {
         PyObject iter = Py.iter(a, "writelines() requires an iterable argument");
 
         PyObject item = null;
-        while ((item = iter.__iternext__()) != null) {
+        while ((item = iter.__next__()) != null) {
             if (!(item instanceof PyString)) {
                 throw Py.TypeError("writelines() argument must be a sequence of strings");
             }

@@ -476,7 +476,7 @@ public class AstList extends PySequence implements Cloneable, List, Traverseproc
             if(value == this) {
                 PyList newseq = new PyList();
                 PyObject iter = value.__iter__();
-                for(PyObject item = null; (item = iter.__iternext__()) != null;) {
+                for(PyObject item = null; (item = iter.__next__()) != null;) {
                     newseq.append(item);
                 }
                 value = newseq;

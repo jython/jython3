@@ -89,12 +89,12 @@ public class FieldNameIterator extends PyObject implements Traverseproc {
     }
 
     @Override
-    public PyObject __iternext__() {
-        return fieldnameiterator___iternext__();
+    public PyObject __next__() {
+        return fieldnameiterator___next__();
     }
 
     @ExposedMethod
-    final PyObject fieldnameiterator___iternext__() {
+    final PyObject fieldnameiterator___next__() {
         Chunk chunk = nextChunk();
         if (chunk == null) {
             return null;

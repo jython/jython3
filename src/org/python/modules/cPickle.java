@@ -1225,7 +1225,7 @@ public class cPickle implements ClassDictInit {
                 do {
                     // Get next group of (no more than) BATCHSIZE elements.
                     for (n = 0; n < BATCHSIZE; n++) {
-                        obj = object.__iternext__();
+                        obj = object.__next__();
                         if (obj == null) {
                             break;
                         }

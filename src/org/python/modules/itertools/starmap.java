@@ -59,7 +59,7 @@ public class starmap extends PyIterator {
     private void starmap___init__(final PyObject callable, final PyObject iterator) {
         iter = new itertools.ItertoolsIterator() {
 
-            public PyObject __iternext__() {
+            public PyObject __next__() {
                 PyObject args = nextElement(iterator);
                 PyObject result = null;
 
@@ -74,14 +74,14 @@ public class starmap extends PyIterator {
         };
     }
 
-    public PyObject __iternext__() {
-        return iter.__iternext__();
+    public PyObject __next__() {
+        return iter.__next__();
     }
 
     @ExposedMethod
     @Override
     public PyObject next() {
-        return doNext(__iternext__());
+        return doNext(__next__());
     }
 
 

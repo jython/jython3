@@ -57,7 +57,7 @@ public class PyReader extends PyIterator {
         this.dialect = dialect;
     }
 
-    public PyObject __iternext__() {
+    public PyObject __next__() {
         PyObject lineobj;
         PyObject fields;
         String line;
@@ -66,7 +66,7 @@ public class PyReader extends PyIterator {
 
         parse_reset();
         do {
-            lineobj = input_iter.__iternext__();
+            lineobj = input_iter.__next__();
             if (lineobj == null) {
                 // End of input OR exception
                 if (field.length() != 0 || state == ParserState.IN_QUOTED_FIELD) {

@@ -74,7 +74,7 @@ public class PyWriter extends PyObject implements Traverseproc {
             throw _csv.Error("writerows() argument must be iterable");
         }
 
-        while ((row_obj = row_iter.__iternext__()) != null) {
+        while ((row_obj = row_iter.__next__()) != null) {
             result = writerow(row_obj);
             if (!result) {
                 break;

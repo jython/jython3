@@ -1337,7 +1337,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         setline(node);
         // get the next element from the list
         code.aload(iter_tmp);
-        code.invokevirtual(p(PyObject.class), "__iternext__", sig(PyObject.class));
+        code.invokevirtual(p(PyObject.class), "__next__", sig(PyObject.class));
 
         code.astore(expr_tmp);
         code.aload(expr_tmp);
