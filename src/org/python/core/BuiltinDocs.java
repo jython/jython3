@@ -5389,6 +5389,95 @@ public class BuiltinDocs {
     public final static String SRE_Match_string_doc = 
         "";
 
+    // Docs for <class 'range_iterator'>
+    public final static String range_iterator___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String range_iterator___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String range_iterator___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String range_iterator_doc = 
+        "";
+
+    public final static String range_iterator___eq___doc = 
+        "Return self==value.";
+
+    public final static String range_iterator___format___doc = 
+        "default object formatter";
+
+    public final static String range_iterator___ge___doc = 
+        "Return self>=value.";
+
+    public final static String range_iterator___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String range_iterator___gt___doc = 
+        "Return self>value.";
+
+    public final static String range_iterator___hash___doc = 
+        "Return hash(self).";
+
+    public final static String range_iterator___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String range_iterator___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String range_iterator___le___doc = 
+        "Return self<=value.";
+
+    public final static String range_iterator___length_hint___doc = 
+        "Private method returning an estimate of len(list(it)).";
+
+    public final static String range_iterator___lt___doc = 
+        "Return self<value.";
+
+    public final static String range_iterator___ne___doc = 
+        "Return self!=value.";
+
+    public final static String range_iterator___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String range_iterator___next___doc = 
+        "Implement next(self).";
+
+    public final static String range_iterator___reduce___doc = 
+        "Return state information for pickling.";
+
+    public final static String range_iterator___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String range_iterator___repr___doc = 
+        "Return repr(self).";
+
+    public final static String range_iterator___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String range_iterator___setstate___doc = 
+        "Set state information for unpickling.";
+
+    public final static String range_iterator___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String range_iterator___str___doc = 
+        "Return str(self).";
+
+    public final static String range_iterator___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
     // Docs for <class 'io.TextIOBase'>
     public final static String TextIOBase___abstractmethods___doc = 
         "";

@@ -555,7 +555,7 @@ public class PyObject implements Serializable {
         for (PyObject starargs : starargsArray) {
             starObjs = new ArrayList<PyObject>();
             PyObject iter = Py.iter(starargs, name + "argument after * must be a sequence");
-            for (PyObject cur = null; ((cur = iter.__iternext__()) != null); ) {
+            for (PyObject cur = null; ((cur = iter.__next__()) != null); ) {
                 starObjs.add(cur);
             }
             argslen += starObjs.size();
@@ -908,8 +908,9 @@ public class PyObject implements Serializable {
      *
      * @since 2.2
      */
-    public PyObject __iternext__() {
-        return null;
+    public PyObject __next__() {
+        throw Py.TypeError(String.format("iter() returned non-iterator of type '%.200s'",
+                getType().fastGetName()));
     }
 
     /*The basic functions to implement a namespace*/

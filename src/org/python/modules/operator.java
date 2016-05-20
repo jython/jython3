@@ -273,7 +273,7 @@ public class operator extends PyObject implements ClassDictInit
     public static int indexOf(PyObject seq, PyObject item) {
         int i = 0;
         PyObject iter = seq.__iter__();
-        for (PyObject tmp = null; (tmp = iter.__iternext__()) != null; i++) {
+        for (PyObject tmp = null; (tmp = iter.__next__()) != null; i++) {
             if (item._eq(tmp).__bool__()) {
                 return i;
             }

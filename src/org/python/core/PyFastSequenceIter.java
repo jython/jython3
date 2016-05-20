@@ -22,13 +22,13 @@ public class PyFastSequenceIter extends PyIterator {
         this.seq = seq;
     }
 
-    @ExposedMethod(doc = "x.next() -> the next value, or raise StopIteration")
-    final PyObject fastsequenceiterator_next() {
+    @ExposedMethod(doc = "x.__next__() -> the next value, or raise StopIteration")
+    final PyObject fastsequenceiterator___next__() {
         return super.next();
     }
 
     @Override
-    public PyObject __iternext__() {
+    public PyObject __next__() {
         if (seq == null) {
             return null;
         }

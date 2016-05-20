@@ -1023,7 +1023,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                     case Opcode.FOR_ITER: {
                         PyObject it = stack.pop();
                         try {
-                            PyObject x = it.__iternext__();
+                            PyObject x = it.__next__();
                             if (x != null) {
                                 stack.push(it);
                                 stack.push(x);

@@ -386,7 +386,7 @@ public class PyBZ2File extends PyObject implements FinalizablePyObject, Finaliza
     private class BZ2FileIterator extends PyIterator {
 
         @Override
-        public PyObject __iternext__() {
+        public PyObject __next__() {
             PyString s = BZ2File_readline(new PyObject[0], new String[0]);
 
             if (s.equals(Py.EmptyString)) {

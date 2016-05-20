@@ -471,7 +471,7 @@ public class imp {
 
         // nothing in the cache, so check all hooks
         PyObject iter = hooks.__iter__();
-        for (PyObject hook; (hook = iter.__iternext__()) != null;) {
+        for (PyObject hook; (hook = iter.__next__()) != null;) {
             try {
                 importer = hook.__call__(p);
                 break;

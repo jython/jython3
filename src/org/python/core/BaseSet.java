@@ -234,7 +234,7 @@ public abstract class BaseSet extends PyObject implements Set, Traverseproc {
             private Iterator<PyObject> iterator = _set.iterator();
 
             @Override
-            public PyObject __iternext__() {
+            public PyObject __next__() {
                 if (iterator.hasNext()) {
                     return iterator.next();
                 }

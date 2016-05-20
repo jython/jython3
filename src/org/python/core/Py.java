@@ -1038,7 +1038,7 @@ public final class Py {
             if (iter instanceof PyGenerator) {
                 retval = ((PyGenerator) iter).send(null);
             } else {
-                retval = iter.__iternext__();
+                retval = iter.__next__();
             }
         } catch (PyException e) {
             if (e.match(Py.StopIteration)) {
@@ -1947,7 +1947,7 @@ public final class Py {
                     expandBases.add(base);
                 } else {
                     PyObject iter = Py.iter(base, name + "argument after * must be a sequence");
-                    for (PyObject cur = null; ((cur = iter.__iternext__()) != null); ) {
+                    for (PyObject cur = null; ((cur = iter.__next__()) != null); ) {
                         expandBases.add(cur);
                     }
                 }
@@ -2110,7 +2110,7 @@ public final class Py {
         PyObject iter = obj.__iter__();
         int i = 0;
         for (; i < argcount; i++) {
-            PyObject tmp = iter.__iternext__();
+            PyObject tmp = iter.__next__();
             if (tmp == null) {
                 if (argcountAfter == -1) {
                     throw Py.ValueError(String.format("not enough values to unpack (expected %d, got %d)",
@@ -2125,12 +2125,12 @@ public final class Py {
 
         if (argcountAfter == -1) {
             // We better have exhausted the iterator now.
-            if (iter.__iternext__() != null) {
+            if (iter.__next__() != null) {
                 throw Py.ValueError(String.format("too many values to unpack (expected %d)", argcount));
             }
         } else {
             PyList after = new PyList();
-            for (PyObject o = null; (o = iter.__iternext__()) != null;) {
+            for (PyObject o = null; (o = iter.__next__()) != null;) {
                 after.append(o);
             }
             if (after.size() < argcountAfter) {

@@ -433,7 +433,7 @@ public class PyStringMap extends PyObject implements Traverseproc {
         PyObject pairs = other.__iter__();
         PyObject pair;
 
-        for (int i = 0; (pair = pairs.__iternext__()) != null; i++) {
+        for (int i = 0; (pair = pairs.__next__()) != null; i++) {
             try {
                 pair = PySequence.fastSequence(pair, "");
             } catch(PyException pye) {
@@ -580,7 +580,7 @@ public class PyStringMap extends PyObject implements Traverseproc {
         }
 
         @Override
-        public PyObject __iternext__() {
+        public PyObject __next__() {
             if (table.size() != size) {
                 throw Py.RuntimeError("dictionary changed size during iteration");
             }

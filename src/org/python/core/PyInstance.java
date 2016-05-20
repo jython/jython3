@@ -746,7 +746,7 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
     }
 
     @Override
-    public PyObject __iternext__() {
+    public PyObject __next__() {
         PyObject func = __findattr__("next");
         if (func != null) {
             try {

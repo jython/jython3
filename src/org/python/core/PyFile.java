@@ -24,11 +24,9 @@ import org.python.core.io.StreamIO;
 import org.python.core.io.TextIOBase;
 import org.python.core.io.TextIOWrapper;
 import org.python.core.io.UniversalIOWrapper;
-import org.python.expose.ExposedDelete;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
-import org.python.expose.ExposedSet;
 import org.python.expose.ExposedType;
 
 /**
@@ -417,30 +415,18 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
     }
 
     @Override
-    public PyObject __iternext__() {
-        return file___iternext__();
-    }
-
-    final synchronized PyObject file___iternext__() {
-        checkClosed();
-        String next = file.readline(-1);
-        if (next.length() == 0) {
-            return null;
-        }
-        return new PyString(next);
+    public PyObject __next__() {
+        return file___next__();
     }
 
     @ExposedMethod(doc = BuiltinDocs.TextIOBase___next___doc)
-    final PyObject file_next() {
-        PyObject ret = file___iternext__();
-        if (ret == null) {
+    final PyObject file___next__() {
+        checkClosed();
+        String next = file.readline(-1);
+        if (next.length() == 0) {
             throw Py.StopIteration();
         }
-        return ret;
-    }
-
-    public PyObject next() {
-        return file_next();
+        return new PyString(next);
     }
 
     @ExposedMethod(names = {"__enter__", "__iter__", "xreadlines"},
@@ -500,7 +486,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
     final synchronized void file_writelines(PyObject lines) {
         checkClosed();
         PyObject iter = Py.iter(lines, "writelines() requires an iterable argument");
-        for (PyObject item = null; (item = iter.__iternext__()) != null;) {
+        for (PyObject item = null; (item = iter.__next__()) != null;) {
             checkClosed(); // ... in case a nasty iterable closed this file
             softspace = false;
             file.write(asWritable(item, "writelines() argument must be a sequence of strings"));

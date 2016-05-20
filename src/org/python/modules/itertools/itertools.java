@@ -58,7 +58,7 @@ public class itertools implements ClassDictInit {
         protected PyObject nextElement(PyObject pyIter) {
             PyObject element = null;
             try {
-                element = pyIter.__iternext__();//next();
+                element = pyIter.__next__();//next();
             } catch (PyException pyEx) {
                 if (pyEx.match(Py.StopIteration)) {
                     // store exception - will be used by PyIterator.next()
@@ -139,7 +139,7 @@ public class itertools implements ClassDictInit {
             this.filterTrue = filterTrue;
         }
 
-        public PyObject __iternext__() {
+        public PyObject __next__() {
 
             while (true) {
                 PyObject element = nextElement(iterator);
@@ -206,7 +206,7 @@ public class itertools implements ClassDictInit {
             this.drop = drop;
         }
 
-        public PyObject __iternext__() {
+        public PyObject __next__() {
 
             while (true) {
                 PyObject element = nextElement(iterator);

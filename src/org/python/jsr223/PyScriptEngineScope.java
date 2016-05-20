@@ -169,10 +169,10 @@ public final class PyScriptEngineScope extends PyObject {
     private Map<PyObject, PyObject> getMap() {
         ScopeIterator iterator = new ScopeIterator(this);
         Map<PyObject, PyObject> map = new HashMap<PyObject, PyObject>(iterator.size());
-        PyObject key = iterator.__iternext__();
+        PyObject key = iterator.__next__();
         while (key != null) {
             map.put(key, __finditem__(key));
-            key = iterator.__iternext__();
+            key = iterator.__next__();
         }
         return map;
     }
@@ -197,7 +197,7 @@ public final class PyScriptEngineScope extends PyObject {
         }
 
         @Override
-        public PyObject __iternext__() {
+        public PyObject __next__() {
             PyObject result = null;
             _index++;
             if (_index < size()) {
