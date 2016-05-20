@@ -11,16 +11,30 @@ public abstract class WrappedIterIterator<E> implements Iterator<E> {
     private final PyObject iter;
 
     private PyObject next;
+    private PyObject __next__method;
 
     private boolean checkedForNext;
 
     public WrappedIterIterator(PyObject iter) {
         this.iter = iter;
+        __next__method = iter.__findattr__("__next__");
     }
 
     public boolean hasNext() {
         if (!checkedForNext) {
-            next = iter.__iternext__();
+            if (__next__method == null) {
+                next = iter.__iternext__();
+            } else {
+                try {
+                    next = __next__method.__call__();
+                } catch (PyException e) {
+                    if (e.match(Py.StopIteration)) {
+                        next = null;
+                    } else {
+                        throw e;
+                    }
+                }
+            }
             checkedForNext = true;
         }
         return next != null;
