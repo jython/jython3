@@ -19,6 +19,8 @@ import org.python.antlr.ast.*;
 import org.python.antlr.base.expr;
 import org.python.antlr.base.mod;
 import org.python.antlr.base.stmt;
+import org.python.core.AsyncContextGuard;
+import org.python.core.AsyncContextManager;
 import org.python.core.CompilerFlags;
 import org.python.core.ContextGuard;
 import org.python.core.ContextManager;
@@ -70,6 +72,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     private Stack<ExceptionHandler> exceptionHandlers;
     private Vector<Label> yields = new Vector<Label>();
 
+    final static Method contextGuard_getManager =
+            Method.getMethod("org.python.core.ContextManager getManager (org.python.core.PyObject)");
+    final static Method __enter__ =
+            Method.getMethod("org.python.core.PyObject __enter__ (org.python.core.ThreadState)");
+    final static Method __exit__ =
+            Method.getMethod("boolean __exit__ (org.python.core.ThreadState,org.python.core.PyException)");
     /*
      * break/continue finally's level. This is the lowest level in the exceptionHandlers which
      * should be executed at break or continue. It is saved/updated/restored when compiling loops. A
@@ -644,14 +652,40 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
     @Override
     public Object visitAwait(Await node) throws Exception {
-        setline(node);
-        expr iterable = node.getInternalValue();
-        visit(iterable);
+       setline(node);
+        if (!fast_locals) {
+            throw new ParseException("'await' outside function", node);
+        }
+
+        int stackState = saveStack();
+        visit(node.getInternalValue());
+
+        yield_count++;
+        setLastI(yield_count);
         code.invokestatic(p(Py.class), "getAwaitable", sig(PyObject.class, PyObject.class));
         loadFrame();
-        code.invokevirtual(p(PyFrame.class), "getGeneratorInput", sig(Object.class));
-        code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyObject.class, Object.class));
+        code.swap();
+        code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
+
+        Label restart = new Label();
+        yields.addElement(restart);
+        code.label(restart);
+        restoreLocals();
+        restoreStack(stackState);
+
+        loadFrame();
+        code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyFrame.class));
         code.areturn();
+        yield_count++;
+        Label nonYieldSection = new Label();
+        yields.addElement(nonYieldSection);
+        code.label(nonYieldSection);
+        restoreLocals();
+        restoreStack(stackState);
+
+        // restore return value from subgenerator
+        loadFrame();
+        code.invokevirtual(p(PyFrame.class), "getf_stacktop", sig(PyObject.class));
         return null;
     }
 
@@ -688,8 +722,6 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         Label restart = new Label();
         yields.addElement(restart);
         code.label(restart);
-        restoreLocals();
-        restoreStack(stackState);
 
         loadFrame();
         code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyFrame.class));
@@ -2495,16 +2527,32 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
                     sig(Void.TYPE));
 
             node.setName(new PyString(inner));
+
+            // get the original parameters
+            java.util.List<expr> actualArgs = node.getInternalBases();
+            java.util.List<String> kwargs = new ArrayList<>();
+            if (node.getInternalKeywords() != null && node.getInternalKeywords().size() > 0) {
+                // Assume only keywords parameter is the metaclass
+                actualArgs.add(node.getInternalKeywords().get(0).getInternalValue());
+                kwargs.add("metaclass");
+            }
+
             java.util.List<stmt> bod = new ArrayList<stmt>();
+            String vararg = "__(args)__";
+            String kwarg = "__(kw)__";
+            // replace inner class parameters
+            Starred starred = new Starred(node.getToken(), new Name(node.getToken(), vararg, expr_contextType.Load), expr_contextType.Load);
+            node.setBases(new PyList(new PyObject[]{starred}));
+            keyword kw = new keyword(node.getToken(), null, new Name(node.getToken(), kwarg, expr_contextType.Load));
+            node.setKeywords(new PyList(new PyObject[]{kw}));
             bod.add(node);
+
             Name innerName = new Name(node, inner, expr_contextType.Load);
             Assign assign = new Assign(node, Arrays.<expr>asList(new Name(node, "__class__", expr_contextType.Store)),
                     innerName);
             bod.add(assign);
             Return _ret = new Return(node.getToken(), innerName);
             bod.add(_ret);
-            String vararg = "__(args)__";
-            String kwarg = "__(kw)__";
             arguments args = new arguments(node, new ArrayList<expr>(),
                 vararg, new ArrayList<String>(), new ArrayList<expr>(), kwarg, new ArrayList<expr>());
             FunctionDef funcdef = new FunctionDef(node.getToken(), outer, args, bod, new ArrayList<expr>());
@@ -2534,14 +2582,6 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             code.freeLocal(genExp);
             loadThreadState();
 
-            java.util.List<expr> actualArgs = node.getInternalBases();
-            java.util.List<String> kwargs = new ArrayList<>();
-
-            if (node.getInternalKeywords() != null && node.getInternalKeywords().size() > 0) {
-                // Assume only keywords parameter is the metaclass
-                actualArgs.add(node.getInternalKeywords().get(0).getInternalValue());
-                kwargs.add("metaclass");
-            }
             int baseArray = makeArray(actualArgs);
             int kwArray = makeStrings(code, kwargs);
 
@@ -2919,7 +2959,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     }
 
     @Override
-    public Object visitWith(With node) throws Exception {
+    public Object visitAsyncWith(AsyncWith node) throws Exception {
         // AST is converted such that every context only has one item
         withitem item = node.getInternalItems().get(0);
         final Label label_body_start = new Label();
@@ -2927,12 +2967,184 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         final Label label_catch = new Label();
         final Label label_end = new Label();
 
-        final Method contextGuard_getManager =
-                Method.getMethod("org.python.core.ContextManager getManager (org.python.core.PyObject)");
-        final Method __enter__ =
-                Method.getMethod("org.python.core.PyObject __enter__ (org.python.core.ThreadState)");
-        final Method __exit__ =
-                Method.getMethod("boolean __exit__ (org.python.core.ThreadState,org.python.core.PyException)");
+        // mgr = (EXPR)
+        visit(item.getInternalContext_expr());
+
+        // wrap the manager with the ContextGuard (or get it directly if it
+        // supports the ContextManager interface)
+        code.invokestatic(p(AsyncContextGuard.class),
+                "getManager", sig(AsyncContextManager.class, PyObject.class));
+        code.dup();
+
+        final int mgr_tmp = code.getLocal(p(AsyncContextManager.class));
+        code.astore(mgr_tmp);
+
+        // value = mgr.__enter__()
+        loadThreadState();
+        code.invokeinterface(p(AsyncContextManager.class),
+                "__aenter__", sig(PyObject.class, ThreadState.class), true);
+        int value_tmp = code.getLocal(p(PyObject.class));
+        yield_count++;
+        setLastI(yield_count);
+        code.invokestatic(p(Py.class), "getAwaitable", sig(PyObject.class, PyObject.class));
+        loadFrame();
+        code.swap();
+        code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
+
+        Label restart = new Label();
+        yields.addElement(restart);
+        code.label(restart);
+
+        loadFrame();
+        code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyFrame.class));
+        code.areturn();
+        yield_count++;
+        Label nonYieldSection = new Label();
+        yields.addElement(nonYieldSection);
+        code.label(nonYieldSection);
+
+        // restore return value from subgenerator
+        loadFrame();
+        code.invokevirtual(p(PyFrame.class), "getf_stacktop", sig(PyObject.class));
+        code.astore(value_tmp);
+
+        // exc = True # not necessary, since we don't exec finally if exception
+
+        // FINALLY (preparation)
+        // ordinarily with a finally, we need to duplicate the code. that's not the case
+        // here
+        // # The normal and non-local-goto cases are handled here
+        // if exc: # implicit
+        // exit(None, None, None)
+        ExceptionHandler normalExit = new ExceptionHandler() {
+
+            @Override
+            public boolean isFinallyHandler() {
+                return true;
+            }
+
+            @Override
+            public void finalBody(CodeCompiler compiler) throws Exception {
+                compiler.code.aload(mgr_tmp);
+                loadThreadState();
+                compiler.code.aconst_null();
+                compiler.code.invokeinterface(p(AsyncContextManager.class),
+                        "__aexit__", sig(Boolean.TYPE, ThreadState.class, PyException.class), true);
+                yield_count++;
+                setLastI(yield_count);
+                code.invokestatic(p(Py.class), "getAwaitable", sig(PyObject.class, PyObject.class));
+                loadFrame();
+                code.swap();
+                code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
+
+                Label restart = new Label();
+                yields.addElement(restart);
+                code.label(restart);
+
+                loadFrame();
+                code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyFrame.class));
+                code.areturn();
+                yield_count++;
+                Label nonYieldSection = new Label();
+                yields.addElement(nonYieldSection);
+                code.label(nonYieldSection);
+
+                // restore return value from subgenerator
+                loadFrame();
+                code.invokevirtual(p(PyFrame.class), "getf_stacktop", sig(PyObject.class));
+                compiler.code.pop();
+            }
+        };
+        exceptionHandlers.push(normalExit);
+
+        // try-catch block here
+        ExceptionHandler handler = new ExceptionHandler();
+        exceptionHandlers.push(handler);
+        handler.exceptionStarts.addElement(label_body_start);
+
+        // VAR = value # Only if "as VAR" is present
+        code.label(label_body_start);
+        if (item.getInternalOptional_vars() != null) {
+            set(item.getInternalOptional_vars(), value_tmp);
+        }
+        code.freeLocal(value_tmp);
+
+        // BLOCK + FINALLY if non-local-goto
+        Object blockResult = suite(node.getInternalBody());
+        normalExit.bodyDone = true;
+        exceptionHandlers.pop();
+        exceptionHandlers.pop();
+        code.label(label_body_end);
+        handler.exceptionEnds.addElement(label_body_end);
+
+        // FINALLY if *not* non-local-goto
+        if (blockResult == NoExit) {
+            // BLOCK would have generated FINALLY for us if it exited (due to a break,
+            // continue or return)
+            inlineFinally(normalExit);
+            code.goto_(label_end);
+        }
+
+        // CATCH
+        code.label(label_catch);
+
+        loadFrame();
+        code.invokestatic(p(Py.class), "setException",
+                sig(PyException.class, Throwable.class, PyFrame.class));
+        code.aload(mgr_tmp);
+        code.swap();
+        loadThreadState();
+        code.swap();
+        code.invokeinterface(p(AsyncContextManager.class),
+                "__aexit__", sig(Boolean.TYPE, ThreadState.class, PyException.class), true);
+
+        yield_count++;
+        setLastI(yield_count);
+        code.invokestatic(p(Py.class), "getAwaitable", sig(PyObject.class, PyObject.class));
+        loadFrame();
+        code.swap();
+        code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
+
+        restart = new Label();
+        yields.addElement(restart);
+        code.label(restart);
+
+        loadFrame();
+        code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyFrame.class));
+        code.areturn();
+        yield_count++;
+        nonYieldSection = new Label();
+        yields.addElement(nonYieldSection);
+        code.label(nonYieldSection);
+
+        // restore return value from subgenerator
+        loadFrame();
+        code.invokevirtual(p(PyFrame.class), "getf_stacktop", sig(PyObject.class));
+        // # The exceptional case is handled here
+        // exc = False # implicit
+        // if not exit(*sys.exc_info()):
+        code.ifne(label_end);
+        // raise
+        // # The exception is swallowed if exit() returns true
+        code.invokestatic(p(Py.class), "makeException", sig(PyException.class));
+        code.checkcast(p(Throwable.class));
+        code.athrow();
+
+        code.label(label_end);
+        code.freeLocal(mgr_tmp);
+
+        handler.addExceptionHandlers(label_catch);
+        return null;
+    }
+
+    @Override
+    public Object visitWith(With node) throws Exception {
+        // AST is converted such that every context only has one item
+        withitem item = node.getInternalItems().get(0);
+        final Label label_body_start = new Label();
+        final Label label_body_end = new Label();
+        final Label label_catch = new Label();
+        final Label label_end = new Label();
 
         // mgr = (EXPR)
         visit(item.getInternalContext_expr());

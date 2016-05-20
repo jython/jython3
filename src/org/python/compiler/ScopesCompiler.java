@@ -337,21 +337,21 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
 
     @Override
     public Object visitAwait(Await node) throws Exception {
-        cur.defineAsGenerator(node);
+        cur.defineAsGenerator();
         traverse(node);
         return null;
     }
 
     @Override
     public Object visitYieldFrom(YieldFrom node) throws Exception {
-        cur.defineAsGenerator(node);
+        cur.defineAsGenerator();
         traverse(node);
         return null;
     }
 
     @Override
     public Object visitYield(Yield node) throws Exception {
-        cur.defineAsGenerator(node);
+        cur.defineAsGenerator();
         cur.yield_count++;
         traverse(node);
         return null;
@@ -360,7 +360,7 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
     @Override
     public Object visitReturn(Return node) throws Exception {
         if (node.getInternalValue() != null) {
-            cur.noteReturnValue(node);
+            cur.noteReturnValue();
         }
         traverse(node);
         return null;
@@ -389,7 +389,7 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         cur.addParam(bound_exp);
         cur.markFromParam();
 
-        cur.defineAsGenerator(node);
+        cur.defineAsGenerator();
         cur.yield_count++;
         // The reset of the iterators are evaluated in the inner scope
         if (elt != null) {
@@ -421,6 +421,13 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
     @Override
     public Object visitGeneratorExp(GeneratorExp node) throws Exception {
         return visitInternalGenerators(node, node.getInternalElt(), node.getInternalGenerators());
+    }
+
+    @Override
+    public Object visitAsyncWith(AsyncWith node) throws Exception {
+        cur.defineAsGenerator();
+        traverse(node);
+        return null;
     }
 
     @Override
