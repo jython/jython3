@@ -98,9 +98,9 @@ public final class Py {
     /** A tuple with zero elements **/
     public final static PyTuple EmptyTuple = new PyTuple(Py.EmptyObjects);
     /** The Python integer 0 **/
-    public final static PyInteger Zero = new PyInteger(0);
+    public final static PyLong Zero = new PyLong(0);
     /** The Python integer 1 **/
-    public final static PyInteger One = new PyInteger(1);
+    public final static PyLong One = new PyLong(1);
     /** The Python boolean False **/
     public final static PyBoolean False = new PyBoolean(false);
     /** The Python boolean True **/

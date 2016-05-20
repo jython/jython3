@@ -275,19 +275,11 @@ public class ScopeInfo extends Object implements ScopeConstants {
                 System.identityHashCode(this);
     }
 
-    public void defineAsGenerator(expr node) {
+    public void defineAsGenerator() {
         generator = true;
-//        if (hasReturnWithValue) {
-//            throw new ParseException("'return' with argument " +
-//                    "inside generator", node);
-//        }
     }
 
-    public void noteReturnValue(Return node) {
-//        if (generator) {
-//            throw new ParseException("'return' with argument " +
-//                    "inside generator", node);
-//        }
+    public void noteReturnValue() {
         hasReturnWithValue = true;
     }
 }

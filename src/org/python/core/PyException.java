@@ -76,7 +76,7 @@ public class PyException extends RuntimeException implements Traverseproc
     }
 
     public PyException(PyObject type, String value) {
-        this(type, Py.newStringOrUnicode(value));
+        this(type, Py.newUnicode(value));
     }
 
     private boolean printingStackTrace = false;
