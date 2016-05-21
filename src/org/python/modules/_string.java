@@ -30,7 +30,7 @@ public class _string implements ClassDictInit {
     }
 
     public static PyUnicode __doc__formatter_field_name_split = new PyUnicode("split the argument as a field name");
-    final PyObject formatter_field_name_split(PyString str) {
+    public static PyObject formatter_field_name_split(PyString str) {
         FieldNameIterator iterator = new FieldNameIterator(str);
         return new PyTuple(iterator.pyHead(), iterator);
     }
