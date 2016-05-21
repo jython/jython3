@@ -2,16 +2,13 @@
 
 package org.python.compiler;
 
+import org.python.antlr.PythonTree;
+
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Hashtable;
 import java.util.Vector;
-
-import org.python.antlr.ParseException;
-import org.python.antlr.PythonTree;
-import org.python.antlr.ast.Return;
-import org.python.antlr.base.expr;
 
 public class ScopeInfo extends Object implements ScopeConstants {
 

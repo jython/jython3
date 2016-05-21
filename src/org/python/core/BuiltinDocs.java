@@ -5478,6 +5478,191 @@ public class BuiltinDocs {
         "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
+    // Docs for <class 'list_iterator'>
+    public final static String list_iterator___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String list_iterator___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String list_iterator___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String list_iterator_doc = 
+        "";
+
+    public final static String list_iterator___eq___doc = 
+        "Return self==value.";
+
+    public final static String list_iterator___format___doc = 
+        "default object formatter";
+
+    public final static String list_iterator___ge___doc = 
+        "Return self>=value.";
+
+    public final static String list_iterator___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String list_iterator___gt___doc = 
+        "Return self>value.";
+
+    public final static String list_iterator___hash___doc = 
+        "Return hash(self).";
+
+    public final static String list_iterator___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String list_iterator___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String list_iterator___le___doc = 
+        "Return self<=value.";
+
+    public final static String list_iterator___length_hint___doc = 
+        "Private method returning an estimate of len(list(it)).";
+
+    public final static String list_iterator___lt___doc = 
+        "Return self<value.";
+
+    public final static String list_iterator___ne___doc = 
+        "Return self!=value.";
+
+    public final static String list_iterator___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String list_iterator___next___doc = 
+        "Implement next(self).";
+
+    public final static String list_iterator___reduce___doc = 
+        "Return state information for pickling.";
+
+    public final static String list_iterator___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String list_iterator___repr___doc = 
+        "Return repr(self).";
+
+    public final static String list_iterator___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String list_iterator___setstate___doc = 
+        "Set state information for unpickling.";
+
+    public final static String list_iterator___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String list_iterator___str___doc = 
+        "Return str(self).";
+
+    public final static String list_iterator___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    // Docs for <class 'itertools.chain'>
+    public final static String chain___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String chain___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String chain___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String chain_doc = 
+        "chain(*iterables) --> chain object\n" + 
+        "\n" + 
+        "Return a chain object whose .__next__() method returns elements from the\n" + 
+        "first iterable until it is exhausted, then elements from the next\n" + 
+        "iterable, until all of the iterables are exhausted.";
+
+    public final static String chain___eq___doc = 
+        "Return self==value.";
+
+    public final static String chain___format___doc = 
+        "default object formatter";
+
+    public final static String chain___ge___doc = 
+        "Return self>=value.";
+
+    public final static String chain___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String chain___gt___doc = 
+        "Return self>value.";
+
+    public final static String chain___hash___doc = 
+        "Return hash(self).";
+
+    public final static String chain___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String chain___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String chain___le___doc = 
+        "Return self<=value.";
+
+    public final static String chain___lt___doc = 
+        "Return self<value.";
+
+    public final static String chain___ne___doc = 
+        "Return self!=value.";
+
+    public final static String chain___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String chain___next___doc = 
+        "Implement next(self).";
+
+    public final static String chain___reduce___doc = 
+        "Return state information for pickling.";
+
+    public final static String chain___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String chain___repr___doc = 
+        "Return repr(self).";
+
+    public final static String chain___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String chain___setstate___doc = 
+        "Set state information for unpickling.";
+
+    public final static String chain___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String chain___str___doc = 
+        "Return str(self).";
+
+    public final static String chain___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String chain_from_iterable_doc = 
+        "chain.from_iterable(iterable) --> chain object\n" + 
+        "\n" + 
+        "Alternate chain() contructor taking a single iterable argument\n" + 
+        "that evaluates lazily.";
+
     // Docs for <class 'io.TextIOBase'>
     public final static String TextIOBase___abstractmethods___doc = 
         "";

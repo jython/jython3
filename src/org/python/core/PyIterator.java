@@ -24,8 +24,7 @@ public abstract class PyIterator extends PyObject implements Iterable<Object>, T
         super(subType);
     }
 
-    public abstract PyObject __next__();
-
+    @Override
     public PyObject __iter__() {
         return this;
     }

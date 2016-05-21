@@ -130,8 +130,7 @@ class CommonTest(unittest.TestCase):
 
         # Create from various iteratables
         for s in ("123", "", range(1000), ('do', 1.2), range(2000,2200,5)):
-            for g in (Sequence, IterFunc, IterGen,
-                      itermulti, iterfunc):
+            for g in (Sequence, IterFunc, IterGen, itermulti, iterfunc):
                 self.assertEqual(self.type2test(g(s)), self.type2test(s))
             self.assertEqual(self.type2test(IterFuncStop(s)), self.type2test())
             self.assertEqual(self.type2test(c for c in "123"), self.type2test("123"))
