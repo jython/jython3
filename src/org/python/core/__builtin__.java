@@ -1107,8 +1107,8 @@ public class __builtin__ {
         return o;
     }
 
-    public static PyString repr(PyObject o) {
-        return o.__repr__();
+    public static PyUnicode repr(PyObject o) {
+        return (PyUnicode) o.__repr__().decode();
     }
 
     public static void setattr(PyObject obj, PyObject name, PyObject value) {

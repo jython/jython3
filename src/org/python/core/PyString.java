@@ -154,9 +154,9 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     @ExposedNew
-    static PyObject str_new(PyNewWrapper new_, boolean init, PyType subtype, PyObject[] args,
+    static PyObject bytes_new(PyNewWrapper new_, boolean init, PyType subtype, PyObject[] args,
             String[] keywords) {
-        ArgParser ap = new ArgParser("str", args, keywords, new String[] {"object"}, 0);
+        ArgParser ap = new ArgParser("str", args, keywords, new String[] {"object", "encoding", "errors"}, 0);
         PyObject S = ap.getPyObject(0, null);
         // Get the textual representation of the object into str/bytes form
         String str;
