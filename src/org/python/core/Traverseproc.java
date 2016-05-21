@@ -289,7 +289,7 @@ import org.python.modules.gc;
  *   ContextGuard:                   - no PyObject<br>
  *     ContextCode                   - Traverseproc<br>
  *     GeneratorContextManager       - Traverseproc<br>
- *   exceptions                      - no refs, untraversable<br>
+ *   Exceptions                      - no refs, untraversable<br>
  *     BoundStaticJavaMethod         - no refs, untraversable<br>
  *   JavaImporter                    - no refs, untraversable<br>
  *   JavaProxyList:<br>

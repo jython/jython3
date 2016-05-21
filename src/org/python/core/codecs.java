@@ -232,13 +232,13 @@ public class codecs {
         ArgParser ap = new ArgParser("replace_errors", args, kws, "exc");
         PyObject exc = ap.getPyObject(0);
         if (Py.isInstance(exc, Py.UnicodeEncodeError)) {
-            int end = exceptions.getEnd(exc, true);
+            int end = Exceptions.getEnd(exc, true);
             return new PyTuple(new PyUnicode("?"), Py.newInteger(end));
         } else if (Py.isInstance(exc, Py.UnicodeDecodeError)) {
-            int end = exceptions.getEnd(exc, false);
+            int end = Exceptions.getEnd(exc, false);
             return new PyTuple(new PyUnicode(Py_UNICODE_REPLACEMENT_CHARACTER), Py.newInteger(end));
         } else if (Py.isInstance(exc, Py.UnicodeTranslateError)) {
-            int end = exceptions.getEnd(exc, true);
+            int end = Exceptions.getEnd(exc, true);
             return new PyTuple(new PyUnicode(Py_UNICODE_REPLACEMENT_CHARACTER), Py.newInteger(end));
         }
         throw wrong_exception_type(exc);

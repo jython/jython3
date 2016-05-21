@@ -27,7 +27,6 @@ Import related tests:
 The reference is C-python.
 '''
 import unittest
-import exceptions
 import imp
 import builtins
 import sys
@@ -46,7 +45,7 @@ def dump_module(m):
 
 origImport = __import__ 
 
-class TestImportStatementTell(exceptions.ImportError):
+class TestImportStatementTell(ImportError):
     # Raised by TestImportStatement.importFunction to tell us how it was called
     def __init__(self, args):
         # Smuggle the arguments of importFunction() through the call stack
@@ -202,7 +201,7 @@ class TestImportStatement(unittest.TestCase):
         self.assertEqual(a.level, 0)
 
 
-class TestImportFunctionSuccess(exceptions.ImportError):
+class TestImportFunctionSuccess(ImportError):
     pass
 
 class TestImportFunction(unittest.TestCase):

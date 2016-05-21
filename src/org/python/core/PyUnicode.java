@@ -1,5 +1,14 @@
 package org.python.core;
 
+import com.google.common.base.CharMatcher;
+import org.python.expose.ExposedClassMethod;
+import org.python.expose.ExposedMethod;
+import org.python.expose.ExposedNew;
+import org.python.expose.ExposedType;
+import org.python.expose.MethodType;
+import org.python.modules._codecs;
+import org.python.util.Generic;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,17 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.base.CharMatcher;
-import org.python.core.stringlib.FieldNameIterator;
-import org.python.core.stringlib.MarkupIterator;
-import org.python.expose.ExposedClassMethod;
-import org.python.expose.ExposedMethod;
-import org.python.expose.ExposedNew;
-import org.python.expose.ExposedType;
-import org.python.expose.MethodType;
-import org.python.modules._codecs;
-import org.python.util.Generic;
 
 /**
  * a builtin python unicode string.

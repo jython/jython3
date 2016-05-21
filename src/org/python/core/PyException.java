@@ -3,7 +3,7 @@ package org.python.core;
 import java.io.*;
 
 /**
- * A wrapper for all python exception. Note that the well-known python exceptions are <b>not</b>
+ * A wrapper for all python exception. Note that the well-known python Exceptions are <b>not</b>
  * subclasses of PyException. Instead the python exception class is stored in the <code>type</code>
  * field and value or class instance is stored in the <code>value</code> field.
  */
@@ -21,12 +21,12 @@ public class PyException extends RuntimeException implements Traverseproc
     public PyObject value = Py.None;
 
     /**
-     * The cause of the exception for implicitly chained exceptions
+     * The cause of the exception for implicitly chained Exceptions
      */
     public PyBaseException context;
 
     /**
-     * The cause of the exception for explicitly chained exceptions
+     * The cause of the exception for explicitly chained Exceptions
      */
     public PyBaseException cause;
 
@@ -235,12 +235,12 @@ public class PyException extends RuntimeException implements Traverseproc
         } else {
             // Not something you can raise.  You get an exception
             // anyway, just not what you specified :-)
-            throw Py.TypeError("exceptions must be old-style classes or derived from "
+            throw Py.TypeError("Exceptions must be old-style classes or derived from "
                                + "BaseException, not " + type.getType().fastGetName());
         }
 
         if (Options.py3k_warning && type instanceof PyClass) {
-            Py.DeprecationWarning("exceptions must derive from BaseException in 3.x");
+            Py.DeprecationWarning("Exceptions must derive from BaseException in 3.x");
         }
 
         return new PyException(type, value, cause);
@@ -263,7 +263,7 @@ public class PyException extends RuntimeException implements Traverseproc
         }
 
         if (exc instanceof PyString) {
-            Py.DeprecationWarning("catching of string exceptions is deprecated");
+            Py.DeprecationWarning("catching of string Exceptions is deprecated");
         } else if (Options.py3k_warning && !isPy3kExceptionClass(exc)) {
             Py.DeprecationWarning("catching classes that don't inherit from BaseException is not "
                                   + "allowed in 3.x");

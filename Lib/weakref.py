@@ -22,7 +22,6 @@ from _weakref import (
 
 from _weakrefset import WeakSet
 
-from exceptions import ReferenceError
 from jythonlib import MapMaker, dict_builder
 
 

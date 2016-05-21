@@ -81,7 +81,7 @@ public class PythonTreeAdaptor extends CommonTreeAdaptor {
             int nc = newRootTree.getChildCount();
             if ( nc==1 ) newRootTree = newRootTree.getChild(0);
             else if ( nc >1 ) {
-				// TODO: make tree run time exceptions hierarchy
+				// TODO: make tree run time Exceptions hierarchy
 				throw new RuntimeException("more than one node as root (TODO: make exception hierarchy)");
 			}
         }

@@ -73,7 +73,7 @@ public class FileUtil {
 
     /**
      * Read all bytes from the input stream. <p/> Note that using this method to
-     * read very large streams could cause out-of-memory exceptions and/or block
+     * read very large streams could cause out-of-memory Exceptions and/or block
      * for large periods of time.
      */
     public static byte[] readBytes(InputStream in) throws IOException {

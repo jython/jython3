@@ -81,7 +81,7 @@ public class InteractiveInterpreter extends PythonInterpreter {
      * Nothing happens. Return is <code>true</code>.</li>
      *
      * <li>The input is complete; compilation returned a code object. The code is executed by
-     * calling {@link #runcode(PyObject)} (which also handles run-time exceptions, except for
+     * calling {@link #runcode(PyObject)} (which also handles run-time Exceptions, except for
      * SystemExit). Return is <code>false</code>.</li>
      * </ol>
      *

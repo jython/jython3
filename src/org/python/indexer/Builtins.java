@@ -362,7 +362,6 @@ public class Builtins {
         new DatetimeModule();
         new DbmModule();
         new ErrnoModule();
-        new ExceptionsModule();
         new FcntlModule();
         new FpectlModule();
         new GcModule();
@@ -1264,20 +1263,6 @@ public class Builtins {
         }
     }
 
-    class ExceptionsModule extends NativeModule {
-        public ExceptionsModule() {
-            super("exceptions");
-        }
-        @Override
-        public void initBindings() {
-            NModuleType builtins = get("__builtin__");
-            for (String s : builtin_exception_types) {
-                NBinding b = builtins.getTable().lookup(s);
-                table.update(b.getName(), b.getSignatureNode(), b.getType(), b.getKind());
-            }
-        }
-    }
-
     class FcntlModule extends NativeModule {
         public FcntlModule() {
             super("fcntl");
@@ -1827,7 +1812,7 @@ public class Builtins {
             addFunction("isexpr", liburl("queries-on-st-objects"), BaseBool);
             addFunction("issuite", liburl("queries-on-st-objects"), BaseBool);
 
-            addClass("ParserError", liburl("exceptions-and-error-handling"),
+            addClass("ParserError", liburl("Exceptions-and-error-handling"),
                      newException("ParserError", table));
         }
     }

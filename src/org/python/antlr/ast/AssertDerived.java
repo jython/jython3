@@ -918,7 +918,7 @@ public class AssertDerived extends Assert implements Slotted,FinalizablePyObject
     public PyObject __getitem__(PyObject key) {
         // Same as __finditem__, without swallowing LookupErrors. This allows
         // __getitem__ implementations written in Python to raise custom
-        // exceptions (such as subclasses of KeyError).
+        // Exceptions (such as subclasses of KeyError).
         //
         // We are forced to duplicate the code, instead of defining __finditem__
         // in terms of __getitem__. That's because PyObject defines __getitem__

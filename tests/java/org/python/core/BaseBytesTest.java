@@ -19,7 +19,7 @@ import org.python.util.PythonInterpreter;
  * <ul>
  * <li>construction of a correct internal buffer through the init methods</li>.
  * <li>access methods for immutable types (such as {@link BaseBytes#getslice(int, int, int)}</li>.
- * <li>access methods for mutable types throw exceptions</li>.
+ * <li>access methods for mutable types throw Exceptions</li>.
  * <li>the java.util.List<PyInteger> interface</li>.
  * </ul>
  * From this list the test currently lacks testing deletion, testing the List API and memoryview.
@@ -298,7 +298,7 @@ public class BaseBytesTest extends TestCase {
      * but where every example produced some kind of exception.
      */
     public void testInit_Exceptions() {
-        // Need interpreter for exceptions to be formed properly
+        // Need interpreter for Exceptions to be formed properly
         interp = new PythonInterpreter();
         // A scary set of objects
         final PyObject[] brantub = {Py.None, new PyInteger(-1), //
@@ -342,7 +342,7 @@ public class BaseBytesTest extends TestCase {
             // System.out.printf("    aRef[%2d]=%3d  r=%3d\n", i, aRef[i], r.asInt());
             assertEquals(aRef[i], r.asInt());
         }
-        // Check IndexError exceptions generated
+        // Check IndexError Exceptions generated
         for (int i : new int[] {-1, -100, MEDIUM, MEDIUM + 1}) {
             try {
                 PyInteger r = a.pyget(i);

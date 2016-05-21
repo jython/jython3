@@ -3547,7 +3547,7 @@ public class BuiltinDocs {
         "default dir() implementation";
 
     public final static String BaseException_doc = 
-        "Common base class for all exceptions";
+        "Common base class for all Exceptions";
 
     public final static String BaseException___eq___doc = 
         "Return self==value.";

@@ -14,7 +14,7 @@ import org.python.core.Py;
  * context of Python files.
  *
  * RawIOBases maintain state about their underlying I/O objects (such
- * as their mode) and translate Java exceptions into PyExceptions.
+ * as their mode) and translate Java Exceptions into PyExceptions.
  *
  * The read() method is implemented by calling readinto(); derived
  * classes that want to support read() only need to implement

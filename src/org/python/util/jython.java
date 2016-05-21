@@ -90,7 +90,7 @@ public class jython {
     /**
      * Runs a JAR file, by executing the code found in the file __run__.py, which should be in the
      * root of the JAR archive. Note that the __name__ is set to the base name of the JAR file and
-     * not to "__main__" (for historic reasons). This method do NOT handle exceptions. the caller
+     * not to "__main__" (for historic reasons). This method do NOT handle Exceptions. the caller
      * SHOULD handle any (Py)Exceptions thrown by the code.
      *
      * @param filename The path to the filename to run.

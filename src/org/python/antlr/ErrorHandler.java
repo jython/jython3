@@ -33,6 +33,6 @@ interface ErrorHandler {
     slice errorSlice(PythonTree t);
     stmt errorStmt(PythonTree t);
 
-    //exceptions
+    //Exceptions
     void error(String message, PythonTree t);
 }

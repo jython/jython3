@@ -329,7 +329,7 @@ public class operator extends PyObject implements ClassDictInit
         private PyObject getattr(PyObject obj, PyObject name) {
             // XXX: We should probably have a PyObject.__getattr__(PyObject) that does
             // this. This is different than __builtin__.getattr (in how it handles
-            // exceptions)
+            // Exceptions)
             String nameStr = ensureStringAttribute(name);
             String[] components = nameStr.split("\\.");
             for (String component : components) {

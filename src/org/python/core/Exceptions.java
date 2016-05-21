@@ -7,43 +7,16 @@ import java.lang.reflect.Method;
 import org.python.modules.zipimport.zipimport;
 
 /**
- * The builtin exceptions module. The entire module should be imported from
+ * The builtin Exceptions module. The entire module should be imported from
  * python. None of the methods defined here should be called from java.
  */
 @Untraversable
-public class exceptions extends PyObject implements ClassDictInit {
-
-    public static String __doc__ = "Python's standard exception class hierarchy.\n"
-            + "\n"
-            + "Exceptions found here are defined both in the exceptions module and the\n"
-            + "built-in namespace.  It is recommended that user-defined exceptions\n"
-            + "inherit from Exception.  See the documentation for the exception\n"
-            + "inheritance hierarchy.\n";
+public class Exceptions {
 
     /**
      * <i>Internal use only. Do not call this method explicit.</i>
      */
-    public static void classDictInit(PyObject dict) {
-        dict.invoke("clear");
-        dict.__setitem__("__name__", new PyString("exceptions"));
-        dict.__setitem__("__doc__", new PyString(__doc__));
-
-        ThreadState ts = Py.getThreadState();
-        if (ts.systemState == null) {
-            ts.systemState = Py.defaultSystemState;
-        }
-        // Push frame
-        PyFrame frame = new PyFrame(null, new PyStringMap());
-        frame.f_back = ts.frame;
-        if (frame.f_builtins == null) {
-            if (frame.f_back != null) {
-                frame.f_builtins = frame.f_back.f_builtins;
-            } else {
-                frame.f_builtins = PySystemState.getDefaultBuiltins();
-            }
-        }
-        ts.frame = frame;
-
+    public static void init(PyObject dict) {
         dict.__setitem__("BaseException", PyBaseException.TYPE);
 
         buildClass(dict, "KeyboardInterrupt", "BaseException", "Program interrupted by user.");
@@ -52,10 +25,10 @@ public class exceptions extends PyObject implements ClassDictInit {
                 "Request to exit from the interpreter.");
 
         buildClass(dict, "Exception", "BaseException",
-                "Common base class for all non-exit exceptions.");
+                "Common base class for all non-exit Exceptions.");
 
         buildClass(dict, "StandardError", "Exception",
-                "Base class for all standard Python exceptions that do not represent\n"
+                "Base class for all standard Python Exceptions that do not represent\n"
                         + "interpreter exiting.");
 
         buildClass(dict, "SyntaxError", "StandardError", SyntaxError(), "Invalid syntax.");
@@ -184,8 +157,6 @@ public class exceptions extends PyObject implements ClassDictInit {
         // Initialize ZipImportError here, where it's safe to; it's
         // needed immediately
         zipimport.initClassExceptions(dict);
-
-        ts.frame = ts.frame.f_back;
     }
 
     public static PyObject ImportError() {
@@ -700,7 +671,7 @@ public class exceptions extends PyObject implements ClassDictInit {
     private static PyObject buildClass(PyObject dict, String classname, String superclass,
                                        PyObject classDict, String doc) {
         classDict.__setitem__("__doc__", Py.newString(doc));
-        PyType type = (PyType)Py.makeClass("exceptions." + classname,
+        PyType type = (PyType)Py.makeClass(classname,
                                            dict.__finditem__(superclass), classDict);
         type.builtin = true;
         dict.__setitem__(classname, type);
@@ -708,7 +679,7 @@ public class exceptions extends PyObject implements ClassDictInit {
     }
 
     public static PyObject bindStaticJavaMethod(String name, String methodName) {
-        return bindStaticJavaMethod(name, exceptions.class, methodName);
+        return bindStaticJavaMethod(name, Exceptions.class, methodName);
     }
 
     public static PyObject bindStaticJavaMethod(String name, Class<?> cls, String methodName) {
