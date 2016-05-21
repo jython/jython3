@@ -1,6 +1,7 @@
 import io
 import types
 import re
+import itertools
 
 def print_doc(out, obj, meth):
     if meth == '__doc__':
@@ -65,6 +66,9 @@ types.FrameType,
 types.TracebackType,
 type(re.compile("f")),
 type(re.compile("f").match("f")),
+type(range(1).__iter__()),
+type(list().__iter__()),
+type(itertools.chain(map(lambda x:x, list()))),
 io.TextIOBase
 ]
 

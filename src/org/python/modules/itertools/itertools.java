@@ -56,18 +56,7 @@ public class itertools implements ClassDictInit {
          * the Exception and return null according to PyIterator practice.
          */
         protected PyObject nextElement(PyObject pyIter) {
-            PyObject element = null;
-            try {
-                element = pyIter.__next__();//next();
-            } catch (PyException pyEx) {
-                if (pyEx.match(Py.StopIteration)) {
-                    // store exception - will be used by PyIterator.next()
-                    stopException = pyEx;
-                } else {
-                    throw pyEx;
-                }
-            }
-            return element;
+            return pyIter.__next__();
         }
     }
 

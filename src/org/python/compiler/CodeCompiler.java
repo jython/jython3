@@ -1108,33 +1108,6 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     }
 
     @Override
-    public Object visitExec(Exec node) throws Exception {
-        setline(node);
-        visit(node.getInternalBody());
-        stackProduce();
-
-        if (node.getInternalGlobals() != null) {
-            visit(node.getInternalGlobals());
-        } else {
-            code.aconst_null();
-        }
-        stackProduce();
-
-        if (node.getInternalLocals() != null) {
-            visit(node.getInternalLocals());
-        } else {
-            code.aconst_null();
-        }
-        stackProduce();
-
-        // do the real work here
-        stackConsume(3);
-        code.invokestatic(p(Py.class), "exec",
-                sig(Void.TYPE, PyObject.class, PyObject.class, PyObject.class));
-        return null;
-    }
-
-    @Override
     public Object visitAssert(Assert node) throws Exception {
         setline(node);
         Label end_of_assert = new Label();
@@ -1296,7 +1269,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         Label break_loop = breakLabels.peek();
         Label start_loop = new Label();
         Label next_loop = new Label();
-
+        Label start = new Label();
+        Label end = new Label();
+        Label handler = new Label();
         setline(node);
 
         // parse the list
@@ -1322,15 +1297,29 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.label(continue_loop);
 
         code.label(next_loop);
+        code.label(start);
         setline(node);
         // get the next element from the list
         code.aload(iter_tmp);
         code.invokevirtual(p(PyObject.class), "__next__", sig(PyObject.class));
 
         code.astore(expr_tmp);
-        code.aload(expr_tmp);
         // if no more elements then fall through
-        code.ifnonnull(start_loop);
+        code.aload(expr_tmp);
+        // this is still necessary before all builtin __next__ methods throw StopIteration
+        code.ifnull(break_loop);
+        code.goto_(start_loop);
+        code.label(handler);
+        int exc = code.getLocal(p(Throwable.class));
+        code.astore(exc);
+        code.aload(exc);
+        code.getstatic(p(Py.class), "StopIteration", ci(PyObject.class));
+        code.invokevirtual(p(PyException.class), "match", sig(Boolean.TYPE, PyObject.class));
+        code.ifne(break_loop);
+        code.aload(exc);
+        code.athrow();
+        code.freeLocal(exc);
+        code.label(end);
 
         finishLoop(savebcf);
 
@@ -1344,6 +1333,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.freeLocal(iter_tmp);
         code.freeLocal(expr_tmp);
 
+        code.trycatch(start, end, handler, p(PyException.class));
         // Probably need to detect "guaranteed exits"
         return null;
     }

@@ -22,7 +22,7 @@ public class PyFastSequenceIter extends PyIterator {
         this.seq = seq;
     }
 
-    @ExposedMethod(doc = "x.__next__() -> the next value, or raise StopIteration")
+    @ExposedMethod(doc = BuiltinDocs.list_iterator___next___doc)
     final PyObject fastsequenceiterator___next__() {
         return super.next();
     }
@@ -33,16 +33,7 @@ public class PyFastSequenceIter extends PyIterator {
             return null;
         }
 
-        PyObject result;
-        try {
-            result = seq.seq___finditem__(index++);
-        } catch (PyException pye) {
-            if (pye.match(Py.StopIteration)) {
-                seq = null;
-                return null;
-            }
-            throw pye;
-        }
+        PyObject result = seq.seq___finditem__(index++);
 
         if (result == null) {
             seq = null;
