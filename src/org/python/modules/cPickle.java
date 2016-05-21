@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import java.util.Map;
 
 import org.python.core.ClassDictInit;
+import org.python.core.Exceptions;
 import org.python.core.Py;
 import org.python.core.PyBoolean;
 import org.python.core.PyBuiltinCallable;
@@ -41,7 +42,6 @@ import org.python.core.PyType;
 import org.python.core.PyUnicode;
 import org.python.core.__builtin__;
 import org.python.core.codecs;
-import org.python.core.exceptions;
 import org.python.core.imp;
 import org.python.util.Generic;
 
@@ -2253,6 +2253,6 @@ public class cPickle implements ClassDictInit {
     }
 
     private static PyObject getJavaFunc(String name, String methodName) {
-        return exceptions.bindStaticJavaMethod(name, cPickle.class, methodName);
+        return Exceptions.bindStaticJavaMethod(name, cPickle.class, methodName);
     }
 }

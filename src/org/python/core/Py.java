@@ -180,7 +180,7 @@ public final class Py {
         return new PyException(Py.EnvironmentError, message);
     }
 
-    /* The standard Python exceptions */
+    /* The standard Python Exceptions */
     public static PyObject OverflowError;
 
     public static PyException OverflowError(String message) {
@@ -843,7 +843,7 @@ public final class Py {
     }
 
     static void initClassExceptions(PyObject dict) {
-        PyObject exc = imp.load("exceptions");
+        PyObject exc = imp.load("__builtin__");
 
         BaseException = initExc("BaseException", exc, dict);
         Exception = initExc("Exception", exc, dict);
@@ -1119,7 +1119,7 @@ public final class Py {
         Py.getSystemState().callExitFunc();
     }
     //XXX: this needs review to make sure we are cutting out all of the Java
-    //     exceptions.
+    //     Exceptions.
     private static String getStackTrace(Throwable javaError) {
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         javaError.printStackTrace(new PrintStream(buf));
@@ -1328,7 +1328,7 @@ public final class Py {
                 buf.append("<unknown>");
             } else {
                 String moduleStr = moduleName.toString();
-                if (!moduleStr.equals("exceptions")) {
+                if (!moduleStr.equals("Exceptions")) {
                     buf.append(moduleStr);
                     buf.append(".");
                 }
@@ -1629,7 +1629,7 @@ public final class Py {
                                     + "    This attribute is set by the system property python.home, although it can\n"
                                     + "    be often automatically determined by the location of the Jython jar file\n\n"
                                     + "You can use the -S option or python.import.site=false to not import the site module",
-                            pye.value.__getattr__("args").__getitem__(0),
+                            ((PyBaseException) pye.value).args.__getitem__(0),
                             sys.path,
                             sys.prefix), "site");
                 } else {

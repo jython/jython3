@@ -36,7 +36,7 @@ public class _io implements ClassDictInit {
 
         // Define UnsupportedOperation exception by constructing the type
 
-        PyObject exceptions = imp.load("exceptions");
+        PyObject exceptions = imp.load("__builtin__");
         PyObject ValueError = exceptions.__getattr__("ValueError");
         PyObject IOError = exceptions.__getattr__("IOError");
         // Equivalent to class UnsupportedOperation(ValueError, IOError) : pass

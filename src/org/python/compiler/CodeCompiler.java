@@ -1419,7 +1419,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             code.goto_(finallyEnd);
         }
 
-        // Handle any exceptions that get thrown in suite
+        // Handle any Exceptions that get thrown in suite
         code.label(handlerStart);
         code.astore(excLocal);
 
@@ -1466,7 +1466,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
     /**
      * Inline the finally handling code for levels down to the levelth parent (0 means all). This
-     * takes care to avoid having more nested finallys catch exceptions throw by the parent finally
+     * takes care to avoid having more nested finallys catch Exceptions throw by the parent finally
      * code. This also pops off all the handlers above level temporarily.
      */
     private void doFinallysDownTo(int level) throws Exception {

@@ -361,6 +361,10 @@ public class __builtin__ {
         dict.__setitem__("bin", new BinFunction());
     }
 
+    public static void fillWithBuiltinExceptions(PyObject dict) {
+        Exceptions.init(dict);
+    }
+
     public static PyObject abs(PyObject o) {
         return o.__abs__();
     }

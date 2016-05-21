@@ -1827,9 +1827,9 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
         }
         int lastDot = name.lastIndexOf('.');
         if (lastDot != -1) {
-            return Py.newString(name.substring(0, lastDot));
+            return Py.newUnicode(name.substring(0, lastDot));
         }
-        return Py.newString("__builtin__");
+        return Py.newUnicode("builtins");
     }
 
     @ExposedDelete(name = "__module__")

@@ -1007,11 +1007,11 @@ public class IndexerTest extends TestBase {
     public void testExceptionsModule() throws Exception {
         String src = index(
             "test.py",
-            "import exceptions",
-            "raise exceptions.NotImplementedError");
-        assertModuleBinding("exceptions");
-        assertClassBinding("exceptions.NotImplementedError");
-        assertReference("exceptions.NotImplementedError", src.indexOf("Not"));
+            "import Exceptions",
+            "raise Exceptions.NotImplementedError");
+        assertModuleBinding("Exceptions");
+        assertClassBinding("Exceptions.NotImplementedError");
+        assertReference("Exceptions.NotImplementedError", src.indexOf("Not"));
     }
 
     public void testDupFunctionDecl() throws Exception {

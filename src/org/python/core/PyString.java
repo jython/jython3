@@ -920,7 +920,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
         if ((long)s * count > Integer.MAX_VALUE) {
             // Since Strings store their data in an array, we can't make one
             // longer than Integer.MAX_VALUE. Without this check we get
-            // NegativeArraySize exceptions when we create the array on the
+            // NegativeArraySize Exceptions when we create the array on the
             // line with a wrapped int.
             throw Py.OverflowError("max str len is " + Integer.MAX_VALUE);
         }

@@ -94,7 +94,7 @@ public class Version {
             }
         }
         if (!loaded) {
-            // fail with a meaningful exception (cannot use Py exceptions here)
+            // fail with a meaningful exception (cannot use Py Exceptions here)
             throw new RuntimeException("unable to load ".concat(versionProperties));
         }
     }

@@ -8,10 +8,10 @@ import org.python.expose.ExposedSet;
 import org.python.expose.ExposedType;
 
 /**
- * The base class for all standard Python exceptions.
+ * The base class for all standard Python Exceptions.
  *
  */
-@ExposedType(name = "exceptions.BaseException", doc = BuiltinDocs.BaseException_doc)
+@ExposedType(name = "BaseException", doc = BuiltinDocs.BaseException_doc)
 public class PyBaseException extends PyObject implements Traverseproc {
 
     public static final PyType TYPE = PyType.fromClass(PyBaseException.class);

@@ -318,6 +318,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
         static PyObject fillin() {
             PyObject temp = new PyStringMap();
             __builtin__.fillWithBuiltins(temp);
+            __builtin__.fillWithBuiltinExceptions(temp);
             return temp;
         }
     }
