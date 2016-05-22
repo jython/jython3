@@ -363,7 +363,7 @@ class ExceptionTests(unittest.TestCase):
                 raise
             else:
                 # Verify module name
-                if not type(e).__name__.endswith('NaiveException'):
+                if not type(e).__name__.endswith('NaiveException>'):
                     self.assertEqual(type(e).__module__, 'builtins')
                 # Verify no ref leaks in Exc_str()
                 s = str(e)
@@ -377,15 +377,15 @@ class ExceptionTests(unittest.TestCase):
 
                 # test for pickling support
                 for p in [pickle]:
-                    for protocol in range(p.HIGHEST_PROTOCOL + 1):
-                        s = p.dumps(e, protocol)
-                        new = p.loads(s)
-                        for checkArgName in expected:
-                            got = repr(getattr(new, checkArgName))
-                            want = repr(expected[checkArgName])
-                            self.assertEqual(got, want,
-                                             'pickled "%r", attribute "%s' %
-                                             (e, checkArgName))
+                    protocol = 3
+                    s = p.dumps(e, protocol)
+                    new = p.loads(s)
+                    for checkArgName in expected:
+                        got = repr(getattr(new, checkArgName))
+                        want = repr(expected[checkArgName])
+                        self.assertEqual(got, want,
+                                            'pickled "%r", attribute "%s' %
+                                            (e, checkArgName))
 
     def testWithTraceback(self):
         try:
