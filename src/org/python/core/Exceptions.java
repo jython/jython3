@@ -293,7 +293,7 @@ public class Exceptions {
 
     public static PyObject EnvironmentError() {
         PyObject dict = new PyStringMap();
-        defineSlots(dict, "errno", "strerror", "filename");
+        defineSlots(dict, "errno", "strerror", "filename", "filename2");
         dict.__setitem__("__init__", bindStaticJavaMethod("__init__", "EnvironmentError__init__"));
         dict.__setitem__("__str__", bindStaticJavaMethod("__str__", "EnvironmentError__str__"));
         dict.__setitem__("__reduce__", bindStaticJavaMethod("__reduce__", "EnvironmentError__reduce__"));
@@ -304,17 +304,20 @@ public class Exceptions {
         PyBaseException.TYPE.invoke("__init__", self, args, kwargs);
         initSlots(self);
 
-        if (args.length <= 1 || args.length > 3) {
+        if (args.length <= 1) {
             return;
         }
         PyObject errno = args[0];
         PyObject strerror = args[1];
         self.__setattr__("errno", errno);
         self.__setattr__("strerror", strerror);
-        if (args.length == 3) {
+        if (args.length > 2) {
             self.__setattr__("filename", args[2]);
-            self.__setattr__("args", new PyTuple(errno, strerror));
         }
+        if (args.length > 4) {
+            self.__setattr__("filename2", args[4]);
+        }
+        self.__setattr__("args", new PyTuple(errno, strerror));
     }
 
     public static PyObject EnvironmentError__str__(PyObject self, PyObject[] args,
@@ -338,13 +341,14 @@ public class Exceptions {
         PyBaseException selfBase = (PyBaseException)self;
         PyObject reduceArgs = selfBase.args;
         PyObject filename = self.__findattr__("filename");
+        PyObject filename2 = self.__findattr__("filename2");
 
         // self->args is only the first two real arguments if there was a file name given
         // to EnvironmentError
         if (selfBase.args.__len__() == 2 && filename != null) {
             reduceArgs = new PyTuple(selfBase.args.__finditem__(0),
                                      selfBase.args.__finditem__(1),
-                                     filename);
+                                     filename, Py.None, filename2);
         }
 
         if (selfBase.__dict__ != null) {
