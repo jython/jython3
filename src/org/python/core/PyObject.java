@@ -4019,7 +4019,7 @@ public class PyObject implements Serializable {
         if (proto >= 2) {
             res = reduce_2();
         } else {
-            PyObject copyreg = __builtin__.__import__("copy_reg", null, null, Py.EmptyTuple);
+            PyObject copyreg = __builtin__.__import__("copyreg", null, null, Py.EmptyTuple);
             PyObject copyreg_reduce = copyreg.__findattr__("_reduce_ex");
             res = copyreg_reduce.__call__(this, new PyInteger(proto));
         }
@@ -4078,11 +4078,11 @@ public class PyObject implements Serializable {
             return slotnames;
         }
 
-        PyObject copyreg = __builtin__.__import__("copy_reg", null, null, Py.EmptyTuple);
+        PyObject copyreg = __builtin__.__import__("copyreg", null, null, Py.EmptyTuple);
         PyObject copyreg_slotnames = copyreg.__findattr__("_slotnames");
         slotnames = copyreg_slotnames.__call__(cls);
         if (null != slotnames && Py.None != slotnames && (!(slotnames instanceof PyList))) {
-            throw Py.TypeError("copy_reg._slotnames didn't return a list or None");
+            throw Py.TypeError("copyreg._slotnames didn't return a list or None");
         }
 
         return slotnames;
@@ -4157,7 +4157,7 @@ public class PyObject implements Serializable {
             dictitems = invoke("iteritems");
         }
 
-        PyObject copyreg = __builtin__.__import__("copy_reg", null, null, Py.EmptyTuple);
+        PyObject copyreg = __builtin__.__import__("copyreg", null, null, Py.EmptyTuple);
         PyObject newobj = copyreg.__findattr__("__newobj__");
 
         n = ((PyTuple)args).size();

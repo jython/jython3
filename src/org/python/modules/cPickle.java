@@ -374,7 +374,7 @@ public class cPickle implements ClassDictInit {
     public static final int HIGHEST_PROTOCOL = 2;
 
     public static String[] __depends__ = new String[] {
-        "copy_reg",
+        "copyreg",
     };
 
     public static PyObject PickleError;
@@ -494,7 +494,7 @@ public class cPickle implements ClassDictInit {
         // sys.modules.
         imp.importName("__builtin__", true);
 
-        PyModule copyreg = (PyModule)importModule("copy_reg");
+        PyModule copyreg = (PyModule)importModule("copyreg");
 
         dispatch_table = (PyDictionary)copyreg.__getattr__("dispatch_table");
         extension_registry = (PyDictionary)copyreg.__getattr__("_extension_registry");
