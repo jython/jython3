@@ -12,6 +12,9 @@ public class Deriveds {
 
     public static void dispatch__init__(PyObject self, PyObject[] args, String[] keywords) {
         PyType type = self.getType();
+        if (Py.isSubClass(type, PyBaseException.TYPE)) {
+            PyBaseException.TYPE.invoke("__init__", self, args, keywords);
+        }
         PyObject init = type.lookup("__init__");
         if (init == null) {
             return;
