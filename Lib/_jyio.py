@@ -317,6 +317,13 @@ class BytesIO(_BufferedIOBase):
                 fmt = "third item of state should be a dict, got %s"
                 raise TypeError( fmt % type(d) )
 
+    def getbuffer(self):
+        """Return a readable and writable view of the buffer.
+        """
+        if self.closed:
+            raise ValueError("getbuffer on closed file")
+        return memoryview(self._buffer)
+
     def getvalue(self):
         """Return the bytes value (contents) of the buffer
         """
@@ -1555,10 +1562,10 @@ class StringIO(TextIOWrapper):
         if isinstance(newline, str) :
             newline = newline.encode("utf-8")
 
-        super(StringIO, self).__init__(BytesIO(),
-                                       encoding="utf-8",
-                                       errors="strict",
-                                       newline=newline)
+        super().__init__(BytesIO(),
+                         encoding="utf-8",
+                         errors="strict",
+                         newline=newline)
         # Issue #5645: make universal newlines semantics the same as in the
         # C version, even under Windows.
         if newline is None:
