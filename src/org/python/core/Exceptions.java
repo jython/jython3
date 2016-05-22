@@ -410,11 +410,11 @@ public class Exceptions {
                                      new String[] {"encoding", "object", "start", "end",
                                                    "reason" },
                                      5);
-        self.__setattr__("encoding", ap.getPyObjectByType(0, PyString.TYPE));
+        self.__setattr__("encoding", ap.getPyObjectByType(0, PyUnicode.TYPE));
         self.__setattr__("object", ap.getPyObjectByType(1, objectType));
-        self.__setattr__("start", ap.getPyObjectByType(2, PyInteger.TYPE));
-        self.__setattr__("end", ap.getPyObjectByType(3, PyInteger.TYPE));
-        self.__setattr__("reason", ap.getPyObjectByType(4, PyString.TYPE));
+        self.__setattr__("start", ap.getPyObjectByType(2, PyLong.TYPE));
+        self.__setattr__("end", ap.getPyObjectByType(3, PyLong.TYPE));
+        self.__setattr__("reason", ap.getPyObjectByType(4, PyUnicode.TYPE));
     }
 
     public static PyObject UnicodeDecodeError() {
@@ -428,10 +428,23 @@ public class Exceptions {
     public static void UnicodeDecodeError__init__(PyObject self, PyObject[] args,
                                                   String[] kwargs) {
         PyBaseException.TYPE.invoke("__init__", self, args, kwargs);
-        UnicodeError__init__(self, args, kwargs, PyString.TYPE);
+        UnicodeError__init__(self, args, kwargs, PyObject.TYPE);
+        PyObject object = self.__getattr__("object");
+        if (!Py.isInstance(object, PyString.TYPE)) {
+            if (!(object instanceof BufferProtocol)) {
+                throw Py.TypeError(String.format("argument 2 must be a buffer, not %s",
+                        object.getType().fastGetName()));
+            }
+            PyBuffer buf = ((BufferProtocol) object).getBuffer(PyBUF.FULL_RO);
+            char[] chars = new char[buf.getLen()];
+            for (int i = 0; i < chars.length; i++) {
+                chars[i] = (char) buf.intAt(i);
+            }
+            self.__setattr__("object", new PyString(new String(chars)));
+        }
     }
 
-    public static PyString UnicodeDecodeError__str__(PyObject self, PyObject[] args,
+    public static PyUnicode UnicodeDecodeError__str__(PyObject self, PyObject[] args,
                                                      String[] kwargs) {
         int start = self.__getattr__("start").asInt();
         int end = self.__getattr__("end").asInt();
@@ -450,7 +463,7 @@ public class Exceptions {
             result = String.format("'%.400s' codec can't decode bytes in position %d-%d: %.400s",
                                    encoding, start, end - 1, reason);
         }
-        return Py.newString(result);
+        return Py.newUnicode(result);
     }
 
     public static PyObject UnicodeEncodeError() {
@@ -466,7 +479,7 @@ public class Exceptions {
         UnicodeError__init__(self, args, kwargs, PyUnicode.TYPE);
     }
 
-    public static PyString UnicodeEncodeError__str__(PyObject self, PyObject[] args,
+    public static PyUnicode UnicodeEncodeError__str__(PyObject self, PyObject[] args,
                                                      String[] kwargs) {
         int start = self.__getattr__("start").asInt();
         int end = self.__getattr__("end").asInt();
@@ -493,7 +506,7 @@ public class Exceptions {
             result = String.format("'%.400s' codec can't encode characters in position %d-%d: "
                                    + "%.400s", encoding, start, end - 1, reason);
         }
-        return Py.newString(result);
+        return Py.newUnicode(result);
     }
 
     public static PyObject UnicodeTranslateError() {
@@ -512,12 +525,12 @@ public class Exceptions {
                                      new String[] {"object", "start", "end", "reason"},
                                      4);
         self.__setattr__("object", ap.getPyObjectByType(0, PyUnicode.TYPE));
-        self.__setattr__("start", ap.getPyObjectByType(1, PyInteger.TYPE));
-        self.__setattr__("end", ap.getPyObjectByType(2, PyInteger.TYPE));
-        self.__setattr__("reason", ap.getPyObjectByType(3, PyString.TYPE));
+        self.__setattr__("start", ap.getPyObjectByType(1, PyLong.TYPE));
+        self.__setattr__("end", ap.getPyObjectByType(2, PyLong.TYPE));
+        self.__setattr__("reason", ap.getPyObjectByType(3, PyUnicode.TYPE));
     }
 
-    public static PyString UnicodeTranslateError__str__(PyObject self, PyObject[] args,
+    public static PyUnicode UnicodeTranslateError__str__(PyObject self, PyObject[] args,
                                                         String[] kwargs) {
         int start = self.__getattr__("start").asInt();
         int end = self.__getattr__("end").asInt();
@@ -543,7 +556,7 @@ public class Exceptions {
             result = String.format("can't translate characters in position %d-%d: %.400s",
                                    start, end - 1, reason);
         }
-        return Py.newString(result);
+        return Py.newUnicode(result);
     }
 
     /**
@@ -605,7 +618,7 @@ public class Exceptions {
      */
     public static PyString getString(PyObject attr, String name) {
         if (!Py.isInstance(attr, PyString.TYPE)) {
-            throw Py.TypeError(String.format("%.200s attribute must be str", name));
+            throw Py.TypeError(String.format("%.200s attribute must be bytes", name));
         }
         return (PyString)attr;
     }
@@ -619,7 +632,7 @@ public class Exceptions {
      */
     public static PyUnicode getUnicode(PyObject attr, String name) {
         if (!(attr instanceof PyUnicode)) {
-            throw Py.TypeError(String.format("%.200s attribute must be unicode", name));
+            throw Py.TypeError(String.format("%.200s attribute must be str", name));
         }
         return (PyUnicode)attr;
     }
