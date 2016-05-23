@@ -48,6 +48,8 @@ public class Exceptions {
 
         buildClass(dict, "RuntimeError", "StandardError", "Unspecified run-time error.");
 
+        buildClass(dict, "RecursionError", "RuntimeError", "Recursion limit exceeded.");
+
         buildClass(dict, "NotImplementedError", "RuntimeError",
                 "Method or function hasn't been implemented yet.");
 

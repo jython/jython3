@@ -30,6 +30,7 @@ public class PyBaseException extends PyObject implements Traverseproc {
     public PyObject __cause__;
 
     @ExposedGet(doc = BuiltinDocs.BaseException___suppress_context___doc)
+    @ExposedSet
     public PyObject __suppress_context__;
 
     @ExposedGet(doc = BuiltinDocs.BaseException___context___doc)
@@ -141,7 +142,7 @@ public class PyBaseException extends PyObject implements Traverseproc {
     public PyObject fastGetDict() {
         return __dict__;
     }
-    
+
     @Override
     @ExposedGet(name = "__dict__", doc = BuiltinDocs.BaseException___dict___doc)
     public PyObject getDict() {
@@ -158,10 +159,38 @@ public class PyBaseException extends PyObject implements Traverseproc {
         __dict__ = val;
     }
 
+    @ExposedSet(name = "__traceback__")
+    public void setTraceback(PyObject val) {
+        if (val != Py.None && !Py.isInstance(val, PyTraceback.TYPE)) {
+            throw Py.TypeError("__traceback__ must be a traceback");
+        }
+        __traceback__ = val;
+    }
+
+    @ExposedSet(name = "__context__")
+    public void setContext(PyObject val) {
+        ensureException(val);
+        __context__ = val;
+        __suppress_context__ = Py.True;
+    }
+
+    @ExposedSet(name = "__cause__")
+    public void setCause(PyObject val) {
+        ensureException(val);
+        __cause__ = val;
+        __suppress_context__ = Py.True;
+    }
+
     private void ensureDict() {
         // XXX: __dict__ should really be volatile
         if (__dict__ == null) {
             __dict__ = new PyStringMap();
+        }
+    }
+
+    private void ensureException(PyObject val) {
+        if (val != Py.None && !Py.isInstance(val, PyBaseException.TYPE)) {
+            throw Py.TypeError("exception cause must be None or derive from BaseException");
         }
     }
 

@@ -191,6 +191,12 @@ public final class Py {
     public static PyException RuntimeError(String message) {
         return new PyException(Py.RuntimeError, message);
     }
+
+    public static PyObject RecursionError;
+    public static PyException RecursionError(String message) {
+        return new PyException(Py.RecursionError, message);
+    }
+
     public static PyObject KeyboardInterrupt;
     public static PyException KeyboardInterrupt(String message) {
         return new PyException(Py.KeyboardInterrupt, message);
@@ -559,7 +565,7 @@ public final class Py {
         } else if (t instanceof InvocationTargetException) {
             return JavaError(((InvocationTargetException) t).getTargetException());
         } else if (t instanceof StackOverflowError) {
-            return Py.RuntimeError("maximum recursion depth exceeded (Java StackOverflowError)");
+            return Py.RecursionError("maximum recursion depth exceeded (Java StackOverflowError)");
         } else if (t instanceof OutOfMemoryError) {
             memory_error((OutOfMemoryError) t);
         } else if (t instanceof UserInterruptException) {
@@ -860,6 +866,7 @@ public final class Py {
         ConnectionResetError = initExc("ConnectionResetError", exc, dict);
         EOFError = initExc("EOFError", exc, dict);
         RuntimeError = initExc("RuntimeError", exc, dict);
+        RecursionError = initExc("RecursionError", exc, dict);
         NotImplementedError = initExc("NotImplementedError", exc, dict);
         NameError = initExc("NameError", exc, dict);
         UnboundLocalError = initExc("UnboundLocalError", exc, dict);
