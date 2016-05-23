@@ -37,12 +37,9 @@ public class Exceptions {
 
         buildClass(dict, "TabError", "IndentationError", "Improper mixture of spaces and tabs.");
 
-        buildClass(dict, "EnvironmentError", "StandardError", EnvironmentError(),
+        buildClass(dict, "OSError", "Exception", OSError(),
                 "Base class for I/O related errors.");
 
-        buildClass(dict, "IOError", "EnvironmentError", "I/O operation failed.");
-
-        buildClass(dict, "OSError", "EnvironmentError", "OS system call failed.");
         buildClass(dict, "ConnectionError", "OSError", "Connection Error");
         buildClass(dict, "ConnectionResetError", "ConnectionError", "Connection Reset");
 
@@ -293,16 +290,16 @@ public class Exceptions {
         return Py.newString(result);
     }
 
-    public static PyObject EnvironmentError() {
+    public static PyObject OSError() {
         PyObject dict = new PyStringMap();
         defineSlots(dict, "errno", "strerror", "filename", "filename2");
-        dict.__setitem__("__init__", bindStaticJavaMethod("__init__", "EnvironmentError__init__"));
-        dict.__setitem__("__str__", bindStaticJavaMethod("__str__", "EnvironmentError__str__"));
-        dict.__setitem__("__reduce__", bindStaticJavaMethod("__reduce__", "EnvironmentError__reduce__"));
+        dict.__setitem__("__init__", bindStaticJavaMethod("__init__", "OSError__init__"));
+        dict.__setitem__("__str__", bindStaticJavaMethod("__str__", "OSError__str__"));
+        dict.__setitem__("__reduce__", bindStaticJavaMethod("__reduce__", "OSError__reduce__"));
         return dict;
     }
 
-    public static void EnvironmentError__init__(PyObject self, PyObject[] args, String[] kwargs) {
+    public static void OSError__init__(PyObject self, PyObject[] args, String[] kwargs) {
         PyBaseException.TYPE.invoke("__init__", self, args, kwargs);
         initSlots(self);
 
@@ -322,7 +319,7 @@ public class Exceptions {
         self.__setattr__("args", new PyTuple(errno, strerror));
     }
 
-    public static PyObject EnvironmentError__str__(PyObject self, PyObject[] args,
+    public static PyObject OSError__str__(PyObject self, PyObject[] args,
                                                    String[] kwargs) {
         PyObject errno = self.__findattr__("errno");
         PyObject strerror = self.__findattr__("strerror");
@@ -338,7 +335,7 @@ public class Exceptions {
         return Py.newString(result);
     }
 
-    public static PyObject EnvironmentError__reduce__(PyObject self, PyObject[] args,
+    public static PyObject OSError__reduce__(PyObject self, PyObject[] args,
                                                       String[] kwargs) {
         PyBaseException selfBase = (PyBaseException)self;
         PyObject reduceArgs = selfBase.args;
@@ -346,7 +343,7 @@ public class Exceptions {
         PyObject filename2 = self.__findattr__("filename2");
 
         // self->args is only the first two real arguments if there was a file name given
-        // to EnvironmentError
+        // to OSError
         if (selfBase.args.__len__() == 2 && filename != null) {
             reduceArgs = new PyTuple(selfBase.args.__finditem__(0),
                                      selfBase.args.__finditem__(1),

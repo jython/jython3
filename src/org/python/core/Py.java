@@ -840,11 +840,15 @@ public final class Py {
             throw Py.JavaError(e);
         }
     }
-
     private static PyObject initExc(String name, PyObject exceptions,
             PyObject dict) {
+        return initExc(name, name, exceptions, dict);
+    }
+
+    private static PyObject initExc(String alias, String name, PyObject exceptions,
+            PyObject dict) {
         PyObject tmp = exceptions.__getattr__(name);
-        dict.__setitem__(name, tmp);
+        dict.__setitem__(alias, tmp);
         return tmp;
     }
 
@@ -859,8 +863,8 @@ public final class Py {
         StandardError = initExc("StandardError", exc, dict);
         KeyboardInterrupt = initExc("KeyboardInterrupt", exc, dict);
         ImportError = initExc("ImportError", exc, dict);
-        EnvironmentError = initExc("EnvironmentError", exc, dict);
-        IOError = initExc("IOError", exc, dict);
+        EnvironmentError = initExc("EnvironmentError", "OSError", exc, dict);
+        IOError = initExc("IOError", "OSError", exc, dict);
         OSError = initExc("OSError", exc, dict);
         ConnectionError = initExc("ConnectionError", exc, dict);
         ConnectionResetError = initExc("ConnectionResetError", exc, dict);

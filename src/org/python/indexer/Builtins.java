@@ -101,7 +101,7 @@ public class Builtins {
     String[] builtin_exception_types = {
         "ArithmeticError", "AssertionError", "AttributeError", "BaseException",
         "BytesWarning", "Exception", "DeprecationWarning", "EOFError",
-        "EnvironmentError", "FloatingPointError", "FutureWarning",
+        "OSError", "FloatingPointError", "FutureWarning",
         "GeneratorExit", "IOError", "ImportError", "ImportWarning",
         "IndentationError", "IndexError", "KeyError", "KeyboardInterrupt",
         "LookupError", "MemoryError", "NameError", "NotImplemented",
