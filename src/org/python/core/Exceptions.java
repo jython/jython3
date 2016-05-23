@@ -40,8 +40,22 @@ public class Exceptions {
         buildClass(dict, "OSError", "Exception", OSError(),
                 "Base class for I/O related errors.");
 
+        buildClass(dict, "FileExistsError", "OSError", "File already exists.");
+        buildClass(dict, "FileNotFoundError", "OSError", "File not found.");
+        buildClass(dict, "IsADirectoryError", "OSError", "Operation doesn't work on directories");
+        buildClass(dict, "NotADirectoryError", "OSError", "Operation only works on directories");
+        buildClass(dict, "PermissionError", "OSError", "Not enough permissions.");
+        buildClass(dict, "BlockingIOError", "OSError", "I/O operation would block.");
+        buildClass(dict, "InterruptedError", "OSError", "Interrupted by signal.");
+        buildClass(dict, "ChildProcessError", "OSError", "Child process error.");
+        buildClass(dict, "ProcessLookupError", "OSError", "Process not found.");
+        buildClass(dict, "TimeoutError", "OSError", "Timeout expired.");
+
         buildClass(dict, "ConnectionError", "OSError", "Connection Error");
-        buildClass(dict, "ConnectionResetError", "ConnectionError", "Connection Reset");
+        buildClass(dict, "BrokenPipeError", "ConnectionError", "Broken pipe.");
+        buildClass(dict, "ConnectionResetError", "ConnectionError", "Connection reset");
+        buildClass(dict, "ConnectionAbortedError", "ConnectionError", "Connection aborted.");
+        buildClass(dict, "ConnectionRefusedError", "ConnectionError", "Connection refused.");
 
         buildClass(dict, "RuntimeError", "StandardError", "Unspecified run-time error.");
 
@@ -70,7 +84,7 @@ public class Exceptions {
         buildClass(dict, "ValueError", "StandardError",
                 "Inappropriate argument value (of correct type).");
 
-        buildClass(dict, "UnicodeError", "ValueError", "Unicode related error.");
+        buildClass(dict, "UnicodeError", "ValueError", UnicodeError(), "Unicode related error.");
 
         buildClass(dict, "UnicodeEncodeError", "UnicodeError", UnicodeEncodeError(),
                 "Unicode encoding error.");
@@ -113,7 +127,9 @@ public class Exceptions {
         buildClass(dict, "BufferError", "StandardError", "Buffer error.");
 
         buildClass(dict, "StopIteration", "Exception", StopIteration(),
-                "Signal the end from iterator.next().");
+                "Signal the end from iterator.__next__().");
+        buildClass(dict, "StopAsyncIteration", "Exception", StopIteration(),
+                "Signal the end from iterator.__anext__().");
 
         buildClass(dict, "GeneratorExit", "BaseException", "Request that a generator exit.");
 
@@ -167,19 +183,13 @@ public class Exceptions {
     }
 
     public static void ImportError__init__(PyObject self, PyObject[] args, String[] kwargs) {
-        PyBaseException.TYPE.invoke("__init__", self, args, kwargs);
+        PyBaseException.TYPE.invoke("__init__", self, args, Py.NoKeywords);
+        ArgParser ap = new ArgParser("__init__", args, kwargs,
+                new String[] {"msg", "name", "path"});
         initSlots(self);
-        if (args.length > kwargs.length) {
-            self.__setattr__("msg", args[0]);
-        }
-        if (args.length > 1) {
-            self.__setattr__("name", args[1]);
-        }
-        int kwargzero = args.length - kwargs.length;
-        for (int i = 0; i < kwargs.length; i++) {
-            String key = kwargs[i];
-            self.__setattr__(key, args[kwargzero + i]);
-        }
+        self.__setattr__("msg", ap.getPyObject(0, Py.None));
+        self.__setattr__("name", ap.getPyObject(1, Py.None));
+        self.__setattr__("path", ap.getPyObject(2, Py.None));
     }
 
     public static PyString ImportError__str__(PyObject self, PyObject[] arg, String[] kwargs) {
@@ -499,7 +509,7 @@ public class Exceptions {
             } else {
                 badcharStr = String.format("U%08x", badchar);
             }
-            result = String.format("'%.400s' codec can't encode character u'\\%s' in position %d: "
+            result = String.format("'%.400s' codec can't encode character '\\%s' in position %d: "
                                    + "%.400s", encoding, badcharStr, start, reason);
         } else {
             result = String.format("'%.400s' codec can't encode characters in position %d-%d: "
@@ -549,7 +559,7 @@ public class Exceptions {
             } else {
                 badCharStr = String.format("U%08x", badchar);
             }
-            result = String.format("can't translate character u'\\%s' in position %d: %.400s",
+            result = String.format("can't translate character '\\%s' in position %d: %.400s",
                                    badCharStr, start, reason);
         } else {
             result = String.format("can't translate characters in position %d-%d: %.400s",
