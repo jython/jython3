@@ -60,6 +60,46 @@ class BootstrapTypesSingleton {
 }
 
 public final class Py {
+    public static final PyObject[] osErrorMapping = new PyObject[Errno.__UNKNOWN_CONSTANT__.intValue()];
+
+    /**
+     *  +-- BlockingIOError        EAGAIN, EALREADY, EWOULDBLOCK, EINPROGRESS
+        +-- ChildProcessError                                          ECHILD
+        +-- ConnectionError
+            +-- BrokenPipeError                              EPIPE, ESHUTDOWN
+            +-- ConnectionAbortedError                           ECONNABORTED
+            +-- ConnectionRefusedError                           ECONNREFUSED
+            +-- ConnectionResetError                               ECONNRESET
+        +-- FileExistsError                                            EEXIST
+        +-- FileNotFoundError                                          ENOENT
+        +-- InterruptedError                                            EINTR
+        +-- IsADirectoryError                                          EISDIR
+        +-- NotADirectoryError                                        ENOTDIR
+        +-- PermissionError                                     EACCES, EPERM
+        +-- ProcessLookupError                                          ESRCH
+        +-- TimeoutError                                            ETIMEDOUT
+     */
+    static {
+        osErrorMapping[Errno.EEXIST.intValue()] = Py.FileExistsError;
+        for (Constant errno : new Constant[]{Errno.EAGAIN, Errno.EALREADY, Errno.EWOULDBLOCK, Errno.EINPROGRESS}) {
+            osErrorMapping[errno.intValue()] = Py.BlockingIOError;
+        }
+        osErrorMapping[Errno.ECHILD.intValue()] = Py.ChildProcessError;
+        osErrorMapping[Errno.EPIPE.intValue()] = Py.BrokenPipeError;
+        osErrorMapping[Errno.ESHUTDOWN.intValue()] = Py.BrokenPipeError;
+        osErrorMapping[Errno.ECONNABORTED.intValue()] = Py.ConnectionAbortedError;
+        osErrorMapping[Errno.ECONNREFUSED.intValue()] = Py.ConnectionRefusedError;
+        osErrorMapping[Errno.ECONNRESET.intValue()] = Py.ConnectionResetError;
+        osErrorMapping[Errno.EEXIST.intValue()] = Py.FileExistsError;
+        osErrorMapping[Errno.ENOENT.intValue()] = Py.FileNotFoundError;
+        osErrorMapping[Errno.EINTR.intValue()] = Py.InterruptedError;
+        osErrorMapping[Errno.EISDIR.intValue()] = Py.IsADirectoryError;
+        osErrorMapping[Errno.ENOTDIR.intValue()] = Py.NotADirectoryError;
+        osErrorMapping[Errno.EACCES.intValue()] = Py.PermissionError;
+        osErrorMapping[Errno.EPERM.intValue()] = Py.PermissionError;
+        osErrorMapping[Errno.ESRCH.intValue()] = Py.ProcessLookupError;
+        osErrorMapping[Errno.ETIMEDOUT.intValue()] = Py.TimeoutError;
+    }
 
     static class SingletonResolver implements Serializable {
 
@@ -157,8 +197,23 @@ public final class Py {
         // Pass to strerror because jnr-constants currently lacks Errno descriptions on
         // Windows, and strerror falls back to Linux's
         PyObject args = new PyTuple(Py.newInteger(value), PosixModule.strerror(value), filename);
-        return new PyException(Py.OSError, args);
+        PyObject err = osErrorMapping[value];
+        if (err == null) {
+            err = Py.OSError;
+        }
+        return new PyException(err, args);
     }
+
+    public static PyObject BlockingIOError;
+    public static PyObject ChildProcessError;
+    public static PyObject FileExistsError;
+    public static PyObject FileNotFoundError;
+    public static PyObject IsADirectoryError;
+    public static PyObject NotADirectoryError;
+    public static PyObject PermissionError;
+    public static PyObject InterruptedError;
+    public static PyObject ProcessLookupError;
+    public static PyObject TimeoutError;
 
     public static PyObject ConnectionError;
     public static PyException ConnectionError() {
@@ -169,6 +224,9 @@ public final class Py {
     public static PyException ConnectionResetError() {
         return new PyException(Py.ConnectionResetError);
     }
+    public static PyObject BrokenPipeError;
+    public static PyObject ConnectionAbortedError;
+    public static PyObject ConnectionRefusedError;
 
     public static PyObject NotImplementedError;
     public static PyException NotImplementedError(String message) {
@@ -868,6 +926,19 @@ public final class Py {
         OSError = initExc("OSError", exc, dict);
         ConnectionError = initExc("ConnectionError", exc, dict);
         ConnectionResetError = initExc("ConnectionResetError", exc, dict);
+        ConnectionAbortedError = initExc("ConnectionAbortedError", exc, dict);
+        ConnectionRefusedError = initExc("ConnectionRefusedError", exc, dict);
+        BrokenPipeError = initExc("BrokenPipeError", exc, dict);
+        BlockingIOError = initExc("BlockingIOError", exc, dict);
+        FileExistsError = initExc("FileExistsError", exc, dict);
+        FileNotFoundError = initExc("FileNotFoundError", exc, dict);
+        IsADirectoryError = initExc("IsADirectoryError", exc, dict);
+        NotADirectoryError = initExc("NotADirectoryError", exc, dict);
+        PermissionError = initExc("PermissionError", exc, dict);
+        ProcessLookupError = initExc("ProcessLookupError", exc, dict);
+        TimeoutError = initExc("TimeoutError", exc, dict);
+        ChildProcessError = initExc("ChildProcessError", exc, dict);
+
         EOFError = initExc("EOFError", exc, dict);
         RuntimeError = initExc("RuntimeError", exc, dict);
         RecursionError = initExc("RecursionError", exc, dict);

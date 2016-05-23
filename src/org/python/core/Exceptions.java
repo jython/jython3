@@ -1,10 +1,10 @@
 // Copyright 2001 Finn Bock
 package org.python.core;
 
+import org.python.modules.zipimport.zipimport;
+
 import java.io.File;
 import java.lang.reflect.Method;
-
-import org.python.modules.zipimport.zipimport;
 
 /**
  * The builtin Exceptions module. The entire module should be imported from
@@ -310,7 +310,7 @@ public class Exceptions {
     }
 
     public static void OSError__init__(PyObject self, PyObject[] args, String[] kwargs) {
-        PyBaseException.TYPE.invoke("__init__", self, args, kwargs);
+        PyBaseException.TYPE.invoke("__init__", self, args, Py.NoKeywords);
         initSlots(self);
 
         if (args.length <= 1) {
@@ -321,8 +321,14 @@ public class Exceptions {
         self.__setattr__("errno", errno);
         self.__setattr__("strerror", strerror);
         if (args.length > 2) {
-            self.__setattr__("filename", args[2]);
+            PyObject arg = args[2];
+            if (Py.isInstance(arg, PyLong.TYPE)) {
+                self.__setattr__("characters_written", arg);
+            } else {
+                self.__setattr__("filename", args[2]);
+            }
         }
+        // ignore args[3] winerror
         if (args.length > 4) {
             self.__setattr__("filename2", args[4]);
         }
