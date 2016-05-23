@@ -44,7 +44,7 @@ class ThreadStateMapping {
             scopedThreadState.get()[0] = ts;
 //            Thread.currentThread().setContextClassLoader(imp.getSyspathJavaLoader());
         } else if (ts.call_depth > ts.systemState.getrecursionlimit()) {
-            throw Py.RuntimeError("maximum recursion depth exceeded");
+            throw Py.RecursionError("maximum recursion depth exceeded");
         }
         ts.call_depth++;
     }
