@@ -53,6 +53,7 @@ import org.python.antlr.ast.While;
 import org.python.antlr.ast.With;
 import org.python.antlr.ast.Yield;
 import org.python.antlr.ast.alias;
+import org.python.antlr.ast.arg;
 import org.python.antlr.ast.arguments;
 import org.python.antlr.ast.boolopType;
 import org.python.antlr.ast.cmpopType;
@@ -222,6 +223,20 @@ public class AstConverter extends Visitor {
                 NExceptHandler nxh = (NExceptHandler)e.accept(this);
                 if (nxh != null) {
                     out.add(nxh);
+                }
+            }
+        }
+        return out;
+    }
+
+    private List<NNode> convertListArg(List<arg> in) throws Exception {
+         List<NNode> out = new ArrayList<NNode>(in == null ? 0 : in.size());
+        if (in != null) {
+            for (arg e : in) {
+                @SuppressWarnings("unchecked")
+                NNode nx = new NName(e.getInternalArg(), start(e), stop(e));
+                if (nx != null) {
+                    out.add(nx);
                 }
             }
         }
@@ -463,11 +478,11 @@ public class AstConverter extends Visitor {
     public Object visitFunctionDef(FunctionDef n) throws Exception {
         arguments args = n.getInternalArgs();
         NFunctionDef fn = new NFunctionDef((NName)convExpr(n.getInternalNameNode()),
-                                           convertListExpr(args.getInternalArgs()),
+                                           convertListArg(args.getInternalArgs()),
                                            convertListStmt(n.getInternalBody()),
                                            convertListExpr(args.getInternalDefaults()),
-                                           (NName)convExpr(args.getInternalVarargName()),
-                                           (NName)convExpr(args.getInternalKwargName()),
+                                           (NName)convExpr(args.getInternalVararg()),
+                                           (NName)convExpr(args.getInternalKwarg()),
                                            start(n), stop(n));
         fn.setDecoratorList(convertListExpr(n.getInternalDecorator_list()));
         return fn;
@@ -542,11 +557,11 @@ public class AstConverter extends Visitor {
     @Override
     public Object visitLambda(Lambda n) throws Exception {
         arguments args = n.getInternalArgs();
-        return new NLambda(convertListExpr(args.getInternalArgs()),
+        return new NLambda(convertListArg(args.getInternalArgs()),
                            convExpr(n.getInternalBody()),
                            convertListExpr(args.getInternalDefaults()),
-                           (NName)convExpr(args.getInternalVarargName()),
-                           (NName)convExpr(args.getInternalKwargName()),
+                           (NName)convExpr(args.getInternalVararg()),
+                           (NName)convExpr(args.getInternalKwarg()),
                            start(n), stop(n));
     }
 

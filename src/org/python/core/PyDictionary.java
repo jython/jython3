@@ -129,6 +129,10 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
         }
     }
 
+    public static PyDictionary fromKV(String[] keys, PyObject[] values) {
+        return new PyDictionary(keys, values);
+    }
+
     @ExposedMethod(doc = BuiltinDocs.dict___init___doc)
     @ExposedNew
     protected final void dict___init__(PyObject[] args, String[] keywords) {

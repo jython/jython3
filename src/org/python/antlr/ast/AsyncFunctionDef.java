@@ -289,12 +289,17 @@ public static final PyType TYPE = PyType.fromClass(AsyncFunctionDef.class);
     public Name getInternalNameNode() {
         return nameNode;
     }
-    public AsyncFunctionDef(Token token, Name name, arguments args, java.util.List<stmt> body) {
+    private expr returnNode;
+    public expr getInternalReturnNode() {
+        return returnNode;
+    }
+    public AsyncFunctionDef(Token token, Name name, arguments args, java.util.List<stmt> body, expr returnNode) {
         super(token);
         this.name = name.getText();
         this.nameNode = name;
         this.args = args;
         this.body = body;
+        this.returnNode = returnNode;
         if (body == null) {
             this.body = new ArrayList<stmt>();
         }

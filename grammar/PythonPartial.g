@@ -260,9 +260,9 @@ async_funcdef
     : ASYNC funcdef
     ;
 
-//funcdef: 'def' NAME parameters ':' suite
+//funcdef: 'def' NAME parameters ['->' test] ':' suite
 funcdef
-    : DEF NAME parameters COLON suite
+    : DEF NAME parameters (ARROW test)? COLON suite
     ;
 
 //parameters: '(' [typedargslist] ')'
@@ -272,11 +272,6 @@ parameters
       |
       )
       RPAREN
-    ;
-
-//not in CPython's Grammar file
-defparameter
-    : fpdef (ASSIGN test)?
     ;
 
 //typedargslist: (tfpdef ['=' test] (',' tfpdef ['=' test])* [',' [
@@ -296,32 +291,23 @@ typedargslist
 tfpdef
     : NAME (COLON test)? ;
 
-//varargslist: ((fpdef ['=' test] ',')*
-//              ('*' NAME [',' '**' NAME] | '**' NAME) |
-//              fpdef ['=' test] (',' fpdef ['=' test])* [','])
+//varargslist: (vfpdef ['=' test] (',' vfpdef ['=' test])* [',' [
+//        '*' [vfpdef] (',' vfpdef ['=' test])* [',' ['**' vfpdef [',']]]
+//      | '**' vfpdef [',']]]
+//  | '*' [vfpdef] (',' vfpdef ['=' test])* [',' ['**' vfpdef [',']]]
+//  | '**' vfpdef [',']
+//)
 varargslist
-    : defparameter (options {greedy=true;}:COMMA defparameter)*
-      (COMMA
-          (STAR NAME (COMMA DOUBLESTAR NAME)?
-          | DOUBLESTAR NAME
-          )?
-      )?
-    | STAR NAME (COMMA DOUBLESTAR NAME)?
-    | DOUBLESTAR NAME
+    :  (vfpdef (ASSIGN test)? (COMMA vfpdef (ASSIGN test)?)*
+       ( COMMA ( STAR vfpdef? (COMMA vfpdef (ASSIGN test)?)* (COMMA (DOUBLESTAR vfpdef COMMA?)?)?
+               | DOUBLESTAR vfpdef COMMA?)?)?
+       | STAR vfpdef? (COMMA vfpdef (ASSIGN test)?)* (COMMA (DOUBLESTAR vfpdef COMMA?)?)?
+       | DOUBLESTAR vfpdef COMMA?)
     ;
 
-//fpdef: NAME | '(' fplist ')'
-fpdef
-    : NAME
-    | (LPAREN fpdef COMMA) => LPAREN fplist RPAREN
-    | LPAREN fplist RPAREN
-    ;
-
-//fplist: fpdef (',' fpdef)* [',']
-fplist
-    : fpdef
-      (options {greedy=true;}:COMMA fpdef)* (COMMA)?
-    ;
+//vfpdef: NAME ;
+vfpdef
+    : NAME ;
 
 //stmt: simple_stmt | compound_stmt
 stmt
@@ -1025,6 +1011,8 @@ RIGHTSHIFTEQUAL    : '>>=' ;
 DOUBLESTAREQUAL    : '**=' ;
 
 DOUBLESLASHEQUAL    : '//=' ;
+
+ARROW : '->' ;
 
 DOT : '.' ;
 
