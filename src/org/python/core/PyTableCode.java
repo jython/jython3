@@ -69,9 +69,9 @@ public class PyTableCode extends PyBaseCode
     };
 
     public PyObject __dir__() {
-        PyString members[] = new PyString[__members__.length];
+        PyUnicode members[] = new PyUnicode[__members__.length];
         for (int i = 0; i < __members__.length; i++)
-            members[i] = new PyString(__members__[i]);
+            members[i] = new PyUnicode(__members__[i]);
         return new PyList(members);
     }
 
@@ -94,9 +94,9 @@ public class PyTableCode extends PyBaseCode
     private static PyTuple toPyStringTuple(String[] ar) {
         if (ar == null) return Py.EmptyTuple;
         int sz = ar.length;
-        PyString[] pystr = new PyString[sz];
+        PyUnicode[] pystr = new PyUnicode[sz];
         for (int i = 0; i < sz; i++) {
-            pystr[i] = new PyString(ar[i]);
+            pystr[i] = new PyUnicode(ar[i]);
         }
         return new PyTuple(pystr);
     }
