@@ -85,6 +85,7 @@ import org.antlr.runtime.CommonToken;
 import org.python.antlr.ParseException;
 import org.python.antlr.PythonTree;
 import org.python.antlr.ast.alias;
+import org.python.antlr.ast.arg;
 import org.python.antlr.ast.arguments;
 import org.python.antlr.ast.Assert;
 import org.python.antlr.ast.Assign;
@@ -545,7 +546,6 @@ decorated
         )
     ;
 
-//FIXME implement -> AST support.
 //funcdef: 'def' NAME parameters ['->' test] ':' suite
 funcdef
 @init {
@@ -555,9 +555,9 @@ funcdef
 @after {
     $funcdef.tree = stype;
 }
-    : DEF name_or_print parameters (ARROW test[null])? COLON suite[false]
+    : DEF name_or_print parameters (ARROW test[expr_contextType.Load])? COLON suite[false]
     {
-        stype = actions.makeFuncdef($DEF, $name_or_print.start, $parameters.args, $suite.stypes);
+        stype = actions.makeFuncdef($DEF, $name_or_print.start, $parameters.args, $suite.stypes, actions.castExpr($test.tree));
     }
     ;
 
@@ -571,8 +571,8 @@ parameters
         }
       |
         {
-            $args = new arguments($parameters.start, new ArrayList<expr>(), (Name)null, null,
-            new ArrayList<Name>(), new ArrayList<expr>(), new ArrayList<expr>());
+            $args = new arguments($parameters.start, new ArrayList<arg>(), (arg)null,
+            new ArrayList<arg>(), new ArrayList<expr>(), (arg) null, new ArrayList<expr>());
         }
       )
       RPAREN
@@ -580,13 +580,13 @@ parameters
 
 //not in CPython's Grammar file
 tdefparameter
-    [List defaults] returns [expr etype]
+    [List defaults] returns [arg etype]
 @after {
    $tdefparameter.tree = $etype;
 }
-    : tfpdef[expr_contextType.Param] (ASSIGN test[expr_contextType.Load])?
+    : tfpdef (ASSIGN test[expr_contextType.Load])?
       {
-          $etype = actions.castExpr($tfpdef.tree);
+          $etype = actions.castArg($tfpdef.tree);
           if ($ASSIGN != null) {
               defaults.add($test.tree);
           } else {
@@ -625,47 +625,41 @@ typedargslist
 }
     : d+=tdefparameter[defaults] (options {greedy=true;}:COMMA d+=tdefparameter[defaults])*
       (COMMA
-          (STAR (starargs=NAME)? (COMMA kw+=tdefparameter[kw_defaults] (options {greedy=true;}:COMMA kw+=tdefparameter[kw_defaults])*)? (COMMA DOUBLESTAR kwargs=NAME)?
-          | DOUBLESTAR kwargs=NAME
+          (STAR (vararg=tfpdef)? (COMMA kw+=tdefparameter[kw_defaults] (options {greedy=true;}:COMMA kw+=tdefparameter[kw_defaults])*)? (COMMA DOUBLESTAR kwarg=tfpdef)?
+          | DOUBLESTAR kwarg=tfpdef
           )?
       )?
       {
-          $args = actions.makeArgumentsType($typedargslist.start, $d, $starargs, $kwargs, $kw, kw_defaults, defaults);
+          $args = new arguments($typedargslist.start, actions.castArgs($d),
+          actions.castArg($vararg.tree), actions.castArgs($kw),
+          kw_defaults, actions.castArg($kwarg.tree), defaults);
       }
-    | STAR (starargs=NAME)? (COMMA kw+=tdefparameter[kw_defaults] (options {greedy=true;}:COMMA kw+=tdefparameter[kw_defaults])*)? (COMMA DOUBLESTAR kwargs=NAME)?
+    | STAR (vararg=tfpdef)? (COMMA kw+=tdefparameter[kw_defaults] (options {greedy=true;}:COMMA kw+=tdefparameter[kw_defaults])*)? (COMMA DOUBLESTAR kwarg=tfpdef)?
       {
-          $args = actions.makeArgumentsType($typedargslist.start, $d, $starargs, $kwargs, $kw, kw_defaults, defaults);
+          $args = new arguments($typedargslist.start, actions.castArgs($d),
+          actions.castArg($vararg.tree), actions.castArgs($kw),
+          kw_defaults, actions.castArg($kwarg.tree), defaults);
       }
-    | DOUBLESTAR kwargs=NAME
+    | DOUBLESTAR kwarg=tfpdef
       {
-          $args = actions.makeArgumentsType($typedargslist.start, $d, null, $kwargs, $kw, kw_defaults, defaults);
+          $args = new arguments($typedargslist.start, actions.castArgs($d), null,
+          actions.castArgs($kw), kw_defaults, actions.castArg($kwarg.tree), defaults);
       }
     ;
 
 //tfpdef: NAME [':' test]
-tfpdef[expr_contextType ctype]
+tfpdef returns [arg etype]
 @init {
-    expr etype = null;
+  arg etype = null;
 }
 @after {
-    if (etype != null) {
-        $tfpdef.tree = etype;
+    if ($etype != null) {
+        $tfpdef.tree = $etype;
     }
-    actions.checkAssign(actions.castExpr($tfpdef.tree));
 }
-    : NAME (COLON test[null])?
+    : NAME (COLON test[expr_contextType.Load])?
       {
-          etype = new Name($NAME, $NAME.text, ctype);
-      }
-    ;
-
-//fplist: vfpdef (',' vfpdef)* [',']
-fplist
-    returns [List etypes]
-    : f+=vfpdef[expr_contextType.Store]
-      (options {greedy=true;}:COMMA f+=vfpdef[expr_contextType.Store])* (COMMA)?
-      {
-          $etypes = $f;
+          $etype = new arg($NAME, $NAME.text, actions.castExpr($test.tree));
       }
     ;
 
@@ -683,25 +677,30 @@ varargslist
 }
     : d+=vdefparameter[defaults] (options {greedy=true;}:COMMA d+=vdefparameter[defaults])*
       (COMMA
-          (STAR (starargs=NAME)? (COMMA kw+=vdefparameter[kw_defaults] (options {greedy=true;}:COMMA kw+=vdefparameter[kw_defaults])*)? (COMMA DOUBLESTAR kwargs=NAME)?
-          | DOUBLESTAR kwargs=NAME
+          (STAR (vararg=vfpdef[expr_contextType.Param])? (COMMA kw+=vdefparameter[kw_defaults] (options {greedy=true;}:COMMA kw+=vdefparameter[kw_defaults])*)? (COMMA DOUBLESTAR kwarg=vfpdef[expr_contextType.Param])?
+          | DOUBLESTAR kwarg=vfpdef[expr_contextType.Param]
           )?
       )?
       {
-          $args = actions.makeArgumentsType($varargslist.start, $d, $starargs, $kwargs, $kw,
-          kw_defaults, defaults);
+          $args = new arguments($varargslist.start, actions.castArgs($d),
+          actions.castArg($vararg.tree), actions.castArgs($kw),
+          kw_defaults, actions.castArg($kwarg.tree), defaults);
       }
-    | STAR (starargs=NAME)? (COMMA kw+=vdefparameter[kw_defaults] (options {greedy=true;}:COMMA kw+=vdefparameter[kw_defaults])*)? (COMMA DOUBLESTAR kwargs=NAME)?
+    | STAR (vararg=vfpdef[expr_contextType.Param])? (COMMA kw+=vdefparameter[kw_defaults] (options {greedy=true;}:COMMA kw+=vdefparameter[kw_defaults])*)? (COMMA DOUBLESTAR kwarg=vfpdef[expr_contextType.Param])?
       {
-          $args = actions.makeArgumentsType($varargslist.start, $d, $starargs, $kwargs, $kw, kw_defaults, defaults);
+          $args = new arguments($varargslist.start, actions.castArgs($d),
+          actions.castArg($vararg.tree),
+          actions.castArgs($kw), kw_defaults, actions.castArg($kwarg.tree), defaults);
       }
-    | DOUBLESTAR kwargs=NAME
+    | DOUBLESTAR kwarg=vfpdef[expr_contextType.Param]
       {
-          $args = actions.makeArgumentsType($varargslist.start, $d, null, $kwargs, $kw, kw_defaults, defaults);
+          $args = new arguments($varargslist.start, actions.castArgs($d), null,
+          actions.castArgs($kw), kw_defaults,
+          actions.castArg($kwarg.tree), defaults);
       }
     ;
 
-//vfpdef: NAME | '(' fplist ')'
+//vfpdef: NAME
 vfpdef[expr_contextType ctype]
 @init {
     expr etype = null;
@@ -710,17 +709,11 @@ vfpdef[expr_contextType ctype]
     if (etype != null) {
         $vfpdef.tree = etype;
     }
-    actions.checkAssign(actions.castExpr($vfpdef.tree));
 }
     : NAME
       {
           etype = new Name($NAME, $NAME.text, ctype);
       }
-    | (LPAREN vfpdef[null] COMMA) => LPAREN fplist RPAREN
-      {
-          etype = new Tuple($fplist.start, actions.castExprs($fplist.etypes), expr_contextType.Store);
-      }
-    | LPAREN! fplist RPAREN!
     ;
 
 //stmt: simple_stmt | compound_stmt
@@ -748,7 +741,6 @@ simple_stmt
 
 //small_stmt: (expr_stmt | del_stmt | pass_stmt | flow_stmt |
 //             import_stmt | global_stmt | nonlocal_stmt | assert_stmt)
-//XXX: remove print, exec when 3.x Lib works.
 small_stmt : expr_stmt
            | del_stmt
            | pass_stmt
@@ -2107,8 +2099,8 @@ lambdef
       {
           arguments a = $varargslist.args;
           if (a == null) {
-              a = new arguments($LAMBDA, new ArrayList<expr>(), (Name)null, null,
-              new ArrayList<Name>(), new ArrayList<expr>(), new ArrayList<expr>());
+              a = new arguments($LAMBDA, new ArrayList<arg>(), (arg)null,
+              new ArrayList<arg>(), new ArrayList<expr>(), (arg)null, new ArrayList<expr>());
           }
           etype = new Lambda($LAMBDA, a, actions.castExpr($test.tree));
       }
@@ -2126,7 +2118,7 @@ lambdef_nocond
       {
           arguments a = $varargslist.args;
           if (a == null) {
-              a = new arguments($LAMBDA, new ArrayList<expr>(), (Name)null, null, new ArrayList<Name>(), new ArrayList<expr>(), new ArrayList<expr>());
+              a = new arguments($LAMBDA, new ArrayList<arg>(), (arg)null, new ArrayList<arg>(), new ArrayList<expr>(), (arg) null, new ArrayList<expr>());
           }
           etype = new Lambda($LAMBDA, a, actions.castExpr($test_nocond.tree));
       }

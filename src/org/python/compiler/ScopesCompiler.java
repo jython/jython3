@@ -110,7 +110,8 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         arguments args = node.getInternalArgs();
         List<expr> decs = node.getInternalDecorator_list();
         List<stmt> body = node.getInternalBody();
-        return compileFunction(name, args, decs, body, node);
+        expr return_ = node.getInternalReturnNode();
+        return compileFunction(name, args, decs, body, node, return_);
     }
 
     @Override
@@ -119,13 +120,15 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         arguments args = node.getInternalArgs();
         List<expr> decs = node.getInternalDecorator_list();
         List<stmt> body = node.getInternalBody();
-        return compileFunction(name, args, decs, body, node);
+        expr return_ = node.getInternalReturnNode();
+        return compileFunction(name, args, decs, body, node, return_);
     }
 
-    private Object compileFunction(String name, arguments args, List<expr> decs, List<stmt> body, stmt node) throws Exception {
+    private Object compileFunction(String name, arguments args, List<expr> decs, List<stmt> body, stmt node, expr return_) throws Exception {
         def(name);
         ArgListCompiler ac = new ArgListCompiler();
         ac.visitArgs(args);
+        ac.addAnnotation("return", return_);
 
         List<expr> defaults = ac.getDefaults();
         for (int i = 0; i < defaults.size(); i++) {
@@ -266,8 +269,9 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         Return _ret = new Return(node.getToken(), innerName);
         bod.add(_ret);
 
-        arguments args = new arguments(node, new ArrayList<expr>(),
-                vararg, new ArrayList<String>(), new ArrayList<expr>(), kwarg, new ArrayList<expr>());
+        arguments args = new arguments(node, new ArrayList<arg>(),
+                new arg(node, vararg, null), new ArrayList<arg>(), new ArrayList<expr>(),
+                new arg(node, kwarg, null), new ArrayList<expr>());
         FunctionDef funcdef = new FunctionDef(node.getToken(), outer, args, bod, new ArrayList<expr>());
 
         ArgListCompiler ac = new ArgListCompiler();
@@ -377,12 +381,12 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
                 + ")";
         def(tmp);
         ArgListCompiler ac = new ArgListCompiler();
-        List<expr> args = new ArrayList<expr>();
-        args.add(new Name(node.getToken(), bound_exp, expr_contextType.Param));
-        String vararg = null;
-        List<String> kwonlyargs = new ArrayList<>();
+        List<arg> args = new ArrayList<>();
+        args.add(new arg(node.getToken(), bound_exp, null));
+        arg vararg = null;
+        List<arg> kwonlyargs = new ArrayList<>();
         List<expr> kw_defaults = new ArrayList<>();
-        String kwarg = null;
+        arg kwarg = null;
         List<expr> defaults = new ArrayList<>();
         ac.visitArgs(new arguments(node, args, vararg, kwonlyargs, kw_defaults, kwarg, defaults));
         beginScope(tmp, FUNCSCOPE, node, ac);

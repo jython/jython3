@@ -41,6 +41,7 @@ import org.python.antlr.ast.While;
 import org.python.antlr.ast.With;
 import org.python.antlr.ast.Yield;
 import org.python.antlr.ast.alias;
+import org.python.antlr.ast.arg;
 import org.python.antlr.ast.arguments;
 import org.python.antlr.ast.boolopType;
 import org.python.antlr.ast.cmpopType;
@@ -160,6 +161,27 @@ public class GrammarActions {
 
     void errorGenExpNotSoleArg(PythonTree t) {
         errorHandler.error("Generator expression must be parenthesized if not sole argument", t);
+    }
+
+    arg castArg(Object o) {
+        if (o instanceof arg) {
+            return (arg)o;
+        } else if (o instanceof Name) {
+            Name name = (Name) o;
+            return new arg(name.getToken(), name.getInternalId(), null);
+        }
+        return null;
+    }
+
+    List<arg> castArgs(List<Object> args) {
+        List<arg> ret = new ArrayList<>();
+        if (args == null) {
+            return ret;
+        }
+        for (Object o : args) {
+            ret.add(castArg(o));
+        }
+        return ret;
     }
 
     expr castExpr(Object o) {
@@ -319,24 +341,23 @@ public class GrammarActions {
 
     stmt makeAsyncFuncdef(Token t, Object def) {
         FunctionDef func = (FunctionDef) castStmt(def);
-        return new AsyncFunctionDef(t, func.getInternalName(), func.getInternalArgs(), func.getInternalBody(), func.getInternalDecorator_list());
+        return new AsyncFunctionDef(t, func.getInternalNameNode(), func.getInternalArgs(),
+                func.getInternalBody(), func.getInternalReturnNode());
     }
 
-    stmt makeFuncdef(Token t, Token nameToken, arguments args, List funcStatements) {
+    stmt makeFuncdef(Token t, Token nameToken, arguments args, List funcStatements, expr returnNode) {
         if (nameToken == null) {
             return errorHandler.errorStmt(new PythonTree(t));
         }
         Name n = cantBeNoneName(nameToken);
-        arguments a;
-        if (args != null) {
-            a = args;
-        } else {
-            a = new arguments(t, new ArrayList<expr>(), (Name)null, null,
-                    // kwonlyargs, kw_defaults, defaults
-                    new ArrayList<Name>(), new ArrayList<expr>(), new ArrayList<expr>());
+        arguments a = args;
+        if (a == null) {
+            a = new arguments(t, new ArrayList<arg>(), (arg)null,
+                    // kwonlyargs, kw_defaults, kwarg, defaults
+                    new ArrayList<arg>(), new ArrayList<expr>(), (arg) null, new ArrayList<expr>());
         }
         List<stmt> s = castStmts(funcStatements);
-        return new FunctionDef(t, n, a, s);
+        return new FunctionDef(t, n, a, s, returnNode);
     }
 
     List<expr> makeAssignTargets(expr lhs, List rhs) {
@@ -381,27 +402,6 @@ public class GrammarActions {
                 recurseSetContext(tree.getChild(i), context);
             }
         }
-    }
-
-    arguments makeArgumentsType(Token t, List params, Token snameToken,
-        Token knameToken, List kwonlyargs, List<expr> kwDefaults, List defaults) {
-
-        List<expr> p = castExprs(params);
-        List<expr> kwd = kwDefaults; // Note: castExprs remove the null elements, don't do that
-        List<expr> d = castExprs(defaults);
-        Name s;
-        Name k;
-        if (snameToken == null) {
-            s = null;
-        } else {
-            s = cantBeNoneName(snameToken);
-        }
-        if (knameToken == null) {
-            k = null;
-        } else {
-            k = cantBeNoneName(knameToken);
-        }
-        return new arguments(t, p, s, k, kwonlyargs, kwd, d);
     }
 
     List<expr> extractArgs(List args) {

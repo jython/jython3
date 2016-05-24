@@ -118,8 +118,10 @@ module Python version "$Revision$"
     excepthandler = ExceptHandler(expr? type, identifier? name, stmt* body)
                     attributes (int lineno, int col_offset)
 
-    arguments = (expr* args, identifier? vararg, identifier* kwonlyargs, expr* kw_defaults,
-                 identifier? kwarg, expr* defaults)
+    arguments = (arg* args, arg? vararg, arg* kwonlyargs, expr* kw_defaults,
+                 arg? kwarg, expr* defaults)
+
+    arg = (identifier arg, expr? annotation)
 
     -- keyword arguments supplied to call (NULL identifier for **kwargs)
     keyword = (identifier? arg, expr value)

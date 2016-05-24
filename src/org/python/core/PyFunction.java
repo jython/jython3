@@ -20,6 +20,10 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
 
     public static final PyType TYPE = PyType.fromClass(PyFunction.class);
 
+    /** Annotations */
+    @ExposedGet
+    public PyDictionary __annotations__;
+
     /** The writable name */
     @ExposedGet
     public String __name__;
@@ -68,6 +72,16 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
     @ExposedGet
     @ExposedSet
     public PyObject __module__;
+
+    public PyFunction(PyObject globals, PyObject[] defaults, PyDictionary kw_defaults, PyDictionary annotations, PyCode code, PyObject doc) {
+        this(globals, defaults, kw_defaults, annotations, code, doc, null);
+    }
+
+    public PyFunction(PyObject globals, PyObject[] defaults, PyDictionary kw_defaults, PyDictionary annotations, PyCode code, PyObject doc,
+                      PyObject[] closure_cells) {
+        this(globals, defaults, kw_defaults, code, doc, closure_cells);
+        __annotations__ = annotations;
+    }
 
     public PyFunction(PyObject globals, PyObject[] defaults, PyDictionary kw_defaults, PyCode code, PyObject doc,
                       PyObject[] closure_cells) {

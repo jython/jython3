@@ -13,6 +13,7 @@ import org.python.antlr.ast.Assign;
 import org.python.antlr.ast.Name;
 import org.python.antlr.ast.Suite;
 import org.python.antlr.ast.Tuple;
+import org.python.antlr.ast.arg;
 import org.python.antlr.ast.arguments;
 import org.python.antlr.ast.expr_contextType;
 import org.python.antlr.base.expr;
@@ -27,9 +28,11 @@ public class ArgListCompiler extends Visitor
     public int kwonlyargcount;
     public List<String> fpnames;
     public List<stmt> init_code;
+    public Map<String, expr> annotations;
 
     public ArgListCompiler() {
         arglist = keywordlist = false;
+        annotations = new HashMap<>();
         defaults = null;
         names = new ArrayList<String>();
         kw_defaults = new HashMap<>();
@@ -39,8 +42,10 @@ public class ArgListCompiler extends Visitor
 
     public void reset() {
         arglist = keywordlist = false;
+        annotations.clear();
         defaults = null;
         names.clear();
+        kw_defaults.clear();
         init_code.clear();
     }
 
@@ -52,36 +57,43 @@ public class ArgListCompiler extends Visitor
         return defaults;
     }
 
+    public void addAnnotation(String name, expr annotation) {
+        if (annotation != null) annotations.put(name, annotation);
+    }
+
     public void visitArgs(arguments args) throws Exception {
-        for (int i = 0; i < args.getInternalArgs().size(); i++) {
-            String name = (String) visit(args.getInternalArgs().get(i));
+        List<arg> argslist = args.getInternalArgs();
+        String name;
+        for (int i = 0; i < argslist.size(); i++) {
+            name = argslist.get(i).getInternalArg();
             names.add(name);
-            if (args.getInternalArgs().get(i) instanceof Tuple) {
-                List<expr> targets = new ArrayList<expr>();
-                targets.add(args.getInternalArgs().get(i));
-                Assign ass = new Assign(args.getInternalArgs().get(i),
-                    targets,
-                    new Name(args.getInternalArgs().get(i), name, expr_contextType.Load));
-                init_code.add(ass);
-            }
+            addAnnotation(name, argslist.get(i).getInternalAnnotation());
         }
         if (args.getInternalVararg() != null) {
             arglist = true;
-            names.add(args.getInternalVararg());
+            name = args.getInternalVararg().getInternalArg();
+            names.add(name);
+            addAnnotation(name, args.getInternalVararg().getInternalAnnotation());
         }
         kwonlyargcount = args.getInternalKwonlyargs().size();
-        names.addAll(args.getInternalKwonlyargs());
+        List<arg> kwonlyargs = args.getInternalKwonlyargs();
+        for (int i = 0; i < kwonlyargcount; i++) {
+            name = kwonlyargs.get(i).getInternalArg();
+            names.add(name);
+            addAnnotation(name, kwonlyargs.get(i).getInternalAnnotation());
+        }
         if (args.getInternalKwarg() != null) {
             keywordlist = true;
-            names.add(args.getInternalKwarg());
+            name = args.getInternalKwarg().getInternalArg();
+            names.add(name);
+            addAnnotation(name, args.getInternalKwarg().getInternalAnnotation());
         }
 
-        List<String> kwonlyargs = args.getInternalKwonlyargs();
         List<expr> kwdefaults = args.getInternalKw_defaults();
         for (int i = 0; i < kwonlyargcount; i++) {
             expr kwDefault = kwdefaults.get(i);
             if (kwDefault != null) {
-                kw_defaults.put(kwonlyargs.get(i), kwDefault);
+                kw_defaults.put(kwonlyargs.get(i).getInternalArg(), kwDefault);
             }
         }
 

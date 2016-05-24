@@ -30,44 +30,43 @@ import java.util.ArrayList;
 @ExposedType(name = "_ast.arguments", base = AST.class)
 public class arguments extends PythonTree {
     public static final PyType TYPE = PyType.fromClass(arguments.class);
-    private java.util.List<expr> args;
-    public java.util.List<expr> getInternalArgs() {
+    private java.util.List<arg> args;
+    public java.util.List<arg> getInternalArgs() {
         return args;
     }
     @ExposedGet(name = "args")
     public PyObject getArgs() {
-        return new AstList(args, AstAdapters.exprAdapter);
+        return new AstList(args, AstAdapters.argAdapter);
     }
     @ExposedSet(name = "args")
     public void setArgs(PyObject args) {
-        this.args = AstAdapters.py2exprList(args);
+        this.args = AstAdapters.py2argList(args);
     }
 
-    private String vararg;
-    public String getInternalVararg() {
+    private arg vararg;
+    public arg getInternalVararg() {
         return vararg;
     }
     @ExposedGet(name = "vararg")
     public PyObject getVararg() {
-        if (vararg == null) return Py.None;
-        return new PyString(vararg);
+        return vararg;
     }
     @ExposedSet(name = "vararg")
     public void setVararg(PyObject vararg) {
-        this.vararg = AstAdapters.py2identifier(vararg);
+        this.vararg = AstAdapters.py2arg(vararg);
     }
 
-    private java.util.List<String> kwonlyargs;
-    public java.util.List<String> getInternalKwonlyargs() {
+    private java.util.List<arg> kwonlyargs;
+    public java.util.List<arg> getInternalKwonlyargs() {
         return kwonlyargs;
     }
     @ExposedGet(name = "kwonlyargs")
     public PyObject getKwonlyargs() {
-        return new AstList(kwonlyargs, AstAdapters.identifierAdapter);
+        return new AstList(kwonlyargs, AstAdapters.argAdapter);
     }
     @ExposedSet(name = "kwonlyargs")
     public void setKwonlyargs(PyObject kwonlyargs) {
-        this.kwonlyargs = AstAdapters.py2identifierList(kwonlyargs);
+        this.kwonlyargs = AstAdapters.py2argList(kwonlyargs);
     }
 
     private java.util.List<expr> kw_defaults;
@@ -83,18 +82,17 @@ public class arguments extends PythonTree {
         this.kw_defaults = AstAdapters.py2exprList(kw_defaults);
     }
 
-    private String kwarg;
-    public String getInternalKwarg() {
+    private arg kwarg;
+    public arg getInternalKwarg() {
         return kwarg;
     }
     @ExposedGet(name = "kwarg")
     public PyObject getKwarg() {
-        if (kwarg == null) return Py.None;
-        return new PyString(kwarg);
+        return kwarg;
     }
     @ExposedSet(name = "kwarg")
     public void setKwarg(PyObject kwarg) {
-        this.kwarg = AstAdapters.py2identifier(kwarg);
+        this.kwarg = AstAdapters.py2arg(kwarg);
     }
 
     private java.util.List<expr> defaults;
@@ -150,18 +148,24 @@ public class arguments extends PythonTree {
         setDefaults(defaults);
     }
 
-    public arguments(Token token, java.util.List<expr> args, String vararg, java.util.List<String>
-    kwonlyargs, java.util.List<expr> kw_defaults, String kwarg, java.util.List<expr> defaults) {
+    public arguments(Token token, java.util.List<arg> args, arg vararg, java.util.List<arg>
+    kwonlyargs, java.util.List<expr> kw_defaults, arg kwarg, java.util.List<expr> defaults) {
         super(token);
         this.args = args;
         if (args == null) {
-            this.args = new ArrayList<expr>();
+            this.args = new ArrayList<arg>();
         }
         for(PythonTree t : this.args) {
             addChild(t);
         }
         this.vararg = vararg;
         this.kwonlyargs = kwonlyargs;
+        if (kwonlyargs == null) {
+            this.kwonlyargs = new ArrayList<arg>();
+        }
+        for(PythonTree t : this.kwonlyargs) {
+            addChild(t);
+        }
         this.kw_defaults = kw_defaults;
         if (kw_defaults == null) {
             this.kw_defaults = new ArrayList<expr>();
@@ -179,19 +183,25 @@ public class arguments extends PythonTree {
         }
     }
 
-    public arguments(Integer ttype, Token token, java.util.List<expr> args, String vararg,
-    java.util.List<String> kwonlyargs, java.util.List<expr> kw_defaults, String kwarg,
+    public arguments(Integer ttype, Token token, java.util.List<arg> args, arg vararg,
+    java.util.List<arg> kwonlyargs, java.util.List<expr> kw_defaults, arg kwarg,
     java.util.List<expr> defaults) {
         super(ttype, token);
         this.args = args;
         if (args == null) {
-            this.args = new ArrayList<expr>();
+            this.args = new ArrayList<arg>();
         }
         for(PythonTree t : this.args) {
             addChild(t);
         }
         this.vararg = vararg;
         this.kwonlyargs = kwonlyargs;
+        if (kwonlyargs == null) {
+            this.kwonlyargs = new ArrayList<arg>();
+        }
+        for(PythonTree t : this.kwonlyargs) {
+            addChild(t);
+        }
         this.kw_defaults = kw_defaults;
         if (kw_defaults == null) {
             this.kw_defaults = new ArrayList<expr>();
@@ -209,19 +219,24 @@ public class arguments extends PythonTree {
         }
     }
 
-    public arguments(PythonTree tree, java.util.List<expr> args, String vararg,
-    java.util.List<String> kwonlyargs, java.util.List<expr> kw_defaults, String kwarg,
-    java.util.List<expr> defaults) {
+    public arguments(PythonTree tree, java.util.List<arg> args, arg vararg, java.util.List<arg>
+    kwonlyargs, java.util.List<expr> kw_defaults, arg kwarg, java.util.List<expr> defaults) {
         super(tree);
         this.args = args;
         if (args == null) {
-            this.args = new ArrayList<expr>();
+            this.args = new ArrayList<arg>();
         }
         for(PythonTree t : this.args) {
             addChild(t);
         }
         this.vararg = vararg;
         this.kwonlyargs = kwonlyargs;
+        if (kwonlyargs == null) {
+            this.kwonlyargs = new ArrayList<arg>();
+        }
+        for(PythonTree t : this.kwonlyargs) {
+            addChild(t);
+        }
         this.kw_defaults = kw_defaults;
         if (kw_defaults == null) {
             this.kw_defaults = new ArrayList<expr>();
@@ -280,12 +295,22 @@ public class arguments extends PythonTree {
                     t.accept(visitor);
             }
         }
+        if (vararg != null)
+            vararg.accept(visitor);
+        if (kwonlyargs != null) {
+            for (PythonTree t : kwonlyargs) {
+                if (t != null)
+                    t.accept(visitor);
+            }
+        }
         if (kw_defaults != null) {
             for (PythonTree t : kw_defaults) {
                 if (t != null)
                     t.accept(visitor);
             }
         }
+        if (kwarg != null)
+            kwarg.accept(visitor);
         if (defaults != null) {
             for (PythonTree t : defaults) {
                 if (t != null)
@@ -312,58 +337,6 @@ public class arguments extends PythonTree {
             __dict__ = new PyStringMap();
         }
     }
-
-    // Support for indexer below
-
-    private Name varargName;
-    public Name getInternalVarargName() {
-        return varargName;
-    }
-    private Name kwargName;
-    public Name getInternalKwargName() {
-        return kwargName;
-    }
-    // XXX: vararg and kwarg are deliberately moved to the end of the
-    // method signature to avoid clashes with the (Token, List<expr>,
-    // String, String, List<expr>) version of the constructor.
-    public arguments(Token token, java.util.List<expr> args, Name vararg, Name kwarg,
-                     java.util.List<Name> kwonlyargs, java.util.List<expr> kw_defaults,
-            java.util.List<expr> defaults) {
-        super(token);
-        this.args = args;
-        if (args == null) {
-            this.args = new ArrayList<expr>();
-        }
-        for(PythonTree t : this.args) {
-            addChild(t);
-        }
-        this.vararg = vararg == null ? null : vararg.getText();
-        this.varargName = vararg;
-        this.kwarg = kwarg == null ? null : kwarg.getText();
-        this.kwargName = kwarg;
-
-        this.kwonlyargs = new ArrayList<>();
-        if (kwonlyargs != null) {
-            for (Name arg : kwonlyargs) {
-                this.kwonlyargs.add(arg.getText());
-            }
-        }
-        this.kw_defaults = kw_defaults;
-        if (kw_defaults == null) {
-            this.kw_defaults = new ArrayList<expr>();
-        }
-        for(PythonTree t : this.kw_defaults) {
-            addChild(t);
-        }
-        this.defaults = defaults;
-        if (defaults == null) {
-            this.defaults = new ArrayList<expr>();
-        }
-        for(PythonTree t : this.defaults) {
-            addChild(t);
-        }
-    }
-    // End indexer support
 
 
     /* Traverseproc implementation */

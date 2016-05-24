@@ -714,12 +714,17 @@ indexer_support = {
     public Name getInternalNameNode() {
         return nameNode;
     }
-    public AsyncFunctionDef(Token token, Name name, arguments args, java.util.List<stmt> body) {
+    private expr returnNode;
+    public expr getInternalReturnNode() {
+        return returnNode;
+    }
+    public AsyncFunctionDef(Token token, Name name, arguments args, java.util.List<stmt> body, expr returnNode) {
         super(token);
         this.name = name.getText();
         this.nameNode = name;
         this.args = args;
         this.body = body;
+        this.returnNode = returnNode;
         if (body == null) {
             this.body = new ArrayList<stmt>();
         }
@@ -823,12 +828,17 @@ indexer_support = {
     public Name getInternalNameNode() {
         return nameNode;
     }
-    public FunctionDef(Token token, Name name, arguments args, java.util.List<stmt> body) {
+    private expr returnNode;
+    public expr getInternalReturnNode() {
+        return returnNode;
+    }
+    public FunctionDef(Token token, Name name, arguments args, java.util.List<stmt> body, expr returnNode) {
         super(token);
         this.name = name.getText();
         this.nameNode = name;
         this.args = args;
         this.body = body;
+        this.returnNode = returnNode;
         if (body == null) {
             this.body = new ArrayList<stmt>();
         }
@@ -936,59 +946,7 @@ indexer_support = {
     // End indexer support
 """,
 
-"arguments": """    // Support for indexer below
-
-    private Name varargName;
-    public Name getInternalVarargName() {
-        return varargName;
-    }
-    private Name kwargName;
-    public Name getInternalKwargName() {
-        return kwargName;
-    }
-    // XXX: vararg and kwarg are deliberately moved to the end of the
-    // method signature to avoid clashes with the (Token, List<expr>,
-    // String, String, List<expr>) version of the constructor.
-    public arguments(Token token, java.util.List<expr> args, Name vararg, Name kwarg,
-                     java.util.List<Name> kwonlyargs, java.util.List<expr> kw_defaults,
-            java.util.List<expr> defaults) {
-        super(token);
-        this.args = args;
-        if (args == null) {
-            this.args = new ArrayList<expr>();
-        }
-        for(PythonTree t : this.args) {
-            addChild(t);
-        }
-        this.vararg = vararg == null ? null : vararg.getText();
-        this.varargName = vararg;
-        this.kwarg = kwarg == null ? null : kwarg.getText();
-        this.kwargName = kwarg;
-
-        this.kwonlyargs = new ArrayList<>();
-        if (kwonlyargs != null) {
-            for (Name arg : kwonlyargs) {
-                this.kwonlyargs.add(arg.getText());
-            }
-        }
-        this.kw_defaults = kw_defaults;
-        if (kw_defaults == null) {
-            this.kw_defaults = new ArrayList<expr>();
-        }
-        for(PythonTree t : this.kw_defaults) {
-            addChild(t);
-        }
-        this.defaults = defaults;
-        if (defaults == null) {
-            this.defaults = new ArrayList<expr>();
-        }
-        for(PythonTree t : this.defaults) {
-            addChild(t);
-        }
-    }
-    // End indexer support
-
-
+"arguments": """
     /* Traverseproc implementation */
     @Override
     public int traverse(Visitproc visit, Object arg) {

@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class AstAdapters {
     public final static AliasAdapter aliasAdapter = new AliasAdapter();
+    public final static ArgAdapter argAdapter = new ArgAdapter();
     public final static CmpopAdapter cmpopAdapter = new CmpopAdapter();
     public final static ComprehensionAdapter comprehensionAdapter = new ComprehensionAdapter();
     public final static ExcepthandlerAdapter excepthandlerAdapter = new ExcepthandlerAdapter();
@@ -25,6 +26,10 @@ public class AstAdapters {
 
     public static java.util.List<alias> py2aliasList(PyObject o) {
         return (java.util.List<alias>)aliasAdapter.iter2ast(o);
+    }
+
+    public static java.util.List<arg> py2argList(PyObject o) {
+        return (java.util.List<arg>)argAdapter.iter2ast(o);
     }
 
     public static java.util.List<cmpopType> py2cmpopList(PyObject o) {
@@ -57,6 +62,10 @@ public class AstAdapters {
 
     public static java.util.List<stmt> py2stmtList(PyObject o) {
         return (java.util.List<stmt>)stmtAdapter.iter2ast(o);
+    }
+
+    public static arg py2arg(PyObject o) {
+        return (arg) argAdapter.py2ast(o);
     }
 
     public static expr py2expr(PyObject o) {
