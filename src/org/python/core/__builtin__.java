@@ -285,7 +285,6 @@ public class __builtin__ {
         dict.__setitem__("classmethod", PyClassMethod.TYPE);
         dict.__setitem__("super", PySuper.TYPE);
         dict.__setitem__("str", PyUnicode.TYPE);
-        dict.__setitem__("basestring", PyBaseString.TYPE);
         dict.__setitem__("file", PyFile.TYPE);
         dict.__setitem__("slice", PySlice.TYPE);
         dict.__setitem__("range", PyRange.TYPE);

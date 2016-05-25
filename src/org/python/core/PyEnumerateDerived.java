@@ -85,26 +85,26 @@ public class PyEnumerateDerived extends PyEnumerate implements Slotted,Finalizab
         return visit.visit(dict,arg);
     }
 
-    public PyString __str__() {
+    public PyUnicode __str__() {
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__str__");
         if (impl!=null) {
             PyObject res=impl.__get__(this,self_type).__call__();
-            if (res instanceof PyString)
-                return(PyString)res;
-            throw Py.TypeError("__str__"+" returned non-"+"string"+" (type "+res.getType().fastGetName()+")");
+            if (res instanceof PyUnicode)
+                return(PyUnicode)res;
+            throw Py.TypeError("__str__"+" returned non-"+"unicode"+" (type "+res.getType().fastGetName()+")");
         }
         return super.__str__();
     }
 
-    public PyString __repr__() {
+    public PyUnicode __repr__() {
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__repr__");
         if (impl!=null) {
             PyObject res=impl.__get__(this,self_type).__call__();
-            if (res instanceof PyString)
-                return(PyString)res;
-            throw Py.TypeError("__repr__"+" returned non-"+"string"+" (type "+res.getType().fastGetName()+")");
+            if (res instanceof PyUnicode)
+                return(PyUnicode)res;
+            throw Py.TypeError("__repr__"+" returned non-"+"unicode"+" (type "+res.getType().fastGetName()+")");
         }
         return super.__repr__();
     }
@@ -812,20 +812,6 @@ public class PyEnumerateDerived extends PyEnumerate implements Slotted,Finalizab
         return super.hashCode();
     }
 
-    public PyUnicode __unicode__() {
-        PyType self_type=getType();
-        PyObject impl=self_type.lookup("__unicode__");
-        if (impl!=null) {
-            PyObject res=impl.__get__(this,self_type).__call__();
-            if (res instanceof PyUnicode)
-                return(PyUnicode)res;
-            if (res instanceof PyString)
-                return new PyUnicode((PyString)res);
-            throw Py.TypeError("__unicode__"+" should return a "+"unicode");
-        }
-        return super.__unicode__();
-    }
-
     public boolean __bool__() {
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__bool__");
@@ -917,7 +903,7 @@ public class PyEnumerateDerived extends PyEnumerate implements Slotted,Finalizab
     public PyObject __getitem__(PyObject key) {
         // Same as __finditem__, without swallowing LookupErrors. This allows
         // __getitem__ implementations written in Python to raise custom
-        // Exceptions (such as subclasses of KeyError).
+        // exceptions (such as subclasses of KeyError).
         //
         // We are forced to duplicate the code, instead of defining __finditem__
         // in terms of __getitem__. That's because PyObject defines __getitem__

@@ -141,7 +141,7 @@ public class PyDictProxy extends PyObject implements Traverseproc {
 
     @Override
     @ExposedMethod
-    public PyString __str__() {
+    public PyUnicode __str__() {
         return dict.__str__();
     }
 

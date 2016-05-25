@@ -186,23 +186,23 @@ public class Py2kBuffer extends PySequence implements BufferProtocol {
     }
 
     @Override
-    public PyString __repr__() {
+    public PyUnicode __repr__() {
         String fmt = "<read-only buffer for %s, size %d, offset %d at 0x%s>";
         String ret = String.format(fmt, Py.idstr((PyObject)object), size, offset, Py.idstr(this));
-        return new PyString(ret);
+        return new PyUnicode(ret);
     }
 
     @Override
-    public PyString __str__() {
+    public PyUnicode __str__() {
         PyBuffer buf = getBuffer();
         try {
             if (buf instanceof BaseBuffer) {
                 // In practice, it always is
-                return new PyString(buf.toString());
+                return new PyUnicode(buf.toString());
             } else {
                 // But just in case ...
                 String s = StringUtil.fromBytes(buf);
-                return new PyString(s);
+                return new PyUnicode(s);
             }
         } finally {
             buf.release();

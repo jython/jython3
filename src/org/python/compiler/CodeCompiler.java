@@ -2408,7 +2408,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     @Override
     public Object visitRepr(Repr node) throws Exception {
         visit(node.getInternalValue());
-        code.invokevirtual(p(PyObject.class), "__repr__", sig(PyString.class));
+        code.invokevirtual(p(PyObject.class), "__repr__", sig(PyUnicode.class));
         return null;
     }
 

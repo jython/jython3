@@ -228,23 +228,23 @@ public class PyFloat extends PyObject {
     }
 
     @Override
-    public PyString __str__() {
+    public PyUnicode __str__() {
         return float___str__();
     }
 
     @ExposedMethod(doc = BuiltinDocs.float___str___doc)
-    final PyString float___str__() {
-        return Py.newString(formatDouble(SPEC_STR));
+    final PyUnicode float___str__() {
+        return Py.newUnicode(formatDouble(SPEC_STR));
     }
 
     @Override
-    public PyString __repr__() {
+    public PyUnicode __repr__() {
         return float___repr__();
     }
 
     @ExposedMethod(doc = BuiltinDocs.float___repr___doc)
-    final PyString float___repr__() {
-        return Py.newString(formatDouble(SPEC_REPR));
+    final PyUnicode float___repr__() {
+        return Py.newUnicode(formatDouble(SPEC_REPR));
     }
 
     /**

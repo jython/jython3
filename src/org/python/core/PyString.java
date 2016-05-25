@@ -246,19 +246,18 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     @Override
-    public PyString __str__() {
+    public PyUnicode __str__() {
         return bytes___str__();
     }
 
     @ExposedMethod(doc = BuiltinDocs.bytes___str___doc)
-    final PyString bytes___str__() {
+    final PyUnicode bytes___str__() {
         if (getClass() == PyString.class) {
-            return this;
+            return __unicode__();
         }
-        return new PyString(getString(), true);
+        return new PyUnicode(getString(), true);
     }
 
-    @Override
     public PyUnicode __unicode__() {
         return new PyUnicode(this);
     }
@@ -289,13 +288,13 @@ public class PyString extends PyBaseString implements BufferProtocol {
     }
 
     @Override
-    public PyString __repr__() {
+    public PyUnicode __repr__() {
         return bytes___repr__();
     }
 
     @ExposedMethod(doc = BuiltinDocs.bytes___repr___doc)
-    final PyString bytes___repr__() {
-        return new PyString("b" + encode_UnicodeEscape(getString(), true));
+    final PyUnicode bytes___repr__() {
+        return new PyUnicode("b" + encode_UnicodeEscape(getString(), true));
     }
 
     private static char[] hexdigit = "0123456789abcdef".toCharArray();
@@ -787,7 +786,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * Create an instance of the same type as this object, from the Java String given as argument.
      * This is to be overridden in a subclass to return its own type.
      *
-     * @param string UTF-16 string encoding the characters (as Java).
+     * @param str UTF-16 string encoding the characters (as Java).
      * @param isBasic is ignored in <code>PyString</code> (effectively true).
      * @return
      */
@@ -1981,7 +1980,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
         // Will throw a TypeError if not a basestring
         String sep = sepObj.asString();
-        sepObj = sepObj.__unicode__();
+        sepObj = sepObj.__str__();
 
         if (sep.length() == 0) {
             throw Py.ValueError("empty separator");
@@ -2040,7 +2039,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
 
         // Will throw a TypeError if not a basestring
         String sep = sepObj.asString();
-        sepObj = sepObj.__unicode__();
+        sepObj = sepObj.__str__();
 
         if (sep.length() == 0) {
             throw Py.ValueError("empty separator");
@@ -4457,11 +4456,11 @@ final class StringFormatter {
 
         } else if (needUnicode) {
             // The string being built is unicode, so we need that version of the arg.
-            return arg.__unicode__();
+            return arg.__str__();
 
         } else if (arg instanceof PyString) {
             // The string being built is not unicode, so arg is already acceptable.
-            return (PyString)arg;
+            return ((PyString)arg).__unicode__();
 
         } else {
             // The string being built is not unicode, so use __str__ to get a PyString.
