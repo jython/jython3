@@ -234,8 +234,8 @@ public class PyObject implements Serializable {
     // occurs during regression testing.  XXX: more detail for this comment
     // is needed.
     @ExposedMethod(names = "__str__", doc = BuiltinDocs.object___str___doc)
-    public PyString __repr__() {
-        return new PyString(toString());
+    public PyUnicode __repr__() {
+        return new PyUnicode(toString());
     }
 
     @Override
@@ -267,7 +267,7 @@ public class PyObject implements Serializable {
      * configure the string representation of a <code>PyObject</code> is to
      * override the standard Java <code>toString</code> method.
      **/
-    public PyString __str__() {
+    public PyUnicode __str__() {
         return __repr__();
     }
 
@@ -279,10 +279,6 @@ public class PyObject implements Serializable {
      **/
     @ExposedMethod
     public void __ensure_finalizer__() {
-    }
-
-    public PyUnicode __unicode__() {
-        return new PyUnicode(__str__());
     }
 
     /**

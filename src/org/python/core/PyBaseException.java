@@ -195,29 +195,24 @@ public class PyBaseException extends PyObject implements Traverseproc {
     }
 
     @Override
-   public PyString __str__() {
+   public PyUnicode __str__() {
         return BaseException___str__();
     }
 
-    @ExposedMethod(doc = BuiltinDocs.BaseException___str___doc)
-    final PyString BaseException___str__() {
-        switch (args.__len__()) {
-        case 0:
-            return Py.EmptyString;
-        case 1:
-            return args.__getitem__(0).__str__();
-        default:
-            return args.__str__();
-        }
-    }
-
-    @Override
-    public PyUnicode __unicode__() {
-        return BaseException___unicode__();
-    }
+//    @ExposedMethod(doc = BuiltinDocs.BaseException___str___doc)
+//    final PyUnicode BaseException___str__() {
+//        switch (args.__len__()) {
+//        case 0:
+//            return Py.EmptyUnicode;
+//        case 1:
+//            return args.__getitem__(0).__str__();
+//        default:
+//            return args.__str__();
+//        }
+//    }
 
     @ExposedMethod(doc = BuiltinDocs.BaseException___str___doc)
-    final PyUnicode BaseException___unicode__() {
+    final PyUnicode BaseException___str__() {
         // CPython issue6108: if __str__ has been overridden in the subclass, unicode()
         // should return the message returned by __str__ as used to happen before this
         // method was implemented
@@ -227,16 +222,16 @@ public class PyBaseException extends PyObject implements Traverseproc {
         if (str != null && where[0] != TYPE) {
             // Unlike str(), __str__ can return unicode (i.e. return the equivalent
             // of unicode(e.__str__()) instead of unicode(str(e)))
-            return str.__get__(this, type).__call__().__unicode__();
+            return str.__get__(this, type).__call__().__str__();
         }
         
         switch (args.__len__()) {
         case 0:
             return new PyUnicode("");
         case 1:
-            return args.__getitem__(0).__unicode__();
+            return args.__getitem__(0).__str__();
         default:
-            return args.__unicode__();
+            return args.__str__();
         }
     }
 

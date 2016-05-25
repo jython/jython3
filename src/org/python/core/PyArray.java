@@ -988,7 +988,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
      * contain a whole number of items (possible if the item size is not one byte), the behaviour in
      * respect of the final partial item and stream position is not defined.
      *
-     * @param dis data stream source for the values
+     * @param is data stream source for the values
      * @param index first element index to read
      * @param limit first element index <b>not</b> to read
      * @param eofIsError if true, treat EOF as expected way to end

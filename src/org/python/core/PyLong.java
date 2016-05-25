@@ -1030,18 +1030,13 @@ public class PyLong extends PyObject {
     }
 
     @ExposedMethod(doc = BuiltinDocs.int___str___doc)
-    public PyString long___str__() {
-        return Py.newString(getValue().toString());
-    }
-
-    @Override
-    public PyString __str__() {
-        return long___str__();
-    }
-
-    @Override
-    public PyUnicode __unicode__() {
+    public PyUnicode long___str__() {
         return new PyUnicode(getValue().toString());
+    }
+
+    @Override
+    public PyUnicode __str__() {
+        return long___str__();
     }
 
     @ExposedMethod(doc = BuiltinDocs.int___getnewargs___doc)

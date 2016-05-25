@@ -94,27 +94,8 @@ public class PyStatement extends PyObject implements Traverseproc {
     }
 
     @Override
-    public PyUnicode __unicode__() {
-        if (sql instanceof String) {
-            return Py.newUnicode((String) sql);
-        } else if (sql instanceof Procedure) {
-            try {
-                return Py.newUnicode(((Procedure) sql).toSql());
-            } catch (SQLException e) {
-                throw zxJDBC.makeException(e);
-            }
-        }
-        return super.__unicode__();
-    }
-
-    @Override
-    public PyString __str__() {
-        return Py.newString(__unicode__().encode(codecs.getDefaultEncoding(), "replace"));
-    }
-
-    @Override
     public String toString() {
-        return String.format("<PyStatement object at %s for [%s]", Py.idstr(this), __unicode__());
+        return String.format("<PyStatement object at %s for [%s]", Py.idstr(this), __str__());
     }
 
     /**

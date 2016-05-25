@@ -605,7 +605,7 @@ public class PyUnicode extends PyString implements Iterable {
             }
             if (S instanceof PyString) {
                 if (S.getType() != PyString.TYPE && encoding == null && errors == null) {
-                    return S.__unicode__();
+                    return ((PyString) S).__unicode__();
                 }
                 PyObject decoded = codecs.decode((PyString)S, encoding, errors);
                 if (decoded instanceof PyUnicode) {
@@ -615,7 +615,7 @@ public class PyUnicode extends PyString implements Iterable {
                             + decoded.getType().fastGetName() + ")");
                 }
             }
-            return S.__unicode__();
+            return S.__str__();
         } else {
             if (S == null) {
                 return new PyUnicodeDerived(subtype, Py.EmptyString);
@@ -659,13 +659,13 @@ public class PyUnicode extends PyString implements Iterable {
     }
 
     @Override
-    public PyString __str__() {
+    public PyUnicode __str__() {
         return str___str__();
     }
 
     @ExposedMethod(doc = BuiltinDocs.str___str___doc)
-    final PyString str___str__() {
-        return new PyString(encode());
+    final PyUnicode str___str__() {
+        return new PyUnicode(encode());
     }
 
     @Override
@@ -679,13 +679,13 @@ public class PyUnicode extends PyString implements Iterable {
     }
 
     @Override
-    public PyString __repr__() {
+    public PyUnicode __repr__() {
         return str___repr__();
     }
 
     @ExposedMethod(doc = BuiltinDocs.str___repr___doc)
-    final PyString str___repr__() {
-        return new PyString(encode_UnicodeEscape(getString(), true));
+    final PyUnicode str___repr__() {
+        return new PyUnicode(encode_UnicodeEscape(getString(), true));
     }
 
     @ExposedMethod(doc = BuiltinDocs.str___getitem___doc)

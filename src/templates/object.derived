@@ -1,8 +1,8 @@
 base_class: PyObject
 want_dict: true
 ctr:
-unary1: __str__ string
-unary1: __repr__ string
+unary1: __str__ unicode
+unary1: __repr__ unicode
 unary1: __hex__ string
 unary1: __oct__ string
 unary1: __float__ float
@@ -73,20 +73,6 @@ rest:
             throw Py.TypeError(String.format("unhashable type: '%.200s'", getType().fastGetName()));
         }
         return super.hashCode();
-  }
-
-  public PyUnicode __unicode__() {
-      PyType self_type=getType();
-      PyObject impl=self_type.lookup("__unicode__");
-      if (impl!=null) {
-          PyObject res=impl.__get__(this,self_type).__call__();
-          if (res instanceof PyUnicode)
-              return(PyUnicode)res;
-          if (res instanceof PyString)
-              return new PyUnicode((PyString)res);
-          throw Py.TypeError("__unicode__"+" should return a "+"unicode");
-      }
-      return super.__unicode__();
   }
 
   public boolean __bool__() {

@@ -2010,13 +2010,13 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
      * built-in function <code>str()</code> is expected to call this method.
      */
     @Override
-    public PyString __str__() {
+    public PyUnicode __str__() {
         return bytearray_str();
     }
 
     @ExposedMethod(names = {"__str__"}, doc = BuiltinDocs.bytearray___str___doc)
-    final PyString bytearray_str() {
-        return new PyString(this.asString());
+    final PyUnicode bytearray_str() {
+        return new PyUnicode(asString());
     }
 
     /**
