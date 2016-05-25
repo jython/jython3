@@ -1161,14 +1161,8 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             getNone();
         }
 
-        /* Push exception type onto stack(AssertionError) */
-        loadFrame();
-        emitGetGlobal("AssertionError");
-
-        code.swap(); // The type is the first argument, but the message could be a yield
-
-        code.invokestatic(p(Py.class), "makeException",
-                sig(PyException.class, PyObject.class, PyObject.class));
+        code.invokestatic(p(Py.class), "AssertionError",
+                sig(PyException.class, PyObject.class));
         /* Raise assertion error. Only executes this logic if assertion failed */
         code.athrow();
 
@@ -1437,8 +1431,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.aload(excLocal);
         loadFrame();
 
-        code.invokestatic(p(Py.class), "addTraceback",
-                sig(Void.TYPE, Throwable.class, PyFrame.class));
+        code.invokestatic(p(Py.class), "setException",
+                sig(PyException.class, Throwable.class, PyFrame.class));
+        code.pop();
 
         inlineFinally(inFinally);
         code.aload(excLocal);

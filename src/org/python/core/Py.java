@@ -325,6 +325,11 @@ public final class Py {
     public static PyException AssertionError(String message) {
         return new PyException(Py.AssertionError, message);
     }
+
+    public static PyException AssertionError(PyObject val) {
+        return new PyException(Py.AssertionError, new PyTuple(val));
+    }
+
     public static PyObject TypeError;
 
     public static PyException TypeError(String message) {
@@ -1448,11 +1453,6 @@ public final class Py {
         assert_(test, Py.None);
     }
 
-    /* Helpers to implement finally clauses */
-    public static void addTraceback(Throwable t, PyFrame frame) {
-        Py.JavaError(t).tracebackHere(frame, true);
-    }
-
     /* Helpers to implement except clauses */
     public static PyException setException(Throwable t, PyFrame frame) {
         PyException pye = Py.JavaError(t);
@@ -1474,17 +1474,13 @@ public final class Py {
 
     // XXX: the following 4 are backwards compat. for the
     // oldcompiler. newcompiler should just call doRaise instead
-    public static PyException makeException(PyObject type, PyObject value,
-                                            PyObject cause) {
-        return PyException.doRaise(type, value, cause);
+    public static PyException makeException(PyObject value, PyObject cause) {
+        return PyException.doRaise(value, cause);
     }
 
-    public static PyException makeException(PyObject type, PyObject value) {
-        return makeException(type, value, null);
-    }
 
-    public static PyException makeException(PyObject type) {
-        return makeException(type, null);
+    public static PyException makeException(PyObject value) {
+        return makeException(value, null);
     }
 
     public static PyException makeException() {

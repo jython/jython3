@@ -192,19 +192,16 @@ public class Exceptions {
         self.__setattr__("path", ap.getPyObject(2, Py.None));
     }
 
-    public static PyString ImportError__str__(PyObject self, PyObject[] arg, String[] kwargs) {
+    public static PyUnicode ImportError__str__(PyObject self, PyObject[] arg, String[] kwargs) {
         PyObject msg = self.__getattr__("msg");
-        PyObject str = msg.__str__();
-        if (!(msg instanceof PyString)) {
-            return Py.newString(str.toString());
-        }
+        PyUnicode str = msg.__str__();
 
         PyObject name = self.__findattr__("name");
         PyObject path = self.__findattr__("path");
         boolean haveName = name instanceof PyString;
         boolean havePath = path instanceof PyInteger;
         if (!haveName && !havePath) {
-            return (PyString) str;
+            return str;
         }
 
         String result;
@@ -217,7 +214,7 @@ public class Exceptions {
             result = String.format("%s (path %s)", str, path.toString());
         }
 
-        return Py.newString(result);
+        return Py.newUnicode(result);
     }
 
     public static PyObject StopIteration(){
@@ -238,7 +235,7 @@ public class Exceptions {
         }
     }
 
-    public static PyString StopIteration__str__(PyObject self, PyObject[] args, String[] kwargs) {
+    public static PyUnicode StopIteration__str__(PyObject self, PyObject[] args, String[] kwargs) {
         PyObject value = self.__getattr__("value");
         return value.__str__();
     }
@@ -272,19 +269,16 @@ public class Exceptions {
         }
     }
 
-    public static PyString SyntaxError__str__(PyObject self, PyObject[] arg, String[] kwargs) {
+    public static PyUnicode SyntaxError__str__(PyObject self, PyObject[] arg, String[] kwargs) {
         PyObject msg = self.__getattr__("msg");
-        PyObject str = msg.__str__();
-        if (!(msg instanceof PyString)) {
-            return Py.newString(str.toString());
-        }
+        PyUnicode str = msg.__str__();
 
         PyObject filename = self.__findattr__("filename");
         PyObject lineno = self.__findattr__("lineno");
         boolean haveFilename = filename instanceof PyString;
         boolean haveLieno = lineno instanceof PyInteger;
         if (!haveFilename && !haveLieno) {
-            return (PyString)str;
+            return str;
         }
 
         String result;
@@ -297,7 +291,7 @@ public class Exceptions {
             result = String.format("%s (line %d)", str, lineno.asInt());
         }
 
-        return Py.newString(result);
+        return Py.newUnicode(result);
     }
 
     public static PyObject OSError() {
@@ -335,7 +329,7 @@ public class Exceptions {
         self.__setattr__("args", new PyTuple(errno, strerror));
     }
 
-    public static PyObject OSError__str__(PyObject self, PyObject[] args,
+    public static PyUnicode OSError__str__(PyObject self, PyObject[] args,
                                                    String[] kwargs) {
         PyObject errno = self.__findattr__("errno");
         PyObject strerror = self.__findattr__("strerror");
@@ -346,9 +340,9 @@ public class Exceptions {
         } else if (errno.__bool__() && strerror.__bool__()) {
             result = String.format("[Errno %s] %s", errno, strerror);
         } else {
-            return PyBaseException.TYPE.invoke("__str__", self, args, kwargs);
+            return (PyUnicode) PyBaseException.TYPE.invoke("__str__", self, args, kwargs);
         }
-        return Py.newString(result);
+        return Py.newUnicode(result);
     }
 
     public static PyObject OSError__reduce__(PyObject self, PyObject[] args,
