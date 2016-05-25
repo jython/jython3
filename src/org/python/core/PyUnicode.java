@@ -609,7 +609,7 @@ public class PyUnicode extends PyString implements Iterable {
                 }
                 PyObject decoded = codecs.decode((PyString)S, encoding, errors);
                 if (decoded instanceof PyUnicode) {
-                    return new PyUnicode((PyUnicode)decoded);
+                    return decoded;
                 } else {
                     throw Py.TypeError("decoder did not return an unicode object (type="
                             + decoded.getType().fastGetName() + ")");

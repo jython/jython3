@@ -60,14 +60,13 @@ public class PyBaseException extends PyObject implements Traverseproc {
         if (args.length == 1) {
             message = args[0];
         }
-        if (args.length > 1) {
-            __cause__ = args[1];
-            __suppress_context__ = Py.True;
+        ThreadState state = Py.getThreadState();
+        if (state.exception != null) {
+            __context__ = state.exception.value;
         } else {
-            __cause__ = Py.None;
-            __suppress_context__ = Py.False;
+            __context__ = Py.None;
         }
-        __context__ = Py.None;
+        __suppress_context__ = Py.False;
     }
 
     public PyObject with_traceback(PyObject tb) {
@@ -177,7 +176,11 @@ public class PyBaseException extends PyObject implements Traverseproc {
     @ExposedSet(name = "__cause__")
     public void setCause(PyObject val) {
         ensureException(val);
-        __cause__ = val;
+        if (PyException.isExceptionClass(val)) {
+            __cause__ = val.__call__(Py.EmptyObjects);
+        } else {
+            __cause__ = val;
+        }
         __suppress_context__ = Py.True;
     }
 
@@ -189,27 +192,15 @@ public class PyBaseException extends PyObject implements Traverseproc {
     }
 
     private void ensureException(PyObject val) {
-        if (val != Py.None && !Py.isInstance(val, PyBaseException.TYPE)) {
+        if (val != Py.None && !PyException.isExceptionClass(val) && !PyException.isExceptionInstance(val)) {
             throw Py.TypeError("exception cause must be None or derive from BaseException");
         }
     }
 
     @Override
-   public PyUnicode __str__() {
+    public PyUnicode __str__() {
         return BaseException___str__();
     }
-
-//    @ExposedMethod(doc = BuiltinDocs.BaseException___str___doc)
-//    final PyUnicode BaseException___str__() {
-//        switch (args.__len__()) {
-//        case 0:
-//            return Py.EmptyUnicode;
-//        case 1:
-//            return args.__getitem__(0).__str__();
-//        default:
-//            return args.__str__();
-//        }
-//    }
 
     @ExposedMethod(doc = BuiltinDocs.BaseException___str___doc)
     final PyUnicode BaseException___str__() {
@@ -237,18 +228,18 @@ public class PyBaseException extends PyObject implements Traverseproc {
 
     @Override
     public String toString() {
-        return BaseException_toString();
+        return BaseException_toString().asString();
     }
 
     @ExposedMethod(names = "__repr__", doc = BuiltinDocs.BaseException___repr___doc)
-    final String BaseException_toString() {
+    final PyUnicode BaseException_toString() {
         PyObject reprSuffix = args.__repr__();
         String name = getType().fastGetName();
         int lastDot = name.lastIndexOf('.');
         if (lastDot != -1) {
             name = name.substring(lastDot + 1);
         }
-        return name + reprSuffix.toString();
+        return new PyUnicode(name + reprSuffix.toString());
     }
 
     @ExposedSet(name = "args")

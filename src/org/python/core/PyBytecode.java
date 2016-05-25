@@ -696,22 +696,19 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                             case 3: {
                                 PyTraceback tb = (PyTraceback) (stack.pop());
                                 PyObject value = stack.pop();
-                                PyObject type = stack.pop();
-                                PyException pye = PyException.doRaise(type, value);
+                                PyException pye = PyException.doRaise(value);
                                 pye.traceback = tb;
                                 throw pye;
                             }
                             case 2: {
                                 PyObject value = stack.pop();
-                                PyObject type = stack.pop();
-                                throw PyException.doRaise(type, value, null);
+                                throw PyException.doRaise(value, null);
                             }
                             case 1: {
-                                PyObject type = stack.pop();
-                                throw PyException.doRaise(type, null, null);
+                                throw PyException.doRaise(null, null);
                             }
                             case 0:
-                                throw PyException.doRaise(null, null, null);
+                                throw PyException.doRaise(null, null);
                             default:
                                 throw Py.SystemError("bad RAISE_VARARGS oparg");
                         }

@@ -281,6 +281,7 @@ public class PyObject implements Serializable {
     public void __ensure_finalizer__() {
     }
 
+
     /**
      * Equivalent to the standard Python __hash__ method.  This method can
      * not be overridden.  Instead, you should override the standard Java
