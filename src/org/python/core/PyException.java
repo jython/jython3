@@ -73,9 +73,9 @@ public class PyException extends RuntimeException implements Traverseproc
             isReRaise = true;
         }
         if (value != null && !isExceptionInstance(value)) {
-            ThreadState state = Py.getThreadState();
-            if (state.exception != null) {
-                context = (PyBaseException) state.exception.value;
+            PyException pye = Py.getThreadState().exceptions.peek();
+            if (pye != null && pye.value instanceof PyBaseException) {
+                context = (PyBaseException) pye.value;
             }
         }
 
@@ -200,6 +200,14 @@ public class PyException extends RuntimeException implements Traverseproc
         return doRaise(value, null);
     }
 
+    public static PyException doRaise(ThreadState state) {
+        PyException pye = state.exceptions.pollFirst();
+        if (pye == null) {
+            throw Py.RuntimeError("No active exception to reraise");
+        }
+        return pye;
+    }
+
     /**
      * Logic for the raise statement
      *
@@ -212,7 +220,7 @@ public class PyException extends RuntimeException implements Traverseproc
         PyObject type;
         ThreadState state = Py.getThreadState();
         if (value == null) {
-            return state.exception;
+            return state.exceptions.pollFirst();
         }
 
         PyException pye;
@@ -220,8 +228,9 @@ public class PyException extends RuntimeException implements Traverseproc
             type = value;
             // null flags context has been take care of
             pye = new PyException(type, null, cause);
-            if (state.exception != null) {
-                pye.context = (PyBaseException) state.exception.value;
+            PyException context = state.exceptions.pollFirst();
+            if (context != null) {
+                pye.context = (PyBaseException) context.value;
             }
             pye.normalize();
             if (!isExceptionInstance(pye.value)) {
@@ -231,11 +240,11 @@ public class PyException extends RuntimeException implements Traverseproc
             }
             return pye;
         } else if (isExceptionInstance(value)) {
+            // ignore the context for now
             type = value.getType();
             return new PyException(type, value, cause);
         } else {
-            throw Py.TypeError("Exceptions must be old-style classes or derived from "
-                               + "BaseException, not " + value.getType().fastGetName());
+            throw Py.TypeError("exceptions must derive from BaseException");
         }
     }
 
@@ -332,8 +341,7 @@ public class PyException extends RuntimeException implements Traverseproc
      * @return true if an exception instance
      */
     public static boolean isExceptionInstance(PyObject obj) {
-        return obj instanceof PyInstance || obj instanceof PyBaseException
-           || obj.getJavaProxy() instanceof Throwable;
+        return obj instanceof PyBaseException;
     }
 
     /**

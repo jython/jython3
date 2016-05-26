@@ -98,6 +98,16 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         exceptionHandlers = new Stack<ExceptionHandler>();
     }
 
+    public void popException() throws Exception {
+        loadThreadState();
+        code.invokestatic(p(Py.class), "popException", sig(Void.TYPE, ThreadState.class));
+    }
+
+    public void doRaise() throws Exception {
+        loadThreadState();
+        code.invokestatic(p(PyException.class), "doRaise", sig(PyException.class, ThreadState.class));
+    }
+
     public void getNone() throws IOException {
         code.getstatic(p(Py.class), "None", ci(PyObject.class));
     }
@@ -990,13 +1000,13 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         }
 
         if (node.getInternalExc() == null) {
-            code.invokestatic(p(Py.class), "makeException", sig(PyException.class));
+            doRaise();
         } else if (node.getInternalCause() == null) {
             stackConsume();
-            code.invokestatic(p(Py.class), "makeException", sig(PyException.class, PyObject.class));
+            code.invokestatic(p(PyException.class), "doRaise", sig(PyException.class, PyObject.class));
         } else {
             stackConsume(2);
-            code.invokestatic(p(Py.class), "makeException",
+            code.invokestatic(p(PyException.class), "doRaise",
                     sig(PyException.class, PyObject.class, PyObject.class));
         }
         code.athrow();
@@ -1424,6 +1434,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.pop();
 
         inlineFinally(inFinally);
+        popException();
         code.aload(excLocal);
         code.checkcast(p(Throwable.class));
         code.athrow();
@@ -1523,6 +1534,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             code.label(else_end);
         }
 
+        popException();
         code.freeFinallyLocal(exc);
         handler.addExceptionHandlers(handler_start);
         return null;
@@ -3127,7 +3139,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.ifne(label_end);
         // raise
         // # The exception is swallowed if exit() returns true
-        code.invokestatic(p(Py.class), "makeException", sig(PyException.class));
+        doRaise();
         code.checkcast(p(Throwable.class));
         code.athrow();
 
@@ -3145,6 +3157,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         final Label label_body_start = new Label();
         final Label label_body_end = new Label();
         final Label label_catch = new Label();
+        final Label label_catch_end = new Label();
         final Label label_end = new Label();
 
         // mgr = (EXPR)
@@ -3233,17 +3246,18 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.swap();
         code.invokeinterface(Type.getType(ContextManager.class).getInternalName(),
                 __exit__.getName(), __exit__.getDescriptor(), true);
-
         // # The exceptional case is handled here
         // exc = False # implicit
         // if not exit(*sys.exc_info()):
-        code.ifne(label_end);
+        code.ifne(label_catch_end);
         // raise
-        // # The exception is swallowed if exit() returns true
-        code.invokestatic(p(Py.class), "makeException", sig(PyException.class));
+        // # The exception is swallowed if __exit__() returns true
+        doRaise();
         code.checkcast(p(Throwable.class));
         code.athrow();
 
+        code.label(label_catch_end);
+        popException();
         code.label(label_end);
         code.freeLocal(mgr_tmp);
 

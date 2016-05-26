@@ -1,6 +1,7 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.core;
 
+import java.util.Deque;
 import java.util.LinkedList;
 
 public class ThreadState {
@@ -9,7 +10,9 @@ public class ThreadState {
 
     public PyFrame frame;
 
-    public PyException exception;
+    // FIXME this should be a stack, pop when exit try/except clause
+    // FIXME raise RuntimeError if try to reraise and the stack is empty
+    public Deque<PyException> exceptions = new LinkedList<>();
 
     public int call_depth;
 

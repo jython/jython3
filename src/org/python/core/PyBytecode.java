@@ -752,7 +752,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                                 retval = stack.pop();
                             }
                         } else if (v instanceof PyStackException) {
-                            ts.exception = ((PyStackException) v).exception;
+                            ts.exceptions.push(((PyStackException) v).exception);
                             why = Why.RERAISE;
 
                         } else if (v instanceof PyString) {
@@ -1177,7 +1177,6 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
             catch (Throwable t) {
                 PyException pye = Py.setException(t, f);
                 why = Why.EXCEPTION;
-                ts.exception = pye;
                 if (debug) {
                     System.err.println("Caught exception:" + pye);
                 }
@@ -1214,7 +1213,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                 }
                 if (b.b_type == Opcode.SETUP_FINALLY || (b.b_type == Opcode.SETUP_EXCEPT && why == Why.EXCEPTION)) {
                     if (why == Why.EXCEPTION) {
-                        PyException exc = ts.exception;
+                        PyException exc = ts.exceptions.peek();
                         if (b.b_type == Opcode.SETUP_EXCEPT) {
                             exc.normalize();
                         }
@@ -1260,7 +1259,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
         }
 
         if (why == why.EXCEPTION) {
-            throw ts.exception;
+            throw ts.exceptions.peek();
         }
 
         if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR) && why == Why.RETURN && retval == Py.None) {

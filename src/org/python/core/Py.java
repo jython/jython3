@@ -398,7 +398,9 @@ public final class Py {
         return new PyException(Py.StopIteration, new PyTuple(value));
     }
     public static PyObject GeneratorExit;
-
+    public static PyException GeneratorExit() {
+        return new PyException(Py.GeneratorExit);
+    }
     public static PyException GeneratorExit(String message) {
         return new PyException(Py.GeneratorExit, message);
     }
@@ -1299,7 +1301,7 @@ public final class Py {
             displayException(exc.type, exc.value, exc.traceback, file);
         }
 
-        ts.exception = null;
+        ts.exceptions.pop();
     }
 
     public static void displayException(PyObject type, PyObject value, PyObject tb,
@@ -1458,10 +1460,13 @@ public final class Py {
         PyException pye = Py.JavaError(t);
         pye.normalize();
         pye.tracebackHere(frame);
-        getThreadState().exception = pye;
+        getThreadState().exceptions.offerFirst(pye);
         return pye;
     }
 
+    public static void popException(ThreadState state) {
+        state.exceptions.pollFirst();
+    }
 
     /**
      * @deprecated As of Jython 2.5, use {@link PyException#match} instead.
@@ -1469,22 +1474,6 @@ public final class Py {
     @Deprecated
     public static boolean matchException(PyException pye, PyObject exc) {
         return pye.match(exc);
-    }
-
-
-    // XXX: the following 4 are backwards compat. for the
-    // oldcompiler. newcompiler should just call doRaise instead
-    public static PyException makeException(PyObject value, PyObject cause) {
-        return PyException.doRaise(value, cause);
-    }
-
-
-    public static PyException makeException(PyObject value) {
-        return makeException(value, null);
-    }
-
-    public static PyException makeException() {
-        return makeException(null);
     }
 
     public static PyObject runCode(PyCode code, PyObject locals, PyObject globals) {
