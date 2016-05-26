@@ -36,9 +36,6 @@ public abstract class PyBaseCode extends PyCode {
             ts.systemState = Py.defaultSystemState;
         }
 
-        // Cache previously defined exception
-        PyException previous_exception = ts.exception;
-
         // Push frame
         frame.f_back = ts.frame;
         if (frame.f_builtins == null) {
@@ -83,8 +80,6 @@ public abstract class PyBaseCode extends PyCode {
                 ts.profilefunc.traceException(frame, pye);
             }
 
-            // Rethrow the exception to the next stack frame
-            ts.exception = previous_exception;
             ts.frame = ts.frame.f_back;
             throw pye;
         } finally {
@@ -98,9 +93,6 @@ public abstract class PyBaseCode extends PyCode {
         if (ts.profilefunc != null) {
             ts.profilefunc.traceReturn(frame, ret);
         }
-
-        // Restore previously defined exception
-        ts.exception = previous_exception;
 
         ts.frame = ts.frame.f_back;
 

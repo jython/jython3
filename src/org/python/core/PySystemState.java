@@ -378,19 +378,19 @@ public class PySystemState extends PyObject implements AutoCloseable,
     @Override
     public PyObject __findattr_ex__(String name) {
         if (name == "exc_value") {
-            PyException exc = Py.getThreadState().exception;
+            PyException exc = Py.getThreadState().exceptions.peek();
             if (exc == null) {
                 return null;
             }
             return exc.value;
         } else if (name == "exc_type") {
-            PyException exc = Py.getThreadState().exception;
+            PyException exc = Py.getThreadState().exceptions.peek();
             if (exc == null) {
                 return null;
             }
             return exc.type;
         } else if (name == "exc_traceback") {
-            PyException exc = Py.getThreadState().exception;
+            PyException exc = Py.getThreadState().exceptions.peek();
             if (exc == null) {
                 return null;
             }
@@ -1523,7 +1523,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
     }
 
     public static PyTuple exc_info() {
-        PyException exc = Py.getThreadState().exception;
+        PyException exc = Py.getThreadState().exceptions.peek();
         if (exc == null) {
             return new PyTuple(Py.None, Py.None, Py.None);
         }
@@ -1533,7 +1533,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
     }
 
     public static void exc_clear() {
-        Py.getThreadState().exception = null;
+        Py.getThreadState().exceptions.clear();
     }
 
     public static PyFrame _getframe() {
