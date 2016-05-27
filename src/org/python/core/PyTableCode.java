@@ -132,6 +132,7 @@ public class PyTableCode extends PyBaseCode
 
         // Cache previously defined exception
 //        PyException previous_exception = ts.exceptions.peekFirst();
+        int exceptionsLength = ts.exceptions.size();
 
         // Push frame
         frame.f_back = ts.frame;
@@ -179,6 +180,10 @@ public class PyTableCode extends PyBaseCode
 
             // Rethrow the exception to the next stack frame
 //            ts.exceptions.addFirst(previous_exception);
+            while(ts.exceptions.size() > exceptionsLength) {
+                ts.exceptions.pop();
+            }
+
             ts.frame = ts.frame.f_back;
             throw pye;
         } finally {
@@ -196,6 +201,10 @@ public class PyTableCode extends PyBaseCode
         // Restore previously defined exception
 //        ts.exceptions.poll();
 //        ts.exceptions.addFirst(previous_exception);
+        while(ts.exceptions.size() > exceptionsLength) {
+            ts.exceptions.pop();
+        }
+
 
         ts.frame = ts.frame.f_back;
 
