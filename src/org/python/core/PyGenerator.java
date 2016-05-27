@@ -68,7 +68,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         } else if (tb != null && !(tb instanceof PyTraceback)) {
             throw Py.TypeError("throw() third argument must be a traceback object");
         }
-        PyException pye = PyException.doRaise(type, value);
+        PyException pye = new PyException(type, value);
         pye.traceback = (PyTraceback) tb;
         PyObject yf = gi_frame.f_yieldfrom;
         if (yf != null) {

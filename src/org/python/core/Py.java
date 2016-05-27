@@ -442,11 +442,11 @@ public final class Py {
             int start,
             int end,
             String reason) {
-        return new PyException(Py.UnicodeDecodeError, new PyTuple(new PyString(encoding),
+        return new PyException(Py.UnicodeDecodeError, new PyTuple(new PyUnicode(encoding),
                 new PyString(object),
-                new PyInteger(start),
-                new PyInteger(end),
-                new PyString(reason)));
+                new PyLong(start),
+                new PyLong(end),
+                new PyUnicode(reason)));
     }
     public static PyObject UnicodeEncodeError;
 
@@ -455,11 +455,11 @@ public final class Py {
             int start,
             int end,
             String reason) {
-        return new PyException(Py.UnicodeEncodeError, new PyTuple(new PyString(encoding),
+        return new PyException(Py.UnicodeEncodeError, new PyTuple(new PyUnicode(encoding),
                 new PyUnicode(object),
-                new PyInteger(start),
-                new PyInteger(end),
-                new PyString(reason)));
+                new PyLong(start),
+                new PyLong(end),
+                new PyUnicode(reason)));
     }
     public static PyObject EOFError;
 

@@ -311,7 +311,6 @@ import org.python.modules.gc;
  *   PyArray                         - Traverseproc, traverses via reflection<br>
  *   PyBaseCode                      - no refs, abstract class<br>
  *   PyBaseException                 - Traverseproc<br>
- *   PyBaseString                    - no refs, abstract class<br>
  *   PyBeanEvent                     - no refs, untraversable<br>
  *   PyBeanEventProperty             - no refs, untraversable<br>
  *   PyBeanProperty                  - no refs, untraversable<br>

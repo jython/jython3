@@ -234,17 +234,21 @@ public class PyObject implements Serializable {
     // occurs during regression testing.  XXX: more detail for this comment
     // is needed.
     @ExposedMethod(names = "__str__", doc = BuiltinDocs.object___str___doc)
+    final PyUnicode object__str__() {
+        return new PyUnicode(toString());
+    }
+
     public PyUnicode __repr__() {
+        return new PyUnicode(toString());
+    }
+
+    @ExposedMethod(names = "__repr__", doc = BuiltinDocs.object___repr___doc)
+    final PyUnicode object___repr__() {
         return new PyUnicode(toString());
     }
 
     @Override
     public String toString() {
-        return object_toString();
-    }
-
-    @ExposedMethod(names = "__repr__", doc = BuiltinDocs.object___repr___doc)
-    final String object_toString() {
         if (getType() == null) {
             return "unknown object";
         }
@@ -268,7 +272,7 @@ public class PyObject implements Serializable {
      * override the standard Java <code>toString</code> method.
      **/
     public PyUnicode __str__() {
-        return __repr__();
+        return object__str__();
     }
 
     /**

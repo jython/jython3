@@ -23,7 +23,7 @@ import java.util.Set;
  * a builtin python unicode string.
  */
 @Untraversable
-@ExposedType(name = "str", base = PyBaseString.class, doc = BuiltinDocs.str_doc)
+@ExposedType(name = "str", base = PyObject.class, doc = BuiltinDocs.str_doc)
 public class PyUnicode extends PyString implements Iterable {
 
     /**
@@ -594,8 +594,15 @@ public class PyUnicode extends PyString implements Iterable {
                 new ArgParser("str", args, keywords, new String[] {"string", "encoding",
                         "errors"}, 0);
         PyObject S = ap.getPyObject(0, null);
-        String encoding = checkEncoding(ap.getString(1, null));
-        String errors = checkEncoding(ap.getString(2, null));
+        String encoding = ap.getString(1, null);
+        String errors = ap.getString(2, null);
+        if (encoding == null) {
+            return S.__str__();
+        }
+
+        checkEncoding(errors);
+        checkEncoding(encoding);
+
         if (new_.for_type == subtype) {
             if (S == null) {
                 return new PyUnicode("");
@@ -1879,13 +1886,6 @@ public class PyUnicode extends PyString implements Iterable {
                 return false;
             }
         }
-        return true;
-    }
-
-    // end utf-16 aware
-    @ExposedMethod(doc = "isunicode is deprecated.")
-    final boolean str_isunicode() {
-        Py.warning(Py.DeprecationWarning, "isunicode is deprecated.");
         return true;
     }
 
