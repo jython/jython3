@@ -3,6 +3,7 @@ import types
 import warnings
 
 import unittest
+from test.support import cpython_only
 
 # Decorator used in the deprecation tests to reset the warning registry for
 # test isolation and reproducibility.
@@ -1022,6 +1023,7 @@ class Test_TestLoader(unittest.TestCase):
 
     # #14971: Make sure the dotted name resolution works even if the actual
     # function doesn't have the same name as is used to find it.
+    @cpython_only
     def test_loadTestsFromName__function_with_different_name_than_method(self):
         # lambdas have the name '<lambda>'.
         m = types.ModuleType('m')

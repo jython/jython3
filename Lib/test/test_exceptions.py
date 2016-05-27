@@ -257,6 +257,7 @@ class ExceptionTests(unittest.TestCase):
         with self.assertRaisesRegex(OSError, 'Windows Error 0x%x' % code):
             ctypes.pythonapi.PyErr_SetFromWindowsErr(code)
 
+    @cpython_only
     def testAttributes(self):
         # test that exception attributes are happy
 

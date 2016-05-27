@@ -6,6 +6,7 @@ from io import BytesIO
 from unittest import TestCase, mock
 import os
 import token
+import unittest
 
 
 class TokenizeTest(TestCase):

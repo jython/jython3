@@ -2016,7 +2016,7 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
 
     @ExposedMethod(names = {"__str__"}, doc = BuiltinDocs.bytearray___str___doc)
     final PyUnicode bytearray_str() {
-        return new PyUnicode(asString());
+        return new PyUnicode(toString());
     }
 
     /**

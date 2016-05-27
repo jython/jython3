@@ -2321,8 +2321,8 @@ def mock_open(mock=None, read_data=''):
 
     global file_spec
     if file_spec is None:
-        import _io
-        file_spec = list(set(dir(_io.TextIOWrapper)).union(set(dir(_io.BytesIO))))
+        import _jyio
+        file_spec = list(set(dir(_jyio.TextIOWrapper)).union(set(dir(_jyio.BytesIO))))
 
     if mock is None:
         mock = MagicMock(name='open', spec=open)

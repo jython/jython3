@@ -96,6 +96,7 @@ ihooks.py
 imaplib.py
 imghdr.py
 imp.py
+inspect.py
 io.py
 keyword.py
 linecache.py
