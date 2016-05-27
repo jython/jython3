@@ -167,6 +167,10 @@ public class PyException extends RuntimeException implements Traverseproc
         if (context != null) {
             ((PyBaseException) value).__context__ = context;
         }
+        if (traceback != null) {
+            traceback.tb_next = ((PyBaseException) value).__traceback__;
+            ((PyBaseException) value).__traceback__ = traceback;
+        }
         normalized = true;
     }
 
@@ -201,7 +205,7 @@ public class PyException extends RuntimeException implements Traverseproc
     }
 
     public static PyException doRaise(ThreadState state) {
-        PyException pye = state.exceptions.pollFirst();
+        PyException pye = state.exceptions.peekFirst();
         if (pye == null) {
             throw Py.RuntimeError("No active exception to reraise");
         }
@@ -220,7 +224,7 @@ public class PyException extends RuntimeException implements Traverseproc
         PyObject type;
         ThreadState state = Py.getThreadState();
         if (value == null) {
-            return state.exceptions.pollFirst();
+            return state.exceptions.peekFirst();
         }
 
         PyException pye;
@@ -228,7 +232,7 @@ public class PyException extends RuntimeException implements Traverseproc
             type = value;
             // null flags context has been take care of
             pye = new PyException(type, null, cause);
-            PyException context = state.exceptions.pollFirst();
+            PyException context = state.exceptions.peekFirst();
             if (context != null) {
                 pye.context = (PyBaseException) context.value;
             }
