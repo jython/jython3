@@ -60,7 +60,7 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
                                                               "chr(): 1st arg can't be coerced to "
                                                               + "int")));
             case 1:
-                return Py.newInteger(__builtin__.len(arg1));
+                return Py.newLong(__builtin__.len(arg1));
             case 2:
                 return __builtin__.range(arg1);
             case 3:
