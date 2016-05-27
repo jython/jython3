@@ -167,10 +167,6 @@ public class PyException extends RuntimeException implements Traverseproc
         if (context != null) {
             ((PyBaseException) value).__context__ = context;
         }
-        if (traceback != null) {
-            traceback.tb_next = ((PyBaseException) value).__traceback__;
-            ((PyBaseException) value).__traceback__ = traceback;
-        }
         normalized = true;
     }
 
@@ -194,6 +190,11 @@ public class PyException extends RuntimeException implements Traverseproc
             // the frame is either inapplicable or already registered (from a finally)
             // during a re-raise
             traceback = new PyTraceback(traceback, here);
+            // since this is called after normalize, we can only amend it
+            if (value instanceof PyBaseException) {
+                traceback.tb_next = ((PyBaseException) value).__traceback__;
+                ((PyBaseException) value).__traceback__ = traceback;
+            }
         }
         // finally blocks immediately tracebackHere: so they toggle isReRaise to skip the
         // next tracebackHere hook
