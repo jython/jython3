@@ -626,7 +626,10 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
 
             }
 
-            return res.__str__();
+            PyBuffer buf = res.getBuffer(PyBUF.FULL_RO);
+            byte[] bytes = new byte[buf.getLen()];
+            buf.copyTo(bytes, 0);
+            return new PyString(new String(bytes));
         }
 
     }
