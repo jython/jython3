@@ -70,6 +70,7 @@
   <target name="needed-check" unless="full-build">
     <uptodate property="antlr.notneeded" targetfile="${gensrc.dir}/org/python/antlr/PythonParser.java">
       <srcfiles dir="grammar" includes="*.g" />
+      <srcfiles dir="${basedir}/src/org/python/compiler" includes="CodeCompiler.java" />
     </uptodate>
   </target>
 
