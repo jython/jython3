@@ -4,7 +4,6 @@ package org.python.modules._csv;
 import org.python.core.ArgParser;
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
-import org.python.core.PyBaseString;
 import org.python.core.PyDictionary;
 import org.python.core.PyException;
 import org.python.core.PyInteger;
@@ -120,7 +119,7 @@ public class _csv implements ClassDictInit {
         PyObject name = ap.getPyObject(0);
         PyObject dialect = ap.getPyObject(1, null);
 
-        if (!(name instanceof PyBaseString)) {
+        if (!(name instanceof PyString)) {
             throw Py.TypeError("dialect name must be a string or unicode");
         }
 

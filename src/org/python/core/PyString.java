@@ -34,8 +34,8 @@ import org.python.expose.MethodType;
  * A builtin python string.
  */
 @Untraversable
-@ExposedType(name = "bytes", base = PyBaseString.class, doc = BuiltinDocs.str_doc)
-public class PyString extends PyBaseString implements BufferProtocol {
+@ExposedType(name = "bytes", base = PyObject.class, doc = BuiltinDocs.bytes_doc)
+public class PyString extends PySequence implements BufferProtocol {
 
     public static final PyType TYPE = PyType.fromClass(PyString.class);
     protected String string; // cannot make final because of Python intern support

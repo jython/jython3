@@ -1142,7 +1142,7 @@ public class codecs {
 
     /* --- ASCII and Latin-1 Codecs --------------------------------------- */
     public static String PyUnicode_DecodeASCII(String str, int size, String errors) {
-        return PyUnicode_DecodeIntLimited(str, size, errors, "ascii", 128);
+        return PyUnicode_DecodeIntLimited(str, size, errors, "ascii", 256);
     }
 
     public static String PyUnicode_DecodeLatin1(String str, int size, String errors) {
@@ -1167,7 +1167,7 @@ public class codecs {
     }
 
     public static String PyUnicode_EncodeASCII(String str, int size, String errors) {
-        return PyUnicode_EncodeIntLimited(str, size, errors, "ascii", 128);
+        return PyUnicode_EncodeIntLimited(str, size, errors, "ascii", 256);
     }
 
     public static String PyUnicode_EncodeLatin1(String str, int size, String errors) {
@@ -1615,7 +1615,7 @@ public class codecs {
      */
     private static void checkErrorHandlerReturn(String errors, PyObject replacementSpec) {
         if (!(replacementSpec instanceof PyTuple) || replacementSpec.__len__() != 2
-                || !(replacementSpec.__getitem__(0) instanceof PyBaseString)
+                || !(replacementSpec.__getitem__(0) instanceof PyString)
                 || !(replacementSpec.__getitem__(1) instanceof PyInteger)) {
             throw new PyException(Py.TypeError, "error_handler " + errors
                     + " must return a tuple of (replacement, new position)");

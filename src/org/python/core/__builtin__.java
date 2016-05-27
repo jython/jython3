@@ -273,7 +273,7 @@ public class __builtin__ {
         dict.__setitem__("int", PyLong.TYPE);
         dict.__setitem__("enumerate", PyEnumerate.TYPE);
         dict.__setitem__("float", PyFloat.TYPE);
-        dict.__setitem__("long", PyLong.TYPE);
+//        dict.__setitem__("long", PyLong.TYPE);
         dict.__setitem__("complex", PyComplex.TYPE);
         dict.__setitem__("dict", PyDictionary.TYPE);
         dict.__setitem__("list", PyList.TYPE);
@@ -587,7 +587,7 @@ public class __builtin__ {
         return list;
     }
 
-    public static PyObject filterBaseString(PyObject func, PyBaseString seq, PyType stringType) {
+    public static PyObject filterBaseString(PyObject func, PyString seq, PyType stringType) {
         if (func == Py.None && seq.getType() == stringType) {
             // If it's a real string we can return the original, as no character is ever
             // false and __getitem__ does return this character. If it's a subclass we

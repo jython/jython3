@@ -779,8 +779,8 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         ArgParser ap = new ArgParser("bytearray", args, kwds, "source", "encoding", "errors");
         PyObject arg = ap.getPyObject(0, null);
         // If not null, encoding and errors must be PyString (or PyUnicode)
-        PyObject encoding = ap.getPyObjectByType(1, PyBaseString.TYPE, null);
-        PyObject errors = ap.getPyObjectByType(2, PyBaseString.TYPE, null);
+        PyObject encoding = ap.getPyObjectByType(1, PyString.TYPE, null);
+        PyObject errors = ap.getPyObjectByType(2, PyString.TYPE, null);
 
         /*
          * This method and the related init()s are modelled on CPython (see
