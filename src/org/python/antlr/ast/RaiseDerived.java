@@ -823,7 +823,7 @@ public class RaiseDerived extends Raise implements Slotted,FinalizablePyObjectDe
         }
         PyObject o=impl.__get__(this,self_type).__call__();
         Class c=o.getClass();
-        if (c!=PyInteger.class&&c!=PyBoolean.class) {
+        if (c!=PyLong.class&&c!=PyBoolean.class) {
             throw Py.TypeError(String.format("__bool__ should return bool or int, returned %s",self_type.getName()));
         }
         return o.__bool__();
