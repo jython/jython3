@@ -1142,7 +1142,7 @@ public class codecs {
 
     /* --- ASCII and Latin-1 Codecs --------------------------------------- */
     public static String PyUnicode_DecodeASCII(String str, int size, String errors) {
-        return PyUnicode_DecodeIntLimited(str, size, errors, "ascii", 256);
+        return PyUnicode_DecodeIntLimited(str, size, errors, "ascii", 128);
     }
 
     public static String PyUnicode_DecodeLatin1(String str, int size, String errors) {
@@ -1167,7 +1167,7 @@ public class codecs {
     }
 
     public static String PyUnicode_EncodeASCII(String str, int size, String errors) {
-        return PyUnicode_EncodeIntLimited(str, size, errors, "ascii", 256);
+        return PyUnicode_EncodeIntLimited(str, size, errors, "ascii", 128);
     }
 
     public static String PyUnicode_EncodeLatin1(String str, int size, String errors) {
