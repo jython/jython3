@@ -56,7 +56,7 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
     public PyObject __call__(PyObject arg1) {
         switch (this.index) {
             case 0:
-                return Py.newString(__builtin__.chr(Py.py2int(arg1,
+                return Py.newUnicode(__builtin__.chr(Py.py2int(arg1,
                                                               "chr(): 1st arg can't be coerced to "
                                                               + "int")));
             case 1:
@@ -64,7 +64,7 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
             case 2:
                 return __builtin__.range(arg1);
             case 3:
-                return Py.newInteger(__builtin__.ord(arg1));
+                return Py.newLong(__builtin__.ord(arg1));
             case 5:
                 return __builtin__.hash(arg1);
             case 6:
@@ -74,7 +74,7 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
             case 9:
                 return __builtin__.apply(arg1);
             case 11:
-                return Py.newInteger(__builtin__.id(arg1));
+                return Py.newLong(__builtin__.id(arg1));
             case 12:
                 return __builtin__.sum(arg1);
             case 14:
@@ -125,7 +125,7 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
             case 2:
                 return __builtin__.range(arg1, arg2);
             case 6:
-                return Py.newInteger(__builtin__.cmp(arg1, arg2));
+                return Py.newLong(__builtin__.cmp(arg1, arg2));
             case 9:
                 return __builtin__.apply(arg1, arg2);
             case 10:
@@ -309,7 +309,6 @@ public class __builtin__ {
         dict.__setitem__("callable", new BuiltinFunctions("callable", 14, 1));
         dict.__setitem__("coerce", new BuiltinFunctions("coerce", 13, 2));
         dict.__setitem__("chr", new BuiltinFunctions("chr", 0, 1));
-        dict.__setitem__("cmp", new BuiltinFunctions("cmp", 6, 2));
         dict.__setitem__("globals", new BuiltinFunctions("globals", 4, 0));
         dict.__setitem__("hash", new BuiltinFunctions("hash", 5, 1));
         dict.__setitem__("id", new BuiltinFunctions("id", 11, 1));
@@ -509,7 +508,7 @@ public class __builtin__ {
         if (o instanceof PyCode) {
             code = (PyCode) o;
         } else {
-            if (o instanceof PyString) {
+            if (o instanceof PyUnicode) {
                 code = (PyCode)CompileFunction.compile(o, "<string>", "eval");
             } else {
                 throw Py.TypeError("eval: argument 1 must be string or code object");
