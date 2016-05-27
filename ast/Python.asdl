@@ -35,7 +35,6 @@ module Python version "$Revision$"
           | With(withitem* items, stmt* body)
           | AsyncWith(withitem* items, stmt* body)
 
-          -- 'type' is a bad name
           | Raise(expr? exc, expr? cause)
 
           | TryExcept(stmt* body, excepthandler* handlers, stmt* orelse)

@@ -2,6 +2,7 @@
 Define names for built-in types that aren't directly accessible as a builtin.
 """
 import sys
+import os
 
 # Iterators in Python aren't a matter of type but of protocol.  A large
 # and changing number of builtin types implement *some* flavor of
@@ -31,7 +32,7 @@ MethodType = type(_C()._m)
 BuiltinFunctionType = type(len)
 BuiltinMethodType = type([].append)     # Same as BuiltinFunctionType
 
-ModuleType = type(sys)
+ModuleType = type(os)
 
 try:
     raise TypeError

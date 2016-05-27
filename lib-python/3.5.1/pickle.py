@@ -1338,7 +1338,7 @@ class _Unpickler:
     def load_stack_global(self):
         name = self.stack.pop()
         module = self.stack.pop()
-        if type(name) is not bytes or type(module) is not str:
+        if type(name) is not str or type(module) is not str:
             raise UnpicklingError("STACK_GLOBAL requires str")
         self.append(self.find_class(module, name))
     dispatch[STACK_GLOBAL[0]] = load_stack_global
