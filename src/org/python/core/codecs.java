@@ -1692,8 +1692,8 @@ public class codecs {
         }
 
         public PyTuple lookup(String encoding) {
-            PyString v = new PyString(normalizestring(encoding));
-            PyObject cached = searchCache.__finditem__(v);
+            String normalizedEncoding = normalizestring(encoding);
+            PyObject cached = searchCache.__finditem__(normalizedEncoding);
             if (cached != null) {
                 return (PyTuple)cached;
             }
@@ -1703,6 +1703,7 @@ public class codecs {
                         "no codec search functions registered: can't find encoding '" + encoding + "'");
             }
 
+            PyString v = new PyString(normalizedEncoding);
             for (PyObject func : searchPath.asIterable()) {
                 PyObject created = func.__call__(v);
                 if (created == Py.None) {

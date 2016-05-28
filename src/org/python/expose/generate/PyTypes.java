@@ -15,6 +15,7 @@ import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyType;
+import org.python.core.PyUnicode;
 import org.python.core.ThreadState;
 import org.python.expose.ExposeAsSuperclass;
 import org.python.expose.ExposedClassMethod;
@@ -44,7 +45,9 @@ public interface PyTypes {
 
     public static final Type PY = Type.getType(Py.class);
 
-    public static final Type PYSTR = Type.getType(PyString.class);
+    public static final Type PYBYTES = Type.getType(PyString.class);
+
+    public static final Type PYSTR = Type.getType(PyUnicode.class);
 
     public static final Type PYBOOLEAN = Type.getType(PyBoolean.class);
 

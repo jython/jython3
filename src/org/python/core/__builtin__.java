@@ -391,10 +391,10 @@ public class __builtin__ {
 
             for (int i = 0; i < n; i++) {
                 PyObject name = ik.next();
-                if (name.getClass() != PyString.class) {
+                if (name.getClass() != PyUnicode.class) {
                     throw Py.TypeError(String.format("keywords must be strings"));
                 }
-                kw[i] = ((PyString)name).internedString();
+                kw[i] = ((PyUnicode)name).internedString();
                 a[i + offset] = iv.next();
             }
             return o.__call__(a, kw);
@@ -1159,7 +1159,7 @@ public class __builtin__ {
         }
     }
 
-    public static PyString __doc__zip = new PyString(
+    public static PyUnicode __doc__zip = new PyUnicode(
         "zip(seq1 [, seq2 [...]]) -> [(seq1[0], seq2[0] ...), (...)]\n\n" +
         "Return a list of tuples, where each tuple contains the i-th element\n" +
         "from each of the argument sequences.  The returned list is\n" +

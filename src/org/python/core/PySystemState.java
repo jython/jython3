@@ -172,7 +172,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
     public PyObject last_type = Py.None;
     public PyObject last_traceback = Py.None;
 
-    public PyObject __name__ = new PyString("sys");
+    public PyObject __name__ = new PyUnicode("sys");
 
     public PyObject __dict__;
 
@@ -501,8 +501,8 @@ public class PySystemState extends PyObject implements AutoCloseable,
         }
     }
 
-    public PyString getdefaultencoding() {
-        return new PyString(codecs.getDefaultEncoding());
+    public PyUnicode getdefaultencoding() {
+        return new PyUnicode(codecs.getDefaultEncoding());
     }
 
     public void setdefaultencoding(String encoding) {
@@ -787,7 +787,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
         if (version.equals("12")) {
             version = "1.2";
         }
-        defaultPlatform = new PyString("java" + version);
+        defaultPlatform = new PyUnicode("java" + version);
     }
 
     private static void initRegistry(Properties preProperties, Properties postProperties,
@@ -1180,7 +1180,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
         if (!executableFile.isFile()) {
             return Py.None;
         }
-        return new PyString(executableFile.getPath());
+        return new PyUnicode(executableFile.getPath());
     }
 
     /**
@@ -1324,7 +1324,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
         addPaths(path, props.getProperty("python.path", ""));
         if (prefix != null) {
             String libpath = new File(prefix.toString(), "Lib").toString();
-            path.append(new PyString(libpath));
+            path.append(new PyUnicode(libpath));
         }
         if (standalone) {
             // standalone jython: add the /Lib directory inside JYTHON_JAR to the path
@@ -1426,7 +1426,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
     private static void addPaths(PyList path, String pypath) {
         StringTokenizer tok = new StringTokenizer(pypath, java.io.File.pathSeparator);
         while (tok.hasMoreTokens()) {
-            path.append(new PyString(tok.nextToken().trim()));
+            path.append(new PyUnicode(tok.nextToken().trim()));
         }
     }
 
