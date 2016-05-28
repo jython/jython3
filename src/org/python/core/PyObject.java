@@ -700,7 +700,7 @@ public class PyObject implements Serializable {
      * @see #__finditem__(PyObject)
      **/
     public PyObject __finditem__(String key) {
-        return __finditem__(new PyString(key));
+        return __finditem__(new PyUnicode(key));
     }
 
     /**
@@ -767,7 +767,7 @@ public class PyObject implements Serializable {
      * @see #__setitem__(PyObject, PyObject)
      **/
     public void __setitem__(String key, PyObject value) {
-        __setitem__(new PyString(key), value);
+        __setitem__(new PyUnicode(key), value);
     }
 
     /**
@@ -813,7 +813,7 @@ public class PyObject implements Serializable {
      * @see #__delitem__(PyObject)
      **/
     public void __delitem__(String key) {
-        __delitem__(new PyString(key));
+        __delitem__(new PyUnicode(key));
     }
 
     public PyObject __getslice__(
