@@ -1,5 +1,7 @@
 package org.python.core;
 
+import org.python.core.buffer.SimpleBuffer;
+
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -643,8 +645,11 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
             return null;
 
         } else if (b instanceof BufferProtocol) {
-            return ((BufferProtocol)b).getBuffer(PyBUF.FULL_RO);
+            return ((BufferProtocol) b).getBuffer(PyBUF.FULL_RO);
 
+        } else if (b instanceof PyLong) {
+            byte[] v = ((PyLong) b).getValue().toByteArray();
+            return new SimpleBuffer(v);
         } else {
             return null;
         }
@@ -1166,7 +1171,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      */
     protected final PyObject basebytes_decode(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("decode", args, keywords, "encoding", "errors");
-        String encoding = ap.getString(0, null);
+        String encoding = ap.getString(0, "utf-8");
         String errors = ap.getString(1, null);
         return decode(encoding, errors);
     }
