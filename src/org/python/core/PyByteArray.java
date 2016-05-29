@@ -943,9 +943,13 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         return bytearray___alloc__();
     }
 
+    /**
+     * To be consistent with CPython, the length include the trailing null byte
+     * @return length
+     */
     @ExposedMethod(doc = BuiltinDocs.bytearray___alloc___doc)
     final int bytearray___alloc__() {
-        return storage.length;
+        return storage.length + 1;
     }
 
     /**

@@ -1890,11 +1890,11 @@ public class PyUnicode extends PyString implements Iterable {
     }
 
     @ExposedMethod(doc = BuiltinDocs.str_encode_doc)
-    final String str_encode(PyObject[] args, String[] keywords) {
+    final PyString str_encode(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("encode", args, keywords, "encoding", "errors");
         String encoding = ap.getString(0, "UTF-8");
         String errors = ap.getString(1, null);
-        return encode(encoding, errors);
+        return new PyString(encode(encoding, errors));
     }
 
     @ExposedMethod(doc = BuiltinDocs.str___getnewargs___doc)

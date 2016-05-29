@@ -277,11 +277,10 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
         String encoded;
 
         if (arg instanceof PyUnicode) {
-            if (encoding != null) {
-                encoded = codecs.encode(arg, encoding, errors);
-            } else {
-                throw Py.TypeError("unicode argument without an encoding");
+            if (encoding == null) {
+                encoding = Py.getSystemState().getCodecState().getDefaultEncoding();
             }
+            encoded = codecs.encode(arg, encoding, errors);
         } else {
             if (encoding != null) {
                 encoded = codecs.encode(arg, encoding, errors);
@@ -617,13 +616,6 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
         if (value.isIndex()) {
             // This will possibly produce Py.OverflowError("long int too large to convert")
             return byteCheck(value.asIndex());
-        } else if (value.getType() == PyString.TYPE) {
-            // Exactly PyString (not PyUnicode)
-            String strValue = ((PyString)value).getString();
-            if (strValue.length() != 1) {
-                throw Py.ValueError("string must be of size 1");
-            }
-            return byteCheck(strValue.charAt(0));
         } else {
             throw Py.TypeError("an integer or string of size 1 is required");
         }
@@ -1216,15 +1208,15 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
         return new PyTuple(getType(), args, (dict != null) ? dict : Py.None);
     }
 
-    private static PyString PICKLE_ENCODING;
+    private static PyUnicode PICKLE_ENCODING;
 
     /**
      * Name the encoding effectively used in __reduce__() suport for pickling: this choice is
      * hard-coded in CPython as "latin-1".
      */
-    private static final PyString getPickleEncoding() {
+    private static final PyUnicode getPickleEncoding() {
         if (PICKLE_ENCODING == null) {
-            PICKLE_ENCODING = new PyString("latin-1");
+            PICKLE_ENCODING = new PyUnicode("latin-1");
         }
         return PICKLE_ENCODING;
     }

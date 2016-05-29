@@ -833,12 +833,23 @@ public class PyString extends PySequence implements BufferProtocol {
      * Return a String equivalent to the argument. This is a helper function to those methods that
      * accept any byte array type (any object that supports a one-dimensional byte buffer), but
      * <b>not</b> a <code>unicode</code>.
+     * Added support for integer, as it can be interpreted as a byte
      *
      * @param obj to coerce to a String
      * @return coerced value
      * @throws PyException if the coercion fails (including <code>unicode</code>)
      */
     private static String asStringOrError(PyObject obj) throws PyException {
+        return asStringOrError(obj, true);
+    }
+    private static String asStringOrError(PyObject obj, boolean allowInt) throws PyException {
+        if (allowInt && obj instanceof PyLong) {
+            int val = ((PyLong) obj).getValue().intValue();
+            if (val < 0 || val > 255) {
+                throw Py.ValueError("byte must be in range(0, 256)");
+            }
+            return String.valueOf(val);
+        }
         String ret = (obj instanceof PyUnicode) ? null : asUTF16StringOrNull(obj);
         if (ret != null) {
             return ret;
@@ -1494,7 +1505,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * @return list(str) result
      */
     public PyList split(PyObject sep) {
-        return bytes_split(sep, -1);
+        return bytes_split(new PyObject[]{sep}, Py.NoKeywords);
     }
 
     /**
@@ -1507,21 +1518,17 @@ public class PyString extends PySequence implements BufferProtocol {
      *            parts).
      * @return list(str) result
      */
-    public PyList split(PyObject sep, int maxsplit) {
-        return bytes_split(sep, maxsplit);
+    public PyList split(PyObject sep, PyObject maxsplit) {
+        return bytes_split(new PyObject[]{sep, maxsplit}, Py.NoKeywords);
     }
 
-    @ExposedMethod(defaults = {"null", "-1"}, doc = BuiltinDocs.bytes_split_doc)
-    final PyList bytes_split(PyObject sepObj, int maxsplit) {
-        if (sepObj instanceof PyUnicode) {
-            // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).str_split(sepObj, maxsplit);
-        } else {
-            // It ought to be None, null, some kind of bytes with the buffer API.
-            String sep = asStringNullOrError(sepObj, "split");
-            // Split on specified string or whitespace if sep == null
-            return _split(sep, maxsplit);
-        }
+    @ExposedMethod(doc = BuiltinDocs.bytes_split_doc)
+    final PyList bytes_split(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("rsplit", args, keywords, "sep", "maxsplit");
+        PyObject sep = ap.getPyObject(0, Py.None);
+        int maxsplit = ap.getInt(1, -1);
+        // Split on specified string or whitespace if sep == null
+        return _split(asStringNullOrError(sep, "sep"), maxsplit);
     }
 
     /**
@@ -1745,7 +1752,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * @return list(str) result
      */
     public PyList rsplit(PyObject sep) {
-        return bytes_rsplit(sep, -1);
+        return bytes_rsplit(new PyObject[]{sep}, Py.NoKeywords);
     }
 
     /**
@@ -1758,21 +1765,17 @@ public class PyString extends PySequence implements BufferProtocol {
      *            parts).
      * @return list(str) result
      */
-    public PyList rsplit(PyObject sep, int maxsplit) {
-        return bytes_rsplit(sep, maxsplit);
+    public PyList rsplit(PyObject sep, PyObject maxsplit) {
+        return bytes_rsplit(new PyObject[]{sep, maxsplit}, Py.NoKeywords);
     }
 
-    @ExposedMethod(defaults = {"null", "-1"}, doc = BuiltinDocs.bytes_split_doc)
-    final PyList bytes_rsplit(PyObject sepObj, int maxsplit) {
-        if (sepObj instanceof PyUnicode) {
-            // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).str_rsplit(sepObj, maxsplit);
-        } else {
-            // It ought to be None, null, some kind of bytes with the buffer API.
-            String sep = asStringNullOrError(sepObj, "rsplit");
-            // Split on specified string or whitespace if sep == null
-            return _rsplit(sep, maxsplit);
-        }
+    @ExposedMethod(doc = BuiltinDocs.bytes_split_doc)
+    final PyList bytes_rsplit(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("rsplit", args, keywords, "sep", "maxsplit");
+        PyObject sep = ap.getPyObject(0, Py.None);
+        int maxsplit = ap.getInt(1, -1);
+        // Split on specified string or whitespace if sep == null
+        return _rsplit(asStringNullOrError(sep, "sep"), maxsplit);
     }
 
     /**
@@ -3100,12 +3103,11 @@ public class PyString extends PySequence implements BufferProtocol {
     @ExposedMethod(defaults = "-1", doc = BuiltinDocs.bytes_replace_doc)
     final PyString bytes_replace(PyObject oldPieceObj, PyObject newPieceObj, int count) {
         if (oldPieceObj instanceof PyUnicode || newPieceObj instanceof PyUnicode) {
-            // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).str_replace(oldPieceObj, newPieceObj, count);
+            throw Py.TypeError("a bytes-like object is required, not 'str'");
         } else {
             // Neither is a PyUnicode: both ought to be some kind of bytes with the buffer API.
-            String oldPiece = asStringOrError(oldPieceObj);
-            String newPiece = asStringOrError(newPieceObj);
+            String oldPiece = asStringOrError(oldPieceObj, false);
+            String newPiece = asStringOrError(newPieceObj, false);
             return _replace(oldPiece, newPiece, count);
         }
     }
@@ -3542,11 +3544,14 @@ public class PyString extends PySequence implements BufferProtocol {
         return _translate(table, deletechars);
     }
 
-    @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.bytes_translate_doc)
+    @ExposedMethod(defaults = {"null"}, doc = BuiltinDocs.bytes_translate_doc)
     final String bytes_translate(PyObject tableObj, PyObject deletecharsObj) {
-        // Accept anythiong withthe buffer API or null
-        String table = asStringNullOrError(tableObj, null);
-        String deletechars = asStringNullOrError(deletecharsObj, null);
+        String table = asStringOrNull(tableObj);
+        String deletechars = null;
+        if (deletecharsObj != null) {
+            deletechars = asStringOrError(deletecharsObj);
+        }
+        // Accept anythiong with the buffer API or null
         return _translate(table, deletechars);
     }
 
