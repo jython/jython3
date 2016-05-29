@@ -1089,6 +1089,13 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         return (PyByteArray)basebytes_center(width, fillchar);
     }
 
+    @ExposedMethod(doc = BuiltinDocs.bytearray_copy_doc)
+    final PyByteArray bytearray_copy() {
+        PyByteArray copy = new PyByteArray();
+        copy.init((BufferProtocol) this);
+        return copy;
+    }
+
     /**
      * Implementation of Python <code>count(sub)</code>. Return the number of non-overlapping
      * occurrences of <code>sub</code> in this byte array.
