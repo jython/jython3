@@ -596,6 +596,10 @@ public class PyUnicode extends PyString implements Iterable {
         PyObject S = ap.getPyObject(0, null);
         String encoding = ap.getString(1, null);
         String errors = ap.getString(2, null);
+        if (S == null) {
+            return Py.EmptyUnicode;
+        }
+
         if (encoding == null) {
             return S.__str__();
         }

@@ -789,17 +789,19 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
          * bytearray from the right-hand side. Hopefully, it still tries the same things in the same
          * order and fails in the same way.
          */
-
+        boolean isUnicode = arg != null && arg instanceof PyUnicode;
+        if (encoding == null && isUnicode) {
+            throw Py.TypeError("string argument without an encoding");
+        }
         if (encoding != null || errors != null) {
             /*
              * bytearray(string [, encoding [, errors]]) Construct from a text string by encoding it
              * using the specified encoding.
              */
-            if (arg == null || !(arg instanceof PyString)) {
-                throw Py.TypeError("encoding or errors without sequence argument");
+            if (arg == null || !isUnicode) {
+                throw Py.TypeError("encoding or errors without string argument");
             }
             init((PyString)arg, encoding, errors);
-
         } else {
             // Now construct from arbitrary object (or null)
             init(arg);
@@ -1989,6 +1991,11 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
     final synchronized void bytearray___setitem__(PyObject index, PyObject value) {
         // Let the SequenceIndexDelegate take care of it
         delegator.checkIdxAndSetItem(index, value);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.bytearray_clear_doc)
+    final synchronized void bytearray_clear() {
+        clear();
     }
 
     /**
