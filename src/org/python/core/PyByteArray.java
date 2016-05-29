@@ -1304,16 +1304,19 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
      * @param hex specification of the bytes
      * @throws PyException (ValueError) if non-hex characters, or isolated ones, are encountered
      */
-    static PyByteArray fromhex(String hex) throws PyException {
+    static PyByteArray fromhex(PyObject hex) throws PyException {
         return bytearray_fromhex(TYPE, hex);
     }
 
     @ExposedClassMethod(doc = BuiltinDocs.bytearray_fromhex_doc)
-    static PyByteArray bytearray_fromhex(PyType type, String hex) {
+    static PyByteArray bytearray_fromhex(PyType type, PyObject hex) {
         // I think type tells us the actual class but we always return exactly a bytearray
         // PyObject ba = type.__call__();
+        if (!(hex instanceof PyUnicode)) {
+            throw Py.ValueError(String.format("fromhex() argument must be str, not %s", hex.getType().fastGetName()));
+        }
         PyByteArray result = new PyByteArray();
-        basebytes_fromhex(result, hex);
+        basebytes_fromhex(result, hex.asString());
         return result;
     }
 

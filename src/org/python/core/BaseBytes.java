@@ -648,8 +648,11 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
             return ((BufferProtocol) b).getBuffer(PyBUF.FULL_RO);
 
         } else if (b instanceof PyLong) {
-            byte[] v = ((PyLong) b).getValue().toByteArray();
-            return new SimpleBuffer(v);
+            int v = ((PyLong) b).getValue().intValue();
+            if (v < 0 || v > 255) {
+                throw Py.ValueError("byte must be in range(0, 256)");
+            }
+            return new SimpleBuffer(new byte[]{(byte) v});
         } else {
             return null;
         }
@@ -664,11 +667,15 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      * @return byte-oriented view
      */
     protected static PyBuffer getViewOrError(PyObject b) {
+        String fmt = "a bytes-like object is required, not '%s'";
+        return getViewOrError(b, fmt);
+    }
+
+    protected static PyBuffer getViewOrError(PyObject b, String fmt) {
         PyBuffer buffer = getView(b);
         if (buffer != null) {
             return buffer;
         } else {
-            String fmt = "Type %s doesn't support the buffer API";
             throw Py.TypeError(String.format(fmt, b.getType().fastGetName()));
         }
     }
@@ -1042,7 +1049,9 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
             return false; // None of them matched
 
         } else {
-            return match(target, index[0], index[3], endswith);
+            StringBuilder fmt = new StringBuilder(endswith ? "endswith" : "startswith");
+            fmt.append(" first arg must be bytes or a tuple of bytes, not '%s'");
+            return match(target, index[0], index[3], endswith, fmt.toString());
         }
     }
 
@@ -1060,9 +1069,13 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      * @return true if and only if the slice [offset:<code>]</code> matches the given target
      */
     private boolean match(PyObject target, int pos, int n, boolean endswith) {
+        return match(target, pos, n, endswith, "a bytes-like object is required, not '%s'");
+    }
+
+    private boolean match(PyObject target, int pos, int n, boolean endswith, String error) {
 
         // Error if not something we can treat as a view of bytes
-        try (PyBuffer vt = getViewOrError(target)) {
+        try (PyBuffer vt = getViewOrError(target, error)) {
             int j = 0, len = vt.getLen();
 
             if (!endswith) {
