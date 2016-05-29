@@ -1194,9 +1194,6 @@ public class imp {
      */
     private static void loadNames(PyObject names, PyObject module, PyObject locals, boolean filter) {
         for (PyObject name : names.asIterable()) {
-            if (!(name instanceof PyUnicode)) {
-                System.out.println("hello");
-            }
             String sname = ((PyString)name).internedString();
             if (filter && sname.startsWith("_")) {
                 continue;
