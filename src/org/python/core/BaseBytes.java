@@ -2805,7 +2805,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
         int p, q; // Indexes of unsplit text and whitespace
 
         // Scan over leading whitespace
-        for (p = offset; p < limit && Character.isWhitespace(storage[p] & 0xff); p++) {
+        for (p = offset; p < limit && isspace(storage[p] & 0xff); p++) {
             ; // continue
         }
 
@@ -2817,13 +2817,13 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
             // Delimit a word at p
             // storage[p] is not whitespace or at the limit: it is the start of a word
             // Skip q over the non-whitespace at p
-            for (q = p; q < limit && !Character.isWhitespace(storage[q] & 0xff); q++) {
+            for (q = p; q < limit && !isspace(storage[q] & 0xff); q++) {
                 ; // continue
             }
             // storage[q] is whitespace or it is at the limit
             result.append(getslice(p - offset, q - offset));
             // Skip p over the whitespace at q
-            for (p = q; p < limit && Character.isWhitespace(storage[p] & 0xff); p++) {
+            for (p = q; p < limit && isspace(storage[p] & 0xff); p++) {
                 ; // continue
             }
         }
