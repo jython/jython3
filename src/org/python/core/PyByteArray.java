@@ -1006,6 +1006,22 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         return repeat(n.asIndex(Py.OverflowError));
     }
 
+    @Override
+    public PyObject __mod__(PyObject other) {
+        return bytearray___mod__(other);
+    }
+
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytearray___mod___doc)
+    final PyObject bytearray___mod__(PyObject other) {
+        StringFormatter fmt = new StringFormatter(asString(), false);
+        return new PyByteArray(fmt.format(other));
+    }
+
+    @ExposedClassMethod(doc = BuiltinDocs.bytearray_maketrans_doc)
+    final static PyObject bytearray_maketrans(PyType type, PyObject from, PyObject to) {
+        return PyString.bytes_maketrans(type, from, to, null);
+    }
+
     /**
      * Append a single byte to the end of the array.
      *

@@ -1,18 +1,6 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.core;
 
-import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.List;
-import java.util.Locale;
-
 import org.python.core.buffer.BaseBuffer;
 import org.python.core.buffer.SimpleStringBuffer;
 import org.python.core.stringlib.FieldNameIterator;
@@ -29,6 +17,17 @@ import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
 import org.python.expose.MethodType;
+
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A builtin python string.
@@ -3600,31 +3599,24 @@ public class PyString extends PySequence implements BufferProtocol {
         return bytes_maketrans(TYPE, fromstr, tostr, other);
     }
 
-    @ExposedClassMethod(defaults = {"null"}, doc = BuiltinDocs.str_maketrans_doc)
+    @ExposedClassMethod(defaults = {"null"}, doc = BuiltinDocs.bytes_maketrans_doc)
     static final PyObject bytes_maketrans(PyType type, PyObject fromstr, PyObject tostr, PyObject other) {
         if (fromstr.__len__() != tostr.__len__()) {
             throw Py.ValueError("maketrans arguments must have same length");
         }
-        if (!(fromstr instanceof PyString))
-            throw Py.TypeError(String.format("a bytes-like object is required, not '%s'", fromstr.TYPE));
-        if (!(tostr instanceof PyString))
-            throw Py.TypeError(String.format("a bytes-like object is required, not '%s'", tostr.TYPE));
-        if (other != null && !(other instanceof PyString))
-            throw Py.TypeError(String.format("a bytes-like object is required, not '%s'", other.TYPE));
-        int[] fromCodePoints = ((PyString) fromstr).toCodePoints();
-        int[] toCodePoints = ((PyString) tostr).toCodePoints();
-        Map<PyObject, PyObject> tbl = new HashMap<>();
-        for (int i = 0; i < fromCodePoints.length; i++) {
-            tbl.put(new PyLong(fromCodePoints[i]), new PyLong(toCodePoints[i]));
+        byte[] res = new byte[256];
+        for (int i = 0; i < 256; i++) {
+            res[i] = (byte) i;
         }
-
-        if (other != null) {
-            int[] codePoints = ((PyUnicode) other).toCodePoints();
-            for (Integer code : codePoints) {
-                tbl.put(new PyLong(code), Py.None);
+        try(
+                PyBuffer frm = BaseBytes.getViewOrError(fromstr);
+                PyBuffer to = BaseBytes.getViewOrError(tostr)
+                ) {
+            for (int i = 0; i < frm.getLen(); i++) {
+                res[frm.byteAt(i) & 0xFF] = to.byteAt(i);
             }
         }
-        return new PyDictionary(tbl);
+        return new PyString(new String(res, StandardCharsets.ISO_8859_1));
     }
 
     public boolean islower() {
@@ -4657,10 +4649,24 @@ final class StringFormatter {
             Formatter f; // = ff, fi or ft, whichever we actually use.
 
             switch (spec.type) {
-
+                case 'b':
+                    PyObject arg = getarg();
+                    f = ft = new TextFormatter(buffer, spec);
+                    ft.setBytes(true);
+                    PyObject __bytes__;
+                    if (arg instanceof PyString) {
+                        ft.format(((PyString) arg).getString());
+                    } else if ((__bytes__ = arg.__findattr__("__bytes__")) != null) {
+                        ft.format(((PyString) __bytes__.__call__(arg)).getString());
+                    } else {
+                        throw Py.TypeError(String.format(
+                                " %b requires bytes, or an object that implements __bytes__, not '%s'",
+                                arg.getType().fastGetName()));
+                    }
+                    break;
                 case 's': // String: converts any object using __str__(), __unicode__() ...
                 case 'r': // ... or repr().
-                    PyObject arg = getarg();
+                    arg = getarg();
 
                     // Get hold of the actual object to display (may set needUnicode)
                     PyString argAsString = asText(spec.type == 's' ? arg : arg.__repr__());
