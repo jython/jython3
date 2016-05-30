@@ -1320,6 +1320,15 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         return result;
     }
 
+    @ExposedMethod(doc = BuiltinDocs.bytearray_hex_doc)
+    final PyObject bytearray_hex() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = offset; i < offset + size; i++) {
+            sb.append(String.format("%02x", storage[i]));
+        }
+        return new PyUnicode(sb.toString());
+    }
+
     @ExposedMethod(doc = BuiltinDocs.bytearray___getitem___doc)
     final synchronized PyObject bytearray___getitem__(PyObject index) {
         // Let the SequenceIndexDelegate take care of it
