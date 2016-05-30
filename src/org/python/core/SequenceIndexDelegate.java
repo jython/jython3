@@ -71,7 +71,7 @@ public abstract class SequenceIndexDelegate implements Serializable {
         } else if (idx instanceof PySlice) {
             return getSlice((PySlice)idx);
         } else {
-            throw Py.TypeError(getTypeName() + " indices must be integers");
+            throw Py.TypeError(getTypeName() + " indices must be integers or slices");
         }
     }
 

@@ -1785,7 +1785,7 @@ public class PyObject implements Serializable {
      * @return a string representing this object as a hexadecimal number.
      **/
     public PyString __hex__() {
-        throw Py.TypeError("hex() argument can't be converted to hex");
+        throw Py.TypeError(String.format("%s object cannot be interpreted as an integer", getType().fastGetName()));
     }
 
     /**
