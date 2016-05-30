@@ -1914,8 +1914,11 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         return getslice(0, right);
     }
 
-    @ExposedMethod(defaults = {"null", "-1"}, doc = BuiltinDocs.bytearray_split_doc)
-    final PyList bytearray_split(PyObject sep, int maxsplit) {
+    @ExposedMethod(doc = BuiltinDocs.bytearray_split_doc)
+    final PyList bytearray_split(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("split", args, keywords, "sep", "maxsplit");
+        PyObject sep = ap.getPyObject(0, null);
+        int maxsplit = ap.getInt(1, -1);
         return basebytes_split(sep, maxsplit);
     }
 
