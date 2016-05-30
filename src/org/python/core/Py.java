@@ -1800,6 +1800,8 @@ public final class Py {
     public static int py2int(PyObject o, String msg) {
         if (o instanceof PyInteger) {
             return ((PyInteger) o).getValue();
+        } else if (o instanceof PyLong) {
+            return ((PyLong) o).getValue().intValue();
         }
         Object obj = o.__tojava__(Integer.TYPE);
         if (obj == Py.NoConversion) {
