@@ -983,7 +983,6 @@ public class PyString extends PySequence implements BufferProtocol {
             // Yes it is: concatenate as strings, which are guaranteed byte-like.
             return new PyString(getString().concat(otherStr), true);
         } else if (other instanceof PyUnicode) {
-            // Convert self to PyUnicode and escalate the problem
             return decode().__add__(other);
         } else {
             // Allow PyObject._basic_add to pick up the pieces or raise informative error

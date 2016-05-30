@@ -865,6 +865,9 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
             return 0;
 
         } else {
+            if (b instanceof PyUnicode) {
+                return -2;
+            }
 
             // Try to get a byte-oriented view
             try (PyBuffer bv = getView(b)) {

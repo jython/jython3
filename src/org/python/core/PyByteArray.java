@@ -1236,8 +1236,10 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         return (PyByteArray)basebytes_expandtabs(tabsize);
     }
 
-    @ExposedMethod(defaults = "8", doc = BuiltinDocs.bytearray_expandtabs_doc)
-    final PyByteArray bytearray_expandtabs(int tabsize) {
+    @ExposedMethod(doc = BuiltinDocs.bytearray_expandtabs_doc)
+    final PyByteArray bytearray_expandtabs(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("expandtabs", args, keywords, 0, "tabsize");
+        int tabsize = ap.getInt(0, 8);
         return (PyByteArray)basebytes_expandtabs(tabsize);
     }
 
@@ -1922,8 +1924,10 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         return basebytes_split(sep, maxsplit);
     }
 
-    @ExposedMethod(defaults = "false", doc = BuiltinDocs.bytearray_splitlines_doc)
-    final PyList bytearray_splitlines(boolean keepends) {
+    @ExposedMethod(doc = BuiltinDocs.bytearray_splitlines_doc)
+    final PyList bytearray_splitlines(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("splitlines", args, keywords, 0, "keepends");
+        boolean keepends = ap.getPyObject(0, Py.False).__bool__();
         return basebytes_splitlines(keepends);
     }
 
