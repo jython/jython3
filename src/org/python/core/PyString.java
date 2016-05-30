@@ -1523,7 +1523,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes_split_doc)
     final PyList bytes_split(PyObject[] args, String[] keywords) {
-        ArgParser ap = new ArgParser("rsplit", args, keywords, "sep", "maxsplit");
+        ArgParser ap = new ArgParser("split", args, keywords, "sep", "maxsplit");
         PyObject sep = ap.getPyObject(0, Py.None);
         int maxsplit = ap.getInt(1, -1);
         // Split on specified string or whitespace if sep == null
@@ -1836,7 +1836,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
             // Find the next occurrence of non-whitespace (working leftwards)
             while (end >= 0) {
-                if (!Character.isWhitespace(s.charAt(end))) {
+                if (!isspace(s.charAt(end))) {
                     // Break leaving end pointing at non-whitespace
                     break;
                 }
@@ -1854,7 +1854,7 @@ public class PyString extends PySequence implements BufferProtocol {
             } else {
                 // The next segment runs back to the next next whitespace or beginning
                 for (index = end; index >= 0; --index) {
-                    if (Character.isWhitespace(s.charAt(index))) {
+                    if (isspace(s.charAt(index))) {
                         // Break leaving index pointing at whitespace
                         break;
                     }
@@ -3867,13 +3867,28 @@ public class PyString extends PySequence implements BufferProtocol {
         return bytes_isspace();
     }
 
+    private boolean isspace(char c) {
+        switch(c) {
+            case 0x09:
+            case 0x0A:
+            case 0x0B:
+            case 0x0C:
+            case 0x0D:
+            case 0x20:
+                break;
+            default:
+                return false;
+        }
+        return true;
+    }
+
     @ExposedMethod(doc = BuiltinDocs.bytes_isspace_doc)
     final boolean bytes_isspace() {
         int n = getString().length();
 
         /* Shortcut for single character strings */
         if (n == 1) {
-            return Character.isWhitespace(getString().charAt(0));
+            return isspace(getString().charAt(0));
         }
 
         if (n == 0) {
@@ -3883,7 +3898,7 @@ public class PyString extends PySequence implements BufferProtocol {
         for (int i = 0; i < n; i++) {
             char ch = getString().charAt(i);
 
-            if (!Character.isWhitespace(ch)) {
+            if (!isspace(ch)) {
                 return false;
             }
         }

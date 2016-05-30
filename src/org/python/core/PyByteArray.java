@@ -1867,8 +1867,11 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         return basebytes_rpartition(sep);
     }
 
-    @ExposedMethod(defaults = {"null", "-1"}, doc = BuiltinDocs.bytearray_rsplit_doc)
-    final PyList bytearray_rsplit(PyObject sep, int maxsplit) {
+    @ExposedMethod(doc = BuiltinDocs.bytearray_rsplit_doc)
+    final PyList bytearray_rsplit(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("rsplit", args, keywords, "sep", "maxsplit");
+        PyObject sep = ap.getPyObject(0, null);
+        int maxsplit = ap.getInt(1, -1);
         return basebytes_rsplit(sep, maxsplit);
     }
 
@@ -2571,6 +2574,9 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         final int f = offset;
         final int s2 = size + e; // Size of result s'
         final int L2 = recLength(s2); // Length of storage for result
+        if (L2 < 0) {
+            throw Py.MemoryError("");
+        }
 
         if (L2 <= L) {
             // Ignore recommendations to shrink and use the existing array
@@ -2589,7 +2595,12 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
 
         } else {
             // New storage size as recommended
-            byte[] newStorage = new byte[L2];
+            byte[] newStorage;
+            try {
+                newStorage = new byte[L2];
+            } catch (OutOfMemoryError oom) {
+                throw Py.MemoryError(oom.getMessage());
+            }
 
             // Choose the new offset f'=0 to make repeated append operations quicker.
             // Copy across the data from existing to new storage.

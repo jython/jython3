@@ -2614,7 +2614,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
 
         // Scan backwards over trailing whitespace
         for (q = offset + size; q > offset; --q) {
-            if (!Character.isWhitespace(storage[q - 1] & 0xff)) {
+            if (!isspace(storage[q - 1] & 0xff)) {
                 break;
             }
         }
@@ -2627,7 +2627,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
             // Delimit the word whose last byte is storage[q-1]
             // Skip p backwards over the non-whitespace
             for (p = q; p > offset; --p) {
-                if (Character.isWhitespace(storage[p - 1] & 0xff)) {
+                if (isspace(storage[p - 1] & 0xff)) {
                     break;
                 }
             }
@@ -2636,7 +2636,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
             result.add(0, word);
             // Skip q backwards over the whitespace
             for (q = p; q > offset; --q) {
-                if (!Character.isWhitespace(storage[q - 1] & 0xff)) {
+                if (!isspace(storage[q - 1] & 0xff)) {
                     break;
                 }
             }
@@ -3240,6 +3240,21 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
         return basebytes_isspace();
     }
 
+    private boolean isspace(int c) {
+        switch(c) {
+            case 0x09:
+            case 0x0A:
+            case 0x0B:
+            case 0x0C:
+            case 0x0D:
+            case 0x20:
+                break;
+            default:
+                return false;
+        }
+        return true;
+    }
+
     /**
      * Ready-to-expose implementation of Python <code>isspace()</code>.
      *
@@ -3253,7 +3268,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
         } else {
             // Test the bytes
             for (int i = 0; i < size; i++) {
-                if (!Character.isWhitespace(charAt(i))) {
+                if (!isspace(charAt(i))) {
                     return false;
                 }
             }
