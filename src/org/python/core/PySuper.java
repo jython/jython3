@@ -41,6 +41,9 @@ public class PySuper extends PyObject implements Traverseproc {
             PyFrame frame = Py.getThreadState().frame;
             obj = frame.getlocal(0);
             type = (PyType) frame.getLocals().__finditem__("__class__");
+            if (type == null) {
+                throw Py.RuntimeError("super(): empty __class__ cell");
+            }
         } else {
             if (!(args[0] instanceof PyType)) {
                 throw Py.TypeError("super: argument 1 must be type");

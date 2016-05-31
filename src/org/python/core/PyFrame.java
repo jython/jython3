@@ -395,6 +395,11 @@ public class PyFrame extends PyObject implements Traverseproc {
         f_env[index].ob_ref = value;
     }
 
+    // NOTE: can only delete free vars
+    public void delderef(int index) {
+        f_env[f_ncells + index].ob_ref = null;
+    }
+
     public void to_cell(int parm_index, int env_index) {
         f_env[env_index].ob_ref = f_fastlocals[parm_index];
     }
