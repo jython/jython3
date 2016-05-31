@@ -323,6 +323,14 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
     }
 
     @Override
+    public Object visitNonlocal(Nonlocal node) throws Exception {
+        for (String name : node.getInternalNames()) {
+            cur.addNonlocal(name);
+        }
+        return null;
+    }
+
+    @Override
     public Object visitListComp(ListComp node) throws Exception {
         return visitInternalGenerators(node, node.getInternalElt(), node.getInternalGenerators());
     }

@@ -2788,13 +2788,19 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
                         if (syminf == null) {
                             throw new ParseException("internal compiler error", node);
                         }
-                        if ((syminf.flags & ScopeInfo.CELL) != 0) {
+                        if ((syminf.flags & ScopeInfo.FREE) != 0) {
+                            code.iconst(syminf.env_index);
+                            code.invokevirtual(p(PyFrame.class), "delderef",
+                                    sig(Void.TYPE, Integer.TYPE));
+                        } else if ((syminf.flags & ScopeInfo.CELL) != 0) {
+
                             module.error("can not delete variable '" + name
                                     + "' referenced in nested scope", true, node);
+                        } else {
+                            code.iconst(syminf.locals_index);
+                            code.invokevirtual(p(PyFrame.class), "dellocal",
+                                    sig(Void.TYPE, Integer.TYPE));
                         }
-                        code.iconst(syminf.locals_index);
-                        code.invokevirtual(p(PyFrame.class), "dellocal",
-                                sig(Void.TYPE, Integer.TYPE));
                     }
                 }
                 return null;

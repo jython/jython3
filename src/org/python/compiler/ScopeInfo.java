@@ -70,6 +70,17 @@ public class ScopeInfo extends Object implements ScopeConstants {
     public Map<String, SymInfo> tbl = new LinkedHashMap<String, SymInfo>();
     public Vector<String> names = new Vector<String>();
 
+    public int addNonlocal(String name) {
+        SymInfo info = tbl.get(name);
+        if (info == null) {
+            tbl.put(name,new SymInfo(FREE|BOUND));
+            return -1;
+        }
+        int prev = info.flags;
+        info.flags |= FREE|BOUND;
+        return prev;
+    }
+
     public int addGlobal(String name) {
         // global kind = func vs. class
         int global = kind==CLASSSCOPE?CLASS_GLOBAL:NGLOBAL;
