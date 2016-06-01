@@ -39,7 +39,13 @@ public class PySuper extends PyObject implements Traverseproc {
         PyType objType = null;
         if (keywords.length != 0 || !PyBuiltinCallable.DefaultInfo.check(args.length, 1, 2)) {
             PyFrame frame = Py.getThreadState().frame;
-            obj = frame.getlocal(0);
+            if (frame.f_fastlocals == null || frame.f_fastlocals.length < 1) {
+                throw Py.RuntimeError("super(): no arguments");
+            }
+            obj = frame.f_fastlocals[0];
+            if (obj == null) {
+                throw Py.RuntimeError("super(): arg[0] deleted");
+            }
             type = (PyType) frame.getLocals().__finditem__("__class__");
             if (type == null) {
                 throw Py.RuntimeError("super(): empty __class__ cell");
