@@ -244,11 +244,14 @@ public abstract class PyBaseCode extends PyCode {
                 n = co_argcount;
             }
 
-            System.arraycopy(args, 0, fastlocals, 0, n);
+            if (args.length > 0) {
+                System.arraycopy(args, 0, fastlocals, 0, n);
+            }
 
             if (varargs) {
                 PyObject[] u = new PyObject[argcount - n];
-                System.arraycopy(args, n, u, 0, u.length);
+                if (args.length > 0)
+                    System.arraycopy(args, n, u, 0, u.length);
                 PyObject uTuple = new PyTuple(u);
                 fastlocals[co_argcount] = uTuple;
             }
@@ -285,7 +288,7 @@ public abstract class PyBaseCode extends PyCode {
             java.util.List<String> missingKwArg = new ArrayList<>();
 
             int kwonlyargZeroIndex = co_argcount;
-            if (varargs) kwonlyargZeroIndex += 1;
+            if (varargs) kwonlyargZeroIndex++;
             for (int j = 0; j < co_kwonlyargcount; j++) {
                 int kwonlyargIdx = kwonlyargZeroIndex + j;
                 String name = co_varnames[kwonlyargIdx];
