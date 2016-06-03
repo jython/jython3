@@ -72,6 +72,9 @@ public class ArgListCompiler extends Visitor
         if (args.getInternalVararg() != null) {
             arglist = true;
             name = args.getInternalVararg().getInternalArg();
+            if (name == null) {
+                name = ""; // empty name for anonymous star var
+            }
             names.add(name);
             addAnnotation(name, args.getInternalVararg().getInternalAnnotation());
         }

@@ -45,12 +45,12 @@ public class PyTableCode extends PyBaseCode
         this.varargs = varargs;
         co_name = name;
         if (varargs) {
-            co_argcount -= 1;
+            co_argcount--;
             co_flags.setFlag(CodeFlag.CO_VARARGS);
         }
         this.varkwargs = varkwargs;
         if (varkwargs) {
-            co_argcount -= 1;
+            co_argcount--;
             co_flags.setFlag(CodeFlag.CO_VARKEYWORDS);
         }
         co_flags = new CompilerFlags(co_flags.toBits() | moreflags);
