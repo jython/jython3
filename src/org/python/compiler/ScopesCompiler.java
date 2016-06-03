@@ -59,7 +59,7 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         ScopeInfo referenceable = up;
         for (int i = scopes.size() - 1; i >= 0
                 && referenceable.kind == CLASSSCOPE;i--,dist++) {
-            referenceable = (scopes.get(i));
+            referenceable = scopes.get(i);
         }
 
         cur.cook(referenceable, dist, code_compiler);

@@ -119,9 +119,6 @@ public class ScopeInfo extends Object implements ScopeConstants {
 
     public void addUsed(String name) {
         // class variable assignment should resolve variables by frame.getname, instead of getderef
-        if (kind == CLASSSCOPE) {
-            return;
-        }
         if (tbl.get(name) == null) {
             tbl.put(name, new SymInfo(0));
             return;

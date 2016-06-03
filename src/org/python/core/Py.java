@@ -332,6 +332,10 @@ public final class Py {
 
     public static PyObject TypeError;
 
+    public static PyException TypeError(Throwable t) {
+        return new PyException(TypeError, t.getMessage());
+    }
+
     public static PyException TypeError(String message) {
         return new PyException(Py.TypeError, message);
     }
