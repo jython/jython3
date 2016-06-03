@@ -82,6 +82,9 @@ public class PyFrame extends PyObject implements Traverseproc {
     private static final String UNBOUNDLOCAL_ERROR_MSG =
             "local variable '%.200s' referenced before assignment";
 
+    private static final String FREEVAR_ERROR_MSG =
+            "free variable '%.200s' referenced before assignment";
+
     public PyFrame(PyBaseCode code, PyObject locals, PyObject globals, PyObject builtins) {
         super(TYPE);
         f_code = code;
@@ -388,7 +391,7 @@ public class PyFrame extends PyObject implements Traverseproc {
         } else {
             name = f_code.co_cellvars[index];
         }
-        throw Py.UnboundLocalError(String.format(UNBOUNDLOCAL_ERROR_MSG, name));
+        throw Py.NameError(String.format(FREEVAR_ERROR_MSG, name));
     }
 
     public void setderef(int index, PyObject value) {
