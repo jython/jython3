@@ -73,11 +73,11 @@ public class ScopeInfo extends Object implements ScopeConstants {
     public int addNonlocal(String name) {
         SymInfo info = tbl.get(name);
         if (info == null) {
-            tbl.put(name,new SymInfo(FREE|BOUND));
+            tbl.put(name,new SymInfo(FREE));
             return -1;
         }
         int prev = info.flags;
-        info.flags |= FREE|BOUND;
+        info.flags |= FREE;
         return prev;
     }
 
@@ -114,14 +114,15 @@ public class ScopeInfo extends Object implements ScopeConstants {
             tbl.put(name, new SymInfo(BOUND));
             return;
         }
-        info.flags |= BOUND;
+        // don't bound nonlocal variables
+        if ((info.flags & FREE) == 0) {
+            info.flags |= BOUND;
+        }
     }
 
     public void addUsed(String name) {
-        // class variable assignment should resolve variables by frame.getname, instead of getderef
         if (tbl.get(name) == null) {
             tbl.put(name, new SymInfo(0));
-            return;
         }
     }
 

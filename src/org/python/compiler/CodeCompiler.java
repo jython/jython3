@@ -2763,26 +2763,26 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
                     code.invokevirtual(p(PyFrame.class), "setglobal",
                             sig(Void.TYPE, String.class, PyObject.class));
                 } else {
-                    if (!fast_locals) {
-                        code.ldc(name);
+                    if (syminf != null && (syminf.flags & (ScopeInfo.CELL|ScopeInfo.FREE)) != 0) {
+                        code.iconst(syminf.env_index);
                         code.aload(temporary);
-                        code.invokevirtual(p(PyFrame.class), "setlocal",
-                                sig(Void.TYPE, String.class, PyObject.class));
+                        code.invokevirtual(p(PyFrame.class), "setderef",
+                                sig(Void.TYPE, Integer.TYPE, PyObject.class));
+                        return null;
+                    }
+                    if (!fast_locals) {
+                            code.ldc(name);
+                            code.aload(temporary);
+                            code.invokevirtual(p(PyFrame.class), "setlocal",
+                                    sig(Void.TYPE, String.class, PyObject.class));
                     } else {
                         if (syminf == null) {
                             throw new ParseException("internal compiler error", node);
                         }
-                        if ((syminf.flags & ScopeInfo.CELL) != 0) {
-                            code.iconst(syminf.env_index);
-                            code.aload(temporary);
-                            code.invokevirtual(p(PyFrame.class), "setderef",
-                                    sig(Void.TYPE, Integer.TYPE, PyObject.class));
-                        } else {
-                            code.iconst(syminf.locals_index);
-                            code.aload(temporary);
-                            code.invokevirtual(p(PyFrame.class), "setlocal",
-                                    sig(Void.TYPE, Integer.TYPE, PyObject.class));
-                        }
+                        code.iconst(syminf.locals_index);
+                        code.aload(temporary);
+                        code.invokevirtual(p(PyFrame.class), "setlocal",
+                                sig(Void.TYPE, Integer.TYPE, PyObject.class));
                     }
                 }
                 return null;
