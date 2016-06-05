@@ -24,6 +24,7 @@ import org.python.modules.gc;
  */
 @ExposedType(name = "object", doc = BuiltinDocs.object_doc)
 public class PyObject implements Serializable {
+    private static final String UNORDERABLE_ERROR_MSG = "unorderable types: %s() %s %s()";
 
     public static final PyType TYPE = PyType.fromClass(PyObject.class);
 
@@ -1610,7 +1611,13 @@ public class PyObject implements Serializable {
                 if ((token = check_recursion(ts, this, o)) == null)
                     throw Py.ValueError("can't order recursive values");
             }
-            return Py.newBoolean(__lt__(o).__bool__() || __eq__(o).__bool__());
+            PyObject ltRes = __lt__(o);
+            PyObject eqRes = __eq__(o);
+            if (ltRes == null || eqRes == null) {
+                throw Py.TypeError(String.format(UNORDERABLE_ERROR_MSG,
+                        getType().fastGetName(), "<=", o.getType().fastGetName()));
+            }
+            return Py.newBoolean(ltRes.__bool__() || eqRes.__bool__());
         } finally {
             delete_token(ts, token);
             ts.compareStateNesting--;
@@ -1644,7 +1651,9 @@ public class PyObject implements Serializable {
             res = o.__gt__(this);
             if (res != null)
                 return res;
-            return _cmp_unsafe(o) < 0 ? Py.True : Py.False;
+            throw Py.TypeError(String.format(UNORDERABLE_ERROR_MSG,
+                    getType().fastGetName(), "<", o.getType().fastGetName()));
+//            return _cmp_unsafe(o) < 0 ? Py.True : Py.False;
         } finally {
             delete_token(ts, token);
             ts.compareStateNesting--;
