@@ -741,16 +741,21 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
         default: return null;
         }
     }
+
+    @Override
+    public PyObject __eq__(PyObject other) {
+        return type___eq__(other);
+    }
     
     @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.type___eq___doc)
-    public PyObject type___eq__(PyObject other) {
+    final PyObject type___eq__(PyObject other) {
         return richCompare(other, cmpopType.Eq);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.type___ne___doc)
-    public PyObject type___ne__(PyObject other) {
-        return richCompare(other, cmpopType.NotEq);
-    }
+//    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.type___ne___doc)
+//    public PyObject type___ne__(PyObject other) {
+//        return richCompare(other, cmpopType.NotEq);
+//    }
 
     @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.type___le___doc)
     public PyObject type___le__(PyObject other) {

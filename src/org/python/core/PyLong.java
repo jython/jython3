@@ -951,14 +951,7 @@ public class PyLong extends PyObject {
 
     @ExposedMethod(doc = BuiltinDocs.int___lt___doc)
     final PyObject long___lt__(PyObject other) {
-        if (other instanceof PyInteger) {
-            return Py.newBoolean(value.compareTo(BigInteger.valueOf(((PyInteger) other).getValue())) < 0);
-        }
-
-        if (other instanceof PyLong) {
-            return Py.newBoolean(value.compareTo(((PyLong) other).getValue()) < 0);
-        }
-        return other.__gt__(this);
+        return Py.newBoolean(long_compare(other) > 0);
     }
 
     @Override
@@ -968,13 +961,31 @@ public class PyLong extends PyObject {
 
     @ExposedMethod(doc = BuiltinDocs.int___eq___doc)
     final PyObject long___eq__(PyObject other) {
+        int cmp = long_compare(other);
+        if (cmp < -1) {
+            return null;
+        }
+        return Py.newBoolean(cmp == 0);
+    }
+
+    private int long_compare(PyObject other) {
         if (other instanceof PyInteger) {
-            return Py.newBoolean(BigInteger.valueOf(((PyInteger) other).getValue()).compareTo(value) == 0);
+            return BigInteger.valueOf(((PyInteger) other).getValue()).compareTo(value);
         }
         if (other instanceof PyLong) {
-            return Py.newBoolean(((PyLong) other).getValue().compareTo(value) == 0);
+            return ((PyLong) other).getValue().compareTo(value);
         }
-        return Py.False;
+        if (other instanceof PyFloat) {
+            return new BigDecimal(((PyFloat) other).getValue()).compareTo(new BigDecimal(value));
+        }
+        if (other instanceof PyComplex) {
+            PyComplex complex = (PyComplex) other;
+            if (complex.imag != 0) {
+                return 2;
+            }
+            return long_compare(complex.getReal());
+        }
+        return -2;
     }
 
     @Override
