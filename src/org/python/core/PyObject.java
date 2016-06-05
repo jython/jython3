@@ -1279,6 +1279,11 @@ public class PyObject implements Serializable {
      * @return the result of the comparison.
      **/
     public PyObject __eq__(PyObject other) {
+        return object___eq__(other);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.object___eq___doc)
+    final PyObject object___eq__(PyObject other) {
         return null;
     }
 
@@ -1289,7 +1294,16 @@ public class PyObject implements Serializable {
      * @return the result of the comparison.
      **/
     public PyObject __ne__(PyObject other) {
-        return null;
+        return object___ne__(other);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.object___ne___doc)
+    final PyObject object___ne__(PyObject other) {
+        PyObject res = __eq__(other);
+        if (res == null) {
+            return null;
+        }
+        return Py.newBoolean(!res.__bool__());
     }
 
     /**
@@ -1531,8 +1545,9 @@ public class PyObject implements Serializable {
             if (res != null)
                 return res;
             res = o.__eq__(this);
-            if (res != null)
+            if (res != null) {
                 return res;
+            }
             return _cmpeq_unsafe(o) == 0 ? Py.True : Py.False;
         } finally {
             delete_token(ts, token);
@@ -1561,7 +1576,16 @@ public class PyObject implements Serializable {
                 if ((token = check_recursion(ts, this, o)) == null)
                     return Py.False;
             }
-            return Py.newBoolean(!_eq(o).__bool__());
+            PyObject res = __ne__(o);
+            if (res != null)
+                return res;
+            res = o.__ne__(this);
+            if (res != null) {
+                return res;
+            }
+            return Py.True;
+//            return _cmpeq_unsafe(o) != 0 ? Py.True : Py.False;
+//            return Py.newBoolean(!_eq(o).__bool__());
         } finally {
             delete_token(ts, token);
             ts.compareStateNesting--;

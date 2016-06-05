@@ -284,7 +284,7 @@ public class PyComplex extends PyObject {
                 } else {
                     // Delegate the logic to PyFloat
                     PyFloat f = new PyFloat(r);
-                    equal = (f.float___cmp__(other) == 0);
+                    equal = (f.__cmp__(other) == 0);
                 }
             } else {
                 // No other primitive can have an imaginary part.

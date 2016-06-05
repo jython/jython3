@@ -321,7 +321,11 @@ public class PyFloat extends PyObject {
         if (Double.isNaN(getValue())) {
             return Py.False;
         }
-        return Py.newBoolean(float___cmp__(other) == 0);
+        int cmp = __cmp__(other);
+        if (cmp < -1) {
+            return null;
+        }
+        return Py.newBoolean(cmp == 0);
     }
 
     @Override
@@ -382,12 +386,6 @@ public class PyFloat extends PyObject {
 
     @Override
     public int __cmp__(PyObject other) {
-        return float___cmp__(other);
-    }
-
-    // XXX: needs __doc__
-    @ExposedMethod(type = MethodType.CMP)
-    final int float___cmp__(PyObject other) {
         double i = getValue();
         double j;
 
@@ -406,7 +404,7 @@ public class PyFloat extends PyObject {
             j = ((PyInteger)other).getValue();
         } else if (other instanceof PyLong) {
             BigDecimal v = new BigDecimal(getValue());
-            BigDecimal w = new BigDecimal(((PyLong)other).getValue());
+            BigDecimal w = new BigDecimal(((PyLong) other).getValue());
             return v.compareTo(w);
         } else {
             return -2;
