@@ -73,7 +73,7 @@ public class PyException extends RuntimeException implements Traverseproc
             isReRaise = true;
         }
         if (value != null && !isExceptionInstance(value)) {
-            PyException pye = Py.getThreadState().exceptions.peek();
+            PyException pye = Py.getThreadState().exceptions.peekFirst();
             if (pye != null && pye.value instanceof PyBaseException) {
                 context = (PyBaseException) pye.value;
             }
@@ -207,10 +207,14 @@ public class PyException extends RuntimeException implements Traverseproc
 
     public static PyException doRaise(ThreadState state) {
         PyException pye = state.exceptions.peekFirst();
+
         if (pye == null) {
             throw Py.RuntimeError("No active exception to reraise");
         }
-        return pye;
+        PyObject type = pye.type;
+        PyObject value = pye.value;
+        PyObject cause = pye.cause;
+        return new PyException(type, value, cause);
     }
 
     /**
@@ -224,9 +228,6 @@ public class PyException extends RuntimeException implements Traverseproc
     public static PyException doRaise(PyObject value, PyObject cause) {
         PyObject type;
         ThreadState state = Py.getThreadState();
-        if (value == null) {
-            return state.exceptions.peekFirst();
-        }
 
         PyException pye;
         if (isExceptionClass(value)) {
