@@ -17,6 +17,7 @@ import org.python.core.stringlib.IntegerFormatter;
 import org.python.core.util.ExtraMath;
 import org.python.core.util.RelativeFile;
 import org.python.modules._functools._functools;
+import org.python.modules._io._io;
 
 @Untraversable
 class BuiltinFunctions extends PyBuiltinFunctionSet {
@@ -1718,31 +1719,12 @@ class CompileFunction extends PyBuiltinFunction {
 @Untraversable
 class OpenFunction extends PyBuiltinFunction {
     OpenFunction() {
-        super("open", "Open a file using the file() type, returns a file object.  This is the\n"
-              + "preferred way to open a file.");
+        super("open", BuiltinDocs.builtins_open_doc);
     }
-
-    private static final String warning =
-            "Passing an Input/OutputStream to open is deprecated, use "
-            + "org.python.core.util.FileUtil.wrap(stream[, bufsize]) instead.";
 
     @Override
     public PyObject __call__(PyObject args[], String kwds[]) {
-        ArgParser ap = new ArgParser("file", args, kwds, new String[] {"name", "mode", "buffering"},
-                                     1);
-        PyObject obj = ap.getPyObject(0);
-        if (obj.getJavaProxy() != null) {
-            int bufsize = ap.getInt(2, -1);
-            Object javaProxy = obj.getJavaProxy();
-            if (javaProxy instanceof InputStream) {
-                Py.warning(Py.DeprecationWarning, warning);
-                return new PyFile((InputStream) javaProxy, bufsize);
-            } else if (javaProxy instanceof OutputStream) {
-                Py.warning(Py.DeprecationWarning, warning);
-                return new PyFile((OutputStream) javaProxy, bufsize);
-            }
-        }
-        return PyFile.TYPE.__call__(args, kwds);
+        return _io.open(args, kwds);
     }
 }
 
