@@ -68,16 +68,19 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         } else if (tb != null && !(tb instanceof PyTraceback)) {
             throw Py.TypeError("throw() third argument must be a traceback object");
         }
-        PyException pye = new PyException(type, value);
+        PyException pye;
+        if (value == null) {
+            pye = PyException.doRaise(type);
+        } else {
+            pye = new PyException(type, value);
+        }
         pye.traceback = (PyTraceback) tb;
         PyObject yf = gi_frame.f_yieldfrom;
-        if (yf != null) {
-            if (pye.match(Py.GeneratorExit)) {
-                gen_close_iter(yf);
-            }
-            return gen_send_ex(Py.getThreadState(), pye);
+        if (yf != null && pye.match(Py.GeneratorExit)) {
+            gen_close_iter(yf);
         }
-        throw pye;
+        gi_frame.previousException = pye;
+        return gen_send_ex(Py.getThreadState(), pye);
     }
 
     public PyObject close() {
@@ -123,7 +126,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         return generator___next__();
     }
 
-    @ExposedMethod(doc="x.next() -> the next value, or raise StopIteration")
+    @ExposedMethod(doc = BuiltinDocs.generator___next___doc)
     final PyObject generator___next__() {
         return super.next();
     }
@@ -177,7 +180,12 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
     @Override
     public PyObject __next__() {
         try {
-            return gen_send_ex(Py.getThreadState(), Py.None);
+            ThreadState ts = Py.getThreadState();
+            if (gi_frame.previousException != null) {
+                ts.exceptions.offerFirst(gi_frame.previousException);
+                gi_frame.previousException = null;
+            }
+            return gen_send_ex(ts, Py.None);
         } catch (PyException e) {
             // for iteration use null as stop iteration
             if (e.match(Py.StopIteration)) {

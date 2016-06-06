@@ -29,6 +29,12 @@ public class PyFrame extends PyObject implements Traverseproc {
      */
     public PyObject f_stacktop = Py.None;
 
+    /**
+     * temporary store for the thrown exception, if the generator survives, it means the exception is rescued,
+     * and could be re-raised
+     */
+    public PyException previousException;
+
     /** Previous frame or null. */
     @ExposedGet
     public PyFrame f_back;

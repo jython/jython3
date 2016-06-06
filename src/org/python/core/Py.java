@@ -1469,6 +1469,7 @@ public final class Py {
     }
 
     public static void popException(ThreadState state) {
+        state.frame.previousException = null;
         state.exceptions.pollFirst();
     }
 
