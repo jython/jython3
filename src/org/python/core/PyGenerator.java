@@ -195,6 +195,21 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         }
     }
 
+    @ExposedGet(name = "__name__")
+    final String getName() {
+        return gi_code.co_name;
+    }
+
+    @ExposedGet(name = "__qualname__")
+    final String getQualname() {
+        return gi_code.co_name;
+    }
+
+    @ExposedGet(name = "gi_yieldfrom")
+    final PyObject getgi_yieldfrom() {
+        return gi_frame.f_yieldfrom;
+    }
+
     private PyObject gen_send_ex(ThreadState state, Object value) {
         if (stopException != null) throw stopException;
         if (gi_running) {
