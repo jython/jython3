@@ -4,6 +4,990 @@ package org.python.core;
 
 public class BuiltinDocs {
 
+    // Docs for <module 'builtins' (built-in)>
+    public final static String builtins_ArithmeticError_doc = 
+        "Base class for arithmetic errors.";
+
+    public final static String builtins_AssertionError_doc = 
+        "Assertion failed.";
+
+    public final static String builtins_AttributeError_doc = 
+        "Attribute not found.";
+
+    public final static String builtins_BaseException_doc = 
+        "Common base class for all exceptions";
+
+    public final static String builtins_BlockingIOError_doc = 
+        "I/O operation would block.";
+
+    public final static String builtins_BrokenPipeError_doc = 
+        "Broken pipe.";
+
+    public final static String builtins_BufferError_doc = 
+        "Buffer error.";
+
+    public final static String builtins_BytesWarning_doc = 
+        "Base class for warnings about bytes and buffer related problems, mostly\n" + 
+        "related to conversion from str or comparing to str.";
+
+    public final static String builtins_ChildProcessError_doc = 
+        "Child process error.";
+
+    public final static String builtins_ConnectionAbortedError_doc = 
+        "Connection aborted.";
+
+    public final static String builtins_ConnectionError_doc = 
+        "Connection error.";
+
+    public final static String builtins_ConnectionRefusedError_doc = 
+        "Connection refused.";
+
+    public final static String builtins_ConnectionResetError_doc = 
+        "Connection reset.";
+
+    public final static String builtins_DeprecationWarning_doc = 
+        "Base class for warnings about deprecated features.";
+
+    public final static String builtins_EOFError_doc = 
+        "Read beyond end of file.";
+
+    public final static String builtins_Ellipsis_doc = 
+        "";
+
+    public final static String builtins_EnvironmentError_doc = 
+        "Base class for I/O related errors.";
+
+    public final static String builtins_Exception_doc = 
+        "Common base class for all non-exit exceptions.";
+
+    public final static String builtins_False_doc = 
+        "bool(x) -> bool\n" + 
+        "\n" + 
+        "Returns True when the argument x is true, False otherwise.\n" + 
+        "The builtins True and False are the only two instances of the class bool.\n" + 
+        "The class bool is a subclass of the class int, and cannot be subclassed.";
+
+    public final static String builtins_FileExistsError_doc = 
+        "File already exists.";
+
+    public final static String builtins_FileNotFoundError_doc = 
+        "File not found.";
+
+    public final static String builtins_FloatingPointError_doc = 
+        "Floating point operation failed.";
+
+    public final static String builtins_FutureWarning_doc = 
+        "Base class for warnings about constructs that will change semantically\n" + 
+        "in the future.";
+
+    public final static String builtins_GeneratorExit_doc = 
+        "Request that a generator exit.";
+
+    public final static String builtins_IOError_doc = 
+        "Base class for I/O related errors.";
+
+    public final static String builtins_ImportError_doc = 
+        "Import can't find module, or can't find name in module.";
+
+    public final static String builtins_ImportWarning_doc = 
+        "Base class for warnings about probable mistakes in module imports";
+
+    public final static String builtins_IndentationError_doc = 
+        "Improper indentation.";
+
+    public final static String builtins_IndexError_doc = 
+        "Sequence index out of range.";
+
+    public final static String builtins_InterruptedError_doc = 
+        "Interrupted by signal.";
+
+    public final static String builtins_IsADirectoryError_doc = 
+        "Operation doesn't work on directories.";
+
+    public final static String builtins_KeyError_doc = 
+        "Mapping key not found.";
+
+    public final static String builtins_KeyboardInterrupt_doc = 
+        "Program interrupted by user.";
+
+    public final static String builtins_LookupError_doc = 
+        "Base class for lookup errors.";
+
+    public final static String builtins_MemoryError_doc = 
+        "Out of memory.";
+
+    public final static String builtins_NameError_doc = 
+        "Name not found globally.";
+
+    public final static String builtins_None_doc = 
+        "";
+
+    public final static String builtins_NotADirectoryError_doc = 
+        "Operation only works on directories.";
+
+    public final static String builtins_NotImplemented_doc = 
+        "";
+
+    public final static String builtins_NotImplementedError_doc = 
+        "Method or function hasn't been implemented yet.";
+
+    public final static String builtins_OSError_doc = 
+        "Base class for I/O related errors.";
+
+    public final static String builtins_OverflowError_doc = 
+        "Result too large to be represented.";
+
+    public final static String builtins_PendingDeprecationWarning_doc = 
+        "Base class for warnings about features which will be deprecated\n" + 
+        "in the future.";
+
+    public final static String builtins_PermissionError_doc = 
+        "Not enough permissions.";
+
+    public final static String builtins_ProcessLookupError_doc = 
+        "Process not found.";
+
+    public final static String builtins_RecursionError_doc = 
+        "Recursion limit exceeded.";
+
+    public final static String builtins_ReferenceError_doc = 
+        "Weak ref proxy used after referent went away.";
+
+    public final static String builtins_ResourceWarning_doc = 
+        "Base class for warnings about resource usage.";
+
+    public final static String builtins_RuntimeError_doc = 
+        "Unspecified run-time error.";
+
+    public final static String builtins_RuntimeWarning_doc = 
+        "Base class for warnings about dubious runtime behavior.";
+
+    public final static String builtins_StopAsyncIteration_doc = 
+        "Signal the end from iterator.__anext__().";
+
+    public final static String builtins_StopIteration_doc = 
+        "Signal the end from iterator.__next__().";
+
+    public final static String builtins_SyntaxError_doc = 
+        "Invalid syntax.";
+
+    public final static String builtins_SyntaxWarning_doc = 
+        "Base class for warnings about dubious syntax.";
+
+    public final static String builtins_SystemError_doc = 
+        "Internal error in the Python interpreter.\n" + 
+        "\n" + 
+        "Please report this to the Python maintainer, along with the traceback,\n" + 
+        "the Python version, and the hardware/OS platform and version.";
+
+    public final static String builtins_SystemExit_doc = 
+        "Request to exit from the interpreter.";
+
+    public final static String builtins_TabError_doc = 
+        "Improper mixture of spaces and tabs.";
+
+    public final static String builtins_TimeoutError_doc = 
+        "Timeout expired.";
+
+    public final static String builtins_True_doc = 
+        "bool(x) -> bool\n" + 
+        "\n" + 
+        "Returns True when the argument x is true, False otherwise.\n" + 
+        "The builtins True and False are the only two instances of the class bool.\n" + 
+        "The class bool is a subclass of the class int, and cannot be subclassed.";
+
+    public final static String builtins_TypeError_doc = 
+        "Inappropriate argument type.";
+
+    public final static String builtins_UnboundLocalError_doc = 
+        "Local name referenced but not bound to a value.";
+
+    public final static String builtins_UnicodeDecodeError_doc = 
+        "Unicode decoding error.";
+
+    public final static String builtins_UnicodeEncodeError_doc = 
+        "Unicode encoding error.";
+
+    public final static String builtins_UnicodeError_doc = 
+        "Unicode related error.";
+
+    public final static String builtins_UnicodeTranslateError_doc = 
+        "Unicode translation error.";
+
+    public final static String builtins_UnicodeWarning_doc = 
+        "Base class for warnings about Unicode related problems, mostly\n" + 
+        "related to conversion problems.";
+
+    public final static String builtins_UserWarning_doc = 
+        "Base class for warnings generated by user code.";
+
+    public final static String builtins_ValueError_doc = 
+        "Inappropriate argument value (of correct type).";
+
+    public final static String builtins_Warning_doc = 
+        "Base class for warning categories.";
+
+    public final static String builtins_ZeroDivisionError_doc = 
+        "Second argument to a division or modulo operation was zero.";
+
+    public final static String builtins___build_class___doc = 
+        "__build_class__(func, name, *bases, metaclass=None, **kwds) -> class\n" + 
+        "\n" + 
+        "Internal helper function used by the class statement.";
+
+    public final static String builtins___debug___doc = 
+        "bool(x) -> bool\n" + 
+        "\n" + 
+        "Returns True when the argument x is true, False otherwise.\n" + 
+        "The builtins True and False are the only two instances of the class bool.\n" + 
+        "The class bool is a subclass of the class int, and cannot be subclassed.";
+
+    public final static String builtins_doc = 
+        "Built-in functions, exceptions, and other objects.\n" + 
+        "\n" + 
+        "Noteworthy: None is the `nil' object; Ellipsis represents `...' in slices.";
+
+    public final static String builtins___import___doc = 
+        "__import__(name, globals=None, locals=None, fromlist=(), level=0) -> module\n" + 
+        "\n" + 
+        "Import a module. Because this function is meant for use by the Python\n" + 
+        "interpreter and not for general use it is better to use\n" + 
+        "importlib.import_module() to programmatically import a module.\n" + 
+        "\n" + 
+        "The globals argument is only used to determine the context;\n" + 
+        "they are not modified.  The locals argument is unused.  The fromlist\n" + 
+        "should be a list of names to emulate ``from name import ...'', or an\n" + 
+        "empty list to emulate ``import name''.\n" + 
+        "When importing a module from a package, note that __import__('A.B', ...)\n" + 
+        "returns package A when fromlist is empty, but its submodule B when\n" + 
+        "fromlist is not empty.  Level is used to determine whether to perform \n" + 
+        "absolute or relative imports. 0 is absolute while a positive number\n" + 
+        "is the number of parent directories to search relative to the current module.";
+
+    public final static String builtins___loader___doc = 
+        "Meta path import for built-in modules.\n" + 
+        "\n" + 
+        "    All methods are either class or static methods to avoid the need to\n" + 
+        "    instantiate the class.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String builtins___name___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String builtins___package___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String builtins___spec___doc = 
+        "The specification for a module, used for loading.\n" + 
+        "\n" + 
+        "    A module's spec is the source for information about the module.  For\n" + 
+        "    data associated with the module, including source, use the spec's\n" + 
+        "    loader.\n" + 
+        "\n" + 
+        "    `name` is the absolute name of the module.  `loader` is the loader\n" + 
+        "    to use when loading the module.  `parent` is the name of the\n" + 
+        "    package the module is in.  The parent is derived from the name.\n" + 
+        "\n" + 
+        "    `is_package` determines if the module is considered a package or\n" + 
+        "    not.  On modules this is reflected by the `__path__` attribute.\n" + 
+        "\n" + 
+        "    `origin` is the specific location used by the loader from which to\n" + 
+        "    load the module, if that information is available.  When filename is\n" + 
+        "    set, origin will match.\n" + 
+        "\n" + 
+        "    `has_location` indicates that a spec's \"origin\" reflects a location.\n" + 
+        "    When this is True, `__file__` attribute of the module is set.\n" + 
+        "\n" + 
+        "    `cached` is the location of the cached bytecode file, if any.  It\n" + 
+        "    corresponds to the `__cached__` attribute.\n" + 
+        "\n" + 
+        "    `submodule_search_locations` is the sequence of path entries to\n" + 
+        "    search when importing submodules.  If set, is_package should be\n" + 
+        "    True--and False otherwise.\n" + 
+        "\n" + 
+        "    Packages are simply modules that (may) have submodules.  If a spec\n" + 
+        "    has a non-None value in `submodule_search_locations`, the import\n" + 
+        "    system will consider modules loaded from the spec as packages.\n" + 
+        "\n" + 
+        "    Only finders (see importlib.abc.MetaPathFinder and\n" + 
+        "    importlib.abc.PathEntryFinder) should modify ModuleSpec instances.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String builtins_abs_doc = 
+        "Return the absolute value of the argument.";
+
+    public final static String builtins_all_doc = 
+        "Return True if bool(x) is True for all values x in the iterable.\n" + 
+        "\n" + 
+        "If the iterable is empty, return True.";
+
+    public final static String builtins_any_doc = 
+        "Return True if bool(x) is True for any x in the iterable.\n" + 
+        "\n" + 
+        "If the iterable is empty, return False.";
+
+    public final static String builtins_ascii_doc = 
+        "Return an ASCII-only representation of an object.\n" + 
+        "\n" + 
+        "As repr(), return a string containing a printable representation of an\n" + 
+        "object, but escape the non-ASCII characters in the string returned by\n" + 
+        "repr() using \\\\x, \\\\u or \\\\U escapes. This generates a string similar\n" + 
+        "to that returned by repr() in Python 2.";
+
+    public final static String builtins_bin_doc = 
+        "Return the binary representation of an integer.\n" + 
+        "\n" + 
+        "   >>> bin(2796202)\n" + 
+        "   '0b1010101010101010101010'";
+
+    public final static String builtins_bool_doc = 
+        "bool(x) -> bool\n" + 
+        "\n" + 
+        "Returns True when the argument x is true, False otherwise.\n" + 
+        "The builtins True and False are the only two instances of the class bool.\n" + 
+        "The class bool is a subclass of the class int, and cannot be subclassed.";
+
+    public final static String builtins_bytearray_doc = 
+        "bytearray(iterable_of_ints) -> bytearray\n" + 
+        "bytearray(string, encoding[, errors]) -> bytearray\n" + 
+        "bytearray(bytes_or_buffer) -> mutable copy of bytes_or_buffer\n" + 
+        "bytearray(int) -> bytes array of size given by the parameter initialized with null bytes\n" + 
+        "bytearray() -> empty bytes array\n" + 
+        "\n" + 
+        "Construct an mutable bytearray object from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - a bytes or a buffer object\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String builtins_bytes_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String builtins_callable_doc = 
+        "Return whether the object is callable (i.e., some kind of function).\n" + 
+        "\n" + 
+        "Note that classes are callable, as are instances of classes with a\n" + 
+        "__call__() method.";
+
+    public final static String builtins_chr_doc = 
+        "Return a Unicode string of one character with ordinal i; 0 <= i <= 0x10ffff.";
+
+    public final static String builtins_classmethod_doc = 
+        "classmethod(function) -> method\n" + 
+        "\n" + 
+        "Convert a function to be a class method.\n" + 
+        "\n" + 
+        "A class method receives the class as implicit first argument,\n" + 
+        "just like an instance method receives the instance.\n" + 
+        "To declare a class method, use this idiom:\n" + 
+        "\n" + 
+        "  class C:\n" + 
+        "      def f(cls, arg1, arg2, ...): ...\n" + 
+        "      f = classmethod(f)\n" + 
+        "\n" + 
+        "It can be called either on the class (e.g. C.f()) or on an instance\n" + 
+        "(e.g. C().f()).  The instance is ignored except for its class.\n" + 
+        "If a class method is called for a derived class, the derived class\n" + 
+        "object is passed as the implied first argument.\n" + 
+        "\n" + 
+        "Class methods are different than C++ or Java static methods.\n" + 
+        "If you want those, see the staticmethod builtin.";
+
+    public final static String builtins_compile_doc = 
+        "Compile source into a code object that can be executed by exec() or eval().\n" + 
+        "\n" + 
+        "The source code may represent a Python module, statement or expression.\n" + 
+        "The filename will be used for run-time error messages.\n" + 
+        "The mode must be 'exec' to compile a module, 'single' to compile a\n" + 
+        "single (interactive) statement, or 'eval' to compile an expression.\n" + 
+        "The flags argument, if present, controls which future statements influence\n" + 
+        "the compilation of the code.\n" + 
+        "The dont_inherit argument, if true, stops the compilation inheriting\n" + 
+        "the effects of any future statements in effect in the code calling\n" + 
+        "compile; if absent or false these statements do influence the compilation,\n" + 
+        "in addition to any features explicitly specified.";
+
+    public final static String builtins_complex_doc = 
+        "complex(real[, imag]) -> complex number\n" + 
+        "\n" + 
+        "Create a complex number from a real part and an optional imaginary part.\n" + 
+        "This is equivalent to (real + imag*1j) where imag defaults to 0.";
+
+    public final static String builtins_copyright_doc = 
+        "interactive prompt objects for printing the license text, a list of\n" + 
+        "    contributors and the copyright notice.";
+
+    public final static String builtins_credits_doc = 
+        "interactive prompt objects for printing the license text, a list of\n" + 
+        "    contributors and the copyright notice.";
+
+    public final static String builtins_delattr_doc = 
+        "Deletes the named attribute from the given object.\n" + 
+        "\n" + 
+        "delattr(x, 'y') is equivalent to ``del x.y''";
+
+    public final static String builtins_dict_doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String builtins_dir_doc = 
+        "dir([object]) -> list of strings\n" + 
+        "\n" + 
+        "If called without an argument, return the names in the current scope.\n" + 
+        "Else, return an alphabetized list of names comprising (some of) the attributes\n" + 
+        "of the given object, and of attributes reachable from it.\n" + 
+        "If the object supplies a method named __dir__, it will be used; otherwise\n" + 
+        "the default dir() logic is used and returns:\n" + 
+        "  for a module object: the module's attributes.\n" + 
+        "  for a class object:  its attributes, and recursively the attributes\n" + 
+        "    of its bases.\n" + 
+        "  for any other object: its attributes, its class's attributes, and\n" + 
+        "    recursively the attributes of its class's base classes.";
+
+    public final static String builtins_divmod_doc = 
+        "Return the tuple ((x-x%y)/y, x%y).  Invariant: div*y + mod == x.";
+
+    public final static String builtins_enumerate_doc = 
+        "enumerate(iterable[, start]) -> iterator for index, value of iterable\n" + 
+        "\n" + 
+        "Return an enumerate object.  iterable must be another object that supports\n" + 
+        "iteration.  The enumerate object yields pairs containing a count (from\n" + 
+        "start, which defaults to zero) and a value yielded by the iterable argument.\n" + 
+        "enumerate is useful for obtaining an indexed list:\n" + 
+        "    (0, seq[0]), (1, seq[1]), (2, seq[2]), ...";
+
+    public final static String builtins_eval_doc = 
+        "Evaluate the given source in the context of globals and locals.\n" + 
+        "\n" + 
+        "The source may be a string representing a Python expression\n" + 
+        "or a code object as returned by compile().\n" + 
+        "The globals must be a dictionary and locals can be any mapping,\n" + 
+        "defaulting to the current globals and locals.\n" + 
+        "If only globals is given, locals defaults to it.";
+
+    public final static String builtins_exec_doc = 
+        "Execute the given source in the context of globals and locals.\n" + 
+        "\n" + 
+        "The source may be a string representing one or more Python statements\n" + 
+        "or a code object as returned by compile().\n" + 
+        "The globals must be a dictionary and locals can be any mapping,\n" + 
+        "defaulting to the current globals and locals.\n" + 
+        "If only globals is given, locals defaults to it.";
+
+    public final static String builtins_exit_doc = 
+        "";
+
+    public final static String builtins_filter_doc = 
+        "filter(function or None, iterable) --> filter object\n" + 
+        "\n" + 
+        "Return an iterator yielding those items of iterable for which function(item)\n" + 
+        "is true. If function is None, return the items that are true.";
+
+    public final static String builtins_float_doc = 
+        "float(x) -> floating point number\n" + 
+        "\n" + 
+        "Convert a string or number to a floating point number, if possible.";
+
+    public final static String builtins_format_doc = 
+        "Return value.__format__(format_spec)\n" + 
+        "\n" + 
+        "format_spec defaults to the empty string";
+
+    public final static String builtins_frozenset_doc = 
+        "frozenset() -> empty frozenset object\n" + 
+        "frozenset(iterable) -> frozenset object\n" + 
+        "\n" + 
+        "Build an immutable unordered collection of unique elements.";
+
+    public final static String builtins_getattr_doc = 
+        "getattr(object, name[, default]) -> value\n" + 
+        "\n" + 
+        "Get a named attribute from an object; getattr(x, 'y') is equivalent to x.y.\n" + 
+        "When a default argument is given, it is returned when the attribute doesn't\n" + 
+        "exist; without it, an exception is raised in that case.";
+
+    public final static String builtins_globals_doc = 
+        "Return the dictionary containing the current scope's global variables.\n" + 
+        "\n" + 
+        "NOTE: Updates to this dictionary *will* affect name lookups in the current\n" + 
+        "global scope and vice-versa.";
+
+    public final static String builtins_hasattr_doc = 
+        "Return whether the object has an attribute with the given name.\n" + 
+        "\n" + 
+        "This is done by calling getattr(obj, name) and catching AttributeError.";
+
+    public final static String builtins_hash_doc = 
+        "Return the hash value for the given object.\n" + 
+        "\n" + 
+        "Two objects that compare equal must also have the same hash value, but the\n" + 
+        "reverse is not necessarily true.";
+
+    public final static String builtins_help_doc = 
+        "Define the builtin 'help'.\n" + 
+        "\n" + 
+        "    This is a wrapper around pydoc.help that provides a helpful message\n" + 
+        "    when 'help' is typed at the Python interactive prompt.\n" + 
+        "\n" + 
+        "    Calling help() at the Python prompt starts an interactive help session.\n" + 
+        "    Calling help(thing) prints help for the python object 'thing'.\n" + 
+        "    ";
+
+    public final static String builtins_hex_doc = 
+        "Return the hexadecimal representation of an integer.\n" + 
+        "\n" + 
+        "   >>> hex(12648430)\n" + 
+        "   '0xc0ffee'";
+
+    public final static String builtins_id_doc = 
+        "Return the identity of an object.\n" + 
+        "\n" + 
+        "This is guaranteed to be unique among simultaneously existing objects.\n" + 
+        "(CPython uses the object's memory address.)";
+
+    public final static String builtins_input_doc = 
+        "Read a string from standard input.  The trailing newline is stripped.\n" + 
+        "\n" + 
+        "The prompt string, if given, is printed to standard output without a\n" + 
+        "trailing newline before reading input.\n" + 
+        "\n" + 
+        "If the user hits EOF (*nix: Ctrl-D, Windows: Ctrl-Z+Return), raise EOFError.\n" + 
+        "On *nix systems, readline is used if available.";
+
+    public final static String builtins_int_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String builtins_isinstance_doc = 
+        "Return whether an object is an instance of a class or of a subclass thereof.\n" + 
+        "\n" + 
+        "A tuple, as in ``isinstance(x, (A, B, ...))``, may be given as the target to\n" + 
+        "check against. This is equivalent to ``isinstance(x, A) or isinstance(x, B)\n" + 
+        "or ...`` etc.";
+
+    public final static String builtins_issubclass_doc = 
+        "Return whether 'cls' is a derived from another class or is the same class.\n" + 
+        "\n" + 
+        "A tuple, as in ``issubclass(x, (A, B, ...))``, may be given as the target to\n" + 
+        "check against. This is equivalent to ``issubclass(x, A) or issubclass(x, B)\n" + 
+        "or ...`` etc.";
+
+    public final static String builtins_iter_doc = 
+        "iter(iterable) -> iterator\n" + 
+        "iter(callable, sentinel) -> iterator\n" + 
+        "\n" + 
+        "Get an iterator from an object.  In the first form, the argument must\n" + 
+        "supply its own iterator, or be a sequence.\n" + 
+        "In the second form, the callable is called until it returns the sentinel.";
+
+    public final static String builtins_len_doc = 
+        "Return the number of items in a container.";
+
+    public final static String builtins_license_doc = 
+        "interactive prompt objects for printing the license text, a list of\n" + 
+        "    contributors and the copyright notice.";
+
+    public final static String builtins_list_doc = 
+        "list() -> new empty list\n" + 
+        "list(iterable) -> new list initialized from iterable's items";
+
+    public final static String builtins_locals_doc = 
+        "Return a dictionary containing the current scope's local variables.\n" + 
+        "\n" + 
+        "NOTE: Whether or not updates to this dictionary will affect name lookups in\n" + 
+        "the local scope and vice-versa is *implementation dependent* and not\n" + 
+        "covered by any backwards compatibility guarantees.";
+
+    public final static String builtins_map_doc = 
+        "map(func, *iterables) --> map object\n" + 
+        "\n" + 
+        "Make an iterator that computes the function using arguments from\n" + 
+        "each of the iterables.  Stops when the shortest iterable is exhausted.";
+
+    public final static String builtins_max_doc = 
+        "max(iterable, *[, default=obj, key=func]) -> value\n" + 
+        "max(arg1, arg2, *args, *[, key=func]) -> value\n" + 
+        "\n" + 
+        "With a single iterable argument, return its biggest item. The\n" + 
+        "default keyword-only argument specifies an object to return if\n" + 
+        "the provided iterable is empty.\n" + 
+        "With two or more arguments, return the largest argument.";
+
+    public final static String builtins_memoryview_doc = 
+        "Create a new memoryview object which references the given object.";
+
+    public final static String builtins_min_doc = 
+        "min(iterable, *[, default=obj, key=func]) -> value\n" + 
+        "min(arg1, arg2, *args, *[, key=func]) -> value\n" + 
+        "\n" + 
+        "With a single iterable argument, return its smallest item. The\n" + 
+        "default keyword-only argument specifies an object to return if\n" + 
+        "the provided iterable is empty.\n" + 
+        "With two or more arguments, return the smallest argument.";
+
+    public final static String builtins_next_doc = 
+        "next(iterator[, default])\n" + 
+        "\n" + 
+        "Return the next item from the iterator. If default is given and the iterator\n" + 
+        "is exhausted, it is returned instead of raising StopIteration.";
+
+    public final static String builtins_object_doc = 
+        "The most base type";
+
+    public final static String builtins_oct_doc = 
+        "Return the octal representation of an integer.\n" + 
+        "\n" + 
+        "   >>> oct(342391)\n" + 
+        "   '0o1234567'";
+
+    public final static String builtins_open_doc = 
+        "Open file and return a stream.  Raise IOError upon failure.\n" + 
+        "\n" + 
+        "file is either a text or byte string giving the name (and the path\n" + 
+        "if the file isn't in the current working directory) of the file to\n" + 
+        "be opened or an integer file descriptor of the file to be\n" + 
+        "wrapped. (If a file descriptor is given, it is closed when the\n" + 
+        "returned I/O object is closed, unless closefd is set to False.)\n" + 
+        "\n" + 
+        "mode is an optional string that specifies the mode in which the file\n" + 
+        "is opened. It defaults to 'r' which means open for reading in text\n" + 
+        "mode.  Other common values are 'w' for writing (truncating the file if\n" + 
+        "it already exists), 'x' for creating and writing to a new file, and\n" + 
+        "'a' for appending (which on some Unix systems, means that all writes\n" + 
+        "append to the end of the file regardless of the current seek position).\n" + 
+        "In text mode, if encoding is not specified the encoding used is platform\n" + 
+        "dependent: locale.getpreferredencoding(False) is called to get the\n" + 
+        "current locale encoding. (For reading and writing raw bytes use binary\n" + 
+        "mode and leave encoding unspecified.) The available modes are:\n" + 
+        "\n" + 
+        "========= ===============================================================\n" + 
+        "Character Meaning\n" + 
+        "--------- ---------------------------------------------------------------\n" + 
+        "'r'       open for reading (default)\n" + 
+        "'w'       open for writing, truncating the file first\n" + 
+        "'x'       create a new file and open it for writing\n" + 
+        "'a'       open for writing, appending to the end of the file if it exists\n" + 
+        "'b'       binary mode\n" + 
+        "'t'       text mode (default)\n" + 
+        "'+'       open a disk file for updating (reading and writing)\n" + 
+        "'U'       universal newline mode (deprecated)\n" + 
+        "========= ===============================================================\n" + 
+        "\n" + 
+        "The default mode is 'rt' (open for reading text). For binary random\n" + 
+        "access, the mode 'w+b' opens and truncates the file to 0 bytes, while\n" + 
+        "'r+b' opens the file without truncation. The 'x' mode implies 'w' and\n" + 
+        "raises an `FileExistsError` if the file already exists.\n" + 
+        "\n" + 
+        "Python distinguishes between files opened in binary and text modes,\n" + 
+        "even when the underlying operating system doesn't. Files opened in\n" + 
+        "binary mode (appending 'b' to the mode argument) return contents as\n" + 
+        "bytes objects without any decoding. In text mode (the default, or when\n" + 
+        "'t' is appended to the mode argument), the contents of the file are\n" + 
+        "returned as strings, the bytes having been first decoded using a\n" + 
+        "platform-dependent encoding or using the specified encoding if given.\n" + 
+        "\n" + 
+        "'U' mode is deprecated and will raise an exception in future versions\n" + 
+        "of Python.  It has no effect in Python 3.  Use newline to control\n" + 
+        "universal newlines mode.\n" + 
+        "\n" + 
+        "buffering is an optional integer used to set the buffering policy.\n" + 
+        "Pass 0 to switch buffering off (only allowed in binary mode), 1 to select\n" + 
+        "line buffering (only usable in text mode), and an integer > 1 to indicate\n" + 
+        "the size of a fixed-size chunk buffer.  When no buffering argument is\n" + 
+        "given, the default buffering policy works as follows:\n" + 
+        "\n" + 
+        "* Binary files are buffered in fixed-size chunks; the size of the buffer\n" + 
+        "  is chosen using a heuristic trying to determine the underlying device's\n" + 
+        "  \"block size\" and falling back on `io.DEFAULT_BUFFER_SIZE`.\n" + 
+        "  On many systems, the buffer will typically be 4096 or 8192 bytes long.\n" + 
+        "\n" + 
+        "* \"Interactive\" text files (files for which isatty() returns True)\n" + 
+        "  use line buffering.  Other text files use the policy described above\n" + 
+        "  for binary files.\n" + 
+        "\n" + 
+        "encoding is the name of the encoding used to decode or encode the\n" + 
+        "file. This should only be used in text mode. The default encoding is\n" + 
+        "platform dependent, but any encoding supported by Python can be\n" + 
+        "passed.  See the codecs module for the list of supported encodings.\n" + 
+        "\n" + 
+        "errors is an optional string that specifies how encoding errors are to\n" + 
+        "be handled---this argument should not be used in binary mode. Pass\n" + 
+        "'strict' to raise a ValueError exception if there is an encoding error\n" + 
+        "(the default of None has the same effect), or pass 'ignore' to ignore\n" + 
+        "errors. (Note that ignoring encoding errors can lead to data loss.)\n" + 
+        "See the documentation for codecs.register or run 'help(codecs.Codec)'\n" + 
+        "for a list of the permitted encoding error strings.\n" + 
+        "\n" + 
+        "newline controls how universal newlines works (it only applies to text\n" + 
+        "mode). It can be None, '', '\\n', '\\r', and '\\r\\n'.  It works as\n" + 
+        "follows:\n" + 
+        "\n" + 
+        "* On input, if newline is None, universal newlines mode is\n" + 
+        "  enabled. Lines in the input can end in '\\n', '\\r', or '\\r\\n', and\n" + 
+        "  these are translated into '\\n' before being returned to the\n" + 
+        "  caller. If it is '', universal newline mode is enabled, but line\n" + 
+        "  endings are returned to the caller untranslated. If it has any of\n" + 
+        "  the other legal values, input lines are only terminated by the given\n" + 
+        "  string, and the line ending is returned to the caller untranslated.\n" + 
+        "\n" + 
+        "* On output, if newline is None, any '\\n' characters written are\n" + 
+        "  translated to the system default line separator, os.linesep. If\n" + 
+        "  newline is '' or '\\n', no translation takes place. If newline is any\n" + 
+        "  of the other legal values, any '\\n' characters written are translated\n" + 
+        "  to the given string.\n" + 
+        "\n" + 
+        "If closefd is False, the underlying file descriptor will be kept open\n" + 
+        "when the file is closed. This does not work when a file name is given\n" + 
+        "and must be True in that case.\n" + 
+        "\n" + 
+        "A custom opener can be used by passing a callable as *opener*. The\n" + 
+        "underlying file descriptor for the file object is then obtained by\n" + 
+        "calling *opener* with (*file*, *flags*). *opener* must return an open\n" + 
+        "file descriptor (passing os.open as *opener* results in functionality\n" + 
+        "similar to passing None).\n" + 
+        "\n" + 
+        "open() returns a file object whose type depends on the mode, and\n" + 
+        "through which the standard file operations such as reading and writing\n" + 
+        "are performed. When open() is used to open a file in a text mode ('w',\n" + 
+        "'r', 'wt', 'rt', etc.), it returns a TextIOWrapper. When used to open\n" + 
+        "a file in a binary mode, the returned class varies: in read binary\n" + 
+        "mode, it returns a BufferedReader; in write binary and append binary\n" + 
+        "modes, it returns a BufferedWriter, and in read/write mode, it returns\n" + 
+        "a BufferedRandom.\n" + 
+        "\n" + 
+        "It is also possible to use a string or bytearray as a file for both\n" + 
+        "reading and writing. For strings StringIO can be used like a file\n" + 
+        "opened in a text mode, and for bytes a BytesIO can be used like a file\n" + 
+        "opened in a binary mode.";
+
+    public final static String builtins_ord_doc = 
+        "Return the Unicode code point for a one-character string.";
+
+    public final static String builtins_pow_doc = 
+        "Equivalent to x**y (with two arguments) or x**y % z (with three arguments)\n" + 
+        "\n" + 
+        "Some types, such as ints, are able to use a more efficient algorithm when\n" + 
+        "invoked using the three argument form.";
+
+    public final static String builtins_print_doc = 
+        "print(value, ..., sep=' ', end='\\n', file=sys.stdout, flush=False)\n" + 
+        "\n" + 
+        "Prints the values to a stream, or to sys.stdout by default.\n" + 
+        "Optional keyword arguments:\n" + 
+        "file:  a file-like object (stream); defaults to the current sys.stdout.\n" + 
+        "sep:   string inserted between values, default a space.\n" + 
+        "end:   string appended after the last value, default a newline.\n" + 
+        "flush: whether to forcibly flush the stream.";
+
+    public final static String builtins_property_doc = 
+        "property(fget=None, fset=None, fdel=None, doc=None) -> property attribute\n" + 
+        "\n" + 
+        "fget is a function to be used for getting an attribute value, and likewise\n" + 
+        "fset is a function for setting, and fdel a function for del'ing, an\n" + 
+        "attribute.  Typical use is to define a managed attribute x:\n" + 
+        "\n" + 
+        "class C(object):\n" + 
+        "    def getx(self): return self._x\n" + 
+        "    def setx(self, value): self._x = value\n" + 
+        "    def delx(self): del self._x\n" + 
+        "    x = property(getx, setx, delx, \"I'm the 'x' property.\")\n" + 
+        "\n" + 
+        "Decorators make defining new properties or modifying existing ones easy:\n" + 
+        "\n" + 
+        "class C(object):\n" + 
+        "    @property\n" + 
+        "    def x(self):\n" + 
+        "        \"I am the 'x' property.\"\n" + 
+        "        return self._x\n" + 
+        "    @x.setter\n" + 
+        "    def x(self, value):\n" + 
+        "        self._x = value\n" + 
+        "    @x.deleter\n" + 
+        "    def x(self):\n" + 
+        "        del self._x\n" + 
+        "";
+
+    public final static String builtins_quit_doc = 
+        "";
+
+    public final static String builtins_range_doc = 
+        "range(stop) -> range object\n" + 
+        "range(start, stop[, step]) -> range object\n" + 
+        "\n" + 
+        "Return an object that produces a sequence of integers from start (inclusive)\n" + 
+        "to stop (exclusive) by step.  range(i, j) produces i, i+1, i+2, ..., j-1.\n" + 
+        "start defaults to 0, and stop is omitted!  range(4) produces 0, 1, 2, 3.\n" + 
+        "These are exactly the valid indices for a list of 4 elements.\n" + 
+        "When step is given, it specifies the increment (or decrement).";
+
+    public final static String builtins_repr_doc = 
+        "Return the canonical string representation of the object.\n" + 
+        "\n" + 
+        "For many object types, including most builtins, eval(repr(obj)) == obj.";
+
+    public final static String builtins_reversed_doc = 
+        "reversed(sequence) -> reverse iterator over values of the sequence\n" + 
+        "\n" + 
+        "Return a reverse iterator";
+
+    public final static String builtins_round_doc = 
+        "round(number[, ndigits]) -> number\n" + 
+        "\n" + 
+        "Round a number to a given precision in decimal digits (default 0 digits).\n" + 
+        "This returns an int when called with one argument, otherwise the\n" + 
+        "same type as the number. ndigits may be negative.";
+
+    public final static String builtins_set_doc = 
+        "set() -> new empty set object\n" + 
+        "set(iterable) -> new set object\n" + 
+        "\n" + 
+        "Build an unordered collection of unique elements.";
+
+    public final static String builtins_setattr_doc = 
+        "Sets the named attribute on the given object to the specified value.\n" + 
+        "\n" + 
+        "setattr(x, 'y', v) is equivalent to ``x.y = v''";
+
+    public final static String builtins_slice_doc = 
+        "slice(stop)\n" + 
+        "slice(start, stop[, step])\n" + 
+        "\n" + 
+        "Create a slice object.  This is used for extended slicing (e.g. a[0:10:2]).";
+
+    public final static String builtins_sorted_doc = 
+        "Return a new list containing all items from the iterable in ascending order.\n" + 
+        "\n" + 
+        "A custom key function can be supplied to customise the sort order, and the\n" + 
+        "reverse flag can be set to request the result in descending order.";
+
+    public final static String builtins_staticmethod_doc = 
+        "staticmethod(function) -> method\n" + 
+        "\n" + 
+        "Convert a function to be a static method.\n" + 
+        "\n" + 
+        "A static method does not receive an implicit first argument.\n" + 
+        "To declare a static method, use this idiom:\n" + 
+        "\n" + 
+        "     class C:\n" + 
+        "     def f(arg1, arg2, ...): ...\n" + 
+        "     f = staticmethod(f)\n" + 
+        "\n" + 
+        "It can be called either on the class (e.g. C.f()) or on an instance\n" + 
+        "(e.g. C().f()).  The instance is ignored except for its class.\n" + 
+        "\n" + 
+        "Static methods in Python are similar to those found in Java or C++.\n" + 
+        "For a more advanced concept, see the classmethod builtin.";
+
+    public final static String builtins_str_doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String builtins_sum_doc = 
+        "Return the sum of a 'start' value (default: 0) plus an iterable of numbers\n" + 
+        "\n" + 
+        "When the iterable is empty, return the start value.\n" + 
+        "This function is intended specifically for use with numeric values and may\n" + 
+        "reject non-numeric types.";
+
+    public final static String builtins_super_doc = 
+        "super() -> same as super(__class__, <first argument>)\n" + 
+        "super(type) -> unbound super object\n" + 
+        "super(type, obj) -> bound super object; requires isinstance(obj, type)\n" + 
+        "super(type, type2) -> bound super object; requires issubclass(type2, type)\n" + 
+        "Typical use to call a cooperative superclass method:\n" + 
+        "class C(B):\n" + 
+        "    def meth(self, arg):\n" + 
+        "        super().meth(arg)\n" + 
+        "This works for class methods too:\n" + 
+        "class C(B):\n" + 
+        "    @classmethod\n" + 
+        "    def cmeth(cls, arg):\n" + 
+        "        super().cmeth(arg)\n" + 
+        "";
+
+    public final static String builtins_tuple_doc = 
+        "tuple() -> empty tuple\n" + 
+        "tuple(iterable) -> tuple initialized from iterable's items\n" + 
+        "\n" + 
+        "If the argument is a tuple, the return value is the same object.";
+
+    public final static String builtins_type_doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String builtins_vars_doc = 
+        "vars([object]) -> dictionary\n" + 
+        "\n" + 
+        "Without arguments, equivalent to locals().\n" + 
+        "With an argument, equivalent to object.__dict__.";
+
+    public final static String builtins_zip_doc = 
+        "zip(iter1 [,iter2 [...]]) --> zip object\n" + 
+        "\n" + 
+        "Return a zip object whose .__next__() method returns a tuple where\n" + 
+        "the i-th element comes from the i-th iterable argument.  The .__next__()\n" + 
+        "method continues until the shortest iterable in the argument sequence\n" + 
+        "is exhausted and then it raises StopIteration.";
+
     // Docs for <class 'object'>
     public final static String object___class___doc = 
         "type(object_or_name, bases, dict)\n" + 
@@ -3547,7 +4531,7 @@ public class BuiltinDocs {
         "default dir() implementation";
 
     public final static String BaseException_doc = 
-        "Common base class for all Exceptions";
+        "Common base class for all exceptions";
 
     public final static String BaseException___eq___doc = 
         "Return self==value.";
