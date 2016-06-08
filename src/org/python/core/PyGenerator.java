@@ -64,15 +64,46 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         } else if (tb != null && !(tb instanceof PyTraceback)) {
             throw Py.TypeError("throw() third argument must be a traceback object");
         }
-        PyException pye;
-        if (value == null) {
-            pye = PyException.doRaise(type);
-        } else {
-            pye = new PyException(type, value);
+
+        if (gi_frame.f_yieldfrom != null) {
+            PyObject ret = null;
+            if (type == Py.GeneratorExit) {
+                gi_running = true;
+                try {
+                    gen_close_iter(gi_frame.f_yieldfrom);
+                } catch (PyException e) {
+                    throw e;
+                } finally {
+                    gi_running = false;
+                }
+                return raiseException(type, value, tb);
+            }
+            if (gi_frame.f_yieldfrom instanceof PyGenerator) {
+                gi_running = true;
+                try {
+                    ret = ((PyGenerator) gi_frame.f_yieldfrom).throw$(type, value, tb);
+                } catch (Throwable e) {
+                    throw e;
+                } finally {
+                    gi_running = false;
+                }
+            } else {
+                PyObject meth = gi_frame.f_yieldfrom.__findattr__("close");
+                if (meth != null) {
+                    ret = meth.__call__();
+                } else {
+                    gi_frame.f_yieldfrom = null;
+                    return raiseException(type, value, tb);
+                }
+            }
+            if (ret == null) {
+                gi_frame.f_yieldfrom = null;
+                gi_frame.f_lasti++;
+                ret = gen_send_ex(Py.getThreadState(), Py.None);
+            }
+            return ret;
         }
-        pye.traceback = (PyTraceback) tb;
-        gi_frame.previousException = pye;
-        return gen_send_ex(Py.getThreadState(), pye);
+        return raiseException(type, value, tb);
     }
 
     public PyObject close() {
@@ -107,10 +138,10 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
             throw e;
         }
         if (retval != null || retval != Py.None) {
-            throw Py.RuntimeError("generator ignored GeneratorExit 1");
+            throw Py.RuntimeError("generator ignored GeneratorExit");
         }
         // not reachable
-        return Py.None;
+        return null;
     }
 
     @ExposedMethod(doc = BuiltinDocs.generator___next___doc)
@@ -128,16 +159,16 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         return this;
     }
 
-    private PyObject raiseException(PyException ex) {
-        if (gi_frame == null || gi_frame.f_lasti == 0) {
-            gi_frame = null;
-            throw ex;
+    private PyObject raiseException(PyObject type, PyObject value, PyObject tb) {
+        PyException pye;
+        if (value == null) {
+            pye = PyException.doRaise(type);
+        } else {
+            pye = new PyException(type, value);
         }
-        PyObject yf = gi_frame.f_yieldfrom;
-        if (yf != null) {
-            ((PyGenerator) yf).raiseException(ex);
-        }
-        return gen_send_ex(Py.getThreadState(), ex);
+        pye.traceback = (PyTraceback) tb;
+        gi_frame.previousException = pye;
+        return gen_send_ex(Py.getThreadState(), pye);
     }
     
     @Override
@@ -232,16 +263,16 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         return result;
     }
 
-    private void gen_close_iter(PyObject iter) {
+    private PyObject gen_close_iter(PyObject iter) {
         if (iter instanceof PyGenerator) {
-            ((PyGenerator) iter).close();
-            return;
+            return ((PyGenerator) iter).close();
         }
         try {
-            PyObject closeMeth = iter.__finditem__("close");
-            closeMeth.__call__();
+            PyObject closeMeth = iter.__findattr_ex__("close");
+            return closeMeth.__call__();
         } catch (PyException e) {
             if (! e.match(Py.AttributeError)) throw e;
+            return null;
         }
     }
 

@@ -1134,8 +1134,7 @@ public final class Py {
             if (iter instanceof PyGenerator) {
                 retval = ((PyGenerator) iter).send(null);
             } else {
-                PyObject nextImp = iter.__findattr__("__next__");
-                retval = nextImp.__call__();
+                retval = iter.__next__();
             }
         } catch (PyException e) {
             if (e.match(Py.StopIteration)) {
@@ -1157,7 +1156,7 @@ public final class Py {
      * throws AttributeError if method not found
      */
     public static PyObject invoke(PyObject callee, String method) {
-        PyObject imp = callee.__finditem__(method);
+        PyObject imp = callee.__findattr__(method);
         return imp.__call__();
     }
 
