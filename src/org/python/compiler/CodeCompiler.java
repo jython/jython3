@@ -1437,7 +1437,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.pop();
 
         inlineFinally(inFinally);
-        popException();
+//        popException();
         code.aload(excLocal);
         code.checkcast(p(Throwable.class));
         code.athrow();
@@ -3312,8 +3312,11 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             for (int i = 0; i < exceptionStarts.size(); ++i) {
                 Label start = exceptionStarts.elementAt(i);
                 Label end = exceptionEnds.elementAt(i);
-                code.trycatch(start, end,
-                        handlerStart, p(Throwable.class));
+                // the start and end label has to match
+                if (start.getOffset() != end.getOffset()) {
+                    code.trycatch(exceptionStarts.elementAt(i), exceptionEnds.elementAt(i),
+                            handlerStart, p(Throwable.class));
+                }
             }
         }
 
