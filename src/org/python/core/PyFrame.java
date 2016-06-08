@@ -155,7 +155,12 @@ public class PyFrame extends PyObject implements Traverseproc {
         } else {
             // Because the implementation of the send method is different from CPython, and we are simulating the
             // 'send' function here, so we raise an AttributeError
-            f_yieldfrom.__findattr_ex__("send");
+            PyObject send = f_yieldfrom.__findattr__("send");
+            if (send == null) {
+                generatorInput = Py.AttributeError(
+                        String.format("'%s' object has no attribute 'send'", f_yieldfrom.getType().fastGetName()));
+                f_yieldfrom = null;
+            }
         }
     }
 
