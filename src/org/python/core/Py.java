@@ -399,7 +399,7 @@ public final class Py {
         return new PyException(Py.StopIteration);
     }
     public static PyException StopIteration(PyObject value) {
-        return new PyException(Py.StopIteration, new PyTuple(value));
+        return new PyException(Py.StopIteration, value);
     }
     public static PyObject GeneratorExit;
     public static PyException GeneratorExit() {
@@ -1125,13 +1125,17 @@ public final class Py {
 
     public static PyObject yieldFrom(PyFrame frame) {
         PyObject iter = frame.f_yieldfrom;
+        if (iter == null) {
+            throw (PyException) frame.getGeneratorInput();
+        }
         PyObject retval;
         try {
             // coroutine or generator
             if (iter instanceof PyGenerator) {
                 retval = ((PyGenerator) iter).send(null);
             } else {
-                retval = iter.__next__();
+                PyObject nextImp = iter.__findattr__("__next__");
+                retval = nextImp.__call__();
             }
         } catch (PyException e) {
             if (e.match(Py.StopIteration)) {
@@ -1143,6 +1147,18 @@ public final class Py {
             throw e;
         }
         return retval;
+    }
+
+    /**
+     * Invoke a python method by its name
+     * @param callee the receiver of the method
+     * @param method method name
+     * @return PyObject
+     * throws AttributeError if method not found
+     */
+    public static PyObject invoke(PyObject callee, String method) {
+        PyObject imp = callee.__finditem__(method);
+        return imp.__call__();
     }
 
     public static void initProxy(PyProxy proxy, String module, String pyclass, Object[] args)

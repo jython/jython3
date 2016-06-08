@@ -1328,7 +1328,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         setline(node);
         // get the next element from the list
         code.aload(iter_tmp);
-        code.invokevirtual(p(PyObject.class), "__next__", sig(PyObject.class));
+//        code.invokevirtual(p(PyObject.class), "__next__", sig(PyObject.class));
+        code.ldc("__next__");
+        code.invokestatic(p(Py.class), "invoke", sig(PyObject.class, PyObject.class, String.class));
 
         code.astore(expr_tmp);
         // if no more elements then fall through
@@ -1336,17 +1338,18 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         // this is still necessary before all builtin __next__ methods throw StopIteration
         code.ifnull(break_loop);
         code.goto_(start_loop);
+        code.label(end);
         code.label(handler);
         int exc = code.getLocal(p(Throwable.class));
         code.astore(exc);
         code.aload(exc);
+        code.checkcast(p(PyException.class));
         code.getstatic(p(Py.class), "StopIteration", ci(PyObject.class));
         code.invokevirtual(p(PyException.class), "match", sig(Boolean.TYPE, PyObject.class));
         code.ifne(break_loop);
         code.aload(exc);
         code.athrow();
         code.freeLocal(exc);
-        code.label(end);
 
         finishLoop(savebcf);
 
@@ -3321,11 +3324,8 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             for (int i = 0; i < exceptionStarts.size(); ++i) {
                 Label start = exceptionStarts.elementAt(i);
                 Label end = exceptionEnds.elementAt(i);
-                // FIXME: not at all sure that getOffset() test is correct or necessary.
-                if (start.getOffset() != end.getOffset()) {
-                    code.trycatch(exceptionStarts.elementAt(i), exceptionEnds.elementAt(i),
-                            handlerStart, p(Throwable.class));
-                }
+                code.trycatch(start, end,
+                        handlerStart, p(Throwable.class));
             }
         }
 
