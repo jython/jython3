@@ -67,15 +67,17 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
 
         if (gi_frame.f_yieldfrom != null) {
             PyObject ret = null;
+            PyObject err = null;
             if (type == Py.GeneratorExit) {
                 gi_running = true;
                 try {
-                    gen_close_iter(gi_frame.f_yieldfrom);
+                    err = gen_close_iter(gi_frame.f_yieldfrom);
                 } catch (PyException e) {
                     throw e;
                 } finally {
                     gi_running = false;
                 }
+                gi_frame.f_yieldfrom = null;
                 return raiseException(type, value, tb);
             }
             if (gi_frame.f_yieldfrom instanceof PyGenerator) {
