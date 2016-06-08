@@ -237,7 +237,10 @@ public class Exceptions {
 
     public static PyUnicode StopIteration__str__(PyObject self, PyObject[] args, String[] kwargs) {
         PyObject value = self.__getattr__("value");
-        return value.__str__();
+        if (value != Py.None) {
+            return value.__str__();
+        }
+        return Py.EmptyUnicode;
     }
 
     public static PyObject SyntaxError() {
