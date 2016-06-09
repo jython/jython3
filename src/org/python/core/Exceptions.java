@@ -236,8 +236,8 @@ public class Exceptions {
     }
 
     public static PyUnicode StopIteration__str__(PyObject self, PyObject[] args, String[] kwargs) {
-        PyObject value = self.__getattr__("value");
-        if (value != Py.None) {
+        PyObject value = ((PyBaseException) self).args.__finditem__(0);
+        if (value != null) {
             return value.__str__();
         }
         return Py.EmptyUnicode;
