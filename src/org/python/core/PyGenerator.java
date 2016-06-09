@@ -114,6 +114,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
 
     @ExposedMethod(doc = BuiltinDocs.generator_close_doc)
     final PyObject generator_close() {
+        PyException pye = null;
         PyObject retval;
         PyObject yf = gi_frame.f_yieldfrom;
         if (yf != null) {
@@ -122,14 +123,14 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
                 gi_frame.f_yieldfrom = null;
                 gen_close_iter(yf);
             } catch (PyException e) {
-                if (!e.match(Py.StopIteration) && !e.match(Py.GeneratorExit)) {
-                    throw e;
-                }
+                pye = e;
             } finally {
                 gi_running = false;
             }
         }
-        PyException pye = Py.GeneratorExit();
+        if (pye == null) {
+            pye = Py.GeneratorExit();
+        }
         try {
             // clean up
             retval = gen_send_ex(Py.getThreadState(), pye);
