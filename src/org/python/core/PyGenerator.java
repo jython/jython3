@@ -274,12 +274,14 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
             return ((PyGenerator) iter).close();
         }
         try {
-            PyObject closeMeth = iter.__findattr_ex__("close");
-            return closeMeth.__call__();
+            PyObject closeMeth = iter.__findattr__("close");
+            if (closeMeth != null) {
+                return closeMeth.__call__();
+            }
         } catch (PyException e) {
-            if (! e.match(Py.AttributeError)) throw e;
-            return null;
+            Py.writeUnraisable(e, iter);
         }
+        return null;
     }
 
     /* Traverseproc implementation */

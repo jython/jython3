@@ -165,6 +165,8 @@ public class PyString extends PySequence implements BufferProtocol {
             if (S instanceof PyUnicode) {
                 // Encoding will raise UnicodeEncodeError if not 7-bit clean.
                 str = codecs.encode((PyUnicode) S, null, null);
+            } else if (S instanceof PyByteArray) {
+                return new PyString(new String(((PyByteArray) S).storage));
             } else {
                 // Must be str/bytes, and should be 8-bit clean already.
                 str = S.toString();

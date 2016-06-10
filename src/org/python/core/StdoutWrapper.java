@@ -63,7 +63,7 @@ public class StdoutWrapper extends OutputStream {
         if (out instanceof PyFile) {
             ((PyFile) out).write(s);
         } else {
-            out.invoke("write", new PyString(s));
+            out.invoke("write", new PyUnicode(s));
         }
     }
 
@@ -248,11 +248,11 @@ public class StdoutWrapper extends OutputStream {
     }
 
     public void print(String s) {
-        print(Py.newStringOrUnicode(s), false, false);
+        print(Py.newUnicode(s), false, false);
     }
 
     public void println(String s) {
-        print(Py.newStringOrUnicode(s), false, true);
+        print(Py.newUnicode(s), false, true);
     }
 
     public void print(PyObject o) {

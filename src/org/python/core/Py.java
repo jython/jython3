@@ -150,11 +150,11 @@ public final class Py {
     /** A zero-length Python Unicode string **/
     public final static PyUnicode EmptyUnicode = new PyUnicode("");
     /** A Python string containing '\n' **/
-    public final static PyString Newline = new PyString("\n");
+    public final static PyString Newline = new PyUnicode("\n");
     /** A Python unicode string containing '\n' **/
     public final static PyUnicode UnicodeNewline = new PyUnicode("\n");
     /** A Python string containing ' ' **/
-    public final static PyString Space = new PyString(" ");
+    public final static PyString Space = new PyUnicode(" ");
     /** A Python unicode string containing ' ' **/
     public final static PyUnicode UnicodeSpace = new PyUnicode(" ");
     /** Set if the type object is dynamically allocated */
@@ -1459,7 +1459,7 @@ public final class Py {
     public static void writeUnraisable(Throwable unraisable, PyObject obj) {
         PyException pye = JavaError(unraisable);
         stderr.println(String.format("Exception %s in %s ignored",
-                                     formatException(pye.type, pye.value, true), obj));
+                                     formatException(pye.type, pye.value, true), obj.toString()));
     }
 
 

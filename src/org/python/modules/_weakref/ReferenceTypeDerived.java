@@ -1126,16 +1126,4 @@ public class ReferenceTypeDerived extends ReferenceType implements Slotted,Final
         return super.__coerce_ex__(o);
     }
 
-    public String toString() {
-        PyType self_type=getType();
-        PyObject impl=self_type.lookup("__repr__");
-        if (impl!=null) {
-            PyObject res=impl.__get__(this,self_type).__call__();
-            if (!(res instanceof PyString))
-                throw Py.TypeError("__repr__ returned non-string (type "+res.getType().fastGetName()+")");
-            return((PyString)res).toString();
-        }
-        return super.toString();
-    }
-
 }
