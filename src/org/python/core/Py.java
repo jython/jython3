@@ -1125,16 +1125,25 @@ public final class Py {
 
     public static PyObject yieldFrom(PyFrame frame) {
         PyObject iter = frame.f_yieldfrom;
+        Object input = frame.getGeneratorInput();
         if (iter == null) {
-            throw (PyException) frame.getGeneratorInput();
+            throw (PyException) input;
         }
         PyObject retval;
         try {
             // coroutine or generator
             if (iter instanceof PyGenerator) {
-                retval = ((PyGenerator) iter).send(null);
+                retval = ((PyGenerator) iter).send((PyObject) input);
+            } else if (input != Py.None) {
+                PyObject sendImp = iter.__findattr__("send");
+                if (sendImp == null) {
+                    throw Py.AttributeError(
+                            String.format("'%s' object has no attribute 'send'",
+                                    frame.f_yieldfrom.getType().fastGetName()));
+                }
+                retval = sendImp.__call__((PyObject) input);
             } else {
-                retval = iter.__next__();
+                return iter.__next__();
             }
         } catch (PyException e) {
             if (e.match(Py.StopIteration)) {
