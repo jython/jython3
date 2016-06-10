@@ -67,11 +67,11 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
 
         if (gi_frame.f_yieldfrom != null) {
             PyObject ret = null;
-            PyObject err = null;
+            Object err = null;
             if (type == Py.GeneratorExit) {
                 gi_running = true;
                 try {
-                    err = gen_close_iter(gi_frame.f_yieldfrom);
+                    gen_close_iter(gi_frame.f_yieldfrom);
                 } catch (PyException e) {
                     throw e;
                 } finally {
@@ -86,7 +86,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
                     ret = ((PyGenerator) gi_frame.f_yieldfrom).throw$(type, value, tb);
                 } catch (PyException e) {
                     if (!e.match(Py.StopIteration)) {
-                        throw e;
+                        err = e;
                     }
                     gi_frame.f_stacktop = e.value.__findattr__("value");
                 } finally {
@@ -103,8 +103,14 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
             }
             if (ret == null) {
                 gi_frame.f_yieldfrom = null;
-                gi_frame.f_lasti++;
-                ret = gen_send_ex(Py.getThreadState(), Py.None);
+                Object val;
+                if (err == null) {
+                    val = Py.None;
+                    gi_frame.f_lasti++;
+                } else {
+                    val = err;
+                }
+                ret = gen_send_ex(Py.getThreadState(), val);
             }
             return ret;
         }
