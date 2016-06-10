@@ -1143,6 +1143,9 @@ public final class Py {
                 frame.f_stacktop = retval;
                 return null;
             }
+            // if somehow the subgenerator raise an exception, move on
+            frame.f_yieldfrom = null;
+            frame.f_lasti++;
             throw e;
         }
         return retval;
