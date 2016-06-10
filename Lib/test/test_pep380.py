@@ -12,7 +12,7 @@ import io
 import sys
 import inspect
 
-from test.support import captured_stderr, disable_gc, gc_collect
+from test.support import captured_stderr, disable_gc, gc_collect, cpython_only
 
 class TestPEP380Operation(unittest.TestCase):
     """
@@ -35,7 +35,7 @@ class TestPEP380Operation(unittest.TestCase):
         for x in g1():
             trace.append("Yielded %s" % (x,))
         self.assertEqual(trace,[
-            "Starting g12",
+            "Starting g1",
             "Starting g2",
             "Yielded 42",
             "Finishing g2",
@@ -953,6 +953,7 @@ class TestPEP380Operation(unittest.TestCase):
         list(gen())
         self.assertEqual(ret, 42)
 
+    @cpython_only
     def test_close_with_cleared_frame(self):
         # See issue #17669.
         #
