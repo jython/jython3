@@ -140,6 +140,11 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         if (pye == null) {
             pye = Py.GeneratorExit();
         }
+
+        // if generator closed before call to next, advance anyway
+        if (gi_frame.f_lasti == 0) {
+            __next__();
+        }
         try {
             // clean up
             retval = gen_send_ex(Py.getThreadState(), pye);
@@ -149,7 +154,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
             }
             throw e;
         }
-        if (retval != null || retval != Py.None) {
+        if (retval != null && retval != Py.None) {
             throw Py.RuntimeError("generator ignored GeneratorExit");
         }
         // not reachable
