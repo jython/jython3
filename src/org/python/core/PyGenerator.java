@@ -84,8 +84,11 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
                 gi_running = true;
                 try {
                     ret = ((PyGenerator) gi_frame.f_yieldfrom).throw$(type, value, tb);
-                } catch (Throwable e) {
-                    throw e;
+                } catch (PyException e) {
+                    if (!e.match(Py.StopIteration)) {
+                        throw e;
+                    }
+                    gi_frame.f_stacktop = e.value.__findattr__("value");
                 } finally {
                     gi_running = false;
                 }
