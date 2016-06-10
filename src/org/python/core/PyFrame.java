@@ -145,23 +145,7 @@ public class PyFrame extends PyObject implements Traverseproc {
     }
 
     void setGeneratorInput(Object value) {
-        if (f_yieldfrom == null) {
-            generatorInput = value;
-        } else if (f_yieldfrom instanceof PyGenerator) {
-            PyFrame yf_frame = ((PyGenerator) f_yieldfrom).gi_frame;
-            if (yf_frame != null) {
-                yf_frame.setGeneratorInput(value);
-            }
-        } else {
-            // Because the implementation of the send method is different from CPython, and we are simulating the
-            // 'send' function here, so we raise an AttributeError
-            PyObject send = f_yieldfrom.__findattr__("send");
-            if (send == null) {
-                generatorInput = Py.AttributeError(
-                        String.format("'%s' object has no attribute 'send'", f_yieldfrom.getType().fastGetName()));
-                f_yieldfrom = null;
-            }
-        }
+        generatorInput = value;
     }
 
     public Object getGeneratorInput() {

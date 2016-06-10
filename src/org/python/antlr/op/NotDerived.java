@@ -862,13 +862,7 @@ public class NotDerived extends Not implements Slotted,FinalizablePyObjectDerive
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__next__");
         if (impl!=null) {
-            try {
-                return impl.__get__(this,self_type).__call__();
-            } catch (PyException exc) {
-                if (exc.match(Py.StopIteration))
-                    return null;
-                throw exc;
-            }
+            return impl.__get__(this,self_type).__call__();
         }
         return super.__next__(); // ???
     }
