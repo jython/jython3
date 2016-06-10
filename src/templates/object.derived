@@ -1,5 +1,7 @@
 base_class: PyObject
 want_dict: true
+no_toString: true
+
 ctr:
 unary1: __str__ unicode
 unary1: __repr__ unicode
