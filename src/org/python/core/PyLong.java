@@ -1033,11 +1033,21 @@ public class PyLong extends PyObject {
      * @param spec prepared format-specifier.
      * @return converted value of this object
      */
-    private PyString formatImpl(Spec spec) {
+    private PyUnicode formatImpl(Spec spec) {
         // Traditional formatter (%-format) because #o means "-0123" not "-0o123".
         IntegerFormatter f = new IntegerFormatter.Traditional(spec);
-        f.format(value).append('L');
-        return new PyString(f.getResult());
+        f.format(value);
+        return new PyUnicode(f.getResult());
+    }
+
+    @Override
+    public PyUnicode __hex__() {
+        return formatImpl(IntegerFormatter.HEX);
+    }
+
+    @Override
+    public PyUnicode __oct__() {
+        return formatImpl(IntegerFormatter.OCT);
     }
 
     @ExposedMethod(doc = BuiltinDocs.int___str___doc)
