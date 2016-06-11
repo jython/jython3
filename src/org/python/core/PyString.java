@@ -163,10 +163,16 @@ public class PyString extends PySequence implements BufferProtocol {
             str = "";
         } else {
             if (S instanceof PyUnicode) {
+                String encoding = ap.getString(1, "utf-8");
+                String errors = ap.getString(2, "strict");
                 // Encoding will raise UnicodeEncodeError if not 7-bit clean.
-                str = codecs.encode((PyUnicode) S, null, null);
+                str = codecs.encode((PyUnicode) S, encoding, errors);
             } else if (S instanceof PyByteArray) {
-                return new PyString(new String(((PyByteArray) S).storage));
+                PyBuffer buffer = ((PyByteArray) S).getBuffer(PyBUF.FULL_RO);
+                byte[] buf = new byte[buffer.getLen()];
+                buffer.copyTo(buf, 0);
+                buffer.close();
+                return new PyString(new String(buf));
             } else {
                 // Must be str/bytes, and should be 8-bit clean already.
                 str = S.toString();
@@ -3951,7 +3957,7 @@ public class PyString extends PySequence implements BufferProtocol {
     final PyObject bytes_decode(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("decode", args, keywords, "encoding", "errors");
         String encoding = ap.getString(0, "UTF-8");
-        String errors = ap.getString(1, null);
+        String errors = ap.getString(1, "strict");
         return decode(encoding, errors);
     }
 
