@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.python.core.stringlib.IntegerFormatter;
+import org.python.core.stringlib.InternalFormat;
 import org.python.expose.ExposedClassMethod;
 import org.python.expose.ExposedDelete;
 import org.python.expose.ExposedGet;
@@ -1806,6 +1808,23 @@ public class PyObject implements Serializable {
     }
 
     /* The basic numeric operations */
+    /**
+     * Common code used by the number-base conversion method __oct__ and __hex__.
+     *
+     * @param spec prepared format-specifier.
+     * @return converted value of this object
+     */
+    private PyUnicode formatImpl(InternalFormat.Spec spec) {
+        // Traditional formatter (%-format) because #o means "-0123" not "-0o123".
+        IntegerFormatter f = new IntegerFormatter.Traditional(spec);
+        PyObject index = __index__();
+        if (index instanceof PyInteger) {
+            f.format(((PyInteger) index).getValue());
+        } else if (index instanceof PyLong) {
+            f.format(((PyLong) index).getValue());
+        }
+        return new PyUnicode(f.getResult());
+    }
 
     /**
      * Equivalent to the standard Python __hex__ method
@@ -1815,7 +1834,7 @@ public class PyObject implements Serializable {
      * @return a string representing this object as a hexadecimal number.
      **/
     public PyString __hex__() {
-        throw Py.TypeError(String.format("%s object cannot be interpreted as an integer", getType().fastGetName()));
+        return formatImpl(IntegerFormatter.HEX);
     }
 
     /**
@@ -1826,7 +1845,7 @@ public class PyObject implements Serializable {
      * @return a string representing this object as an octal number.
      **/
     public PyString __oct__() {
-        throw Py.TypeError("oct() argument can't be converted to oct");
+        return formatImpl(IntegerFormatter.OCT);
     }
 
     /**
