@@ -1559,14 +1559,16 @@ public class codecs {
 
         // Handle the two special cases "ignore" and "replace" locally
         if (errors != null) {
-            if (errors.equals(IGNORE)) {
-                // Just skip to the first non-problem byte
-                return end;
-            } else if (errors.equals(REPLACE)) {
-                // Insert *one* Unicode replacement character and skip
-                partialDecode.appendCodePoint(Py_UNICODE_REPLACEMENT_CHARACTER);
-                return end;
-            }
+            partialDecode.appendCodePoint(Py_UNICODE_REPLACEMENT_CHARACTER);
+            return end;
+//            if (errors.equals(IGNORE)) {
+//                // Just skip to the first non-problem byte
+//                return end;
+//            } else if (errors.equals(REPLACE)) {
+//                // Insert *one* Unicode replacement character and skip
+//                partialDecode.appendCodePoint(Py_UNICODE_REPLACEMENT_CHARACTER);
+//                return end;
+//            }
         }
 
         // If errors not one of those, invoke the generic mechanism
