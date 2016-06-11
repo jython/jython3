@@ -200,6 +200,7 @@ public abstract class BaseSet extends PyObject implements Set, Traverseproc {
      *
      * @return The length of the set.
      */
+    @Override
     public int __len__() {
         return baseset___len__();
     }
@@ -239,6 +240,11 @@ public abstract class BaseSet extends PyObject implements Set, Traverseproc {
                     return iterator.next();
                 }
                 return null;
+            }
+
+            @Override
+            public int __len__() {
+                return size;
             }
         };
     }

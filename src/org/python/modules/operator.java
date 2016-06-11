@@ -23,7 +23,7 @@ import org.python.expose.ExposedType;
 @Untraversable
 class OperatorFunctions extends PyBuiltinFunctionSet
 {
-    public static final PyObject module = Py.newString("operator");
+    public static final PyObject module = Py.newUnicode("operator");
 
     public OperatorFunctions(String name, int index, int argcount) {
         this(name, index, argcount, argcount);
@@ -53,6 +53,7 @@ class OperatorFunctions extends PyBuiltinFunctionSet
         case 19: return Py.newBoolean(arg1.isSequenceType());
         case 32: return arg1.__invert__();
         case 52: return arg1.__index__();
+        case 53: return Py.newLong(arg1.__len__());
         default:
             throw info.unexpectedCall(1, false);
         }
@@ -99,6 +100,7 @@ class OperatorFunctions extends PyBuiltinFunctionSet
         case 49: return arg1._isub(arg2);
         case 50: return arg1._itruediv(arg2);
         case 51: return arg1._ixor(arg2);
+        case 53: return Py.newLong(arg1.__len__());
         default:
             throw info.unexpectedCall(2, false);
         }
@@ -253,6 +255,7 @@ public class operator extends PyObject implements ClassDictInit
         dict.__setitem__("ixor", new OperatorFunctions("ixor", 51, 2));
         dict.__setitem__("__index__", new OperatorFunctions("__index__", 52, 1));
         dict.__setitem__("index", new OperatorFunctions("index", 52, 1));
+        dict.__setitem__("length_hint", new OperatorFunctions("length_hint", 53, 1, 2));
 
         dict.__setitem__("attrgetter", PyAttrGetter.TYPE);
         dict.__setitem__("itemgetter", PyItemGetter.TYPE);
