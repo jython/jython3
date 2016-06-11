@@ -42,4 +42,8 @@ public class PyXRangeIter extends PyIterator {
         return null;
     }
 
+    @Override
+    public int __len__() {
+        return (int) len;
+    }
 }

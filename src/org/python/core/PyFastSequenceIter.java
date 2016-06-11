@@ -41,6 +41,10 @@ public class PyFastSequenceIter extends PyIterator {
         return result;
     }
 
+    @Override
+    public int __len__() {
+        return seq.__len__();
+    }
 
     /* Traverseproc implementation */
     @Override

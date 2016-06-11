@@ -677,6 +677,11 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
             }
             return iterator.next();
         }
+
+        @Override
+        public int __len__() {
+            return size;
+        }
     }
 
     class ItemsIter extends PyIterator {
@@ -697,6 +702,11 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
             }
             Entry<PyObject, PyObject> entry = iterator.next();
             return new PyTuple(entry.getKey(), entry.getValue());
+        }
+
+        @Override
+        public int __len__() {
+            return size;
         }
     }
 
