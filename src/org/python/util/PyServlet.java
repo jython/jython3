@@ -21,6 +21,7 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
+import org.python.core.PyUnicode;
 
 /**
  * This servlet is used to re-serve Jython servlets. It stores bytecode for Jython servlets and
@@ -122,10 +123,10 @@ public class PyServlet extends HttpServlet {
         String rootPath = getRootPath(servletContext);
         PySystemState sys = new PySystemState();
         PythonInterpreter interp = new PythonInterpreter(Py.newStringMap(), sys);
-        sys.path.append(new PyString(rootPath));
+        sys.path.append(new PyUnicode(rootPath));
 
         String modulesDir = rootPath + "WEB-INF" + File.separator + "jython";
-        sys.path.append(new PyString(modulesDir));
+        sys.path.append(new PyUnicode(modulesDir));
         return interp;
     }
 

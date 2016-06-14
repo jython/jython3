@@ -27,6 +27,7 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
+import org.python.core.PyUnicode;
 import org.python.core.imp;
 import org.python.core.util.RelativeFile;
 import org.python.modules._systemrestart;
@@ -206,7 +207,7 @@ public class jython {
 
     private static boolean runMainFromImporter(InteractiveConsole interp, String filename) {
         // Support http://bugs.python.org/issue1739468 - Allow interpreter to execute a zip file or directory
-        PyString argv0 = Py.newStringOrUnicode(filename);
+        PyUnicode argv0 = Py.newUnicode(filename);
         PyObject importer = imp.getImporter(argv0);
         if (!(importer instanceof PyNullImporter)) {
              /* argv0 is usable as an import source, so
@@ -323,7 +324,7 @@ public class jython {
             if (path == null) {
                 path = "";
             }
-            Py.getSystemState().path.insert(0, Py.newStringOrUnicode(path));
+            Py.getSystemState().path.insert(0, Py.newUnicode(path));
             if (opts.jar) {
                 try {
                     runJar(opts.filename);
@@ -387,7 +388,7 @@ public class jython {
             // on sys.path. This is here because if there /was/ a filename on the c.l.,
             // and say the -i option was given, sys.path[0] will have gotten filled in
             // with the dir of the argument filename.
-            Py.getSystemState().path.insert(0, Py.EmptyString);
+            Py.getSystemState().path.insert(0, Py.EmptyUnicode);
 
             if (opts.command != null) {
                 try {
