@@ -113,10 +113,10 @@ public class PyTableCode extends PyBaseCode
             return toPyStringTuple(co_freevars);
         }
         if (name == "co_filename") {
-            return new PyString(co_filename);
+            return new PyUnicode(co_filename);
         }
         if (name == "co_name") {
-            return new PyString(co_name);
+            return new PyUnicode(co_name);
         }
         if (name == "co_flags") {
             return Py.newLong(co_flags.toBits());

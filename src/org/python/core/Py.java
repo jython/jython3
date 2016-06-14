@@ -60,45 +60,47 @@ class BootstrapTypesSingleton {
 }
 
 public final class Py {
-    public static final PyObject[] osErrorMapping = new PyObject[Errno.__UNKNOWN_CONSTANT__.intValue()];
+    static class ErrorMapping {
+        public static final PyObject[] osErrorMapping = new PyObject[Errno.__UNKNOWN_CONSTANT__.intValue()];
 
-    /**
-     *  +-- BlockingIOError        EAGAIN, EALREADY, EWOULDBLOCK, EINPROGRESS
-        +-- ChildProcessError                                          ECHILD
-        +-- ConnectionError
-            +-- BrokenPipeError                              EPIPE, ESHUTDOWN
-            +-- ConnectionAbortedError                           ECONNABORTED
-            +-- ConnectionRefusedError                           ECONNREFUSED
-            +-- ConnectionResetError                               ECONNRESET
-        +-- FileExistsError                                            EEXIST
-        +-- FileNotFoundError                                          ENOENT
-        +-- InterruptedError                                            EINTR
-        +-- IsADirectoryError                                          EISDIR
-        +-- NotADirectoryError                                        ENOTDIR
-        +-- PermissionError                                     EACCES, EPERM
-        +-- ProcessLookupError                                          ESRCH
-        +-- TimeoutError                                            ETIMEDOUT
-     */
-    static {
-        osErrorMapping[Errno.EEXIST.intValue()] = Py.FileExistsError;
-        for (Constant errno : new Constant[]{Errno.EAGAIN, Errno.EALREADY, Errno.EWOULDBLOCK, Errno.EINPROGRESS}) {
-            osErrorMapping[errno.intValue()] = Py.BlockingIOError;
+        /**
+         *  +-- BlockingIOError        EAGAIN, EALREADY, EWOULDBLOCK, EINPROGRESS
+         +-- ChildProcessError                                          ECHILD
+         +-- ConnectionError
+         +-- BrokenPipeError                              EPIPE, ESHUTDOWN
+         +-- ConnectionAbortedError                           ECONNABORTED
+         +-- ConnectionRefusedError                           ECONNREFUSED
+         +-- ConnectionResetError                               ECONNRESET
+         +-- FileExistsError                                            EEXIST
+         +-- FileNotFoundError                                          ENOENT
+         +-- InterruptedError                                            EINTR
+         +-- IsADirectoryError                                          EISDIR
+         +-- NotADirectoryError                                        ENOTDIR
+         +-- PermissionError                                     EACCES, EPERM
+         +-- ProcessLookupError                                          ESRCH
+         +-- TimeoutError                                            ETIMEDOUT
+         */
+        static {
+            osErrorMapping[Errno.EEXIST.intValue()] = Py.FileExistsError;
+            for (Constant errno : new Constant[]{Errno.EAGAIN, Errno.EALREADY, Errno.EWOULDBLOCK, Errno.EINPROGRESS}) {
+                osErrorMapping[errno.intValue()] = Py.BlockingIOError;
+            }
+            osErrorMapping[Errno.ECHILD.intValue()] = Py.ChildProcessError;
+            osErrorMapping[Errno.EPIPE.intValue()] = Py.BrokenPipeError;
+            osErrorMapping[Errno.ESHUTDOWN.intValue()] = Py.BrokenPipeError;
+            osErrorMapping[Errno.ECONNABORTED.intValue()] = Py.ConnectionAbortedError;
+            osErrorMapping[Errno.ECONNREFUSED.intValue()] = Py.ConnectionRefusedError;
+            osErrorMapping[Errno.ECONNRESET.intValue()] = Py.ConnectionResetError;
+            osErrorMapping[Errno.EEXIST.intValue()] = Py.FileExistsError;
+            osErrorMapping[Errno.ENOENT.intValue()] = Py.FileNotFoundError;
+            osErrorMapping[Errno.EINTR.intValue()] = Py.InterruptedError;
+            osErrorMapping[Errno.EISDIR.intValue()] = Py.IsADirectoryError;
+            osErrorMapping[Errno.ENOTDIR.intValue()] = Py.NotADirectoryError;
+            osErrorMapping[Errno.EACCES.intValue()] = Py.PermissionError;
+            osErrorMapping[Errno.EPERM.intValue()] = Py.PermissionError;
+            osErrorMapping[Errno.ESRCH.intValue()] = Py.ProcessLookupError;
+            osErrorMapping[Errno.ETIMEDOUT.intValue()] = Py.TimeoutError;
         }
-        osErrorMapping[Errno.ECHILD.intValue()] = Py.ChildProcessError;
-        osErrorMapping[Errno.EPIPE.intValue()] = Py.BrokenPipeError;
-        osErrorMapping[Errno.ESHUTDOWN.intValue()] = Py.BrokenPipeError;
-        osErrorMapping[Errno.ECONNABORTED.intValue()] = Py.ConnectionAbortedError;
-        osErrorMapping[Errno.ECONNREFUSED.intValue()] = Py.ConnectionRefusedError;
-        osErrorMapping[Errno.ECONNRESET.intValue()] = Py.ConnectionResetError;
-        osErrorMapping[Errno.EEXIST.intValue()] = Py.FileExistsError;
-        osErrorMapping[Errno.ENOENT.intValue()] = Py.FileNotFoundError;
-        osErrorMapping[Errno.EINTR.intValue()] = Py.InterruptedError;
-        osErrorMapping[Errno.EISDIR.intValue()] = Py.IsADirectoryError;
-        osErrorMapping[Errno.ENOTDIR.intValue()] = Py.NotADirectoryError;
-        osErrorMapping[Errno.EACCES.intValue()] = Py.PermissionError;
-        osErrorMapping[Errno.EPERM.intValue()] = Py.PermissionError;
-        osErrorMapping[Errno.ESRCH.intValue()] = Py.ProcessLookupError;
-        osErrorMapping[Errno.ETIMEDOUT.intValue()] = Py.TimeoutError;
     }
 
     static class SingletonResolver implements Serializable {
@@ -180,24 +182,24 @@ public final class Py {
 
     public static PyException OSError(Constant errno) {
         int value = errno.intValue();
-        PyObject args = new PyTuple(Py.newInteger(value), PosixModule.strerror(value));
+        PyObject args = new PyTuple(Py.newInteger(value), Py.newUnicode(Errno.valueOf(value).description()));
         return new PyException(Py.OSError, args);
     }
     
-    public static PyException OSError(Constant errno, PyObject filename) {
+    public static PyException OSError(Errno errno, PyObject filename) {
         int value = errno.intValue();
         // see https://github.com/jruby/jruby/commit/947c661e46683ea82f8016dde9d3fa597cd10e56
         // for rationale to do this mapping, but in a nutshell jnr-constants is automatically
         // generated from header files, so that's not the right place to do this mapping,
         // but for Posix compatibility reasons both CPython andCRuby do this mapping;
         // except CPython chooses EEXIST instead of CRuby's ENOENT
-        if (Platform.IS_WINDOWS && (value == 20047 || value == Errno.ESRCH.intValue())) {
+        if (Platform.IS_WINDOWS && (value == 20047 || errno == Errno.ESRCH)) {
             value = Errno.EEXIST.intValue();
         }
         // Pass to strerror because jnr-constants currently lacks Errno descriptions on
         // Windows, and strerror falls back to Linux's
-        PyObject args = new PyTuple(Py.newInteger(value), PosixModule.strerror(value), filename);
-        PyObject err = osErrorMapping[value];
+        PyObject args = new PyTuple(Py.newInteger(value), Py.newUnicode(errno.description()), filename);
+        PyObject err = ErrorMapping.osErrorMapping[value];
         if (err == null) {
             err = Py.OSError;
         }
@@ -304,8 +306,10 @@ public final class Py {
             message = ioe.getClass().getName();
         }
         if (ioe instanceof FileNotFoundException) {
-            PyTuple args = new PyTuple(Py.newInteger(Errno.ENOENT.intValue()),
-                                       Py.newString("File not found - " + message));
+            int value = Errno.ENOENT.intValue();
+            PyTuple args = new PyTuple(Py.newLong(value),
+                    Py.newUnicode(Errno.ENOENT.description() + message));
+            err = ErrorMapping.osErrorMapping[value];
             return new PyException(err, args);
         }
         return new PyException(err, message);

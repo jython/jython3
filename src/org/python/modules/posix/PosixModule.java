@@ -504,7 +504,7 @@ public class PosixModule implements ClassDictInit {
         "getcwd() -> path\n\n" +
         "Return a unicode string representing the current working directory.");
     public static PyObject getcwd() {
-        return Py.newStringOrUnicode(Py.getSystemState().getCurrentWorkingDir());
+        return Py.newUnicode(Py.getSystemState().getCurrentWorkingDir());
     }
 
     public static PyString __doc__getcwdb = new PyString(
