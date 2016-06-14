@@ -1041,12 +1041,12 @@ public class PyLong extends PyObject {
     }
 
     @Override
-    public PyUnicode __hex__() {
+    public PyString __hex__() {
         return formatImpl(IntegerFormatter.HEX);
     }
 
     @Override
-    public PyUnicode __oct__() {
+    public PyString __oct__() {
         return formatImpl(IntegerFormatter.OCT);
     }
 

@@ -12,8 +12,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channel;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
+import java.nio.channels.Pipe;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.NotLinkException;
@@ -48,8 +48,8 @@ import org.python.core.PyDictionary;
 import org.python.core.PyException;
 import org.python.core.PyFile;
 import org.python.core.PyFloat;
-import org.python.core.PyIterator;
 import org.python.core.PyList;
+import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyStringMap;
@@ -61,6 +61,8 @@ import org.python.core.io.FileIO;
 import org.python.core.io.IOBase;
 import org.python.core.io.RawIOBase;
 import org.python.core.util.StringUtil;
+import org.python.util.FilenoUtil;
+import org.python.util.PosixShim;
 
 /**
  * The posix/nt module, depending on the platform.
@@ -95,6 +97,8 @@ public class PosixModule implements ClassDictInit {
     private static final int W_OK = 1 << 1;
     private static final int R_OK = 1 << 2;
 
+    public static final int WNOHANG = 0x00000001;
+
     /** Lazily initialized singleton source for urandom. */
     private static class UrandomSource {
         static final SecureRandom INSTANCE = new SecureRandom();
@@ -118,6 +122,8 @@ public class PosixModule implements ClassDictInit {
         dict.__setitem__("R_OK", Py.newInteger(R_OK));
         // Successful termination
         dict.__setitem__("EX_OK", Py.Zero);
+
+        dict.__setitem__("WNOHANG", Py.newLong(WNOHANG));
 
         // SecurityManager may restrict access to native implementation,
         // so use Java-only implementation as necessary
@@ -804,6 +810,12 @@ public class PosixModule implements ClassDictInit {
         return imp.load("os").__getattr__("popen").__call__(args, kwds);
     }
 
+    public static PyObject pipe() {
+        int[] fds = new int[2];
+        int rc = posix.pipe(fds); // XXX check rc
+        return new PyTuple(new PyLong(fds[0]), new PyLong(fds[1]));
+    }
+
     public static PyString __doc__putenv = new PyString(
         "putenv(key, value)\n\n" +
         "Change or add an environment variable.");
@@ -1057,6 +1069,26 @@ public class PosixModule implements ClassDictInit {
             throw errorFromErrno();
         }
         return new PyTuple(Py.newInteger(pid), Py.newInteger(status[0]));
+    }
+
+    @Hide(posixImpl = PosixImpl.JAVA)
+    public static boolean WIFSIGNALED(long status) {
+        return PosixShim.WAIT_MACROS.WIFSIGNALED(status);
+    }
+
+    @Hide(posixImpl = PosixImpl.JAVA)
+    public static boolean WIFEXITED(long status) {
+        return PosixShim.WAIT_MACROS.WIFEXITED(status);
+    }
+
+    @Hide(posixImpl = PosixImpl.JAVA)
+    public static int WTERMSIG(long status) {
+        return PosixShim.WAIT_MACROS.WTERMSIG(status);
+    }
+
+    @Hide(posixImpl = PosixImpl.JAVA)
+    public static int WEXITSTATUS(long status) {
+        return PosixShim.WAIT_MACROS.WEXITSTATUS(status);
     }
 
     public static PyString __doc__write = new PyString(
