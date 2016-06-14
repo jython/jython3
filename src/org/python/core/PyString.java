@@ -882,18 +882,14 @@ public class PyString extends PySequence implements BufferProtocol {
 
         if (obj == null || obj == Py.None) {
             return null;
-        } else {
-            String ret = (obj instanceof PyUnicode) ? null : asUTF16StringOrNull(obj);
-            if (ret != null) {
-                return ret;
-            } else if (name == null) {
-                // A nameless method is the client
-                throw Py.TypeError("expected None, str or buffer compatible object");
-            } else {
-                // Tuned for .strip and its relations, which supply their name
-                throw Py.TypeError(name + " arg must be None, str or buffer compatible object");
-            }
         }
+        String ret = (obj instanceof PyUnicode) ? null : asUTF16StringOrNull(obj);
+        if (ret != null) {
+            return ret;
+        }
+        // A nameless method is the client
+        throw Py.TypeError(String.format("a bytes-like object is required, not '%s'",
+                obj.getType().fastGetName()));
     }
 
     /**
@@ -3194,15 +3190,15 @@ public class PyString extends PySequence implements BufferProtocol {
         int sepLen = getString().length();
         for (; i < seqLen; i++) {
             item = seq.pyget(i);
-            if (!(item instanceof PyString)) {
-                throw Py.TypeError(String.format("sequence item %d: expected string, %.80s found",
+            if (!(item instanceof PyString) || item instanceof PyUnicode) {
+                throw Py.TypeError(String.format("sequence item %d: expected a bytes-like object, %.80s found",
                         i, item.getType().fastGetName()));
             }
-            if (item instanceof PyUnicode) {
-                // Defer to Unicode join. CAUTION: There's no gurantee that the original
-                // sequence can be iterated over again, so we must pass seq here
-                return unicodeJoin(seq);
-            }
+//            if (item instanceof PyUnicode) {
+//                // Defer to Unicode join. CAUTION: There's no gurantee that the original
+//                // sequence can be iterated over again, so we must pass seq here
+//                return unicodeJoin(seq);
+//            }
 
             if (i != 0) {
                 size += sepLen;

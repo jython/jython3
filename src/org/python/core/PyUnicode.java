@@ -872,7 +872,7 @@ public class PyUnicode extends PyString implements Iterable {
         if (o instanceof PyUnicode) {
             return (PyUnicode)o;
         } else if (o instanceof PyString) {
-            return new PyUnicode(((PyString)o).getString(), true);
+            throw Py.TypeError("Can't convert 'bytes' object to str implicitly");
         } else if (o instanceof BufferProtocol) {
             // PyByteArray, PyMemoryView, Py2kBuffer ...
             try (PyBuffer buf = ((BufferProtocol)o).getBuffer(PyBUF.FULL_RO)) {
@@ -1401,9 +1401,8 @@ public class PyUnicode extends PyString implements Iterable {
         PyUnicode sep = coerceToUnicodeOrNull(sepObj);
         if (sep != null) {
             return _split(sep.getString(), maxsplit);
-        } else {
-            return _split(null, maxsplit);
         }
+        return _split(null, maxsplit);
     }
 
     @ExposedMethod(defaults = {"null", "-1"}, doc = BuiltinDocs.str_rsplit_doc)
