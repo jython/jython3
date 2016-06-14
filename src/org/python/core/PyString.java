@@ -62,8 +62,8 @@ public class PyString extends PySequence implements BufferProtocol {
         super(subType);
         if (string == null) {
             throw new IllegalArgumentException("Cannot create PyString from null");
-        } else if (!isBytes(string)) {
-            throw new IllegalArgumentException("Cannot create PyString with non-byte value");
+//        } else if (!isBytes(string)) {
+//            throw new IllegalArgumentException("Cannot create PyString with non-byte value");
         }
         this.string = string;
     }

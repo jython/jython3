@@ -38,6 +38,7 @@ public class Setup
         "_json:org.python.modules._json._json",
         "_jythonlib:org.python.modules._jythonlib._jythonlib",
         "marshal",
+        "_posixsubprocess",
         "_py_compile",
         "_random:org.python.modules.random.RandomModule",
         "_sre",

@@ -46,7 +46,7 @@ public class PyModule extends PyObject implements Traverseproc {
     public PyModule(String name, PyObject dict) {
         super(TYPE);
         __dict__ = dict;
-        module___init__(new PyString(name), Py.None);
+        module___init__(new PyUnicode(name), Py.None);
     }
 
     @ExposedNew
