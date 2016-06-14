@@ -1660,11 +1660,26 @@ public class PyUnicode extends PyString implements Iterable {
 
     @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.str_startswith_doc)
     final boolean str_startswith(PyObject prefix, PyObject start, PyObject end) {
+        if (prefix instanceof PyTuple) {
+            for (PyObject prefixObj : ((PyTuple) prefix).getArray()) {
+                if (!(prefixObj instanceof PyUnicode)) {
+                    throw Py.TypeError(String.format("Can't convert '%s' object to str implicitly",
+                            prefixObj.getType().fastGetName()));
+                }
+            }
+        } else if (!(prefix instanceof PyUnicode)) {
+            throw Py.TypeError(String.format("startswith first arg must be str or a tuple of str, not %s",
+                    prefix.getType().fastGetName()));
+        }
         return bytes_startswith(prefix, start, end);
     }
 
     @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.str_endswith_doc)
     final boolean str_endswith(PyObject suffix, PyObject start, PyObject end) {
+        if (!(suffix instanceof PyUnicode)) {
+            throw Py.TypeError(String.format("startswith first arg must be str or a tuple of str, not %s",
+                    suffix.getType().fastGetName()));
+        }
         return bytes_endswith(suffix, start, end);
     }
 
