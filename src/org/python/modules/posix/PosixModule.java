@@ -55,6 +55,7 @@ import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
+import org.python.core.PyUnicode;
 import org.python.core.imp;
 import org.python.core.Untraversable;
 import org.python.core.io.FileIO;
@@ -820,10 +821,7 @@ public class PosixModule implements ClassDictInit {
         "putenv(key, value)\n\n" +
         "Change or add an environment variable.");
     public static void putenv(String key, String value) {
-        // XXX: Consider deprecating putenv/unsetenv
-        // import os; os.environ[key] = value
-        PyObject environ = imp.load("os").__getattr__("environ");
-        environ.__setitem__(key, new PyString(value));
+        posix.setenv(key, value, 1);
     }
 
     public static PyString __doc__read = new PyString(
@@ -1116,15 +1114,7 @@ public class PosixModule implements ClassDictInit {
         "unsetenv(key)\n\n" +
         "Delete an environment variable.");
     public static void unsetenv(String key) {
-        // import os; try: del os.environ[key]; except KeyError: pass
-        PyObject environ = imp.load("os").__getattr__("environ");
-        try {
-            environ.__delitem__(key);
-        } catch (PyException pye) {
-            if (!pye.match(Py.KeyError)) {
-                throw pye;
-            }
-        }
+        posix.unsetenv(key);
     }
 
     public static PyString __doc__urandom = new PyString(
@@ -1325,6 +1315,10 @@ public class PosixModule implements ClassDictInit {
 
         @Override
         public PyObject __call__(PyObject path) {
+            // posix file descriptor
+            if (path instanceof PyLong) {
+                return PyStatResult.fromFileStat(posix.fstat(path.asInt()));
+            }
             Path absolutePath = absolutePath(path);
             try {
                 Map<String, Object> attributes = Files.readAttributes(absolutePath, "unix:*");

@@ -183,7 +183,7 @@ public class PyFileIO extends PyRawIOBase {
         }
     }
 
-    private static final String[] openArgs = {"file", "mode", "closefd"};
+    private static final String[] openArgs = {"file", "mode", "closefd", "opener"};
 
     /**
      * Create a {@link PyFileIO} and its <code>FileIO</code> delegate from the arguments.
@@ -196,6 +196,7 @@ public class PyFileIO extends PyRawIOBase {
         PyObject file = ap.getPyObject(0);
         PyObject m = ap.getPyObject(1, defaultMode);
         boolean closefd = Py.py2boolean(ap.getPyObject(2, Py.True));
+        PyObject opener = ap.getPyObject(3, Py.None);
 
         // Decode the mode string and check it
         OpenMode mode = new OpenMode(m.asString()) {
