@@ -257,7 +257,7 @@ public class PyStringMap extends PyObject implements Traverseproc {
             if (key instanceof String) {
                 // This is a bit complicated, but prevents us to duplicate
                 // PyString#__repr__ logic here.
-                buf.append(new PyString((String)key).__repr__().toString());
+                buf.append(new PyUnicode((String)key).__repr__().toString());
             } else {
                 buf.append(((PyObject)key).__repr__().toString());
             }
@@ -631,7 +631,7 @@ public class PyStringMap extends PyObject implements Traverseproc {
 
     private static PyObject keyToPy(Object objKey){
         if (objKey instanceof String) {
-            return PyString.fromInterned((String)objKey);
+            return PyUnicode.fromInterned((String)objKey);
         } else {
             return (PyObject)objKey;
         }

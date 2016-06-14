@@ -438,7 +438,7 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
             }
         }
         for (int i = 0; i < keywords.length; i++) {
-            dict___setitem__(Py.newString(keywords[i]), args[nargs + i]);
+            dict___setitem__(Py.newUnicode(keywords[i]), args[nargs + i]);
         }
     }
 

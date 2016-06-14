@@ -812,16 +812,14 @@ public class PyString extends PySequence implements BufferProtocol {
      */
     private static String asUTF16StringOrNull(PyObject obj) {
         if (obj instanceof PyString) {
-            // str or unicode object: go directly to the String
             return ((PyString)obj).getString();
         } else if (obj instanceof BufferProtocol) {
             // Other object with buffer API: briefly access the buffer
             try (PyBuffer buf = ((BufferProtocol)obj).getBuffer(PyBUF.FULL_RO)) {
                 return buf.toString();
             }
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -908,7 +906,7 @@ public class PyString extends PySequence implements BufferProtocol {
         if (ret != null) {
             return ret;
         } else {
-            throw Py.TypeError("expected str, bytearray, unicode or buffer compatible object");
+            throw Py.TypeError(String.format("a bytes-like object is required, not '%s'", obj.getType().fastGetName()));
         }
     }
 
@@ -3337,7 +3335,9 @@ public class PyString extends PySequence implements BufferProtocol {
         int sliceLen = indices[1] - start;
 
         if (!(prefix instanceof PyTuple)) {
-            // It ought to be PyUnicode or some kind of bytes with the buffer API.
+            if (!(this instanceof PyUnicode) && prefix instanceof PyUnicode) {
+                throw Py.TypeError("startswith first arg must be bytes or a tuple of bytes, not str");
+            }
             String s = asUTF16StringOrError(prefix);
             // If s is non-BMP, and this is a PyString (bytes), result will correctly be false.
             return sliceLen >= s.length() && getString().startsWith(s, start);

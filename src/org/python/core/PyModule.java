@@ -62,7 +62,7 @@ public class PyModule extends PyObject implements Traverseproc {
         ensureDict();
         __dict__.__setitem__("__name__", name);
         __dict__.__setitem__("__doc__", doc);
-        if (name.equals(new PyString("__main__"))) {
+        if (name.equals(new PyUnicode("__main__"))) {
             __dict__.__setitem__("__builtins__", Py.getSystemState().modules.__finditem__("__builtin__"));
             __dict__.__setitem__("__package__", Py.None);
         }
