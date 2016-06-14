@@ -309,10 +309,10 @@ public class ArgParser {
             }
             missingKwonlyArgs.add(kwonlyargs[i]);
         }
-        if (!missingKwonlyArgs.isEmpty()) {
-            throw Py.TypeError(String.format("%.200s() missing %d keyword-only %s: %s", funcname, missingKwonlyArgs.size(),
-                    missingKwonlyArgs.size() > 1 ? "arguments" : "argument", Joiner.on(',').join(missingKwonlyArgs)));
-        }
+//        if (!missingKwonlyArgs.isEmpty()) {
+//            throw Py.TypeError(String.format("%.200s() missing %d keyword-only %s: %s", funcname, missingKwonlyArgs.size(),
+//                    missingKwonlyArgs.size() > 1 ? "arguments" : "argument", Joiner.on(',').join(missingKwonlyArgs)));
+//        }
     }
 
     private PyObject getRequiredArg(int pos) {

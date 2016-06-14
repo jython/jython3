@@ -38,6 +38,7 @@ import jnr.posix.Times;
 import jnr.posix.util.FieldAccess;
 import jnr.posix.util.Platform;
 
+import org.python.core.ArgParser;
 import org.python.core.BufferProtocol;
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
@@ -159,11 +160,9 @@ public class PosixModule implements ClassDictInit {
         dict.__setitem__("badFD", null);
 
         String[] haveFunctions = new String[]{
-                "HAVE_FACCESSAT", "HAVE_FCHDIR", "HAVE_FCHMOD", "HAVE_FCHMODAT", "HAVE_FCHOWN", "HAVE_FCHOWNAT",
-                "HAVE_FEXECVE", "HAVE_FDOPENDIR", "HAVE_FPATHCONF", "HAVE_FSTATAT", "HAVE_FSTATVFS", "HAVE_FTRUNCATE",
-                "HAVE_FUTIMENS", "HAVE_FUTIMES", "HAVE_FUTIMESAT", "HAVE_LINKAT", "HAVE_LCHOWN", "HAVE_LSTAT",
-                "HAVE_LUTIMES", "HAVE_MKDIRAT", "HAVE_MKFIFOAT", "HAVE_MKNODAT", "HAVE_OPENAT", "HAVE_READLINKAT",
-                "HAVE_RENAMEAT", "HAVE_SYMLINKAT", "HAVE_UNLINKAT", "HAVE_UTIMENSAT"
+                "HAVE_FCHDIR", "HAVE_FCHMOD", "HAVE_FCHOWN",
+                "HAVE_FEXECVE", "HAVE_FDOPENDIR", "HAVE_FPATHCONF", "HAVE_FSTATVFS", "HAVE_FTRUNCATE",
+                "HAVE_FUTIMENS", "HAVE_FUTIMES", "HAVE_LCHOWN", "HAVE_LUTIMES"
         };
 
         List<PyObject> haveFuncs = new ArrayList<PyObject>();
@@ -711,6 +710,25 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
+    public static void mkfifo(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("mkfifo", args, keywords, "path", "mode", "*", "dir_fd");
+        PyObject dir_fd = ap.getPyObject(3, Py.None);
+        if (dir_fd != Py.None) {
+            throw Py.NotImplementedError("dir_fd is not supported");
+        }
+        String path = ap.getString(0);
+        int mode = ap.getInt(1, 438);
+        posix.mkfifo(path, mode);
+    }
+
+    public static void mknod(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("mknod", args, keywords, "path", "mode", "device", "*", "dir_fd");
+        PyObject dir_fd = ap.getPyObject(4, Py.None);
+        if (dir_fd != Py.None) {
+            throw Py.NotImplementedError("dir_fd is not supported");
+        }
+    }
+
     public static PyString __doc__mkdir = new PyString(
         "mkdir(path [, mode=0777])\n\n" +
         "Create a directory.");
@@ -935,9 +953,17 @@ public class PosixModule implements ClassDictInit {
         "Create a symbolic link pointing to src named dst.");
 
     @Hide(OS.NT)
-    public static void symlink(PyObject src, PyObject dst) {
+    public static void symlink(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("symlink", args, keywords, "src", "dst", "target_is_directory", "*", "dir_fd");
+        String src = ap.getString(0);
+        String dst = ap.getString(1);
+        boolean isDirectory = ap.getPyObject(2, Py.False).__bool__();
+        PyObject dir_fd = ap.getPyObject(4, Py.None);
+        if (dir_fd != Py.None) {
+            throw Py.NotImplementedError("dir_fd is not supported");
+        }
         try {
-            Files.createSymbolicLink(Paths.get(asPath(dst)), Paths.get(asPath(src)));
+            Files.createSymbolicLink(Paths.get(dst), Paths.get(src));
         } catch (FileAlreadyExistsException ex) {
             throw Py.OSError(Errno.EEXIST);
         } catch (IOException ioe) {
