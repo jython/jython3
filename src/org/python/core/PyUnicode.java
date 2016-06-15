@@ -34,6 +34,28 @@ public class PyUnicode extends PyString implements Iterable {
      */
     private static final boolean DEBUG_NON_BMP_METHODS = false;
 
+    /**
+     * A singleton provides the translation service (which is a pass-through) for all BMP strings.
+     */
+    static final IndexTranslator BASIC = new IndexTranslator() {
+
+        @Override
+        public int suppCount() {
+            return 0;
+        }
+
+        @Override
+        public int codePointIndex(int u) {
+            return u;
+        }
+
+        @Override
+        public int utf16Index(int i) {
+            return i;
+        }
+    };
+
+    // Note: place this after BASIC, since the initialization of str type __doc__ depends on BASIC
     public static final PyType TYPE = PyType.fromClass(PyUnicode.class);
 
     // for PyJavaClass.init()
@@ -121,6 +143,9 @@ public class PyUnicode extends PyString implements Iterable {
         super(subtype, "");
         this.string = string;
         translator = isBasic ? BASIC : this.chooseIndexTranslator();
+        if (translator == null) {
+            System.out.println("weird");
+        }
     }
 
     @Override
@@ -159,27 +184,6 @@ public class PyUnicode extends PyString implements Iterable {
      * {@link #BASIC} or and instance of {@link #Supplementary}.
      */
     private final IndexTranslator translator;
-
-    /**
-     * A singleton provides the translation service (which is a pass-through) for all BMP strings.
-     */
-    static final IndexTranslator BASIC = new IndexTranslator() {
-
-        @Override
-        public int suppCount() {
-            return 0;
-        }
-
-        @Override
-        public int codePointIndex(int u) {
-            return u;
-        }
-
-        @Override
-        public int utf16Index(int i) {
-            return i;
-        }
-    };
 
     /**
      * A class of index translation that uses the cumulative count so far of supplementary
