@@ -508,7 +508,7 @@ public class GrammarActions {
             sb.append(sp.getString());
         }
         if (ustring) {
-            return new PyUnicode(sb.toString());
+            return new PyUnicode(sb.toString(), true);
         }
         return new PyString(sb.toString());
     }

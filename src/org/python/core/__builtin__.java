@@ -73,7 +73,7 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
             case 7:
                 return __builtin__.abs(arg1);
             case 9:
-                return __builtin__.apply(arg1);
+                return __builtin__.ascii(arg1);
             case 11:
                 return Py.newLong(__builtin__.id(arg1));
             case 12:
@@ -127,8 +127,8 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
                 return __builtin__.range(arg1, arg2);
             case 6:
                 return Py.newLong(__builtin__.cmp(arg1, arg2));
-            case 9:
-                return __builtin__.apply(arg1, arg2);
+//            case 9:
+//                return __builtin__.apply(arg1, arg2);
             case 10:
                 return Py.newBoolean(__builtin__.isinstance(arg1, arg2));
             case 12:
@@ -307,6 +307,7 @@ public class __builtin__ {
 // TODO: redo the builtin function stuff to possibly use enum
         dict.__setitem__("abs", new BuiltinFunctions("abs", 7, 1));
 //        dict.__setitem__("apply", new BuiltinFunctions("apply", 9, 1, 3));
+        dict.__setitem__("ascii", new BuiltinFunctions("ascii", 9, 1));
         dict.__setitem__("callable", new BuiltinFunctions("callable", 14, 1));
         dict.__setitem__("coerce", new BuiltinFunctions("coerce", 13, 2));
         dict.__setitem__("chr", new BuiltinFunctions("chr", 0, 1));
@@ -404,6 +405,10 @@ public class __builtin__ {
         }
     }
 
+    public static PyObject ascii(PyObject obj) {
+        return obj.__repr__();
+    }
+
     public static boolean callable(PyObject obj) {
         return obj.isCallable();
     }
@@ -428,11 +433,8 @@ public class __builtin__ {
         return i;
     }
 
-    public static char chr(int i) {
-        if (i < 0 || i > 255) {
-            throw Py.ValueError("chr() arg not in range(256)");
-        }
-        return (char) i;
+    public static String chr(int i) {
+        return String.valueOf((char) i);
     }
 
     public static int cmp(PyObject x, PyObject y) {
