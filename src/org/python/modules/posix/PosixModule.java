@@ -63,6 +63,8 @@ import org.python.core.io.FileIO;
 import org.python.core.io.IOBase;
 import org.python.core.io.RawIOBase;
 import org.python.core.util.StringUtil;
+import org.python.modules._io.OpenMode;
+import org.python.modules._io.PyFileIO;
 import org.python.util.FilenoUtil;
 import org.python.util.PosixShim;
 
@@ -266,6 +268,13 @@ public class PosixModule implements ClassDictInit {
         tojava = fdObj.__tojava__(FileIO.class);
         if (tojava != Py.NoConversion) {
             return new FDUnion(((FileIO)tojava).getFD());
+        }
+        if (fdObj instanceof PyFileIO) {
+            return new FDUnion(FilenoUtil.filenoFrom(fdObj));
+        }
+        tojava = fdObj.__tojava__(RawIOBase.class);
+        if (tojava != Py.NoConversion) {
+            return new FDUnion(FilenoUtil.filenoFrom(((RawIOBase) tojava).getChannel()));
         }
         throw Py.TypeError("an integer or Java/Jython file descriptor is required");
     }
@@ -829,10 +838,37 @@ public class PosixModule implements ClassDictInit {
         return imp.load("os").__getattr__("popen").__call__(args, kwds);
     }
 
-    public static PyObject pipe() {
-        int[] fds = new int[2];
-        int rc = posix.pipe(fds); // XXX check rc
-        return new PyTuple(new PyLong(fds[0]), new PyLong(fds[1]));
+    // XXX handle IOException
+    public static PyObject pipe() throws IOException {
+        // This is ideal solution, but we need a wrapper in java to read and write into,
+        // or else when this file descriptor is passed back to java, we cannot handle it
+//        int[] fds = new int[2];
+//        int rc = posix.pipe(fds); // XXX check rc
+//        return new PyTuple(new PyLong(fds[0]), new PyLong(fds[1]));
+        final Pipe pipe = Pipe.open();
+        RawIOBase read = new RawIOBase() {
+            @Override
+            public Channel getChannel() {
+                return pipe.source();
+            }
+
+            @Override
+            public boolean readable() {
+                return true;
+            }
+        };
+        RawIOBase write = new RawIOBase() {
+            @Override
+            public Channel getChannel() {
+                return pipe.sink();
+            }
+
+            @Override
+            public boolean writable() {
+                return true;
+            }
+        };
+        return new PyTuple(new PyFileIO(read, OpenMode.R_ONLY), new PyFileIO(write, OpenMode.W_ONLY));
     }
 
     public static PyString __doc__putenv = new PyString(
