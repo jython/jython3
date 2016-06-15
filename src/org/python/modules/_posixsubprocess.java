@@ -1,11 +1,5 @@
 package org.python.modules;
 
-import com.zaxxer.nuprocess.NuAbstractProcessHandler;
-import com.zaxxer.nuprocess.NuProcess;
-import com.zaxxer.nuprocess.NuProcessBuilder;
-import com.zaxxer.nuprocess.NuProcessHandler;
-import com.zaxxer.nuprocess.internal.BasePosixProcess;
-import jnr.constants.platform.Errno;
 import jnr.constants.platform.Fcntl;
 import jnr.posix.POSIX;
 import jnr.posix.SpawnAttribute;
@@ -14,7 +8,6 @@ import jnr.posix.util.Platform;
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
 import org.python.core.PyList;
-import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyUnicode;
@@ -22,7 +15,6 @@ import org.python.modules.posix.PosixModule;
 import org.python.util.FilenoUtil;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.channels.Channel;
 import java.nio.channels.Pipe;
 import java.util.ArrayList;
@@ -49,26 +41,27 @@ public class _posixsubprocess implements ClassDictInit {
     // subprocess_fork_exec
     public static PyObject fork_exec(PyObject process_args, PyObject executable_list,
                                      boolean close_fds, PyObject fds_to_keep, PyObject cwd, PyObject env,
-                                     int p2cread, int p2cwrite, int c2pread, int c2pwrite,
-                                     int errread, int errwrite, int errpipe_read, int errpipe_write,
+                                     PyObject p2cread, PyObject p2cwrite, PyObject c2pread, PyObject c2pwrite,
+                                     PyObject errread, PyObject errwrite, PyObject errpipe_read, PyObject errpipe_write,
                                      boolean restore_signals, boolean call_setsid, PyObject preexec_fn) throws IOException {
         PyList exec_array = new PyList(executable_list), argv = new PyList(process_args), envp;
 //        String[] command = new String[argv.size() + 1];
 //        System.arraycopy(argv.toArray(), 0, command, 1, argv.size());
 //        command[0] = exec_array.__getitem__(0).asString();
         ExecArg eargp = new ExecArg();
+        PyObject m1 = Py.newLong(-1);
 
-        if (p2cread != -1) {
-            eargp.fileActions.add(SpawnFileAction.dup(p2cread, 0));
-            eargp.fileActions.add(SpawnFileAction.close(p2cwrite));
+        if (p2cread != m1) {
+            eargp.fileActions.add(SpawnFileAction.dup(FilenoUtil.filenoFrom(p2cread), 0));
+            eargp.fileActions.add(SpawnFileAction.close(FilenoUtil.filenoFrom(p2cwrite)));
         }
-        if (c2pread != -1) {
-            eargp.fileActions.add(SpawnFileAction.dup(c2pwrite, 1));
-            eargp.fileActions.add(SpawnFileAction.close(c2pread));
+        if (c2pread != m1) {
+            eargp.fileActions.add(SpawnFileAction.dup(FilenoUtil.filenoFrom(c2pwrite), 1));
+            eargp.fileActions.add(SpawnFileAction.close(FilenoUtil.filenoFrom(c2pread)));
         }
-        if (errread != -1) {
-            eargp.fileActions.add(SpawnFileAction.dup(errwrite, 2));
-            eargp.fileActions.add(SpawnFileAction.close(errread));
+        if (errread != m1) {
+            eargp.fileActions.add(SpawnFileAction.dup(FilenoUtil.filenoFrom(errwrite), 2));
+            eargp.fileActions.add(SpawnFileAction.close(FilenoUtil.filenoFrom(errread)));
         }
 
         POSIX posix = PosixModule.getPOSIX();
