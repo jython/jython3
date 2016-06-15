@@ -185,7 +185,11 @@ public final class Py {
         PyObject args = new PyTuple(Py.newInteger(value), Py.newUnicode(Errno.valueOf(value).description()));
         return new PyException(Py.OSError, args);
     }
-    
+
+    public static PyException OSError(Errno errno, String filename) {
+        return OSError(errno, new PyUnicode(filename));
+    }
+
     public static PyException OSError(Errno errno, PyObject filename) {
         int value = errno.intValue();
         // see https://github.com/jruby/jruby/commit/947c661e46683ea82f8016dde9d3fa597cd10e56
