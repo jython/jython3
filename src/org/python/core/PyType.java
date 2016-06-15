@@ -536,7 +536,10 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
         if (dict.__finditem__("__doc__") == null) {
             PyObject docObj;
             if (doc != null) {
-                docObj = new PyUnicode(doc);
+                docObj = new PyUnicode(doc, true);
+                // PyUnicode.TYPE is initializing, cannot use PyObject.setType,
+                // as this is not yet fully initialized
+                if (underlying_class == PyUnicode.class) docObj.objtype = this;
             } else {
                 // XXX: Hack: Py.None may be null during bootstrapping. Most types
                 // encountered then should have docstrings anyway
