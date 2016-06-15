@@ -13,6 +13,7 @@ import java.nio.channels.Channel;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.Pipe;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -28,6 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.kenai.jffi.Library;
+import com.sun.security.auth.module.UnixSystem;
 import jnr.constants.Constant;
 import jnr.constants.platform.Errno;
 import jnr.constants.platform.Sysconf;
@@ -101,6 +104,12 @@ public class PosixModule implements ClassDictInit {
     private static final int W_OK = 1 << 1;
     private static final int R_OK = 1 << 2;
 
+    /** RTLD_* constants */
+    private static final int RTLD_LAZY = Library.LAZY;
+    private static final int RTLD_NOW = Library.NOW;
+    private static final int RTLD_GLOBAL = Library.GLOBAL;
+    private static final int RTLD_LOCAL = Library.LOCAL;
+
     public static final int WNOHANG = 0x00000001;
 
     /** Lazily initialized singleton source for urandom. */
@@ -110,22 +119,28 @@ public class PosixModule implements ClassDictInit {
 
     public static void classDictInit(PyObject dict) {
         // only expose the open flags we support
-        dict.__setitem__("O_RDONLY", Py.newInteger(O_RDONLY));
-        dict.__setitem__("O_WRONLY", Py.newInteger(O_WRONLY));
-        dict.__setitem__("O_RDWR", Py.newInteger(O_RDWR));
-        dict.__setitem__("O_APPEND", Py.newInteger(O_APPEND));
-        dict.__setitem__("O_SYNC", Py.newInteger(O_SYNC));
-        dict.__setitem__("O_CREAT", Py.newInteger(O_CREAT));
-        dict.__setitem__("O_TRUNC", Py.newInteger(O_TRUNC));
-        dict.__setitem__("O_EXCL", Py.newInteger(O_EXCL));
+        dict.__setitem__("O_RDONLY", Py.newLong(O_RDONLY));
+        dict.__setitem__("O_WRONLY", Py.newLong(O_WRONLY));
+        dict.__setitem__("O_RDWR", Py.newLong(O_RDWR));
+        dict.__setitem__("O_APPEND", Py.newLong(O_APPEND));
+        dict.__setitem__("O_SYNC", Py.newLong(O_SYNC));
+        dict.__setitem__("O_CREAT", Py.newLong(O_CREAT));
+        dict.__setitem__("O_TRUNC", Py.newLong(O_TRUNC));
+        dict.__setitem__("O_EXCL", Py.newLong(O_EXCL));
 
         // os.access flags
-        dict.__setitem__("F_OK", Py.newInteger(F_OK));
-        dict.__setitem__("X_OK", Py.newInteger(X_OK));
-        dict.__setitem__("W_OK", Py.newInteger(W_OK));
-        dict.__setitem__("R_OK", Py.newInteger(R_OK));
+        dict.__setitem__("F_OK", Py.newLong(F_OK));
+        dict.__setitem__("X_OK", Py.newLong(X_OK));
+        dict.__setitem__("W_OK", Py.newLong(W_OK));
+        dict.__setitem__("R_OK", Py.newLong(R_OK));
         // Successful termination
         dict.__setitem__("EX_OK", Py.Zero);
+
+        // RTLD
+        dict.__setitem__("RTLD_LOCAL", Py.newLong(RTLD_LOCAL));
+        dict.__setitem__("RTLD_GLOBAL", Py.newLong(RTLD_GLOBAL));
+        dict.__setitem__("RTLD_NOW", Py.newLong(RTLD_NOW));
+        dict.__setitem__("RTLD_LAZY", Py.newLong(RTLD_LAZY));
 
         dict.__setitem__("WNOHANG", Py.newLong(WNOHANG));
 
@@ -164,7 +179,7 @@ public class PosixModule implements ClassDictInit {
         String[] haveFunctions = new String[]{
                 "HAVE_FCHDIR", "HAVE_FCHMOD", "HAVE_FCHOWN",
                 "HAVE_FEXECVE", "HAVE_FDOPENDIR", "HAVE_FPATHCONF", "HAVE_FSTATVFS", "HAVE_FTRUNCATE",
-                "HAVE_FUTIMENS", "HAVE_FUTIMES", "HAVE_LCHOWN", "HAVE_LUTIMES"
+                "HAVE_LCHOWN", "HAVE_LUTIMES"
         };
 
         List<PyObject> haveFuncs = new ArrayList<PyObject>();
@@ -402,11 +417,11 @@ public class PosixModule implements ClassDictInit {
     // this incomplete support currently breaks py.test
 
 //    public static PyObject dup(PyObject fd1) {
-//        return Py.newInteger(posix.dup(getFD(fd1).getIntFD()));
+//        return Py.newLong(posix.dup(getFD(fd1).getIntFD()));
 //    }
 //
 //    public static PyObject dup2(PyObject fd1, PyObject fd2) {
-//        return Py.newInteger(posix.dup2(getFD(fd1).getIntFD(), getFD(fd2).getIntFD()));
+//        return Py.newLong(posix.dup2(getFD(fd1).getIntFD(), getFD(fd2).getIntFD()));
 //    }
 
     public static PyString __doc__fdopen = new PyString(
@@ -546,6 +561,16 @@ public class PosixModule implements ClassDictInit {
         return posix.getgid();
     }
 
+    @Hide(value=OS.NT, posixImpl = PosixImpl.JAVA)
+    public static PyObject getgroups() {
+        long[] groups = new UnixSystem().getGroups();
+        PyObject[] list = new PyObject[groups.length];
+        for (int i = 0; i < groups.length; i++) {
+            list[i] = new PyLong(groups[i]);
+        }
+        return new PyList(list);
+    }
+
     public static PyString __doc__getlogin = new PyString(
         "getlogin() -> string\n\n" +
         "Return the actual login name.");
@@ -682,7 +707,9 @@ public class PosixModule implements ClassDictInit {
         "path: path of directory to list\n\n" +
         "The list is in arbitrary order.  It does not include the special\n" +
         "entries '.' and '..' even if they are present in the directory.");
-    public static PyList listdir(PyObject path) {
+    public static PyList listdir(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("listdir", args, keywords, "path");
+        String path = ap.getString(0, System.getProperty("user.home"));
         File file = absolutePath(path).toFile();
         String[] names = file.list();
 
@@ -698,7 +725,7 @@ public class PosixModule implements ClassDictInit {
 
         PyList list = new PyList();
         for (String name : names) {
-            list.append(Py.newStringOrUnicode(path, name));
+            list.append(Py.newUnicode(name));
         }
         return list;
     }
@@ -846,15 +873,30 @@ public class PosixModule implements ClassDictInit {
 //        int rc = posix.pipe(fds); // XXX check rc
 //        return new PyTuple(new PyLong(fds[0]), new PyLong(fds[1]));
         final Pipe pipe = Pipe.open();
+        final ReadableByteChannel readChan = pipe.source();
         RawIOBase read = new RawIOBase() {
             @Override
             public Channel getChannel() {
-                return pipe.source();
+                return readChan;
             }
 
             @Override
             public boolean readable() {
                 return true;
+            }
+
+            @Override
+            public long seek(long pos, int whence) {
+                return -1;
+            }
+
+            @Override
+            public int readinto(ByteBuffer buf) {
+                try {
+                    return readChan.read(buf);
+                } catch (IOException e) {
+                    return -1;
+                }
             }
         };
         RawIOBase write = new RawIOBase() {
@@ -1067,7 +1109,10 @@ public class PosixModule implements ClassDictInit {
         "utime(path, None)\n\n" +
         "Set the access and modified time of the file to the given values.  If the\n" +
         "second form is used, set the access and modified times to the current time.");
-    public static void utime(PyObject path, PyObject times) {
+    public static void utime(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("utime", args, keywords, "path", "times", "*", "ns", "dir_fd", "follow_symlinks");
+        String path = ap.getString(0);
+        PyObject times = ap.getPyObject(1, Py.None);
         long[] atimeval;
         long[] mtimeval;
 
@@ -1080,7 +1125,7 @@ public class PosixModule implements ClassDictInit {
             throw Py.TypeError("utime() arg 2 must be a tuple (atime, mtime)");
         }
         if (posix.utimes(absolutePath(path).toString(), atimeval, mtimeval) < 0) {
-            throw errorFromErrno(path);
+            throw errorFromErrno(new PyUnicode(path));
         }
     }
 
@@ -1115,7 +1160,7 @@ public class PosixModule implements ClassDictInit {
         if (pid < 0) {
             throw errorFromErrno();
         }
-        return new PyTuple(Py.newInteger(pid), Py.newInteger(status[0]));
+        return new PyTuple(Py.newLong(pid), Py.newInteger(status[0]));
     }
 
     public static PyString __doc__waitpid = new PyString(
@@ -1128,7 +1173,7 @@ public class PosixModule implements ClassDictInit {
         if (pid < 0) {
             throw errorFromErrno();
         }
-        return new PyTuple(Py.newInteger(pid), Py.newInteger(status[0]));
+        return new PyTuple(Py.newLong(pid), Py.newInteger(status[0]));
     }
 
     @Hide(posixImpl = PosixImpl.JAVA)
@@ -1255,6 +1300,10 @@ public class PosixModule implements ClassDictInit {
             // Returning current working directory would be wrong in our context (chdir, etc.).
             throw Py.OSError(Errno.ENOENT, pathObj);
         }
+        return absolutePath(pathStr);
+    }
+
+    private static Path absolutePath(String pathStr) {
         try {
             Path path = Paths.get(pathStr);
             // Relative path: augment from current working directory.
@@ -1276,7 +1325,7 @@ public class PosixModule implements ClassDictInit {
              * error WindowsError [Error 123], but it seems excessive to duplicate this error
              * hierarchy.
              */
-            throw Py.OSError(Errno.EINVAL, pathObj);
+            throw Py.OSError(Errno.EINVAL, new PyUnicode(pathStr));
         }
     }
 
@@ -1380,6 +1429,10 @@ public class PosixModule implements ClassDictInit {
             // posix file descriptor
             if (path instanceof PyLong) {
                 return PyStatResult.fromFileStat(posix.fstat(path.asInt()));
+            }
+            Object fileIO = path.__tojava__(FileIO.class);
+            if (fileIO != Py.NoConversion) {
+                return PyStatResult.fromFileStat(posix.fstat(getFD(path).getIntFD()));
             }
             Path absolutePath = absolutePath(path);
             try {
