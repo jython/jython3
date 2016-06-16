@@ -6647,6 +6647,240 @@ public class BuiltinDocs {
         "Alternate chain() contructor taking a single iterable argument\n" + 
         "that evaluates lazily.";
 
+    // Docs for <class 'NoneType'>
+    public final static String NoneType___bool___doc = 
+        "self != 0";
+
+    public final static String NoneType___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String NoneType___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String NoneType___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String NoneType_doc = 
+        "";
+
+    public final static String NoneType___eq___doc = 
+        "Return self==value.";
+
+    public final static String NoneType___format___doc = 
+        "default object formatter";
+
+    public final static String NoneType___ge___doc = 
+        "Return self>=value.";
+
+    public final static String NoneType___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String NoneType___gt___doc = 
+        "Return self>value.";
+
+    public final static String NoneType___hash___doc = 
+        "Return hash(self).";
+
+    public final static String NoneType___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String NoneType___le___doc = 
+        "Return self<=value.";
+
+    public final static String NoneType___lt___doc = 
+        "Return self<value.";
+
+    public final static String NoneType___ne___doc = 
+        "Return self!=value.";
+
+    public final static String NoneType___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String NoneType___reduce___doc = 
+        "helper for pickle";
+
+    public final static String NoneType___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String NoneType___repr___doc = 
+        "Return repr(self).";
+
+    public final static String NoneType___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String NoneType___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String NoneType___str___doc = 
+        "Return str(self).";
+
+    public final static String NoneType___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    // Docs for <class 'NotImplementedType'>
+    public final static String NotImplementedType___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String NotImplementedType___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String NotImplementedType___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String NotImplementedType_doc = 
+        "";
+
+    public final static String NotImplementedType___eq___doc = 
+        "Return self==value.";
+
+    public final static String NotImplementedType___format___doc = 
+        "default object formatter";
+
+    public final static String NotImplementedType___ge___doc = 
+        "Return self>=value.";
+
+    public final static String NotImplementedType___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String NotImplementedType___gt___doc = 
+        "Return self>value.";
+
+    public final static String NotImplementedType___hash___doc = 
+        "Return hash(self).";
+
+    public final static String NotImplementedType___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String NotImplementedType___le___doc = 
+        "Return self<=value.";
+
+    public final static String NotImplementedType___lt___doc = 
+        "Return self<value.";
+
+    public final static String NotImplementedType___ne___doc = 
+        "Return self!=value.";
+
+    public final static String NotImplementedType___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String NotImplementedType___reduce___doc = 
+        "";
+
+    public final static String NotImplementedType___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String NotImplementedType___repr___doc = 
+        "Return repr(self).";
+
+    public final static String NotImplementedType___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String NotImplementedType___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String NotImplementedType___str___doc = 
+        "Return str(self).";
+
+    public final static String NotImplementedType___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    // Docs for <class 'ellipsis'>
+    public final static String ellipsis___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String ellipsis___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String ellipsis___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String ellipsis_doc = 
+        "";
+
+    public final static String ellipsis___eq___doc = 
+        "Return self==value.";
+
+    public final static String ellipsis___format___doc = 
+        "default object formatter";
+
+    public final static String ellipsis___ge___doc = 
+        "Return self>=value.";
+
+    public final static String ellipsis___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String ellipsis___gt___doc = 
+        "Return self>value.";
+
+    public final static String ellipsis___hash___doc = 
+        "Return hash(self).";
+
+    public final static String ellipsis___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String ellipsis___le___doc = 
+        "Return self<=value.";
+
+    public final static String ellipsis___lt___doc = 
+        "Return self<value.";
+
+    public final static String ellipsis___ne___doc = 
+        "Return self!=value.";
+
+    public final static String ellipsis___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String ellipsis___reduce___doc = 
+        "";
+
+    public final static String ellipsis___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String ellipsis___repr___doc = 
+        "Return repr(self).";
+
+    public final static String ellipsis___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String ellipsis___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String ellipsis___str___doc = 
+        "Return str(self).";
+
+    public final static String ellipsis___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
     // Docs for <class 'io.TextIOBase'>
     public final static String TextIOBase___abstractmethods___doc = 
         "";

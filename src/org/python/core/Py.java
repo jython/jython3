@@ -124,11 +124,11 @@ public final class Py {
     }
     /* Holds the singleton None and Ellipsis objects */
     /** The singleton None Python object **/
-    public final static PyObject None = new PyNone();
+    public final static PyObject None = PyNone.getInstance();
     /** The singleton Ellipsis Python object - written as ... when indexing */
-    public final static PyObject Ellipsis = new PyEllipsis();
+    public final static PyObject Ellipsis = PyEllipsis.getInstance();
     /** The singleton NotImplemented Python object. Used in rich comparison */
-    public final static PyObject NotImplemented = new PyNotImplemented();
+    public final static PyObject NotImplemented = PyNotImplemented.getInstance();
     /** A zero-length array of Strings to pass to functions that
     don't have any keyword arguments **/
     public final static String[] NoKeywords = new String[0];
