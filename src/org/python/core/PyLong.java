@@ -1027,29 +1027,6 @@ public class PyLong extends PyObject {
         return this;
     }
 
-    /**
-     * Common code used by the number-base conversion method __oct__ and __hex__.
-     *
-     * @param spec prepared format-specifier.
-     * @return converted value of this object
-     */
-    private PyUnicode formatImpl(Spec spec) {
-        // Traditional formatter (%-format) because #o means "-0123" not "-0o123".
-        IntegerFormatter f = new IntegerFormatter.Traditional(spec);
-        f.format(value);
-        return new PyUnicode(f.getResult());
-    }
-
-    @Override
-    public PyString __hex__() {
-        return formatImpl(IntegerFormatter.HEX);
-    }
-
-    @Override
-    public PyString __oct__() {
-        return formatImpl(IntegerFormatter.OCT);
-    }
-
     @ExposedMethod(doc = BuiltinDocs.int___str___doc)
     public PyUnicode long___str__() {
         return new PyUnicode(getValue().toString());

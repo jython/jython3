@@ -946,18 +946,6 @@ public class PyInteger extends PyObject {
     public PyComplex __complex__() {
         return new PyComplex(getValue(), 0.);
     }
-    /**
-     * Common code used by the number-base conversion method __oct__ and __hex__.
-     *
-     * @param spec prepared format-specifier.
-     * @return converted value of this object
-     */
-    private PyString formatImpl(Spec spec) {
-        // Traditional formatter (%-format) because #o means "-0123" not "-0o123".
-        IntegerFormatter f = new IntegerFormatter.Traditional(spec);
-        f.format(value);
-        return new PyString(f.getResult());
-    }
 
     @ExposedMethod(doc = BuiltinDocs.int___getnewargs___doc)
     final PyTuple int___getnewargs__() {
