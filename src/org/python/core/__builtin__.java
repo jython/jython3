@@ -691,7 +691,7 @@ public class __builtin__ {
         return false;
     }
 
-    public static PyInteger hash(PyObject o) {
+    public static PyLong hash(PyObject o) {
         return o.__hash__();
     }
 
