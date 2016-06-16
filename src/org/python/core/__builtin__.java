@@ -773,16 +773,15 @@ public class __builtin__ {
         }
 
         while (true) {
-            boolean any_items = false;
+            boolean all_items = true;
             for (int j = 0; j < n; j++) {
                 if ((element = iters[j].__next__()) != null) {
                     args[j] = element;
-                    any_items = true;
                 } else {
-                    args[j] = Py.None;
+                    all_items = false;
                 }
             }
-            if (!any_items) {
+            if (!all_items) {
                 break;
             }
             if (f == Py.None) {
@@ -1490,7 +1489,7 @@ class PrintFunction extends PyBuiltinFunction {
 class MaxFunction extends PyBuiltinFunction {
     MaxFunction() {
         super("max",
-              "max(iterable[, key=func]) -> value\n" +
+              "max(iterable, *[, default=obj, key=func]) -> value\n" +
               "max(a, b, c, ...[, key=func]) -> value\n\n" +
               "With a single iterable argument, return its largest item.\n" +
               "With two or more arguments, return the largest argument.");
@@ -1500,9 +1499,15 @@ class MaxFunction extends PyBuiltinFunction {
     public PyObject __call__(PyObject args[], String kwds[]) {
         int argslen = args.length;
         PyObject key = null;
+        PyObject defaultValue = null;
 
         if (args.length - kwds.length == 0) {
             throw Py.TypeError("max() expected 1 arguments, got 0");
+        }
+        for (int i = 0; i < kwds.length; i++) {
+            if (kwds[i].equals("key")) {
+
+            }
         }
         if (kwds.length > 0) {
             if (kwds[0].equals("key")) {

@@ -1816,7 +1816,7 @@ public class PyObject implements Serializable {
      */
     private PyUnicode formatImpl(InternalFormat.Spec spec) {
         // Traditional formatter (%-format) because #o means "-0123" not "-0o123".
-        IntegerFormatter f = new IntegerFormatter.Traditional(spec);
+        IntegerFormatter f = new IntegerFormatter(spec);
         PyObject index = __index__();
         if (index instanceof PyInteger) {
             f.format(((PyInteger) index).getValue());
