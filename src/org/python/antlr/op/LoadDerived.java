@@ -842,7 +842,10 @@ public class LoadDerived extends Load implements Slotted,FinalizablePyObjectDeri
         PyObject impl=self_type.lookup("__len__");
         if (impl!=null) {
             PyObject res=impl.__get__(this,self_type).__call__();
-            return res.asInt();
+            if (res instanceof PyInteger||res instanceof PyLong) {
+                return res.asInt();
+            }
+            throw Py.TypeError(String.format("'%s' object cannot be interpreted as an integer",getType().fastGetName()));
         }
         return super.__len__();
     }
