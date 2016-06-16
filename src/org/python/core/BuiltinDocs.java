@@ -6881,6 +6881,141 @@ public class BuiltinDocs {
         "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
+    // Docs for <class '_multiprocessing.SemLock'>
+    public final static String SemLock_SEM_VALUE_MAX_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String SemLock___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String SemLock___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String SemLock___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String SemLock_doc = 
+        "Semaphore/Mutex type";
+
+    public final static String SemLock___enter___doc = 
+        "enter the semaphore/lock";
+
+    public final static String SemLock___eq___doc = 
+        "Return self==value.";
+
+    public final static String SemLock___exit___doc = 
+        "exit the semaphore/lock";
+
+    public final static String SemLock___format___doc = 
+        "default object formatter";
+
+    public final static String SemLock___ge___doc = 
+        "Return self>=value.";
+
+    public final static String SemLock___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String SemLock___gt___doc = 
+        "Return self>value.";
+
+    public final static String SemLock___hash___doc = 
+        "Return hash(self).";
+
+    public final static String SemLock___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String SemLock___le___doc = 
+        "Return self<=value.";
+
+    public final static String SemLock___lt___doc = 
+        "Return self<value.";
+
+    public final static String SemLock___ne___doc = 
+        "Return self!=value.";
+
+    public final static String SemLock___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String SemLock___reduce___doc = 
+        "helper for pickle";
+
+    public final static String SemLock___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String SemLock___repr___doc = 
+        "Return repr(self).";
+
+    public final static String SemLock___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String SemLock___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String SemLock___str___doc = 
+        "Return str(self).";
+
+    public final static String SemLock___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String SemLock__after_fork_doc = 
+        "rezero the net acquisition count after fork()";
+
+    public final static String SemLock__count_doc = 
+        "num of `acquire()`s minus num of `release()`s for this process";
+
+    public final static String SemLock__get_value_doc = 
+        "get the value of the semaphore";
+
+    public final static String SemLock__is_mine_doc = 
+        "whether the lock is owned by this thread";
+
+    public final static String SemLock__is_zero_doc = 
+        "returns whether semaphore has value zero";
+
+    public final static String SemLock__rebuild_doc = 
+        "";
+
+    public final static String SemLock_acquire_doc = 
+        "acquire the semaphore/lock";
+
+    public final static String SemLock_handle_doc = 
+        "";
+
+    public final static String SemLock_kind_doc = 
+        "";
+
+    public final static String SemLock_maxvalue_doc = 
+        "";
+
+    public final static String SemLock_name_doc = 
+        "";
+
+    public final static String SemLock_release_doc = 
+        "release the semaphore/lock";
+
     // Docs for <class 'io.TextIOBase'>
     public final static String TextIOBase___abstractmethods___doc = 
         "";

@@ -10,6 +10,7 @@ import org.python.core.Py;
 import org.python.core.PyDictionary;
 import org.python.core.PyObject;
 import org.python.core.PyString;
+import org.python.core.PyUnicode;
 import org.python.core.imp;
 
 /**
@@ -34,6 +35,7 @@ public class errno implements ClassDictInit {
     public static final PyObject errorcode = new PyDictionary();
 
     public static void classDictInit(PyObject dict) {
+        dict.__setitem__("name", new PyUnicode("errno"));
         if (Platform.IS_WINDOWS) {
             initWindows(dict);
         } else {
