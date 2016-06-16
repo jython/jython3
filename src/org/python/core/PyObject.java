@@ -295,8 +295,8 @@ public class PyObject implements Serializable {
      * <code>hashCode</code> method to return an appropriate hash code for
      * the <code>PyObject</code>.
      **/
-    public final PyInteger __hash__() {
-        return new PyInteger(hashCode());
+    public final PyLong __hash__() {
+        return new PyLong(hashCode());
     }
 
     @Override
