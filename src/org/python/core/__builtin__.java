@@ -43,7 +43,7 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
             case 28:
                 return __builtin__.locals();
             case 34:
-                return Py.newString(__builtin__.raw_input());
+                return Py.newUnicode(__builtin__.raw_input());
             case 41:
                 return __builtin__.vars();
             case 43:
@@ -98,7 +98,7 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
             case 32:
                 return __builtin__.oct(arg1);
             case 34:
-                return Py.newString(__builtin__.raw_input(arg1));
+                return Py.newUnicode(__builtin__.raw_input(arg1));
             case 36:
                 return __builtin__.reload(arg1);
             case 37:
@@ -329,7 +329,7 @@ public class __builtin__ {
         dict.__setitem__("getattr", new BuiltinFunctions("getattr", 21, 2, 3));
         dict.__setitem__("hasattr", new BuiltinFunctions("hasattr", 22, 2));
         dict.__setitem__("hex", new BuiltinFunctions("hex", 23, 1));
-        dict.__setitem__("input", new BuiltinFunctions("input", 24, 0, 1));
+//        dict.__setitem__("input", new BuiltinFunctions("input", 24, 0, 1));
         dict.__setitem__("intern", new BuiltinFunctions("intern", 25, 1));
         dict.__setitem__("issubclass", new BuiltinFunctions("issubclass", 26, 2));
         dict.__setitem__("iter", new BuiltinFunctions("iter", 27, 1, 2));
@@ -339,7 +339,7 @@ public class __builtin__ {
         dict.__setitem__("min", new MinFunction());
         dict.__setitem__("oct", new BuiltinFunctions("oct", 32, 1));
         dict.__setitem__("pow", new BuiltinFunctions("pow", 33, 2, 3));
-        dict.__setitem__("raw_input", new BuiltinFunctions("raw_input", 34, 0, 1));
+        dict.__setitem__("input", new BuiltinFunctions("input", 34, 0, 1));
         dict.__setitem__("reduce", new BuiltinFunctions("reduce", 35, 2, 3));
         dict.__setitem__("reload", new BuiltinFunctions("reload", 36, 1));
         dict.__setitem__("repr", new BuiltinFunctions("repr", 37, 1));
