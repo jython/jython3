@@ -1622,7 +1622,9 @@ class RoundFunction extends PyBuiltinFunction {
             // Rounding caused magnitude to increase beyond representable range
             throw Py.OverflowError("rounded value too large to represent");
         } else {
-            return new PyFloat(r);
+            if (!(number instanceof PyLong) && !Double.isInfinite(r) && args.length > 1)
+                return new PyFloat(r);
+            return new PyLong(r);
         }
     }
 }

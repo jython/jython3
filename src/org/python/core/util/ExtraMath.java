@@ -78,7 +78,7 @@ public class ExtraMath {
             } else {
                 // We have to work it out properly.
                 BigDecimal xx = new BigDecimal(x);
-                BigDecimal rr = xx.setScale(n, RoundingMode.HALF_UP);
+                BigDecimal rr = xx.setScale(n, RoundingMode.HALF_EVEN);
                 return rr.doubleValue();
             }
         }
