@@ -7,6 +7,7 @@ package org.python.core;
 import java.io.Serializable;
 
 import org.python.expose.ExposedMethod;
+import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
 
 /**
@@ -18,8 +19,20 @@ public class PyNone extends PyObject implements Serializable {
 
     public static final PyType TYPE = PyType.fromClass(PyNone.class);
 
-    PyNone() {
+    private static PyNone INST = new PyNone();
+
+    private PyNone() {
         super(TYPE);
+    }
+
+    @ExposedNew
+    final static PyObject NoneType_new(PyNewWrapper new_, boolean init, PyType subtype,
+            PyObject[] args, String[] keywords) {
+        return INST;
+    }
+
+    public static PyNone getInstance() {
+        return INST;
     }
 
     @Override
