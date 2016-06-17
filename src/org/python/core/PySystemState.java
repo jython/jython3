@@ -9,6 +9,7 @@ import org.python.core.packagecache.PackageManager;
 import org.python.core.packagecache.SysPackageManager;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedType;
+import org.python.modules.PyNamespace;
 import org.python.modules.Setup;
 import org.python.util.Generic;
 
@@ -2073,50 +2074,5 @@ class LongInfo extends PyTuple {
     @Override
     public boolean refersDirectlyTo(PyObject ob) {
         return ob != null && (ob == bits_per_digit || ob == sizeof_digit);
-    }
-}
-
-/**
- * namespace object implementation
- */
-@ExposedType(name = "types.SimpleNamespace", doc = BuiltinDocs.SimpleNamespace___class___doc)
-class PyNamespace extends PyObject {
-    public static final PyType TYPE = PyType.fromClass(PyNamespace.class);
-
-    @ExposedGet
-    public PyDictionary __dict__;
-
-    public PyNamespace(Map<String, Object> dict) {
-        super();
-        __dict__ = new PyDictionary();
-        __dict__.putAll(dict);
-    }
-
-    public PyNamespace(PyObject[] args, String[] keywords) {
-        super();
-        __dict__ = new PyDictionary();
-        SimpleNamespace___init__(args, keywords);
-    }
-
-    final void SimpleNamespace___init__(PyObject[] args, String[] keywords) {
-        __dict__.dict_update(args, keywords);
-    }
-
-    final PyObject SimpleNamespace___repr__() {
-        PyList keys = __dict__.keys_as_list();
-        keys.sort();
-        StringBuilder items = new StringBuilder();
-        for (int i = 0; i < keys.size(); i++) {
-            Object key = keys.get(i);
-            if (i > 0) {
-                items.append(", ");
-            }
-            items.append(String.format("%s=%s", key, __dict__.get(key)));
-        }
-        return Py.newUnicode(String.format("%s(%s)", __getattr__("__name__"), items));
-    }
-
-    final PyObject SimpleNamespace___eq__(PyObject other) {
-        return __dict__.equals(other.__getattr__("__dict__")) ? Py.True : Py.False;
     }
 }
