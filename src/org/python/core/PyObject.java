@@ -1011,10 +1011,12 @@ public class PyObject implements Serializable {
      * @see #__findattr__(java.lang.String)
      **/
     public final PyObject __getattr__(String name) {
-        PyObject ret = __findattr_ex__(name);
-        if (ret == null)
-            noAttributeError(name);
-        return ret;
+        PyType selfType = getType();
+        PyObject getattr = selfType.lookup("__getattribute__");
+        PyObject ret = getattr.__get__(this, selfType).__call__(new PyString(name));
+        if (ret != Py.None) {
+            return ret;
+        }
     }
 
     public void noAttributeError(String name) {
@@ -3924,7 +3926,13 @@ public class PyObject implements Serializable {
         String name = asName(arg0);
         PyObject ret = object___findattr__(name);
         if (ret == null) {
-            noAttributeError(name);
+            PyObject __getattr = object___findattr__("__getattr__");
+            if (__getattr != null) {
+                return __getattr.__call__(arg0);
+            }
+            ret = __findattr_ex__(name);
+            if (ret == null)
+                noAttributeError(name);
         }
         return ret;
     }
