@@ -210,7 +210,7 @@ public class PosixModule implements ClassDictInit {
 
     // Combine Java FileDescriptor objects with Posix int file descriptors in one representation.
     // Unfortunate ugliness!
-    private static class FDUnion {
+    public static class FDUnion {
         volatile int intFD;
         final FileDescriptor javaFD;
 
@@ -228,7 +228,7 @@ public class PosixModule implements ClassDictInit {
             return intFD != -1;
         }
 
-        int getIntFD() {
+        public int getIntFD() {
             return getIntFD(true);
         }
 
@@ -262,7 +262,7 @@ public class PosixModule implements ClassDictInit {
 
     }
 
-    private static FDUnion getFD(PyObject fdObj) {
+    public static FDUnion getFD(PyObject fdObj) {
         if (fdObj.isInteger()) {
             int intFd = fdObj.asInt();
             switch (intFd) {

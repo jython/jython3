@@ -54,6 +54,7 @@ public class Setup {
             "cPickle",
             "cmath",
             "errno",
+            "fcntl",
             "Exceptions:org.python.core.Exceptions",
             "gc",
             "_imp:org.python.modules._imp",
