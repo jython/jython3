@@ -45,6 +45,8 @@ public class Setup {
             "_string",
             "_systemrestart",
             "_threading:org.python.modules._threading._threading",
+            "_types",
+            "_warnings",
             "_weakref:org.python.modules._weakref.WeakrefModule",
             "array:org.python.modules.ArrayModule",
             "binascii",
@@ -65,7 +67,6 @@ public class Setup {
             "thread:org.python.modules.thread.thread",
             "time:org.python.modules.time.Time",
             "ucnhash",
-            "_warnings",
             "zipimport:org.python.modules.zipimport.zipimport",
             PosixModule.getOSName() + ":org.python.modules.posix.PosixModule"
     };
