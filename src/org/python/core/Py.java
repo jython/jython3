@@ -2087,7 +2087,7 @@ public final class Py {
             }
         }
         PyObject prepare =  metaclass.__findattr__("__prepare__");
-        PyString clsname = new PyString(name);
+        PyUnicode clsname = new PyUnicode(name);
         PyObject basesArray = new PyTuple(bases);
         if (prepare != null) {
             PyDictionary map = (PyDictionary) prepare.__call__(clsname, basesArray);
