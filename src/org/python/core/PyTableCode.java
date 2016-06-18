@@ -6,9 +6,12 @@ package org.python.core;
  * is stored as a PyFunctionTable instance and an integer index.
  */
 
+import org.python.expose.ExposedGet;
+import org.python.expose.ExposedType;
 import org.python.modules._systemrestart;
 
 @Untraversable
+@ExposedType(name = "code", base = PyObject.class, doc = BuiltinDocs.code_doc)
 public class PyTableCode extends PyBaseCode
 {
 
@@ -68,12 +71,12 @@ public class PyTableCode extends PyBaseCode
         // co_lnotab, co_stacksize
     };
 
-    public PyObject __dir__() {
-        PyUnicode members[] = new PyUnicode[__members__.length];
-        for (int i = 0; i < __members__.length; i++)
-            members[i] = new PyUnicode(__members__[i]);
-        return new PyList(members);
-    }
+//    public PyObject __dir__() {
+//        PyUnicode members[] = new PyUnicode[__members__.length];
+//        for (int i = 0; i < __members__.length; i++)
+//            members[i] = new PyUnicode(__members__[i]);
+//        return new PyList(members);
+//    }
 
     private void throwReadonly(String name) {
         for (int i = 0; i < __members__.length; i++)
@@ -101,27 +104,34 @@ public class PyTableCode extends PyBaseCode
         return new PyTuple(pystr);
     }
 
-    public PyObject __findattr_ex__(String name) {
-        // have to craft co_varnames specially
-        if (name == "co_varnames") {
-            return toPyStringTuple(co_varnames);
-        }
-        if (name == "co_cellvars") {
-            return toPyStringTuple(co_cellvars);
-        }
-        if (name == "co_freevars") {
-            return toPyStringTuple(co_freevars);
-        }
-        if (name == "co_filename") {
-            return new PyUnicode(co_filename);
-        }
-        if (name == "co_name") {
-            return new PyUnicode(co_name);
-        }
-        if (name == "co_flags") {
-            return Py.newLong(co_flags.toBits());
-        }
-        return super.__findattr_ex__(name);
+    @ExposedGet
+    final PyObject co_varnames() {
+        return toPyStringTuple(co_varnames);
+    }
+
+    @ExposedGet
+    final PyObject co_cellvars() {
+        return toPyStringTuple(co_cellvars);
+    }
+
+    @ExposedGet
+    final PyObject co_freevars() {
+        return toPyStringTuple(co_freevars);
+    }
+
+    @ExposedGet
+    final PyObject co_filename() {
+        return new PyUnicode(co_filename);
+    }
+
+    @ExposedGet
+    final PyObject co_name() {
+        return new PyUnicode(co_name);
+    }
+
+    @ExposedGet
+    final PyObject co_flags() {
+        return Py.newLong(co_flags.toBits());
     }
 
     @Override
