@@ -297,13 +297,13 @@ public class PySystemState extends PyObject implements AutoCloseable,
     }
 
     private void initImplementation() {
-        Map<String, Object> dict = new HashMap<String, Object>();
-        dict.put("cache_tag", "jython-" + Version.getVersion());
-        dict.put("hexversion", hexversion);
-        dict.put("name", "Jython");
+        Map<String, PyObject> dict = new HashMap<>();
+        dict.put("cache_tag", new PyUnicode("jython-" + Version.getVersion()));
+        dict.put("hexversion", new PyLong(hexversion));
+        dict.put("name", new PyUnicode("Jython"));
         dict.put("version", version_info);
-        dict.put("release_level", "alpha");
-        dict.put("serial", 0);
+        dict.put("release_level", new PyUnicode("alpha"));
+        dict.put("serial", new PyLong(0));
         implementation = new PyNamespace(dict);
     }
 

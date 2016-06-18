@@ -102,9 +102,9 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
         PyObject obj = ap.getPyObject(0);
         Class<?> type;
         String typecode;
-        if (obj instanceof PyString && !(obj instanceof PyUnicode)) {
+        if (obj instanceof PyUnicode) {
             if (obj.__len__() != 1) {
-                throw Py.TypeError("array() argument 1 must be char, not str");
+                throw Py.TypeError("must be a unicode character, not str");
             }
             typecode = obj.toString();
             type = char2class(typecode.charAt(0));
@@ -112,7 +112,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
             type = ((PyJavaType)obj).getProxyType();
             typecode = type.getName();
         } else {
-            throw Py.TypeError("array() argument 1 must be char, not "
+            throw Py.TypeError("must be a unicode character, not "
                     + obj.getType().fastGetName());
         }
 
