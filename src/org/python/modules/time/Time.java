@@ -158,7 +158,7 @@ public class Time implements ClassDictInit
     }
 
     private static PyNamespace clockInfo(boolean adjustable, String implementation, boolean monotonic, double resolution) {
-        Map<String, Object> info = new HashMap<>();
+        Map<String, PyObject> info = new HashMap<>();
         info.put("adjustable", Py.newBoolean(adjustable));
         info.put("implementation", new PyUnicode(implementation));
         info.put("monotonic", Py.newBoolean(monotonic));
