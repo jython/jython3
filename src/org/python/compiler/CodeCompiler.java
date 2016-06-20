@@ -1,10 +1,6 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.compiler;
 
-import org.objectweb.asm.Label;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.Method;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,17 +44,10 @@ import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyUnicode;
 import org.python.core.ThreadState;
-import org.python.core.imp;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Stack;
-import java.util.Vector;
-
+import org.objectweb.asm.Label;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.Method;
 import static org.python.util.CodegenUtils.*;
 
 public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
@@ -681,7 +670,6 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.goto_(continueLabels.peek());
         return Exit;
     }
-
 
     @Override
     public Object visitAwait(Await node) throws Exception {
