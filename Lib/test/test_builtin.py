@@ -7,7 +7,7 @@ from test.support import fcmp, have_unicode, TESTFN, unlink, \
 import warnings
 from operator import neg
 
-import sys, io, random, UserDict
+import sys, io, random
 import collections
 from functools import reduce
 import imp
@@ -436,7 +436,7 @@ class BuiltinTest(unittest.TestCase):
 
         # Verify locals stores (used by list comps)
         eval('[locals() for i in (2,3)]', g, d)
-        eval('[locals() for i in (2,3)]', g, UserDict.UserDict())
+        eval('[locals() for i in (2,3)]', g, {})
 
         class SpreadSheet:
             "Sample application showing nested, calculated lookups."

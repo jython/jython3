@@ -1012,7 +1012,7 @@ def _syscmd_uname(option,default=''):
         f = os.popen('uname %s 2> %s' % (option, DEV_NULL))
     except (AttributeError,os.error):
         return default
-    output = string.strip(f.read())
+    output = f.read().strip()
     rc = f.close()
     if not output or rc:
         return default
@@ -1255,7 +1255,7 @@ def uname():
         elif system[:4] == 'java':
             release,vendor,vminfo,osinfo = java_ver()
             system = 'Java'
-            version = string.join(vminfo,', ')
+            version = ', '.join(vminfo)
             if not version:
                 version = vendor
 

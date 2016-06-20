@@ -2,6 +2,8 @@ import io
 import types
 import re
 import itertools
+import builtins
+import _multiprocessing
 
 def print_doc(out, obj, meth):
     if meth == '__doc__':
@@ -32,6 +34,7 @@ coro = foo()
 coro.close()
 
 types_list = [
+builtins,
 object,
 type,
 bytes,
@@ -69,6 +72,10 @@ type(re.compile("f").match("f")),
 type(range(1).__iter__()),
 type(list().__iter__()),
 type(itertools.chain(map(lambda x:x, list()))),
+type(None),
+type(NotImplemented),
+type(Ellipsis),
+_multiprocessing.SemLock,
 io.TextIOBase
 ]
 

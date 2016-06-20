@@ -10,6 +10,7 @@ distutils/**
 email/**
 encodings/**
 ensurepip/**
+html/**
 http/**
 importlib/*
 logging/*
@@ -69,6 +70,7 @@ difflib.py
 dircache.py
 dircmp.py
 dis.py
+doctest.py
 DocXMLRPCServer.py
 dospath.py
 dumbdbm.py
@@ -119,6 +121,7 @@ nntplib.py
 numbers.py
 nturl2path.py
 opcode.py
+operator.py
 optparse.py
 pdb.py
 pickle.py
@@ -158,6 +161,7 @@ site-packages/README
 smtpd.py
 smtplib.py
 sndhdr.py
+socket.py
 socketserver.py
 sre_compile.py
 sre_constants.py
@@ -165,7 +169,7 @@ sre_parse.py
 stat.py
 string.py
 stringprep.py
-StringIO.py
+subprocess.py
 symbol.py
 sysconfig.py
 tabnanny.py

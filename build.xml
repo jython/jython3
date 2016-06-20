@@ -70,7 +70,9 @@
   <target name="needed-check" unless="full-build">
     <uptodate property="antlr.notneeded" targetfile="${gensrc.dir}/org/python/antlr/PythonParser.java">
       <srcfiles dir="grammar" includes="*.g" />
+      <!--
       <srcfiles dir="${basedir}/src/org/python/compiler" includes="CodeCompiler.java" />
+      -->
     </uptodate>
   </target>
 
@@ -172,11 +174,14 @@
           <pathelement path="${extlibs.dir}/jffi-x86_64-OpenBSD.jar"/>
           <pathelement path="${extlibs.dir}/jffi-x86_64-SunOS.jar"/>
           <pathelement path="${extlibs.dir}/jffi-x86_64-Windows.jar"/>
-          <pathelement path="${extlibs.dir}/jffi-1.2.7.jar"/>
-          <pathelement path="${extlibs.dir}/jnr-ffi-2.0.1.jar"/>
-          <pathelement path="${extlibs.dir}/jnr-netdb-1.1.4.jar"/>
-          <pathelement path="${extlibs.dir}/jnr-posix-3.0.9.jar"/>
-          <pathelement path="${extlibs.dir}/jnr-constants-0.8.6.jar"/>
+          <pathelement path="${extlibs.dir}/jffi-1.2.12.jar"/>
+          <pathelement path="${extlibs.dir}/jnr-ffi-2.0.9.jar"/>
+          <pathelement path="${extlibs.dir}/jnr-enxio-0.12.jar"/>
+          <pathelement path="${extlibs.dir}/jnr-netdb-1.1.5.jar"/>
+          <pathelement path="${extlibs.dir}/jnr-posix-3.0.29.jar"/>
+          <pathelement path="${extlibs.dir}/jnr-process-0.2-SNAPSHOT.jar"/>
+          <pathelement path="${extlibs.dir}/jnr-constants-0.9.2.jar"/>
+          <pathelement path="${extlibs.dir}/jnr-unixsocket-0.12.jar"/>
           <pathelement path="${extlibs.dir}/jline-2.12.1.jar"/>
           <pathelement path="${extlibs.dir}/netty-buffer-4.0.25.Final.jar"/>
           <pathelement path="${extlibs.dir}/netty-codec-4.0.25.Final.jar"/>
