@@ -45,6 +45,7 @@ org/python/core/PyStaticMethod.class
 org/python/core/PyString.class
 org/python/core/PyStringMap.class
 org/python/core/PySuper.class
+org/python/core/PyTableCode.class
 org/python/core/PyTraceback.class
 org/python/core/PyTuple.class
 org/python/core/PyType.class
@@ -53,6 +54,7 @@ org/python/core/PyRange.class
 org/python/core/stringlib/MarkupIterator.class
 org/python/core/stringlib/FieldNameIterator.class
 org/python/modules/PyStruct.class
+org/python/modules/PyNamespace.class
 org/python/jsr223/PyScriptEngineScope.class
 org/python/modules/_codecs$EncodingMap.class
 org/python/modules/_collections/PyDefaultDict.class
@@ -63,6 +65,7 @@ org/python/modules/_csv/PyWriter.class
 org/python/modules/_io/PyIOBase.class
 org/python/modules/_io/PyRawIOBase.class
 org/python/modules/_io/PyFileIO.class
+org/python/modules/_multiprocessing/PySemLock.class
 org/python/modules/_functools/PyPartial.class
 org/python/modules/_hashlib$Hash.class
 org/python/modules/bz2/PyBZ2File.class

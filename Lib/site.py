@@ -417,7 +417,7 @@ class _Printer(object):
             for filename in self.__files:
                 filename = os.path.join(dir, filename)
                 try:
-                    fp = file(filename, "rU")
+                    fp = open(filename, "rt")
                     data = fp.read()
                     fp.close()
                     break

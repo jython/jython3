@@ -42,7 +42,7 @@ try:
     import _thread
     import threading
 except ImportError:
-    thread = None
+    _thread = None
 
 __author__  = "Vinay Sajip <vinay_sajip@red-dove.com>"
 __status__  = "production"
@@ -198,7 +198,7 @@ def _checkLevel(level):
 #the lock would already have been acquired - so we need an RLock.
 #The same argument applies to Loggers and Manager.loggerDict.
 #
-if thread:
+if _thread:
     _lock = threading.RLock()
 else:
     _lock = None
