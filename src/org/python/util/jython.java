@@ -24,7 +24,7 @@ import org.python.core.PyFile;
 import org.python.core.PyList;
 import org.python.core.PyNullImporter;
 import org.python.core.PyObject;
-import org.python.core.PyString;
+import org.python.core.PyUnicode;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 import org.python.core.PyUnicode;
@@ -121,7 +121,7 @@ public class jython {
                 filename = filename.substring(beginIndex + 1);
             }
 
-            locals.__setitem__("__name__", new PyString(filename));
+            locals.__setitem__("__name__", new PyUnicode(filename));
             locals.__setitem__("zipfile", Py.java2py(zip));
 
             InputStream file = zip.getInputStream(runit);
@@ -334,15 +334,15 @@ public class jython {
                 }
             } else if (opts.filename.equals("-")) {
                 try {
-                    interp.globals.__setitem__(new PyString("__file__"), new PyString("<stdin>"));
+                    interp.globals.__setitem__(new PyUnicode("__file__"), new PyUnicode("<stdin>"));
                     interp.execfile(System.in, "<stdin>");
                 } catch (Throwable t) {
                     Py.printException(t);
                 }
             } else {
                 try {
-                    interp.globals.__setitem__(new PyString("__file__"),
-                            new PyString(opts.filename));
+                    interp.globals.__setitem__(new PyUnicode("__file__"),
+                            new PyUnicode(opts.filename));
 
                     FileInputStream file;
                     try {

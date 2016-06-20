@@ -9,28 +9,28 @@ import org.python.expose.ExposedNew;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedType;
 
-@ExposedType(name = "itertools.ifilterfalse", base = PyObject.class,
-    doc = ifilterfalse.ifilterfalse_doc)
-public class ifilterfalse extends PyIterator {
+@ExposedType(name = "itertools.filterfalse", base = PyObject.class,
+    doc = filterfalse.filterfalse_doc)
+public class filterfalse extends PyIterator {
 
-    public static final PyType TYPE = PyType.fromClass(ifilterfalse.class);
+    public static final PyType TYPE = PyType.fromClass(filterfalse.class);
     private PyIterator iter;
 
-    public ifilterfalse() {
+    public filterfalse() {
         super();
     }
 
-    public ifilterfalse(PyType subType) {
+    public filterfalse(PyType subType) {
         super(subType);
     }
 
-    public ifilterfalse(PyObject predicate, PyObject iterable) {
+    public filterfalse(PyObject predicate, PyObject iterable) {
         super();
-        ifilterfalse___init__(predicate, iterable);
+        filterfalse___init__(predicate, iterable);
     }
 
-    public static final String ifilterfalse_doc =
-        "'ifilterfalse(function or None, sequence) --> ifilterfalse object\n\n" +
+    public static final String filterfalse_doc =
+        "'filterfalse(function or None, sequence) --> filterfalse object\n\n" +
         "Return those items of sequence for which function(item) is false.\n" +
         "If function is None, return the items that are false.'";
 
@@ -41,15 +41,15 @@ public class ifilterfalse extends PyIterator {
      */
     @ExposedNew
     @ExposedMethod
-    final void ifilterfalse___init__(PyObject[] args, String[] kwds) {
-        ArgParser ap = new ArgParser("ifilter", args, kwds, new String[] {"predicate", "iterable"}, 2);
+    final void filterfalse___init__(PyObject[] args, String[] kwds) {
+        ArgParser ap = new ArgParser("filter", args, kwds, new String[] {"predicate", "iterable"}, 2);
         ap.noKeywords();
         PyObject predicate = ap.getPyObject(0);
         PyObject iterable = ap.getPyObject(1);
-        ifilterfalse___init__(predicate, iterable);
+        filterfalse___init__(predicate, iterable);
     }
 
-    public void ifilterfalse___init__(PyObject predicate, PyObject iterable) {
+    public void filterfalse___init__(PyObject predicate, PyObject iterable) {
         iter = new itertools.FilterIterator(predicate, iterable, false);
     }
 

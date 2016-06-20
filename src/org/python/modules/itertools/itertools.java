@@ -31,7 +31,7 @@ public class itertools implements ClassDictInit {
             "dropwhile(pred, seq) --> seq[n], seq[n+1], starting when pred fails\n" +
             "groupby(iterable[, keyfunc]) --> sub-iterators grouped by value of keyfunc(v)\n" +
             "ifilter(pred, seq) --> elements of seq where pred(elem) is True\n" +
-            "ifilterfalse(pred, seq) --> elements of seq where pred(elem) is False\n" +
+            "filterfalse(pred, seq) --> elements of seq where pred(elem) is False\n" +
             "islice(seq, [start,] stop [, step]) --> elements from seq[start:stop:step]\n" +
             "imap(fun, p, q, ...) --> fun(p0, q0), fun(p1, q1), ...\n" +
             "starmap(fun, seq) --> fun(*seq[0]), fun(*seq[1]), ...\n" +
@@ -73,7 +73,7 @@ public class itertools implements ClassDictInit {
         dict.__setitem__("groupby", groupby.TYPE);
         dict.__setitem__("imap", imap.TYPE);
         dict.__setitem__("ifilter", ifilter.TYPE);
-        dict.__setitem__("ifilterfalse", ifilterfalse.TYPE);
+        dict.__setitem__("filterfalse", filterfalse.TYPE);
         dict.__setitem__("islice", islice.TYPE);
         dict.__setitem__("izip", izip.TYPE);
         dict.__setitem__("izip_longest", izipLongest.TYPE);
@@ -109,7 +109,7 @@ public class itertools implements ClassDictInit {
 
     /**
      * Iterator base class for iterators returned by <code>ifilter</code> and
-     * <code>ifilterfalse</code>.
+     * <code>filterfalse</code>.
      */
     static class FilterIterator extends ItertoolsIterator {
         private PyObject predicate;
@@ -142,7 +142,7 @@ public class itertools implements ClassDictInit {
                         // if the boolean value is the same as filterTrue return
                         // the element
                         // for ifilter filterTrue is always true, for
-                        // ifilterfalse always false
+                        // filterfalse always false
                         return element;
                     }
                 } else {
