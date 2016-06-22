@@ -413,7 +413,6 @@ dotted_attr
     ;
 
 //not in CPython's Grammar file
-// This is used to allow PRINT as a NAME for the __future__ print_function.
 name_or_print
     returns [Token tok]
     : NAME {
@@ -422,7 +421,7 @@ name_or_print
     | ASYNC {
         $tok = $name_or_print.start;
     }
-    | {printFunction}? => PRINT {
+    | AWAIT {
         $tok = $name_or_print.start;
     }
     ;
@@ -460,7 +459,6 @@ attr
     | OR
     | ORELSE
     | PASS
-    | PRINT
     | RAISE
     | RETURN
     | TRY
@@ -657,9 +655,9 @@ tfpdef returns [arg etype]
         $tfpdef.tree = $etype;
     }
 }
-    : NAME (COLON test[expr_contextType.Load])?
+    : name_or_print (COLON test[expr_contextType.Load])?
       {
-          $etype = new arg($NAME, $NAME.text, actions.castExpr($test.tree));
+          $etype = new arg($name_or_print.tree, $name_or_print.text, actions.castExpr($test.tree));
       }
     ;
 
@@ -894,72 +892,6 @@ augassign
         }
     ;
 
-//print_stmt: 'print' ( [ test (',' test)* [','] ] |
-//                      '>>' test [ (',' test)+ [','] ] )
-print_stmt
-@init {
-    stmt stype = null;
-}
-
-@after {
-    $print_stmt.tree = stype;
-}
-    : PRINT
-      (t1=printlist
-       {
-           stype = new Print($PRINT, null, actions.castExprs($t1.elts), $t1.newline);
-       }
-      | RIGHTSHIFT t2=printlist2
-       {
-           stype = new Print($PRINT, actions.castExpr($t2.elts.get(0)), actions.castExprs($t2.elts, 1), $t2.newline);
-       }
-      |
-       {
-           stype = new Print($PRINT, null, new ArrayList<expr>(), true);
-       }
-      )
-      ;
-
-//not in CPython's Grammar file
-printlist
-    returns [boolean newline, List elts]
-    : (test[null] COMMA) =>
-       t+=test[expr_contextType.Load] (options {k=2;}: COMMA t+=test[expr_contextType.Load])* (trailcomma=COMMA)?
-       {
-           $elts=$t;
-           if ($trailcomma == null) {
-               $newline = true;
-           } else {
-               $newline = false;
-           }
-       }
-    | t+=test[expr_contextType.Load]
-      {
-          $elts=$t;
-          $newline = true;
-      }
-    ;
-
-//XXX: would be nice if printlist and printlist2 could be merged.
-//not in CPython's Grammar file
-printlist2
-    returns [boolean newline, List elts]
-    : (test[null] COMMA test[null]) =>
-       t+=test[expr_contextType.Load] (options {k=2;}: COMMA t+=test[expr_contextType.Load])* (trailcomma=COMMA)?
-       { $elts=$t;
-           if ($trailcomma == null) {
-               $newline = true;
-           } else {
-               $newline = false;
-           }
-       }
-    | t+=test[expr_contextType.Load]
-      {
-          $elts=$t;
-          $newline = true;
-      }
-    ;
-
 //del_stmt: 'del' exprlist
 del_stmt
 @init {
@@ -1063,9 +995,6 @@ yield_stmt
     ;
 
 //raise_stmt: 'raise' [test ['from' test]]
-raise_stmt
-    ;
-
 raise_stmt
 @init {
     stmt stype = null;
@@ -1235,21 +1164,6 @@ nonlocal_stmt
     : NONLOCAL n+=NAME (COMMA n+=NAME)*
       {
           stype = new Nonlocal($NONLOCAL, actions.makeNames($n), actions.makeNameNodes($n));
-      }
-    ;
-
-
-//exec_stmt: 'exec' expr ['in' test [',' test]]
-exec_stmt
-@init {
-    stmt stype = null;
-}
-@after {
-   $exec_stmt.tree = stype;
-}
-    : EXEC expr[expr_contextType.Load] (IN t1=test[expr_contextType.Load] (COMMA t2=test[expr_contextType.Load])?)?
-      {
-         stype = new Exec($EXEC, actions.castExpr($expr.tree), actions.castExpr($t1.tree), actions.castExpr($t2.tree));
       }
     ;
 
@@ -1928,7 +1842,7 @@ atom_expr
 @after {
     $atom_expr.tree = $etype;
 }
-    : AWAIT? atom (t+=trailer[$atom.start, $atom.tree])*
+    : (AWAIT? atom) => AWAIT? atom (t+=trailer[$atom.start, $atom.tree])*
       {
           $lparen = $atom.lparen;
           //XXX: This could be better.
@@ -1955,6 +1869,11 @@ atom_expr
           if ($AWAIT != null) {
               $etype = new Await($AWAIT, $etype);
           }
+      }
+    // XXX remove this once await becomes a proper keyword
+    | AWAIT
+      {
+          $etype = new Name($AWAIT, $AWAIT.text, expr_contextType.Load);
       }
     ;
 
@@ -2011,9 +1930,9 @@ atom
        {
            etype = new NameConstant($NAME_CONSTANT.tree);
        }
-     | name_or_print
+     | NAME
        {
-           etype = new Name($name_or_print.start, $name_or_print.text, $expr::ctype);
+           etype = new Name($NAME, $NAME.text, $expr::ctype);
        }
      | INT
        {
@@ -2477,7 +2396,6 @@ LAMBDA    : 'lambda' ;
 NONLOCAL  : 'nonlocal' ;
 ORELSE    : 'else' ;
 PASS      : 'pass'  ;
-PRINT     : 'print' ;
 RAISE     : 'raise' ;
 RETURN    : 'return' ;
 TRY       : 'try' ;

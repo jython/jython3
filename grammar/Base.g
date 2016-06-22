@@ -210,7 +210,6 @@ attr
     | OR
     | ORELSE
     | PASS
-    | PRINT
     | RAISE
     | RETURN
     | TRY
@@ -341,33 +340,6 @@ augassign
     | RIGHTSHIFTEQUAL
     | DOUBLESTAREQUAL
     | DOUBLESLASHEQUAL
-    ;
-
-//print_stmt: 'print' ( [ test (',' test)* [','] ] |
-//                      '>>' test [ (',' test)+ [','] ] )
-print_stmt
-    : PRINT
-      (printlist
-      | RIGHTSHIFT printlist2
-      |
-      )
-      ;
-
-//not in CPython's Grammar file
-printlist
-    : (test COMMA) =>
-       test (options {k=2;}: COMMA test)*
-         (COMMA)?
-    | test
-    ;
-
-//XXX: would be nice if printlist and printlist2 could be merged.
-//not in CPython's Grammar file
-printlist2
-    : (test COMMA test]) =>
-       test (options {k=2;}: COMMA test)*
-         (COMMA)?
-    | test
     ;
 
 //del_stmt: 'del' exprlist
@@ -895,7 +867,6 @@ IS        : 'is' ;
 LAMBDA    : 'lambda' ;
 ORELSE    : 'else' ;
 PASS      : 'pass'  ;
-PRINT     : 'print' ;
 RAISE     : 'raise' ;
 RETURN    : 'return' ;
 TRY       : 'try' ;
