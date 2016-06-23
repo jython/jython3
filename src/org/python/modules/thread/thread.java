@@ -10,6 +10,7 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyType;
 import org.python.core.PyTuple;
+import org.python.core.PyUnicode;
 
 public class thread implements ClassDictInit {
 
@@ -24,8 +25,12 @@ public class thread implements ClassDictInit {
     );
 
     public static void classDictInit(PyObject dict) {
+        dict.__setitem__("__name__", new PyUnicode("_thread"));
         dict.__setitem__("LockType", PyType.fromClass(PyLock.class));
         dict.__setitem__("_local", PyLocal.TYPE);
+
+        // hide from Python
+        dict.__setitem__("classDictInit", null);
         dict.__setitem__("interruptAllThreads", null);
     }
 
