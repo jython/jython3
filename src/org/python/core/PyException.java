@@ -79,9 +79,10 @@ public class PyException extends RuntimeException implements Traverseproc
             }
         }
 
-        this.value = value;
         if (value == null) {
             this.value = Py.None;
+        } else {
+            this.value = value;
         }
     }
 

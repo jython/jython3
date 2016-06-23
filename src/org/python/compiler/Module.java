@@ -314,20 +314,20 @@ class PyCodeConstant extends Constant implements ClassConstants, Opcodes {
         jy_npurecell = scope.jy_npurecell;
 
         if (CodeCompiler.checkOptimizeGlobals(fast_locals, scope)) {
-            _moreflags |= org.python.core.CodeFlag.CO_OPTIMIZED.flag;
+            _moreflags |= CodeFlag.CO_OPTIMIZED.flag;
         }
-        if (scope.generator) {
-            _moreflags |= org.python.core.CodeFlag.CO_GENERATOR.flag;
-        }
+
         if (scope.async) {
             _moreflags |= CodeFlag.CO_COROUTINE.flag;
+        } else if (scope.generator) {
+            _moreflags |= CodeFlag.CO_GENERATOR.flag;
         }
         if (cflags != null) {
             if (cflags.isFlagSet(CodeFlag.CO_GENERATOR_ALLOWED)) {
-                _moreflags |= org.python.core.CodeFlag.CO_GENERATOR_ALLOWED.flag;
+                _moreflags |= CodeFlag.CO_GENERATOR_ALLOWED.flag;
             }
             if (cflags.isFlagSet(CodeFlag.CO_FUTURE_DIVISION)) {
-                _moreflags |= org.python.core.CodeFlag.CO_FUTURE_DIVISION.flag;
+                _moreflags |= CodeFlag.CO_FUTURE_DIVISION.flag;
             }
         }
         moreflags = _moreflags;

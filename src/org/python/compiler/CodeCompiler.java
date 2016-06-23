@@ -957,29 +957,19 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         int tmp = 0;
         if (node.getInternalValue() != null) {
             visit(node.getInternalValue());
-            if (my_scope.generator) { //&& !(node instanceof LambdaSyntheticReturn)) {
-                code.invokestatic(p(Py.class), "StopIteration", sig(PyException.class, PyObject.class));
-                code.athrow();
-            } else {
-                tmp = code.getReturnLocal();
-                code.astore(tmp);
-            }
-        } else if (my_scope.generator) {
-            code.invokestatic(p(Py.class), "StopIteration", sig(PyException.class));
-            code.athrow();
+            tmp = code.getReturnLocal();
+            code.astore(tmp);
         }
-        if (!my_scope.generator) {
-            doFinallysDownTo(0);
+        doFinallysDownTo(0);
 
-            setLastI(-1);
+        setLastI(-1);
 
-            if (node.getInternalValue() != null) {
-                code.aload(tmp);
-            } else {
-                getNone();
-            }
-            code.areturn();
+        if (node.getInternalValue() != null) {
+            code.aload(tmp);
+        } else {
+            getNone();
         }
+        code.areturn();
         return Exit;
     }
 

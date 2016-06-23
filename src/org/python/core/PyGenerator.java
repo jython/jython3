@@ -263,19 +263,26 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
             result = gi_frame.f_code.call(state, gi_frame, closure);
         } catch (PyException pye) {
             gi_frame = null;
+            if (this instanceof PyCoroutine && pye.match(Py.StopIteration)) {
+//                PyException stop = pye;
+                pye = Py.RuntimeError("coroutine raised StopIteration"); // PEP-479
+                pye.normalize();
+//                pye.context = (PyBaseException) stop.value;
+            }
             throw pye;
         } finally {
             gi_running = false;
         }
+
         if (result == null && gi_frame.f_yieldfrom != null) {
             gi_frame.f_yieldfrom = null;
             gi_frame.f_lasti++;
             return gen_send_ex(state, value);
         }
 
-        if (result == Py.None && gi_frame.f_lasti == -1) {
+        if (gi_frame.f_lasti == -1) {
             gi_frame = null;
-            throw Py.StopIteration();
+            throw Py.StopIteration(result);
         }
         return result;
     }
