@@ -191,7 +191,6 @@ class Styler extends DefaultNodeVisitor {
                 case PythonLexer.OR:
                 case PythonLexer.ORELSE:
                 case PythonLexer.PASS:
-                case PythonLexer.PRINT:
                 case PythonLexer.RAISE:
                 case PythonLexer.RETURN:
                 case PythonLexer.TRY:

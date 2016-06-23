@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -354,20 +355,25 @@ public class imp {
 
     public static byte[] compileSource(String name, InputStream fp, String filename, long mtime) {
         ByteArrayOutputStream ofp = new ByteArrayOutputStream();
+        ParserFacade.ExpectedEncodingBufferedReader bufReader = null;
         try {
             if (filename == null) {
                 filename = UNKNOWN_SOURCEFILE;
             }
             org.python.antlr.base.mod node;
-            try {
-                node = ParserFacade.parse(fp, CompileMode.exec, filename, new CompilerFlags());
-            } finally {
-                fp.close();
-            }
+            CompilerFlags cflags = new CompilerFlags();
+            bufReader = ParserFacade.prepBufReader(fp, cflags, filename, false);
+            node = ParserFacade.parseOnly(bufReader, CompileMode.exec, filename, cflags);
             Module.compile(node, ofp, name + "$py", filename, true, false, null, mtime);
             return ofp.toByteArray();
         } catch (Throwable t) {
-            throw ParserFacade.fixParseError(null, t, filename);
+            throw ParserFacade.fixParseError(bufReader, t, filename);
+        } finally {
+            try {
+                bufReader.close();
+            } catch (IOException e) {
+                // ignore
+            }
         }
     }
 

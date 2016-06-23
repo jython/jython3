@@ -2,6 +2,7 @@
 
 package org.python.compiler;
 
+import org.python.antlr.ParseException;
 import org.python.antlr.Visitor;
 import org.python.antlr.PythonTree;
 import org.python.antlr.ast.*;
@@ -68,11 +69,7 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
     }
 
     public void parse(PythonTree node) throws Exception {
-        try {
-            visit(node);
-        } catch (Throwable t) {
-            throw ParserFacade.fixParseError(null, t, code_compiler.getFilename());
-        }
+        visit(node);
     }
 
     @Override
@@ -140,10 +137,17 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         }
 
         beginScope(name, FUNCSCOPE, node, ac);
-        cur.async = node instanceof AsyncFunctionDef;
+        if (node instanceof AsyncFunctionDef) {
+            cur.async = true;
+            cur.defineAsGenerator();
+        }
         int n = ac.names.size();
         for (int i = 0; i < n; i++) {
-            cur.addParam(ac.names.get(i));
+            String curName = ac.names.get(i);
+            if (cur.async && curName.equals("await")) {
+                throw new ParseException("invalid syntax", node);
+            }
+            cur.addParam(curName);
         }
         for (int i = 0; i < ac.init_code.size(); i++) {
             visit(ac.init_code.get(i));
@@ -308,6 +312,8 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
     @Override
     public Object visitName(Name node) throws Exception {
         String name = node.getInternalId();
+        if (cur.async && name.equals("await"))
+            throw new ParseException("invalid syntax", node);
         if (node.getInternalCtx() == expr_contextType.Load && name.equals("super")) {
             cur.addUsed("__class__");
         }
@@ -349,13 +355,22 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
 
     @Override
     public Object visitAwait(Await node) throws Exception {
-        cur.defineAsGenerator();
+        if (!cur.isFunction()) {
+            throw new ParseException("'await' outside function", node);
+        } else if (cur.comprehension) {
+            throw new ParseException("'await' expressions in comprehensions are not supported", node);
+        } else if (!cur.async) {
+            throw new ParseException("invalid syntax", node);
+        }
         traverse(node);
         return null;
     }
 
     @Override
     public Object visitYieldFrom(YieldFrom node) throws Exception {
+        if (cur.async) {
+            throw new ParseException("'yield from' inside async function", node);
+        }
         cur.defineAsGenerator();
         traverse(node);
         return null;
@@ -363,6 +378,9 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
 
     @Override
     public Object visitYield(Yield node) throws Exception {
+        if (cur.async) {
+            throw new ParseException("'yield' inside async function", node);
+        }
         cur.defineAsGenerator();
         cur.yield_count++;
         traverse(node);
@@ -398,6 +416,7 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         List<expr> defaults = new ArrayList<>();
         ac.visitArgs(new arguments(node, args, vararg, kwonlyargs, kw_defaults, kwarg, defaults));
         beginScope(tmp, FUNCSCOPE, node, ac);
+        cur.defineAsComprehension();
         cur.addParam(bound_exp);
         cur.markFromParam();
 
@@ -457,5 +476,4 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         }
         return null;
     }
-
 }

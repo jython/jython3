@@ -1,6 +1,21 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.core;
 
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.python.antlr.BaseParser;
+import org.python.antlr.NoCloseReaderStream;
+import org.python.antlr.ParseException;
+import org.python.antlr.PythonPartialLexer;
+import org.python.antlr.PythonPartialParser;
+import org.python.antlr.PythonTokenSource;
+import org.python.antlr.PythonTree;
+import org.python.antlr.base.mod;
+import org.python.core.io.StreamIO;
+import org.python.core.io.TextIOInputStream;
+import org.python.core.io.UniversalIOWrapper;
+import org.python.core.util.StringUtil;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -18,28 +33,12 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.antlr.runtime.CharStream;
-import org.antlr.runtime.CommonTokenStream;
-import org.python.antlr.BaseParser;
-import org.python.antlr.NoCloseReaderStream;
-import org.python.antlr.ParseException;
-import org.python.antlr.PythonPartialLexer;
-import org.python.antlr.PythonPartialParser;
-import org.python.antlr.PythonTokenSource;
-import org.python.antlr.PythonTree;
-import org.python.antlr.base.mod;
-import org.python.core.io.StreamIO;
-import org.python.core.io.TextIOInputStream;
-import org.python.core.io.UniversalIOWrapper;
-import org.python.core.util.StringUtil;
-
 /**
  * Facade for the classes in the org.python.antlr package.
  */
 public class ParserFacade {
 
     private static int MARK_LIMIT = 100000;
-
     private ParserFacade() {}
 
     private static String getLine(ExpectedEncodingBufferedReader reader, int line) {
@@ -62,6 +61,7 @@ public class ParserFacade {
             }
             return text + "\n";
         } catch (IOException ioe) {
+            System.out.println("foo");
         }
         return text;
     }
@@ -74,18 +74,20 @@ public class ParserFacade {
             try {
                 reader.reset();
             } catch (IOException e) {
-                reader = null;
+//                reader = null;
             }
         }
 
         if (t instanceof ParseException) {
             ParseException e = (ParseException)t;
             PythonTree node = (PythonTree)e.node;
-            int line=e.line;
-            int col=e.charPositionInLine;
+            int line, col;
             if (node != null) {
                 line = node.getLine();
                 col = node.getCharPositionInLine();
+            } else {
+                line = e.line;
+                col = e.charPositionInLine;
             }
             String text= getLine(reader, line);
             String msg = e.getMessage();
@@ -124,8 +126,7 @@ public class ParserFacade {
             // first, try parsing as an expression
             return parse(bufReader, CompileMode.eval, filename, cflags);
         } catch (Throwable t) {
-            if (bufReader == null)
-             {
+            if (bufReader == null) {
                 throw Py.JavaError(t); // can't do any more
             }
             try {
@@ -139,13 +140,15 @@ public class ParserFacade {
     }
 
     /**
-     * Internal parser entry point.
+     * Parser entry point.
      *
      * Users of this method should call fixParseError on any Throwable thrown
      * from it, to translate ParserExceptions into PySyntaxErrors or
      * PyIndentationErrors.
+     *
+     * Also the caller is responsible for closing the reader
      */
-    private static mod parse(ExpectedEncodingBufferedReader reader,
+    public static mod parseOnly(ExpectedEncodingBufferedReader reader,
                                 CompileMode kind,
                                 String filename,
                                 CompilerFlags cflags) throws Throwable {
@@ -168,7 +171,7 @@ public class ParserFacade {
         ExpectedEncodingBufferedReader bufReader = null;
         try {
             bufReader = prepBufReader(reader, cflags, filename);
-            return parse(bufReader, kind, filename, cflags );
+            return parseOnly(bufReader, kind, filename, cflags );
         } catch (Throwable t) {
             throw fixParseError(bufReader, t, filename);
         } finally {
@@ -185,7 +188,7 @@ public class ParserFacade {
             // prepBufReader takes care of encoding detection and universal
             // newlines:
             bufReader = prepBufReader(stream, cflags, filename, false);
-            return parse(bufReader, kind, filename, cflags );
+            return parseOnly(bufReader, kind, filename, cflags );
         } catch (Throwable t) {
             throw fixParseError(bufReader, t, filename);
         } finally {
@@ -200,7 +203,7 @@ public class ParserFacade {
         ExpectedEncodingBufferedReader bufReader = null;
         try {
             bufReader = prepBufReader(string, cflags, filename);
-            return parse(bufReader, kind, filename, cflags);
+            return parseOnly(bufReader, kind, filename, cflags);
         } catch (Throwable t) {
             throw fixParseError(bufReader, t, filename);
         } finally {
@@ -217,7 +220,7 @@ public class ParserFacade {
         ExpectedEncodingBufferedReader reader = null;
         try {
             reader = prepBufReader(string, cflags, filename);
-            return parse(reader, kind, filename, cflags);
+            return parseOnly(reader, kind, filename, cflags);
         } catch (Throwable t) {
             PyException p = fixParseError(reader, t, filename);
             if (reader != null && validPartialSentence(reader, kind, filename)) {
@@ -255,7 +258,7 @@ public class ParserFacade {
         return true;
     }
 
-    private static class ExpectedEncodingBufferedReader extends BufferedReader {
+    public static class ExpectedEncodingBufferedReader extends BufferedReader {
 
         /**
          * The encoding from the source file, or null if none was specified and UTF-8 is being used.
@@ -285,10 +288,10 @@ public class ParserFacade {
         return new ExpectedEncodingBufferedReader(bufferedReader, null);
     }
 
-    private static ExpectedEncodingBufferedReader prepBufReader(InputStream input,
-                                                                CompilerFlags cflags,
-                                                                String filename,
-                                                                boolean fromString)
+    static ExpectedEncodingBufferedReader prepBufReader(InputStream input,
+                                                        CompilerFlags cflags,
+                                                        String filename,
+                                                        boolean fromString)
         throws IOException {
         return prepBufReader(input, cflags, filename, fromString, true);
     }

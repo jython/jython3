@@ -673,11 +673,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
     @Override
     public Object visitAwait(Await node) throws Exception {
-       setline(node);
-        if (!fast_locals) {
-            throw new ParseException("'await' outside function", node);
-        }
-
+        setline(node);
         int stackState = saveStack();
         visit(node.getInternalValue());
 
@@ -1537,7 +1533,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             code.label(else_end);
         }
 
-        popException();
+//        popException();
         code.freeFinallyLocal(exc);
         handler.addExceptionHandlers(handler_start);
         return null;
@@ -3262,7 +3258,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.athrow();
 
         code.label(label_catch_end);
-        popException();
+//        popException();
         code.label(label_end);
         code.freeLocal(mgr_tmp);
 
