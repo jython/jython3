@@ -683,12 +683,11 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         loadFrame();
         code.swap();
         code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
+        saveLocals();
 
         Label restart = new Label();
         yields.addElement(restart);
         code.label(restart);
-        restoreLocals();
-        restoreStack(stackState);
 
         loadFrame();
         code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyFrame.class));
