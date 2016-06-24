@@ -221,7 +221,7 @@ public class _codecs {
     }
 
     private static PyTuple encode_tuple(String s, int len) {
-        return new PyTuple(new PyUnicode(s), Py.newLong(len));
+        return new PyTuple(new PyString(s), Py.newLong(len));
     }
 
     /* --- UTF-8 Codec --------------------------------------------------- */
