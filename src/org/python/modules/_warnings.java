@@ -3,6 +3,7 @@ package org.python.modules;
 import org.python.core.ArgParser;
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
+import org.python.core.PyDictionary;
 import org.python.core.PyObject;
 import org.python.core.PyUnicode;
 
@@ -16,6 +17,7 @@ public class _warnings implements ClassDictInit {
     public static void classDictInit(PyObject dict) {
         dict.__setitem__("__name__", new PyUnicode("_warnings"));
         dict.__setitem__("__doc__", __doc__);
+        dict.__setitem__("_onceregistry", new PyDictionary());
 
         // Hide from Python
         dict.__setitem__("classDictInit", null);

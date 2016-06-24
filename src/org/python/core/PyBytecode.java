@@ -675,7 +675,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                         break;
 
                     case Opcode.GET_AWAITABLE:
-                        Py.getAwaitable(stack.pop());
+                        Py.getAwaitableIter(stack.pop());
                         break;
 
                     case Opcode.LOAD_BUILD_CLASS:

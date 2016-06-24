@@ -679,7 +679,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         yield_count++;
         setLastI(yield_count);
-        code.invokestatic(p(Py.class), "getAwaitable", sig(PyObject.class, PyObject.class));
+        code.invokestatic(p(Py.class), "getAwaitableIter", sig(PyObject.class, PyObject.class));
         loadFrame();
         code.swap();
         code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
@@ -730,7 +730,8 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         yield_count++;
         setLastI(yield_count);
-        code.invokestatic(p(Py.class), "getYieldFromIter", sig(PyObject.class, PyObject.class));
+        loadFrame();
+        code.invokestatic(p(Py.class), "getYieldFromIter", sig(PyObject.class, PyObject.class, PyFrame.class));
         loadFrame();
         code.swap();
         code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
@@ -2990,7 +2991,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         int value_tmp = code.getLocal(p(PyObject.class));
         yield_count++;
         setLastI(yield_count);
-        code.invokestatic(p(Py.class), "getAwaitable", sig(PyObject.class, PyObject.class));
+        code.invokestatic(p(Py.class), "getAwaitableIter", sig(PyObject.class, PyObject.class));
         loadFrame();
         code.swap();
         code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
@@ -3036,7 +3037,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
                         "__aexit__", sig(Boolean.TYPE, ThreadState.class, PyException.class), true);
                 yield_count++;
                 setLastI(yield_count);
-                code.invokestatic(p(Py.class), "getAwaitable", sig(PyObject.class, PyObject.class));
+                code.invokestatic(p(Py.class), "getAwaitableIter", sig(PyObject.class, PyObject.class));
                 loadFrame();
                 code.swap();
                 code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
@@ -3104,7 +3105,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         yield_count++;
         setLastI(yield_count);
-        code.invokestatic(p(Py.class), "getAwaitable", sig(PyObject.class, PyObject.class));
+        code.invokestatic(p(Py.class), "getAwaitableIter", sig(PyObject.class, PyObject.class));
         loadFrame();
         code.swap();
         code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));

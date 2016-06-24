@@ -48,7 +48,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         }
 
         if (gi_frame.f_lasti == 0 && value != Py.None && value != null) {
-            throw Py.TypeError("can't send non-None value to a just-started generator");
+            throw Py.TypeError("can't send non-None value to a just-started " + tp());
         }
         return gen_send_ex(Py.getThreadState(), value);
     }
@@ -154,8 +154,8 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
             }
             throw e;
         }
-        if (retval != null && retval != Py.None) {
-            throw Py.RuntimeError("generator ignored GeneratorExit");
+        if (retval != null) {
+            throw Py.RuntimeError(tp() + " ignored GeneratorExit");
         }
         // not reachable
         return null;
@@ -190,8 +190,14 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
     
     @Override
     public void __del_builtin__() {
-        if (gi_frame == null || gi_frame.f_lasti == -1) {
+        if (gi_frame  == null || gi_frame.f_lasti == -1) {
             return;
+        }
+
+        // If `gen` is a coroutine, and if it was never awaited on,
+        // issue a RuntimeWarning.
+        if (this instanceof PyCoroutine && gi_frame.previousException == null && gi_frame.f_lasti == 0) {
+            Py.RuntimeWarning(String.format("coroutine '%.50s' was never awaited", getQualname()));
         }
         try {
             close();
@@ -241,7 +247,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
 
     private PyObject gen_send_ex(ThreadState state, Object value) {
         if (gi_running) {
-            throw Py.ValueError("generator already executing");
+            throw Py.ValueError(tp() + " already executing");
         }
         if (gi_frame == null) {
             throw Py.StopIteration();
@@ -328,5 +334,9 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
     public boolean refersDirectlyTo(PyObject ob) {
         return ob != null && (ob == gi_frame || ob == gi_code
             || ob == closure || super.refersDirectlyTo(ob));
+    }
+
+    private String tp() {
+        return this instanceof PyCoroutine ? "coroutine" : "generator";
     }
 }
