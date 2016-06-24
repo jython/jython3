@@ -125,6 +125,9 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
     final PyObject generator_close() {
         PyException pye = null;
         PyObject retval;
+        if (gi_frame == null) {
+            return Py.None;
+        }
         PyObject yf = gi_frame.f_yieldfrom;
         if (yf != null) {
             gi_running = true;
