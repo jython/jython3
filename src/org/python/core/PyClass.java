@@ -113,7 +113,7 @@ public class PyClass extends PyObject implements Traverseproc {
             return __bases__;
         }
         if (name == "__name__") {
-            return Py.newString(__name__);
+            return Py.newUnicode(__name__);
         }
 
         PyObject result = lookup(name);
