@@ -93,12 +93,15 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
                     gi_running = false;
                 }
             } else {
-                PyObject meth = gi_frame.f_yieldfrom.__findattr__("close");
-                if (meth != null) {
-                    ret = meth.__call__();
-                } else {
-                    gi_frame.f_yieldfrom = null;
+                PyObject meth = gi_frame.f_yieldfrom.__findattr__("throw");
+                if (meth == null) {
                     return raiseException(type, value, tb);
+                }
+                gi_running = true;
+                try {
+                    ret = meth.__call__(type, value, tb);
+                } finally {
+                    gi_running = false;
                 }
             }
             if (ret == null) {
