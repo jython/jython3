@@ -26,7 +26,7 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-/** Python 2.3.3 Grammar
+/** Python 3.5.1 Grammar
  *
  *  Terence Parr and Loring Craymer
  *  February 2004
@@ -250,51 +250,64 @@ decorators
     : decorator+
     ;
 
-//funcdef: [decorators] 'def' NAME parameters ':' suite
-funcdef
-    : decorators? DEF NAME parameters COLON suite
+//decorated: decorators (classdef | funcdef | async_funcdef)
+decorated
+    : decorators (classdef | funcdef | async_funcdef)
     ;
 
-//parameters: '(' [varargslist] ')'
+//async_funcdef: ASYNC funcdef
+async_funcdef
+    : ASYNC funcdef
+    ;
+
+//funcdef: 'def' NAME parameters ['->' test] ':' suite
+funcdef
+    : DEF NAME parameters (ARROW test)? COLON suite
+    ;
+
+//parameters: '(' [typedargslist] ')'
 parameters
     : LPAREN
-      (varargslist
+      (typedargslist
       |
       )
       RPAREN
     ;
 
-//not in CPython's Grammar file
-defparameter
-    : fpdef (ASSIGN test)?
+//typedargslist: (tfpdef ['=' test] (',' tfpdef ['=' test])* [',' [
+//        '*' [tfpdef] (',' tfpdef ['=' test])* [',' ['**' tfpdef [',']]]
+//      | '**' tfpdef [',']]]
+//  | '*' [tfpdef] (',' tfpdef ['=' test])* [',' ['**' tfpdef [',']]]
+//  | '**' tfpdef [','])
+typedargslist
+    :  (tfpdef (ASSIGN test)? (COMMA tfpdef (ASSIGN test)?)*
+       ( COMMA ( STAR tfpdef? (COMMA tfpdef (ASSIGN test)?)* (COMMA (DOUBLESTAR tfpdef COMMA?)?)?
+               | DOUBLESTAR tfpdef COMMA?)?)?
+       | STAR tfpdef? (COMMA tfpdef (ASSIGN test)?)* (COMMA (DOUBLESTAR tfpdef COMMA?)?)?
+       | DOUBLESTAR tfpdef COMMA?)
     ;
 
-//varargslist: ((fpdef ['=' test] ',')*
-//              ('*' NAME [',' '**' NAME] | '**' NAME) |
-//              fpdef ['=' test] (',' fpdef ['=' test])* [','])
+//tfpdef: NAME [':' test]
+tfpdef
+    : NAME (COLON test)? ;
+
+//varargslist: (vfpdef ['=' test] (',' vfpdef ['=' test])* [',' [
+//        '*' [vfpdef] (',' vfpdef ['=' test])* [',' ['**' vfpdef [',']]]
+//      | '**' vfpdef [',']]]
+//  | '*' [vfpdef] (',' vfpdef ['=' test])* [',' ['**' vfpdef [',']]]
+//  | '**' vfpdef [',']
+//)
 varargslist
-    : defparameter (options {greedy=true;}:COMMA defparameter)*
-      (COMMA
-          (STAR NAME (COMMA DOUBLESTAR NAME)?
-          | DOUBLESTAR NAME
-          )?
-      )?
-    | STAR NAME (COMMA DOUBLESTAR NAME)?
-    | DOUBLESTAR NAME
+    :  (vfpdef (ASSIGN test)? (COMMA vfpdef (ASSIGN test)?)*
+       ( COMMA ( STAR vfpdef? (COMMA vfpdef (ASSIGN test)?)* (COMMA (DOUBLESTAR vfpdef COMMA?)?)?
+               | DOUBLESTAR vfpdef COMMA?)?)?
+       | STAR vfpdef? (COMMA vfpdef (ASSIGN test)?)* (COMMA (DOUBLESTAR vfpdef COMMA?)?)?
+       | DOUBLESTAR vfpdef COMMA?)
     ;
 
-//fpdef: NAME | '(' fplist ')'
-fpdef
-    : NAME
-    | (LPAREN fpdef COMMA) => LPAREN fplist RPAREN
-    | LPAREN fplist RPAREN
-    ;
-
-//fplist: fpdef (',' fpdef)* [',']
-fplist
-    : fpdef
-      (options {greedy=true;}:COMMA fpdef)* (COMMA)?
-    ;
+//vfpdef: NAME ;
+vfpdef
+    : NAME ;
 
 //stmt: simple_stmt | compound_stmt
 stmt
@@ -319,6 +332,10 @@ small_stmt : expr_stmt
            | exec_stmt
            | assert_stmt
            ;
+
+//star_expr: '*' expr
+star_expr : STAR expr ;
+
 
 //expr_stmt: testlist (augassign (yield_expr|testlist) |
 //                     ('=' (yield_expr|testlist))*)
@@ -417,10 +434,9 @@ yield_stmt
     : yield_expr
     ;
 
-//raise_stmt: 'raise' [test [',' test [',' test]]]
+//raise_stmt: 'raise' [test ['from' test]]
 raise_stmt
-    : RAISE (test (COMMA test
-        (COMMA test)?)?)?
+    : RAISE (test (FROM test)?)?
     ;
 
 //import_stmt: import_name | import_from
@@ -485,16 +501,22 @@ assert_stmt
     : ASSERT test (COMMA test)?
     ;
 
-//compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | funcdef | classdef
+//compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated | async_stmt
 compound_stmt
     : if_stmt
     | while_stmt
     | for_stmt
     | try_stmt
     | with_stmt
-    | (decorators? DEF) => funcdef
-    | (decorators? CLASS) => classdef
-    | decorators
+    | funcdef
+    | classdef
+    | decorated
+    | async_stmt
+    ;
+
+//async_stmt: ASYNC (funcdef | with_stmt | for_stmt)
+async_stmt
+    : ASYNC (funcdef | with_stmt | for_stmt)
     ;
 
 //if_stmt: 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite]
@@ -534,7 +556,7 @@ for_stmt
 //           'finally' ':' suite))
 try_stmt
     : TRY COLON suite
-      ( except_clause+ (ORELSE COLON suite)? (FINALLY COLON suite)?
+      ( (except_clause COLON suite)+ (ORELSE COLON suite)? (FINALLY COLON suite)?
       | FINALLY COLON suite
       )?
       ;
@@ -549,9 +571,9 @@ with_item
     : test (AS expr)?
     ;
 
-//except_clause: 'except' [test [('as' | ',') test]]
+//except_clause: 'except' [test ['as' NAME]]
 except_clause
-    : EXCEPT (test ((COMMA | AS) test)?)? COLON suite
+    : EXCEPT (test (COMMA NAME)?)?
     ;
 
 //suite: simple_stmt | NEWLINE INDENT stmt+ DEDENT
@@ -702,25 +724,30 @@ factor
     | TRAILBACKSLASH
     ;
 
-//power: atom trailer* ['**' factor]
+//power: atom_expr ['**' factor]
 power
-    : atom (trailer)* (options {greedy=true;}:DOUBLESTAR factor)?
+    : atom_expr (options {greedy=true;}:DOUBLESTAR factor)?
     ;
 
-//atom: ('(' [yield_expr|testlist_gexp] ')' |
-//       '[' [listmaker] ']' |
+//atom_expr: [AWAIT] atom trailer*
+atom_expr
+    : AWAIT? atom trailer*
+    ;
+
+//atom: ('(' [yield_expr|testlist_comp] ')' |
+//       '[' [testlist_comp] ']' |
 //       '{' [dictorsetmaker] '}' |
 //       '`' testlist1 '`' |
 //       NAME | NUMBER | STRING+)
 atom
     : LPAREN
       ( yield_expr
-      | testlist_gexp
+      | testlist_comp
       |
       )
       RPAREN
     | LBRACK
-      (listmaker
+      (testlist_comp
       |
       )
       RBRACK
@@ -736,26 +763,21 @@ atom
      | FLOAT
      | COMPLEX
      | DOT DOT DOT
+     | NAME_CONSTANT
      | (STRING)+
      | TRISTRINGPART
      | STRINGPART TRAILBACKSLASH
      ;
 
-//listmaker: test ( list_for | (',' test)* [','] )
-listmaker
+//testlist_comp: (test|star_expr) ( comp_for | (',' (test|star_expr))* [','] )
+testlist_comp
     : test
-        (list_for
-        | (options {greedy=true;}:COMMA test)*
-        ) (COMMA)?
-    ;
-
-//testlist_gexp: test ( comp_for | (',' test)* [','] )
-testlist_gexp
-    : test
-        ( ((options {k=2;}: COMMA test)* (COMMA)?
-          )
-        | (comp_for
-          )
+        ( (options {k=2;}: COMMA (test | star_expr))* COMMA?
+        | comp_for
+        )
+    | star_expr
+        ( (options {k=2;}: COMMA (test | star_expr))* COMMA?
+        | comp_for
         )
     ;
 
@@ -816,64 +838,40 @@ testlist
     | test
     ;
 
-//dictorsetmaker: ( (test ':' test (comp_for | (',' test ':' test)* [','])) |
-//                  (test (comp_for | (',' test)* [','])) )
+//dictorsetmaker: ( ((test ':' test | '**' expr)
+//                   (comp_for | (',' (test ':' test | '**' expr))* [','])) |
+//                  ((test | star_expr)
+//                   (comp_for | (',' (test | star_expr))* [','])) )
 dictorsetmaker
-    : test
-         (
-             (COLON test
-               ( comp_for
-               | (options {k=2;}:COMMA test COLON test)*
-               )
-             |(COMMA test)*
-             )
-             (COMMA)?
-         | comp_for
-         )
+    : (test COLON | DOUBLESTAR) => (test COLON test | DOUBLESTAR expr)
+         (comp_for
+         | (COMMA (test COLON test | DOUBLESTAR expr))* (COMMA)?)
+    | (test | star_expr)
+         (comp_for
+         | (COMMA (test | star_expr))* (COMMA)?)
     ;
 
-//classdef: 'class' NAME ['(' [testlist] ')'] ':' suite
+//classdef: 'class' NAME ['(' [arglist] ')'] ':' suite
 classdef
-    : decorators? CLASS NAME (LPAREN testlist? RPAREN)? COLON suite
+    : CLASS NAME (LPAREN arglist? RPAREN)? COLON suite
     ;
 
-//arglist: (argument ',')* (argument [',']
-//                         |'*' test (',' argument)* [',' '**' test]
-//                         |'**' test)
-arglist
-    : argument (COMMA argument)*
-          (COMMA
-              ( STAR test (COMMA argument)* (COMMA DOUBLESTAR test)?
-              | DOUBLESTAR test
-              )?
-          )?
-    | STAR test (COMMA argument)* (COMMA DOUBLESTAR test)?
-    | DOUBLESTAR test
-    ;
+//arglist: argument (',' argument)*  [',']
+arglist : argument (COMMA argument)* COMMA? ;
 
-//argument: test [comp_for] | test '=' test  # Really [keyword '='] test
+//argument: ( test [comp_for] |
+//            test '=' test |
+//            '**' test |
+//            '*' test )
 argument
     : test
-        ((ASSIGN test)
-        | comp_for
-        |
-        )
-    ;
-
-//list_iter: list_for | list_if
-list_iter
-    : list_for
-    | list_if
-    ;
-
-//list_for: 'for' exprlist 'in' testlist_safe [list_iter]
-list_for
-    : FOR exprlist IN testlist (list_iter)?
-    ;
-
-//list_if: 'if' test [list_iter]
-list_if
-    : IF test (list_iter)?
+      (comp_for
+      |ASSIGN test
+      |
+      )
+    | STAR
+      ( STAR test
+      | test)
     ;
 
 //comp_iter: comp_for | comp_if
@@ -899,6 +897,8 @@ yield_expr
 
 AS        : 'as' ;
 ASSERT    : 'assert' ;
+ASYNC     : 'async' ;
+AWAIT     : 'await' ;
 BREAK     : 'break' ;
 CLASS     : 'class' ;
 CONTINUE  : 'continue' ;
@@ -906,7 +906,7 @@ DEF       : 'def' ;
 DELETE    : 'del' ;
 ELIF      : 'elif' ;
 EXCEPT    : 'except' ;
-EXEC      : 'exec' ;
+EXEC      : 'exec1' ;
 FINALLY   : 'finally' ;
 FROM      : 'from' ;
 FOR       : 'for' ;
@@ -1012,6 +1012,8 @@ DOUBLESTAREQUAL    : '**=' ;
 
 DOUBLESLASHEQUAL    : '//=' ;
 
+ARROW : '->' ;
+
 DOT : '.' ;
 
 AT : '@' ;
@@ -1051,6 +1053,8 @@ COMPLEX
 
 fragment
 DIGITS : ( '0' .. '9' )+ ;
+
+NAME_CONSTANT: 'None' | 'True' | 'False' ;
 
 NAME:    ( 'a' .. 'z' | 'A' .. 'Z' | '_')
         ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*

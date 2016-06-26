@@ -16,7 +16,7 @@ This was originally copied from the sandbox of the CPython CVS repository.
 Thanks to Tim Peters for suggesting using it.
 """
 
-from __future__ import division
+
 import time as _time
 import math as _math
 import struct as _struct
@@ -321,7 +321,7 @@ def _check_int_field(value):
         except AttributeError:
             pass
         else:
-            if isinstance(value, (int, long)):
+            if isinstance(value, (int, int)):
                 return value
             raise TypeError('__int__ method should return an integer')
         raise TypeError('an integer is required')
@@ -511,7 +511,7 @@ class timedelta(object):
             d = days
         assert isinstance(daysecondsfrac, float)
         assert abs(daysecondsfrac) <= 1.0
-        assert isinstance(d, (int, long))
+        assert isinstance(d, (int, int))
         assert abs(s) <= 24 * 3600
         # days isn't referenced again before redefinition
 
@@ -527,7 +527,7 @@ class timedelta(object):
         assert isinstance(secondsfrac, float)
         assert abs(secondsfrac) <= 2.0
 
-        assert isinstance(seconds, (int, long))
+        assert isinstance(seconds, (int, int))
         days, seconds = divmod(seconds, 24*3600)
         d += days
         s += int(seconds)    # can't overflow
@@ -564,7 +564,7 @@ class timedelta(object):
         days, s = divmod(s, 24*3600)
         d += days
 
-        assert isinstance(d, (int, long))
+        assert isinstance(d, (int, int))
         assert isinstance(s, int) and 0 <= s < 24*3600
         assert isinstance(us, int) and 0 <= us < 1000000
 
@@ -665,7 +665,7 @@ class timedelta(object):
             return self
 
     def __mul__(self, other):
-        if isinstance(other, (int, long)):
+        if isinstance(other, (int, int)):
             # for CPython compatibility, we cannot use
             # our __class__ here, but need a real timedelta
             return timedelta(self._days * other,
@@ -680,7 +680,7 @@ class timedelta(object):
                 self._microseconds)
 
     def __div__(self, other):
-        if not isinstance(other, (int, long)):
+        if not isinstance(other, (int, int)):
             return NotImplemented
         usec = self._to_microseconds()
         return timedelta(0, 0, usec // other)
@@ -734,7 +734,7 @@ class timedelta(object):
             self._hashcode = hash(self._getstate())
         return self._hashcode
 
-    def __nonzero__(self):
+    def __bool__(self):
         return (self._days != 0 or
                 self._seconds != 0 or
                 self._microseconds != 0)
@@ -864,7 +864,7 @@ class date(object):
         return _wrap_strftime(self, fmt, self.timetuple())
 
     def __format__(self, fmt):
-        if not isinstance(fmt, (str, unicode)):
+        if not isinstance(fmt, (str, str)):
             raise ValueError("__format__ expects str or unicode, not %s" %
                              fmt.__class__.__name__)
         if len(fmt) != 0:
@@ -1375,7 +1375,7 @@ class time(object):
         return _wrap_strftime(self, fmt, timetuple)
 
     def __format__(self, fmt):
-        if not isinstance(fmt, (str, unicode)):
+        if not isinstance(fmt, (str, str)):
             raise ValueError("__format__ expects str or unicode, not %s" %
                              fmt.__class__.__name__)
         if len(fmt) != 0:
@@ -1456,7 +1456,7 @@ class time(object):
             tzinfo = self.tzinfo
         return time(hour, minute, second, microsecond, tzinfo)
 
-    def __nonzero__(self):
+    def __bool__(self):
         if self.second or self.microsecond:
             return True
         offset = self._utcoffset() or 0

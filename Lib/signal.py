@@ -30,11 +30,12 @@
 """
 
 from java.lang import SecurityException
+import collections
 try:
     import sun.misc.Signal
 except ImportError:
     raise ImportError("signal module requires sun.misc.Signal, which is not available on this platform")
-except SecurityException, ex:
+except SecurityException as ex:
     raise ImportError("signal module requires sun.misc.Signal, which is not allowed by your security profile: %s" % ex)
 
 import os
@@ -103,7 +104,7 @@ def _init_signals():
     return signals
 
 _signals = _init_signals()
-NSIG = max(_signals.iterkeys()) + 1
+NSIG = max(_signals.keys()) + 1
 SIG_DFL = sun.misc.SignalHandler.SIG_DFL # default system handler
 SIG_IGN = sun.misc.SignalHandler.SIG_IGN # handler to ignore a signal
 
@@ -135,7 +136,7 @@ def signal(sig, action):
     except KeyError:
         raise ValueError("signal number out of range")
 
-    if callable(action):
+    if isinstance(action, collections.Callable):
         prev = _register_signal(signal, JythonSignalHandler(action))
     elif action in (SIG_IGN, SIG_DFL) or isinstance(action, sun.misc.SignalHandler):
         prev = _register_signal(signal, action)
@@ -151,7 +152,7 @@ def signal(sig, action):
 def _register_signal(signal, action):
     try:
         return sun.misc.Signal.handle(signal, action)
-    except RuntimeException, err:
+    except RuntimeException as err:
         raise ValueError(err.getMessage())
 
 
@@ -235,7 +236,7 @@ def alarm(time):
     def raise_alarm():
         try:
             sun.misc.Signal.raise(_signals[SIGALRM])
-        except RuntimeException, err:
+        except RuntimeException as err:
             raise ValueError(err.getMessage())
 
     if time > 0:

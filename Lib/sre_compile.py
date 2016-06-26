@@ -19,7 +19,7 @@ assert _sre.MAGIC == MAGIC, "SRE module mismatch"
 if _sre.CODESIZE == 2:
     MAXCODE = 65535
 else:
-    MAXCODE = 0xFFFFFFFFL
+    MAXCODE = 0xFFFFFFFF
 
 def _identityfunction(x):
     return x
@@ -30,10 +30,10 @@ def set(seq):
         s[elem] = 1
     return s
 
-_LITERAL_CODES = set([LITERAL, NOT_LITERAL])
-_REPEATING_CODES = set([REPEAT, MIN_REPEAT, MAX_REPEAT])
-_SUCCESS_CODES = set([SUCCESS, FAILURE])
-_ASSERT_CODES = set([ASSERT, ASSERT_NOT])
+_LITERAL_CODES = {LITERAL, NOT_LITERAL}
+_REPEATING_CODES = {REPEAT, MIN_REPEAT, MAX_REPEAT}
+_SUCCESS_CODES = {SUCCESS, FAILURE}
+_ASSERT_CODES = {ASSERT, ASSERT_NOT}
 
 def _compile(code, pattern, flags):
     # internal: compile a (sub)pattern
@@ -69,7 +69,7 @@ def _compile(code, pattern, flags):
                 emit(OPCODES[ANY])
         elif op in REPEATING_CODES:
             if flags & SRE_FLAG_TEMPLATE:
-                raise error, "internal: unsupported template operator"
+                raise error("internal: unsupported template operator")
                 emit(OPCODES[REPEAT])
                 skip = _len(code); emit(0)
                 emit(av[0])
@@ -118,7 +118,7 @@ def _compile(code, pattern, flags):
             else:
                 lo, hi = av[1].getwidth()
                 if lo != hi:
-                    raise error, "look-behind requires fixed-width pattern"
+                    raise error("look-behind requires fixed-width pattern")
                 emit(lo) # look behind
             _compile(code, av[1], flags)
             emit(OPCODES[SUCCESS])
@@ -179,7 +179,7 @@ def _compile(code, pattern, flags):
             else:
                 code[skipyes] = _len(code) - skipyes + 1
         else:
-            raise ValueError, ("unsupported operand type", op)
+            raise ValueError("unsupported operand type", op)
 
 def _compile_charset(charset, flags, code, fixup=None):
     # compile charset subprogram
@@ -207,7 +207,7 @@ def _compile_charset(charset, flags, code, fixup=None):
             else:
                 emit(CHCODES[av])
         else:
-            raise error, "internal: unsupported set operator"
+            raise error("internal: unsupported set operator")
     emit(OPCODES[FAILURE])
 
 def _optimize_charset(charset, fixup):
@@ -267,7 +267,7 @@ def _mk_bitmap(bits):
     if _sre.CODESIZE == 2:
         start = (1, 0)
     else:
-        start = (1L, 0L)
+        start = (1, 0)
     m, v = start
     for c in bits:
         if c:
@@ -366,7 +366,7 @@ def _simple(av):
     # check if av is a "simple" operator
     lo, hi = av[2].getwidth()
     if lo == 0 and hi == MAXREPEAT:
-        raise error, "nothing to repeat"
+        raise error("nothing to repeat")
     return lo == hi == 1 and av[2][0][0] != SUBPATTERN
 
 def _compile_info(code, pattern, flags):
@@ -475,12 +475,7 @@ def _compile_info(code, pattern, flags):
         _compile_charset(charset, flags, code)
     code[skip] = len(code) - skip
 
-try:
-    unicode
-except NameError:
-    STRING_TYPES = (type(""),)
-else:
-    STRING_TYPES = (type(""), type(unicode("")))
+STRING_TYPES = (type(b""), type(""))
 
 def isstring(obj):
     for tp in STRING_TYPES:
@@ -526,7 +521,7 @@ def compile(p, flags=0):
     # map in either direction
     groupindex = p.pattern.groupdict
     indexgroup = [None] * p.pattern.groups
-    for k, i in groupindex.items():
+    for k, i in list(groupindex.items()):
         indexgroup[i] = k
 
     return _sre.compile(

@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
-import test.test_support, unittest
-from test.test_support import TESTFN, unlink
+import test.support, unittest
+from test.support import TESTFN, unlink
 
 import sys, UserDict
 
 from codecs import BOM_UTF8
+import collections
 
 class BuiltinTest(unittest.TestCase):
 
     def test_in_sys_modules(self):
-        self.assert_("__builtin__" in sys.modules,
+        self.assertTrue("__builtin__" in sys.modules,
             "__builtin__ not found in sys.modules")
 
     def test_hasattr_swallows_exceptions(self):
         class Foo(object):
             def __getattr__(self, name):
                 raise TypeError()
-        self.assert_(not hasattr(Foo(), 'bar'))
+        self.assertTrue(not hasattr(Foo(), 'bar'))
 
     def test_getattr_custom_AttributeError(self):
         class Foo(object):
@@ -24,7 +25,7 @@ class BuiltinTest(unittest.TestCase):
                 raise AttributeError('baz')
         try:
             getattr(Foo(), 'bar')
-        except AttributeError, ae:
+        except AttributeError as ae:
             self.assertEqual(str(ae), 'baz')
         else:
             self.assertTrue(False)
@@ -38,7 +39,7 @@ class BuiltinTest(unittest.TestCase):
 
     def test_numeric_cmp(self):
         # http://bugs.jython.org/issue1449
-        for numeric in 1, 2L, 3.0, 4j:
+        for numeric in 1, 2, 3.0, 4j:
             self.assertTrue(numeric < Ellipsis)
             self.assertTrue(Ellipsis > numeric)
 
@@ -46,7 +47,7 @@ class BuiltinTest(unittest.TestCase):
         'fix for http://bugs.jython.org/issue2130'
         try:
             max([])
-        except ValueError, e:
+        except ValueError as e:
             self.assertEqual(str(e), 'max of empty sequence')
         else:
             self.fail('max with empty sequence should raise a proper ValueError')
@@ -54,7 +55,7 @@ class BuiltinTest(unittest.TestCase):
 class LoopTest(unittest.TestCase):
 
     def test_break(self):
-        while 1:
+        while True:
             i = 0
             while i<10:
                 i = i+1
@@ -67,8 +68,8 @@ class DebugTest(unittest.TestCase):
         "__debug__ exists"
         try:
             foo = __debug__
-        except NameError, e:
-            self.assert_(False)
+        except NameError as e:
+            self.assertTrue(False)
 
 class GetSliceTest(unittest.TestCase):
 
@@ -76,7 +77,7 @@ class GetSliceTest(unittest.TestCase):
         class F:
             def __getitem__(self,*args): return '__getitem__ '+repr(args)
             def __getslice__(self,*args): return '__getslice__ '+repr(args)
-        self.failUnless("__getslice__ (1, 1)" in F()[1:1])
+        self.assertTrue("__getslice__ (1, 1)" in F()[1:1])
 
 class ChrTest(unittest.TestCase):
 
@@ -85,9 +86,9 @@ class ChrTest(unittest.TestCase):
         foo = False
         try:
             chr(None)
-        except TypeError, e:
+        except TypeError as e:
             foo = True
-        self.assert_(foo)
+        self.assertTrue(foo)
 
 class ReturnTest(unittest.TestCase):
 
@@ -107,37 +108,37 @@ class ReprTest(unittest.TestCase):
         class Foo:
             def bar(s):
                 pass
-        self.failUnless(repr(Foo.bar).startswith('<unbound method'))
+        self.assertTrue(repr(Foo.bar).startswith('<unbound method'))
 
 class CallableTest(unittest.TestCase):
 
     def test_callable_oldstyle(self):
         class Foo:
             pass
-        self.assert_(callable(Foo))
-        self.assert_(not callable(Foo()))
+        self.assertTrue(isinstance(Foo, collections.Callable))
+        self.assertTrue(not isinstance(Foo(), collections.Callable))
         class Bar:
             def __call__(self):
                 return None
-        self.assert_(callable(Bar()))
+        self.assertTrue(isinstance(Bar(), collections.Callable))
         class Baz:
             def __getattr__(self, name):
                 return None
-        self.assert_(callable(Baz()))
+        self.assertTrue(isinstance(Baz(), collections.Callable))
 
     def test_callable_newstyle(self):
         class Foo(object):
             pass
-        self.assert_(callable(Foo))
-        self.assert_(not callable(Foo()))
+        self.assertTrue(isinstance(Foo, collections.Callable))
+        self.assertTrue(not isinstance(Foo(), collections.Callable))
         class Bar(object):
             def __call__(self):
                 return None
-        self.assert_(callable(Bar()))
+        self.assertTrue(isinstance(Bar(), collections.Callable))
         class Baz(object):
             def __getattr__(self, name):
                 return None
-        self.assert_(not callable(Baz()))
+        self.assertTrue(not isinstance(Baz(), collections.Callable))
 
 class ConversionTest(unittest.TestCase):
 
@@ -149,10 +150,10 @@ class ConversionTest(unittest.TestCase):
     foo = Foo()
 
     def test_range_non_int(self):
-        self.assertEqual(range(self.foo), [0, 1, 2])
+        self.assertEqual(list(range(self.foo)), [0, 1, 2])
 
     def test_xrange_non_int(self):
-        self.assertEqual(list(xrange(self.foo)), [0, 1, 2])
+        self.assertEqual(list(range(self.foo)), [0, 1, 2])
 
     def test_round_non_float(self):
         self.assertEqual(round(self.Foo(), 1), 3.1)
@@ -190,7 +191,7 @@ class ExecEvalTest(unittest.TestCase):
             ("bar = '\rfoo\r'", '\rfoo\r')
             ):
             ns = {}
-            exec code in ns
+            exec(code, ns)
             self.assertEqual(ns['bar'], expected)
 
     def test_general_eval(self):
@@ -276,7 +277,7 @@ class ExecEvalTest(unittest.TestCase):
     f.write('z = z+1\n')
     f.write('z = z*2\n')
     f.close()
-    execfile(TESTFN)
+    exec(compile(open(TESTFN).read(), TESTFN, 'exec'))
 
     def test_execfile(self):
         globals = {'a': 1, 'b': 2}
@@ -298,7 +299,7 @@ class ExecEvalTest(unittest.TestCase):
 
         locals = M()
         locals['z'] = 0
-        execfile(TESTFN, globals, locals)
+        exec(compile(open(TESTFN).read(), TESTFN, 'exec'), globals, locals)
         self.assertEqual(locals['z'], 2)
 
         self.assertRaises(TypeError, execfile)
@@ -318,7 +319,7 @@ class ModuleNameTest(unittest.TestCase):
 
 
 def test_main():
-    test.test_support.run_unittest(BuiltinTest,
+    test.support.run_unittest(BuiltinTest,
                                    LoopTest,
                                    DebugTest,
                                    GetSliceTest,

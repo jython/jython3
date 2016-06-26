@@ -531,13 +531,15 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
         name = builder.getName();
         dict = builder.getDict(this);
         String doc = builder.getDoc();
-        // XXX: Can't create a __doc__ str until the PyBaseString/PyString types are
+        // XXX: Can't create a __doc__ str until the PyUnicode types are
         // created
-        if (dict.__finditem__("__doc__") == null && forClass != PyBaseString.class
-            && forClass != PyString.class) {
+        if (dict.__finditem__("__doc__") == null) {
             PyObject docObj;
             if (doc != null) {
-                docObj = new PyString(doc);
+                docObj = new PyUnicode(doc, true);
+                // PyUnicode.TYPE is initializing, cannot use PyObject.setType,
+                // as this is not yet fully initialized
+                if (underlying_class == PyUnicode.class) docObj.objtype = this;
             } else {
                 // XXX: Hack: Py.None may be null during bootstrapping. Most types
                 // encountered then should have docstrings anyway
@@ -742,16 +744,21 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
         default: return null;
         }
     }
+
+    @Override
+    public PyObject __eq__(PyObject other) {
+        return type___eq__(other);
+    }
     
     @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.type___eq___doc)
-    public PyObject type___eq__(PyObject other) {
+    final PyObject type___eq__(PyObject other) {
         return richCompare(other, cmpopType.Eq);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.type___ne___doc)
-    public PyObject type___ne__(PyObject other) {
-        return richCompare(other, cmpopType.NotEq);
-    }
+//    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.type___ne___doc)
+//    public PyObject type___ne__(PyObject other) {
+//        return richCompare(other, cmpopType.NotEq);
+//    }
 
     @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.type___le___doc)
     public PyObject type___le__(PyObject other) {
@@ -1722,9 +1729,14 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
         return name;
     }
 
+    @ExposedGet(name = "__qualname__")
+    public PyObject type___qualname__() {
+        return Py.newUnicode(name);
+    }
+
     @ExposedGet(name = "__name__")
     public PyObject pyGetName() {
-        return Py.newString(getName());
+        return Py.newUnicode(getName());
     }
 
     public String getName() {
@@ -1822,9 +1834,9 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
         }
         int lastDot = name.lastIndexOf('.');
         if (lastDot != -1) {
-            return Py.newString(name.substring(0, lastDot));
+            return Py.newUnicode(name.substring(0, lastDot));
         }
-        return Py.newString("__builtin__");
+        return Py.newUnicode("builtins");
     }
 
     @ExposedDelete(name = "__module__")

@@ -85,7 +85,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
         co_lnotab = getBytes(lnotab);
     }
     private static final String[] __members__ = {
-        "co_name", "co_argcount",
+        "co_name", "co_argcount", "co_kwonlyargcount",
         "co_varnames", "co_filename", "co_firstlineno",
         "co_flags", "co_cellvars", "co_freevars", "co_nlocals",
         "co_code", "co_consts", "co_names", "co_lnotab", "co_stacksize"
@@ -674,11 +674,11 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                         PySystemState.displayhook(stack.pop());
                         break;
 
-                    case Opcode.PRINT_ITEM_TO:
-                        Py.printComma(stack.pop(), stack.pop());
+                    case Opcode.GET_AWAITABLE:
+                        Py.getAwaitable(stack.pop());
                         break;
 
-                    case Opcode.PRINT_ITEM:
+                    case Opcode.LOAD_BUILD_CLASS:
                         Py.printComma(stack.pop());
                         break;
 
@@ -686,8 +686,8 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                         Py.printlnv(stack.pop());
                         break;
 
-                    case Opcode.PRINT_NEWLINE:
-                        Py.println();
+                    case Opcode.YIELD_FROM:
+                        Py.yieldFrom(f);
                         break;
 
                     case Opcode.RAISE_VARARGS:
@@ -696,20 +696,19 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                             case 3: {
                                 PyTraceback tb = (PyTraceback) (stack.pop());
                                 PyObject value = stack.pop();
-                                PyObject type = stack.pop();
-                                throw PyException.doRaise(type, value, tb);
+                                PyException pye = PyException.doRaise(value);
+                                pye.traceback = tb;
+                                throw pye;
                             }
                             case 2: {
                                 PyObject value = stack.pop();
-                                PyObject type = stack.pop();
-                                throw PyException.doRaise(type, value, null);
+                                throw PyException.doRaise(value, null);
                             }
                             case 1: {
-                                PyObject type = stack.pop();
-                                throw PyException.doRaise(type, null, null);
+                                throw PyException.doRaise(null, null);
                             }
                             case 0:
-                                throw PyException.doRaise(null, null, null);
+                                throw PyException.doRaise(null, null);
                             default:
                                 throw Py.SystemError("bad RAISE_VARARGS oparg");
                         }
@@ -753,7 +752,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                                 retval = stack.pop();
                             }
                         } else if (v instanceof PyStackException) {
-                            ts.exception = ((PyStackException) v).exception;
+                            ts.exceptions.push(((PyStackException) v).exception);
                             why = Why.RERAISE;
 
                         } else if (v instanceof PyString) {
@@ -956,7 +955,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                     case Opcode.IMPORT_NAME: {
                         PyObject __import__ = f.f_builtins.__finditem__("__import__");
                         if (__import__ == null) {
-                            throw Py.ImportError("__import__ not found");
+                            throw Py.ImportError("__import__ not found", "__import__");
                         }
                         PyString name = Py.newString(co_names[oparg]);
                         PyObject fromlist = stack.pop();
@@ -983,7 +982,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
 
                         } catch (PyException pye) {
                             if (pye.match(Py.AttributeError)) {
-                                throw Py.ImportError(String.format("cannot import name %.230s", name));
+                                throw Py.ImportError(String.format("cannot import name %.230s", name), name);
                             } else {
                                 throw pye;
                             }
@@ -1021,7 +1020,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                     case Opcode.FOR_ITER: {
                         PyObject it = stack.pop();
                         try {
-                            PyObject x = it.__iternext__();
+                            PyObject x = it.__next__();
                             if (x != null) {
                                 stack.push(it);
                                 stack.push(x);
@@ -1127,12 +1126,13 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
 
                     case Opcode.MAKE_FUNCTION: {
                         PyCode code = (PyCode) stack.pop();
+                        PyDictionary kw_defaults = (PyDictionary) stack.pop();
                         PyObject[] defaults = stack.popN(oparg);
                         PyObject doc = null;
                         if (code instanceof PyBytecode && ((PyBytecode) code).co_consts.length > 0) {
                             doc = ((PyBytecode) code).co_consts[0];
                         }
-                        PyFunction func = new PyFunction(f.f_globals, defaults, code, doc);
+                        PyFunction func = new PyFunction(f.f_globals, defaults, kw_defaults, code, doc);
                         stack.push(func);
                         break;
                     }
@@ -1140,12 +1140,13 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                     case Opcode.MAKE_CLOSURE: {
                         PyCode code = (PyCode) stack.pop();
                         PyObject[] closure_cells = ((PySequenceList) (stack.pop())).getArray();
+                        PyDictionary kw_defaults = (PyDictionary) stack.pop();
                         PyObject[] defaults = stack.popN(oparg);
                         PyObject doc = null;
                         if (code instanceof PyBytecode && ((PyBytecode) code).co_consts.length > 0) {
                             doc = ((PyBytecode) code).co_consts[0];
                         }
-                        PyFunction func = new PyFunction(f.f_globals, defaults, code, doc, closure_cells);
+                        PyFunction func = new PyFunction(f.f_globals, defaults, kw_defaults, code, doc, closure_cells);
                         stack.push(func);
                         break;
                     }
@@ -1176,7 +1177,6 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
             catch (Throwable t) {
                 PyException pye = Py.setException(t, f);
                 why = Why.EXCEPTION;
-                ts.exception = pye;
                 if (debug) {
                     System.err.println("Caught exception:" + pye);
                 }
@@ -1213,7 +1213,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                 }
                 if (b.b_type == Opcode.SETUP_FINALLY || (b.b_type == Opcode.SETUP_EXCEPT && why == Why.EXCEPTION)) {
                     if (why == Why.EXCEPTION) {
-                        PyException exc = ts.exception;
+                        PyException exc = ts.exceptions.peek();
                         if (b.b_type == Opcode.SETUP_EXCEPT) {
                             exc.normalize();
                         }
@@ -1259,7 +1259,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
         }
 
         if (why == why.EXCEPTION) {
-            throw ts.exception;
+            throw ts.exceptions.peek();
         }
 
         if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR) && why == Why.RETURN && retval == Py.None) {
@@ -1334,8 +1334,8 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
 
     private static void call_function(int na, int nk, boolean var, boolean kw, PyStack stack) {
         int n = na + nk * 2;
-        PyObject kwargs = kw ? stack.pop() : null;
-        PyObject starargs = var ? stack.pop() : null;
+        PyObject[] kwargs = kw ? new PyObject[]{stack.pop()} : new PyObject[0];
+        PyObject[] starargs = var ? new PyObject[]{stack.pop()} : new PyObject[0];
         PyObject params[] = stack.popN(n);
         PyObject callable = stack.pop();
 

@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.python.core.stringlib.IntegerFormatter;
+import org.python.core.stringlib.InternalFormat;
 import org.python.expose.ExposedClassMethod;
 import org.python.expose.ExposedDelete;
 import org.python.expose.ExposedGet;
@@ -24,6 +26,7 @@ import org.python.modules.gc;
  */
 @ExposedType(name = "object", doc = BuiltinDocs.object_doc)
 public class PyObject implements Serializable {
+    private static final String UNORDERABLE_ERROR_MSG = "unorderable types: %s() %s %s()";
 
     public static final PyType TYPE = PyType.fromClass(PyObject.class);
 
@@ -234,17 +237,21 @@ public class PyObject implements Serializable {
     // occurs during regression testing.  XXX: more detail for this comment
     // is needed.
     @ExposedMethod(names = "__str__", doc = BuiltinDocs.object___str___doc)
-    public PyString __repr__() {
-        return new PyString(toString());
+    final PyUnicode object__str__() {
+        return new PyUnicode(toString());
+    }
+
+    public PyUnicode __repr__() {
+        return new PyUnicode(toString());
+    }
+
+    @ExposedMethod(names = "__repr__", doc = BuiltinDocs.object___repr___doc)
+    final PyUnicode object___repr__() {
+        return new PyUnicode(toString());
     }
 
     @Override
     public String toString() {
-        return object_toString();
-    }
-
-    @ExposedMethod(names = "__repr__", doc = BuiltinDocs.object___repr___doc)
-    final String object_toString() {
         if (getType() == null) {
             return "unknown object";
         }
@@ -267,8 +274,8 @@ public class PyObject implements Serializable {
      * configure the string representation of a <code>PyObject</code> is to
      * override the standard Java <code>toString</code> method.
      **/
-    public PyString __str__() {
-        return __repr__();
+    public PyUnicode __str__() {
+        return object__str__();
     }
 
     /**
@@ -281,9 +288,6 @@ public class PyObject implements Serializable {
     public void __ensure_finalizer__() {
     }
 
-    public PyUnicode __unicode__() {
-        return new PyUnicode(__str__());
-    }
 
     /**
      * Equivalent to the standard Python __hash__ method.  This method can
@@ -291,8 +295,8 @@ public class PyObject implements Serializable {
      * <code>hashCode</code> method to return an appropriate hash code for
      * the <code>PyObject</code>.
      **/
-    public final PyInteger __hash__() {
-        return new PyInteger(hashCode());
+    public final PyLong __hash__() {
+        return new PyLong(hashCode());
     }
 
     @Override
@@ -523,8 +527,8 @@ public class PyObject implements Serializable {
 
     public PyObject _callextra(PyObject[] args,
                                String[] keywords,
-                               PyObject starargs,
-                               PyObject kwargs) {
+                               PyObject[] starargsArray,
+                               PyObject[] kwargsArray) {
 
         int argslen = args.length;
 
@@ -536,7 +540,7 @@ public class PyObject implements Serializable {
         } else {
             name = getType().fastGetName() + " ";
         }
-        if (kwargs != null) {
+        for (PyObject kwargs : kwargsArray) {
             PyObject keys = kwargs.__findattr__("keys");
             if(keys == null)
                 throw Py.TypeError(name
@@ -552,10 +556,10 @@ public class PyObject implements Serializable {
             argslen += kwargs.__len__();
         }
         List<PyObject> starObjs = null;
-        if (starargs != null) {
+        for (PyObject starargs : starargsArray) {
             starObjs = new ArrayList<PyObject>();
             PyObject iter = Py.iter(starargs, name + "argument after * must be a sequence");
-            for (PyObject cur = null; ((cur = iter.__iternext__()) != null); ) {
+            for (PyObject cur = null; ((cur = iter.__next__()) != null); ) {
                 starObjs.add(cur);
             }
             argslen += starObjs.size();
@@ -576,7 +580,7 @@ public class PyObject implements Serializable {
                          keywords.length);
         argidx += keywords.length;
 
-        if (kwargs != null) {
+        for (PyObject kwargs : kwargsArray) {
             String[] newkeywords =
                 new String[keywords.length + kwargs.__len__()];
             System.arraycopy(keywords, 0, newkeywords, 0, keywords.length);
@@ -699,7 +703,7 @@ public class PyObject implements Serializable {
      * @see #__finditem__(PyObject)
      **/
     public PyObject __finditem__(String key) {
-        return __finditem__(new PyString(key));
+        return __finditem__(new PyUnicode(key));
     }
 
     /**
@@ -766,7 +770,7 @@ public class PyObject implements Serializable {
      * @see #__setitem__(PyObject, PyObject)
      **/
     public void __setitem__(String key, PyObject value) {
-        __setitem__(new PyString(key), value);
+        __setitem__(new PyUnicode(key), value);
     }
 
     /**
@@ -812,7 +816,7 @@ public class PyObject implements Serializable {
      * @see #__delitem__(PyObject)
      **/
     public void __delitem__(String key) {
-        __delitem__(new PyString(key));
+        __delitem__(new PyUnicode(key));
     }
 
     public PyObject __getslice__(
@@ -905,8 +909,9 @@ public class PyObject implements Serializable {
      *
      * @since 2.2
      */
-    public PyObject __iternext__() {
-        return null;
+    public PyObject __next__() {
+        throw Py.TypeError(String.format("iter() returned non-iterator of type '%.200s'",
+                getType().fastGetName()));
     }
 
     /*The basic functions to implement a namespace*/
@@ -1003,10 +1008,9 @@ public class PyObject implements Serializable {
      * @see #__findattr__(java.lang.String)
      **/
     public final PyObject __getattr__(String name) {
-        PyObject ret = __findattr_ex__(name);
-        if (ret == null)
-            noAttributeError(name);
-        return ret;
+        PyType selfType = getType();
+        PyObject getattr = selfType.lookup("__getattribute__");
+        return getattr.__get__(this, selfType).__call__(new PyString(name));
     }
 
     public void noAttributeError(String name) {
@@ -1274,6 +1278,11 @@ public class PyObject implements Serializable {
      * @return the result of the comparison.
      **/
     public PyObject __eq__(PyObject other) {
+        return object___eq__(other);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.object___eq___doc)
+    final PyObject object___eq__(PyObject other) {
         return null;
     }
 
@@ -1284,7 +1293,16 @@ public class PyObject implements Serializable {
      * @return the result of the comparison.
      **/
     public PyObject __ne__(PyObject other) {
-        return null;
+        return object___ne__(other);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.object___ne___doc)
+    final PyObject object___ne__(PyObject other) {
+        PyObject res = __eq__(other);
+        if (res == null) {
+            return null;
+        }
+        return Py.newBoolean(!res.__bool__());
     }
 
     /**
@@ -1526,8 +1544,9 @@ public class PyObject implements Serializable {
             if (res != null)
                 return res;
             res = o.__eq__(this);
-            if (res != null)
+            if (res != null) {
                 return res;
+            }
             return _cmpeq_unsafe(o) == 0 ? Py.True : Py.False;
         } finally {
             delete_token(ts, token);
@@ -1560,9 +1579,12 @@ public class PyObject implements Serializable {
             if (res != null)
                 return res;
             res = o.__ne__(this);
-            if (res != null)
+            if (res != null) {
                 return res;
-            return _cmpeq_unsafe(o) != 0 ? Py.True : Py.False;
+            }
+            return Py.True;
+//            return _cmpeq_unsafe(o) != 0 ? Py.True : Py.False;
+//            return Py.newBoolean(!_eq(o).__bool__());
         } finally {
             delete_token(ts, token);
             ts.compareStateNesting--;
@@ -1590,13 +1612,13 @@ public class PyObject implements Serializable {
                 if ((token = check_recursion(ts, this, o)) == null)
                     throw Py.ValueError("can't order recursive values");
             }
-            PyObject res = __le__(o);
-            if (res != null)
-                return res;
-            res = o.__ge__(this);
-            if (res != null)
-                return res;
-            return _cmp_unsafe(o) <= 0 ? Py.True : Py.False;
+            PyObject ltRes = __lt__(o);
+            PyObject eqRes = __eq__(o);
+            if (ltRes == null || eqRes == null) {
+                throw Py.TypeError(String.format(UNORDERABLE_ERROR_MSG,
+                        getType().fastGetName(), "<=", o.getType().fastGetName()));
+            }
+            return Py.newBoolean(ltRes.__bool__() || eqRes.__bool__());
         } finally {
             delete_token(ts, token);
             ts.compareStateNesting--;
@@ -1630,7 +1652,9 @@ public class PyObject implements Serializable {
             res = o.__gt__(this);
             if (res != null)
                 return res;
-            return _cmp_unsafe(o) < 0 ? Py.True : Py.False;
+            throw Py.TypeError(String.format(UNORDERABLE_ERROR_MSG,
+                    getType().fastGetName(), "<", o.getType().fastGetName()));
+//            return _cmp_unsafe(o) < 0 ? Py.True : Py.False;
         } finally {
             delete_token(ts, token);
             ts.compareStateNesting--;
@@ -1658,13 +1682,7 @@ public class PyObject implements Serializable {
                 if ((token = check_recursion(ts, this, o)) == null)
                     throw Py.ValueError("can't order recursive values");
             }
-            PyObject res = __ge__(o);
-            if (res != null)
-                return res;
-            res = o.__le__(this);
-            if (res != null)
-                return res;
-            return _cmp_unsafe(o) >= 0 ? Py.True : Py.False;
+            return Py.newBoolean(!__lt__(o).__bool__());
         } finally {
             delete_token(ts, token);
             ts.compareStateNesting--;
@@ -1692,13 +1710,7 @@ public class PyObject implements Serializable {
                 if ((token = check_recursion(ts, this, o)) == null)
                     throw Py.ValueError("can't order recursive values");
             }
-            PyObject res = __gt__(o);
-            if (res != null)
-                return res;
-            res = o.__lt__(this);
-            if (res != null)
-                return res;
-            return _cmp_unsafe(o) > 0 ? Py.True : Py.False;
+            return Py.newBoolean(!_le(o).__bool__());
         } finally {
             delete_token(ts, token);
             ts.compareStateNesting--;
@@ -1795,6 +1807,23 @@ public class PyObject implements Serializable {
     }
 
     /* The basic numeric operations */
+    /**
+     * Common code used by the number-base conversion method __oct__ and __hex__.
+     *
+     * @param spec prepared format-specifier.
+     * @return converted value of this object
+     */
+    private PyUnicode formatImpl(InternalFormat.Spec spec) {
+        // Traditional formatter (%-format) because #o means "-0123" not "-0o123".
+        IntegerFormatter f = new IntegerFormatter(spec);
+        PyObject index = __index__();
+        if (index instanceof PyInteger) {
+            f.format(((PyInteger) index).getValue());
+        } else if (index instanceof PyLong) {
+            f.format(((PyLong) index).getValue());
+        }
+        return new PyUnicode(f.getResult());
+    }
 
     /**
      * Equivalent to the standard Python __hex__ method
@@ -1804,7 +1833,7 @@ public class PyObject implements Serializable {
      * @return a string representing this object as a hexadecimal number.
      **/
     public PyString __hex__() {
-        throw Py.TypeError("hex() argument can't be converted to hex");
+        return formatImpl(IntegerFormatter.HEX);
     }
 
     /**
@@ -1815,7 +1844,7 @@ public class PyObject implements Serializable {
      * @return a string representing this object as an octal number.
      **/
     public PyString __oct__() {
-        throw Py.TypeError("oct() argument can't be converted to oct");
+        return formatImpl(IntegerFormatter.OCT);
     }
 
     /**
@@ -3891,7 +3920,13 @@ public class PyObject implements Serializable {
         String name = asName(arg0);
         PyObject ret = object___findattr__(name);
         if (ret == null) {
-            noAttributeError(name);
+            PyObject __getattr = object___findattr__("__getattr__");
+            if (__getattr != null) {
+                return __getattr.__call__(arg0);
+            }
+            ret = __findattr_ex__(name);
+            if (ret == null)
+                noAttributeError(name);
         }
         return ret;
     }
@@ -4039,7 +4074,7 @@ public class PyObject implements Serializable {
         if (proto >= 2) {
             res = reduce_2();
         } else {
-            PyObject copyreg = __builtin__.__import__("copy_reg", null, null, Py.EmptyTuple);
+            PyObject copyreg = __builtin__.__import__("copyreg", null, null, Py.EmptyTuple);
             PyObject copyreg_reduce = copyreg.__findattr__("_reduce_ex");
             res = copyreg_reduce.__call__(this, new PyInteger(proto));
         }
@@ -4098,11 +4133,11 @@ public class PyObject implements Serializable {
             return slotnames;
         }
 
-        PyObject copyreg = __builtin__.__import__("copy_reg", null, null, Py.EmptyTuple);
+        PyObject copyreg = __builtin__.__import__("copyreg", null, null, Py.EmptyTuple);
         PyObject copyreg_slotnames = copyreg.__findattr__("_slotnames");
         slotnames = copyreg_slotnames.__call__(cls);
         if (null != slotnames && Py.None != slotnames && (!(slotnames instanceof PyList))) {
-            throw Py.TypeError("copy_reg._slotnames didn't return a list or None");
+            throw Py.TypeError("copyreg._slotnames didn't return a list or None");
         }
 
         return slotnames;
@@ -4177,7 +4212,7 @@ public class PyObject implements Serializable {
             dictitems = invoke("iteritems");
         }
 
-        PyObject copyreg = __builtin__.__import__("copy_reg", null, null, Py.EmptyTuple);
+        PyObject copyreg = __builtin__.__import__("copyreg", null, null, Py.EmptyTuple);
         PyObject newobj = copyreg.__findattr__("__newobj__");
 
         n = ((PyTuple)args).size();

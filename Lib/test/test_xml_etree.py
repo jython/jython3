@@ -5,7 +5,7 @@
 import doctest
 import sys
 
-from test import test_support
+from test import support
 
 SAMPLE_XML = """
 <body>
@@ -38,11 +38,11 @@ def sanity():
 
 def check_method(method):
     if not hasattr(method, '__call__'):
-        print method, "not callable"
+        print(method, "not callable")
 
 def serialize(ET, elem, encoding=None):
-    import StringIO
-    file = StringIO.StringIO()
+    import io
+    file = io.StringIO()
     tree = ET.ElementTree(elem)
     if encoding:
         tree.write(file, encoding)
@@ -54,7 +54,7 @@ def summarize(elem):
     return elem.tag
 
 def summarize_list(seq):
-    return map(summarize, seq)
+    return list(map(summarize, seq))
 
 def interface():
     """
@@ -349,7 +349,7 @@ def xinclude():
 
 def test_main():
     from test import test_xml_etree
-    test_support.run_doctest(test_xml_etree, verbosity=True)
+    support.run_doctest(test_xml_etree, verbosity=True)
 
 if __name__ == '__main__':
     test_main()

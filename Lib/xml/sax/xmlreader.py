@@ -1,9 +1,9 @@
 """An XML Reader is the SAX 2 name for an XML parser. XML Parsers
 should be based on this code. """
 
-import handler
+from . import handler
 
-from _exceptions import SAXNotSupportedException, SAXNotRecognizedException
+from ._exceptions import SAXNotSupportedException, SAXNotRecognizedException
 
 
 # ===== XMLREADER =====
@@ -113,7 +113,7 @@ class IncrementalParser(XMLReader):
         XMLReader.__init__(self)
 
     def parse(self, source):
-        import saxutils
+        from . import saxutils
         source = saxutils.prepare_input_source(source)
 
         self.prepareParser(source)
@@ -294,20 +294,20 @@ class AttributesImpl:
         return self._attrs[name]
 
     def getNameByQName(self, name):
-        if not self._attrs.has_key(name):
-            raise KeyError, name
+        if name not in self._attrs:
+            raise KeyError(name)
         return name
 
     def getQNameByName(self, name):
-        if not self._attrs.has_key(name):
-            raise KeyError, name
+        if name not in self._attrs:
+            raise KeyError(name)
         return name
 
     def getNames(self):
-        return self._attrs.keys()
+        return list(self._attrs.keys())
 
     def getQNames(self):
-        return self._attrs.keys()
+        return list(self._attrs.keys())
 
     def __len__(self):
         return len(self._attrs)
@@ -316,10 +316,10 @@ class AttributesImpl:
         return self._attrs[name]
 
     def keys(self):
-        return self._attrs.keys()
+        return list(self._attrs.keys())
 
     def has_key(self, name):
-        return self._attrs.has_key(name)
+        return name in self._attrs
 
     def get(self, name, alternative=None):
         return self._attrs.get(name, alternative)
@@ -328,10 +328,10 @@ class AttributesImpl:
         return self.__class__(self._attrs)
 
     def items(self):
-        return self._attrs.items()
+        return list(self._attrs.items())
 
     def values(self):
-        return self._attrs.values()
+        return list(self._attrs.values())
 
 # ===== ATTRIBUTESNSIMPL =====
 
@@ -346,24 +346,24 @@ class AttributesNSImpl(AttributesImpl):
         self._qnames = qnames
 
     def getValueByQName(self, name):
-        for (nsname, qname) in self._qnames.items():
+        for (nsname, qname) in list(self._qnames.items()):
             if qname == name:
                 return self._attrs[nsname]
 
-        raise KeyError, name
+        raise KeyError(name)
 
     def getNameByQName(self, name):
-        for (nsname, qname) in self._qnames.items():
+        for (nsname, qname) in list(self._qnames.items()):
             if qname == name:
                 return nsname
 
-        raise KeyError, name
+        raise KeyError(name)
 
     def getQNameByName(self, name):
         return self._qnames[name]
 
     def getQNames(self):
-        return self._qnames.values()
+        return list(self._qnames.values())
 
     def copy(self):
         return self.__class__(self._attrs, self._qnames)

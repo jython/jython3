@@ -311,7 +311,7 @@ public abstract class PySequence extends PyObject {
         }
         PyList list = new PyList();
         PyObject iter = Py.iter(seq, msg);
-        for (PyObject item = null; (item = iter.__iternext__()) != null;) {
+        for (PyObject item = null; (item = iter.__next__()) != null;) {
             list.append(item);
         }
         return list;

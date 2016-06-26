@@ -166,7 +166,7 @@ def libc_ver(executable=sys.executable,lib='',version='',
     f = open(executable,'rb')
     binary = f.read(chunksize)
     pos = 0
-    while 1:
+    while True:
         m = _libc_search.search(binary,pos)
         if not m:
             binary = f.read(chunksize)
@@ -208,7 +208,7 @@ def _dist_try_harder(distname,version,id):
         info = open('/var/adm/inst-log/info').readlines()
         distname = 'SuSE'
         for line in info:
-            tv = string.split(line)
+            tv = line.split()
             if len(tv) == 2:
                 tag,value = tv
             else:
@@ -216,7 +216,7 @@ def _dist_try_harder(distname,version,id):
             if tag == 'MIN_DIST_VERSION':
                 version = string.strip(value)
             elif tag == 'DIST_IDENT':
-                values = string.split(value,'-')
+                values = value.split('-')
                 id = values[2]
         return distname,version,id
 
@@ -224,7 +224,7 @@ def _dist_try_harder(distname,version,id):
         # Caldera OpenLinux has some infos in that file (thanks to Colin Kong)
         info = open('/etc/.installed').readlines()
         for line in info:
-            pkg = string.split(line,'-')
+            pkg = line.split('-')
             if len(pkg) >= 2 and pkg[0] == 'OpenLinux':
                 # XXX does Caldera support non Intel platforms ? If yes,
                 #     where can we find the needed id ?
@@ -284,7 +284,7 @@ def _parse_release_file(firstline):
         return tuple(m.groups())
 
     # Unkown format... take the first two words
-    l = string.split(string.strip(firstline))
+    l = firstline.strip().split()
     if l:
         version = l[0]
         if len(l) > 1:
@@ -384,7 +384,7 @@ class _popen:
     def __init__(self,cmd,mode='r',bufsize=None):
 
         if mode != 'r':
-            raise ValueError,'popen()-emulation only supports read mode'
+            raise ValueError('popen()-emulation only supports read mode')
         import tempfile
         self.tmpfile = tmpfile = tempfile.mktemp()
         os.system(cmd + ' > %s' % tmpfile)
@@ -457,15 +457,15 @@ def _norm_version(version, build=''):
     """ Normalize the version and build strings and return a single
         version string using the format major.minor.build (or patchlevel).
     """
-    l = string.split(version,'.')
+    l = version.split('.')
     if build:
         l.append(build)
     try:
-        ints = map(int,l)
+        ints = list(map(int,l))
     except ValueError:
         strings = l
     else:
-        strings = map(str,ints)
+        strings = list(map(str,ints))
     version = string.join(strings[:3],'.')
     return version
 
@@ -505,14 +505,14 @@ def _syscmd_ver(system='', release='', version='',
             pipe = popen(cmd)
             info = pipe.read()
             if pipe.close():
-                raise os.error,'command failed'
+                raise os.error('command failed')
             # XXX How can I suppress shell errors from being written
             #     to stderr ?
-        except os.error,why:
-            #print 'Command %s failed: %s' % (cmd,why)
+        except os.error as why:
+            print('Command %s failed: %s' % (cmd,why))
             continue
-        except IOError,why:
-            #print 'Command %s failed: %s' % (cmd,why)
+        except IOError as why:
+            print('Command %s failed: %s' % (cmd,why))
             continue
         else:
             break
@@ -546,8 +546,8 @@ def _win32_getvalue(key,name,default=''):
         from win32api import RegQueryValueEx
     except ImportError:
         # On Python 2.0 and later, emulate using _winreg
-        import _winreg
-        RegQueryValueEx = _winreg.QueryValueEx
+        import winreg
+        RegQueryValueEx = winreg.QueryValueEx
     try:
         return RegQueryValueEx(key,name)
     except:
@@ -597,12 +597,12 @@ def win32_ver(release='',version='',csd='',ptype=''):
         else:
             # Emulation using _winreg (added in Python 2.0) and
             # sys.getwindowsversion() (added in Python 2.3)
-            import _winreg
+            import winreg
             GetVersionEx = sys.getwindowsversion
-            RegQueryValueEx = _winreg.QueryValueEx
-            RegOpenKeyEx = _winreg.OpenKeyEx
-            RegCloseKey = _winreg.CloseKey
-            HKEY_LOCAL_MACHINE = _winreg.HKEY_LOCAL_MACHINE
+            RegQueryValueEx = winreg.QueryValueEx
+            RegOpenKeyEx = winreg.OpenKeyEx
+            RegCloseKey = winreg.CloseKey
+            HKEY_LOCAL_MACHINE = winreg.HKEY_LOCAL_MACHINE
             VER_PLATFORM_WIN32_WINDOWS = 1
             VER_PLATFORM_WIN32_NT = 2
             VER_NT_WORKSTATION = 1
@@ -888,7 +888,7 @@ def system_alias(system,release,version):
             # These releases use the old name SunOS
             return system,release,version
         # Modify release (marketing release = SunOS release - 3)
-        l = string.split(release,'.')
+        l = release.split('.')
         if l:
             try:
                 major = int(l[0])
@@ -929,8 +929,8 @@ def _platform(*args):
     """
     # Format the platform string
     platform = string.join(
-        map(string.strip,
-            filter(len, args)),
+        list(map(string.strip,
+            list(filter(len, args)))),
         '-')
 
     # Cleanup some possible filename obstacles...
@@ -948,7 +948,7 @@ def _platform(*args):
     platform = replace(platform,'unknown','')
 
     # Fold '--'s and remove trailing '-'
-    while 1:
+    while True:
         cleaned = replace(platform,'--','-')
         if cleaned == platform:
             break
@@ -1012,7 +1012,7 @@ def _syscmd_uname(option,default=''):
         f = os.popen('uname %s 2> %s' % (option, DEV_NULL))
     except (AttributeError,os.error):
         return default
-    output = string.strip(f.read())
+    output = f.read().strip()
     rc = f.close()
     if not output or rc:
         return default
@@ -1193,7 +1193,7 @@ def uname():
     except AttributeError:
         no_os_uname = 1
 
-    if no_os_uname or not filter(None, (system, node, release, version, machine)):
+    if no_os_uname or not [_f for _f in (system, node, release, version, machine) if _f]:
         # Hmm, no there is either no uname or uname has returned
         #'unknowns'... we'll have to poke around the system then.
         if no_os_uname:
@@ -1255,7 +1255,7 @@ def uname():
         elif system[:4] == 'java':
             release,vendor,vminfo,osinfo = java_ver()
             system = 'Java'
-            version = string.join(vminfo,', ')
+            version = ', '.join(vminfo)
             if not version:
                 version = vendor
 
@@ -1474,10 +1474,10 @@ def _sys_version(sys_version=None):
         revision = ''
 
     # Add the patchlevel version if missing
-    l = string.split(version, '.')
+    l = version.join('.')
     if len(l) == 2:
         l.append('0')
-        version = string.join(l, '.')
+        version = ".".join(l)
 
     # Build and cache the result
     result = (name, version, branch, revision, buildno, builddate, compiler)

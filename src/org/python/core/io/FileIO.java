@@ -482,7 +482,7 @@ public class FileIO extends RawIOBase {
         } catch (IllegalArgumentException e) {
         } catch (IllegalAccessException e) {
         }
-        return Py.newInteger(intFD);
+        return Py.newLong(intFD);
     }
 
     public PyObject __add__(PyObject otherObj) {

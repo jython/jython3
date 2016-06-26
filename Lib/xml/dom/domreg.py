@@ -57,27 +57,27 @@ def getDOMImplementation(name = None, features = ()):
         return mod.getDOMImplementation()
     elif name:
         return registered[name]()
-    elif os.environ.has_key("PYTHON_DOM"):
+    elif "PYTHON_DOM" in os.environ:
         return getDOMImplementation(name = os.environ["PYTHON_DOM"])
 
     # User did not specify a name, try implementations in arbitrary
     # order, returning the one that has the required features
     if isinstance(features, StringTypes):
         features = _parse_feature_string(features)
-    for creator in registered.values():
+    for creator in list(registered.values()):
         dom = creator()
         if _good_enough(dom, features):
             return dom
 
-    for creator in well_known_implementations.keys():
+    for creator in list(well_known_implementations.keys()):
         try:
             dom = getDOMImplementation(name = creator)
-        except StandardError: # typically ImportError, or AttributeError
+        except Exception: # typically ImportError, or AttributeError
             continue
         if _good_enough(dom, features):
             return dom
 
-    raise ImportError,"no suitable DOM implementation found"
+    raise ImportError("no suitable DOM implementation found")
 
 def _parse_feature_string(s):
     features = []
@@ -87,7 +87,7 @@ def _parse_feature_string(s):
     while i < length:
         feature = parts[i]
         if feature[0] in "0123456789":
-            raise ValueError, "bad feature name: " + `feature`
+            raise ValueError("bad feature name: " + repr(feature))
         i = i + 1
         version = None
         if i < length:

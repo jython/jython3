@@ -4,31 +4,31 @@ Made for Jython.
 """
 import sys
 import unittest
-from test import test_support
+from test import support
 
 class DictproxyTestCase(unittest.TestCase):
 
     def test_dictproxy(self):
         proxy = type.__dict__
-        first_key = iter(proxy).next()
+        first_key = next(iter(proxy))
 
-        self.assert_(isinstance(first_key, str))
-        self.assert_(first_key in proxy)
-        self.assert_(proxy.has_key(first_key))
+        self.assertTrue(isinstance(first_key, str))
+        self.assertTrue(first_key in proxy)
+        self.assertTrue(first_key in proxy)
         self.assertEqual(proxy[first_key], proxy.get(first_key))
         self.assertEqual(proxy.get('NOT A KEY', 'foo'), 'foo')
 
         proxy_len = len(proxy)
-        self.assert_(isinstance(proxy_len, int) and proxy_len > 2)
-        self.assert_(proxy_len == len(proxy.keys()) == len(proxy.items()) ==
-                     len(proxy.values()) == len(list(proxy.iterkeys())) ==
-                     len(list(proxy.iteritems())) ==
-                     len(list(proxy.itervalues())))
-        self.assert_(isinstance(proxy.items()[0], tuple))
-        self.assert_(isinstance(proxy.iteritems().next(), tuple))
+        self.assertTrue(isinstance(proxy_len, int) and proxy_len > 2)
+        self.assertTrue(proxy_len == len(list(proxy.keys())) == len(list(proxy.items())) ==
+                     len(list(proxy.values())) == len(list(proxy.keys())) ==
+                     len(list(proxy.items())) ==
+                     len(list(proxy.values())))
+        self.assertTrue(isinstance(list(proxy.items())[0], tuple))
+        self.assertTrue(isinstance(next(iter(proxy.items())), tuple))
 
         copy = proxy.copy()
-        self.assert_(proxy is not copy)
+        self.assertTrue(proxy is not copy)
         self.assertEqual(len(proxy), len(copy))
 
     def test_dictproxy_equality(self):
@@ -41,7 +41,7 @@ class DictproxyTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(DictproxyTestCase)
+    support.run_unittest(DictproxyTestCase)
 
 
 if __name__ == '__main__':

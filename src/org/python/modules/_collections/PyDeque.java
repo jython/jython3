@@ -664,7 +664,7 @@ public class PyDeque extends PyObject implements Traverseproc {
         }
 
         @Override
-        public PyObject __iternext__() {
+        public PyObject __next__() {
             synchronized (PyDeque.this) {
                 if (startState != state) {
                     throw Py.RuntimeError("deque changed size during iteration");

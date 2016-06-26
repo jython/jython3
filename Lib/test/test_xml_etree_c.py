@@ -3,7 +3,7 @@
 import doctest
 import sys
 
-from test import test_support
+from test import support
 
 from xml.etree import cElementTree as ET
 
@@ -36,11 +36,11 @@ def sanity():
 
 def check_method(method):
     if not hasattr(method, '__call__'):
-        print method, "not callable"
+        print(method, "not callable")
 
 def serialize(ET, elem, encoding=None):
-    import StringIO
-    file = StringIO.StringIO()
+    import io
+    file = io.StringIO()
     tree = ET.ElementTree(elem)
     if encoding:
         tree.write(file, encoding)
@@ -52,7 +52,7 @@ def summarize(elem):
     return elem.tag
 
 def summarize_list(seq):
-    return map(summarize, seq)
+    return list(map(summarize, seq))
 
 def interface():
     """
@@ -218,7 +218,7 @@ def bug_1534630():
 
 def test_main():
     from test import test_xml_etree_c
-    test_support.run_doctest(test_xml_etree_c, verbosity=True)
+    support.run_doctest(test_xml_etree_c, verbosity=True)
 
 if __name__ == '__main__':
     test_main()

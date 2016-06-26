@@ -4,7 +4,7 @@ Made for Jython.
 """
 import math
 import unittest
-from test import test_support
+from test import support
 from test.test_math import (MathTests, ulps_check,
                             parse_testfile, test_file)
 
@@ -34,9 +34,9 @@ class MathTestCase(unittest.TestCase):
         self.assertEqual(-1e-100, math.fmod(-1e-100, 1e100))
 
     def test_hypot(self):
-        self.assert_(math.isnan(math.hypot(nan, nan)))
-        self.assert_(math.isnan(math.hypot(4, nan)))
-        self.assert_(math.isnan(math.hypot(nan, 4)))
+        self.assertTrue(math.isnan(math.hypot(nan, nan)))
+        self.assertTrue(math.isnan(math.hypot(4, nan)))
+        self.assertTrue(math.isnan(math.hypot(nan, 4)))
         self.assertEqual(inf, math.hypot(inf, 4))
         self.assertEqual(inf, math.hypot(4, inf))
         self.assertEqual(inf, math.hypot(ninf, 4))
@@ -152,7 +152,7 @@ class MathAccuracy(MathTests):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
             MathTestCase,
             MathAccuracy,
         )

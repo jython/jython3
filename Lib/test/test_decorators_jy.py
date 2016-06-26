@@ -2,7 +2,7 @@
 
 Made for Jython.
 """
-from test import test_support
+from test import support
 import unittest
 
 
@@ -14,7 +14,7 @@ def funcattrs(**kwds):
 
 def classattrs(**kwds):
     def decorate(cls):
-        for k, v in kwds.iteritems():
+        for k, v in kwds.items():
             setattr(cls, k, v)
         return cls
     return decorate
@@ -51,7 +51,7 @@ class TestDecorators(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(TestDecorators)
+    support.run_unittest(TestDecorators)
 
 
 if __name__ == '__main__':

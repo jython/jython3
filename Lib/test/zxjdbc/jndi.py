@@ -21,10 +21,10 @@ ctx = InitialContext(env)
 try:
     try:
         ctx.bind("/jdbc/mysqldb", ds)
-    except NameAlreadyBoundException, e:
+    except NameAlreadyBoundException as e:
         ctx.unbind("/jdbc/mysqldb")
         ctx.bind("/jdbc/mysqldb", ds)
 finally:
     ctx.close()
 
-print "bound [%s] at /jdbc/mysqldb" % (ds)
+print("bound [%s] at /jdbc/mysqldb" % (ds))

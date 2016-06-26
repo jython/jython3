@@ -53,7 +53,7 @@ public class compress extends PyIterator {
 
         iter = new itertools.ItertoolsIterator() {
             @Override
-            public PyObject __iternext__() {
+            public PyObject __next__() {
                 while (true) {
                     PyObject datum = nextElement(data);
                     if (datum == null) { return null; }
@@ -68,14 +68,14 @@ public class compress extends PyIterator {
         };
     }
 
-    public PyObject __iternext__() {
-        return iter.__iternext__();
+    public PyObject __next__() {
+        return iter.__next__();
     }
 
     @ExposedMethod
     @Override
     public PyObject next() {
-        return doNext(__iternext__());
+        return doNext(__next__());
     }
 
 

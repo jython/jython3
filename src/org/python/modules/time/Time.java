@@ -19,24 +19,30 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
 import org.python.core.PyBuiltinFunctionSet;
 import org.python.core.PyException;
+import org.python.core.PyFloat;
 import org.python.core.PyInteger;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyTuple;
+import org.python.core.PyUnicode;
 import org.python.core.__builtin__;
 import org.python.core.Untraversable;
+import org.python.modules.PyNamespace;
 
 @Untraversable
 class TimeFunctions extends PyBuiltinFunctionSet
 {
     public static final PyObject module = Py.newString("time");
+
 
     public TimeFunctions(String name, int index, int argcount) {
         super(name, index, argcount);
@@ -130,6 +136,36 @@ public class Time implements ClassDictInit
         timezone = -tz.getRawOffset() / 1000;
         altzone = timezone - tz.getDSTSavings() / 1000;
     }
+
+    public static final Map<String, PyNamespace> clockInfos = new HashMap<>();
+
+    static {
+        /**
+         *
+    "clock" : time.clock()
+    "monotonic" : time.monotonic()
+    "perf_counter" : time.perf_counter()
+    "process_time" : time.process_time()
+    "time" : time.time()
+
+         */
+
+        clockInfos.put("clock", clockInfo(false, "clock()", true, 1e6));
+        clockInfos.put("monotonic", clockInfo(false, "clock_gettime(CLOCK_MONOTONIC)", true, 1e9));
+        clockInfos.put("perf_counter", clockInfo(false, "clock_gettime(CLOCK_MONOTONIC)", true, 1e9));
+        clockInfos.put("process_time", clockInfo(false, "clock_gettime(CLOCK_PROCESS_CPUTIME_ID)", true, 1e9));
+        clockInfos.put("process_time", clockInfo(true, "clock_gettime(CLOCK_REALTIME)", false, 1e9));
+    }
+
+    private static PyNamespace clockInfo(boolean adjustable, String implementation, boolean monotonic, double resolution) {
+        Map<String, PyObject> info = new HashMap<>();
+        info.put("adjustable", Py.newBoolean(adjustable));
+        info.put("implementation", new PyUnicode(implementation));
+        info.put("monotonic", Py.newBoolean(monotonic));
+        info.put("resolution", new PyFloat(resolution));
+        return new PyNamespace(info);
+    }
+
 
     public static double time() {
         return System.currentTimeMillis()/1000.0;
@@ -268,6 +304,13 @@ public class Time implements ClassDictInit
             total += threadBean.getThreadCpuTime(id);
         }
         return total / 1000000000.0;
+    }
+
+    public static PyObject get_clock_info(String name) {
+        if (clockInfos.containsKey(name)) {
+            return clockInfos.get(name);
+        }
+        throw Py.ValueError("unknown clock");
     }
     
     protected static PyTimeTuple _timefields(double secs, TimeZone tz) {

@@ -1,7 +1,7 @@
 import unittest
 import sys
 
-from test import test_support
+from test import support
 
 
 class EnumerateJyTestCase(unittest.TestCase):
@@ -25,13 +25,13 @@ class EnumerateJyTestCase(unittest.TestCase):
         self.assertEqual(list(e), self.res)
 
     def test_start_maxint(self):
-        e = self.enum(self.seq, sys.maxint)
-        self.assertEqual(list(e), [(2147483647, 'a'), (2147483648L, 'b'), (2147483649L, 'c')])
+        e = self.enum(self.seq, sys.maxsize)
+        self.assertEqual(list(e), [(2147483647, 'a'), (2147483648, 'b'), (2147483649, 'c')])
 
 
 def test_main(verbose=None):
     testclasses = (EnumerateJyTestCase,)
-    test_support.run_unittest(*testclasses)
+    support.run_unittest(*testclasses)
 
 
 if __name__ == "__main__":

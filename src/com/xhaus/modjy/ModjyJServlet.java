@@ -40,6 +40,7 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PySystemState;
 import org.python.core.PyType;
+import org.python.core.PyUnicode;
 import org.python.util.PythonInterpreter;
 
 public class ModjyJServlet extends HttpServlet {
@@ -203,7 +204,7 @@ public class ModjyJServlet extends HttpServlet {
         if (!pythonLib.exists()) {
             return;
         }
-        systemState.path.append(new PyString(pythonLibPath));
+        systemState.path.append(new PyUnicode(pythonLibPath));
         // Now check for .pth files in lib-python and process each one
         String[] libPythonContents = pythonLib.list();
         for (String libPythonContent : libPythonContents) {
@@ -247,7 +248,7 @@ public class ModjyJServlet extends HttpServlet {
                 }
                 File archiveFile = new File(pythonLibPath, line);
                 String archiveRealpath = archiveFile.getAbsolutePath();
-                systemState.path.append(new PyString(archiveRealpath));
+                systemState.path.append(new PyUnicode(archiveRealpath));
             }
         } catch (IOException iox) {
             System.err.println("IOException: " + iox.toString());

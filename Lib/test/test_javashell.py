@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 
 import re
 
@@ -40,12 +40,12 @@ fullTestCmds = [
             # should print 'testKey=%testKey%' on NT before initialization,
             # should print 'testKey=' on 95 before initialization,
             # and 'testKey=testValue' after
-            ("echo %s=%%%s%%" % (key,key),
+            ("echo %s=%%%s%%" % (key, key),
                     "(%s=)" % (key,)),
             # should print PATH (on Unix)
             ( "echo PATH=$PATH", "PATH=.*" ),
             # should print 'testKey=testValue' on Unix after initialization
-            ( "echo %s=$%s" % (key,key),
+            ( "echo %s=$%s" % (key, key),
                     "(%s=$%s)|(%s=)|(%s=%s)" % (key, key, key, key, value ) ),
             # should output quotes on NT but not on Unix
             ( 'echo "hello there"', '"?hello there"?' ),
@@ -104,7 +104,7 @@ class JavaShellTest(unittest.TestCase):
         # test system using the non-default environment
         self._testCmds( javashell._shellEnv, testCmds, "initialized" )
 
-        assert os.environ.has_key( "PATH" ), \
+        assert "PATH" in os.environ, \
                 "expected environment to have PATH attribute " \
                 "(this may not apply to all platforms!)"
 
@@ -116,7 +116,7 @@ class JavaShellTest(unittest.TestCase):
         if newValue == "$NEWVARIABLE":
             newValue = os.popen( "echo %NEWVARIABLE%" ).read().strip()
         if newValue == "%NEWVARIABLE%":
-            raise test_support.TestSkipped( "Unable to find a subshell to execute echo" )
+            raise support.TestSkipped( "Unable to find a subshell to execute echo" )
         assert newValue == value, (
             "Expected (%s) to equal value we set (%s)" % (
             newValue, value
@@ -125,16 +125,16 @@ class JavaShellTest(unittest.TestCase):
     def testFormatUnicodeCommand(self):
         shell = javashell._ShellEnv(cmd=['runner'])
         self.assertEqual(shell._formatCmd('echo hello'), ['runner', 'echo hello'])
-        self.assertEqual(shell._formatCmd(u'echo world'), ['runner', u'echo world'])
+        self.assertEqual(shell._formatCmd('echo world'), ['runner', 'echo world'])
 
     def testExecuteUnicodeCommandWithRedirection(self):
-        process = javashell.shellexecute(u'nonexcmd 2>&1')
+        process = javashell.shellexecute('nonexcmd 2>&1')
         stdout = process.getOutputStream().toString()
         process.waitFor()
         self.assertNotEqual(stdout, "", "Redirecting 2>&1 failed with unicode cmd")
 
 def test_main():
-    test_support.run_unittest(JavaShellTest)
+    support.run_unittest(JavaShellTest)
 
 if __name__ == "__main__":
     test_main()

@@ -3,7 +3,7 @@
 # testing of error conditions uncovered when using extension types.
 
 import unittest
-from test import test_support
+from test import support
 import sys
 
 
@@ -242,9 +242,9 @@ class TestIsInstanceIsSubclass(unittest.TestCase):
         self.assertEqual(False, issubclass(NewChild, ()))
         self.assertEqual(True, issubclass(NewSuper, (NewChild, (NewSuper,))))
 
-        self.assertEqual(True, issubclass(int, (long, (float, int))))
-        if test_support.have_unicode:
-            self.assertEqual(True, issubclass(str, (unicode, (Child, NewChild, basestring))))
+        self.assertEqual(True, issubclass(int, (int, (float, int))))
+        if support.have_unicode:
+            self.assertEqual(True, issubclass(str, (str, (Child, NewChild, str))))
 
     def test_subclass_recursion_limit(self):
         # make sure that issubclass raises RuntimeError before the C stack is
@@ -266,7 +266,7 @@ def blowstack(fxn, arg, compare_to):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         TestIsInstanceExceptions,
         TestIsSubclassExceptions,
         TestIsInstanceIsSubclass

@@ -867,7 +867,7 @@ public class PyJavaType extends PyType {
             this.proxy = proxy;
         }
 
-        public PyObject __iternext__() {
+        public PyObject __next__() {
             return proxy.hasMoreElements() ? Py.java2py(proxy.nextElement()) : null;
         }
     }

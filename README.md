@@ -11,3 +11,12 @@ Please see ACKNOWLEDGMENTS for details about Jython's copyright,
 license, contributors, and mailing lists; and NEWS for detailed
 release notes, including bugs fixed, backwards breaking changes, and
 new features.
+
+
+TODO:
+
+1. Subclass PyString to BaseBytes class, so that it can share most behaviour with
+bytearray, rename to PyBytes
+
+2. Replace most occurrance of PyString with PyUnicode, which are used as string
+before.

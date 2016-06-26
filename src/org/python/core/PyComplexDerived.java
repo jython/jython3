@@ -85,26 +85,26 @@ public class PyComplexDerived extends PyComplex implements Slotted,FinalizablePy
         return visit.visit(dict,arg);
     }
 
-    public PyString __str__() {
+    public PyUnicode __str__() {
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__str__");
         if (impl!=null) {
             PyObject res=impl.__get__(this,self_type).__call__();
-            if (res instanceof PyString)
-                return(PyString)res;
-            throw Py.TypeError("__str__"+" returned non-"+"string"+" (type "+res.getType().fastGetName()+")");
+            if (res instanceof PyUnicode)
+                return(PyUnicode)res;
+            throw Py.TypeError("__str__"+" returned non-"+"unicode"+" (type "+res.getType().fastGetName()+")");
         }
         return super.__str__();
     }
 
-    public PyString __repr__() {
+    public PyUnicode __repr__() {
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__repr__");
         if (impl!=null) {
             PyObject res=impl.__get__(this,self_type).__call__();
-            if (res instanceof PyString)
-                return(PyString)res;
-            throw Py.TypeError("__repr__"+" returned non-"+"string"+" (type "+res.getType().fastGetName()+")");
+            if (res instanceof PyUnicode)
+                return(PyUnicode)res;
+            throw Py.TypeError("__repr__"+" returned non-"+"unicode"+" (type "+res.getType().fastGetName()+")");
         }
         return super.__repr__();
     }
@@ -812,20 +812,6 @@ public class PyComplexDerived extends PyComplex implements Slotted,FinalizablePy
         return super.hashCode();
     }
 
-    public PyUnicode __unicode__() {
-        PyType self_type=getType();
-        PyObject impl=self_type.lookup("__unicode__");
-        if (impl!=null) {
-            PyObject res=impl.__get__(this,self_type).__call__();
-            if (res instanceof PyUnicode)
-                return(PyUnicode)res;
-            if (res instanceof PyString)
-                return new PyUnicode((PyString)res);
-            throw Py.TypeError("__unicode__"+" should return a "+"unicode");
-        }
-        return super.__unicode__();
-    }
-
     public boolean __bool__() {
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__bool__");
@@ -836,7 +822,7 @@ public class PyComplexDerived extends PyComplex implements Slotted,FinalizablePy
         }
         PyObject o=impl.__get__(this,self_type).__call__();
         Class c=o.getClass();
-        if (c!=PyInteger.class&&c!=PyBoolean.class) {
+        if (c!=PyLong.class&&c!=PyBoolean.class) {
             throw Py.TypeError(String.format("__bool__ should return bool or int, returned %s",self_type.getName()));
         }
         return o.__bool__();
@@ -855,7 +841,10 @@ public class PyComplexDerived extends PyComplex implements Slotted,FinalizablePy
         PyObject impl=self_type.lookup("__len__");
         if (impl!=null) {
             PyObject res=impl.__get__(this,self_type).__call__();
-            return res.asInt();
+            if (res instanceof PyInteger||res instanceof PyLong) {
+                return res.asInt();
+            }
+            throw Py.TypeError(String.format("'%s' object cannot be interpreted as an integer",getType().fastGetName()));
         }
         return super.__len__();
     }
@@ -871,19 +860,13 @@ public class PyComplexDerived extends PyComplex implements Slotted,FinalizablePy
         return new PySequenceIter(this);
     }
 
-    public PyObject __iternext__() {
+    public PyObject __next__() {
         PyType self_type=getType();
-        PyObject impl=self_type.lookup("next");
+        PyObject impl=self_type.lookup("__next__");
         if (impl!=null) {
-            try {
-                return impl.__get__(this,self_type).__call__();
-            } catch (PyException exc) {
-                if (exc.match(Py.StopIteration))
-                    return null;
-                throw exc;
-            }
+            return impl.__get__(this,self_type).__call__();
         }
-        return super.__iternext__(); // ???
+        return super.__next__(); // ???
     }
 
     public PyObject __finditem__(PyObject key) { // ???
@@ -1137,18 +1120,6 @@ public class PyComplexDerived extends PyComplex implements Slotted,FinalizablePy
             return((PyTuple)res).getArray();
         }
         return super.__coerce_ex__(o);
-    }
-
-    public String toString() {
-        PyType self_type=getType();
-        PyObject impl=self_type.lookup("__repr__");
-        if (impl!=null) {
-            PyObject res=impl.__get__(this,self_type).__call__();
-            if (!(res instanceof PyString))
-                throw Py.TypeError("__repr__ returned non-string (type "+res.getType().fastGetName()+")");
-            return((PyString)res).toString();
-        }
-        return super.toString();
     }
 
 }

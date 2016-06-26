@@ -6,10 +6,10 @@ except ImportError:
 
 import zipfile, os, unittest, sys, shutil
 
-from StringIO import StringIO
+from io import StringIO
 from tempfile import TemporaryFile
 
-from test.test_support import TESTFN, is_jython, run_unittest
+from test.support import TESTFN, is_jython, run_unittest
 
 TESTFN2 = TESTFN + "2"
 
@@ -49,39 +49,39 @@ class TestsWithSourceFile(unittest.TestCase):
 
         directory = fp.getvalue()
         lines = directory.splitlines()
-        self.assertEquals(len(lines), 4) # Number of files + header
+        self.assertEqual(len(lines), 4) # Number of files + header
 
-        self.assert_('File Name' in lines[0])
-        self.assert_('Modified' in lines[0])
-        self.assert_('Size' in lines[0])
+        self.assertTrue('File Name' in lines[0])
+        self.assertTrue('Modified' in lines[0])
+        self.assertTrue('Size' in lines[0])
 
         fn, date, time, size = lines[1].split()
-        self.assertEquals(fn, 'another.name')
+        self.assertEqual(fn, 'another.name')
         # XXX: timestamp is not tested
-        self.assertEquals(size, str(len(self.data)))
+        self.assertEqual(size, str(len(self.data)))
 
         # Check the namelist
         names = zipfp.namelist()
-        self.assertEquals(len(names), 3)
-        self.assert_(TESTFN in names)
-        self.assert_("another"+os.extsep+"name" in names)
-        self.assert_("strfile" in names)
+        self.assertEqual(len(names), 3)
+        self.assertTrue(TESTFN in names)
+        self.assertTrue("another"+os.extsep+"name" in names)
+        self.assertTrue("strfile" in names)
 
         # Check infolist
         infos = zipfp.infolist()
         names = [ i.filename for i in infos ]
-        self.assertEquals(len(names), 3)
-        self.assert_(TESTFN in names)
-        self.assert_("another"+os.extsep+"name" in names)
-        self.assert_("strfile" in names)
+        self.assertEqual(len(names), 3)
+        self.assertTrue(TESTFN in names)
+        self.assertTrue("another"+os.extsep+"name" in names)
+        self.assertTrue("strfile" in names)
         for i in infos:
-            self.assertEquals(i.file_size, len(self.data))
+            self.assertEqual(i.file_size, len(self.data))
 
         # check getinfo
         for nm in (TESTFN, "another"+os.extsep+"name", "strfile"):
             info = zipfp.getinfo(nm)
-            self.assertEquals(info.filename, nm)
-            self.assertEquals(info.file_size, len(self.data))
+            self.assertEqual(info.filename, nm)
+            self.assertEqual(info.file_size, len(self.data))
 
         # Check that testzip doesn't raise an exception
         zipfp.testzip()
@@ -174,39 +174,39 @@ class TestZip64InSmallFiles(unittest.TestCase):
 
         directory = fp.getvalue()
         lines = directory.splitlines()
-        self.assertEquals(len(lines), 4) # Number of files + header
+        self.assertEqual(len(lines), 4) # Number of files + header
 
-        self.assert_('File Name' in lines[0])
-        self.assert_('Modified' in lines[0])
-        self.assert_('Size' in lines[0])
+        self.assertTrue('File Name' in lines[0])
+        self.assertTrue('Modified' in lines[0])
+        self.assertTrue('Size' in lines[0])
 
         fn, date, time, size = lines[1].split()
-        self.assertEquals(fn, 'another.name')
+        self.assertEqual(fn, 'another.name')
         # XXX: timestamp is not tested
-        self.assertEquals(size, str(len(self.data)))
+        self.assertEqual(size, str(len(self.data)))
 
         # Check the namelist
         names = zipfp.namelist()
-        self.assertEquals(len(names), 3)
-        self.assert_(TESTFN in names)
-        self.assert_("another"+os.extsep+"name" in names)
-        self.assert_("strfile" in names)
+        self.assertEqual(len(names), 3)
+        self.assertTrue(TESTFN in names)
+        self.assertTrue("another"+os.extsep+"name" in names)
+        self.assertTrue("strfile" in names)
 
         # Check infolist
         infos = zipfp.infolist()
         names = [ i.filename for i in infos ]
-        self.assertEquals(len(names), 3)
-        self.assert_(TESTFN in names)
-        self.assert_("another"+os.extsep+"name" in names)
-        self.assert_("strfile" in names)
+        self.assertEqual(len(names), 3)
+        self.assertTrue(TESTFN in names)
+        self.assertTrue("another"+os.extsep+"name" in names)
+        self.assertTrue("strfile" in names)
         for i in infos:
-            self.assertEquals(i.file_size, len(self.data))
+            self.assertEqual(i.file_size, len(self.data))
 
         # check getinfo
         for nm in (TESTFN, "another"+os.extsep+"name", "strfile"):
             info = zipfp.getinfo(nm)
-            self.assertEquals(info.filename, nm)
-            self.assertEquals(info.file_size, len(self.data))
+            self.assertEqual(info.filename, nm)
+            self.assertEqual(info.file_size, len(self.data))
 
         # Check that testzip doesn't raise an exception
         zipfp.testzip()
@@ -251,11 +251,11 @@ class PyZipFileTests(unittest.TestCase):
         zipfp.writepy(fn)
 
         bn = os.path.basename(fn)
-        self.assert_(bn not in zipfp.namelist())
+        self.assertTrue(bn not in zipfp.namelist())
         if not is_jython:
-            self.assert_(bn + 'o' in zipfp.namelist() or bn + 'c' in zipfp.namelist())
+            self.assertTrue(bn + 'o' in zipfp.namelist() or bn + 'c' in zipfp.namelist())
         else:
-            self.assert_(bn[:-3] + '$py.class' in zipfp.namelist())
+            self.assertTrue(bn[:-3] + '$py.class' in zipfp.namelist())
         zipfp.close()
 
 
@@ -269,11 +269,11 @@ class PyZipFileTests(unittest.TestCase):
         zipfp.writepy(fn, "testpackage")
 
         bn = "%s/%s"%("testpackage", os.path.basename(fn))
-        self.assert_(bn not in zipfp.namelist())
+        self.assertTrue(bn not in zipfp.namelist())
         if not is_jython:
-            self.assert_(bn + 'o' in zipfp.namelist() or bn + 'c' in zipfp.namelist())
+            self.assertTrue(bn + 'o' in zipfp.namelist() or bn + 'c' in zipfp.namelist())
         else:
-            self.assert_(bn[:-3] + '$py.class' in zipfp.namelist())
+            self.assertTrue(bn[:-3] + '$py.class' in zipfp.namelist())
         zipfp.close()
 
     def testWritePythonPackage(self):
@@ -286,11 +286,11 @@ class PyZipFileTests(unittest.TestCase):
         # Check for a couple of modules at different levels of the hieararchy
         names = zipfp.namelist()
         if not is_jython:
-            self.assert_('email/__init__.pyo' in names or 'email/__init__.pyc' in names)
-            self.assert_('email/mime/text.pyo' in names or 'email/mime/text.pyc' in names)
+            self.assertTrue('email/__init__.pyo' in names or 'email/__init__.pyc' in names)
+            self.assertTrue('email/mime/text.pyo' in names or 'email/mime/text.pyc' in names)
         else:
-            self.assert_('email/__init__$py.class' in names)
-            self.assert_('email/mime/text$py.class' in names)
+            self.assertTrue('email/__init__$py.class' in names)
+            self.assertTrue('email/mime/text$py.class' in names)
 
     def testWritePythonDirectory(self):
         os.mkdir(TESTFN2)
@@ -312,12 +312,12 @@ class PyZipFileTests(unittest.TestCase):
 
             names = zipfp.namelist()
             if not is_jython:
-                self.assert_('mod1.pyc' in names or 'mod1.pyo' in names)
-                self.assert_('mod2.pyc' in names or 'mod2.pyo' in names)
+                self.assertTrue('mod1.pyc' in names or 'mod1.pyo' in names)
+                self.assertTrue('mod2.pyc' in names or 'mod2.pyo' in names)
             else:
-                self.assert_('mod1$py.class' in names)
-                self.assert_('mod2$py.class' in names)
-            self.assert_('mod2.txt' not in names)
+                self.assertTrue('mod1$py.class' in names)
+                self.assertTrue('mod2$py.class' in names)
+            self.assertTrue('mod2.txt' not in names)
 
         finally:
             shutil.rmtree(TESTFN2)

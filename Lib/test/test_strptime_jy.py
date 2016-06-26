@@ -3,7 +3,7 @@
 import unittest
 from datetime import datetime
 from time import strptime
-from test import test_support
+from test import support
 
 
 class ParsingTests(unittest.TestCase):
@@ -27,7 +27,7 @@ class ParsingTests(unittest.TestCase):
         self.assertEqual(1900, d.tm_year)
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         ParsingTests
     )
 

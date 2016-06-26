@@ -107,7 +107,7 @@ public class cStringIO {
             super.__setattr__(name, value);
         }
 
-        public PyObject __iternext__() {
+        public PyObject __next__() {
             _complain_ifclosed();
             PyString r = readline();
             if (r.__len__() == 0)

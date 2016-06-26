@@ -4,7 +4,7 @@
 """Unit tests for abc.py."""
 
 import unittest, weakref
-from test import test_support
+from test import support
 
 import abc
 from inspect import isabstract
@@ -109,10 +109,10 @@ class TestABC(unittest.TestCase):
             pass
         b = B()
         self.assertFalse(isinstance(b, A))
-        self.assertFalse(isinstance(b, (A,)))
+        self.assertFalse(isinstance(b, A))
         A.register(B)
         self.assertTrue(isinstance(b, A))
-        self.assertTrue(isinstance(b, (A,)))
+        self.assertTrue(isinstance(b, A))
 
     def test_registration_builtins(self):
         class A(metaclass=abc.ABCMeta):
@@ -124,7 +124,7 @@ class TestABC(unittest.TestCase):
         self.assertTrue(issubclass(int, (A,)))
         class B(A):
             pass
-        B.register(basestring)
+        B.register(str)
         self.assertIsInstance("", A)
         self.assertIsInstance("", (A,))
         self.assertTrue(issubclass(str, A))
@@ -150,7 +150,7 @@ class TestABC(unittest.TestCase):
     def test_register_non_class(self):
         class A(object, metaclass=abc.ABCMeta):
             pass
-        self.assertRaisesRegexp(TypeError, "Can only register classes",
+        self.assertRaisesRegex(TypeError, "Can only register classes",
                                 A.register, 4)
 
     def test_registration_transitiveness(self):
@@ -206,7 +206,7 @@ class TestABC(unittest.TestCase):
         C()
         self.assertEqual(B.counter, 1)
 
-    @test_support.cpython_only
+    @support.cpython_only
     def test_cache_leak(self):
         # See issue #2521.
         class A(object, metaclass=abc.ABCMeta):
@@ -220,11 +220,11 @@ class TestABC(unittest.TestCase):
         # Trigger cache.
         C().f()
         del C
-        test_support.gc_collect()
+        support.gc_collect()
         self.assertEqual(r(), None)
 
 def test_main():
-    test_support.run_unittest(TestABC)
+    support.run_unittest(TestABC)
 
 
 if __name__ == "__main__":

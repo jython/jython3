@@ -1,5 +1,5 @@
 import unittest
-from test import test_support, seq_tests
+from test import support, seq_tests
 
 class TupleTest(seq_tests.CommonTest):
     type2test = tuple
@@ -11,8 +11,8 @@ class TupleTest(seq_tests.CommonTest):
 
     def test_truth(self):
         super(TupleTest, self).test_truth()
-        self.assert_(not ())
-        self.assert_((42, ))
+        self.assertTrue(not ())
+        self.assertTrue((42, ))
 
     def test_len(self):
         super(TupleTest, self).test_len()
@@ -25,27 +25,27 @@ class TupleTest(seq_tests.CommonTest):
         u = (0, 1)
         u2 = u
         u += (2, 3)
-        self.assert_(u is not u2)
+        self.assertTrue(u is not u2)
 
     def test_imul(self):
         super(TupleTest, self).test_imul()
         u = (0, 1)
         u2 = u
         u *= 3
-        self.assert_(u is not u2)
+        self.assertTrue(u is not u2)
 
     def test_tupleresizebug(self):
         # Check that a specific bug in _PyTuple_Resize() is squashed.
         def f():
             for i in range(1000):
                 yield i
-        self.assertEqual(list(tuple(f())), range(1000))
+        self.assertEqual(list(tuple(f())), list(range(1000)))
 
     def test_hash(self):
         from java.lang import OutOfMemoryError
         try:
             self._test_hash()
-        except OutOfMemoryError, oome:
+        except OutOfMemoryError as oome:
             oome.printStackTrace()
             raise
 
@@ -66,16 +66,16 @@ class TupleTest(seq_tests.CommonTest):
         #      is sorely suspect.
 
         N=50
-        base = range(N)
+        base = list(range(N))
         xp = [(i, j) for i in base for j in base]
         inps = base + [(i, j) for i in base for j in xp] + \
-                     [(i, j) for i in xp for j in base] + xp + zip(base)
-        hashes = map(hash, inps)
+                     [(i, j) for i in xp for j in base] + xp + list(zip(base))
+        hashes = list(map(hash, inps))
         unique = set(hashes)
         unique_len = len(unique)
         collisions  = len(inps) - unique_len
         #collisions = len(inps) - len(set(map(hash, inps)))
-        self.assert_(collisions <= 15)
+        self.assertTrue(collisions <= 15)
 
     def test_repr(self):
         l0 = tuple()
@@ -92,10 +92,10 @@ class TupleTest(seq_tests.CommonTest):
         #This test is equivalent to (1,2)[0] = 0 which was briefly broken in
         #Jython 2.5b2
         import operator
-        self.assertRaises(TypeError, operator.setitem, (1,2), 0, 0)
+        self.assertRaises(TypeError, operator.setitem, (1, 2), 0, 0)
 
 def test_main():
-    test_support.run_unittest(TupleTest)
+    support.run_unittest(TupleTest)
 
 if __name__=="__main__":
     test_main()

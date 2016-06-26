@@ -60,7 +60,7 @@ ImportError exception, it is silently ignored.
 
 # these first two imports will always be available if we got this far,
 # since they are implemented in Java
-import __builtin__
+import builtins
 import sys
 
 # but the remaining imports may fail, if so, this is because
@@ -108,7 +108,7 @@ def makepath(*paths):
 
 def abs__file__():
     """Set all module' __file__ attribute to an absolute path"""
-    for m in sys.modules.values():
+    for m in list(sys.modules.values()):
         if hasattr(m, '__loader__') or (
             _is_jython and not isinstance(m, _ModuleType)):
                 continue   # don't mess with a PEP 302-supplied __file__
@@ -392,8 +392,8 @@ def setquit():
             except:
                 pass
             raise SystemExit(code)
-    __builtin__.quit = Quitter('quit')
-    __builtin__.exit = Quitter('exit')
+    builtins.quit = Quitter('quit')
+    builtins.exit = Quitter('exit')
 
 
 class _Printer(object):
@@ -417,7 +417,7 @@ class _Printer(object):
             for filename in self.__files:
                 filename = os.path.join(dir, filename)
                 try:
-                    fp = file(filename, "rU")
+                    fp = open(filename, "rt")
                     data = fp.read()
                     fp.close()
                     break
@@ -441,7 +441,7 @@ class _Printer(object):
         self.__setup()
         prompt = 'Hit Return for more, or q (and Return) to quit: '
         lineno = 0
-        while 1:
+        while True:
             try:
                 for i in range(lineno, lineno + self.MAXLINES):
                     print(self.__lines[i])
@@ -451,7 +451,7 @@ class _Printer(object):
                 lineno += self.MAXLINES
                 key = None
                 while key is None:
-                    key = raw_input(prompt)
+                    key = input(prompt)
                     if key not in ('', 'q'):
                         key = None
                 if key == 'q':
@@ -459,17 +459,17 @@ class _Printer(object):
 
 def setcopyright():
     """Set 'copyright' and 'credits' in __builtin__"""
-    __builtin__.copyright = _Printer("copyright", sys.copyright)
+    builtins.copyright = _Printer("copyright", sys.copyright)
     if sys.platform[:4] == 'java':
-        __builtin__.credits = _Printer(
+        builtins.credits = _Printer(
             "credits",
             "Jython is maintained by the Jython developers (www.jython.org).")
     else:
-        __builtin__.credits = _Printer("credits", """\
+        builtins.credits = _Printer("credits", """\
     Thanks to CWI, CNRI, BeOpen.com, Zope Corporation and a cast of thousands
     for supporting Python development.  See www.python.org for more information.""")
     here = os.path.dirname(os.__file__)
-    __builtin__.license = _Printer(
+    builtins.license = _Printer(
         "license", "See http://www.python.org/%.3s/license.html" % sys.version,
         ["LICENSE.txt", "LICENSE"],
         [os.path.join(here, os.pardir), here, os.curdir])
@@ -489,7 +489,7 @@ class _Helper(object):
         return pydoc.help(*args, **kwds)
 
 def sethelper():
-    __builtin__.help = _Helper()
+    builtins.help = _Helper()
 
 def aliasmbcs():
     """On Windows, some default encodings are not provided by Python,

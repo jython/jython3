@@ -2,7 +2,7 @@ import sys
 import imp
 import os
 import unittest
-from test import test_support
+from test import support
 
 
 test_src = """\
@@ -58,7 +58,7 @@ class TestImporter:
         mod.__loader__ = self
         if ispkg:
             mod.__path__ = self._get__path__()
-        exec code in mod.__dict__
+        exec(code, mod.__dict__)
         return mod
 
 
@@ -84,7 +84,7 @@ class ImportBlocker:
             return self
         return None
     def load_module(self, fullname):
-        raise ImportError, "I dare you"
+        raise ImportError("I dare you")
 
 
 class ImpWrapper:
@@ -194,7 +194,7 @@ class ImportHooksTestCase(ImportHooksBaseTestCase):
         mnames = ("colorsys", "urlparse", "distutils.core")
         for mname in mnames:
             parent = mname.split(".")[0]
-            for n in sys.modules.keys():
+            for n in list(sys.modules.keys()):
                 if n.startswith(parent):
                     del sys.modules[n]
         for mname in mnames:
@@ -208,7 +208,7 @@ class ImportHooksTestCase(ImportHooksBaseTestCase):
         self.doTestImpWrapper(lambda: None, lambda: None)
 
 def test_main():
-    test_support.run_unittest(ImportHooksTestCase)
+    support.run_unittest(ImportHooksTestCase)
 
 if __name__ == "__main__":
     test_main()

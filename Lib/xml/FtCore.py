@@ -48,7 +48,7 @@ else:
     _top = os.path.dirname(os.path.abspath(__file__))
 
     def get_translator(pkg):
-        if not _cache.has_key(pkg):
+        if pkg not in _cache:
             locale_dir = os.path.join(_top, pkg.replace(".", os.sep))
             try:
                 f = gettext.translation('4Suite', locale_dir).gettext

@@ -3,6 +3,7 @@ package org.python.core;
 
 import java.io.Serializable;
 
+import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
 
 /**
@@ -13,9 +14,20 @@ import org.python.expose.ExposedType;
 public class PyEllipsis extends PySingleton implements Serializable {
 
     public static final PyType TYPE = PyType.fromClass(PyEllipsis.class);
+    private static PyEllipsis INST = new PyEllipsis();
 
-    PyEllipsis() {
-        super("Ellipsis");
+    private PyEllipsis() {
+        super(TYPE, "Ellipsis");
+    }
+
+    @ExposedNew
+    final static PyObject ellipsis_new(PyNewWrapper new_, boolean init, PyType subtype,
+            PyObject[] args, String[] keywords) {
+        return INST;
+    }
+
+    public static PyEllipsis getInstance() {
+        return INST;
     }
 
     private Object writeReplace() {

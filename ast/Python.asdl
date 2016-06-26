@@ -11,11 +11,11 @@ module Python version "$Revision$"
 
     stmt = FunctionDef(identifier name, arguments args,
                            stmt* body, expr* decorator_list)
+          | AsyncFunctionDef(identifier name, arguments args,
+              stmt* body, expr* decorator_list)
           | ClassDef(identifier name,
              expr* bases,
              keyword* keywords,
-             expr? starargs,
-             expr? kwargs,
              stmt* body,
              expr* decorator_list)
           | Return(expr? value)
@@ -25,16 +25,18 @@ module Python version "$Revision$"
           | AugAssign(expr target, operator op, expr value)
 
           -- not sure if bool is allowed, can always use int
-           | Print(expr? dest, expr* values, bool nl)
+          | Print(expr? dest, expr* values, bool nl)
 
           -- use 'orelse' because else is a keyword in target languages
           | For(expr target, expr iter, stmt* body, stmt* orelse)
+          | AsyncFor(expr target, expr iter, stmt* body, stmt* orelse)
           | While(expr test, stmt* body, stmt* orelse)
           | If(expr test, stmt* body, stmt* orelse)
-          | With(expr context_expr, expr? optional_vars, stmt* body)
+          | With(withitem* items, stmt* body)
+          | AsyncWith(withitem* items, stmt* body)
 
-          -- 'type' is a bad name
-          | Raise(expr? type, expr? inst, expr? tback)
+          | Raise(expr? exc, expr? cause)
+
           | TryExcept(stmt* body, excepthandler* handlers, stmt* orelse)
           | TryFinally(stmt* body, stmt* finalbody)
           | Assert(expr test, expr? msg)
@@ -69,17 +71,18 @@ module Python version "$Revision$"
          | DictComp(expr key, expr value, comprehension* generators)
          | GeneratorExp(expr elt, comprehension* generators)
          -- the grammar constrains where yield expressions can occur
+         | Await(expr value)
          | Yield(expr? value)
          | YieldFrom(expr value)
          -- need sequences for compare to distinguish between
          -- x < 4 < 3 and (x < 4) < 3
          | Compare(expr left, cmpop* ops, expr* comparators)
-         | Call(expr func, expr* args, keyword* keywords,
-             expr? starargs, expr? kwargs)
+         | Call(expr func, expr* args, keyword* keywords)
          | Repr(expr value)
          | Num(object n) -- a number as a PyObject.
          | Str(string s) -- need to specify raw, unicode, etc?
          -- other literals? bools?
+         | NameConstant(identifier value)
          | Ellipsis
 
          -- the following expression can appear in assignment context
@@ -111,15 +114,18 @@ module Python version "$Revision$"
     comprehension = (expr target, expr iter, expr* ifs)
 
     -- not sure what to call the first argument for raise and except
-    excepthandler = ExceptHandler(expr? type, expr? name, stmt* body)
+    excepthandler = ExceptHandler(expr? type, identifier? name, stmt* body)
                     attributes (int lineno, int col_offset)
 
-    arguments = (expr* args, identifier? vararg,
-             identifier? kwarg, expr* defaults)
+    arguments = (arg* args, arg? vararg, arg* kwonlyargs, expr* kw_defaults,
+                 arg? kwarg, expr* defaults)
 
-    -- keyword arguments supplied to call
-    keyword = (identifier arg, expr value)
+    arg = (identifier arg, expr? annotation)
+
+    -- keyword arguments supplied to call (NULL identifier for **kwargs)
+    keyword = (identifier? arg, expr value)
 
     -- import name with optional 'as' alias.
     alias = (identifier name, identifier? asname)
+    withitem = (expr context_expr, expr? optional_vars)
 }

@@ -18,7 +18,7 @@ except:
 import sys
 
 if _name == 'nt':
-    raise ImportError, 'pwd module not supported on Windows'
+    raise ImportError('pwd module not supported on Windows')
 
 class struct_passwd(tuple):
     """
@@ -52,7 +52,7 @@ def getpwuid(uid):
     Return the password database entry for the given numeric user ID.
     See pwd.__doc__ for more on password database entries.
     """
-    if uid > sys.maxint or uid < 0:
+    if uid > sys.maxsize or uid < 0:
         raise KeyError(uid)
     entry = _posix_impl.getpwuid(uid)
     if not entry:

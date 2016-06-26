@@ -9,16 +9,16 @@ import warnings
 import errno
 import struct
 
-from test import test_support
-from test.test_support import TESTFN, run_unittest, unlink, is_jython
-from StringIO import StringIO
+from test import support
+from test.support import TESTFN, run_unittest, unlink, is_jython
+from io import StringIO
 
 try:
     import threading
 except ImportError:
     threading = None
 
-HOST = test_support.HOST
+HOST = support.HOST
 
 class dummysocket:
     def __init__(self):
@@ -315,7 +315,7 @@ class DispatcherTests(unittest.TestCase):
         d = asyncore.dispatcher(socket.socket())
         # make sure the error message no longer refers to the socket
         # object but the dispatcher instance instead
-        self.assertRaisesRegexp(AttributeError, 'dispatcher instance',
+        self.assertRaisesRegex(AttributeError, 'dispatcher instance',
                                 getattr, d, 'foo')
         # cheap inheritance with the underlying socket is supposed
         # to still work but a DeprecationWarning is expected
@@ -353,12 +353,12 @@ class DispatcherWithSendTests(unittest.TestCase):
 
     @unittest.skipIf(is_jython, 'FIXME: Currently not working on jython')
     @unittest.skipUnless(threading, 'Threading required for this test.')
-    @test_support.reap_threads
+    @support.reap_threads
     def test_send(self):
         evt = threading.Event()
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(3)
-        port = test_support.bind_port(sock)
+        port = support.bind_port(sock)
 
         cap = StringIO()
         args = (evt, cap, sock)
@@ -716,14 +716,14 @@ class BaseTestAPI(unittest.TestCase):
             sock.close()
 
     @unittest.skipUnless(threading, 'Threading required for this test.')
-    @test_support.reap_threads
+    @support.reap_threads
     def test_quick_connect(self):
         # see: http://bugs.python.org/issue10340
         server = TCPServer()
         t = threading.Thread(target=lambda: asyncore.loop(timeout=0.1, count=500))
         t.start()
 
-        for x in xrange(20):
+        for x in range(20):
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(.2)
             s.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER,

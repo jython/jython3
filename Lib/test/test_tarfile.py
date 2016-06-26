@@ -423,8 +423,8 @@ class MiscReadTestBase(CommonReadTest):
         # of the testtar.
         tar = tarfile.open(self.tarname, mode=self.mode)
         try:
-            tar.next()
-            t = tar.next()
+            next(tar)
+            t = next(tar)
             name = t.name
             offset = t.offset
             with tar.extractfile(t) as f:
@@ -438,7 +438,7 @@ class MiscReadTestBase(CommonReadTest):
 
             # Test if the tarfile starts with the second member.
             tar = tar.open(self.tarname, mode="r:", fileobj=fobj)
-            t = tar.next()
+            t = next(tar)
             self.assertEqual(t.name, name)
             # Read to the end of fileobj and test if seeking back to the
             # beginning works.
@@ -613,7 +613,7 @@ class StreamReadTest(CommonReadTest, unittest.TestCase):
                         break
 
     def test_fileobj_regular_file(self):
-        tarinfo = self.tar.next() # get "regtype" (can't use getmember)
+        tarinfo = next(self.tar) # get "regtype" (can't use getmember)
         with self.tar.extractfile(tarinfo) as fobj:
             data = fobj.read()
         self.assertEqual(len(data), tarinfo.size,
@@ -632,8 +632,8 @@ class StreamReadTest(CommonReadTest, unittest.TestCase):
             tar2 = self.tar
 
             while True:
-                t1 = tar1.next()
-                t2 = tar2.next()
+                t1 = next(tar1)
+                t2 = next(tar2)
                 if t1 is None:
                     break
                 self.assertIsNotNone(t2, "stream.next() failed.")
@@ -740,7 +740,7 @@ class MemberReadTest(ReadTest, unittest.TestCase):
             # V7 tar can't handle alphabetic owners.
             kwargs["uname"] = "tarfile"
             kwargs["gname"] = "tarfile"
-        for k, v in kwargs.items():
+        for k, v in list(kwargs.items()):
             self.assertEqual(getattr(tarinfo, k), v,
                     "wrong value in %s field of %s" % (k, tarinfo.name))
 
@@ -1186,7 +1186,7 @@ class WriteTest(WriteTestBase, unittest.TestCase):
 
         tar = tarfile.open(tmpname, "r")
         try:
-            t = tar.next()
+            t = next(tar)
         finally:
             tar.close()
 
@@ -1205,17 +1205,17 @@ class WriteTest(WriteTestBase, unittest.TestCase):
         temparchive = os.path.join(TEMPDIR, "testsymlinks.tar")
         os.mkdir(tempdir)
         try:
-            source_file = os.path.join(tempdir,'source')
-            target_file = os.path.join(tempdir,'symlink')
-            with open(source_file,'w') as f:
+            source_file = os.path.join(tempdir, 'source')
+            target_file = os.path.join(tempdir, 'symlink')
+            with open(source_file, 'w') as f:
                 f.write('something\n')
             os.symlink(source_file, target_file)
-            tar = tarfile.open(temparchive,'w')
+            tar = tarfile.open(temparchive, 'w')
             tar.add(source_file)
             tar.add(target_file)
             tar.close()
             # Let's extract it to the location which contains the symlink
-            tar = tarfile.open(temparchive,'r')
+            tar = tarfile.open(temparchive, 'r')
             # this should not raise OSError: [Errno 17] File exists
             try:
                 tar.extractall(path=tempdir)
@@ -1387,7 +1387,7 @@ class GNUWriteTest(unittest.TestCase):
 
         tar = tarfile.open(tmpname)
         try:
-            member = tar.next()
+            member = next(tar)
             self.assertIsNotNone(member,
                     "unable to read longname member")
             self.assertEqual(tarinfo.name, member.name,
@@ -1597,7 +1597,7 @@ class PaxWriteTest(GNUWriteTest):
             self.assertEqual(tar.pax_headers, pax_headers)
             self.assertEqual(tar.getmembers()[0].pax_headers, pax_headers)
             # Test if all the fields are strings.
-            for key, val in tar.pax_headers.items():
+            for key, val in list(tar.pax_headers.items()):
                 self.assertIsNot(type(key), bytes)
                 self.assertIsNot(type(val), bytes)
                 if key in tarfile.PAX_NUMBER_FIELDS:
@@ -1711,8 +1711,8 @@ class UstarUnicodeTest(unittest.TestCase):
                 tar.close()
                 tar = tarfile.open(tmpname, encoding="ascii")
                 t = tar.getmember("foo")
-                self.assertEqual(t.uname, "\udce4\udcf6\udcfc")
-                self.assertEqual(t.gname, "\udce4\udcf6\udcfc")
+                self.assertEqual(t.uname, "\\udce4\\udcf6\\udcfc")
+                self.assertEqual(t.gname, "\\udce4\\udcf6\\udcfc")
         finally:
             tar.close()
 
@@ -1725,7 +1725,7 @@ class GNUUnicodeTest(UstarUnicodeTest):
         # Test for issue #8633. GNU tar <= 1.23 creates raw binary fields
         # without a hdrcharset=BINARY header.
         for encoding, name in (
-                ("utf-8", "pax/bad-pax-\udce4\udcf6\udcfc"),
+                ("utf-8", "pax/bad-pax-\\udce4\\udcf6\\udcfc"),
                 ("iso8859-1", "pax/bad-pax-\xe4\xf6\xfc"),):
             with tarfile.open(tarname, encoding=encoding,
                               errors="surrogateescape") as tar:
@@ -1745,7 +1745,7 @@ class PAXUnicodeTest(UstarUnicodeTest):
     def test_binary_header(self):
         # Test a POSIX.1-2008 compatible header with a hdrcharset=BINARY field.
         for encoding, name in (
-                ("utf-8", "pax/hdrcharset-\udce4\udcf6\udcfc"),
+                ("utf-8", "pax/hdrcharset-\\udce4\\udcf6\\udcfc"),
                 ("iso8859-1", "pax/hdrcharset-\xe4\xf6\xfc"),):
             with tarfile.open(tarname, encoding=encoding,
                               errors="surrogateescape") as tar:
@@ -1759,7 +1759,7 @@ class AppendTestBase:
     # Test append mode (cp. patch #1652681).
 
     def setUp(self):
-        test_support.gc_collect()
+        support.gc_collect()
         self.tarname = tmpname
         if os.path.exists(self.tarname):
             support.unlink(self.tarname)

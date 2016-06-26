@@ -4,12 +4,16 @@
  */
 package org.python.core;
 
+import com.google.common.base.Joiner;
 import org.python.modules._systemrestart;
 import com.google.common.base.CharMatcher;
+
+import java.util.ArrayList;
 
 public abstract class PyBaseCode extends PyCode {
 
     public int co_argcount;
+    public int co_kwonlyargcount;
     int nargs;
     public int co_firstlineno = -1;
     public String co_varnames[];
@@ -26,15 +30,11 @@ public abstract class PyBaseCode extends PyCode {
         return co_freevars != null && co_freevars.length > 0;
     }
 
+    @Override
     public PyObject call(ThreadState ts, PyFrame frame, PyObject closure) {
-//         System.err.println("tablecode call: "+co_name);
         if (ts.systemState == null) {
             ts.systemState = Py.defaultSystemState;
         }
-        //System.err.println("got ts: "+ts+", "+ts.systemState);
-
-        // Cache previously defined exception
-        PyException previous_exception = ts.exception;
 
         // Push frame
         frame.f_back = ts.frame;
@@ -42,8 +42,6 @@ public abstract class PyBaseCode extends PyCode {
             if (frame.f_back != null) {
                 frame.f_builtins = frame.f_back.f_builtins;
             } else {
-                //System.err.println("ts: "+ts);
-                //System.err.println("ss: "+ts.systemState);
                 frame.f_builtins = ts.systemState.builtins;
             }
         }
@@ -69,7 +67,7 @@ public abstract class PyBaseCode extends PyCode {
         try {
             ret = interpret(frame, ts);
         } catch (Throwable t) {
-            // Convert exceptions that occurred in Java code to PyExceptions
+            // Convert Exceptions that occurred in Java code to PyExceptions
             PyException pye = Py.JavaError(t);
             pye.tracebackHere(frame);
 
@@ -82,8 +80,6 @@ public abstract class PyBaseCode extends PyCode {
                 ts.profilefunc.traceException(frame, pye);
             }
 
-            // Rethrow the exception to the next stack frame
-            ts.exception = previous_exception;
             ts.frame = ts.frame.f_back;
             throw pye;
         } finally {
@@ -98,9 +94,6 @@ public abstract class PyBaseCode extends PyCode {
             ts.profilefunc.traceReturn(frame, ret);
         }
 
-        // Restore previously defined exception
-        ts.exception = previous_exception;
-
         ts.frame = ts.frame.f_back;
 
         // Check for interruption, which is used for restarting the interpreter
@@ -111,72 +104,84 @@ public abstract class PyBaseCode extends PyCode {
         return ret;
     }
 
+    @Override
     public PyObject call(ThreadState state, PyObject globals, PyObject[] defaults,
-                         PyObject closure)
+                         PyDictionary kw_defaults, PyObject closure)
     {
-        if (co_argcount != 0 || varargs || varkwargs)
+        if (co_argcount != 0 || varargs || varkwargs || !kw_defaults.isEmpty())
             return call(state, Py.EmptyObjects, Py.NoKeywords, globals, defaults,
-                        closure);
+                        kw_defaults, closure);
         PyFrame frame = new PyFrame(this, globals);
         if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR)) {
             return new PyGenerator(frame, closure);
+        } else if (co_flags.isFlagSet(CodeFlag.CO_COROUTINE)) {
+            return new PyCoroutine(frame, closure);
         }
         return call(state, frame, closure);
     }
 
+    @Override
     public PyObject call(ThreadState state, PyObject arg1, PyObject globals, PyObject[] defaults,
-                         PyObject closure)
+                         PyDictionary kw_defaults, PyObject closure)
     {
-        if (co_argcount != 1 || varargs || varkwargs)
+        if (co_argcount != 1 || varargs || varkwargs || !kw_defaults.isEmpty())
             return call(state, new PyObject[] {arg1},
-                        Py.NoKeywords, globals, defaults, closure);
+                        Py.NoKeywords, globals, defaults, kw_defaults, closure);
         PyFrame frame = new PyFrame(this, globals);
         frame.f_fastlocals[0] = arg1;
         if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR)) {
             return new PyGenerator(frame, closure);
+        } else if (co_flags.isFlagSet(CodeFlag.CO_COROUTINE)) {
+            return new PyCoroutine(frame, closure);
         }
         return call(state, frame, closure);
     }
 
+    @Override
     public PyObject call(ThreadState state, PyObject arg1, PyObject arg2, PyObject globals,
-                         PyObject[] defaults, PyObject closure)
+                         PyObject[] defaults, PyDictionary kw_defaults, PyObject closure)
     {
-        if (co_argcount != 2 || varargs || varkwargs)
+        if (co_argcount != 2 || varargs || varkwargs || !kw_defaults.isEmpty())
             return call(state, new PyObject[] {arg1, arg2},
-                        Py.NoKeywords, globals, defaults, closure);
+                        Py.NoKeywords, globals, defaults, kw_defaults, closure);
         PyFrame frame = new PyFrame(this, globals);
         frame.f_fastlocals[0] = arg1;
         frame.f_fastlocals[1] = arg2;
         if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR)) {
             return new PyGenerator(frame, closure);
+        } else if (co_flags.isFlagSet(CodeFlag.CO_COROUTINE)) {
+            return new PyCoroutine(frame, closure);
         }
         return call(state, frame, closure);
     }
 
+    @Override
     public PyObject call(ThreadState state, PyObject arg1, PyObject arg2, PyObject arg3,
-                         PyObject globals, PyObject[] defaults,
+                         PyObject globals, PyObject[] defaults, PyDictionary kw_defaults,
                          PyObject closure)
     {
-        if (co_argcount != 3 || varargs || varkwargs)
+        if (co_argcount != 3 || varargs || varkwargs || !kw_defaults.isEmpty())
             return call(state, new PyObject[] {arg1, arg2, arg3},
-                        Py.NoKeywords, globals, defaults, closure);
+                        Py.NoKeywords, globals, defaults, kw_defaults, closure);
         PyFrame frame = new PyFrame(this, globals);
         frame.f_fastlocals[0] = arg1;
         frame.f_fastlocals[1] = arg2;
         frame.f_fastlocals[2] = arg3;
         if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR)) {
             return new PyGenerator(frame, closure);
+        } else if (co_flags.isFlagSet(CodeFlag.CO_COROUTINE)) {
+            return new PyCoroutine(frame, closure);
         }
         return call(state, frame, closure);
     }
     
     @Override
     public PyObject call(ThreadState state, PyObject arg1, PyObject arg2,
-            PyObject arg3, PyObject arg4, PyObject globals,
-            PyObject[] defaults, PyObject closure) {
-        if (co_argcount != 4 || varargs || varkwargs)
+                         PyObject arg3, PyObject arg4, PyObject globals,
+                         PyObject[] defaults, PyDictionary kw_defaults, PyObject closure) {
+        if (co_argcount != 4 || varargs || varkwargs || !kw_defaults.isEmpty())
             return call(state, new PyObject[]{arg1, arg2, arg3, arg4},
-                        Py.NoKeywords, globals, defaults, closure);
+                        Py.NoKeywords, globals, defaults, kw_defaults, closure);
         PyFrame frame = new PyFrame(this, globals);
         frame.f_fastlocals[0] = arg1;
         frame.f_fastlocals[1] = arg2;
@@ -184,23 +189,30 @@ public abstract class PyBaseCode extends PyCode {
         frame.f_fastlocals[3] = arg4;
         if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR)) {
             return new PyGenerator(frame, closure);
+        } else if (co_flags.isFlagSet(CodeFlag.CO_COROUTINE)) {
+            return new PyCoroutine(frame, closure);
         }
         return call(state, frame, closure);
     }
 
+    @Override
     public PyObject call(ThreadState state, PyObject self, PyObject args[],
                          String keywords[], PyObject globals,
-                         PyObject[] defaults, PyObject closure)
+                         PyObject[] defaults, PyDictionary kw_defaults, PyObject closure)
     {
         PyObject[] os = new PyObject[args.length+1];
         os[0] = self;
         System.arraycopy(args, 0, os, 1, args.length);
-        return call(state, os, keywords, globals, defaults, closure);
+        return call(state, os, keywords, globals, defaults, kw_defaults, closure);
     }
 
+    @Override
     public PyObject call(ThreadState state, PyObject args[], String kws[], PyObject globals,
-                         PyObject[] defs, PyObject closure) {
+                         PyObject[] defs, PyDictionary kw_defaults, PyObject closure) {
         final PyFrame frame = new PyFrame(this, globals);
+        int paramCount = co_argcount + co_kwonlyargcount;
+        if (varargs) paramCount += 1;
+        if (varkwargs) paramCount += 1;
         final int argcount = args.length - kws.length;
 
         if ((co_argcount > 0) || varargs || varkwargs) {
@@ -210,10 +222,11 @@ public abstract class PyBaseCode extends PyCode {
             final PyObject[] fastlocals = frame.f_fastlocals;
             if (varkwargs) {
                 kwdict = new PyDictionary();
-                i = co_argcount;
+                i = co_argcount + co_kwonlyargcount;
                 if (varargs) {
                     i++;
                 }
+
                 fastlocals[i] = kwdict;
             }
             if (argcount > co_argcount) {
@@ -231,11 +244,14 @@ public abstract class PyBaseCode extends PyCode {
                 n = co_argcount;
             }
 
-            System.arraycopy(args, 0, fastlocals, 0, n);
+            if (args.length > 0) {
+                System.arraycopy(args, 0, fastlocals, 0, n);
+            }
 
             if (varargs) {
                 PyObject[] u = new PyObject[argcount - n];
-                System.arraycopy(args, n, u, 0, argcount - n);
+                if (args.length > 0)
+                    System.arraycopy(args, n, u, 0, u.length);
                 PyObject uTuple = new PyTuple(u);
                 fastlocals[co_argcount] = uTuple;
             }
@@ -243,12 +259,12 @@ public abstract class PyBaseCode extends PyCode {
                 String keyword = kws[i];
                 PyObject value = args[i + argcount];
                 int j;
-                for (j = 0; j < co_argcount; j++) {
+                for (j = 0; j < paramCount; j++) {
                     if (co_varnames[j].equals(keyword)) {
                         break;
                     }
                 }
-                if (j >= co_argcount) {
+                if (j == paramCount) { // not in varnames
                     if (kwdict == null) {
                         throw Py.TypeError(String.format(
                                 "%.200s() got an unexpected keyword argument '%.400s'",
@@ -269,6 +285,27 @@ public abstract class PyBaseCode extends PyCode {
                     fastlocals[j] = value;
                 }
             }
+            java.util.List<String> missingKwArg = new ArrayList<>();
+
+            int kwonlyargZeroIndex = co_argcount;
+            if (varargs) kwonlyargZeroIndex++;
+            for (int j = 0; j < co_kwonlyargcount; j++) {
+                int kwonlyargIdx = kwonlyargZeroIndex + j;
+                String name = co_varnames[kwonlyargIdx];
+                PyUnicode key = Py.newUnicode(name);
+                if (fastlocals[kwonlyargIdx] == null) {
+                    if (kw_defaults.__contains__(key)) {
+                        fastlocals[kwonlyargIdx] = kw_defaults.__getitem__(key);
+                    } else {
+                        missingKwArg.add(name);
+                    }
+                }
+            }
+            if (!missingKwArg.isEmpty()) {
+                throw Py.TypeError(String.format("%.200s() missing %d keyword-only %s: %s", co_name, missingKwArg.size(),
+                        missingKwArg.size() > 1 ? "arguments" : "argument", Joiner.on(',').join(missingKwArg)));
+            }
+
             if (argcount < co_argcount) {
                 final int defcount = defs != null ? defs.length : 0;
                 final int m = co_argcount - defcount;
@@ -303,6 +340,8 @@ public abstract class PyBaseCode extends PyCode {
 
         if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR)) {
             return new PyGenerator(frame, closure);
+        } else if (co_flags.isFlagSet(CodeFlag.CO_COROUTINE)) {
+            return new PyCoroutine(frame, closure);
         }
         return call(state, frame, closure);
     }

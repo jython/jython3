@@ -34,18 +34,30 @@ public class PySuper extends PyObject implements Traverseproc {
     @ExposedMethod
     @ExposedNew
     public void super___init__(PyObject[] args, String[] keywords) {
-        if (keywords.length != 0 || !PyBuiltinCallable.DefaultInfo.check(args.length, 1, 2)) {
-            throw PyBuiltinCallable.DefaultInfo.unexpectedCall(args.length, keywords.length != 0,
-                                                               "super", 1, 2);
-        }
-        if (!(args[0] instanceof PyType)) {
-            throw Py.TypeError("super: argument 1 must be type");
-        }
-        PyType type = (PyType)args[0];
+        PyType type;
         PyObject obj = null;
         PyType objType = null;
-        if (args.length == 2 && args[1] != Py.None) {
-            obj = args[1];
+        if (keywords.length != 0 || !PyBuiltinCallable.DefaultInfo.check(args.length, 1, 2)) {
+            PyFrame frame = Py.getThreadState().frame;
+            if (frame.f_fastlocals == null || frame.f_fastlocals.length < 1) {
+                throw Py.RuntimeError("super(): no arguments");
+            }
+            obj = frame.f_fastlocals[0];
+            if (obj == null) {
+                throw Py.RuntimeError("super(): arg[0] deleted");
+            }
+            type = (PyType) frame.getLocals().__finditem__("__class__");
+            if (type == null) {
+                throw Py.RuntimeError("super(): empty __class__ cell");
+            }
+        } else {
+            if (!(args[0] instanceof PyType)) {
+                throw Py.TypeError("super: argument 1 must be type");
+            }
+            type = (PyType)args[0];
+            if (args.length == 2 && args[1] != Py.None) {
+                obj = args[1];
+            }
         }
         if (obj != null) {
             objType = supercheck(type, obj);

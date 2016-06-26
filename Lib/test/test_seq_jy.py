@@ -4,7 +4,7 @@ Made for Jython.
 """
 import unittest
 from collections import deque
-from test import test_support
+from test import support
 
 class SeqTestCase(unittest.TestCase):
 
@@ -60,7 +60,7 @@ class SeqTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(SeqTestCase)
+    support.run_unittest(SeqTestCase)
 
 
 if __name__ == "__main__":

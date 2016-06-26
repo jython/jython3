@@ -6,4 +6,4 @@ try:
 except SyntaxError:
     pass
 else:
-    print 'PR#104 regressed'
+    print('PR#104 regressed')

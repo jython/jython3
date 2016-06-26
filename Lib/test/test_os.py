@@ -10,7 +10,7 @@ import sys
 import signal
 import subprocess
 import time
-from test import test_support
+from test import support
 try:
     import mmap
 except:
@@ -23,21 +23,21 @@ warnings.filterwarnings("ignore", "tmpnam", RuntimeWarning, __name__)
 # Tests creating TESTFN
 class FileTests(unittest.TestCase):
     def setUp(self):
-        test_support.gc_collect()
-        if os.path.exists(test_support.TESTFN):
-            os.unlink(test_support.TESTFN)
+        support.gc_collect()
+        if os.path.exists(support.TESTFN):
+            os.unlink(support.TESTFN)
     tearDown = setUp
 
     def test_access(self):
-        f = os.open(test_support.TESTFN, os.O_CREAT|os.O_RDWR)
+        f = os.open(support.TESTFN, os.O_CREAT|os.O_RDWR)
         os.close(f)
-        self.assertTrue(os.access(test_support.TESTFN, os.W_OK))
+        self.assertTrue(os.access(support.TESTFN, os.W_OK))
 
-    @unittest.skipIf(test_support.is_jython and os._name == "nt",
+    @unittest.skipIf(support.is_jython and os._name == "nt",
                      "Does not properly close files under Windows")
     @unittest.skipUnless(hasattr(os, "dup"), "No os.dup function")
     def test_closerange(self):
-        first = os.open(test_support.TESTFN, os.O_CREAT|os.O_RDWR)
+        first = os.open(support.TESTFN, os.O_CREAT|os.O_RDWR)
         # We must allocate two consecutive file descriptors, otherwise
         # it will mess up other file descriptors (perhaps even the three
         # standard ones).
@@ -57,13 +57,13 @@ class FileTests(unittest.TestCase):
         os.closerange(first, first + 2)
         self.assertRaises(OSError, os.write, first, "a")
 
-    @test_support.cpython_only
+    @support.cpython_only
     def test_rename(self):
-        path = unicode(test_support.TESTFN)
-        if not test_support.is_jython:
+        path = str(support.TESTFN)
+        if not support.is_jython:
             old = sys.getrefcount(path)
         self.assertRaises(TypeError, os.rename, path, 0)
-        if not test_support.is_jython:
+        if not support.is_jython:
             new = sys.getrefcount(path)
             self.assertEqual(old, new)
 
@@ -71,12 +71,12 @@ class FileTests(unittest.TestCase):
 class TemporaryFileTests(unittest.TestCase):
     def setUp(self):
         self.files = []
-        os.mkdir(test_support.TESTFN)
+        os.mkdir(support.TESTFN)
 
     def tearDown(self):
         for name in self.files:
             os.unlink(name)
-        os.rmdir(test_support.TESTFN)
+        os.rmdir(support.TESTFN)
 
     def check_tempfile(self, name):
         # make sure it doesn't already exist:
@@ -95,10 +95,10 @@ class TemporaryFileTests(unittest.TestCase):
             warnings.filterwarnings("ignore", "tempnam", DeprecationWarning)
             self.check_tempfile(os.tempnam())
 
-            name = os.tempnam(test_support.TESTFN)
+            name = os.tempnam(support.TESTFN)
             self.check_tempfile(name)
 
-            name = os.tempnam(test_support.TESTFN, "pfx")
+            name = os.tempnam(support.TESTFN, "pfx")
             self.assertTrue(os.path.basename(name)[:3] == "pfx")
             self.check_tempfile(name)
 
@@ -128,14 +128,14 @@ class TemporaryFileTests(unittest.TestCase):
                     os.remove(name)
                 try:
                     fp = open(name, 'w')
-                except IOError, first:
+                except IOError as first:
                     # open() failed, assert tmpfile() fails in the same way.
                     # Although open() raises an IOError and os.tmpfile() raises an
                     # OSError(), 'args' will be (13, 'Permission denied') in both
                     # cases.
                     try:
                         fp = os.tmpfile()
-                    except OSError, second:
+                    except OSError as second:
                         self.assertEqual(first.args, second.args)
                     else:
                         self.fail("expected os.tmpfile() to raise OSError")
@@ -148,7 +148,7 @@ class TemporaryFileTests(unittest.TestCase):
 
             fp = os.tmpfile()
             fp.write("foobar")
-            fp.seek(0,0)
+            fp.seek(0, 0)
             s = fp.read()
             fp.close()
             self.assertTrue(s == "foobar")
@@ -186,15 +186,15 @@ class TemporaryFileTests(unittest.TestCase):
 # Test attributes on return values from os.*stat* family.
 class StatAttributeTests(unittest.TestCase):
     def setUp(self):
-        os.mkdir(test_support.TESTFN)
-        self.fname = os.path.join(test_support.TESTFN, "f1")
+        os.mkdir(support.TESTFN)
+        self.fname = os.path.join(support.TESTFN, "f1")
         f = open(self.fname, 'wb')
         f.write("ABC")
         f.close()
 
     def tearDown(self):
         os.unlink(self.fname)
-        os.rmdir(test_support.TESTFN)
+        os.rmdir(support.TESTFN)
 
     def test_stat_attributes(self):
         if not hasattr(os, "stat"):
@@ -254,7 +254,7 @@ class StatAttributeTests(unittest.TestCase):
 
         # Use the constructr with a too-long tuple.
         try:
-            result2 = os.stat_result((0,1,2,3,4,5,6,7,8,9,10,11,12,13,14))
+            result2 = os.stat_result((0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))
         except TypeError:
             pass
 
@@ -265,7 +265,7 @@ class StatAttributeTests(unittest.TestCase):
 
         try:
             result = os.statvfs(self.fname)
-        except OSError, e:
+        except OSError as e:
             # On AtheOS, glibc always returns ENOSYS
             if e.errno == errno.ENOSYS:
                 return
@@ -301,17 +301,17 @@ class StatAttributeTests(unittest.TestCase):
 
         # Use the constructr with a too-long tuple.
         try:
-            result2 = os.statvfs_result((0,1,2,3,4,5,6,7,8,9,10,11,12,13,14))
+            result2 = os.statvfs_result((0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))
         except TypeError:
             pass
 
     def test_utime_dir(self):
         delta = 1000000
-        st = os.stat(test_support.TESTFN)
+        st = os.stat(support.TESTFN)
         # round to int, because some systems may support sub-second
         # time stamps in stat, but not in utime.
-        os.utime(test_support.TESTFN, (st.st_atime, int(st.st_mtime-delta)))
-        st2 = os.stat(test_support.TESTFN)
+        os.utime(support.TESTFN, (st.st_atime, int(st.st_mtime-delta)))
+        st2 = os.stat(support.TESTFN)
         self.assertEqual(st2.st_mtime, int(st.st_mtime-delta))
 
     # Restrict test to Win32, since there is no guarantee other
@@ -325,7 +325,7 @@ class StatAttributeTests(unittest.TestCase):
             if kernel32.GetVolumeInformationA(root, None, 0, None, None, None, buf, len(buf)):
                 return buf.value
 
-        if get_file_system(test_support.TESTFN) == "NTFS":
+        if get_file_system(support.TESTFN) == "NTFS":
             def test_1565150(self):
                 t1 = 1159195039.25
                 os.utime(self.fname, (t1, t1))
@@ -340,7 +340,7 @@ class StatAttributeTests(unittest.TestCase):
             # Verify that an open file can be stat'ed
             try:
                 os.stat(r"c:\pagefile.sys")
-            except WindowsError, e:
+            except WindowsError as e:
                 if e.errno == 2: # file does not exist; cannot run test
                     return
                 self.fail("Could not stat pagefile.sys")
@@ -389,7 +389,7 @@ class WalkTests(unittest.TestCase):
         #           link/           a symlink to TESTFN.2
         #       TEST2/
         #         tmp4              a lone file
-        walk_path = join(test_support.TESTFN, "TEST1")
+        walk_path = join(support.TESTFN, "TEST1")
         sub1_path = join(walk_path, "SUB1")
         sub11_path = join(sub1_path, "SUB11")
         sub2_path = join(walk_path, "SUB2")
@@ -397,8 +397,8 @@ class WalkTests(unittest.TestCase):
         tmp2_path = join(sub1_path, "tmp2")
         tmp3_path = join(sub2_path, "tmp3")
         link_path = join(sub2_path, "link")
-        t2_path = join(test_support.TESTFN, "TEST2")
-        tmp4_path = join(test_support.TESTFN, "TEST2", "tmp4")
+        t2_path = join(support.TESTFN, "TEST2")
+        tmp4_path = join(support.TESTFN, "TEST2", "tmp4")
 
         # Create stuff.
         os.makedirs(sub11_path)
@@ -467,7 +467,7 @@ class WalkTests(unittest.TestCase):
         # Windows, which doesn't have a recursive delete command.  The
         # (not so) subtlety is that rmdir will fail unless the dir's
         # kids are removed first, so bottom up is essential.
-        for root, dirs, files in os.walk(test_support.TESTFN, topdown=False):
+        for root, dirs, files in os.walk(support.TESTFN, topdown=False):
             for name in files:
                 os.remove(os.path.join(root, name))
             for name in dirs:
@@ -476,14 +476,14 @@ class WalkTests(unittest.TestCase):
                     os.rmdir(dirname)
                 else:
                     os.remove(dirname)
-        os.rmdir(test_support.TESTFN)
+        os.rmdir(support.TESTFN)
 
 class MakedirTests (unittest.TestCase):
     def setUp(self):
-        os.mkdir(test_support.TESTFN)
+        os.mkdir(support.TESTFN)
 
     def test_makedir(self):
-        base = test_support.TESTFN
+        base = support.TESTFN
         path = os.path.join(base, 'dir1', 'dir2', 'dir3')
         os.makedirs(path)             # Should work
         path = os.path.join(base, 'dir1', 'dir2', 'dir3', 'dir4')
@@ -501,12 +501,12 @@ class MakedirTests (unittest.TestCase):
 
 
     def tearDown(self):
-        path = os.path.join(test_support.TESTFN, 'dir1', 'dir2', 'dir3',
+        path = os.path.join(support.TESTFN, 'dir1', 'dir2', 'dir3',
                             'dir4', 'dir5', 'dir6')
         # If the tests failed, the bottom-most directory ('../dir6')
         # may not have been created, so we look for the outermost directory
         # that exists.
-        while not os.path.exists(path) and path != test_support.TESTFN:
+        while not os.path.exists(path) and path != support.TESTFN:
             path = os.path.dirname(path)
 
         os.removedirs(path)
@@ -534,34 +534,34 @@ class URandomTests (unittest.TestCase):
         except NotImplementedError:
             pass
 
-    @unittest.skipIf(test_support.is_jython,
+    @unittest.skipIf(support.is_jython,
                      "Jython does not support os.execvpe.")
     def test_execvpe_with_bad_arglist(self):
         self.assertRaises(ValueError, os.execvpe, 'notepad', [], None)
 
 class Win32ErrorTests(unittest.TestCase):
     def test_rename(self):
-        self.assertRaises(WindowsError, os.rename, test_support.TESTFN, test_support.TESTFN+".bak")
+        self.assertRaises(WindowsError, os.rename, support.TESTFN, support.TESTFN+".bak")
 
     def test_remove(self):
-        self.assertRaises(WindowsError, os.remove, test_support.TESTFN)
+        self.assertRaises(WindowsError, os.remove, support.TESTFN)
 
     def test_chdir(self):
-        self.assertRaises(WindowsError, os.chdir, test_support.TESTFN)
+        self.assertRaises(WindowsError, os.chdir, support.TESTFN)
 
     def test_mkdir(self):
-        f = open(test_support.TESTFN, "w")
+        f = open(support.TESTFN, "w")
         try:
-            self.assertRaises(WindowsError, os.mkdir, test_support.TESTFN)
+            self.assertRaises(WindowsError, os.mkdir, support.TESTFN)
         finally:
             f.close()
-            os.unlink(test_support.TESTFN)
+            os.unlink(support.TESTFN)
 
     def test_utime(self):
-        self.assertRaises(WindowsError, os.utime, test_support.TESTFN, None)
+        self.assertRaises(WindowsError, os.utime, support.TESTFN, None)
 
     def test_chmod(self):
-        self.assertRaises(WindowsError, os.chmod, test_support.TESTFN, 0)
+        self.assertRaises(WindowsError, os.chmod, support.TESTFN, 0)
 
 class TestInvalidFD(unittest.TestCase):
     singles = ["fchdir", "fdopen", "dup", "fdatasync", "fstat",
@@ -578,23 +578,23 @@ class TestInvalidFD(unittest.TestCase):
 
     def check(self, f, *args):
         try:
-            fd = test_support.make_bad_fd()
+            fd = support.make_bad_fd()
             f(fd, *args)
         except OSError as e:
             self.assertEqual(e.errno, errno.EBADF)
         except ValueError:
-            self.assertTrue(test_support.is_jython)
+            self.assertTrue(support.is_jython)
         else:
             self.fail("%r didn't raise a OSError with a bad file descriptor"
                       % f)
 
     def test_isatty(self):
         if hasattr(os, "isatty"):
-            self.assertEqual(os.isatty(test_support.make_bad_fd()), False)
+            self.assertEqual(os.isatty(support.make_bad_fd()), False)
 
     def test_closerange(self):
         if hasattr(os, "closerange"):
-            fd = int(test_support.make_bad_fd())  # need to take an int for Jython, given this test
+            fd = int(support.make_bad_fd())  # need to take an int for Jython, given this test
             # Make sure none of the descriptors we are about to close are
             # currently valid (issue 6542).
             for i in range(10):
@@ -820,7 +820,7 @@ class Win32KillTests(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         FileTests,
         TemporaryFileTests,
         StatAttributeTests,

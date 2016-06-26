@@ -1,4 +1,4 @@
-from __future__ import generators
+
 import unittest
 
 # tests for deeply nested try/except/finally's
@@ -122,27 +122,27 @@ class FinallyTests(unittest.TestCase):
             except:
                 pass
     def testFinally(self):
-        self.assertEquals([1], list(self.gen1()))
-        self.assertEquals([0, 1, 2], list(self.genContinue()))
-        self.assertEquals([0, 1, 2], list(self.genPass()))
-        self.assertEquals([1], list(self.genLocal()))
-        self.assertEquals(
+        self.assertEqual([1], list(self.gen1()))
+        self.assertEqual([0, 1, 2], list(self.genContinue()))
+        self.assertEqual([0, 1, 2], list(self.genPass()))
+        self.assertEqual([1], list(self.genLocal()))
+        self.assertEqual(
             [1, 2, 1, 2, 0, 1],
             list(self.genConditional()))
-        self.assertEquals([0, 1, 2, 3], list(self.genTryExceptAroundFinally()))
-        self.assertEquals(
+        self.assertEqual([0, 1, 2, 3], list(self.genTryExceptAroundFinally()))
+        self.assertEqual(
             [(0, 0), (0, 1), (1, 0), (1, 1)],
             list(self.genNested()))
-        self.assertEquals(
+        self.assertEqual(
             [(0, 0), (0, 1), (1, 0), (1, 1)],
             list(self.genNestedReversed()))
-        self.assertEquals(
+        self.assertEqual(
             [(2, 1, 0), (3, 1, 0), (3, 2, 0), (3, 2, 1)],
             list(self.genNestedDeeply()))
-        self.assertEquals(
+        self.assertEqual(
             [(0, 0), (1, 0), (2, 0)],
             list(self.genNestedTryExcept()))
-        self.assertEquals(
+        self.assertEqual(
             [(0, 0, 0), (1, 0, 0), (2, 0, 0)],
             list(self.genNestedDeeplyTryExcept()))
 
@@ -152,13 +152,13 @@ class TryExceptTests(unittest.TestCase):
             try:
                 try:
                     1//0
-                except ZeroDivisionError, e:
+                except ZeroDivisionError as e:
                     yield 1
                     raise e
             except ZeroDivisionError:
                 pass
     def testExcept(self):
-        self.assertEquals([1, 1, 1], list(self.genNestedExcept()))
+        self.assertEqual([1, 1, 1], list(self.genNestedExcept()))
 
 class TestThrowTestCase(unittest.TestCase):
 
@@ -166,7 +166,7 @@ class TestThrowTestCase(unittest.TestCase):
         genexp = (i for i in range(2))
         self.assertRaises(IOError, genexp.throw, IOError)
         self.assertEqual(genexp.gi_frame, None)
-        self.assertRaises(StopIteration, genexp.next)
+        self.assertRaises(StopIteration, genexp.__next__)
 
 if __name__ == "__main__":
     unittest.main()

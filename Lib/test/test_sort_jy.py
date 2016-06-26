@@ -1,4 +1,4 @@
-from test import test_support
+from test import support
 import unittest
 
 class SortTest(unittest.TestCase):
@@ -10,14 +10,14 @@ class SortTest(unittest.TestCase):
         a_sorted_set = set(a_sorted)
 
         if a_sorted_set != a_set:
-            print 'list elements changed during sort:'
-            print 'removed', tuple(a_set - a_sorted_set)
-            print 'added', tuple(a_sorted_set - a_set)
+            print('list elements changed during sort:')
+            print('removed', tuple(a_set - a_sorted_set))
+            print('added', tuple(a_sorted_set - a_set))
 
         assert len(a_set - a_sorted_set) == len(a_sorted_set - a_set) == 0
 
 def test_main():
-    test_support.run_unittest(SortTest)
+    support.run_unittest(SortTest)
 
 if __name__ == "__main__":
     test_main()

@@ -779,8 +779,8 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         ArgParser ap = new ArgParser("bytearray", args, kwds, "source", "encoding", "errors");
         PyObject arg = ap.getPyObject(0, null);
         // If not null, encoding and errors must be PyString (or PyUnicode)
-        PyObject encoding = ap.getPyObjectByType(1, PyBaseString.TYPE, null);
-        PyObject errors = ap.getPyObjectByType(2, PyBaseString.TYPE, null);
+        PyObject encoding = ap.getPyObjectByType(1, PyUnicode.TYPE, null);
+        PyObject errors = ap.getPyObjectByType(2, PyUnicode.TYPE, null);
 
         /*
          * This method and the related init()s are modelled on CPython (see
@@ -789,17 +789,19 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
          * bytearray from the right-hand side. Hopefully, it still tries the same things in the same
          * order and fails in the same way.
          */
-
+        boolean isUnicode = arg != null && arg instanceof PyUnicode;
+        if (encoding == null && isUnicode) {
+            throw Py.TypeError("string argument without an encoding");
+        }
         if (encoding != null || errors != null) {
             /*
              * bytearray(string [, encoding [, errors]]) Construct from a text string by encoding it
              * using the specified encoding.
              */
-            if (arg == null || !(arg instanceof PyString)) {
-                throw Py.TypeError("encoding or errors without sequence argument");
+            if (arg == null || !isUnicode) {
+                throw Py.TypeError("encoding or errors without string argument");
             }
             init((PyString)arg, encoding, errors);
-
         } else {
             // Now construct from arbitrary object (or null)
             init(arg);
@@ -943,9 +945,13 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         return bytearray___alloc__();
     }
 
+    /**
+     * To be consistent with CPython, the length include the trailing null byte
+     * @return length
+     */
     @ExposedMethod(doc = BuiltinDocs.bytearray___alloc___doc)
     final int bytearray___alloc__() {
-        return storage.length;
+        return storage.length + 1;
     }
 
     /**
@@ -998,6 +1004,22 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
             return null;
         }
         return repeat(n.asIndex(Py.OverflowError));
+    }
+
+    @Override
+    public PyObject __mod__(PyObject other) {
+        return bytearray___mod__(other);
+    }
+
+    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytearray___mod___doc)
+    final PyObject bytearray___mod__(PyObject other) {
+        StringFormatter fmt = new StringFormatter(asString(), false);
+        return new PyByteArray(fmt.format(other));
+    }
+
+    @ExposedClassMethod(doc = BuiltinDocs.bytearray_maketrans_doc)
+    final static PyObject bytearray_maketrans(PyType type, PyObject from, PyObject to) {
+        return PyString.bytes_maketrans(type, from, to, null);
     }
 
     /**
@@ -1081,6 +1103,13 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
     @ExposedMethod(defaults = "null", doc = BuiltinDocs.bytearray_center_doc)
     final PyByteArray bytearray_center(int width, String fillchar) {
         return (PyByteArray)basebytes_center(width, fillchar);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.bytearray_copy_doc)
+    final PyByteArray bytearray_copy() {
+        PyByteArray copy = new PyByteArray();
+        copy.init((BufferProtocol) this);
+        return copy;
     }
 
     /**
@@ -1207,8 +1236,10 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         return (PyByteArray)basebytes_expandtabs(tabsize);
     }
 
-    @ExposedMethod(defaults = "8", doc = BuiltinDocs.bytearray_expandtabs_doc)
-    final PyByteArray bytearray_expandtabs(int tabsize) {
+    @ExposedMethod(doc = BuiltinDocs.bytearray_expandtabs_doc)
+    final PyByteArray bytearray_expandtabs(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("expandtabs", args, keywords, 0, "tabsize");
+        int tabsize = ap.getInt(0, 8);
         return (PyByteArray)basebytes_expandtabs(tabsize);
     }
 
@@ -1291,17 +1322,29 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
      * @param hex specification of the bytes
      * @throws PyException (ValueError) if non-hex characters, or isolated ones, are encountered
      */
-    static PyByteArray fromhex(String hex) throws PyException {
+    static PyByteArray fromhex(PyObject hex) throws PyException {
         return bytearray_fromhex(TYPE, hex);
     }
 
     @ExposedClassMethod(doc = BuiltinDocs.bytearray_fromhex_doc)
-    static PyByteArray bytearray_fromhex(PyType type, String hex) {
+    static PyByteArray bytearray_fromhex(PyType type, PyObject hex) {
         // I think type tells us the actual class but we always return exactly a bytearray
         // PyObject ba = type.__call__();
+        if (!(hex instanceof PyUnicode)) {
+            throw Py.ValueError(String.format("fromhex() argument must be str, not %s", hex.getType().fastGetName()));
+        }
         PyByteArray result = new PyByteArray();
-        basebytes_fromhex(result, hex);
+        basebytes_fromhex(result, hex.asString());
         return result;
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.bytearray_hex_doc)
+    final PyObject bytearray_hex() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = offset; i < offset + size; i++) {
+            sb.append(String.format("%02x", storage[i]));
+        }
+        return new PyUnicode(sb.toString());
     }
 
     @ExposedMethod(doc = BuiltinDocs.bytearray___getitem___doc)
@@ -1826,8 +1869,11 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         return basebytes_rpartition(sep);
     }
 
-    @ExposedMethod(defaults = {"null", "-1"}, doc = BuiltinDocs.bytearray_rsplit_doc)
-    final PyList bytearray_rsplit(PyObject sep, int maxsplit) {
+    @ExposedMethod(doc = BuiltinDocs.bytearray_rsplit_doc)
+    final PyList bytearray_rsplit(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("rsplit", args, keywords, "sep", "maxsplit");
+        PyObject sep = ap.getPyObject(0, null);
+        int maxsplit = ap.getInt(1, -1);
         return basebytes_rsplit(sep, maxsplit);
     }
 
@@ -1870,13 +1916,18 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         return getslice(0, right);
     }
 
-    @ExposedMethod(defaults = {"null", "-1"}, doc = BuiltinDocs.bytearray_split_doc)
-    final PyList bytearray_split(PyObject sep, int maxsplit) {
+    @ExposedMethod(doc = BuiltinDocs.bytearray_split_doc)
+    final PyList bytearray_split(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("split", args, keywords, "sep", "maxsplit");
+        PyObject sep = ap.getPyObject(0, null);
+        int maxsplit = ap.getInt(1, -1);
         return basebytes_split(sep, maxsplit);
     }
 
-    @ExposedMethod(defaults = "false", doc = BuiltinDocs.bytearray_splitlines_doc)
-    final PyList bytearray_splitlines(boolean keepends) {
+    @ExposedMethod(doc = BuiltinDocs.bytearray_splitlines_doc)
+    final PyList bytearray_splitlines(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("splitlines", args, keywords, 0, "keepends");
+        boolean keepends = ap.getPyObject(0, Py.False).__bool__();
         return basebytes_splitlines(keepends);
     }
 
@@ -1987,6 +2038,11 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         delegator.checkIdxAndSetItem(index, value);
     }
 
+    @ExposedMethod(doc = BuiltinDocs.bytearray_clear_doc)
+    final synchronized void bytearray_clear() {
+        clear();
+    }
+
     /**
      * An overriding of the standard Java {@link #toString()} method, returning a printable
      * expression of this byte array in the form <code>bytearray(b'hello')</code>, where in the
@@ -2010,13 +2066,13 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
      * built-in function <code>str()</code> is expected to call this method.
      */
     @Override
-    public PyString __str__() {
+    public PyUnicode __str__() {
         return bytearray_str();
     }
 
     @ExposedMethod(names = {"__str__"}, doc = BuiltinDocs.bytearray___str___doc)
-    final PyString bytearray_str() {
-        return new PyString(this.asString());
+    final PyUnicode bytearray_str() {
+        return new PyUnicode(toString());
     }
 
     /**
@@ -2525,6 +2581,9 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         final int f = offset;
         final int s2 = size + e; // Size of result s'
         final int L2 = recLength(s2); // Length of storage for result
+        if (L2 < 0) {
+            throw Py.MemoryError("");
+        }
 
         if (L2 <= L) {
             // Ignore recommendations to shrink and use the existing array
@@ -2543,7 +2602,12 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
 
         } else {
             // New storage size as recommended
-            byte[] newStorage = new byte[L2];
+            byte[] newStorage;
+            try {
+                newStorage = new byte[L2];
+            } catch (OutOfMemoryError oom) {
+                throw Py.MemoryError(oom.getMessage());
+            }
 
             // Choose the new offset f'=0 to make repeated append operations quicker.
             // Copy across the data from existing to new storage.

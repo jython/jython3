@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
 import unittest
-from test import test_support
+from test import support
 
 import socket
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import sys
 import os
 import time
 
-mimetools = test_support.import_module("mimetools", deprecated=True)
+mimetools = support.import_module("mimetools", deprecated=True)
 
 
 def _open_with_retry(func, host, *args, **kwargs):
@@ -18,7 +18,7 @@ def _open_with_retry(func, host, *args, **kwargs):
     for i in range(3):
         try:
             return func(host, *args, **kwargs)
-        except IOError, last_exc:
+        except IOError as last_exc:
             continue
         except:
             raise
@@ -36,7 +36,7 @@ class URLTimeoutTest(unittest.TestCase):
         socket.setdefaulttimeout(None)
 
     def testURLread(self):
-        f = _open_with_retry(urllib.urlopen, "http://www.python.org/")
+        f = _open_with_retry(urllib.request.urlopen, "http://www.python.org/")
         x = f.read()
 
 class urlopenNetworkTests(unittest.TestCase):
@@ -55,7 +55,7 @@ class urlopenNetworkTests(unittest.TestCase):
     """
 
     def urlopen(self, *args):
-        return _open_with_retry(urllib.urlopen, *args)
+        return _open_with_retry(urllib.request.urlopen, *args)
 
     def test_basic(self):
         # Simple test expected to pass.
@@ -73,7 +73,7 @@ class urlopenNetworkTests(unittest.TestCase):
         # Test both readline and readlines.
         open_url = self.urlopen("http://www.python.org/")
         try:
-            self.assertIsInstance(open_url.readline(), basestring,
+            self.assertIsInstance(open_url.readline(), str,
                                   "readline did not return a string")
             self.assertIsInstance(open_url.readlines(), list,
                                   "readlines did not return a list")
@@ -110,14 +110,14 @@ class urlopenNetworkTests(unittest.TestCase):
     def test_getcode(self):
         # test getcode() with the fancy opener to get 404 error codes
         URL = "http://www.python.org/XXXinvalidXXX"
-        open_url = urllib.FancyURLopener().open(URL)
+        open_url = urllib.request.FancyURLopener().open(URL)
         try:
             code = open_url.getcode()
         finally:
             open_url.close()
         self.assertEqual(code, 404)
 
-    @unittest.skipIf(test_support.is_jython, "Sockets cannot be used as file descriptors")
+    @unittest.skipIf(support.is_jython, "Sockets cannot be used as file descriptors")
     def test_fileno(self):
         if (sys.platform in ('win32',) or
                 not hasattr(os, 'fdopen')):
@@ -153,17 +153,17 @@ class urlopenNetworkTests(unittest.TestCase):
                           # domain will be spared to serve its defined
                           # purpose.
                           # urllib.urlopen, "http://www.sadflkjsasadf.com/")
-                          urllib.urlopen, "http://sadflkjsasf.i.nvali.d/")
+                          urllib.request.urlopen, "http://sadflkjsasf.i.nvali.d/")
 
 class urlretrieveNetworkTests(unittest.TestCase):
     """Tests urllib.urlretrieve using the network."""
 
     def urlretrieve(self, *args):
-        return _open_with_retry(urllib.urlretrieve, *args)
+        return _open_with_retry(urllib.request.urlretrieve, *args)
 
     def test_basic(self):
         # Test basic functionality.
-        file_location,info = self.urlretrieve("http://www.python.org/")
+        file_location, info = self.urlretrieve("http://www.python.org/")
         self.assertTrue(os.path.exists(file_location), "file location returned by"
                         " urlretrieve is not a valid path")
         FILE = file(file_location)
@@ -176,9 +176,9 @@ class urlretrieveNetworkTests(unittest.TestCase):
 
     def test_specified_path(self):
         # Make sure that specifying the location of the file to write to works.
-        file_location,info = self.urlretrieve("http://www.python.org/",
-                                              test_support.TESTFN)
-        self.assertEqual(file_location, test_support.TESTFN)
+        file_location, info = self.urlretrieve("http://www.python.org/",
+                                              support.TESTFN)
+        self.assertEqual(file_location, support.TESTFN)
         self.assertTrue(os.path.exists(file_location))
         FILE = file(file_location)
         try:
@@ -208,10 +208,10 @@ class urlretrieveNetworkTests(unittest.TestCase):
 
 
 def test_main():
-    test_support.requires('network')
-    with test_support.check_py3k_warnings(
+    support.requires('network')
+    with support.check_py3k_warnings(
             ("urllib.urlopen.. has been removed", DeprecationWarning)):
-        test_support.run_unittest(URLTimeoutTest,
+        support.run_unittest(URLTimeoutTest,
                                   urlopenNetworkTests,
                                   urlretrieveNetworkTests)
 

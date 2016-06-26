@@ -24,7 +24,7 @@ public abstract class BaseSet extends PyObject implements Set, Traverseproc {
         return _set;
     }
 
-    protected void _update(PyObject data) {
+    public void _update(PyObject data) {
         _update(_set, data);
     }
 
@@ -36,7 +36,7 @@ public abstract class BaseSet extends PyObject implements Set, Traverseproc {
      * Update the underlying set with the contents of the iterable.
      */
     protected static Set<PyObject> _update(Set<PyObject> set, PyObject data) {
-        if (data == null) {
+        if (data == null || data == Py.None) {
             return set;
         }
         if (data instanceof BaseSet) {
@@ -200,6 +200,7 @@ public abstract class BaseSet extends PyObject implements Set, Traverseproc {
      *
      * @return The length of the set.
      */
+    @Override
     public int __len__() {
         return baseset___len__();
     }
@@ -234,11 +235,16 @@ public abstract class BaseSet extends PyObject implements Set, Traverseproc {
             private Iterator<PyObject> iterator = _set.iterator();
 
             @Override
-            public PyObject __iternext__() {
+            public PyObject __next__() {
                 if (iterator.hasNext()) {
                     return iterator.next();
                 }
                 return null;
+            }
+
+            @Override
+            public int __len__() {
+                return size;
             }
         };
     }

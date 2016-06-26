@@ -10,6 +10,7 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
+import org.python.core.PyUnicode;
 import org.python.core.__builtin__;
 import org.python.core.Visitproc;
 import org.python.expose.ExposedNew;
@@ -106,7 +107,7 @@ public class count extends PyIterator {
 
         iter = new PyIterator() {
 
-            public PyObject __iternext__() {
+            public PyObject __next__() {
                 PyObject result = counter;
                 counter = counter._add(stepper);
                 return result;
@@ -140,23 +141,23 @@ public class count extends PyIterator {
     }
 
     @ExposedMethod
-    public PyString __repr__() {
+    public PyUnicode __repr__() {
         if (stepper instanceof PyInteger && stepper._cmp(Py.One) == 0) {
-            return Py.newString(String.format("count(%s)", counter));
+            return Py.newUnicode(String.format("count(%s)", counter));
         }
         else {
-            return Py.newString(String.format("count(%s, %s)", counter, stepper));
+            return Py.newUnicode(String.format("count(%s, %s)", counter, stepper));
         }
     }
 
-    public PyObject __iternext__() {
-        return iter.__iternext__();
+    public PyObject __next__() {
+        return iter.__next__();
     }
 
     @ExposedMethod
     @Override
     public PyObject next() {
-        return doNext(__iternext__());
+        return doNext(__next__());
     }
 
 

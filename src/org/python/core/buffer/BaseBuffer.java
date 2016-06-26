@@ -11,7 +11,7 @@ import org.python.core.PyException;
 /**
  * Base implementation of the Buffer API providing variables and accessors for the navigational
  * arrays, methods for expressing and checking the buffer request flags, methods and mechanism for
- * get-release counting, boilerplate error checks and their associated exceptions, and default
+ * get-release counting, boilerplate error checks and their associated Exceptions, and default
  * implementations of some methods for access to the buffer content. The design aim is to ensure
  * unglamorous common code need only be implemented once.
  * <p>

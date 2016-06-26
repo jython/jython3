@@ -28,7 +28,7 @@ class anygui:
         for name in candidates:
             backend = self.__try_to_get('%sgui' % name)
         if not backend:
-            raise Exception, 'not able to import any GUI backends'
+            raise Exception('not able to import any GUI backends')
         self.__backend = backend
 
     def __getattr__(self, name):

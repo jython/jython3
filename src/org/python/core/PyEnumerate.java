@@ -34,15 +34,6 @@ public class PyEnumerate extends PyIterator {
         this(TYPE, seq, start);
     }
 
-    public PyObject next() {
-        return enumerate_next();
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.enumerate___next___doc)
-    final PyObject enumerate_next() {
-        return doNext(enumerate___iternext__());
-    }
-
     @ExposedMethod(doc = BuiltinDocs.enumerate___iter___doc)
     final PyObject enumerate___iter__() {
         return super.__iter__();
@@ -69,19 +60,20 @@ public class PyEnumerate extends PyIterator {
         }
     }
 
-    public PyObject __iternext__() {
-        return enumerate___iternext__();
+    public PyObject __next__() {
+        return enumerate___next__();
     }
 
-    final PyObject enumerate___iternext__() {
+    @ExposedMethod(doc = BuiltinDocs.enumerate___next___doc)
+    final PyObject enumerate___next__() {
         PyObject nextItem;
 
-        nextItem = sit.__iternext__();
+        nextItem = sit.__next__();
         if (nextItem == null) {
             if (sit instanceof PyIterator && ((PyIterator)sit).stopException != null) {
-                stopException = ((PyIterator)sit).stopException;
+                throw ((PyIterator)sit).stopException;
             }
-            return null;
+            throw Py.StopIteration();
         }
 
         PyObject next = new PyTuple(index, nextItem);

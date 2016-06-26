@@ -15,7 +15,7 @@ public class PyCallIter extends PyIterator {
         this.sentinel = sentinel;
     }
 
-    public PyObject __iternext__() {
+    public PyObject __next__() {
         if (callable == null) {
             return null;
         }

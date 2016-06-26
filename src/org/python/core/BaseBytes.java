@@ -1,5 +1,7 @@
 package org.python.core;
 
+import org.python.core.buffer.SimpleBuffer;
+
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -277,11 +279,10 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
         String encoded;
 
         if (arg instanceof PyUnicode) {
-            if (encoding != null) {
-                encoded = codecs.encode(arg, encoding, errors);
-            } else {
-                throw Py.TypeError("unicode argument without an encoding");
+            if (encoding == null) {
+                encoding = Py.getSystemState().getCodecState().getDefaultEncoding();
             }
+            encoded = codecs.encode(arg, encoding, errors);
         } else {
             if (encoding != null) {
                 encoded = codecs.encode(arg, encoding, errors);
@@ -617,13 +618,6 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
         if (value.isIndex()) {
             // This will possibly produce Py.OverflowError("long int too large to convert")
             return byteCheck(value.asIndex());
-        } else if (value.getType() == PyString.TYPE) {
-            // Exactly PyString (not PyUnicode)
-            String strValue = ((PyString)value).getString();
-            if (strValue.length() != 1) {
-                throw Py.ValueError("string must be of size 1");
-            }
-            return byteCheck(strValue.charAt(0));
         } else {
             throw Py.TypeError("an integer or string of size 1 is required");
         }
@@ -651,8 +645,14 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
             return null;
 
         } else if (b instanceof BufferProtocol) {
-            return ((BufferProtocol)b).getBuffer(PyBUF.FULL_RO);
+            return ((BufferProtocol) b).getBuffer(PyBUF.FULL_RO);
 
+        } else if (b instanceof PyLong) {
+            int v = ((PyLong) b).getValue().intValue();
+            if (v < 0 || v > 255) {
+                throw Py.ValueError("byte must be in range(0, 256)");
+            }
+            return new SimpleBuffer(new byte[]{(byte) v});
         } else {
             return null;
         }
@@ -667,11 +667,15 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      * @return byte-oriented view
      */
     protected static PyBuffer getViewOrError(PyObject b) {
+        String fmt = "a bytes-like object is required, not '%s'";
+        return getViewOrError(b, fmt);
+    }
+
+    protected static PyBuffer getViewOrError(PyObject b, String fmt) {
         PyBuffer buffer = getView(b);
         if (buffer != null) {
             return buffer;
         } else {
-            String fmt = "Type %s doesn't support the buffer API";
             throw Py.TypeError(String.format(fmt, b.getType().fastGetName()));
         }
     }
@@ -861,6 +865,9 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
             return 0;
 
         } else {
+            if (b instanceof PyUnicode) {
+                return -2;
+            }
 
             // Try to get a byte-oriented view
             try (PyBuffer bv = getView(b)) {
@@ -1045,7 +1052,9 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
             return false; // None of them matched
 
         } else {
-            return match(target, index[0], index[3], endswith);
+            StringBuilder fmt = new StringBuilder(endswith ? "endswith" : "startswith");
+            fmt.append(" first arg must be bytes or a tuple of bytes, not '%s'");
+            return match(target, index[0], index[3], endswith, fmt.toString());
         }
     }
 
@@ -1063,9 +1072,13 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      * @return true if and only if the slice [offset:<code>]</code> matches the given target
      */
     private boolean match(PyObject target, int pos, int n, boolean endswith) {
+        return match(target, pos, n, endswith, "a bytes-like object is required, not '%s'");
+    }
+
+    private boolean match(PyObject target, int pos, int n, boolean endswith, String error) {
 
         // Error if not something we can treat as a view of bytes
-        try (PyBuffer vt = getViewOrError(target)) {
+        try (PyBuffer vt = getViewOrError(target, error)) {
             int j = 0, len = vt.getLen();
 
             if (!endswith) {
@@ -1174,7 +1187,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      */
     protected final PyObject basebytes_decode(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("decode", args, keywords, "encoding", "errors");
-        String encoding = ap.getString(0, null);
+        String encoding = ap.getString(0, "utf-8");
         String errors = ap.getString(1, null);
         return decode(encoding, errors);
     }
@@ -1216,15 +1229,15 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
         return new PyTuple(getType(), args, (dict != null) ? dict : Py.None);
     }
 
-    private static PyString PICKLE_ENCODING;
+    private static PyUnicode PICKLE_ENCODING;
 
     /**
      * Name the encoding effectively used in __reduce__() suport for pickling: this choice is
      * hard-coded in CPython as "latin-1".
      */
-    private static final PyString getPickleEncoding() {
+    private static final PyUnicode getPickleEncoding() {
         if (PICKLE_ENCODING == null) {
-            PICKLE_ENCODING = new PyString("latin-1");
+            PICKLE_ENCODING = new PyUnicode("latin-1");
         }
         return PICKLE_ENCODING;
     }
@@ -2604,7 +2617,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
 
         // Scan backwards over trailing whitespace
         for (q = offset + size; q > offset; --q) {
-            if (!Character.isWhitespace(storage[q - 1] & 0xff)) {
+            if (!isspace(storage[q - 1] & 0xff)) {
                 break;
             }
         }
@@ -2617,7 +2630,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
             // Delimit the word whose last byte is storage[q-1]
             // Skip p backwards over the non-whitespace
             for (p = q; p > offset; --p) {
-                if (Character.isWhitespace(storage[p - 1] & 0xff)) {
+                if (isspace(storage[p - 1] & 0xff)) {
                     break;
                 }
             }
@@ -2626,7 +2639,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
             result.add(0, word);
             // Skip q backwards over the whitespace
             for (q = p; q > offset; --q) {
-                if (!Character.isWhitespace(storage[q - 1] & 0xff)) {
+                if (!isspace(storage[q - 1] & 0xff)) {
                     break;
                 }
             }
@@ -2795,7 +2808,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
         int p, q; // Indexes of unsplit text and whitespace
 
         // Scan over leading whitespace
-        for (p = offset; p < limit && Character.isWhitespace(storage[p] & 0xff); p++) {
+        for (p = offset; p < limit && isspace(storage[p] & 0xff); p++) {
             ; // continue
         }
 
@@ -2807,13 +2820,13 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
             // Delimit a word at p
             // storage[p] is not whitespace or at the limit: it is the start of a word
             // Skip q over the non-whitespace at p
-            for (q = p; q < limit && !Character.isWhitespace(storage[q] & 0xff); q++) {
+            for (q = p; q < limit && !isspace(storage[q] & 0xff); q++) {
                 ; // continue
             }
             // storage[q] is whitespace or it is at the limit
             result.append(getslice(p - offset, q - offset));
             // Skip p over the whitespace at q
-            for (p = q; p < limit && Character.isWhitespace(storage[p] & 0xff); p++) {
+            for (p = q; p < limit && isspace(storage[p] & 0xff); p++) {
                 ; // continue
             }
         }
@@ -3230,6 +3243,21 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
         return basebytes_isspace();
     }
 
+    private boolean isspace(int c) {
+        switch(c) {
+            case 0x09:
+            case 0x0A:
+            case 0x0B:
+            case 0x0C:
+            case 0x0D:
+            case 0x20:
+                break;
+            default:
+                return false;
+        }
+        return true;
+    }
+
     /**
      * Ready-to-expose implementation of Python <code>isspace()</code>.
      *
@@ -3243,7 +3271,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
         } else {
             // Test the bytes
             for (int i = 0; i < size; i++) {
-                if (!Character.isWhitespace(charAt(i))) {
+                if (!isspace(charAt(i))) {
                     return false;
                 }
             }

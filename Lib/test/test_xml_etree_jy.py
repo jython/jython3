@@ -16,8 +16,7 @@ def jython(function):
 
 class sortdict(dict):
     def __repr__(self):
-        items = self.items()
-        items.sort()
+        items = sorted(list(self.items()))
         pairs = ["%r: %r" % pair for pair in items]
         return "{%s}" % ", ".join(pairs)
     __str__ = __repr__
@@ -25,50 +24,50 @@ class sortdict(dict):
 
 class Outputter:
     def StartElementHandler(self, name, attrs):
-        print 'Start element:\n   ', repr(name), sortdict(attrs)
+        print('Start element:\n   ', repr(name), sortdict(attrs))
 
     def EndElementHandler(self, name):
-        print 'End element:\n   ', repr(name)
+        print('End element:\n   ', repr(name))
 
     def CharacterDataHandler(self, data):
         data = data.strip()
         if data:
-            print 'Character data:'
-            print '   ', repr(data)
+            print('Character data:')
+            print('   ', repr(data))
 
     def ProcessingInstructionHandler(self, target, data):
-        print 'PI:\n   ', repr(target), repr(data)
+        print('PI:\n   ', repr(target), repr(data))
 
     def StartNamespaceDeclHandler(self, prefix, uri):
-        print 'NS decl:\n   ', repr(prefix), repr(uri)
+        print('NS decl:\n   ', repr(prefix), repr(uri))
 
     def EndNamespaceDeclHandler(self, prefix):
-        print 'End of NS decl:\n   ', repr(prefix)
+        print('End of NS decl:\n   ', repr(prefix))
 
     def StartCdataSectionHandler(self):
-        print 'Start of CDATA section'
+        print('Start of CDATA section')
 
     def EndCdataSectionHandler(self):
-        print 'End of CDATA section'
+        print('End of CDATA section')
 
     def CommentHandler(self, text):
-        print 'Comment:\n   ', repr(text)
+        print('Comment:\n   ', repr(text))
 
     def NotationDeclHandler(self, *args):
         name, base, sysid, pubid = args
-        print 'Notation declared:', args
+        print('Notation declared:', args)
 
     def UnparsedEntityDeclHandler(self, *args):
         entityName, base, systemId, publicId, notationName = args
-        print 'Unparsed entity decl:\n   ', args
+        print('Unparsed entity decl:\n   ', args)
 
     def NotStandaloneHandler(self, userData):
-        print 'Not standalone'
+        print('Not standalone')
         return 1
 
     def ExternalEntityRefHandler(self, *args):
         context, base, sysId, pubId = args
-        print 'External entity ref:', args[1:]
+        print('External entity ref:', args[1:])
         return 1
 
     def DefaultHandler(self, userData):
@@ -204,7 +203,7 @@ def test_utf8():
     Unparsed entity decl:
         (u'unparsed_entity', None, u'entity.file', None, u'notation')
     Start element:
-        u'root' {u'attr1': u'value1', u'attr2': u'value2\u1f40'}
+        u'root' {u'attr1': u'value1', u'attr2': u'value2\\u1f40'}
     NS decl:
         u'myns' u'http://www.python.org/namespace'
     Start element:
@@ -406,7 +405,7 @@ def test_unicode_bug():
 
     >>> doc = XML("<doc>&#x8230;</doc>")
     >>> doc.text
-    u'\u8230'
+    u'\\u8230'
     """
 
 def test_DTD():
@@ -519,7 +518,7 @@ def handler(name, header="XML>", returns=None):
             args = "(%r)" % args[0]
         else:
             args = str(args)
-        print header, name + "%s" % args
+        print(header, name + "%s" % args)
         return returns
     return _handler
 
@@ -617,7 +616,7 @@ def test_undefined_entities():
 
 def locate(parser, name):
     def _handler(*args):
-        print name, parser.CurrentLineNumber, parser.CurrentColumnNumber
+        print(name, parser.CurrentLineNumber, parser.CurrentColumnNumber)
     return _handler
 
 def test_current_location():
@@ -754,17 +753,17 @@ def test_close_files():
     # http://bugs.jython.org/issue1479
     """
     >>> import os
-    >>> from test import test_support
+    >>> from test import support
     >>> from xml.etree import ElementTree as ET
 
-    >>> ET.ElementTree(ET.XML('<test/>')).write(test_support.TESTFN)
-    >>> os.remove(test_support.TESTFN)
+    >>> ET.ElementTree(ET.XML('<test/>')).write(support.TESTFN)
+    >>> os.remove(support.TESTFN)
 
-    >>> fp = open(test_support.TESTFN, 'w')
+    >>> fp = open(support.TESTFN, 'w')
     >>> fp.write('<test/>')
     >>> fp.close()
-    >>> tree = ET.parse(test_support.TESTFN)
-    >>> os.remove(test_support.TESTFN)
+    >>> tree = ET.parse(support.TESTFN)
+    >>> os.remove(support.TESTFN)
     """
 
 if __name__ == "__main__":

@@ -8,6 +8,7 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
+import org.python.core.PyUnicode;
 import org.python.core.Visitproc;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
@@ -73,7 +74,7 @@ public class repeat extends PyIterator {
         }
         iter = new PyIterator() {
 
-            public PyObject __iternext__() {
+            public PyObject __next__() {
                 if (counter > 0) {
                     counter--;
                     return object;
@@ -91,7 +92,7 @@ public class repeat extends PyIterator {
         this.object = object;
         counter = -1;
         iter = new PyIterator() {
-            public PyObject __iternext__() {
+            public PyObject __next__() {
                 return object;
             }
         };
@@ -111,25 +112,25 @@ public class repeat extends PyIterator {
     }
 
     @ExposedMethod
-    public PyString __repr__() {
+    public PyUnicode __repr__() {
         if (counter >= 0) {
-            return (PyString)(Py.newString("repeat(%r, %d)").
+            return (PyUnicode) (Py.newUnicode("repeat(%r, %d)").
                     __mod__(new PyTuple(object, Py.newInteger(counter))));
         }
         else {
-            return (PyString)(Py.newString("repeat(%r)").
+            return (PyUnicode)(Py.newUnicode("repeat(%r)").
                     __mod__(new PyTuple(object)));
         }
     }
 
-    public PyObject __iternext__() {
-        return iter.__iternext__();
+    public PyObject __next__() {
+        return iter.__next__();
     }
 
     @ExposedMethod
     @Override
     public PyObject next() {
-        return doNext(__iternext__());
+        return doNext(__next__());
     }
 
 

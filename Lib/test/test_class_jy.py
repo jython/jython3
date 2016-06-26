@@ -7,7 +7,7 @@ import __builtin__
 import types
 import unittest
 from java.lang import Object
-from test import test_support
+from test import support
 
 class ClassGeneralTestCase(unittest.TestCase):
 
@@ -427,7 +427,7 @@ class LenTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         ClassGeneralTestCase,
         ClassNamelessModuleTestCase,
         BrokenNameTestCase,

@@ -2,7 +2,7 @@ import os
 import unittest
 import platform
 
-from test.test_support import TESTFN
+from test.support import TESTFN
 
 def can_symlink():
     # cache the result in can_symlink.prev_val

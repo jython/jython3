@@ -5,10 +5,8 @@
 package org.python.core;
 
 import java.util.AbstractSet;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -66,6 +64,17 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
     }
 
     /**
+     * Create a dictionary with keys and values list, used when create keyvalue-only parameter defaults
+     */
+    public PyDictionary(String[] keys, PyObject[] values) {
+        this();
+        ConcurrentMap<PyObject, PyObject> map = getMap();
+        for (int i = 0; i < keys.length; i++) {
+            map.put(Py.newUnicode(keys[i]), values[i]);
+        }
+    }
+
+    /**
      * Create a new dictionary which is based on given map.
      */
     public PyDictionary(Map<PyObject, PyObject> map) {
@@ -118,6 +127,10 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
         for (int i = 0; i < elements.length; i += 2) {
             map.put(elements[i], elements[i + 1]);
         }
+    }
+
+    public static PyDictionary fromKV(String[] keys, PyObject[] values) {
+        return new PyDictionary(keys, values);
     }
 
     @ExposedMethod(doc = BuiltinDocs.dict___init___doc)
@@ -425,7 +438,7 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
             }
         }
         for (int i = 0; i < keywords.length; i++) {
-            dict___setitem__(Py.newString(keywords[i]), args[nargs + i]);
+            dict___setitem__(Py.newUnicode(keywords[i]), args[nargs + i]);
         }
     }
 
@@ -442,7 +455,7 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
      *
      * @param other a PyObject with a keys() method
      */
-    private void merge(PyObject other) {
+    public void merge(PyObject other) {
         if (other instanceof PyDictionary) {
             getMap().putAll(((PyDictionary) other).getMap());
         } else if (other instanceof PyStringMap) {
@@ -474,7 +487,7 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
         PyObject pairs = other.__iter__();
         PyObject pair;
 
-        for (int i = 0; (pair = pairs.__iternext__()) != null; i++) {
+        for (int i = 0; (pair = pairs.__next__()) != null; i++) {
             try {
                 pair = PySequence.fastSequence(pair, "");
             } catch(PyException pye) {
@@ -578,7 +591,7 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
     }
 
     public final PyList keys_as_list() {
-        return PyList.fromList(new ArrayList<PyObject>(getMap().keySet()));
+        return new PyList(getMap().keySet());
     }
 
     public final PyObject dict_iteritems() {
@@ -658,11 +671,16 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
         }
 
         @Override
-        public PyObject __iternext__() {
+        public PyObject __next__() {
             if (!iterator.hasNext()) {
                 return null;
             }
             return iterator.next();
+        }
+
+        @Override
+        public int __len__() {
+            return size;
         }
     }
 
@@ -678,12 +696,17 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
         }
 
         @Override
-        public PyObject __iternext__() {
+        public PyObject __next__() {
             if (!iterator.hasNext()) {
                 return null;
             }
             Entry<PyObject, PyObject> entry = iterator.next();
             return new PyTuple(entry.getKey(), entry.getValue());
+        }
+
+        @Override
+        public int __len__() {
+            return size;
         }
     }
 

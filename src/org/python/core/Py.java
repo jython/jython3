@@ -34,8 +34,6 @@ import jnr.posix.util.Platform;
 import org.python.antlr.base.mod;
 import org.python.core.adapter.ClassicPyObjectAdapter;
 import org.python.core.adapter.ExtensiblePyObjectAdapter;
-import org.python.core.Traverseproc;
-import org.python.core.Visitproc;
 import org.python.modules.posix.PosixModule;
 import org.python.util.Generic;
 
@@ -62,6 +60,48 @@ class BootstrapTypesSingleton {
 }
 
 public final class Py {
+    static class ErrorMapping {
+        public static final PyObject[] osErrorMapping = new PyObject[Errno.__UNKNOWN_CONSTANT__.intValue()];
+
+        /**
+         *  +-- BlockingIOError        EAGAIN, EALREADY, EWOULDBLOCK, EINPROGRESS
+         +-- ChildProcessError                                          ECHILD
+         +-- ConnectionError
+         +-- BrokenPipeError                              EPIPE, ESHUTDOWN
+         +-- ConnectionAbortedError                           ECONNABORTED
+         +-- ConnectionRefusedError                           ECONNREFUSED
+         +-- ConnectionResetError                               ECONNRESET
+         +-- FileExistsError                                            EEXIST
+         +-- FileNotFoundError                                          ENOENT
+         +-- InterruptedError                                            EINTR
+         +-- IsADirectoryError                                          EISDIR
+         +-- NotADirectoryError                                        ENOTDIR
+         +-- PermissionError                                     EACCES, EPERM
+         +-- ProcessLookupError                                          ESRCH
+         +-- TimeoutError                                            ETIMEDOUT
+         */
+        static {
+            osErrorMapping[Errno.EEXIST.intValue()] = Py.FileExistsError;
+            for (Constant errno : new Constant[]{Errno.EAGAIN, Errno.EALREADY, Errno.EWOULDBLOCK, Errno.EINPROGRESS}) {
+                osErrorMapping[errno.intValue()] = Py.BlockingIOError;
+            }
+            osErrorMapping[Errno.ECHILD.intValue()] = Py.ChildProcessError;
+            osErrorMapping[Errno.EPIPE.intValue()] = Py.BrokenPipeError;
+            osErrorMapping[Errno.ESHUTDOWN.intValue()] = Py.BrokenPipeError;
+            osErrorMapping[Errno.ECONNABORTED.intValue()] = Py.ConnectionAbortedError;
+            osErrorMapping[Errno.ECONNREFUSED.intValue()] = Py.ConnectionRefusedError;
+            osErrorMapping[Errno.ECONNRESET.intValue()] = Py.ConnectionResetError;
+            osErrorMapping[Errno.EEXIST.intValue()] = Py.FileExistsError;
+            osErrorMapping[Errno.ENOENT.intValue()] = Py.FileNotFoundError;
+            osErrorMapping[Errno.EINTR.intValue()] = Py.InterruptedError;
+            osErrorMapping[Errno.EISDIR.intValue()] = Py.IsADirectoryError;
+            osErrorMapping[Errno.ENOTDIR.intValue()] = Py.NotADirectoryError;
+            osErrorMapping[Errno.EACCES.intValue()] = Py.PermissionError;
+            osErrorMapping[Errno.EPERM.intValue()] = Py.PermissionError;
+            osErrorMapping[Errno.ESRCH.intValue()] = Py.ProcessLookupError;
+            osErrorMapping[Errno.ETIMEDOUT.intValue()] = Py.TimeoutError;
+        }
+    }
 
     static class SingletonResolver implements Serializable {
 
@@ -84,11 +124,11 @@ public final class Py {
     }
     /* Holds the singleton None and Ellipsis objects */
     /** The singleton None Python object **/
-    public final static PyObject None = new PyNone();
+    public final static PyObject None = PyNone.getInstance();
     /** The singleton Ellipsis Python object - written as ... when indexing */
-    public final static PyObject Ellipsis = new PyEllipsis();
+    public final static PyObject Ellipsis = PyEllipsis.getInstance();
     /** The singleton NotImplemented Python object. Used in rich comparison */
-    public final static PyObject NotImplemented = new PyNotImplemented();
+    public final static PyObject NotImplemented = PyNotImplemented.getInstance();
     /** A zero-length array of Strings to pass to functions that
     don't have any keyword arguments **/
     public final static String[] NoKeywords = new String[0];
@@ -100,9 +140,9 @@ public final class Py {
     /** A tuple with zero elements **/
     public final static PyTuple EmptyTuple = new PyTuple(Py.EmptyObjects);
     /** The Python integer 0 **/
-    public final static PyInteger Zero = new PyInteger(0);
+    public final static PyLong Zero = new PyLong(0);
     /** The Python integer 1 **/
-    public final static PyInteger One = new PyInteger(1);
+    public final static PyLong One = new PyLong(1);
     /** The Python boolean False **/
     public final static PyBoolean False = new PyBoolean(false);
     /** The Python boolean True **/
@@ -112,11 +152,11 @@ public final class Py {
     /** A zero-length Python Unicode string **/
     public final static PyUnicode EmptyUnicode = new PyUnicode("");
     /** A Python string containing '\n' **/
-    public final static PyString Newline = new PyString("\n");
+    public final static PyString Newline = new PyUnicode("\n");
     /** A Python unicode string containing '\n' **/
     public final static PyUnicode UnicodeNewline = new PyUnicode("\n");
     /** A Python string containing ' ' **/
-    public final static PyString Space = new PyString(" ");
+    public final static PyString Space = new PyUnicode(" ");
     /** A Python unicode string containing ' ' **/
     public final static PyUnicode UnicodeSpace = new PyUnicode(" ");
     /** Set if the type object is dynamically allocated */
@@ -142,25 +182,57 @@ public final class Py {
 
     public static PyException OSError(Constant errno) {
         int value = errno.intValue();
-        PyObject args = new PyTuple(Py.newInteger(value), PosixModule.strerror(value));
+        PyObject args = new PyTuple(Py.newInteger(value), Py.newUnicode(Errno.valueOf(value).description()));
         return new PyException(Py.OSError, args);
     }
-    
-    public static PyException OSError(Constant errno, PyObject filename) {
+
+    public static PyException OSError(Errno errno, String filename) {
+        return OSError(errno, new PyUnicode(filename));
+    }
+
+    public static PyException OSError(Errno errno, PyObject filename) {
         int value = errno.intValue();
         // see https://github.com/jruby/jruby/commit/947c661e46683ea82f8016dde9d3fa597cd10e56
         // for rationale to do this mapping, but in a nutshell jnr-constants is automatically
         // generated from header files, so that's not the right place to do this mapping,
         // but for Posix compatibility reasons both CPython andCRuby do this mapping;
         // except CPython chooses EEXIST instead of CRuby's ENOENT
-        if (Platform.IS_WINDOWS && (value == 20047 || value == Errno.ESRCH.intValue())) {
+        if (Platform.IS_WINDOWS && (value == 20047 || errno == Errno.ESRCH)) {
             value = Errno.EEXIST.intValue();
         }
         // Pass to strerror because jnr-constants currently lacks Errno descriptions on
         // Windows, and strerror falls back to Linux's
-        PyObject args = new PyTuple(Py.newInteger(value), PosixModule.strerror(value), filename);
-        return new PyException(Py.OSError, args);
+        PyObject args = new PyTuple(Py.newInteger(value), Py.newUnicode(errno.description()), filename);
+        PyObject err = ErrorMapping.osErrorMapping[value];
+        if (err == null) {
+            err = Py.OSError;
+        }
+        return new PyException(err, args);
     }
+
+    public static PyObject BlockingIOError;
+    public static PyObject ChildProcessError;
+    public static PyObject FileExistsError;
+    public static PyObject FileNotFoundError;
+    public static PyObject IsADirectoryError;
+    public static PyObject NotADirectoryError;
+    public static PyObject PermissionError;
+    public static PyObject InterruptedError;
+    public static PyObject ProcessLookupError;
+    public static PyObject TimeoutError;
+
+    public static PyObject ConnectionError;
+    public static PyException ConnectionError() {
+        return new PyException(Py.ConnectionError);
+    }
+
+    public static PyObject ConnectionResetError;
+    public static PyException ConnectionResetError() {
+        return new PyException(Py.ConnectionResetError);
+    }
+    public static PyObject BrokenPipeError;
+    public static PyObject ConnectionAbortedError;
+    public static PyObject ConnectionRefusedError;
 
     public static PyObject NotImplementedError;
     public static PyException NotImplementedError(String message) {
@@ -172,7 +244,7 @@ public final class Py {
         return new PyException(Py.EnvironmentError, message);
     }
 
-    /* The standard Python exceptions */
+    /* The standard Python Exceptions */
     public static PyObject OverflowError;
 
     public static PyException OverflowError(String message) {
@@ -183,6 +255,12 @@ public final class Py {
     public static PyException RuntimeError(String message) {
         return new PyException(Py.RuntimeError, message);
     }
+
+    public static PyObject RecursionError;
+    public static PyException RecursionError(String message) {
+        return new PyException(Py.RecursionError, message);
+    }
+
     public static PyObject KeyboardInterrupt;
     public static PyException KeyboardInterrupt(String message) {
         return new PyException(Py.KeyboardInterrupt, message);
@@ -232,8 +310,10 @@ public final class Py {
             message = ioe.getClass().getName();
         }
         if (ioe instanceof FileNotFoundException) {
-            PyTuple args = new PyTuple(Py.newInteger(Errno.ENOENT.intValue()),
-                                       Py.newString("File not found - " + message));
+            int value = Errno.ENOENT.intValue();
+            PyTuple args = new PyTuple(Py.newLong(value),
+                    Py.newUnicode(Errno.ENOENT.description() + message));
+            err = ErrorMapping.osErrorMapping[value];
             return new PyException(err, args);
         }
         return new PyException(err, message);
@@ -253,7 +333,16 @@ public final class Py {
     public static PyException AssertionError(String message) {
         return new PyException(Py.AssertionError, message);
     }
+
+    public static PyException AssertionError(PyObject val) {
+        return new PyException(Py.AssertionError, new PyTuple(val));
+    }
+
     public static PyObject TypeError;
+
+    public static PyException TypeError(Throwable t) {
+        return new PyException(TypeError, t.getMessage());
+    }
 
     public static PyException TypeError(String message) {
         return new PyException(Py.TypeError, message);
@@ -314,11 +403,16 @@ public final class Py {
     }
     public static PyObject StopIteration;
 
-    public static PyException StopIteration(String message) {
-        return new PyException(Py.StopIteration, message);
+    public static PyException StopIteration() {
+        return new PyException(Py.StopIteration);
+    }
+    public static PyException StopIteration(PyObject value) {
+        return new PyException(Py.StopIteration, value);
     }
     public static PyObject GeneratorExit;
-
+    public static PyException GeneratorExit() {
+        return new PyException(Py.GeneratorExit);
+    }
     public static PyException GeneratorExit(String message) {
         return new PyException(Py.GeneratorExit, message);
     }
@@ -327,6 +421,12 @@ public final class Py {
     public static PyException ImportError(String message) {
         return new PyException(Py.ImportError, message);
     }
+
+    public static PyException ImportError(String message, String name) {
+      return new PyException(Py.ImportError, new PyTuple(
+            new PyString(message), new PyString(name)));
+    }
+
     public static PyObject ValueError;
 
     public static PyException ValueError(String message) {
@@ -354,11 +454,11 @@ public final class Py {
             int start,
             int end,
             String reason) {
-        return new PyException(Py.UnicodeDecodeError, new PyTuple(new PyString(encoding),
+        return new PyException(Py.UnicodeDecodeError, new PyTuple(new PyUnicode(encoding),
                 new PyString(object),
-                new PyInteger(start),
-                new PyInteger(end),
-                new PyString(reason)));
+                new PyLong(start),
+                new PyLong(end),
+                new PyUnicode(reason)));
     }
     public static PyObject UnicodeEncodeError;
 
@@ -367,11 +467,11 @@ public final class Py {
             int start,
             int end,
             String reason) {
-        return new PyException(Py.UnicodeEncodeError, new PyTuple(new PyString(encoding),
+        return new PyException(Py.UnicodeEncodeError, new PyTuple(new PyUnicode(encoding),
                 new PyUnicode(object),
-                new PyInteger(start),
-                new PyInteger(end),
-                new PyString(reason)));
+                new PyLong(start),
+                new PyLong(end),
+                new PyUnicode(reason)));
     }
     public static PyObject EOFError;
 
@@ -451,6 +551,12 @@ public final class Py {
     public static void BytesWarning(String message) {
         warning(BytesWarning, message);
     }
+
+    public static PyObject ResourceWarning;
+    public static void ResourceWarning(String message) {
+        warning(ResourceWarning, message);
+    }
+
 
     public static void warnPy3k(String message) {
         warnPy3k(message, 1);
@@ -536,7 +642,7 @@ public final class Py {
         } else if (t instanceof InvocationTargetException) {
             return JavaError(((InvocationTargetException) t).getTargetException());
         } else if (t instanceof StackOverflowError) {
-            return Py.RuntimeError("maximum recursion depth exceeded (Java StackOverflowError)");
+            return Py.RecursionError("maximum recursion depth exceeded (Java StackOverflowError)");
         } else if (t instanceof OutOfMemoryError) {
             memory_error((OutOfMemoryError) t);
         } else if (t instanceof UserInterruptException) {
@@ -759,11 +865,11 @@ public final class Py {
             boolean args, boolean keywords,
             PyFunctionTable funcs, int func_id,
             String[] cellvars, String[] freevars,
-            int npurecell, int moreflags) {
+            int npurecell, int kwonlyargcount, int moreflags) {
         return new PyTableCode(argcount, varnames,
                 filename, name, 0, args, keywords, funcs,
                 func_id, cellvars, freevars, npurecell,
-                moreflags);
+                kwonlyargcount, moreflags);
     }
 
     public static PyCode newCode(int argcount, String varnames[],
@@ -772,11 +878,11 @@ public final class Py {
             boolean args, boolean keywords,
             PyFunctionTable funcs, int func_id,
             String[] cellvars, String[] freevars,
-            int npurecell, int moreflags) {
+            int npurecell, int kwonlyargcount, int moreflags) {
         return new PyTableCode(argcount, varnames,
                 filename, name, firstlineno, args, keywords,
                 funcs, func_id, cellvars, freevars, npurecell,
-                moreflags);
+                kwonlyargcount, moreflags);
     }
 
     // --
@@ -811,16 +917,20 @@ public final class Py {
             throw Py.JavaError(e);
         }
     }
-
     private static PyObject initExc(String name, PyObject exceptions,
             PyObject dict) {
+        return initExc(name, name, exceptions, dict);
+    }
+
+    private static PyObject initExc(String alias, String name, PyObject exceptions,
+            PyObject dict) {
         PyObject tmp = exceptions.__getattr__(name);
-        dict.__setitem__(name, tmp);
+        dict.__setitem__(alias, tmp);
         return tmp;
     }
 
     static void initClassExceptions(PyObject dict) {
-        PyObject exc = imp.load("exceptions");
+        PyObject exc = imp.load("__builtin__");
 
         BaseException = initExc("BaseException", exc, dict);
         Exception = initExc("Exception", exc, dict);
@@ -830,11 +940,27 @@ public final class Py {
         StandardError = initExc("StandardError", exc, dict);
         KeyboardInterrupt = initExc("KeyboardInterrupt", exc, dict);
         ImportError = initExc("ImportError", exc, dict);
-        EnvironmentError = initExc("EnvironmentError", exc, dict);
-        IOError = initExc("IOError", exc, dict);
+        EnvironmentError = initExc("EnvironmentError", "OSError", exc, dict);
+        IOError = initExc("IOError", "OSError", exc, dict);
         OSError = initExc("OSError", exc, dict);
+        ConnectionError = initExc("ConnectionError", exc, dict);
+        ConnectionResetError = initExc("ConnectionResetError", exc, dict);
+        ConnectionAbortedError = initExc("ConnectionAbortedError", exc, dict);
+        ConnectionRefusedError = initExc("ConnectionRefusedError", exc, dict);
+        BrokenPipeError = initExc("BrokenPipeError", exc, dict);
+        BlockingIOError = initExc("BlockingIOError", exc, dict);
+        FileExistsError = initExc("FileExistsError", exc, dict);
+        FileNotFoundError = initExc("FileNotFoundError", exc, dict);
+        IsADirectoryError = initExc("IsADirectoryError", exc, dict);
+        NotADirectoryError = initExc("NotADirectoryError", exc, dict);
+        PermissionError = initExc("PermissionError", exc, dict);
+        ProcessLookupError = initExc("ProcessLookupError", exc, dict);
+        TimeoutError = initExc("TimeoutError", exc, dict);
+        ChildProcessError = initExc("ChildProcessError", exc, dict);
+
         EOFError = initExc("EOFError", exc, dict);
         RuntimeError = initExc("RuntimeError", exc, dict);
+        RecursionError = initExc("RecursionError", exc, dict);
         NotImplementedError = initExc("NotImplementedError", exc, dict);
         NameError = initExc("NameError", exc, dict);
         UnboundLocalError = initExc("UnboundLocalError", exc, dict);
@@ -867,6 +993,7 @@ public final class Py {
         PendingDeprecationWarning = initExc("PendingDeprecationWarning", exc, dict);
         SyntaxWarning = initExc("SyntaxWarning", exc, dict);
         RuntimeWarning = initExc("RuntimeWarning", exc, dict);
+        ResourceWarning = initExc("ResourceWarning", exc, dict);
         FutureWarning = initExc("FutureWarning", exc, dict);
         ImportWarning = initExc("ImportWarning", exc, dict);
         UnicodeWarning = initExc("UnicodeWarning", exc, dict);
@@ -989,9 +1116,70 @@ public final class Py {
     // statements can trigger static initializers
     private static Class<?> loadAndInitClass(String name, ClassLoader loader) throws ClassNotFoundException {
         return Class.forName(name, true, loader);
-    } 
- 
-    
+    }
+
+    public static PyObject getYieldFromIter(PyObject iter) {
+        if (iter instanceof PyCoroutine) {
+            throw Py.TypeError("cannot 'yield from' a coroutine object in a non-coroutine generator");
+        } else if (iter instanceof PyGenerator) {
+            return iter;
+        }
+        return iter.__iter__();
+    }
+
+    public static PyObject getAwaitable(PyObject iter) {
+        return ((PyCoroutine) iter).__await__();
+    }
+
+    public static PyObject yieldFrom(PyFrame frame) {
+        PyObject iter = frame.f_yieldfrom;
+        Object input = frame.getGeneratorInput();
+        if (iter == null) {
+            throw (PyException) input;
+        }
+        PyObject retval;
+        try {
+            // coroutine or generator
+            if (iter instanceof PyGenerator) {
+                retval = ((PyGenerator) iter).send((PyObject) input);
+            } else if (input != Py.None) {
+                PyObject sendImp = iter.__findattr__("send");
+                if (sendImp == null) {
+                    throw Py.AttributeError(
+                            String.format("'%s' object has no attribute 'send'",
+                                    frame.f_yieldfrom.getType().fastGetName()));
+                }
+                retval = sendImp.__call__((PyObject) input);
+            } else {
+                return iter.__next__();
+            }
+        } catch (PyException e) {
+            if (e.match(Py.StopIteration)) {
+                retval = e.value.__findattr__("value");
+                // if subgenerator exit, continue for next subgenerator
+                frame.f_stacktop = retval;
+                return null;
+            }
+            // if somehow the subgenerator raise an exception, move on
+            frame.f_yieldfrom = null;
+            frame.f_lasti++;
+            throw e;
+        }
+        return retval;
+    }
+
+    /**
+     * Invoke a python method by its name
+     * @param callee the receiver of the method
+     * @param method method name
+     * @return PyObject
+     * throws AttributeError if method not found
+     */
+    public static PyObject invoke(PyObject callee, String method) {
+        PyObject imp = callee.__findattr__(method);
+        return imp.__call__();
+    }
+
     public static void initProxy(PyProxy proxy, String module, String pyclass, Object[] args)
     {
         if (proxy._getPyInstance() != null)
@@ -1059,7 +1247,7 @@ public final class Py {
         Py.getSystemState().callExitFunc();
     }
     //XXX: this needs review to make sure we are cutting out all of the Java
-    //     exceptions.
+    //     Exceptions.
     private static String getStackTrace(Throwable javaError) {
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         javaError.printStackTrace(new PrintStream(buf));
@@ -1152,7 +1340,7 @@ public final class Py {
             displayException(exc.type, exc.value, exc.traceback, file);
         }
 
-        ts.exception = null;
+        ts.exceptions.pop();
     }
 
     public static void displayException(PyObject type, PyObject value, PyObject tb,
@@ -1268,7 +1456,7 @@ public final class Py {
                 buf.append("<unknown>");
             } else {
                 String moduleStr = moduleName.toString();
-                if (!moduleStr.equals("exceptions")) {
+                if (!moduleStr.equals("Exceptions")) {
                     buf.append(moduleStr);
                     buf.append(".");
                 }
@@ -1291,7 +1479,7 @@ public final class Py {
     public static void writeUnraisable(Throwable unraisable, PyObject obj) {
         PyException pye = JavaError(unraisable);
         stderr.println(String.format("Exception %s in %s ignored",
-                                     formatException(pye.type, pye.value, true), obj));
+                                     formatException(pye.type, pye.value, true), obj.toString()));
     }
 
 
@@ -1306,20 +1494,19 @@ public final class Py {
         assert_(test, Py.None);
     }
 
-    /* Helpers to implement finally clauses */
-    public static void addTraceback(Throwable t, PyFrame frame) {
-        Py.JavaError(t).tracebackHere(frame, true);
-    }
-
     /* Helpers to implement except clauses */
     public static PyException setException(Throwable t, PyFrame frame) {
         PyException pye = Py.JavaError(t);
         pye.normalize();
         pye.tracebackHere(frame);
-        getThreadState().exception = pye;
+        getThreadState().exceptions.offerFirst(pye);
         return pye;
     }
 
+    public static void popException(ThreadState state) {
+        state.frame.previousException = null;
+        state.exceptions.pollFirst();
+    }
 
     /**
      * @deprecated As of Jython 2.5, use {@link PyException#match} instead.
@@ -1327,26 +1514,6 @@ public final class Py {
     @Deprecated
     public static boolean matchException(PyException pye, PyObject exc) {
         return pye.match(exc);
-    }
-
-
-    // XXX: the following 4 are backwards compat. for the
-    // oldcompiler. newcompiler should just call doRaise instead
-    public static PyException makeException(PyObject type, PyObject value,
-                                            PyObject traceback) {
-        return PyException.doRaise(type, value, traceback);
-    }
-
-    public static PyException makeException(PyObject type, PyObject value) {
-        return makeException(type, value, null);
-    }
-
-    public static PyException makeException(PyObject type) {
-        return makeException(type, null);
-    }
-
-    public static PyException makeException() {
-        return makeException(null);
     }
 
     public static PyObject runCode(PyCode code, PyObject locals, PyObject globals) {
@@ -1569,9 +1736,9 @@ public final class Py {
                                     + "    This attribute is set by the system property python.home, although it can\n"
                                     + "    be often automatically determined by the location of the Jython jar file\n\n"
                                     + "You can use the -S option or python.import.site=false to not import the site module",
-                            pye.value.__getattr__("args").__getitem__(0),
+                            ((PyBaseException) pye.value).args.__getitem__(0),
                             sys.path,
-                            sys.prefix));
+                            sys.prefix), "site");
                 } else {
                     throw pye;
                 }
@@ -1673,6 +1840,8 @@ public final class Py {
     public static int py2int(PyObject o, String msg) {
         if (o instanceof PyInteger) {
             return ((PyInteger) o).getValue();
+        } else if (o instanceof PyLong) {
+            return ((PyLong) o).getValue().intValue();
         }
         Object obj = o.__tojava__(Integer.TYPE);
         if (obj == Py.NoConversion) {
@@ -1835,9 +2004,10 @@ public final class Py {
                                      PyObject[] closure_cells) {
         ThreadState state = getThreadState();
         PyObject dict = code.call(state, Py.EmptyObjects, Py.NoKeywords,
-                state.frame.f_globals, Py.EmptyObjects, new PyTuple(closure_cells));
+                state.frame.f_globals, Py.EmptyObjects, new PyDictionary(), new PyTuple(closure_cells));
         return makeClass(name, bases, dict, metaclass);
     }
+
     public static PyObject makeClass(String name, PyObject base, PyObject dict) {
         return makeClass(name, base, dict, null);
     }
@@ -1857,30 +2027,76 @@ public final class Py {
      * @return a new Python Class PyObject
      */
     public static PyObject makeClass(String name, PyObject[] bases, PyObject dict) {
-        return makeClass(name, bases, dict, null);
+        return makeClass(name, bases, dict, (PyObject) null);
     }
 
+    /**
+     * Note: it's too hard to unpack the starargs and kwargs in byte code, let's do it here instead.
+     * @param name
+     * @param bases
+     * @param dict
+     * @param metaclass
+     * @return
+     */
     public static PyObject makeClass(String name, PyObject[] bases, PyObject dict, PyObject metaclass) {
-        if (metaclass == null) {
-            if (bases.length != 0) {
-                PyObject base = bases[0];
-                metaclass = base.__findattr__("__class__");
-                if (metaclass == null) {
-                    metaclass = base.getType();
-                }
-            } else {
-                PyObject globals = getFrame().f_globals;
-                if (globals != null) {
-                    metaclass = globals.__finditem__("__metaclass__");
-                }
-                if (metaclass == null) {
-                    metaclass = PyClass.TYPE;
-                }
+        // arguments unpack
+        boolean starargs = false;
+        for (PyObject base : bases) {
+            if (!(base instanceof PyType)) {
+                Py.iter(base, name + "argument after * must be a sequence");
+                starargs = true;
+                break;
             }
         }
 
+        if (starargs) {
+            List<PyObject> expandBases = new ArrayList<>();
+            for (PyObject base : bases) {
+                if (base instanceof PyType) {
+                    expandBases.add(base);
+                } else {
+                    PyObject iter = Py.iter(base, name + "argument after * must be a sequence");
+                    for (PyObject cur = null; ((cur = iter.__next__()) != null); ) {
+                        expandBases.add(cur);
+                    }
+                }
+            }
+            bases = new PyObject[expandBases.size()];
+            expandBases.toArray(bases);
+        }
+
+        // in case of kwarg
+        if (metaclass instanceof PyDictionary) {
+            metaclass = metaclass.__finditem__("metaclass");
+        }
+
+        if (metaclass == null) {
+            // metaclass resolution
+            for (PyObject base : bases) {
+                PyObject meta = base.__findattr__("__class__");
+                if (meta == null) {
+                    meta = base.getType();
+                }
+                // FIXME Py.isSubclass running to stackoverflow if both parameters are the same
+                if (metaclass == null || (meta != metaclass && Py.isSubClass(meta, metaclass))) {
+                    metaclass = meta;
+                }
+            }
+            if (metaclass == null) {
+                metaclass = PyType.TYPE;
+            }
+        }
+        PyObject prepare =  metaclass.__findattr__("__prepare__");
+        PyUnicode clsname = new PyUnicode(name);
+        PyObject basesArray = new PyTuple(bases);
+        if (prepare != null) {
+            PyDictionary map = (PyDictionary) prepare.__call__(clsname, basesArray);
+            map.update(dict);
+            dict = map;
+        }
+
         try {
-            return metaclass.__call__(new PyString(name), new PyTuple(bases), dict);
+            return metaclass.__call__(clsname, basesArray, dict);
         } catch (PyException pye) {
             if (!pye.match(TypeError)) {
                 throw pye;
@@ -2003,7 +2219,7 @@ public final class Py {
         PyObject iter = obj.__iter__();
         int i = 0;
         for (; i < argcount; i++) {
-            PyObject tmp = iter.__iternext__();
+            PyObject tmp = iter.__next__();
             if (tmp == null) {
                 if (argcountAfter == -1) {
                     throw Py.ValueError(String.format("not enough values to unpack (expected %d, got %d)",
@@ -2018,12 +2234,12 @@ public final class Py {
 
         if (argcountAfter == -1) {
             // We better have exhausted the iterator now.
-            if (iter.__iternext__() != null) {
+            if (iter.__next__() != null) {
                 throw Py.ValueError(String.format("too many values to unpack (expected %d)", argcount));
             }
         } else {
             PyList after = new PyList();
-            for (PyObject o = null; (o = iter.__iternext__()) != null;) {
+            for (PyObject o = null; (o = iter.__next__()) != null;) {
                 after.append(o);
             }
             if (after.size() < argcountAfter) {
@@ -2377,47 +2593,47 @@ class JavaCode extends PyCode implements Traverseproc {
 
     @Override
     public PyObject call(ThreadState state, PyObject args[], String keywords[],
-            PyObject globals, PyObject[] defaults,
-            PyObject closure) {
+                         PyObject globals, PyObject[] defaults, PyDictionary kw_defaults,
+                         PyObject closure) {
         return func.__call__(args, keywords);
     }
 
     @Override
     public PyObject call(ThreadState state, PyObject self, PyObject args[], String keywords[],
-            PyObject globals, PyObject[] defaults,
-            PyObject closure) {
+                         PyObject globals, PyObject[] defaults, PyDictionary kw_defaults,
+                         PyObject closure) {
         return func.__call__(self, args, keywords);
     }
 
     @Override
     public PyObject call(ThreadState state, PyObject globals, PyObject[] defaults,
-            PyObject closure) {
+                         PyDictionary kw_defaults, PyObject closure) {
         return func.__call__();
     }
 
     @Override
     public PyObject call(ThreadState state, PyObject arg1, PyObject globals,
-            PyObject[] defaults, PyObject closure) {
+                         PyObject[] defaults, PyDictionary kw_defaults, PyObject closure) {
         return func.__call__(arg1);
     }
 
     @Override
     public PyObject call(ThreadState state, PyObject arg1, PyObject arg2, PyObject globals,
-            PyObject[] defaults, PyObject closure) {
+                         PyObject[] defaults, PyDictionary kw_defaults, PyObject closure) {
         return func.__call__(arg1, arg2);
     }
 
     @Override
     public PyObject call(ThreadState state, PyObject arg1, PyObject arg2, PyObject arg3,
-            PyObject globals, PyObject[] defaults,
-            PyObject closure) {
+                         PyObject globals, PyObject[] defaults, PyDictionary kw_defaults,
+                         PyObject closure) {
         return func.__call__(arg1, arg2, arg3);
     }
 
     @Override
     public PyObject call(ThreadState state, PyObject arg1, PyObject arg2,
-            PyObject arg3, PyObject arg4, PyObject globals,
-            PyObject[] defaults, PyObject closure) {
+                         PyObject arg3, PyObject arg4, PyObject globals,
+                         PyObject[] defaults, PyDictionary kw_defaults, PyObject closure) {
         return func.__call__(arg1, arg2, arg3, arg4);
     }
 

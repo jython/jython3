@@ -4,4 +4,4 @@ try:
 except KeyError:
     pass
 else:
-    print 'Deleting missing key should raise KeyError!'
+    print('Deleting missing key should raise KeyError!')

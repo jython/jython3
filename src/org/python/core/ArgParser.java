@@ -1,8 +1,12 @@
 package org.python.core;
 
+import com.google.common.base.Joiner;
 import org.python.antlr.AST;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -34,6 +38,9 @@ public class ArgParser {
     // The list of allowed and expected keyword names.
     private String[] params = null;
 
+    // The list of keyword-only arguments
+    private String[] kwonlyargs = null;
+
     // A marker.
     private static Object required = new Object();
 
@@ -51,53 +58,6 @@ public class ArgParser {
     }
 
     /**
-     * Create an ArgParser for a one-argument function.
-     * 
-     * @param funcname Name of the function. Used in error messages.
-     * @param args The actual call arguments supplied in the call.
-     * @param kws The actual keyword names supplied in the call.
-     * @param p0 The expected argument in the function definition.
-     */
-    public ArgParser(String funcname, PyObject[] args, String[] kws, String p0) {
-        this(funcname, args, kws);
-        this.params = new String[] { p0 };
-        check();
-    }
-
-    /**
-     * Create an ArgParser for a two-argument function.
-     * 
-     * @param funcname Name of the function. Used in error messages.
-     * @param args The actual call arguments supplied in the call.
-     * @param kws The actual keyword names supplied in the call.
-     * @param p0 The first expected argument in the function definition.
-     * @param p1 The second expected argument in the function definition.
-     */
-    public ArgParser(String funcname, PyObject[] args, String[] kws, String p0,
-            String p1) {
-        this(funcname, args, kws);
-        this.params = new String[] { p0, p1 };
-        check();
-    }
-
-    /**
-     * Create an ArgParser for a three-argument function.
-     * 
-     * @param funcname Name of the function. Used in error messages.
-     * @param args The actual call arguments supplied in the call.
-     * @param kws The actual keyword names supplied in the call.
-     * @param p0 The first expected argument in the function definition.
-     * @param p1 The second expected argument in the function definition.
-     * @param p2 The third expected argument in the function definition.
-     */
-    public ArgParser(String funcname, PyObject[] args, String[] kws, String p0,
-            String p1, String p2) {
-        this(funcname, args, kws);
-        this.params = new String[] { p0, p1, p2 };
-        check();
-    }
-
-    /**
      * Create an ArgParser for a multi-argument function.
      * 
      * @param funcname Name of the function. Used in error messages.
@@ -106,16 +66,28 @@ public class ArgParser {
      * @param paramnames The list of expected argument in the function definition.
      */
     public ArgParser(String funcname, PyObject[] args, String[] kws,
-            String[] paramnames) {
+            String... paramnames) {
         this(funcname, args, kws);
-        this.params = paramnames;
+        splitParams(paramnames);
         check();
+    }
+
+    public ArgParser(String funcname, PyObject[] args, String[] kws, int minargs,
+                     String... paramnames) {
+        this(funcname, args, kws);
+        splitParams(paramnames);
+        check();
+        if (!PyBuiltinCallable.DefaultInfo.check(args.length, minargs,
+                this.params.length)) {
+            throw PyBuiltinCallable.DefaultInfo.unexpectedCall(args.length,
+                    false, funcname, minargs, this.params.length);
+        }
     }
 
     public ArgParser(String funcname, PyObject[] args, String[] kws,
             String[] paramnames, int minargs) {
         this(funcname, args, kws);
-        this.params = paramnames;
+        splitParams(paramnames);
         check();
         if (!PyBuiltinCallable.DefaultInfo.check(args.length, minargs,
                 this.params.length)) {
@@ -127,7 +99,7 @@ public class ArgParser {
     public ArgParser(String funcname, PyObject[] args, String[] kws,
             String[] paramnames, int minargs, boolean takesZeroArgs) {
         this(funcname, args, kws);
-        this.params = paramnames;
+        splitParams(paramnames);
         check();
         if (!AST.check(args.length - kws.length, minargs, takesZeroArgs)) {
             throw AST.unexpectedCall(minargs,  funcname);
@@ -293,6 +265,17 @@ public class ArgParser {
         }
     }
 
+    private void splitParams(String[] paramnames) {
+        List<String> paramsList = Arrays.<String>asList(paramnames);
+        int starargIndex = paramsList.indexOf("*");
+        if (starargIndex == -1) {
+            params = paramnames;
+        } else {
+            params = paramsList.subList(0, starargIndex).toArray(new String[0]);
+            kwonlyargs = paramsList.subList(starargIndex + 1, paramsList.size()).toArray(new String[0]);
+        }
+    }
+
     private void check() {
         Set<Integer> usedKws = new HashSet<Integer>();
         int nargs = args.length - kws.length;
@@ -316,6 +299,20 @@ public class ArgParser {
             throw Py.TypeError("'" + kws[i] + "' is an invalid keyword "
                     + "argument for this function");
         }
+        if (kwonlyargs == null) return;
+        List<String> missingKwonlyArgs = new ArrayList<>();
+        l2: for (int i = 0; i < kwonlyargs.length; i++) {
+            for (int j = 0; j < kws.length; j++) {
+                if (kws[j].equals(kwonlyargs[i])) {
+                    continue l2;
+                }
+            }
+            missingKwonlyArgs.add(kwonlyargs[i]);
+        }
+//        if (!missingKwonlyArgs.isEmpty()) {
+//            throw Py.TypeError(String.format("%.200s() missing %d keyword-only %s: %s", funcname, missingKwonlyArgs.size(),
+//                    missingKwonlyArgs.size() > 1 ? "arguments" : "argument", Joiner.on(',').join(missingKwonlyArgs)));
+//        }
     }
 
     private PyObject getRequiredArg(int pos) {

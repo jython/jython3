@@ -1,7 +1,7 @@
 from functools import partial
 import unittest
 
-from test import test_support
+from test import support
 
 
 class PartialDictTest(unittest.TestCase):
@@ -14,7 +14,7 @@ class PartialDictTest(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(PartialDictTest)
+    support.run_unittest(PartialDictTest)
 
 if __name__ == "__main__":
     test_main()

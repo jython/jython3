@@ -11,7 +11,7 @@ import unittest
 import textwrap
 import shutil
 
-from test.test_support import (unlink, TESTFN, unload, run_unittest, rmtree,
+from test.support import (unlink, TESTFN, unload, run_unittest, rmtree,
                                is_jython, check_warnings, EnvironmentVarGuard)
 from test import symlink_support
 from test import script_helper
@@ -26,7 +26,7 @@ def _files(name):
 def chmod_files(name):
     for f in _files(name):
         try:
-            os.chmod(f, 0600)
+            os.chmod(f, 0o600)
         except OSError as exc:
             if exc.errno != errno.ENOENT:
                 raise
@@ -68,16 +68,16 @@ class ImportTests(unittest.TestCase):
                 pyc = TESTFN + os.extsep + "pyc"
 
             with open(source, "w") as f:
-                print >> f, ("# This tests Python's ability to import a", ext,
-                             "file.")
+                print(("# This tests Python's ability to import a", ext,
+                             "file."), file=f)
                 a = random.randrange(1000)
                 b = random.randrange(1000)
-                print >> f, "a =", a
-                print >> f, "b =", b
+                print("a =", a, file=f)
+                print("b =", b, file=f)
 
             try:
                 mod = __import__(TESTFN)
-            except ImportError, err:
+            except ImportError as err:
                 self.fail("import from %s failed: %s" % (ext, err))
             else:
                 self.assertEqual(mod.a, a,
@@ -89,7 +89,7 @@ class ImportTests(unittest.TestCase):
 
             try:
                 imp.reload(mod)
-            except ImportError, err:
+            except ImportError as err:
                 self.fail("import from .pyc/.pyo failed: %s" % err)
             finally:
                 unlink(pyc)
@@ -109,7 +109,7 @@ class ImportTests(unittest.TestCase):
     def test_execute_bit_not_copied(self):
         # Issue 6070: under posix .pyc files got their execute bit set if
         # the .py file had the execute bit set, but they aren't executable.
-        oldmask = os.umask(022)
+        oldmask = os.umask(0o22)
         sys.path.insert(0, os.curdir)
         try:
             fname = TESTFN + os.extsep + "py"
@@ -145,11 +145,11 @@ class ImportTests(unittest.TestCase):
             # Tweak the mtime of the source to ensure pyc gets updated later
             s = os.stat(fname)
             os.utime(fname, (s.st_atime, s.st_mtime-100000000))
-            os.chmod(fname, 0400)
+            os.chmod(fname, 0o400)
             m1 = __import__(TESTFN)
             self.assertEqual(m1.x, 'original')
             # Change the file and then reimport it
-            os.chmod(fname, 0600)
+            os.chmod(fname, 0o600)
             with open(fname, 'w') as f:
                 f.write("x = 'rewritten'\n")
             unload(TESTFN)
@@ -169,7 +169,7 @@ class ImportTests(unittest.TestCase):
     def test_imp_module(self):
         # Verify that the imp module can correctly load and find .py files
 
-        # XXX (ncoghlan): It would be nice to use test_support.CleanImport
+        # XXX (ncoghlan): It would be nice to use support.CleanImport
         # here, but that breaks because the os module registers some
         # handlers in copy_reg on import. Since CleanImport doesn't
         # revert that registration, the module is left in a broken
@@ -205,7 +205,7 @@ class ImportTests(unittest.TestCase):
         sys.path.append('')
 
         # This used to crash.
-        exec 'import ' + module
+        exec('import ' + module)
 
         # Cleanup.
         del sys.path[-1]
@@ -215,7 +215,7 @@ class ImportTests(unittest.TestCase):
     def test_failing_import_sticks(self):
         source = TESTFN + os.extsep + "py"
         with open(source, "w") as f:
-            print >> f, "a = 1 // 0"
+            print("a = 1 // 0", file=f)
 
         # New in 2.4, we shouldn't be able to import that no matter how often
         # we try.
@@ -233,8 +233,8 @@ class ImportTests(unittest.TestCase):
         # A failing reload should leave the module object in sys.modules.
         source = TESTFN + os.extsep + "py"
         with open(source, "w") as f:
-            print >> f, "a = 1"
-            print >> f, "b = 2"
+            print("a = 1", file=f)
+            print("b = 2", file=f)
 
         sys.path.insert(0, os.curdir)
         try:
@@ -251,8 +251,8 @@ class ImportTests(unittest.TestCase):
 
             # Now damage the module.
             with open(source, "w") as f:
-                print >> f, "a = 10"
-                print >> f, "b = 20//0"
+                print("a = 10", file=f)
+                print("b = 20//0", file=f)
 
             self.assertRaises(ZeroDivisionError, imp.reload, mod)
 
@@ -283,13 +283,13 @@ class ImportTests(unittest.TestCase):
     def test_import_name_binding(self):
         # import x.y.z binds x in the current namespace.
         import test as x
-        import test.test_support
+        import test.support
         self.assertIs(x, test, x.__name__)
-        self.assertTrue(hasattr(test.test_support, "__file__"))
+        self.assertTrue(hasattr(test.support, "__file__"))
 
         # import x.y.z as w binds z as w.
-        import test.test_support as y
-        self.assertIs(y, test.test_support, y.__name__)
+        import test.support as y
+        self.assertIs(y, test.support, y.__name__)
 
     def test_import_initless_directory_warning(self):
         # NOTE: to test this, we have to remove Jython's JavaImporter
@@ -486,7 +486,7 @@ func_filename = func.func_code.co_filename
             header = f.read(8)
             code = marshal.load(f)
         constants = list(code.co_consts)
-        foreign_code = test_main.func_code
+        foreign_code = test_main.__code__
         pos = constants.index(1)
         constants[pos] = foreign_code
         code = type(code)(code.co_argcount, code.co_nlocals, code.co_stacksize,
@@ -562,9 +562,9 @@ class RelativeImportTests(unittest.TestCase):
     def test_issue3221(self):
         # Regression test for http://bugs.python.org/issue3221.
         def check_absolute():
-            exec "from os import path" in ns
+            exec("from os import path", ns)
         def check_relative():
-            exec "from . import relimport" in ns
+            exec("from . import relimport", ns)
 
         # Check both OK with __package__ and __name__ correct
         ns = dict(__package__='test', __name__='test.notarealmodule')

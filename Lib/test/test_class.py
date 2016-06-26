@@ -2,7 +2,7 @@
 
 import unittest
 
-from test import test_support
+from test import support
 
 testmeths = [
 
@@ -102,7 +102,7 @@ class AllTests:
 
     @trackCall
     def __long__(self, *args):
-        return 1L
+        return 1
 
     @trackCall
     def __oct__(self, *args):
@@ -125,7 +125,7 @@ def __%(method)s__(self, *args):
 """
 
 for method in testmeths:
-    exec method_template % locals() in AllTests.__dict__
+    exec(method_template % locals(), AllTests.__dict__)
 
 del method, method_template
 
@@ -192,7 +192,7 @@ class ClassTests(unittest.TestCase):
 
 
         callLst[:] = []
-        divmod(testme,1)
+        divmod(testme, 1)
         self.assertCallStack([("__coerce__", (testme, 1)), ("__divmod__", (testme, 1))])
 
         callLst[:] = []
@@ -335,7 +335,7 @@ class ClassTests(unittest.TestCase):
         #  default.
         callLst[:] = []
         testme[:42]
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertCallStack([('__getitem__', (testme,
                                                    slice(None, 42, None)))])
         else:
@@ -344,8 +344,8 @@ class ClassTests(unittest.TestCase):
 
         callLst[:] = []
         testme[:42] = "The Answer"
-        if test_support.is_jython:
-            self.assertCallStack([('__setitem__',(testme,
+        if support.is_jython:
+            self.assertCallStack([('__setitem__', (testme,
                                                   slice(None, 42, None),
                                                   "The Answer"))])
         else:
@@ -354,7 +354,7 @@ class ClassTests(unittest.TestCase):
                                                    "The Answer"))])
         callLst[:] = []
         del testme[:42]
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertCallStack([('__delitem__', (testme,
                                                    slice(None, 42, None)))])
         else:
@@ -367,7 +367,7 @@ class ClassTests(unittest.TestCase):
         AllTests.__delslice__ = delslice
 
 
-    @test_support.cpython_only
+    @support.cpython_only
     def testDelItem(self):
         class A:
             ok = False
@@ -396,7 +396,7 @@ class ClassTests(unittest.TestCase):
         int(testme)
         self.assertCallStack([('__int__', (testme,))])
         callLst[:] = []
-        long(testme)
+        int(testme)
         self.assertCallStack([('__long__', (testme,))])
         callLst[:] = []
         float(testme)
@@ -498,7 +498,7 @@ class ClassTests(unittest.TestCase):
     def testDel(self):
         #XXX: gc.collect is not deterministic on Jython, but it would be nice
         #     to find a way to test this.
-        if not test_support.is_jython:
+        if not support.is_jython:
             x = []
 
             class DelTest:
@@ -522,7 +522,7 @@ class ClassTests(unittest.TestCase):
             __oct__ = __int__
             __hex__ = __int__
 
-        for f in [int, float, long, str, repr, oct, hex]:
+        for f in [int, float, int, str, repr, oct, hex]:
             self.assertRaises(TypeError, f, BadTypeClass())
 
     def testMixIntsAndLongs(self):
@@ -530,7 +530,7 @@ class ClassTests(unittest.TestCase):
         class IntLongMixClass:
             @trackCall
             def __int__(self):
-                return 42L
+                return 42
 
             @trackCall
             def __long__(self):
@@ -540,16 +540,16 @@ class ClassTests(unittest.TestCase):
 
         callLst[:] = []
         as_int = int(mixIntAndLong)
-        self.assertEqual(type(as_int), long)
-        self.assertEqual(as_int, 42L)
+        self.assertEqual(type(as_int), int)
+        self.assertEqual(as_int, 42)
         self.assertCallStack([('__int__', (mixIntAndLong,))])
 
         callLst[:] = []
-        as_long = long(mixIntAndLong)
-        if test_support.is_jython:
+        as_long = int(mixIntAndLong)
+        if support.is_jython:
             self.assertEqual(type(as_long), int)
         else:
-            self.assertEqual(type(as_long), long)
+            self.assertEqual(type(as_long), int)
         self.assertEqual(as_long, 64)
         self.assertCallStack([('__long__', (mixIntAndLong,))])
 
@@ -598,7 +598,7 @@ class ClassTests(unittest.TestCase):
             a = property(booh)
         try:
             A().a # Raised AttributeError: A instance has no attribute 'a'
-        except AttributeError, x:
+        except AttributeError as x:
             if str(x) != "booh":
                 self.fail("attribute error for A().a got masked: %s" % x)
 
@@ -612,7 +612,7 @@ class ClassTests(unittest.TestCase):
             # In debug mode, printed XXX undetected error and
             #  raises AttributeError
             I()
-        except AttributeError, x:
+        except AttributeError as x:
             pass
         else:
             self.fail("attribute error for I.__init__ got masked")
@@ -648,7 +648,7 @@ class ClassTests(unittest.TestCase):
         self.assertEqual(hash(B.f), hash(A.f))
 
         # the following triggers a SystemError in 2.4
-        a = A(hash(A.f.im_func)^(-1))
+        a = A(hash(A.f.__func__)^(-1))
         hash(a.f)
 
     def testAttrSlots(self):
@@ -659,11 +659,11 @@ class ClassTests(unittest.TestCase):
             self.assertRaises(TypeError, type(c).__setattr__, c, [], [])
 
 def test_main():
-    with test_support.check_py3k_warnings(
+    with support.check_py3k_warnings(
             (".+__(get|set|del)slice__ has been removed", DeprecationWarning),
             ("classic int division", DeprecationWarning),
             ("<> not supported", DeprecationWarning)):
-        test_support.run_unittest(ClassTests)
+        support.run_unittest(ClassTests)
 
 if __name__=='__main__':
     test_main()

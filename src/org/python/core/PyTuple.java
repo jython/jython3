@@ -298,13 +298,13 @@ public class PyTuple extends PySequenceList implements List {
         return o.__repr__().toString();
     }
 
-    @Override
-    public String toString() {
-        return tuple___repr__();
+    @ExposedMethod(doc = BuiltinDocs.tuple___repr___doc)
+    final PyUnicode tuple___repr__() {
+        return new PyUnicode(toString());
     }
 
-    @ExposedMethod(doc = BuiltinDocs.tuple___repr___doc)
-    final String tuple___repr__() {
+    @Override
+    public String toString() {
         StringBuilder buf = new StringBuilder("(");
         for (int i = 0; i < array.length - 1; i++) {
             buf.append(subobjRepr(array[i]));

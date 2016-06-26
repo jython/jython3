@@ -27,10 +27,10 @@ warnings.warn('The javapath module is deprecated. Use the os.path module.',
 
 
 def _tostr(s, method):
-    if isinstance(s, basestring):
+    if isinstance(s, str):
         return s
-    raise TypeError, "%s() argument must be a str or unicode object, not %s" % (
-                method, _type_name(s))
+    raise TypeError("%s() argument must be a str or unicode object, not %s" % (
+                method, _type_name(s)))
 
 def _type_name(obj):
     TPFLAGS_HEAPTYPE = 1 << 9
@@ -150,7 +150,7 @@ def commonprefix(m):
     prefix = m[0]
     for item in m:
         for i in range(len(prefix)):
-            if prefix[:i+1] <> item[:i+1]:
+            if prefix[:i+1] != item[:i+1]:
                 prefix = prefix[:i]
                 if i == 0: return ''
                 break
@@ -240,7 +240,7 @@ def normpath(path):
         elif comps[i] == pardir and i > 0 and comps[i-1] not in ('', pardir):
             del comps[i-1:i+1]
             i = i-1
-        elif comps[i] == '' and i > 0 and comps[i-1] <> '':
+        elif comps[i] == '' and i > 0 and comps[i-1] != '':
             del comps[i]
         else:
             i = i+1
@@ -340,7 +340,7 @@ def expandvars(path):
                 try:
                     index = path.index('}')
                     var = path[:index]
-                    if os.environ.has_key(var):
+                    if var in os.environ:
                         res = res + os.environ[var]
                 except ValueError:
                     res = res + path
@@ -353,7 +353,7 @@ def expandvars(path):
                     var = var + c
                     index = index + 1
                     c = path[index:index + 1]
-                if os.environ.has_key(var):
+                if var in os.environ:
                     res = res + os.environ[var]
                 if c != '':
                     res = res + c

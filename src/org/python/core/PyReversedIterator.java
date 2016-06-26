@@ -21,7 +21,7 @@ public class PyReversedIterator extends PyIterator {
         }
     }
 
-    public PyObject __iternext__() {
+    public PyObject __next__() {
         if(idx >= 0) {
             return seq.__finditem__(idx--);
         }

@@ -5,7 +5,7 @@
 # previous version of Python by bouncing pickled objects through Python 2.4
 # and Python 2.5 running this file.
 
-import cPickle
+import pickle
 import os
 import os.path
 import pickle
@@ -14,7 +14,7 @@ import sys
 import types
 import unittest
 
-from test import test_support
+from test import support
 
 # Most distro-supplied Pythons don't include the tests
 # or test support files, and some don't include a way to get these back even if
@@ -25,7 +25,7 @@ from test import test_support
 mod_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                         "pickletester.py"))
 pickletester = types.ModuleType("test.pickletester")
-exec compile(open(mod_path).read(), mod_path, 'exec') in pickletester.__dict__
+exec(compile(open(mod_path).read(), mod_path, 'exec'), pickletester.__dict__)
 AbstractPickleTests = pickletester.AbstractPickleTests
 if pickletester.__name__ in sys.modules:
     raise RuntimeError("Did not expect to find test.pickletester loaded")
@@ -57,20 +57,20 @@ class DumpCPickle_LoadPickle(ApproxFloat, AbstractPickleTests):
 
     def dumps(self, arg, proto=0, fast=False):
         # Ignore fast
-        return cPickle.dumps(arg, proto)
+        return pickle.dumps(arg, proto)
 
     def loads(self, buf):
         # Ignore fast
         return pickle.loads(buf)
 
-    @unittest.skipIf(test_support.is_jython, "FIXME: not working on Jython")
+    @unittest.skipIf(support.is_jython, "FIXME: not working on Jython")
     def test_dynamic_class(self):
         pass
 
 
 class DumpPickle_LoadCPickle(AbstractPickleTests):
 
-    error = cPickle.BadPickleGet
+    error = pickle.BadPickleGet
 
     def dumps(self, arg, proto=0, fast=False):
         # Ignore fast
@@ -78,11 +78,11 @@ class DumpPickle_LoadCPickle(AbstractPickleTests):
 
     def loads(self, buf):
         # Ignore fast
-        return cPickle.loads(buf)
+        return pickle.loads(buf)
 
 def have_python_version(name):
     """Check whether the given name is a valid Python binary and has
-    test.test_support.
+    test.support.
 
     This respects your PATH.
 
@@ -92,7 +92,7 @@ def have_python_version(name):
     Returns:
         True if the name is valid, False otherwise.
     """
-    return os.system(name + " -c 'import test.test_support'") == 0
+    return os.system(name + " -c 'import test.support'") == 0
 
 
 class AbstractCompatTests(AbstractPickleTests):
@@ -182,11 +182,11 @@ class AbstractCompatTests(AbstractPickleTests):
     def test_dynamic_class(self):
         pass
 
-    if test_support.have_unicode:
+    if support.have_unicode:
         # This is a cut-down version of pickletester's test_unicode. Backwards
         # compatibility was explicitly broken in r67934 to fix a bug.
         def test_unicode(self):
-            endcases = [u'', u'<\\u>', u'<\\\u1234>', u'<\n>', u'<\\>']
+            endcases = ['', '<\\u>', '<\\\u1234>', '<\n>', '<\\>']
             for proto in pickletester.protocols:
                 for u in endcases:
                     p = self.dumps(u, proto)
@@ -195,7 +195,7 @@ class AbstractCompatTests(AbstractPickleTests):
 
 
 def run_compat_test(python_name):
-    return (test_support.is_resource_enabled("xpickle") and
+    return (support.is_resource_enabled("xpickle") and
             have_python_version(python_name))
 
 
@@ -208,7 +208,7 @@ else:
 
         module = cPickle
         python = "python2.4"
-        error = cPickle.BadPickleGet
+        error = pickle.BadPickleGet
 
         # Disable these tests for Python 2.4. Making them pass would require
         # nontrivially monkeypatching the pickletester module in the worker.
@@ -233,7 +233,7 @@ else:
 
         module = cPickle
         python = "python2.5"
-        error = cPickle.BadPickleGet
+        error = pickle.BadPickleGet
 
 class PicklePython25Compat(CPicklePython25Compat):
 
@@ -250,7 +250,7 @@ else:
 
         module = cPickle
         python = "python2.6"
-        error = cPickle.BadPickleGet
+        error = pickle.BadPickleGet
 
 class PicklePython26Compat(CPicklePython26Compat):
 
@@ -259,18 +259,18 @@ class PicklePython26Compat(CPicklePython26Compat):
 
 
 def worker_main(in_stream, out_stream):
-    message = cPickle.load(in_stream)
+    message = pickle.load(in_stream)
     protocol, obj = message
-    cPickle.dump(obj, out_stream, protocol)
+    pickle.dump(obj, out_stream, protocol)
 
 
 def test_main():
-    if not test_support.is_resource_enabled("xpickle"):
-        print >>sys.stderr, "test_xpickle -- skipping backwards compat tests."
-        print >>sys.stderr, "Use 'regrtest.py -u xpickle' to run them."
+    if not support.is_resource_enabled("xpickle"):
+        print("test_xpickle -- skipping backwards compat tests.", file=sys.stderr)
+        print("Use 'regrtest.py -u xpickle' to run them.", file=sys.stderr)
         sys.stderr.flush()
 
-    test_support.run_unittest(
+    support.run_unittest(
         DumpCPickle_LoadPickle,
         DumpPickle_LoadCPickle,
         CPicklePython24Compat,

@@ -10,6 +10,10 @@ import org.python.core.PyException;
  */
 public class OpenMode {
 
+    public static OpenMode R_ONLY = new OpenMode("r");
+    public static OpenMode W_ONLY = new OpenMode("w");
+    public static OpenMode RW = new OpenMode("rw");
+
     /** Original string supplied as the mode */
     public final String originalModeString;
 

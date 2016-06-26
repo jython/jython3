@@ -7,7 +7,7 @@ import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedType;
 
-@ExposedType(name = "generator", base = PyObject.class, isBaseType = false)
+@ExposedType(name = "generator", base = PyObject.class, isBaseType = false, doc = BuiltinDocs.generator_doc)
 public class PyGenerator extends PyIterator implements FinalizableBuiltin {
 
     public static final PyType TYPE = PyType.fromClass(PyGenerator.class);
@@ -24,7 +24,11 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
     private PyObject closure;
 
     public PyGenerator(PyFrame frame, PyObject closure) {
-        super(TYPE);
+        this(TYPE, frame, closure);
+    }
+
+    public PyGenerator(PyType subType, PyFrame frame, PyObject closure) {
+        super(subType);
         gi_frame = frame;
         if (gi_frame != null) {
             gi_code = gi_frame.f_code;
@@ -37,57 +41,129 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         return generator_send(value);
     }
 
-    @ExposedMethod
+    @ExposedMethod(doc = BuiltinDocs.generator_send_doc)
     final PyObject generator_send(PyObject value) {
         if (gi_frame == null) {
-            throw Py.StopIteration("");
+            throw Py.StopIteration();
         }
-        if (gi_frame.f_lasti == 0 && value != Py.None) {
+
+        if (gi_frame.f_lasti == 0 && value != Py.None && value != null) {
             throw Py.TypeError("can't send non-None value to a just-started generator");
         }
-        gi_frame.setGeneratorInput(value);
-        return next();
+        return gen_send_ex(Py.getThreadState(), value);
     }
 
     public PyObject throw$(PyObject type, PyObject value, PyObject tb) {
         return generator_throw$(type, value, tb);
     }
 
-    @ExposedMethod(names="throw", defaults={"null", "null"})
+    @ExposedMethod(names="throw", defaults={"null", "null"}, doc = BuiltinDocs.generator_throw_doc)
     final PyObject generator_throw$(PyObject type, PyObject value, PyObject tb) {
         if (tb == Py.None) {
             tb = null;
         } else if (tb != null && !(tb instanceof PyTraceback)) {
             throw Py.TypeError("throw() third argument must be a traceback object");
         }
-        return raiseException(Py.makeException(type, value, tb));
+
+        if (gi_frame.f_yieldfrom != null) {
+            PyObject ret = null;
+            Object err = null;
+            if (type == Py.GeneratorExit) {
+                gi_running = true;
+                try {
+                    gen_close_iter(gi_frame.f_yieldfrom);
+                } catch (PyException e) {
+                    throw e;
+                } finally {
+                    gi_running = false;
+                }
+                gi_frame.f_yieldfrom = null;
+                return raiseException(type, value, tb);
+            }
+            if (gi_frame.f_yieldfrom instanceof PyGenerator) {
+                gi_running = true;
+                try {
+                    ret = ((PyGenerator) gi_frame.f_yieldfrom).throw$(type, value, tb);
+                } catch (PyException e) {
+                    if (!e.match(Py.StopIteration)) {
+                        err = e;
+                    }
+                    gi_frame.f_stacktop = e.value.__findattr__("value");
+                } finally {
+                    gi_running = false;
+                }
+            } else {
+                PyObject meth = gi_frame.f_yieldfrom.__findattr__("close");
+                if (meth != null) {
+                    ret = meth.__call__();
+                } else {
+                    gi_frame.f_yieldfrom = null;
+                    return raiseException(type, value, tb);
+                }
+            }
+            if (ret == null) {
+                gi_frame.f_yieldfrom = null;
+                Object val;
+                if (err == null) {
+                    val = Py.None;
+                    gi_frame.f_lasti++;
+                } else {
+                    val = err;
+                }
+                ret = gen_send_ex(Py.getThreadState(), val);
+            }
+            return ret;
+        }
+        return raiseException(type, value, tb);
     }
 
     public PyObject close() {
         return generator_close();
     }
 
-    @ExposedMethod
+    @ExposedMethod(doc = BuiltinDocs.generator_close_doc)
     final PyObject generator_close() {
-        try {
-            raiseException(Py.makeException(Py.GeneratorExit));
-            throw Py.RuntimeError("generator ignored GeneratorExit");
-        } catch (PyException e) {
-            if (!(e.type == Py.StopIteration || e.type == Py.GeneratorExit)) {
-                throw e;
+        PyException pye = null;
+        PyObject retval;
+        PyObject yf = gi_frame.f_yieldfrom;
+        if (yf != null) {
+            gi_running = true;
+            try {
+                gi_frame.f_yieldfrom = null;
+                gen_close_iter(yf);
+            } catch (PyException e) {
+                pye = e;
+            } finally {
+                gi_running = false;
             }
         }
-        return Py.None;
+        if (pye == null) {
+            pye = Py.GeneratorExit();
+        }
+
+        // if generator closed before call to next, advance anyway
+        if (gi_frame.f_lasti == 0) {
+            __next__();
+        }
+        try {
+            // clean up
+            retval = gen_send_ex(Py.getThreadState(), pye);
+        } catch (PyException e) {
+            if (e.match(Py.StopIteration) || e.match(Py.GeneratorExit)) {
+                return Py.None;
+            }
+            throw e;
+        }
+        if (retval != null && retval != Py.None) {
+            throw Py.RuntimeError("generator ignored GeneratorExit");
+        }
+        // not reachable
+        return null;
     }
 
-    @Override
-    public PyObject next() {
-        return generator_next();
-    }
-
-    @ExposedMethod(doc="x.next() -> the next value, or raise StopIteration")
-    final PyObject generator_next() {
-        return super.next();
+    @ExposedMethod(doc = BuiltinDocs.generator___next___doc)
+    final PyObject generator___next__() {
+        return gen_send_ex(Py.getThreadState(), Py.None);
     }
 
     @Override
@@ -95,18 +171,21 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
         return generator___iter__();
     }
 
-    @ExposedMethod
+    @ExposedMethod(doc = BuiltinDocs.generator___iter___doc)
     final PyObject generator___iter__() {
         return this;
     }
 
-    private PyObject raiseException(PyException ex) {
-        if (gi_frame == null || gi_frame.f_lasti == 0) {
-            gi_frame = null;
-            throw ex;
+    private PyObject raiseException(PyObject type, PyObject value, PyObject tb) {
+        PyException pye;
+        if (value == null) {
+            pye = PyException.doRaise(type);
+        } else {
+            pye = new PyException(type, value);
         }
-        gi_frame.setGeneratorInput(ex);
-        return next();
+        pye.traceback = (PyTraceback) tb;
+        gi_frame.previousException = pye;
+        return gen_send_ex(Py.getThreadState(), pye);
     }
     
     @Override
@@ -134,44 +213,87 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
     }
 
     @Override
-    public PyObject __iternext__() {
-        return __iternext__(Py.getThreadState());
+    public PyObject __next__() {
+        try {
+            return gen_send_ex(Py.getThreadState(), Py.None);
+        } catch (PyException e) {
+            if (e.match(Py.StopIteration)) {
+                return null;
+            }
+            throw e;
+        }
     }
 
-    public PyObject __iternext__(ThreadState state) {
+    @ExposedGet(name = "__name__")
+    final String getName() {
+        return gi_code.co_name;
+    }
+
+    @ExposedGet(name = "__qualname__")
+    final String getQualname() {
+        return gi_code.co_name;
+    }
+
+    @ExposedGet(name = "gi_yieldfrom")
+    final PyObject getgi_yieldfrom() {
+        return gi_frame.f_yieldfrom;
+    }
+
+    private PyObject gen_send_ex(ThreadState state, Object value) {
         if (gi_running) {
             throw Py.ValueError("generator already executing");
         }
         if (gi_frame == null) {
-            return null;
+            throw Py.StopIteration();
         }
-
+        if (gi_frame.previousException != null) {
+            state.exceptions.offerFirst(gi_frame.previousException);
+        }
         if (gi_frame.f_lasti == -1) {
             gi_frame = null;
-            return null;
+            throw Py.StopIteration();
+        }
+        // if value is null, means the input is passed implicitly by frame, don't reset to None
+        if (value != null && value != Py.None) {
+            gi_frame.setGeneratorInput(value);
         }
         gi_running = true;
         PyObject result = null;
         try {
             result = gi_frame.f_code.call(state, gi_frame, closure);
         } catch (PyException pye) {
-            if (!(pye.type == Py.StopIteration || pye.type == Py.GeneratorExit)) {
-                gi_frame = null;
-                throw pye;
-            } else {
-                stopException = pye;
-                gi_frame = null;
-                return null;
-            }
+            gi_frame = null;
+            throw pye;
         } finally {
             gi_running = false;
         }
+        if (result == null && gi_frame.f_yieldfrom != null) {
+            gi_frame.f_yieldfrom = null;
+            gi_frame.f_lasti++;
+            return gen_send_ex(state, value);
+        }
+
         if (result == Py.None && gi_frame.f_lasti == -1) {
-            return null;
+            gi_frame = null;
+            throw Py.StopIteration();
         }
         return result;
     }
 
+    private PyObject gen_close_iter(PyObject iter) {
+        if (iter instanceof PyGenerator) {
+            return ((PyGenerator) iter).close();
+        }
+        try {
+            PyObject closeMeth = iter.__findattr__("close");
+            if (closeMeth != null) {
+                return closeMeth.__call__();
+            }
+        } catch (PyException e) {
+            Py.writeUnraisable(e, iter);
+        }
+        return null;
+    }
 
     /* Traverseproc implementation */
     @Override

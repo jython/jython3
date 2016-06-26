@@ -6,12 +6,15 @@ package org.python.core;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import org.python.core.stringlib.FloatFormatter;
 import org.python.core.stringlib.IntegerFormatter;
 import org.python.core.stringlib.InternalFormat;
 import org.python.core.stringlib.InternalFormat.Formatter;
 import org.python.core.stringlib.InternalFormat.Spec;
+import org.python.expose.ExposedClassMethod;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
@@ -164,6 +167,72 @@ public class PyLong extends PyObject {
             throw Py.ValueError("cannot convert float NaN to integer");
         }
         return new BigDecimal(value).toBigInteger();
+    }
+
+    public static PyObject from_bytes(PyObject bytes, String byteorder) {
+        return long_from_bytes(TYPE, bytes, byteorder, false);
+    }
+
+    public static PyObject from_bytes(PyObject bytes, String byteorder, boolean signed) {
+        return long_from_bytes(TYPE, bytes, byteorder, signed);
+    }
+
+    @ExposedClassMethod(defaults = {"false"}, doc = BuiltinDocs.int_from_bytes_doc)
+    final static PyObject long_from_bytes(PyType type, PyObject bytes, String byteorder, boolean signed) {
+        ByteOrder order = getByteOrder(byteorder);
+
+        try (PyBuffer view = ((BufferProtocol) bytes).getBuffer(PyBUF.FULL_RO)) {
+            int length = view.getLen();
+            byte[] buf = new byte[length];
+            view.copyTo(buf, 0);
+            if (order == ByteOrder.LITTLE_ENDIAN) {
+                byte b;
+                for (int i = 0, j = length - 1; i < j; i++, j--) {
+                    b = buf[i];
+                    buf[i] = buf[j];
+                    buf[j] = b;
+                }
+            }
+            return new PyLong(new BigInteger(buf));
+        }
+    }
+
+    private static ByteOrder getByteOrder(String byteorder) {
+        switch(byteorder) {
+            case "little":
+                return ByteOrder.LITTLE_ENDIAN;
+            case "big":
+                return ByteOrder.BIG_ENDIAN;
+            default:
+                throw Py.TypeError("byteorder must be either 'little' or 'big'");
+        }
+    }
+
+    public PyObject to_bytes(int length, String byteorder) {
+        return long_to_bytes(length, byteorder, false);
+    }
+
+    public PyObject to_bytes(int length, String byteorder, boolean signed) {
+        return long_to_bytes(length, byteorder, signed);
+    }
+
+    @ExposedMethod(defaults={"false"}, doc = BuiltinDocs.int_to_bytes_doc)
+    final PyObject long_to_bytes(int length, String byteorder, boolean signed) {
+        byte[] origin = value.toByteArray();
+        if (length < origin.length) {
+            throw Py.OverflowError("int too big to convert");
+        }
+        byte[] result = new byte[length];
+        ByteOrder order = getByteOrder(byteorder);
+        if (order == ByteOrder.LITTLE_ENDIAN) {
+            for (int i = 0, j = origin.length - 1; j >= 0; i++, j--) {
+                result[i] = origin[j];
+            }
+        } else {
+            System.arraycopy(origin, 0, result, length - origin.length, origin.length);
+        }
+
+        return new PyByteArray(result);
     }
 
     @ExposedGet(name = "real", doc = BuiltinDocs.int_real_doc)
@@ -876,6 +945,50 @@ public class PyLong extends PyObject {
     }
 
     @Override
+    public PyObject __lt__(PyObject other) {
+        return long___lt__(other);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.int___lt___doc)
+    final PyObject long___lt__(PyObject other) {
+        return Py.newBoolean(long_compare(other) > 0);
+    }
+
+    @Override
+    public PyObject __eq__(PyObject other) {
+        return long___eq__(other);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.int___eq___doc)
+    final PyObject long___eq__(PyObject other) {
+        int cmp = long_compare(other);
+        if (cmp < -1) {
+            return null;
+        }
+        return Py.newBoolean(cmp == 0);
+    }
+
+    private int long_compare(PyObject other) {
+        if (other instanceof PyInteger) {
+            return BigInteger.valueOf(((PyInteger) other).getValue()).compareTo(value);
+        }
+        if (other instanceof PyLong) {
+            return ((PyLong) other).getValue().compareTo(value);
+        }
+        if (other instanceof PyFloat) {
+            return new BigDecimal(((PyFloat) other).getValue()).compareTo(new BigDecimal(value));
+        }
+        if (other instanceof PyComplex) {
+            PyComplex complex = (PyComplex) other;
+            if (complex.imag != 0) {
+                return 2;
+            }
+            return long_compare(complex.getReal());
+        }
+        return -2;
+    }
+
+    @Override
     public PyFloat __float__() {
         return long___float__();
     }
@@ -914,32 +1027,14 @@ public class PyLong extends PyObject {
         return this;
     }
 
-    /**
-     * Common code used by the number-base conversion method __oct__ and __hex__.
-     *
-     * @param spec prepared format-specifier.
-     * @return converted value of this object
-     */
-    private PyString formatImpl(Spec spec) {
-        // Traditional formatter (%-format) because #o means "-0123" not "-0o123".
-        IntegerFormatter f = new IntegerFormatter.Traditional(spec);
-        f.format(value).append('L');
-        return new PyString(f.getResult());
-    }
-
     @ExposedMethod(doc = BuiltinDocs.int___str___doc)
-    public PyString long___str__() {
-        return Py.newString(getValue().toString());
-    }
-
-    @Override
-    public PyString __str__() {
-        return long___str__();
-    }
-
-    @Override
-    public PyUnicode __unicode__() {
+    public PyUnicode long___str__() {
         return new PyUnicode(getValue().toString());
+    }
+
+    @Override
+    public PyUnicode __str__() {
+        return long___str__();
     }
 
     @ExposedMethod(doc = BuiltinDocs.int___getnewargs___doc)

@@ -7,7 +7,7 @@ import time
 import threading
 import unittest
 from collections import defaultdict
-from test import test_support
+from test import support
 from random import randint
 
 from java.util.concurrent.atomic import AtomicInteger
@@ -20,14 +20,14 @@ class PickleTestCase(unittest.TestCase):
             self.assertEqual(pickle.loads(pickle.dumps(d, proto)), d)
 
 
-# TODO push into test_support or some other common module - run_threads
+# TODO push into support or some other common module - run_threads
 # is originally from test_list_jy.py
 
 class ThreadSafetyTestCase(unittest.TestCase):
 
     def run_threads(self, f, num=10):
         threads = []
-        for i in xrange(num):
+        for i in range(num):
             t = threading.Thread(target=f)
             t.start()
             threads.append(t)
@@ -62,7 +62,7 @@ class ThreadSafetyTestCase(unittest.TestCase):
         size = 17
 
         def tester():
-            for i in xrange(1000):
+            for i in range(1000):
                 j = (i + randint(0, size)) % size
                 counters[j].decrementAndGet()
                 time.sleep(0.0001)
@@ -70,7 +70,7 @@ class ThreadSafetyTestCase(unittest.TestCase):
 
         self.run_threads(tester, 20)
 
-        for i in xrange(size):
+        for i in range(size):
             self.assertEqual(counters[i].get(), 0, counters)
 
     def test_derived_inc_dec(self):
@@ -88,7 +88,7 @@ class ThreadSafetyTestCase(unittest.TestCase):
         size = 17
 
         def tester():
-            for i in xrange(1000):
+            for i in range(1000):
                 j = (i + randint(0, size)) % size
                 counters[j].decrementAndGet()
                 time.sleep(0.0001)
@@ -96,7 +96,7 @@ class ThreadSafetyTestCase(unittest.TestCase):
 
         self.run_threads(tester, 20)
 
-        for i in xrange(size):
+        for i in range(size):
             self.assertEqual(counters[i].get(), i, counters)
 
 class GetVariantsTestCase(unittest.TestCase):
@@ -105,18 +105,18 @@ class GetVariantsTestCase(unittest.TestCase):
 
     def test_get_does_not_vivify(self):
         d = defaultdict(list)
-        self.assertEquals(d.get("foo"), None)
-        self.assertEquals(d.items(), [])
+        self.assertEqual(d.get("foo"), None)
+        self.assertEqual(list(d.items()), [])
 
     def test_get_default_does_not_vivify(self):
         d = defaultdict(list)
-        self.assertEquals(d.get("foo", 42), 42)
-        self.assertEquals(d.items(), [])
+        self.assertEqual(d.get("foo", 42), 42)
+        self.assertEqual(list(d.items()), [])
 
     def test_getitem_does_vivify(self):
         d = defaultdict(list)
-        self.assertEquals(d["vivify"], [])
-        self.assertEquals(d.items(), [("vivify", [])]) 
+        self.assertEqual(d["vivify"], [])
+        self.assertEqual(list(d.items()), [("vivify", [])]) 
 
 
 
@@ -141,17 +141,17 @@ class OverrideMissingTestCase(unittest.TestCase):
 
     def test_dont_call_derived_missing(self):
         self.kdd[3] = 5
-        self.assertEquals(self.kdd[3], 5)
+        self.assertEqual(self.kdd[3], 5)
 
     #http://bugs.jython.org/issue2088
     def test_override_missing(self):
         # line below causes KeyError in Jython, ignoring overridden __missing__ method
-        self.assertEquals(self.kdd[3], 6)
-        self.assertEquals(self.kdd['ab'], 'abab')
+        self.assertEqual(self.kdd[3], 6)
+        self.assertEqual(self.kdd['ab'], 'abab')
 
 
 def test_main():
-    test_support.run_unittest(PickleTestCase, ThreadSafetyTestCase, GetVariantsTestCase, OverrideMissingTestCase)
+    support.run_unittest(PickleTestCase, ThreadSafetyTestCase, GetVariantsTestCase, OverrideMissingTestCase)
 
 
 if __name__ == '__main__':

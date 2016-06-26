@@ -52,7 +52,7 @@ public class PyTeeIterator extends PyIterator {
         private PyObject nextElement(PyObject pyIter) {
             PyObject element = null;
             try {
-                element = pyIter.__iternext__();
+                element = pyIter.__next__();
             } catch (PyException pyEx) {
                 if (pyEx.match(Py.StopIteration)) {
                     stopException = pyEx;
@@ -129,7 +129,7 @@ public class PyTeeIterator extends PyIterator {
         return next();
     }
     
-    public PyObject __iternext__() {
+    public PyObject __next__() {
         PyObject obj = teeData.getItem(position++);
         if (obj == null) {
             stopException = teeData.stopException;

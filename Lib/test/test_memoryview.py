@@ -8,7 +8,7 @@ import sys
 import gc
 import weakref
 import array
-from test import test_support
+from test import support
 import io
 
 
@@ -23,7 +23,7 @@ class AbstractMemoryTests:
 
     @property
     def _types(self):
-        return filter(None, [self.ro_type, self.rw_type])
+        return [_f for _f in [self.ro_type, self.rw_type] if _f]
 
     def check_getitem_with_type(self, tp):
         item = self.getitem_type
@@ -119,8 +119,8 @@ class AbstractMemoryTests:
         # Trying to resize the memory object
         self.assertRaises(ValueError, setitem, 0, b"")
         self.assertRaises(ValueError, setitem, 0, b"ab")
-        self.assertRaises(ValueError, setitem, slice(1,1), b"a")
-        self.assertRaises(ValueError, setitem, slice(0,2), b"a")
+        self.assertRaises(ValueError, setitem, slice(1, 1), b"a")
+        self.assertRaises(ValueError, setitem, slice(0, 2), b"a")
 
         m = None
         if self.has_refcount:
@@ -149,7 +149,7 @@ class AbstractMemoryTests:
         for tp in self._types:
             m = self._view(tp(self._source))
             l = m.tolist()
-            self.assertEqual(l, map(ord, b"abcdef"))
+            self.assertEqual(l, list(map(ord, b"abcdef")))
 
     def test_compare(self):
         # memoryviews can compare for equality with other objects
@@ -169,10 +169,10 @@ class AbstractMemoryTests:
             self.assertFalse(m[0:5] == m)
 
             # Comparison with objects which don't support the buffer API
-            self.assertFalse(m == u"abcdef")
-            self.assertTrue(m != u"abcdef")
-            self.assertFalse(u"abcdef" == m)
-            self.assertTrue(u"abcdef" != m)
+            self.assertFalse(m == "abcdef")
+            self.assertTrue(m != "abcdef")
+            self.assertFalse("abcdef" == m)
+            self.assertTrue("abcdef" != m)
 
             # Unordered comparisons are unimplemented, and therefore give
             # arbitrary results (they raise a TypeError in py3k)
@@ -327,7 +327,7 @@ class AbstractMemoryTests:
         m = self._view(b)
         self.assertRaises(ValueError, hash, m)
 
-    @unittest.skipIf(test_support.is_jython, "GC nondeterministic in Jython")
+    @unittest.skipIf(support.is_jython, "GC nondeterministic in Jython")
     def test_weakref(self):             # Jython borrowed from CPython 3.3
         # Check memoryviews are weakrefable
         for tp in self._types:
@@ -339,7 +339,7 @@ class AbstractMemoryTests:
             wr = weakref.ref(m, callback)
             self.assertIs(wr(), m)
             del m
-            test_support.gc_collect()
+            support.gc_collect()
             self.assertIs(wr(), None)
             self.assertIs(L[0], b)
 
@@ -457,7 +457,7 @@ class BytesMemorySliceSliceTest(unittest.TestCase,
 
 
 def test_main():
-    test_support.run_unittest(__name__)
+    support.run_unittest(__name__)
 
 if __name__ == "__main__":
     test_main()

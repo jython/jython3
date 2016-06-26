@@ -617,7 +617,7 @@ if _exists('execv'):
         path_list = get_exec_path(env)
         if name != 'nt':
             file = fsencode(file)
-            path_list = map(fsencode, path_list)
+            path_list = list(map(fsencode, path_list))
         for dir in path_list:
             fullname = path.join(dir, file)
             try:
@@ -724,7 +724,7 @@ class _Environ(MutableMapping):
     def __repr__(self):
         return 'environ({{{}}})'.format(', '.join(
             ('{!r}: {!r}'.format(self.decodekey(key), self.decodevalue(value))
-            for key, value in self._data.items())))
+            for key, value in list(self._data.items()))))
 
     def copy(self):
         return dict(self)
@@ -762,7 +762,7 @@ def _createenviron():
         def encodekey(key):
             return encode(key).upper()
         data = {}
-        for key, value in environ.items():
+        for key, value in list(environ.items()):
             data[encodekey(key)] = value
     else:
         # Where Env Var Names Can Be Mixed Case
@@ -881,7 +881,7 @@ if _exists("fork") and not _exists("spawnv") and _exists("execv"):
             # Parent
             if mode == P_NOWAIT:
                 return pid # Caller is responsible for waiting!
-            while 1:
+            while True:
                 wpid, sts = waitpid(pid, 0)
                 if WIFSTOPPED(sts):
                     continue

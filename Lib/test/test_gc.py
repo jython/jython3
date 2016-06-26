@@ -1,6 +1,6 @@
 import unittest
-from test.test_support import verbose, run_unittest
-from test import test_support
+from test.support import verbose, run_unittest
+from test import support
 import sys
 import gc
 import weakref
@@ -199,7 +199,7 @@ class GCTests(unittest.TestCase):
         # Tricky: f -> d -> f, code should call d.clear() after the exec to
         # break the cycle.
         d = {}
-        exec("def f(): pass\n") in d
+        exec(("def f(): pass\n"), d)
         gc.collect()
         del d
         self.assertEqual(gc.collect(), 2)
@@ -235,7 +235,7 @@ class GCTests(unittest.TestCase):
         obj = gc.garbage.pop()
         self.assertEqual(id(obj), id_L)
 
-    @unittest.skipIf(test_support.is_jython,
+    @unittest.skipIf(support.is_jython,
         '''
         Jython neither supports disabling/enabling the gc, nor
         setting the gc threshold.
@@ -255,7 +255,7 @@ class GCTests(unittest.TestCase):
         gc.disable()
         gc.set_threshold(*thresholds)
 
-    @unittest.skipIf(test_support.is_jython,
+    @unittest.skipIf(support.is_jython,
         '''
         Jython neither supports disabling/enabling the gc, nor
         setting the gc threshold.
@@ -281,7 +281,7 @@ class GCTests(unittest.TestCase):
     # For example:
     # - disposed tuples are not freed, but reused
     # - the call to assertEqual somehow avoids building its args tuple
-    @unittest.skipIf(test_support.is_jython,
+    @unittest.skipIf(support.is_jython,
         '''
         Jython does not support to interrogate gc-internal
         generation-wise counters.
@@ -296,7 +296,7 @@ class GCTests(unittest.TestCase):
         # the dict, and the tuple returned by get_count()
         assertEqual(gc.get_count(), (2, 0, 0))
 
-    @unittest.skipIf(test_support.is_jython,
+    @unittest.skipIf(support.is_jython,
         '''
         Jython does not support to interrogate gc-internal
         generation-wise counters.
@@ -313,7 +313,7 @@ class GCTests(unittest.TestCase):
         gc.collect(2)
         assertEqual(gc.get_count(), (0, 0, 0))
 
-    @unittest.skipIf(test_support.is_jython,
+    @unittest.skipIf(support.is_jython,
         '''
         While this test passes in Jython, it leads to internal
         allocation failures because of the massive referencing
@@ -360,7 +360,7 @@ class GCTests(unittest.TestCase):
             #i.e. Jython is running (or other non-CPython interpreter without gc-disabling)
             pass
 
-    @unittest.skipIf(test_support.is_jython,
+    @unittest.skipIf(support.is_jython,
         '''
         Jython does not have a trashcan mechanism.
         This test should still not fail but currently does.
@@ -526,8 +526,7 @@ class GCTests(unittest.TestCase):
 
     def test_get_referents(self):
         alist = [1, 3, 5]
-        got = gc.get_referents(alist)
-        got.sort()
+        got = sorted(gc.get_referents(alist))
         self.assertEqual(got, alist)
 
         atuple = tuple(alist)
@@ -543,7 +542,7 @@ class GCTests(unittest.TestCase):
 
         got = gc.get_referents([1, 2], {3: 4}, (0, 0, 0))
         got.sort()
-        self.assertEqual(got, [0, 0] + range(5))
+        self.assertEqual(got, [0, 0] + list(range(5)))
 
         self.assertEqual(gc.get_referents(1, 'a', 4j), [])
 
@@ -559,7 +558,7 @@ class GCTests(unittest.TestCase):
         self.assertFalse(gc.is_tracked(True))
         self.assertFalse(gc.is_tracked(False))
         self.assertFalse(gc.is_tracked("a"))
-        self.assertFalse(gc.is_tracked(u"a"))
+        self.assertFalse(gc.is_tracked("a"))
         self.assertFalse(gc.is_tracked(bytearray("a")))
         self.assertFalse(gc.is_tracked(type))
         self.assertFalse(gc.is_tracked(int))
@@ -601,7 +600,7 @@ class GCTests(unittest.TestCase):
             # would be damaged, with an empty __dict__.
             self.assertEqual(x, None)
 
-@unittest.skipIf(test_support.is_jython,
+@unittest.skipIf(support.is_jython,
     '''
     GCTogglingTests are neither relevant nor applicable for Jython.
     ''')
@@ -766,7 +765,7 @@ def test_main():
         gc.set_debug(debug)
         # test gc.enable() even if GC is disabled by default
         if verbose:
-            print "restoring automatic collection"
+            print("restoring automatic collection")
         # make sure to always test gc.enable()
         gc.enable()
         assert gc.isenabled()

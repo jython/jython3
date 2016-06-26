@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 
 from test_userdict import TestMappingProtocol
 from org.python.core import PyStringMap
@@ -51,17 +51,17 @@ class PyStringMapTest(StringMapTest):
         # Test keys, items, values
         r = self._reference()
         d.update(self._reference())
-        for k in d.keys():
-            self.failUnless(k in r.keys())
-        for i in d.items():
-            self.failUnless(i in r.items())
-        for v in d.values():
-            self.failUnless(v in r.values())
+        for k in list(d.keys()):
+            self.assertTrue(k in list(r.keys()))
+        for i in list(d.items()):
+            self.assertTrue(i in list(r.items()))
+        for v in list(d.values()):
+            self.assertTrue(v in list(r.values()))
 
         # Test has_key and "in".
-        for i in r.keys():
-            self.assert_(d.has_key(i))
-            self.assert_(i in d)
+        for i in list(r.keys()):
+            self.assertTrue(i in d)
+            self.assertTrue(i in d)
 
         # Test unhashability
         self.assertRaises(TypeError, hash, d)
@@ -70,11 +70,11 @@ class PyStringMapTest(StringMapTest):
         class A:
             def __init__(self):
                 self.a = "a"
-        self.assertEquals("a", "%(a)s" % A().__dict__)
+        self.assertEqual("a", "%(a)s" % A().__dict__)
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         ClassDictTests,
         InstanceDictTests,
         PyStringMapTest

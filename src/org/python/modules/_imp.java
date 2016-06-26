@@ -1,6 +1,8 @@
 
 package org.python.modules;
 
+import org.python.compiler.Module;
+import org.python.core.PyCode;
 import org.python.core.__builtin__;
 import org.python.core.Py;
 import org.python.core.PyFile;
@@ -10,6 +12,8 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
+import org.python.core.imp;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -133,7 +137,7 @@ public class _imp {
     }
 
     public static PyObject load_dynamic(String name, String pathname, PyObject file) {
-        throw Py.ImportError("No module named " + name);
+        throw Py.ImportError("No module named " + name, name);
     }
 
     public static PyObject load_source(String modname, String filename) {
@@ -208,7 +212,7 @@ public class _imp {
                                            new PyString(mi.mode),
                                            Py.newInteger(mi.type)));
         }
-        throw Py.ImportError("No module named " + name);
+        throw Py.ImportError("No module named " + name, name);
     }
 
     public static PyObject load_module(String name, PyObject file, PyObject filename, PyTuple data) {
@@ -258,12 +262,26 @@ public class _imp {
                     filename = new PyString(mi.filename);
                     break;
                 default:
-                    throw Py.ImportError("No module named " + name);
+                    throw Py.ImportError("No module named " + name, name);
             }
         }
         PyObject modules = sys.modules;
         modules.__setitem__(name.intern(), mod);
         return mod;
+    }
+
+    public static PyObject create_builtin(PyObject spec) {
+        PyObject name = spec.__getattr__("name");
+        if (name == null) return null;
+        return addModuleObject(name);
+    }
+
+    public static int exec_builtin(PyObject mod) {
+        return 0;
+    }
+
+    private static PyObject addModuleObject(PyObject name) {
+        return imp.load(name.asString());
     }
 
     public static PyObject get_magic() {
@@ -285,6 +303,22 @@ public class _imp {
 
     public static boolean is_builtin(String name) {
         return PySystemState.getBuiltin(name) != null;
+    }
+
+    public static PyObject _fix_co_filename(PyCode code, PyObject path) {
+        return Py.None;
+    }
+
+    public static PyObject get_frozen_object(String name) {
+        return null;
+    }
+
+    public static int init_frozen(String name) {
+        return -1;
+    }
+
+    public static boolean is_frozen_package(String name) {
+        return false;
     }
 
     public static boolean is_frozen(String name) {
@@ -321,5 +355,12 @@ public class _imp {
      */
     public static boolean lock_held() {
         return Py.getSystemState().getImportLock().isHeldByCurrentThread();
+    }
+
+    /**
+     * Returns the list of file suffixes used to identify extension modules.
+     */
+    public static PyObject extension_suffixes() {
+        return new PyList();
     }
 }

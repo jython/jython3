@@ -17,6 +17,7 @@ import org.python.core.stringlib.IntegerFormatter;
 import org.python.core.util.ExtraMath;
 import org.python.core.util.RelativeFile;
 import org.python.modules._functools._functools;
+import org.python.modules._io._io;
 
 @Untraversable
 class BuiltinFunctions extends PyBuiltinFunctionSet {
@@ -42,7 +43,7 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
             case 28:
                 return __builtin__.locals();
             case 34:
-                return Py.newString(__builtin__.raw_input());
+                return Py.newUnicode(__builtin__.raw_input());
             case 41:
                 return __builtin__.vars();
             case 43:
@@ -56,15 +57,15 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
     public PyObject __call__(PyObject arg1) {
         switch (this.index) {
             case 0:
-                return Py.newString(__builtin__.chr(Py.py2int(arg1,
+                return Py.newUnicode(__builtin__.chr(Py.py2int(arg1,
                                                               "chr(): 1st arg can't be coerced to "
                                                               + "int")));
             case 1:
-                return Py.newInteger(__builtin__.len(arg1));
+                return Py.newLong(__builtin__.len(arg1));
             case 2:
                 return __builtin__.range(arg1);
             case 3:
-                return Py.newInteger(__builtin__.ord(arg1));
+                return Py.newLong(__builtin__.ord(arg1));
             case 5:
                 return __builtin__.hash(arg1);
             case 6:
@@ -72,9 +73,9 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
             case 7:
                 return __builtin__.abs(arg1);
             case 9:
-                return __builtin__.apply(arg1);
+                return __builtin__.ascii(arg1);
             case 11:
-                return Py.newInteger(__builtin__.id(arg1));
+                return Py.newLong(__builtin__.id(arg1));
             case 12:
                 return __builtin__.sum(arg1);
             case 14:
@@ -97,7 +98,7 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
             case 32:
                 return __builtin__.oct(arg1);
             case 34:
-                return Py.newString(__builtin__.raw_input(arg1));
+                return Py.newUnicode(__builtin__.raw_input(arg1));
             case 36:
                 return __builtin__.reload(arg1);
             case 37:
@@ -112,6 +113,8 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
                 return fancyCall(new PyObject[] {arg1});
             case 45:
                 return __builtin__.reversed(arg1);
+            case 46:
+                return __builtin__.exec(arg1);
             default:
                 throw info.unexpectedCall(1, false);
         }
@@ -123,9 +126,9 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
             case 2:
                 return __builtin__.range(arg1, arg2);
             case 6:
-                return Py.newInteger(__builtin__.cmp(arg1, arg2));
-            case 9:
-                return __builtin__.apply(arg1, arg2);
+                return Py.newLong(__builtin__.cmp(arg1, arg2));
+//            case 9:
+//                return __builtin__.apply(arg1, arg2);
             case 10:
                 return Py.newBoolean(__builtin__.isinstance(arg1, arg2));
             case 12:
@@ -164,6 +167,8 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
                 return fancyCall(new PyObject[] {arg1, arg2});
             case 43:
                 return fancyCall(new PyObject[] {arg1, arg2});
+            case 46:
+                return __builtin__.exec(arg1, arg2);
             default:
                 throw info.unexpectedCall(2, false);
         }
@@ -211,6 +216,8 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
                 return fancyCall(new PyObject[] {arg1, arg2, arg3});
             case 43:
                 return fancyCall(new PyObject[] {arg1, arg2, arg3});
+            case 46:
+                return __builtin__.exec(arg1, arg2, arg3);
             default:
                 throw info.unexpectedCall(3, false);
         }
@@ -264,10 +271,10 @@ public class __builtin__ {
         dict.__setitem__("object", PyObject.TYPE);
         dict.__setitem__("type", PyType.TYPE);
         dict.__setitem__("bool", PyBoolean.TYPE);
-        dict.__setitem__("int", PyInteger.TYPE);
+        dict.__setitem__("int", PyLong.TYPE);
         dict.__setitem__("enumerate", PyEnumerate.TYPE);
         dict.__setitem__("float", PyFloat.TYPE);
-        dict.__setitem__("long", PyLong.TYPE);
+//        dict.__setitem__("long", PyLong.TYPE);
         dict.__setitem__("complex", PyComplex.TYPE);
         dict.__setitem__("dict", PyDictionary.TYPE);
         dict.__setitem__("list", PyList.TYPE);
@@ -279,8 +286,7 @@ public class __builtin__ {
         dict.__setitem__("classmethod", PyClassMethod.TYPE);
         dict.__setitem__("super", PySuper.TYPE);
         dict.__setitem__("str", PyUnicode.TYPE);
-        dict.__setitem__("basestring", PyBaseString.TYPE);
-        dict.__setitem__("file", PyFile.TYPE);
+//        dict.__setitem__("file", PyFile.TYPE);
         dict.__setitem__("slice", PySlice.TYPE);
         dict.__setitem__("range", PyRange.TYPE);
 
@@ -291,7 +297,7 @@ public class __builtin__ {
         dict.__setitem__("False", Py.False);
         dict.__setitem__("bytes", PyString.TYPE);
         dict.__setitem__("bytearray", PyByteArray.TYPE);
-        dict.__setitem__("buffer", Py2kBuffer.TYPE);
+//        dict.__setitem__("buffer", Py2kBuffer.TYPE);
         dict.__setitem__("memoryview", PyMemoryView.TYPE);
 
         // Work in debug mode by default
@@ -300,11 +306,11 @@ public class __builtin__ {
 
 // TODO: redo the builtin function stuff to possibly use enum
         dict.__setitem__("abs", new BuiltinFunctions("abs", 7, 1));
-        dict.__setitem__("apply", new BuiltinFunctions("apply", 9, 1, 3));
+//        dict.__setitem__("apply", new BuiltinFunctions("apply", 9, 1, 3));
+        dict.__setitem__("ascii", new BuiltinFunctions("ascii", 9, 1));
         dict.__setitem__("callable", new BuiltinFunctions("callable", 14, 1));
         dict.__setitem__("coerce", new BuiltinFunctions("coerce", 13, 2));
         dict.__setitem__("chr", new BuiltinFunctions("chr", 0, 1));
-        dict.__setitem__("cmp", new BuiltinFunctions("cmp", 6, 2));
         dict.__setitem__("globals", new BuiltinFunctions("globals", 4, 0));
         dict.__setitem__("hash", new BuiltinFunctions("hash", 5, 1));
         dict.__setitem__("id", new BuiltinFunctions("id", 11, 1));
@@ -323,7 +329,7 @@ public class __builtin__ {
         dict.__setitem__("getattr", new BuiltinFunctions("getattr", 21, 2, 3));
         dict.__setitem__("hasattr", new BuiltinFunctions("hasattr", 22, 2));
         dict.__setitem__("hex", new BuiltinFunctions("hex", 23, 1));
-        dict.__setitem__("input", new BuiltinFunctions("input", 24, 0, 1));
+//        dict.__setitem__("input", new BuiltinFunctions("input", 24, 0, 1));
         dict.__setitem__("intern", new BuiltinFunctions("intern", 25, 1));
         dict.__setitem__("issubclass", new BuiltinFunctions("issubclass", 26, 2));
         dict.__setitem__("iter", new BuiltinFunctions("iter", 27, 1, 2));
@@ -333,7 +339,7 @@ public class __builtin__ {
         dict.__setitem__("min", new MinFunction());
         dict.__setitem__("oct", new BuiltinFunctions("oct", 32, 1));
         dict.__setitem__("pow", new BuiltinFunctions("pow", 33, 2, 3));
-        dict.__setitem__("raw_input", new BuiltinFunctions("raw_input", 34, 0, 1));
+        dict.__setitem__("input", new BuiltinFunctions("input", 34, 0, 1));
         dict.__setitem__("reduce", new BuiltinFunctions("reduce", 35, 2, 3));
         dict.__setitem__("reload", new BuiltinFunctions("reload", 36, 1));
         dict.__setitem__("repr", new BuiltinFunctions("repr", 37, 1));
@@ -344,6 +350,7 @@ public class __builtin__ {
         dict.__setitem__("compile", new CompileFunction());
         dict.__setitem__("open", new OpenFunction());
         dict.__setitem__("reversed", new BuiltinFunctions("reversed", 45, 1));
+        dict.__setitem__("exec", new BuiltinFunctions("exec", 46, 1, 3));
         dict.__setitem__("__import__", new ImportFunction());
         dict.__setitem__("sorted", new SortedFunction());
         dict.__setitem__("all", new AllFunction());
@@ -352,6 +359,10 @@ public class __builtin__ {
         dict.__setitem__("print", new PrintFunction());
         dict.__setitem__("next", new NextFunction());
         dict.__setitem__("bin", new BinFunction());
+    }
+
+    public static void fillWithBuiltinExceptions(PyObject dict) {
+        Exceptions.init(dict);
     }
 
     public static PyObject abs(PyObject o) {
@@ -382,16 +393,20 @@ public class __builtin__ {
 
             for (int i = 0; i < n; i++) {
                 PyObject name = ik.next();
-                if (name.getClass() != PyString.class) {
+                if (name.getClass() != PyUnicode.class) {
                     throw Py.TypeError(String.format("keywords must be strings"));
                 }
-                kw[i] = ((PyString)name).internedString();
+                kw[i] = ((PyUnicode)name).internedString();
                 a[i + offset] = iv.next();
             }
             return o.__call__(a, kw);
         } else {
             return apply(o, args);
         }
+    }
+
+    public static PyObject ascii(PyObject obj) {
+        return obj.__repr__();
     }
 
     public static boolean callable(PyObject obj) {
@@ -418,11 +433,8 @@ public class __builtin__ {
         return i;
     }
 
-    public static char chr(int i) {
-        if (i < 0 || i > 255) {
-            throw Py.ValueError("chr() arg not in range(256)");
-        }
-        return (char) i;
+    public static String chr(int i) {
+        return String.valueOf((char) i);
     }
 
     public static int cmp(PyObject x, PyObject y) {
@@ -444,7 +456,7 @@ public class __builtin__ {
     public static PyObject dir(PyObject o) {
         PyObject ret = o.__dir__();
         if (!Py.isInstance(ret, PyList.TYPE)) {
-            throw Py.TypeError("__dir__() must return a list, not " + ret.getType().fastGetName());
+            ret = new PyList(ret);
         }
         ((PyList)ret).sort();
         return ret;
@@ -454,11 +466,10 @@ public class __builtin__ {
         PyObject l = locals();
         PyList ret;
         PyObject retObj = l.invoke("keys");
-        try {
+        if (retObj instanceof PyList) {
             ret = (PyList) retObj;
-        } catch (ClassCastException e) {
-            throw Py.TypeError(String.format("Expected keys() to be a list, not '%s'",
-                                             retObj.getType().fastGetName()));
+        } else {
+            ret = new PyList(retObj);
         }
         ret.sort();
         return ret;
@@ -481,13 +492,26 @@ public class __builtin__ {
         }
     }
 
+    public static PyObject exec(PyObject o, PyObject globals, PyObject locals) {
+        Py.exec(o, globals, locals);
+        return Py.None;
+    }
+
+    public static PyObject exec(PyObject o) {
+        return exec(o, null, null);
+    }
+
+    public static PyObject exec(PyObject o, PyObject globals) {
+        return exec(o, globals, null);
+    }
+
     public static PyObject eval(PyObject o, PyObject globals, PyObject locals) {
         verify_mappings(globals, locals);
         PyCode code;
         if (o instanceof PyCode) {
             code = (PyCode) o;
         } else {
-            if (o instanceof PyString) {
+            if (o instanceof PyUnicode) {
                 code = (PyCode)CompileFunction.compile(o, "<string>", "eval");
             } else {
                 throw Py.TypeError("eval: argument 1 must be string or code object");
@@ -565,7 +589,7 @@ public class __builtin__ {
         return list;
     }
 
-    public static PyObject filterBaseString(PyObject func, PyBaseString seq, PyType stringType) {
+    public static PyObject filterBaseString(PyObject func, PyString seq, PyType stringType) {
         if (func == Py.None && seq.getType() == stringType) {
             // If it's a real string we can return the original, as no character is ever
             // false and __getitem__ does return this character. If it's a subclass we
@@ -667,7 +691,7 @@ public class __builtin__ {
         return false;
     }
 
-    public static PyInteger hash(PyObject o) {
+    public static PyLong hash(PyObject o) {
         return o.__hash__();
     }
 
@@ -749,16 +773,15 @@ public class __builtin__ {
         }
 
         while (true) {
-            boolean any_items = false;
+            boolean all_items = true;
             for (int j = 0; j < n; j++) {
-                if ((element = iters[j].__iternext__()) != null) {
+                if ((element = iters[j].__next__()) != null) {
                     args[j] = element;
-                    any_items = true;
                 } else {
-                    args[j] = Py.None;
+                    all_items = false;
                 }
             }
-            if (!any_items) {
+            if (!all_items) {
                 break;
             }
             if (f == Py.None) {
@@ -1043,7 +1066,7 @@ public class __builtin__ {
         PyObject result = z;
         PyObject iter = Py.iter(l, "reduce() arg 2 must support iteration");
 
-        for (PyObject item; (item = iter.__iternext__()) != null;) {
+        for (PyObject item; (item = iter.__next__()) != null;) {
             if (result == null) {
                 result = item;
             } else {
@@ -1084,8 +1107,8 @@ public class __builtin__ {
         return o;
     }
 
-    public static PyString repr(PyObject o) {
-        return o.__repr__();
+    public static PyUnicode repr(PyObject o) {
+        return (PyUnicode) o.__repr__().decode();
     }
 
     public static void setattr(PyObject obj, PyObject name, PyObject value) {
@@ -1138,7 +1161,7 @@ public class __builtin__ {
         }
     }
 
-    public static PyString __doc__zip = new PyString(
+    public static PyUnicode __doc__zip = new PyUnicode(
         "zip(seq1 [, seq2 [...]]) -> [(seq1[0], seq2[0] ...), (...)]\n\n" +
         "Return a list of tuples, where each tuple contains the i-th element\n" +
         "from each of the argument sequences.  The returned list is\n" +
@@ -1171,7 +1194,7 @@ public class __builtin__ {
 
             for (int j = 0; j < itemsize; j++) {
                 try {
-                    item = iters[j].__iternext__();
+                    item = iters[j].__next__();
                 } catch (PyException e) {
                     if (e.match(Py.StopIteration)) {
                         return ret;
@@ -1466,7 +1489,7 @@ class PrintFunction extends PyBuiltinFunction {
 class MaxFunction extends PyBuiltinFunction {
     MaxFunction() {
         super("max",
-              "max(iterable[, key=func]) -> value\n" +
+              "max(iterable, *[, default=obj, key=func]) -> value\n" +
               "max(a, b, c, ...[, key=func]) -> value\n\n" +
               "With a single iterable argument, return its largest item.\n" +
               "With two or more arguments, return the largest argument.");
@@ -1476,9 +1499,15 @@ class MaxFunction extends PyBuiltinFunction {
     public PyObject __call__(PyObject args[], String kwds[]) {
         int argslen = args.length;
         PyObject key = null;
+        PyObject defaultValue = null;
 
         if (args.length - kwds.length == 0) {
             throw Py.TypeError("max() expected 1 arguments, got 0");
+        }
+        for (int i = 0; i < kwds.length; i++) {
+            if (kwds[i].equals("key")) {
+
+            }
         }
         if (kwds.length > 0) {
             if (kwds[0].equals("key")) {
@@ -1598,7 +1627,9 @@ class RoundFunction extends PyBuiltinFunction {
             // Rounding caused magnitude to increase beyond representable range
             throw Py.OverflowError("rounded value too large to represent");
         } else {
-            return new PyFloat(r);
+            if (!(number instanceof PyLong) && !Double.isInfinite(r) && args.length > 1)
+                return new PyFloat(r);
+            return new PyLong(r);
         }
     }
 }
@@ -1697,31 +1728,12 @@ class CompileFunction extends PyBuiltinFunction {
 @Untraversable
 class OpenFunction extends PyBuiltinFunction {
     OpenFunction() {
-        super("open", "Open a file using the file() type, returns a file object.  This is the\n"
-              + "preferred way to open a file.");
+        super("open", BuiltinDocs.builtins_open_doc);
     }
-
-    private static final String warning =
-            "Passing an Input/OutputStream to open is deprecated, use "
-            + "org.python.core.util.FileUtil.wrap(stream[, bufsize]) instead.";
 
     @Override
     public PyObject __call__(PyObject args[], String kwds[]) {
-        ArgParser ap = new ArgParser("file", args, kwds, new String[] {"name", "mode", "buffering"},
-                                     1);
-        PyObject obj = ap.getPyObject(0);
-        if (obj.getJavaProxy() != null) {
-            int bufsize = ap.getInt(2, -1);
-            Object javaProxy = obj.getJavaProxy();
-            if (javaProxy instanceof InputStream) {
-                Py.warning(Py.DeprecationWarning, warning);
-                return new PyFile((InputStream) javaProxy, bufsize);
-            } else if (javaProxy instanceof OutputStream) {
-                Py.warning(Py.DeprecationWarning, warning);
-                return new PyFile((OutputStream) javaProxy, bufsize);
-            }
-        }
-        return PyFile.TYPE.__call__(args, kwds);
+        return _io.open(args, kwds);
     }
 }
 
@@ -1742,8 +1754,10 @@ class NextFunction extends PyBuiltinFunction {
 
         PyObject next;
         if ((next = it.__findattr__("next")) == null) {
-            throw Py.TypeError(String.format("'%.200s' object is not an iterator",
-                                             it.getType().fastGetName()));
+            if ((next = it.__findattr__("__next__")) == null) {
+                throw Py.TypeError(String.format("'%.200s' object is not an iterator",
+                        it.getType().fastGetName()));
+            }
         }
 
         try {

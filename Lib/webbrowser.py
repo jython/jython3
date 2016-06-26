@@ -55,7 +55,7 @@ def main():
     -t: open new tab""" % sys.argv[0]
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'ntd')
-    except getopt.error, msg:
+    except getopt.error as msg:
         print >>sys.stderr, msg
         print >>sys.stderr, usage
         sys.exit(1)
@@ -63,7 +63,7 @@ def main():
     for o, a in opts:
         if o == '-n': new_win = 1
         elif o == '-t': new_win = 2
-    if len(args) <> 1:
+    if len(args) != 1:
         print >>sys.stderr, usage
         sys.exit(1)
 

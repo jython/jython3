@@ -1,16 +1,16 @@
 # This set of tests exercises the backward-compatibility class
 # in mailbox.py (the ones without write support).
 
-from __future__ import with_statement
+
 import mailbox
 import os
 import time
 import unittest
-from test import test_support
+from test import support
 
 # cleanup earlier tests
 try:
-    os.unlink(test_support.TESTFN)
+    os.unlink(support.TESTFN)
 except os.error:
     pass
 
@@ -27,7 +27,7 @@ class MaildirTestCase(unittest.TestCase):
 
     def setUp(self):
         # create a new maildir mailbox to work with:
-        self._dir = test_support.TESTFN
+        self._dir = support.TESTFN
         os.mkdir(self._dir)
         os.mkdir(os.path.join(self._dir, "cur"))
         os.mkdir(os.path.join(self._dir, "tmp"))
@@ -36,7 +36,7 @@ class MaildirTestCase(unittest.TestCase):
         self._msgfiles = []
 
     def tearDown(self):
-        map(os.unlink, self._msgfiles)
+        list(map(os.unlink, self._msgfiles))
         os.rmdir(os.path.join(self._dir, "cur"))
         os.rmdir(os.path.join(self._dir, "tmp"))
         os.rmdir(os.path.join(self._dir, "new"))
@@ -65,42 +65,42 @@ class MaildirTestCase(unittest.TestCase):
         return tmpname
 
     def assert_and_close(self, message):
-        self.assert_(message is not None)
+        self.assertTrue(message is not None)
         message.fp.close()
 
     def test_empty_maildir(self):
         """Test an empty maildir mailbox"""
         # Test for regression on bug #117490:
-        self.mbox = mailbox.Maildir(test_support.TESTFN)
-        self.assert_(len(self.mbox) == 0)
-        self.assert_(self.mbox.next() is None)
-        self.assert_(self.mbox.next() is None)
+        self.mbox = mailbox.Maildir(support.TESTFN)
+        self.assertTrue(len(self.mbox) == 0)
+        self.assertTrue(next(self.mbox) is None)
+        self.assertTrue(next(self.mbox) is None)
 
     def test_nonempty_maildir_cur(self):
         self.createMessage("cur")
-        self.mbox = mailbox.Maildir(test_support.TESTFN)
-        self.assert_(len(self.mbox) == 1)
-        self.assert_and_close(self.mbox.next())
-        self.assert_(self.mbox.next() is None)
-        self.assert_(self.mbox.next() is None)
+        self.mbox = mailbox.Maildir(support.TESTFN)
+        self.assertTrue(len(self.mbox) == 1)
+        self.assert_and_close(next(self.mbox))
+        self.assertTrue(next(self.mbox) is None)
+        self.assertTrue(next(self.mbox) is None)
 
     def test_nonempty_maildir_new(self):
         self.createMessage("new")
-        self.mbox = mailbox.Maildir(test_support.TESTFN)
-        self.assert_(len(self.mbox) == 1)
-        self.assert_and_close(self.mbox.next())
-        self.assert_(self.mbox.next() is None)
-        self.assert_(self.mbox.next() is None)
+        self.mbox = mailbox.Maildir(support.TESTFN)
+        self.assertTrue(len(self.mbox) == 1)
+        self.assert_and_close(next(self.mbox))
+        self.assertTrue(next(self.mbox) is None)
+        self.assertTrue(next(self.mbox) is None)
 
     def test_nonempty_maildir_both(self):
         self.createMessage("cur")
         self.createMessage("new")
-        self.mbox = mailbox.Maildir(test_support.TESTFN)
-        self.assert_(len(self.mbox) == 2)
-        self.assert_and_close(self.mbox.next())
-        self.assert_and_close(self.mbox.next())
-        self.assert_(self.mbox.next() is None)
-        self.assert_(self.mbox.next() is None)
+        self.mbox = mailbox.Maildir(support.TESTFN)
+        self.assertTrue(len(self.mbox) == 2)
+        self.assert_and_close(next(self.mbox))
+        self.assert_and_close(next(self.mbox))
+        self.assertTrue(next(self.mbox) is None)
+        self.assertTrue(next(self.mbox) is None)
 
     def test_unix_mbox(self):
         ### should be better!
@@ -118,7 +118,7 @@ class MaildirTestCase(unittest.TestCase):
 class MboxTestCase(unittest.TestCase):
     def setUp(self):
         # create a new maildir mailbox to work with:
-        self._path = test_support.TESTFN
+        self._path = support.TESTFN
 
     def tearDown(self):
         os.unlink(self._path)
@@ -146,7 +146,7 @@ body4
         f.close()
         box = mailbox.UnixMailbox(open(self._path, 'rb'))
         messages = list(iter(box))
-        self.assert_(len(messages) == 4)
+        self.assertTrue(len(messages) == 4)
         for message in messages:
             message.fp.close()
         box.fp.close() # Jython addition: explicit close needed
@@ -155,7 +155,7 @@ body4
 
 
 def test_main():
-    test_support.run_unittest(MaildirTestCase, MboxTestCase)
+    support.run_unittest(MaildirTestCase, MboxTestCase)
 
 
 if __name__ == "__main__":

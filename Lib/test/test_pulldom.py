@@ -9,10 +9,10 @@
 	amak.
 """
 
-import StringIO
+import io
 import unittest
 from xml.dom import pulldom
-from test import test_support
+from test import support
 
 class UnicodeTests(unittest.TestCase):
 
@@ -27,7 +27,7 @@ class UnicodeTests(unittest.TestCase):
 """
 
     def setUp(self):
-        self.testFile = StringIO.StringIO(self.testDoc)
+        self.testFile = io.StringIO(self.testDoc)
 
     def testTextNodes(self):
         text = []
@@ -35,9 +35,9 @@ class UnicodeTests(unittest.TestCase):
             if event == pulldom.CHARACTERS:
                 text.append(node.data)
         try:
-            result = u"".join(text)
-            self.failUnlessEqual(repr(result), r"u'\n    Some greek: \u0391\u0392\u0393\u0394\u0395\n    \n    \n    \n'")
-        except Exception, x:
+            result = "".join(text)
+            self.assertEqual(repr(result), r"u'\n    Some greek: \u0391\u0392\u0393\u0394\u0395\n    \n    \n    \n'")
+        except Exception as x:
             self.fail("Unexpected exception joining text pieces: %s" % str(x))
 
     def testAttributes(self):
@@ -47,9 +47,9 @@ class UnicodeTests(unittest.TestCase):
                 for attrIx in range(node.attributes.length):
                     attrText.append(node.attributes.item(attrIx).value)
         try:
-            result = u"".join(attrText)
-            self.failUnlessEqual(repr(result), r"u'\u0396\u0397\u0398\u0399\u039a'")
-        except Exception, x:
+            result = "".join(attrText)
+            self.assertEqual(repr(result), r"u'\u0396\u0397\u0398\u0399\u039a'")
+        except Exception as x:
             self.fail("Unexpected exception joining attribute text pieces: %s" % str(x))
 
     def testProcessingInstruction(self):
@@ -58,13 +58,13 @@ class UnicodeTests(unittest.TestCase):
             if event == pulldom.PROCESSING_INSTRUCTION:
                 piText.append(node.data)
         try:
-            result = u"".join(piText)
+            result = "".join(piText)
             # Weird how the repr for PI data is different from text and char data.
             # Still, the whole xml.dom.* and xml.sax.* hierarchy is rather a 
             # labyrinthine mess under jython, mostly because it's so old, and
             # yet survived through major evolutionary changes in both jython and java.
-            self.failUnlessEqual(repr(result), r"u'&#x39b;&#x39c;&#x39d;&#x39e;&#x39f;'")
-        except Exception, x:
+            self.assertEqual(repr(result), r"u'&#x39b;&#x39c;&#x39d;&#x39e;&#x39f;'")
+        except Exception as x:
             self.fail("Unexpected exception joining pi data pieces: %s" % str(x))
 
     def testComment(self):
@@ -73,13 +73,13 @@ class UnicodeTests(unittest.TestCase):
             if event == pulldom.COMMENT:
                 commentText.append(node.data)
         try:
-            result = u"".join(commentText)
-            self.failUnlessEqual(repr(result), r"u'&#x39b;&#x39c;&#x39d;&#x39e;&#x39f;'")
-        except Exception, x:
+            result = "".join(commentText)
+            self.assertEqual(repr(result), r"u'&#x39b;&#x39c;&#x39d;&#x39e;&#x39f;'")
+        except Exception as x:
             self.fail("Unexpected exception joining comment data pieces: %s" % str(x))
 
 def test_main():
-    test_support.run_unittest(__name__)
+    support.run_unittest(__name__)
 
 if __name__ == "__main__":
     test_main()

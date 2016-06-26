@@ -24,11 +24,9 @@ import org.python.core.io.StreamIO;
 import org.python.core.io.TextIOBase;
 import org.python.core.io.TextIOWrapper;
 import org.python.core.io.UniversalIOWrapper;
-import org.python.expose.ExposedDelete;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
-import org.python.expose.ExposedSet;
 import org.python.expose.ExposedType;
 
 /**
@@ -337,6 +335,19 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         return fileioMode.toString();
     }
 
+    public PyString read1() {
+        return file_read(-1);
+    }
+
+    public PyString read1(int size) {
+        return file_read1(size);
+    }
+
+    @ExposedMethod
+    final synchronized PyString file_read1(int size) {
+        return file_read(size);
+    }
+
     @ExposedMethod(defaults = {"-1"}, doc = BuiltinDocs.TextIOBase_read_doc)
     final synchronized PyString file_read(int size) {
         checkClosed();
@@ -404,30 +415,18 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
     }
 
     @Override
-    public PyObject __iternext__() {
-        return file___iternext__();
-    }
-
-    final synchronized PyObject file___iternext__() {
-        checkClosed();
-        String next = file.readline(-1);
-        if (next.length() == 0) {
-            return null;
-        }
-        return new PyString(next);
+    public PyObject __next__() {
+        return file___next__();
     }
 
     @ExposedMethod(doc = BuiltinDocs.TextIOBase___next___doc)
-    final PyObject file_next() {
-        PyObject ret = file___iternext__();
-        if (ret == null) {
-            throw Py.StopIteration("");
+    final PyObject file___next__() {
+        checkClosed();
+        String next = file.readline(-1);
+        if (next.length() == 0) {
+            throw Py.StopIteration();
         }
-        return ret;
-    }
-
-    public PyObject next() {
-        return file_next();
+        return new PyString(next);
     }
 
     @ExposedMethod(names = {"__enter__", "__iter__", "xreadlines"},
@@ -450,6 +449,24 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         return file_self();
     }
 
+    public PyObject readable() {
+        return file_readable();
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.TextIOBase_readable_doc)
+    final PyObject file_readable() {
+        return Py.newBoolean(reading || universal);
+    }
+
+    public PyObject writable() {
+        return file_writable();
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.TextIOBase_writable_doc)
+    final PyObject file_writable() {
+        return Py.newBoolean(writing || appending || universal);
+    }
+
     @ExposedMethod(doc = BuiltinDocs.TextIOBase_write_doc)
     final void file_write(PyObject obj) {
         file_write(asWritable(obj, null));
@@ -469,7 +486,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
     final synchronized void file_writelines(PyObject lines) {
         checkClosed();
         PyObject iter = Py.iter(lines, "writelines() requires an iterable argument");
-        for (PyObject item = null; (item = iter.__iternext__()) != null;) {
+        for (PyObject item = null; (item = iter.__next__()) != null;) {
             checkClosed(); // ... in case a nasty iterable closed this file
             softspace = false;
             file.write(asWritable(item, "writelines() argument must be a sequence of strings"));
@@ -525,6 +542,15 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
 
     public long tell() {
         return file_tell();
+    }
+
+    public PyObject seekable() {
+        return file_seekable();
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.TextIOBase_seekable_doc)
+    final PyObject file_seekable() {
+        return Py.True;
     }
 
     @ExposedMethod(defaults = {"0"}, doc = BuiltinDocs.TextIOBase_seek_doc)
@@ -730,7 +756,6 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         }
 
     }
-
 
     /* Traverseproc implementation */
     @Override

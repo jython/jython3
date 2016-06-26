@@ -1,5 +1,5 @@
 import unittest
-from test import test_support, test_set
+from test import support, test_set
 
 import pickle
 import threading
@@ -29,7 +29,7 @@ class SetTestCase(unittest.TestCase):
         # issue 1854
         nthreads = 200
         # the race might not happen the first time so we try a few just in case
-        for i in xrange(4):
+        for i in range(4):
             s = set(range(200))
             threads = [threading.Thread(target=s.pop) for i in range(nthreads)]
             for t in threads: t.start()
@@ -39,7 +39,7 @@ class SetTestCase(unittest.TestCase):
     def test_big_set(self):
         """Verify that fairly large collection literals of primitives can be constructed."""
         # use \n to separate to avoid parser problems
-        s = eval("{" + ",\n".join((str(x) for x in xrange(64000))) +"}")
+        s = eval("{" + ",\n".join((str(x) for x in range(64000))) +"}")
         self.assertEqual(len(s), 64000)
         self.assertEqual(sum(s), 2047968000)
 
@@ -54,9 +54,9 @@ class SetInJavaTestCase(unittest.TestCase):
     def test_accessing_items_added_in_java(self):
         s = PySetInJavaTest.createPySetContainingJavaObjects()
         for v in s:
-            self.assert_(v in s)
-            if isinstance(v, unicode):
-                self.assertEquals("value", v)
+            self.assertTrue(v in s)
+            if isinstance(v, str):
+                self.assertEqual("value", v)
             else:
                 # Should be a java.util.Random; ensure we can call it
                 v.nextInt()
@@ -69,7 +69,7 @@ class SetInJavaTestCase(unittest.TestCase):
         s = set(["value", Random(), ("tuple", "of", "stuff")])
         PySetInJavaTest.accessAndRemovePySetItems(s)
         # Check that the Java removal affected the underlying set
-        self.assertEquals(0, len(s))
+        self.assertEqual(0, len(s))
 
     def test_serialization(self):
         s = set(range(5, 10))
@@ -117,7 +117,7 @@ def test_main():
         TestJavaHashSet,
         TestJavaLinkedHashSet,
     ]
-    test_support.run_unittest(*tests)
+    support.run_unittest(*tests)
 
 
 if __name__ == '__main__':

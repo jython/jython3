@@ -19,7 +19,7 @@
 ###
 
 import sys
-import StringIO
+import io
 import traceback
 
 from java.lang import IllegalStateException
@@ -63,10 +63,10 @@ class testing_handler(exception_handler):
 
     def handle(self, req, resp, environ, exc, exc_info):
         typ, value, tb = exc_info
-        err_msg = StringIO.StringIO()
+        err_msg = io.StringIO()
         err_msg.write("%s: %s\n" % (typ, value,) )
         err_msg.write(">Environment\n")
-        for k in environ.keys():
+        for k in list(environ.keys()):
             err_msg.write("%s=%s\n" % (k, repr(environ[k])) )
         err_msg.write("<Environment\n")
         err_msg.write(">TraceBack\n")
@@ -78,7 +78,7 @@ class testing_handler(exception_handler):
             resp.setStatus(status)
             resp.setContentLength(len(err_msg.getvalue()))
             resp.getOutputStream().write(err_msg.getvalue())
-        except IllegalStateException, ise:
+        except IllegalStateException as ise:
             raise exc # Let the container deal with it
 
 #
@@ -88,4 +88,4 @@ class testing_handler(exception_handler):
 class standard_handler(exception_handler):
 
     def handle(self, req, resp, environ, exc, exc_info):
-        raise exc_info[0], exc_info[1], exc_info[2]
+        raise exc_info[0](exc_info[1]).with_traceback(exc_info[2])

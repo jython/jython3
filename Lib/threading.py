@@ -5,8 +5,8 @@ from java.util.concurrent.locks import ReentrantLock
 from org.python.util import jython
 from org.python.core import Py
 from jythonlib import CacheBuilder, CacheLoader, MapMaker, dict_builder
-from thread import _newFunctionThread
-from thread import _local as local
+from _thread import _newFunctionThread
+from _thread import _local as local
 from _threading import Lock, RLock, Condition, _Lock, _RLock
 import java.lang.Thread
 import sys as _sys
@@ -240,19 +240,19 @@ class Thread(JavaThread):
                     # approx. a traceback stack trace
                     exc_type, exc_value, exc_tb = self.__exc_info()
                     try:
-                        print>>self.__stderr, (
+                        print((
                             "Exception in thread " + self.getName() +
-                            " (most likely raised during interpreter shutdown):")
-                        print>>self.__stderr, (
-                            "Traceback (most recent call last):")
+                            " (most likely raised during interpreter shutdown):"), file=self.__stderr)
+                        print((
+                            "Traceback (most recent call last):"), file=self.__stderr)
                         while exc_tb:
-                            print>>self.__stderr, (
+                            print((
                                 '  File "%s", line %s, in %s' %
                                 (exc_tb.tb_frame.f_code.co_filename,
                                     exc_tb.tb_lineno,
-                                    exc_tb.tb_frame.f_code.co_name))
+                                    exc_tb.tb_frame.f_code.co_name)), file=self.__stderr)
                             exc_tb = exc_tb.tb_next
-                        print>>self.__stderr, ("%s: %s" % (exc_type, exc_value))
+                        print(("%s: %s" % (exc_type, exc_value)), file=self.__stderr)
                     # Make sure that exc_tb gets deleted since it is a memory
                     # hog; deleting everything else is just for thoroughness
                     finally:
@@ -318,9 +318,9 @@ def activeCount():
 active_count = activeCount
 
 def enumerate():
-    return _threads.values()
+    return list(_threads.values())
 
-from thread import stack_size
+from _thread import stack_size
 
 
 _MainThread()
@@ -417,7 +417,7 @@ class _BoundedSemaphore(_Semaphore):
 
     def release(self):
         if self._Semaphore__value >= self._initial_value:
-            raise ValueError, "Semaphore released too many times"
+            raise ValueError("Semaphore released too many times")
         return _Semaphore.release(self)
 
     def __exit__(self, t, v, tb):

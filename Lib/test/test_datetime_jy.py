@@ -1,5 +1,5 @@
 import unittest
-from test import test_support
+from test import support
 
 from datetime import timedelta
 from datetime import tzinfo
@@ -56,7 +56,7 @@ class TestTimezone(unittest.TestCase):
                 return timedelta(hours=1)
             def dst(self, dt):
                 return timedelta(0)
-            def tzname(self,dt):
+            def tzname(self, dt):
                 return "Europe/Prague"
 
         self.assertTrue(hasattr(datetime, "__tojava__"))
@@ -77,7 +77,7 @@ class TestTimezone(unittest.TestCase):
                 return timedelta(hours=1, minutes=15)
             def dst(self, dt):
                 return timedelta(seconds=-900)
-            def tzname(self,dt):
+            def tzname(self, dt):
                 return "Foo/Bar"
 
         self.assertTrue(hasattr(datetime, "__tojava__"))
@@ -122,7 +122,7 @@ class TestSQL(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         TestCalendar,
         TestSQL,
         TestTimezone)

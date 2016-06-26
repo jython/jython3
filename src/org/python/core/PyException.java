@@ -3,7 +3,7 @@ package org.python.core;
 import java.io.*;
 
 /**
- * A wrapper for all python exception. Note that the well-known python exceptions are <b>not</b>
+ * A wrapper for all python exception. Note that the well-known python Exceptions are <b>not</b>
  * subclasses of PyException. Instead the python exception class is stored in the <code>type</code>
  * field and value or class instance is stored in the <code>value</code> field.
  */
@@ -19,6 +19,16 @@ public class PyException extends RuntimeException implements Traverseproc
      * The exception instance (for class exception) or exception value (for string exception).
      */
     public PyObject value = Py.None;
+
+    /**
+     * The cause of the exception for implicitly chained Exceptions
+     */
+    public PyBaseException context;
+
+    /**
+     * The cause of the exception for explicitly chained Exceptions
+     */
+    public PyObject cause;
 
     /** The exception traceback object. */
     public PyTraceback traceback;
@@ -43,9 +53,8 @@ public class PyException extends RuntimeException implements Traverseproc
         this(type, value, null);
     }
 
-    public PyException(PyObject type, PyObject value, PyTraceback traceback) {
-        this.type = type;
-        this.value = value;
+    public PyException(PyObject type, PyObject value, PyObject cause, PyTraceback traceback) {
+        this(type, value, cause);
         if (traceback != null) {
             this.traceback = traceback;
             isReRaise = true;
@@ -57,8 +66,27 @@ public class PyException extends RuntimeException implements Traverseproc
         }
     }
 
+    public PyException(PyObject type, PyObject value, PyObject cause) {
+        this.type = type;
+        if (cause != null) {
+            this.cause = cause;
+            isReRaise = true;
+        }
+        if (value != null && !isExceptionInstance(value)) {
+            PyException pye = Py.getThreadState().exceptions.peekFirst();
+            if (pye != null && pye.value instanceof PyBaseException) {
+                context = (PyBaseException) pye.value;
+            }
+        }
+
+        this.value = value;
+        if (value == null) {
+            this.value = Py.None;
+        }
+    }
+
     public PyException(PyObject type, String value) {
-        this(type, Py.newStringOrUnicode(value));
+        this(type, Py.newUnicode(value));
     }
 
     private boolean printingStackTrace = false;
@@ -133,6 +161,12 @@ public class PyException extends RuntimeException implements Traverseproc
                 type = inClass;
             }
         }
+        if (cause != null) {
+            ((PyBaseException) value).setCause(cause);
+        }
+        if (context != null) {
+            ((PyBaseException) value).__context__ = context;
+        }
         normalized = true;
     }
 
@@ -156,46 +190,54 @@ public class PyException extends RuntimeException implements Traverseproc
             // the frame is either inapplicable or already registered (from a finally)
             // during a re-raise
             traceback = new PyTraceback(traceback, here);
+            // since this is called after normalize, we can only amend it
+            if (value instanceof PyBaseException) {
+                traceback.tb_next = ((PyBaseException) value).__traceback__;
+                ((PyBaseException) value).__traceback__ = traceback;
+            }
         }
         // finally blocks immediately tracebackHere: so they toggle isReRaise to skip the
         // next tracebackHere hook
         isReRaise = isFinally;
     }
 
+    public static PyException doRaise(PyObject value) {
+        return doRaise(value, null);
+    }
+
+    public static PyException doRaise(ThreadState state) {
+        PyException pye = state.exceptions.peekFirst();
+
+        if (pye == null) {
+            throw Py.RuntimeError("No active exception to reraise");
+        }
+        PyObject type = pye.type;
+        PyObject value = pye.value;
+        PyObject cause = pye.cause;
+        return new PyException(type, value, cause);
+    }
+
     /**
      * Logic for the raise statement
      *
-     * @param type the first arg to raise, a type or an instance
      * @param value the second arg, the instance of the class or arguments to its
      * constructor
-     * @param traceback a traceback object
+     * @param cause the chained exception
      * @return a PyException wrapper
      */
-    public static PyException doRaise(PyObject type, PyObject value, PyObject traceback) {
-        if (type == null) {
-            ThreadState state = Py.getThreadState();
-            type = state.exception.type;
-            value = state.exception.value;
-            traceback = state.exception.traceback;
-        }
+    public static PyException doRaise(PyObject value, PyObject cause) {
+        PyObject type;
+        ThreadState state = Py.getThreadState();
 
-        if (traceback == Py.None) {
-            traceback = null;
-        } else if (traceback != null && !(traceback instanceof PyTraceback)) {
-            throw Py.TypeError("raise: arg 3 must be a traceback or None");
-        }
-
-        if (value == null) {
-            value = Py.None;
-        }
-
-        // Repeatedly, replace a tuple exception with its first item
-        while (type instanceof PyTuple && ((PyTuple)type).size() > 0) {
-            type = type.__getitem__(0);
-        }
-
-        if (isExceptionClass(type)) {
-            PyException pye = new PyException(type, value, (PyTraceback)traceback);
+        PyException pye;
+        if (isExceptionClass(value)) {
+            type = value;
+            // null flags context has been take care of
+            pye = new PyException(type, null, cause);
+            PyException context = state.exceptions.peekFirst();
+            if (context != null) {
+                pye.context = (PyBaseException) context.value;
+            }
             pye.normalize();
             if (!isExceptionInstance(pye.value)) {
                 throw Py.TypeError(String.format(
@@ -203,27 +245,13 @@ public class PyException extends RuntimeException implements Traverseproc
                     pye.type, pye.value));
             }
             return pye;
-        } else if (isExceptionInstance(type)) {
-            // Raising an instance.  The value should be a dummy.
-            if (value != Py.None) {
-                throw Py.TypeError("instance exception may not have a separate value");
-            } else {
-                // Normalize to raise <class>, <instance>
-                value = type;
-                type = type.fastGetClass();
-            }
+        } else if (isExceptionInstance(value)) {
+            // ignore the context for now
+            type = value.getType();
+            return new PyException(type, value, cause);
         } else {
-            // Not something you can raise.  You get an exception
-            // anyway, just not what you specified :-)
-            throw Py.TypeError("exceptions must be old-style classes or derived from "
-                               + "BaseException, not " + type.getType().fastGetName());
+            throw Py.TypeError("exceptions must derive from BaseException");
         }
-
-        if (Options.py3k_warning && type instanceof PyClass) {
-            Py.DeprecationWarning("exceptions must derive from BaseException in 3.x");
-        }
-
-        return new PyException(type, value, (PyTraceback)traceback);
     }
 
     /**
@@ -243,7 +271,7 @@ public class PyException extends RuntimeException implements Traverseproc
         }
 
         if (exc instanceof PyString) {
-            Py.DeprecationWarning("catching of string exceptions is deprecated");
+            Py.DeprecationWarning("catching of string Exceptions is deprecated");
         } else if (Options.py3k_warning && !isPy3kExceptionClass(exc)) {
             Py.DeprecationWarning("catching classes that don't inherit from BaseException is not "
                                   + "allowed in 3.x");
@@ -319,8 +347,7 @@ public class PyException extends RuntimeException implements Traverseproc
      * @return true if an exception instance
      */
     public static boolean isExceptionInstance(PyObject obj) {
-        return obj instanceof PyInstance || obj instanceof PyBaseException
-           || obj.getJavaProxy() instanceof Throwable;
+        return obj instanceof PyBaseException;
     }
 
     /**

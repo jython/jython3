@@ -5,8 +5,8 @@ import unittest
 from array import array
 from weakref import proxy
 
-from test.test_support import TESTFN, findfile, is_jython, run_unittest
-from UserList import UserList
+from test.support import TESTFN, findfile, is_jython, run_unittest
+from collections import UserList
 
 class AutoFileTests(unittest.TestCase):
     # file tests for which a test file is automatically set up
@@ -23,7 +23,7 @@ class AutoFileTests(unittest.TestCase):
         # verify weak references
         p = proxy(self.f)
         p.write('teststring')
-        self.assertEquals(self.f.tell(), p.tell())
+        self.assertEqual(self.f.tell(), p.tell())
         self.f.close()
         self.f = None
         if is_jython:
@@ -53,7 +53,7 @@ class AutoFileTests(unittest.TestCase):
         a = array('c', 'x'*10)
         self.f = open(TESTFN, 'rb')
         n = self.f.readinto(a)
-        self.assertEquals('12', a.tostring()[:n])
+        self.assertEqual('12', a.tostring()[:n])
 
     def testWritelinesUserList(self):
         # verify writelines with instance sequence
@@ -62,7 +62,7 @@ class AutoFileTests(unittest.TestCase):
         self.f.close()
         self.f = open(TESTFN, 'rb')
         buf = self.f.read()
-        self.assertEquals(buf, '12')
+        self.assertEqual(buf, '12')
 
     def testWritelinesIntegers(self):
         # verify writelines with integers
@@ -70,7 +70,7 @@ class AutoFileTests(unittest.TestCase):
 
     def testWritelinesIntegersUserList(self):
         # verify writelines with integers in UserList
-        l = UserList([1,2,3])
+        l = UserList([1, 2, 3])
         self.assertRaises(TypeError, self.f.writelines, l)
 
     def testWritelinesNonString(self):
@@ -83,17 +83,17 @@ class AutoFileTests(unittest.TestCase):
 
     def testRepr(self):
         # verify repr works
-        self.assert_(repr(self.f).startswith("<open file '" + TESTFN))
+        self.assertTrue(repr(self.f).startswith("<open file '" + TESTFN))
 
     def testErrors(self):
         f = self.f
-        self.assertEquals(f.name, TESTFN)
-        self.assert_(not f.isatty())
-        self.assert_(not f.closed)
+        self.assertEqual(f.name, TESTFN)
+        self.assertTrue(not f.isatty())
+        self.assertTrue(not f.closed)
 
         self.assertRaises(TypeError, f.readinto, "")
         f.close()
-        self.assert_(f.closed)
+        self.assertTrue(f.closed)
 
     def testMethods(self):
         # XXX: Jython file methods require valid arguments: closed file
@@ -111,9 +111,9 @@ class AutoFileTests(unittest.TestCase):
 
         # __exit__ should close the file
         self.f.__exit__(None, None, None)
-        self.assert_(self.f.closed)
+        self.assertTrue(self.f.closed)
 
-        for methodname, arg in methods.iteritems():
+        for methodname, arg in methods.items():
             method = getattr(self.f, methodname)
             # should raise on closed file
             if arg is noarg:
@@ -123,12 +123,12 @@ class AutoFileTests(unittest.TestCase):
         self.assertRaises(ValueError, self.f.writelines, [])
 
         # file is closed, __exit__ shouldn't do anything
-        self.assertEquals(self.f.__exit__(None, None, None), None)
+        self.assertEqual(self.f.__exit__(None, None, None), None)
         # it must also return None if an exception was given
         try:
             1/0
         except:
-            self.assertEquals(self.f.__exit__(*sys.exc_info()), None)
+            self.assertEqual(self.f.__exit__(*sys.exc_info()), None)
 
 
 class OtherFileTests(unittest.TestCase):
@@ -149,15 +149,15 @@ class OtherFileTests(unittest.TestCase):
         if sys.platform != 'osf1V5':
             self.assertRaises(IOError, sys.stdin.seek, -1)
         else:
-            print >>sys.__stdout__, (
+            print((
                 '  Skipping sys.stdin.seek(-1), it may crash the interpreter.'
-                ' Test manually.')
+                ' Test manually.'), file=sys.__stdout__)
         self.assertRaises(IOError, sys.stdin.truncate)
 
     def testUnicodeOpen(self):
         # verify repr works for unicode too
-        f = open(unicode(TESTFN), "w")
-        self.assert_(repr(f).startswith("<open file u'" + TESTFN))
+        f = open(str(TESTFN), "w")
+        self.assertTrue(repr(f).startswith("<open file u'" + TESTFN))
         f.close()
         os.unlink(TESTFN)
 
@@ -166,7 +166,7 @@ class OtherFileTests(unittest.TestCase):
         bad_mode = "qwerty"
         try:
             f = open(TESTFN, bad_mode)
-        except ValueError, msg:
+        except ValueError as msg:
             if msg[0] != 0:
                 s = str(msg)
                 if s.find(TESTFN) != -1 or s.find(bad_mode) == -1:
@@ -190,9 +190,9 @@ class OtherFileTests(unittest.TestCase):
                 d = int(f.read())
                 f.close()
                 f.close()
-            except IOError, msg:
+            except IOError as msg:
                 self.fail('error setting buffer size %d: %s' % (s, str(msg)))
-            self.assertEquals(d, s)
+            self.assertEqual(d, s)
 
     def testTruncateOnWindows(self):
         os.unlink(TESTFN)
@@ -204,7 +204,7 @@ class OtherFileTests(unittest.TestCase):
             f.write('12345678901')   # 11 bytes
             f.close()
 
-            f = open(TESTFN,'rb+')
+            f = open(TESTFN, 'rb+')
             data = f.read(5)
             if data != '12345':
                 self.fail("Read on file opened for update failed %r" % data)
@@ -259,7 +259,7 @@ class OtherFileTests(unittest.TestCase):
             # Test for appropriate errors mixing read* and iteration
             for methodname, args in methods:
                 f = open(TESTFN)
-                if f.next() != filler:
+                if next(f) != filler:
                     self.fail, "Broken testfile"
                 meth = getattr(f, methodname)
                 try:
@@ -280,7 +280,7 @@ class OtherFileTests(unittest.TestCase):
             # between 4 and 16384 (inclusive).
             f = open(TESTFN)
             for i in range(nchunks):
-                f.next()
+                next(f)
             testline = testlines.pop(0)
             try:
                 line = f.readline()

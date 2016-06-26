@@ -17,7 +17,7 @@ public class Options {
     public static boolean showJavaExceptions = false;
 
     /**
-     * If true, exceptions raised from Python code will include a Java stack
+     * If true, Exceptions raised from Python code will include a Java stack
      * trace in addition to the Python traceback.  This can slow raising
      * considerably.
      */

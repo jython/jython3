@@ -12,12 +12,12 @@ import tempfile
 import unittest
 import zipfile
 import zipimport
-from test import test_support
+from test import support
 
 COMPILED_SUFFIX = [suffix for suffix, mode, type in imp.get_suffixes()
                    if type == imp.PY_COMPILED][0]
 
-WINDOWS = (os._name if test_support.is_jython else os.name) == 'nt'
+WINDOWS = (os._name if support.is_jython else os.name) == 'nt'
 
 CODE1 = """result = 'result is %r' % (100.0 * (3.0 / 5.0))"""
 CODE1_RESULT = 'result is %r' % (100.0 * (3.0 / 5.0))
@@ -103,7 +103,7 @@ class BaseChdirTestCase(unittest.TestCase):
     SYSPATH = ()
 
     def setUp(self):
-        for i in max(1, range(self.TEST_DIRS)):
+        for i in max(1, list(range(self.TEST_DIRS))):
             setattr(self, 'dir%i' % (i + 1), tempfile.mkdtemp())
 
         for i in range(self.TEST_FILES):
@@ -263,19 +263,19 @@ class ImportTestCase(BaseImportTestCase):
 
     def test_import_module(self):
         __import__(self.mod_name)
-        self.assert_(self.mod_name in sys.modules)
+        self.assertTrue(self.mod_name in sys.modules)
         mod = sys.modules[self.mod_name]
         self.assertEqual(mod.__file__, self.basename1)
-        self.assert_(os.path.exists(self.bytecode))
+        self.assertTrue(os.path.exists(self.bytecode))
 
     def test_import_bytecode(self):
         py_compile.compile(self.basename1)
-        self.assert_(os.path.exists(self.bytecode))
+        self.assertTrue(os.path.exists(self.bytecode))
 
         os.remove(self.filename1)
 
         __import__(self.mod_name)
-        self.assert_(self.mod_name in sys.modules)
+        self.assertTrue(self.mod_name in sys.modules)
         mod = sys.modules[self.mod_name]
         self.assertEqual(mod.__file__, self.mod_name + COMPILED_SUFFIX)
 
@@ -289,13 +289,13 @@ class ImportTestCase(BaseImportTestCase):
         self.assertEqual(module_info[1], self.basename1)
         mod = imp.load_module(self.mod_name, *module_info)
         self.assertEqual(mod.__file__, self.basename1)
-        self.assert_(os.path.exists(self.bytecode))
+        self.assertTrue(os.path.exists(self.bytecode))
         module_info[0].close()
 
     def test_imp_load_source(self):
         mod = imp.load_source(self.mod_name, self.basename1)
         self.assertEqual(mod.__file__, self.basename1)
-        self.assert_(os.path.exists(self.bytecode))
+        self.assertTrue(os.path.exists(self.bytecode))
 
     def test_imp_load_compiled(self):
         __import__(self.mod_name)
@@ -331,11 +331,11 @@ class ImportPackageTestCase(BaseChdirTestCase):
 
     def test_import_package(self):
         __import__(self.package_name)
-        self.assert_(self.package_name in sys.modules)
+        self.assertTrue(self.package_name in sys.modules)
         package = sys.modules[self.package_name]
         self.assertEqual(package.__path__, [self.package_name])
         self.assertEqual(package.__file__, self.relative_source)
-        self.assert_(os.path.exists(self.bytecode))
+        self.assertTrue(os.path.exists(self.bytecode))
 
     def test_imp_find_module_package(self):
         module_info = imp.find_module(self.package_name)
@@ -345,12 +345,12 @@ class ImportPackageTestCase(BaseChdirTestCase):
         module_info = imp.find_module(self.package_name)
         mod = imp.load_module(self.package_name, *module_info)
         self.assertEqual(mod.__file__, self.relative_source)
-        self.assert_(os.path.exists(self.bytecode))
+        self.assertTrue(os.path.exists(self.bytecode))
 
     def test_imp_load_source_package(self):
         mod = imp.load_source(self.package_name, self.relative_source)
         self.assertEqual(mod.__file__, self.relative_source)
-        self.assert_(os.path.exists(self.bytecode))
+        self.assertTrue(os.path.exists(self.bytecode))
 
 
 class ZipimportTestCase(BaseImportTestCase):
@@ -367,7 +367,7 @@ class ZipimportTestCase(BaseImportTestCase):
         importer = zipimport.zipimporter(self.basename1 + '.zip')
         self.assertEqual(importer.archive, self.basename1 + '.zip')
         self.assertEqual(importer.prefix, '')
-        self.assert_(self.basename1 in importer._files)
+        self.assertTrue(self.basename1 in importer._files)
 
         # Ensure correct cache entry paths
         entry = importer._files[self.basename1]
@@ -385,10 +385,10 @@ class PyCompileTestCase(BaseImportTestCase):
 
     def test_compile(self):
         py_compile.compile(self.basename1)
-        self.assert_(os.path.exists(self.filename1[:-3] + COMPILED_SUFFIX))
+        self.assertTrue(os.path.exists(self.filename1[:-3] + COMPILED_SUFFIX))
 
         __import__(self.mod_name)
-        self.assert_(self.mod_name in sys.modules)
+        self.assertTrue(self.mod_name in sys.modules)
         mod = sys.modules[self.mod_name]
         self.assertEqual(mod.__file__, self.mod_name + COMPILED_SUFFIX)
 
@@ -396,12 +396,12 @@ class PyCompileTestCase(BaseImportTestCase):
         py_compile.compile(self.basename1,
                            self.basename1[:-3] +
                            'chdir_test' + COMPILED_SUFFIX)
-        self.assert_(os.path.exists(self.filename1[:-3] + 'chdir_test' +
+        self.assertTrue(os.path.exists(self.filename1[:-3] + 'chdir_test' +
                                     COMPILED_SUFFIX))
 
         mod_name = self.mod_name + 'chdir_test'
         __import__(mod_name)
-        self.assert_(mod_name in sys.modules)
+        self.assertTrue(mod_name in sys.modules)
         mod = sys.modules[mod_name]
         self.assertEqual(mod.__file__, mod_name + COMPILED_SUFFIX)
 
@@ -457,14 +457,14 @@ class ExecfileTestCase(BaseChdirTestCase):
 
     def test_execfile(self):
         globals = {}
-        execfile(self.filename1, globals)
+        exec(compile(open(self.filename1).read(), self.filename1, 'exec'), globals)
         self.assertEqual(globals['result'], CODE1_RESULT)
 
         # filename1 lives in dir1
         os.chdir(self.dir1)
 
         globals = {}
-        execfile(self.basename1, globals)
+        exec(compile(open(self.basename1).read(), self.basename1, 'exec'), globals)
         self.assertEqual(globals['result'], CODE1_RESULT)
 
         os.chdir(self.dir2)
@@ -480,7 +480,7 @@ class ExecfileTracebackTestCase(BaseChdirTestCase):
     def test_execfile_traceback(self):
         globals = {}
         try:
-            execfile(self.basename1, globals)
+            exec(compile(open(self.basename1).read(), self.basename1, 'exec'), globals)
         except NotImplementedError:
             tb = sys.exc_info()[2]
             self.assertEqual(tb.tb_next.tb_frame.f_code.co_filename,
@@ -511,28 +511,28 @@ class ListdirTestCase(BaseChdirTestCase):
 class DirsTestCase(BaseChdirTestCase):
 
     def test_makedirs(self):
-        self.assert_(not os.path.exists(self.filename1))
+        self.assertTrue(not os.path.exists(self.filename1))
         subdir = os.path.join(self.basename1, 'chdir_test')
         os.makedirs(subdir)
-        self.assert_(os.path.isdir(self.filename1))
-        self.assert_(os.path.isdir(os.path.join(self.filename1, 'chdir_test')))
+        self.assertTrue(os.path.isdir(self.filename1))
+        self.assertTrue(os.path.isdir(os.path.join(self.filename1, 'chdir_test')))
 
     def test_mkdir(self):
-        self.assert_(not os.path.exists(self.filename1))
+        self.assertTrue(not os.path.exists(self.filename1))
         os.mkdir(self.basename1)
-        self.assert_(os.path.isdir(self.filename1))
+        self.assertTrue(os.path.isdir(self.filename1))
 
     def test_rmdir(self):
         os.mkdir(self.filename1)
-        self.assert_(os.path.exists(self.filename1))
-        self.assert_(os.path.exists(self.basename1))
+        self.assertTrue(os.path.exists(self.filename1))
+        self.assertTrue(os.path.exists(self.basename1))
         os.rmdir(self.basename1)
-        self.assert_(not os.path.exists(self.filename1))
+        self.assertTrue(not os.path.exists(self.filename1))
 
     def test_isdir(self):
-        self.assert_(not os.path.isdir(self.basename1))
+        self.assertTrue(not os.path.isdir(self.basename1))
         os.mkdir(self.filename1)
-        self.assert_(os.path.isdir(self.basename1))
+        self.assertTrue(os.path.isdir(self.basename1))
 
 
 class FilesTestCase(BaseChdirTestCase):
@@ -543,12 +543,12 @@ class FilesTestCase(BaseChdirTestCase):
 
     def test_remove(self):
         os.remove(self.basename1)
-        self.assert_(not os.path.exists(self.filename1))
+        self.assertTrue(not os.path.exists(self.filename1))
 
     def test_rename(self):
         os.rename(self.basename1, 'chdir_test')
-        self.assert_(not os.path.exists(self.filename1))
-        self.assert_(os.path.exists(os.path.join(self.dir1, 'chdir_test')))
+        self.assertTrue(not os.path.exists(self.filename1))
+        self.assertTrue(os.path.exists(os.path.join(self.dir1, 'chdir_test')))
 
     def test_stat(self):
         self.assertEqual(os.stat(self.basename1).st_size, 4)
@@ -562,7 +562,7 @@ class FilesTestCase(BaseChdirTestCase):
     def test_open(self):
         fp = open(self.basename1)
         self.assertEqual(fp.name, self.basename1)
-        self.assert_(repr(fp).startswith("<open file '%s'" % self.basename1))
+        self.assertTrue(repr(fp).startswith("<open file '%s'" % self.basename1))
         self.assertEqual(fp.read(), 'test')
         fp.close()
 
@@ -572,10 +572,10 @@ class FilesTestCase(BaseChdirTestCase):
         os.close(fd)
 
     def test_exists(self):
-        self.assert_(os.path.exists(self.basename1))
+        self.assertTrue(os.path.exists(self.basename1))
 
     def test_isfile(self):
-        self.assert_(os.path.isfile(self.basename1))
+        self.assertTrue(os.path.isfile(self.basename1))
 
     def test_abspath(self):
         self.assertEqual(os.path.join(os.getcwd(), self.basename1),
@@ -669,7 +669,7 @@ class ImportJarTestCase(BaseChdirTestCase):
             # because SyspathArchive holds onto its file handle (and you
             # can't delete a file in use on Windows). We may not want to
             # change this
-            self.assert_(WINDOWS)
+            self.assertTrue(WINDOWS)
         if 'ChdirJyTest' in sys.modules:
             del sys.modules['ChdirJyTest']
 
@@ -699,19 +699,19 @@ def raises(exc, expected, callable, *args):
     """Ensure the expected exception is raised"""
     try:
         callable(*args)
-    except exc, msg:
+    except exc as msg:
         if expected is not None:
             if isinstance(expected, str):
                 if str(msg) != expected:
-                    raise test_support.TestFailed(
+                    raise support.TestFailed(
                         "Message %r, expected %r" % (str(msg), expected))
             elif isinstance(expected, int):
                 if msg.errno != expected:
-                    raise test_support.TestFailed(
+                    raise support.TestFailed(
                         "errno %r, expected %r" % (msg, expected))
 
     else:
-        raise test_support.TestFailed("Expected %s" % exc)
+        raise support.TestFailed("Expected %s" % exc)
 
 
 def read(filename):
@@ -747,14 +747,14 @@ def test_main():
         tests.append(WindowsChdirTestCase)
         tests.remove(SymlinkTestCase)       #  os.symlink ... Availability: Unix.
 
-    if test_support.is_jython:
+    if support.is_jython:
         tests.extend((ImportJavaClassTestCase,
                       ImportJarTestCase))
  
-    if test_support.is_resource_enabled('subprocess'):
+    if support.is_resource_enabled('subprocess'):
         tests.append(SubprocessTestCase)
 
-    test_support.run_unittest(*tests)
+    support.run_unittest(*tests)
 
 
 if __name__ == '__main__':

@@ -11,6 +11,7 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
+import org.python.core.PyUnicode;
 import org.python.core.Visitproc;
 
 import org.python.expose.ExposedGet;
@@ -236,8 +237,8 @@ public class PyStatResult extends PyTuple {
     }
 
     @Override
-    public PyString __repr__() {
-        return (PyString) Py.newString(
+    public PyUnicode __repr__() {
+        return (PyUnicode) Py.newUnicode(
                 TYPE.fastGetName() + "(" +
                 "st_mode=%r, st_ino=%r, st_dev=%r, st_nlink=%r, st_uid=%r, "+
                 "st_gid=%r, st_size=%r, st_atime=%r, st_mtime=%r, st_ctime=%r)").__mod__(this);

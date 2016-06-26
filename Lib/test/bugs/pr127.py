@@ -7,4 +7,4 @@ try:
 except TypeError:
     pass
 else:
-    print 'unbound method must be called with class instance 1st argument'
+    print('unbound method must be called with class instance 1st argument')

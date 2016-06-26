@@ -4,7 +4,7 @@
 """
 
 import unittest
-from test.test_support import is_jython, run_unittest, TESTFN
+from test.support import is_jython, run_unittest, TESTFN
 import dircache, os, time, sys, tempfile
 
 
@@ -34,10 +34,10 @@ class DircacheTests(unittest.TestCase):
     def test_listdir(self):
         ## SUCCESSFUL CASES
         entries = dircache.listdir(self.tempdir)
-        self.assertEquals(entries, [])
+        self.assertEqual(entries, [])
 
         # Check that cache is actually caching, not just passing through.
-        self.assert_(dircache.listdir(self.tempdir) is entries)
+        self.assertTrue(dircache.listdir(self.tempdir) is entries)
 
         # Directories aren't "files" on Windows, and directory mtime has
         # nothing to do with when files under a directory get created.
@@ -52,8 +52,8 @@ class DircacheTests(unittest.TestCase):
             time.sleep(1)
             self.writeTemp("test1")
             entries = dircache.listdir(self.tempdir)
-            self.assertEquals(entries, ['test1'])
-            self.assert_(dircache.listdir(self.tempdir) is entries)
+            self.assertEqual(entries, ['test1'])
+            self.assertTrue(dircache.listdir(self.tempdir) is entries)
 
         ## UNSUCCESSFUL CASES
         self.assertRaises(OSError, dircache.listdir, self.tempdir+"_nonexistent")
@@ -63,7 +63,7 @@ class DircacheTests(unittest.TestCase):
         self.mkdirTemp("A")
         lst = ['A', 'test2', 'test_nonexistent']
         dircache.annotate(self.tempdir, lst)
-        self.assertEquals(lst, ['A/', 'test2', 'test_nonexistent'])
+        self.assertEqual(lst, ['A/', 'test2', 'test_nonexistent'])
 
 
 def test_main():

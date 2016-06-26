@@ -6,9 +6,9 @@ import sys
 import os
 import unittest
 
-from test import test_support, seq_tests
+from test import support, seq_tests
 
-if test_support.is_jython:
+if support.is_jython:
     from java.util import List as JList
 
 
@@ -45,7 +45,7 @@ class CommonTest(seq_tests.CommonTest):
         self.assertEqual(str(a2), "[0, 1, 2]")
         self.assertEqual(repr(a2), "[0, 1, 2]")
 
-        if not (test_support.is_jython and issubclass(self.type2test, JList)):
+        if not (support.is_jython and issubclass(self.type2test, JList)):
             # Jython does not support shallow copies of object graphs
             # when moving back and forth from Java object space
             a2.append(a2)
@@ -53,48 +53,48 @@ class CommonTest(seq_tests.CommonTest):
             self.assertEqual(str(a2), "[0, 1, 2, [...], 3]")
             self.assertEqual(repr(a2), "[0, 1, 2, [...], 3]")
 
-        if not test_support.is_jython:
+        if not support.is_jython:
             l0 = []
-            for i in xrange(sys.getrecursionlimit() + 100):
+            for i in range(sys.getrecursionlimit() + 100):
                 l0 = [l0]
             self.assertRaises(RuntimeError, repr, l0)
 
     def test_print(self):
-        if test_support.is_jython and issubclass(self.type2test, JList):
+        if support.is_jython and issubclass(self.type2test, JList):
             raise unittest.SkipTest("Jython does not support shallow copies of object graphs")
-        d = self.type2test(xrange(200))
+        d = self.type2test(range(200))
         d.append(d)
-        d.extend(xrange(200,400))
+        d.extend(range(200, 400))
         d.append(d)
         d.append(400)
         try:
-            with open(test_support.TESTFN, "wb") as fo:
-                print >> fo, d,
-            with open(test_support.TESTFN, "rb") as fo:
+            with open(support.TESTFN, "wb") as fo:
+                print(d, end=' ', file=fo)
+            with open(support.TESTFN, "rb") as fo:
                 self.assertEqual(fo.read(), repr(d))
         finally:
-            os.remove(test_support.TESTFN)
+            os.remove(support.TESTFN)
 
     def test_set_subscript(self):
-        a = self.type2test(range(20))
-        self.assertRaises(ValueError, a.__setitem__, slice(0, 10, 0), [1,2,3])
+        a = self.type2test(list(range(20)))
+        self.assertRaises(ValueError, a.__setitem__, slice(0, 10, 0), [1, 2, 3])
         self.assertRaises(TypeError, a.__setitem__, slice(0, 10), 1)
-        self.assertRaises(ValueError, a.__setitem__, slice(0, 10, 2), [1,2])
+        self.assertRaises(ValueError, a.__setitem__, slice(0, 10, 2), [1, 2])
         self.assertRaises(TypeError, a.__getitem__, 'x', 1)
-        a[slice(2,10,3)] = [1,2,3]
+        a[slice(2, 10, 3)] = [1, 2, 3]
         self.assertEqual(a, self.type2test([0, 1, 1, 3, 4, 2, 6, 7, 3,
                                             9, 10, 11, 12, 13, 14, 15,
                                             16, 17, 18, 19]))
 
     def test_reversed(self):
-        a = self.type2test(range(20))
+        a = self.type2test(list(range(20)))
         r = reversed(a)
-        self.assertEqual(list(r), self.type2test(range(19, -1, -1)))
-        self.assertRaises(StopIteration, r.next)
+        self.assertEqual(list(r), self.type2test(list(range(19, -1, -1))))
+        self.assertRaises(StopIteration, r.__next__)
         self.assertEqual(list(reversed(self.type2test())),
                          self.type2test())
         # Bug 3689: make sure list-reversed-iterator doesn't have __len__
-        self.assertRaises(TypeError, len, reversed([1,2,3]))
+        self.assertRaises(TypeError, len, reversed([1, 2, 3]))
 
     def test_setitem(self):
         a = self.type2test([0, 1])
@@ -113,21 +113,21 @@ class CommonTest(seq_tests.CommonTest):
         self.assertRaises(IndexError, a.__setitem__, -1, 200)
         self.assertRaises(TypeError, a.__setitem__)
 
-        a = self.type2test([0,1,2,3,4])
-        a[0L] = 1
-        a[1L] = 2
-        a[2L] = 3
-        self.assertEqual(a, self.type2test([1,2,3,3,4]))
+        a = self.type2test([0, 1, 2, 3, 4])
+        a[0] = 1
+        a[1] = 2
+        a[2] = 3
+        self.assertEqual(a, self.type2test([1, 2, 3, 3, 4]))
         a[0] = 5
         a[1] = 6
         a[2] = 7
-        self.assertEqual(a, self.type2test([5,6,7,3,4]))
-        a[-2L] = 88
-        a[-1L] = 99
-        self.assertEqual(a, self.type2test([5,6,7,88,99]))
+        self.assertEqual(a, self.type2test([5, 6, 7, 3, 4]))
+        a[-2] = 88
+        a[-1] = 99
+        self.assertEqual(a, self.type2test([5, 6, 7, 88, 99]))
         a[-2] = 8
         a[-1] = 9
-        self.assertEqual(a, self.type2test([5,6,7,8,9]))
+        self.assertEqual(a, self.type2test([5, 6, 7, 8, 9]))
 
     def test_delitem(self):
         a = self.type2test([0, 1])
@@ -191,15 +191,15 @@ class CommonTest(seq_tests.CommonTest):
 
         a = self.type2test([])
         a[:] = tuple(range(10))
-        self.assertEqual(a, self.type2test(range(10)))
+        self.assertEqual(a, self.type2test(list(range(10))))
 
-        if not (test_support.is_jython and issubclass(self.type2test, JList)):
+        if not (support.is_jython and issubclass(self.type2test, JList)):
             # no support for __setslice__ on Jython for
             # java.util.List, given that method deprecated since 2.0!
             self.assertRaises(TypeError, a.__setslice__, 0, 1, 5)
         self.assertRaises(TypeError, a.__setitem__, slice(0, 1, 5))
 
-        if not (test_support.is_jython and issubclass(self.type2test, JList)):
+        if not (support.is_jython and issubclass(self.type2test, JList)):
             self.assertRaises(TypeError, a.__setslice__)
         self.assertRaises(TypeError, a.__setitem__)
 
@@ -210,8 +210,8 @@ class CommonTest(seq_tests.CommonTest):
         self.assertEqual(a, self.type2test([]))
 
         a = self.type2test([0, 1])
-        del a[1L:2L]
-        del a[0L:1L]
+        del a[1:2]
+        del a[0:1]
         self.assertEqual(a, self.type2test([]))
 
         a = self.type2test([0, 1])
@@ -219,7 +219,7 @@ class CommonTest(seq_tests.CommonTest):
         self.assertEqual(a, self.type2test([1]))
 
         a = self.type2test([0, 1])
-        del a[-2L:-1L]
+        del a[-2:-1]
         self.assertEqual(a, self.type2test([1]))
 
         a = self.type2test([0, 1])
@@ -228,8 +228,8 @@ class CommonTest(seq_tests.CommonTest):
         self.assertEqual(a, self.type2test([]))
 
         a = self.type2test([0, 1])
-        del a[1L:]
-        del a[:1L]
+        del a[1:]
+        del a[:1]
         self.assertEqual(a, self.type2test([]))
 
         a = self.type2test([0, 1])
@@ -237,7 +237,7 @@ class CommonTest(seq_tests.CommonTest):
         self.assertEqual(a, self.type2test([0]))
 
         a = self.type2test([0, 1])
-        del a[-1L:]
+        del a[-1:]
         self.assertEqual(a, self.type2test([0]))
 
         a = self.type2test([0, 1])
@@ -285,7 +285,7 @@ class CommonTest(seq_tests.CommonTest):
         b.insert(-2, "foo")
         b.insert(-200, "left")
         b.insert(200, "right")
-        self.assertEqual(b, self.type2test(["left",-2,-1,0,0,"foo",1,2,"right"]))
+        self.assertEqual(b, self.type2test(["left", -2, -1, 0, 0, "foo", 1, 2, "right"]))
 
         self.assertRaises(TypeError, a.insert)
 
@@ -343,7 +343,7 @@ class CommonTest(seq_tests.CommonTest):
         d = self.type2test(['a', 'b', BadCmp2(), 'c'])
         e = self.type2test(d)
         self.assertRaises(BadExc, d.remove, 'c')
-        if not (test_support.is_jython and issubclass(self.type2test, JList)):
+        if not (support.is_jython and issubclass(self.type2test, JList)):
             # When converting back and forth to Java space, Jython does not
             # maintain object identity
             for x, y in zip(d, e):
@@ -407,8 +407,8 @@ class CommonTest(seq_tests.CommonTest):
         self.assertEqual(a.index(0, -3), 3)
         self.assertEqual(a.index(0, 3, 4), 3)
         self.assertEqual(a.index(0, -3, -2), 3)
-        self.assertEqual(a.index(0, -4*sys.maxint, 4*sys.maxint), 2)
-        self.assertRaises(ValueError, a.index, 0, 4*sys.maxint,-4*sys.maxint)
+        self.assertEqual(a.index(0, -4*sys.maxsize, 4*sys.maxsize), 2)
+        self.assertRaises(ValueError, a.index, 0, 4*sys.maxsize, -4*sys.maxsize)
         self.assertRaises(ValueError, a.index, 2, 0, -10)
         a.remove(0)
         self.assertRaises(ValueError, a.index, 2, 0, 4)
@@ -422,7 +422,7 @@ class CommonTest(seq_tests.CommonTest):
                 del self.victim[:]
                 return False
         a = self.type2test()
-        a[:] = [EvilCmp(a) for _ in xrange(100)]
+        a[:] = [EvilCmp(a) for _ in range(100)]
         # This used to seg fault before patch #1005778
         self.assertRaises(ValueError, a.index, None)
 
@@ -437,44 +437,43 @@ class CommonTest(seq_tests.CommonTest):
         self.assertRaises(TypeError, u.reverse, 42)
 
     def test_sort(self):
-        with test_support.check_py3k_warnings(
+        with support.check_py3k_warnings(
                 ("the cmp argument is not supported", DeprecationWarning)):
             self._test_sort()
 
     def _test_sort(self):
-        u = self.type2test([1, 0])
-        u.sort()
+        u = sorted(self.type2test([1, 0]))
         self.assertEqual(u, [0, 1])
 
-        u = self.type2test([2,1,0,-1,-2])
+        u = self.type2test([2, 1, 0, -1, -2])
         u.sort()
-        self.assertEqual(u, self.type2test([-2,-1,0,1,2]))
+        self.assertEqual(u, self.type2test([-2, -1, 0, 1, 2]))
 
         self.assertRaises(TypeError, u.sort, 42, 42)
 
         def revcmp(a, b):
             return cmp(b, a)
         u.sort(revcmp)
-        self.assertEqual(u, self.type2test([2,1,0,-1,-2]))
+        self.assertEqual(u, self.type2test([2, 1, 0, -1, -2]))
 
         # The following dumps core in unpatched Python 1.5:
-        def myComparison(x,y):
+        def myComparison(x, y):
             return cmp(x%3, y%7)
-        z = self.type2test(range(12))
+        z = self.type2test(list(range(12)))
         z.sort(myComparison)
 
         self.assertRaises(TypeError, z.sort, 2)
 
-        def selfmodifyingComparison(x,y):
+        def selfmodifyingComparison(x, y):
             z.append(1)
             return cmp(x, y)
 
         # Need to ensure the comparisons are actually executed by
         # setting up a list
-        z = self.type2test(range(12))
+        z = self.type2test(list(range(12)))
         self.assertRaises(ValueError, z.sort, selfmodifyingComparison)
 
-        z = self.type2test(range(12))
+        z = self.type2test(list(range(12)))
         self.assertRaises(TypeError, z.sort, lambda x, y: 's')
 
         self.assertRaises(TypeError, z.sort, 42, 42, 42, 42)
@@ -495,7 +494,7 @@ class CommonTest(seq_tests.CommonTest):
         u += "eggs"
         self.assertEqual(u, self.type2test("spameggs"))
 
-        if not test_support.is_jython:
+        if not support.is_jython:
             self.assertRaises(TypeError, u.__iadd__, None)
         else:
             import operator
@@ -514,44 +513,44 @@ class CommonTest(seq_tests.CommonTest):
 
     def test_extendedslicing(self):
         #  subscript
-        a = self.type2test([0,1,2,3,4])
+        a = self.type2test([0, 1, 2, 3, 4])
 
         #  deletion
         del a[::2]
-        self.assertEqual(a, self.type2test([1,3]))
-        a = self.type2test(range(5))
+        self.assertEqual(a, self.type2test([1, 3]))
+        a = self.type2test(list(range(5)))
         del a[1::2]
-        self.assertEqual(a, self.type2test([0,2,4]))
-        a = self.type2test(range(5))
+        self.assertEqual(a, self.type2test([0, 2, 4]))
+        a = self.type2test(list(range(5)))
         del a[1::-2]
-        self.assertEqual(a, self.type2test([0,2,3,4]))
-        a = self.type2test(range(10))
+        self.assertEqual(a, self.type2test([0, 2, 3, 4]))
+        a = self.type2test(list(range(10)))
         del a[::1000]
         self.assertEqual(a, self.type2test([1, 2, 3, 4, 5, 6, 7, 8, 9]))
         #  assignment
-        a = self.type2test(range(10))
+        a = self.type2test(list(range(10)))
         a[::2] = [-1]*5
         self.assertEqual(a, self.type2test([-1, 1, -1, 3, -1, 5, -1, 7, -1, 9]))
-        a = self.type2test(range(10))
+        a = self.type2test(list(range(10)))
         a[::-4] = [10]*3
-        self.assertEqual(a, self.type2test([0, 10, 2, 3, 4, 10, 6, 7, 8 ,10]))
-        a = self.type2test(range(4))
+        self.assertEqual(a, self.type2test([0, 10, 2, 3, 4, 10, 6, 7, 8, 10]))
+        a = self.type2test(list(range(4)))
         a[::-1] = a
         self.assertEqual(a, self.type2test([3, 2, 1, 0]))
-        a = self.type2test(range(10))
+        a = self.type2test(list(range(10)))
         b = a[:]
         c = a[:]
         a[2:3] = self.type2test(["two", "elements"])
-        b[slice(2,3)] = self.type2test(["two", "elements"])
+        b[slice(2, 3)] = self.type2test(["two", "elements"])
         c[2:3:] = self.type2test(["two", "elements"])
         self.assertEqual(a, b)
         self.assertEqual(a, c)
-        a = self.type2test(range(10))
+        a = self.type2test(list(range(10)))
         a[::2] = tuple(range(5))
         self.assertEqual(a, self.type2test([0, 1, 1, 3, 2, 5, 3, 7, 4, 9]))
 
         # test issue7788
-        a = self.type2test(range(10))
+        a = self.type2test(list(range(10)))
         del a[9::1<<333]
 
     # XXX: CPython specific, PyList doesn't len() during init

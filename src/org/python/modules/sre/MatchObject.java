@@ -16,17 +16,21 @@
 package org.python.modules.sre;
 
 import org.python.core.ArgParser;
+import org.python.core.BuiltinDocs;
 import org.python.core.Py;
 import org.python.core.PyDictionary;
 import org.python.core.PyInteger;
+import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.Traverseproc;
 import org.python.core.Visitproc;
 import org.python.core.imp;
+import org.python.expose.ExposedType;
 
 
+@ExposedType(name = "_sre.SRE_Match", doc = BuiltinDocs.SRE_Match_doc)
 public class MatchObject extends PyObject implements Traverseproc {
     public PyString string; /* link to the target string */
     public PyObject regs; /* cached list of matching spans */
@@ -153,16 +157,19 @@ public class MatchObject extends PyObject implements Traverseproc {
     }
 
     private int getindex(PyObject index) {
-        if (index instanceof PyInteger)
-            return ((PyInteger) index).getValue();
+        if (index instanceof PyLong)
+            return ((PyLong) index).getValue().intValue();
 
         int i = -1;
 
         if (pattern.groupindex != null) {
             index = pattern.groupindex.__finditem__(index);
-            if (index != null)
+            if (index != null) {
                 if (index instanceof PyInteger)
                     return ((PyInteger) index).getValue();
+                if (index instanceof PyLong)
+                    return ((PyLong) index).getValue().intValue();
+            }
         }
         return i;
     }

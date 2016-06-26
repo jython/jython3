@@ -13,39 +13,39 @@ import struct
 import unittest
 import subprocess
 
-from test import test_support
+from test import support
 from java.io import File
 
 
 class OSFileTestCase(unittest.TestCase):
 
     def setUp(self):
-        open(test_support.TESTFN, 'w').close()
+        open(support.TESTFN, 'w').close()
 
     def tearDown(self):
-        if os.path.exists(test_support.TESTFN):
-            os.remove(test_support.TESTFN)
+        if os.path.exists(support.TESTFN):
+            os.remove(support.TESTFN)
 
     def test_issue1727(self):
-        os.stat(*(test_support.TESTFN,))
+        os.stat(*(support.TESTFN,))
 
     def test_issue1755(self):
-        os.remove(test_support.TESTFN)
-        self.assertRaises(OSError, os.utime, test_support.TESTFN, None)
+        os.remove(support.TESTFN)
+        self.assertRaises(OSError, os.utime, support.TESTFN, None)
 
     @unittest.skipUnless(hasattr(os, 'link'), "os.link not available")
     def test_issue1824(self):
-        os.remove(test_support.TESTFN)
+        os.remove(support.TESTFN)
         self.assertRaises(OSError, os.link,
-                          test_support.TESTFN, test_support.TESTFN)
+                          support.TESTFN, support.TESTFN)
 
     def test_issue1825(self):
-        os.remove(test_support.TESTFN)
-        testfnu = unicode(test_support.TESTFN)
+        os.remove(support.TESTFN)
+        testfnu = str(support.TESTFN)
         try:
             os.open(testfnu, os.O_RDONLY)
-        except OSError, e:
-            self.assertTrue(isinstance(e.filename, unicode))
+        except OSError as e:
+            self.assertTrue(isinstance(e.filename, str))
             self.assertEqual(e.filename, testfnu)
         else:
             self.assertTrue(False)
@@ -55,16 +55,16 @@ class OSFileTestCase(unittest.TestCase):
         for fn in (os.rmdir,):
             try:
                 fn(testfnu)
-            except OSError, e:
-                self.assertTrue(isinstance(e.filename, unicode))
+            except OSError as e:
+                self.assertTrue(isinstance(e.filename, str))
                 self.assertEqual(e.filename, testfnu)
             else:
                 self.assertTrue(False)
 
     def test_issue2068(self):
-        os.remove(test_support.TESTFN)
+        os.remove(support.TESTFN)
         for i in range(2):
-            fd = os.open(test_support.TESTFN, os.O_RDWR | os.O_CREAT | os.O_APPEND)
+            fd = os.open(support.TESTFN, os.O_RDWR | os.O_CREAT | os.O_APPEND)
             try:
                 os.write(fd, bytes('one'))
                 os.write(fd, bytes('two'))
@@ -72,13 +72,13 @@ class OSFileTestCase(unittest.TestCase):
             finally:
                 fd.close()
 
-        with open(test_support.TESTFN, 'rb') as f:
+        with open(support.TESTFN, 'rb') as f:
             content = f.read()
         self.assertEqual(content, 2 * b'onetwothree')
 
     def test_issue1793(self):
         # prepare the input file containing 256 bytes of sorted byte-sized numbers
-        fd = file(test_support.TESTFN, 'wb')
+        fd = file(support.TESTFN, 'wb')
         try:
             for x in range(256):
                 fd.write(chr(x))
@@ -86,7 +86,7 @@ class OSFileTestCase(unittest.TestCase):
             fd.close()
 
         # reopen in read/append mode
-        fd = file(test_support.TESTFN, 'rb+')
+        fd = file(support.TESTFN, 'rb+')
         try:
             # read forward from the beginning
             for x in range(256):
@@ -128,7 +128,7 @@ class OSFileTestCase(unittest.TestCase):
 class OSDirTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.base = test_support.TESTFN
+        self.base = support.TESTFN
         self.path = os.path.join(self.base, 'dir1', 'dir2', 'dir3')
         os.makedirs(self.path)
 
@@ -154,27 +154,27 @@ class OSDirTestCase(unittest.TestCase):
 class OSStatTestCase(unittest.TestCase):
 
     def setUp(self):
-        open(test_support.TESTFN, 'w').close()
+        open(support.TESTFN, 'w').close()
 
     def tearDown(self):
-        if os.path.exists(test_support.TESTFN):
-            os.remove(test_support.TESTFN)
+        if os.path.exists(support.TESTFN):
+            os.remove(support.TESTFN)
 
     def test_stat_with_trailing_slash(self):
-        self.assertRaises(OSError, os.stat, test_support.TESTFN + os.path.sep)
-        self.assertRaises(OSError, os.lstat, test_support.TESTFN + os.path.sep)
+        self.assertRaises(OSError, os.stat, support.TESTFN + os.path.sep)
+        self.assertRaises(OSError, os.lstat, support.TESTFN + os.path.sep)
 
 
 class OSWriteTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.fd = os.open(test_support.TESTFN, os.O_WRONLY | os.O_CREAT)
+        self.fd = os.open(support.TESTFN, os.O_WRONLY | os.O_CREAT)
 
     def tearDown(self):
         if self.fd :
             os.close(self.fd)
-            if os.path.exists(test_support.TESTFN):
-                os.remove(test_support.TESTFN)
+            if os.path.exists(support.TESTFN):
+                os.remove(support.TESTFN)
 
     def do_write(self, b, nx=None):
         if nx is None : nx = len(b)
@@ -183,7 +183,7 @@ class OSWriteTestCase(unittest.TestCase):
 
     def test_write_buffer(self): # Issue 2062
         s = b"Big Red Book"
-        for type2test in (str, buffer, bytearray, (lambda x : array.array('b',x))) :
+        for type2test in (str, buffer, bytearray, (lambda x : array.array('b', x))) :
             self.do_write(type2test(s))
 
         with memoryview(s) as m :
@@ -197,18 +197,18 @@ class OSWriteTestCase(unittest.TestCase):
 class UnicodeTestCase(unittest.TestCase):
 
     def test_env(self):
-        with test_support.temp_cwd(name=u"tempcwd-中文"):
+        with support.temp_cwd(name="tempcwd-中文"):
             newenv = os.environ.copy()
-            newenv["TEST_HOME"] = u"首页"
+            newenv["TEST_HOME"] = "首页"
             p = subprocess.Popen([sys.executable, "-c",
                                   'import sys,os;' \
                                   'sys.stdout.write(os.getenv("TEST_HOME").encode("utf-8"))'],
                                  stdout=subprocess.PIPE,
                                  env=newenv)
-            self.assertEqual(p.stdout.read().decode("utf-8"), u"首页")
+            self.assertEqual(p.stdout.read().decode("utf-8"), "首页")
     
     def test_getcwd(self):
-        with test_support.temp_cwd(name=u"tempcwd-中文") as temp_cwd:
+        with support.temp_cwd(name="tempcwd-中文") as temp_cwd:
             p = subprocess.Popen([sys.executable, "-c",
                                   'import sys,os;' \
                                   'sys.stdout.write(os.getcwd().encode("utf-8"))'],
@@ -218,12 +218,12 @@ class UnicodeTestCase(unittest.TestCase):
     def test_listdir(self):
         # It is hard to avoid Unicode paths on systems like OS X. Use
         # relative paths from a temp CWD to work around this
-        with test_support.temp_cwd() as new_cwd:
+        with support.temp_cwd() as new_cwd:
             unicode_path = os.path.join(".", "unicode")
             self.assertIs(type(unicode_path), str)
-            chinese_path = os.path.join(unicode_path, u"中文")
-            self.assertIs(type(chinese_path), unicode)
-            home_path = os.path.join(chinese_path, u"首页")
+            chinese_path = os.path.join(unicode_path, "中文")
+            self.assertIs(type(chinese_path), str)
+            home_path = os.path.join(chinese_path, "首页")
             os.makedirs(home_path)
             
             with open(os.path.join(home_path, "test.txt"), "w") as test_file:
@@ -231,34 +231,34 @@ class UnicodeTestCase(unittest.TestCase):
 
             # Verify works with str paths, returning Unicode as necessary
             entries = os.listdir(unicode_path)
-            self.assertIn(u"中文", entries)
+            self.assertIn("中文", entries)
 
             # Verify works with Unicode paths
             entries = os.listdir(chinese_path)
-            self.assertIn(u"首页", entries)
+            self.assertIn("首页", entries)
            
             # glob.glob builds on os.listdir; note that we don't use
             # Unicode paths in the arg to glob
             self.assertEqual(
                 glob.glob(os.path.join("unicode", "*")),
-                [os.path.join(u"unicode", u"中文")])
+                [os.path.join("unicode", "中文")])
             self.assertEqual(
                 glob.glob(os.path.join("unicode", "*", "*")),
-                [os.path.join(u"unicode", u"中文", u"首页")])
+                [os.path.join("unicode", "中文", "首页")])
             self.assertEqual(
                 glob.glob(os.path.join("unicode", "*", "*", "*")),
-                [os.path.join(u"unicode", u"中文", u"首页", "test.txt")])
+                [os.path.join("unicode", "中文", "首页", "test.txt")])
 
             # Now use a Unicode path as well as in the glob arg
             self.assertEqual(
-                glob.glob(os.path.join(u"unicode", "*")),
-                [os.path.join(u"unicode", u"中文")])
+                glob.glob(os.path.join("unicode", "*")),
+                [os.path.join("unicode", "中文")])
             self.assertEqual(
-                glob.glob(os.path.join(u"unicode", "*", "*")),
-                [os.path.join(u"unicode", u"中文", u"首页")])
+                glob.glob(os.path.join("unicode", "*", "*")),
+                [os.path.join("unicode", "中文", "首页")])
             self.assertEqual(
-                glob.glob(os.path.join(u"unicode", "*", "*", "*")),
-                [os.path.join(u"unicode", u"中文", u"首页", "test.txt")])
+                glob.glob(os.path.join("unicode", "*", "*", "*")),
+                [os.path.join("unicode", "中文", "首页", "test.txt")])
  
             # Verify Java integration. But we will need to construct
             # an absolute path since chdir doesn't work with Java
@@ -363,7 +363,7 @@ class SystemTestCase(unittest.TestCase):
         # managed by making the import late; also verify the
         # monkeypatching optimization is successful by calling
         # os.system twice.
-        with test_support.temp_cwd() as temp_cwd:
+        with support.temp_cwd() as temp_cwd:
             self.assertEqual(
                 subprocess.check_output(
                     [sys.executable, "-S", "-c",
@@ -376,7 +376,7 @@ class SystemTestCase(unittest.TestCase):
 class LinkTestCase(unittest.TestCase):
 
     def test_bad_link(self):
-        with test_support.temp_cwd() as new_cwd:
+        with support.temp_cwd() as new_cwd:
             target = os.path.join(new_cwd, "target")
             with open(target, "w") as f:
                 f.write("TARGET")
@@ -390,7 +390,7 @@ class LinkTestCase(unittest.TestCase):
             self.assertEqual(cm.exception.errno, errno.ENOENT)
 
     def test_link(self):
-        with test_support.temp_cwd() as new_cwd:
+        with support.temp_cwd() as new_cwd:
             target = os.path.join(new_cwd, "target")
             with open(target, "w") as f:
                 f.write("TARGET")
@@ -404,7 +404,7 @@ class LinkTestCase(unittest.TestCase):
 class SymbolicLinkTestCase(unittest.TestCase):
 
     def test_bad_symlink(self):
-        with test_support.temp_cwd() as new_cwd:
+        with support.temp_cwd() as new_cwd:
             target = os.path.join(new_cwd, "target")
             with open(target, "w") as f:
                 f.write("TARGET")
@@ -414,20 +414,20 @@ class SymbolicLinkTestCase(unittest.TestCase):
             self.assertEqual(cm.exception.errno, errno.EEXIST)
 
     def test_readlink(self):
-        with test_support.temp_cwd() as new_cwd:
+        with support.temp_cwd() as new_cwd:
             target = os.path.join(new_cwd, "target")
             with open(target, "w") as f:
                 f.write("TARGET")
             source = os.path.join(new_cwd, "source")
             os.symlink(target, source)
             self.assertEqual(os.readlink(source), target)
-            self.assertEqual(os.readlink(unicode(source)), unicode(target))
-            self.assertIsInstance(os.readlink(unicode(source)), unicode)
+            self.assertEqual(os.readlink(str(source)), str(target))
+            self.assertIsInstance(os.readlink(str(source)), str)
             
     def test_readlink_non_symlink(self):
         """os.readlink of a non symbolic link should raise an error"""
         # test for http://bugs.jython.org/issue2292
-        with test_support.temp_cwd() as new_cwd:
+        with support.temp_cwd() as new_cwd:
             target = os.path.join(new_cwd, "target")
             with open(target, "w") as f:
                 f.write("TARGET")
@@ -437,7 +437,7 @@ class SymbolicLinkTestCase(unittest.TestCase):
             self.assertEqual(cm.exception.filename, target)
 
     def test_readlink_nonexistent(self):
-        with test_support.temp_cwd() as new_cwd:
+        with support.temp_cwd() as new_cwd:
             nonexistent_file = os.path.join(new_cwd, "nonexistent-file")
             with self.assertRaises(OSError) as cm:
                 os.readlink(nonexistent_file)
@@ -446,7 +446,7 @@ class SymbolicLinkTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         OSFileTestCase, 
         OSDirTestCase,
         OSStatTestCase,

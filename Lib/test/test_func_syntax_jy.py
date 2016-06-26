@@ -1,5 +1,5 @@
 import unittest
-import test.test_support
+import test.support
 
 def parrot(**args): pass
 
@@ -14,7 +14,7 @@ class FuncSyntaxTest(unittest.TestCase):
                 "complex(imag=4, imag=2)")
 
 def test_main():
-    test.test_support.run_unittest(FuncSyntaxTest)
+    test.support.run_unittest(FuncSyntaxTest)
 
 if __name__ == "__main__":
     test_main()

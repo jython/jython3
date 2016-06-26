@@ -707,7 +707,46 @@ def main(outdir, grammar="Python.asdl"):
                         VisitorVisitor(outdir))
     c.visit(mod)
 
-indexer_support = {"Attribute": """    // Support for indexer below
+indexer_support = {
+"AsyncFunctionDef": """    // Support for indexer below
+
+    private Name nameNode;
+    public Name getInternalNameNode() {
+        return nameNode;
+    }
+    private expr returnNode;
+    public expr getInternalReturnNode() {
+        return returnNode;
+    }
+    public AsyncFunctionDef(Token token, Name name, arguments args, java.util.List<stmt> body, expr returnNode) {
+        super(token);
+        this.name = name.getText();
+        this.nameNode = name;
+        this.args = args;
+        this.body = body;
+        this.returnNode = returnNode;
+        if (body == null) {
+            this.body = new ArrayList<stmt>();
+        }
+        for(PythonTree t : this.body) {
+            addChild(t);
+        }
+        this.decorator_list = new ArrayList<>();
+    }
+
+    public void setDecorator_list(java.util.List<expr> decorator_list) {
+        if (decorator_list != null) {
+            this.decorator_list = decorator_list;
+        }
+
+        for(PythonTree t : this.decorator_list) {
+            addChild(t);
+        }
+    }
+    // End indexer support
+""",
+
+"Attribute": """    // Support for indexer below
 
     private Name attrName;
     public Name getInternalAttrName() {
@@ -739,8 +778,9 @@ indexer_support = {"Attribute": """    // Support for indexer below
     public Name getInternalNameNode() {
         return nameNode;
     }
-    public ClassDef(Token token, Name name, java.util.List<expr> bases, java.util.List<stmt>
-    body, java.util.List<expr> decorator_list) {
+
+    public ClassDef(Token token, Name name, java.util.List<expr> bases,
+                    java.util.List<keyword> keywords, java.util.List<stmt> body) {
         super(token);
         this.name = name.getText();
         this.nameNode = name;
@@ -751,6 +791,15 @@ indexer_support = {"Attribute": """    // Support for indexer below
         for(PythonTree t : this.bases) {
             addChild(t);
         }
+
+        this.keywords = keywords;
+        if (keywords == null) {
+            this.keywords = new ArrayList<keyword>();
+        }
+        for(PythonTree t : this.keywords) {
+            addChild(t);
+        }
+
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
@@ -758,10 +807,14 @@ indexer_support = {"Attribute": """    // Support for indexer below
         for(PythonTree t : this.body) {
             addChild(t);
         }
-        this.decorator_list = decorator_list;
-        if (decorator_list == null) {
-            this.decorator_list = new ArrayList<expr>();
+        this.decorator_list = new ArrayList<>();
+    }
+
+    public void setDecorator_list(java.util.List<expr> decorator_list) {
+        if (decorator_list != null) {
+            this.decorator_list = decorator_list;
         }
+
         for(PythonTree t : this.decorator_list) {
             addChild(t);
         }
@@ -775,23 +828,31 @@ indexer_support = {"Attribute": """    // Support for indexer below
     public Name getInternalNameNode() {
         return nameNode;
     }
-    public FunctionDef(Token token, Name name, arguments args, java.util.List<stmt> body,
-            java.util.List<expr> decorator_list) {
+    private expr returnNode;
+    public expr getInternalReturnNode() {
+        return returnNode;
+    }
+    public FunctionDef(Token token, Name name, arguments args, java.util.List<stmt> body, expr returnNode) {
         super(token);
         this.name = name.getText();
         this.nameNode = name;
         this.args = args;
         this.body = body;
+        this.returnNode = returnNode;
         if (body == null) {
             this.body = new ArrayList<stmt>();
         }
         for(PythonTree t : this.body) {
             addChild(t);
         }
-        this.decorator_list = decorator_list;
-        if (decorator_list == null) {
-            this.decorator_list = new ArrayList<expr>();
+        this.decorator_list = new ArrayList<>();
+    }
+
+    public void setDecorator_list(java.util.List<expr> decorator_list) {
+        if (decorator_list != null) {
+            this.decorator_list = decorator_list;
         }
+
         for(PythonTree t : this.decorator_list) {
             addChild(t);
         }
@@ -885,44 +946,7 @@ indexer_support = {"Attribute": """    // Support for indexer below
     // End indexer support
 """,
 
-"arguments": """    // Support for indexer below
-
-    private Name varargName;
-    public Name getInternalVarargName() {
-        return varargName;
-    }
-    private Name kwargName;
-    public Name getInternalKwargName() {
-        return kwargName;
-    }
-    // XXX: vararg and kwarg are deliberately moved to the end of the
-    // method signature to avoid clashes with the (Token, List<expr>,
-    // String, String, List<expr>) version of the constructor.
-    public arguments(Token token, java.util.List<expr> args, Name vararg, Name kwarg,
-            java.util.List<expr> defaults) {
-        super(token);
-        this.args = args;
-        if (args == null) {
-            this.args = new ArrayList<expr>();
-        }
-        for(PythonTree t : this.args) {
-            addChild(t);
-        }
-        this.vararg = vararg == null ? null : vararg.getText();
-        this.varargName = vararg;
-        this.kwarg = kwarg == null ? null : kwarg.getText();
-        this.kwargName = kwarg;
-        this.defaults = defaults;
-        if (defaults == null) {
-            this.defaults = new ArrayList<expr>();
-        }
-        for(PythonTree t : this.defaults) {
-            addChild(t);
-        }
-    }
-    // End indexer support
-
-
+"arguments": """
     /* Traverseproc implementation */
     @Override
     public int traverse(Visitproc visit, Object arg) {

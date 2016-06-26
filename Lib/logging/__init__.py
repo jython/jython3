@@ -23,7 +23,7 @@ Copyright (C) 2001-2012 Vinay Sajip. All Rights Reserved.
 To use, simply 'import logging' and log away!
 """
 
-import sys, os, time, cStringIO, traceback, warnings, weakref
+import sys, os, time, io, traceback, warnings, weakref
 
 __all__ = ['BASIC_FORMAT', 'BufferingFormatter', 'CRITICAL', 'DEBUG', 'ERROR',
            'FATAL', 'FileHandler', 'Filter', 'Formatter', 'Handler', 'INFO',
@@ -39,10 +39,10 @@ except ImportError:
     codecs = None
 
 try:
-    import thread
+    import _thread
     import threading
 except ImportError:
-    thread = None
+    _thread = None
 
 __author__  = "Vinay Sajip <vinay_sajip@red-dove.com>"
 __status__  = "production"
@@ -52,12 +52,6 @@ __date__    = "07 February 2010"
 #---------------------------------------------------------------------------
 #   Miscellaneous module data
 #---------------------------------------------------------------------------
-try:
-    unicode
-    _unicode = True
-except NameError:
-    _unicode = False
-
 #
 # _srcfile is used when walking the stack to check when we've got the first
 # caller stack frame.
@@ -182,7 +176,7 @@ def addLevelName(level, levelName):
         _releaseLock()
 
 def _checkLevel(level):
-    if isinstance(level, (int, long)):
+    if isinstance(level, int):
         rv = level
     elif str(level) == level:
         if level not in _levelNames:
@@ -204,7 +198,7 @@ def _checkLevel(level):
 #the lock would already have been acquired - so we need an RLock.
 #The same argument applies to Loggers and Manager.loggerDict.
 #
-if thread:
+if _thread:
     _lock = threading.RLock()
 else:
     _lock = None
@@ -279,10 +273,10 @@ class LogRecord(object):
         self.lineno = lineno
         self.funcName = func
         self.created = ct
-        self.msecs = (ct - long(ct)) * 1000
+        self.msecs = (ct - int(ct)) * 1000
         self.relativeCreated = (self.created - _startTime) * 1000
         if logThreads and thread:
-            self.thread = thread.get_ident()
+            self.thread = _thread.get_ident()
             self.threadName = threading.current_thread().name
         else:
             self.thread = None
@@ -299,7 +293,7 @@ class LogRecord(object):
                 # for an example
                 try:
                     self.processName = mp.current_process().name
-                except StandardError:
+                except Exception:
                     pass
         if logProcesses and hasattr(os, 'getpid'):
             self.process = os.getpid()
@@ -317,15 +311,12 @@ class LogRecord(object):
         Return the message for this LogRecord after merging any user-supplied
         arguments with the message.
         """
-        if not _unicode: #if no unicode support...
-            msg = str(self.msg)
-        else:
-            msg = self.msg
-            if not isinstance(msg, basestring):
-                try:
-                    msg = str(self.msg)
-                except UnicodeError:
-                    msg = self.msg      #Defer encoding till later
+        msg = self.msg
+        if not isinstance(msg, str):
+            try:
+                msg = str(self.msg)
+            except UnicodeError:
+                msg = self.msg      #Defer encoding till later
         if self.args:
             msg = msg % self.args
         return msg
@@ -436,7 +427,7 @@ class Formatter(object):
         This default implementation just uses
         traceback.print_exception()
         """
-        sio = cStringIO.StringIO()
+        sio = io.StringIO()
         traceback.print_exception(ei[0], ei[1], ei[2], None, sio)
         s = sio.getvalue()
         sio.close()
@@ -853,27 +844,24 @@ class StreamHandler(Handler):
             msg = self.format(record)
             stream = self.stream
             fs = "%s\n"
-            if not _unicode: #if no unicode support...
-                stream.write(fs % msg)
-            else:
-                try:
-                    if (isinstance(msg, unicode) and
+            try:
+                if (isinstance(msg, str) and
                         getattr(stream, 'encoding', None)):
-                        ufs = fs.decode(stream.encoding)
-                        try:
-                            stream.write(ufs % msg)
-                        except UnicodeEncodeError:
-                            #Printing to terminals sometimes fails. For example,
-                            #with an encoding of 'cp1251', the above write will
-                            #work if written to a stream opened or wrapped by
-                            #the codecs module, but fail when writing to a
-                            #terminal even when the codepage is set to cp1251.
-                            #An extra encoding step seems to be needed.
-                            stream.write((ufs % msg).encode(stream.encoding))
+                    ufs = fs.decode(stream.encoding)
+                    try:
+                        stream.write(ufs % msg)
+                    except UnicodeEncodeError:
+                        #Printing to terminals sometimes fails. For example,
+                        #with an encoding of 'cp1251', the above write will
+                        #work if written to a stream opened or wrapped by
+                        #the codecs module, but fail when writing to a
+                        #terminal even when the codepage is set to cp1251.
+                        #An extra encoding step seems to be needed.
+                        stream.write((ufs % msg).encode(stream.encoding))
                     else:
                         stream.write(fs % msg)
-                except UnicodeError:
-                    stream.write(fs % msg.encode("UTF-8"))
+            except UnicodeError:
+                stream.write(fs % msg.encode("UTF-8"))
             self.flush()
         except (KeyboardInterrupt, SystemExit):
             raise
@@ -1018,9 +1006,9 @@ class Manager(object):
         placeholder to now point to the logger.
         """
         rv = None
-        if not isinstance(name, basestring):
+        if not isinstance(name, str):
             raise TypeError('A logger name must be string or Unicode')
-        if isinstance(name, unicode):
+        if isinstance(name, str):
             name = name.encode('utf-8')
         _acquireLock()
         try:
@@ -1083,7 +1071,7 @@ class Manager(object):
         """
         name = alogger.name
         namelen = len(name)
-        for c in ph.loggerMap.keys():
+        for c in list(ph.loggerMap.keys()):
             #The if means ... if not c.parent.name.startswith(nm)
             if c.parent.name[:namelen] != name:
                 alogger.parent = c.parent

@@ -72,8 +72,16 @@ public class PyFileIO extends PyRawIOBase {
         readonlyAttributeError("mode");
     }
 
-    private static final PyString defaultMode = new PyString("r");
+    private static final PyUnicode defaultMode = new PyUnicode("r");
 
+    public PyFileIO(RawIOBase ioBase, OpenMode mode) {
+        readable = mode.reading | mode.updating;
+        writable = mode.writing | mode.updating | mode.appending;
+
+        this.closefd = false;
+        ioDelegate = ioBase;
+        this.mode = new PyString(mode.toString());
+    }
     /**
      * Construct an open <code>_io.FileIO</code> starting with an object that may be a file name or
      * a file descriptor (actually a {@link RawIOBase}). Only the relevant flags within the parsed
@@ -151,13 +159,15 @@ public class PyFileIO extends PyRawIOBase {
              */
             Object fd = file.__tojava__(Object.class);
 
-            if (fd instanceof FileIO || fd instanceof StreamIO) {
+            if (fd instanceof RawIOBase) {
                 /*
                  * It is the "Jython file descriptor", of a type suitable to be the ioDelegate. The
                  * allowed types are able to give us a non-null InputStream or OutputStream,
                  * according to direction.
                  */
                 ioDelegate = (RawIOBase)fd;
+            } else if (fd instanceof PyFileIO) {
+                ioDelegate = ((PyFileIO) fd).ioDelegate;
             }
         }
 
@@ -183,7 +193,7 @@ public class PyFileIO extends PyRawIOBase {
         }
     }
 
-    private static final String[] openArgs = {"file", "mode", "closefd"};
+    private static final String[] openArgs = {"file", "mode", "closefd", "opener"};
 
     /**
      * Create a {@link PyFileIO} and its <code>FileIO</code> delegate from the arguments.
@@ -196,6 +206,7 @@ public class PyFileIO extends PyRawIOBase {
         PyObject file = ap.getPyObject(0);
         PyObject m = ap.getPyObject(1, defaultMode);
         boolean closefd = Py.py2boolean(ap.getPyObject(2, Py.True));
+        PyObject opener = ap.getPyObject(3, Py.None);
 
         // Decode the mode string and check it
         OpenMode mode = new OpenMode(m.asString()) {
@@ -479,6 +490,10 @@ public class PyFileIO extends PyRawIOBase {
                 return String.format("<_io.FileIO fd=%s mode='%s'>", fileno(), mode);
             }
         }
+    }
+
+    public RawIOBase getRawIO() {
+        return ioDelegate;
     }
 
     @Override

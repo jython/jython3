@@ -1,8 +1,8 @@
-import cPickle
+import pickle
 import unittest
-from cStringIO import StringIO
+from io import StringIO
 from test.pickletester import AbstractPickleTests, AbstractPickleModuleTests
-from test import test_support
+from test import support
 
 
 class ApproxFloat(unittest.TestCase):
@@ -27,17 +27,17 @@ class ApproxFloat(unittest.TestCase):
 class cPickleTests(ApproxFloat, AbstractPickleTests, AbstractPickleModuleTests):
 
     def setUp(self):
-        self.dumps = cPickle.dumps
-        self.loads = cPickle.loads
+        self.dumps = pickle.dumps
+        self.loads = pickle.loads
 
-    error = cPickle.BadPickleGet
+    error = pickle.BadPickleGet
     module = cPickle
 
-    @unittest.skipIf(test_support.is_jython, "FIXME: not working on Jython")
+    @unittest.skipIf(support.is_jython, "FIXME: not working on Jython")
     def test_callapi(self):
         pass
 
-    @unittest.skipIf(test_support.is_jython, "FIXME: not working on Jython")
+    @unittest.skipIf(support.is_jython, "FIXME: not working on Jython")
     def test_dynamic_class(self):
         pass
 
@@ -46,19 +46,19 @@ class cPicklePicklerTests(ApproxFloat, AbstractPickleTests):
 
     def dumps(self, arg, proto=0):
         f = StringIO()
-        p = cPickle.Pickler(f, proto)
+        p = pickle.Pickler(f, proto)
         p.dump(arg)
         f.seek(0)
         return f.read()
 
     def loads(self, buf):
         f = StringIO(buf)
-        p = cPickle.Unpickler(f)
+        p = pickle.Unpickler(f)
         return p.load()
 
-    error = cPickle.BadPickleGet
+    error = pickle.BadPickleGet
 
-    @unittest.skipIf(test_support.is_jython, "FIXME: not working on Jython")
+    @unittest.skipIf(support.is_jython, "FIXME: not working on Jython")
     def test_dynamic_class(self):
         pass
 
@@ -66,22 +66,22 @@ class cPicklePicklerTests(ApproxFloat, AbstractPickleTests):
 class cPickleListPicklerTests(AbstractPickleTests):
 
     def dumps(self, arg, proto=0):
-        p = cPickle.Pickler(proto)
+        p = pickle.Pickler(proto)
         p.dump(arg)
         return p.getvalue()
 
     def loads(self, *args):
         f = StringIO(args[0])
-        p = cPickle.Unpickler(f)
+        p = pickle.Unpickler(f)
         return p.load()
 
-    error = cPickle.BadPickleGet
+    error = pickle.BadPickleGet
 
 class cPickleFastPicklerTests(ApproxFloat, AbstractPickleTests):
 
     def dumps(self, arg, proto=0):
         f = StringIO()
-        p = cPickle.Pickler(f, proto)
+        p = pickle.Pickler(f, proto)
         p.fast = 1
         p.dump(arg)
         f.seek(0)
@@ -89,10 +89,10 @@ class cPickleFastPicklerTests(ApproxFloat, AbstractPickleTests):
 
     def loads(self, *args):
         f = StringIO(args[0])
-        p = cPickle.Unpickler(f)
+        p = pickle.Unpickler(f)
         return p.load()
 
-    error = cPickle.BadPickleGet
+    error = pickle.BadPickleGet
 
     def test_recursive_list(self):
         self.assertRaises(ValueError,
@@ -125,7 +125,7 @@ class cPickleFastPicklerTests(ApproxFloat, AbstractPickleTests):
         b = self.loads(self.dumps(a))
         self.assertEqual(a, b)
 
-    @unittest.skipIf(test_support.is_jython, "FIXME: not working on Jython")
+    @unittest.skipIf(support.is_jython, "FIXME: not working on Jython")
     def test_dynamic_class(self):
         pass
 
@@ -137,7 +137,7 @@ def test_main():
         cPickleListPicklerTests,
         cPickleFastPicklerTests
     ]
-    if test_support.is_jython:
+    if support.is_jython:
         # FIXME Jython currently doesn't support list based picklers
         tests.remove(cPickleListPicklerTests)
         # FIXME these cause NullPointerException on Jython
@@ -147,7 +147,7 @@ def test_main():
         del cPickleFastPicklerTests.test_recursive_multi
 
 
-    test_support.run_unittest(*tests)
+    support.run_unittest(*tests)
 
 if __name__ == "__main__":
     test_main()

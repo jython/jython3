@@ -2,13 +2,19 @@
 # used as fileset in build.xml (target copy-full)
 
 # Lib directories, in alphabetical order:
+asyncio/*
+collections/**
 compiler/**
+concurrent/**
 distutils/**
 email/**
 encodings/**
 ensurepip/**
+html/**
+http/**
 importlib/*
 logging/*
+multiprocessing/*
 test/**
 unittest/**
 xml/etree/**
@@ -16,10 +22,14 @@ json/**
 
 # Lib files, in alphabetical order:
 __future__.py
+_collections_abc.py
+_compat_pickle.py
+_dummy_thread.py
 _LWPCookieJar.py
 _MozillaCookieJar.py
 _pyio.py
 _strptime.py
+_sitebuiltins.py
 _threading_local.py
 _weakrefset.py
 abc.py
@@ -50,22 +60,22 @@ colorsys.py
 commands.py
 compileall.py
 contextlib.py
-ConfigParser.py
+configparser.py
 cookielib.py
 copy.py
-copy_reg.py
+copyreg.py
 Cookie.py
 csv.py
 difflib.py
 dircache.py
 dircmp.py
 dis.py
+doctest.py
 DocXMLRPCServer.py
 dospath.py
 dumbdbm.py
-dummy_thread.py
 dummy_threading.py
-exceptions.py
+enum.py
 filecmp.py
 fnmatch.py
 formatter.py
@@ -84,10 +94,11 @@ hmac.py
 htmlentitydefs.py
 htmllib.py
 HTMLParser.py
-httplib.py
 ihooks.py
 imaplib.py
 imghdr.py
+imp.py
+inspect.py
 io.py
 keyword.py
 linecache.py
@@ -96,7 +107,7 @@ macpath.py
 macurl2path.py
 mailbox.py
 mailcap.py
-markupbase.py
+_markupbase.py
 md5.py
 mhlib.py
 mimetools.py
@@ -110,6 +121,7 @@ nntplib.py
 numbers.py
 nturl2path.py
 opcode.py
+operator.py
 optparse.py
 pdb.py
 pickle.py
@@ -126,18 +138,19 @@ pty.py
 pyclbr.py
 pydoc.py
 pydoc_topics.py
-Queue.py
+queue.py
 quopri.py
 random.py
 re.py
 reconvert.py
-repr.py
+reprlib.py
 rfc822.py
 rlcompleter.py
 robotparser.py
 runpy.py
 sched.py
 sha.py
+selectors.py
 sets.py
 sgmllib.py
 shelve.py
@@ -148,11 +161,15 @@ site-packages/README
 smtpd.py
 smtplib.py
 sndhdr.py
-SocketServer.py
-sre*.py
+socket.py
+socketserver.py
+sre_compile.py
+sre_constants.py
+sre_parse.py
 stat.py
 string.py
-StringIO.py
+stringprep.py
+subprocess.py
 symbol.py
 sysconfig.py
 tabnanny.py
@@ -165,13 +182,11 @@ tokenize.py
 trace.py
 traceback.py
 tty.py
+types.py
 tzparse.py
-urllib2.py
-urlparse.py
+unicodedata.py
+urllib/*.py
 user.py
-UserDict.py
-UserList.py
-UserString.py
 uu.py
 uuid.py
 warnings.py
@@ -182,3 +197,5 @@ wsgiref/*.py
 xdrlib.py
 xmllib.py
 xmlrpclib.py
+zipapp.py
+zipfile.py

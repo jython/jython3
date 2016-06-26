@@ -3,13 +3,13 @@
 import unittest
 import os
 import os.path
-import test.test_support
+import test.support
 from test.script_helper import (run_python,
                                 temp_dir, make_script, compile_script,
                                 make_pkg, make_zip_script, make_zip_pkg)
-from test.test_support import is_jython
+from test.support import is_jython
 
-verbose = test.test_support.verbose
+verbose = test.support.verbose
 
 
 test_source = """\
@@ -70,17 +70,17 @@ class CmdLineTest(unittest.TestCase):
         run_args = cmd_line_switches + (script_name,)
         exit_code, data = run_python(*run_args)
         if verbose:
-            print 'Output from test script %r:' % script_name
-            print data
+            print('Output from test script %r:' % script_name)
+            print(data)
         self.assertEqual(exit_code, 0)
         printed_file = '__file__==%r' % str(expected_file)
         printed_argv0 = 'sys.argv[0]==%r' % str(expected_argv0)
         printed_package = '__package__==%r' % (str(expected_package) if expected_package is not None else expected_package)
         if verbose:
-            print 'Expected output:'
-            print printed_file
-            print printed_package
-            print printed_argv0
+            print('Expected output:')
+            print(printed_file)
+            print(printed_package)
+            print(printed_argv0)
         self.assertIn(printed_file, data)
         self.assertIn(printed_package, data)
         self.assertIn(printed_argv0, data)
@@ -90,9 +90,9 @@ class CmdLineTest(unittest.TestCase):
         run_args = cmd_line_switches + (script_name,)
         exit_code, data = run_python(*run_args)
         if verbose:
-            print 'Output from test script %r:' % script_name
-            print data
-            print 'Expected output: %r' % expected_msg
+            print('Output from test script %r:' % script_name)
+            print(data)
+            print('Expected output: %r' % expected_msg)
         self.assertIn(expected_msg, data)
 
     def test_basic_script(self):
@@ -217,8 +217,8 @@ class CmdLineTest(unittest.TestCase):
 
 
 def test_main():
-    test.test_support.run_unittest(CmdLineTest)
-    test.test_support.reap_children()
+    test.support.run_unittest(CmdLineTest)
+    test.support.reap_children()
 
 if __name__ == '__main__':
     test_main()

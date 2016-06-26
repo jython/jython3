@@ -22,8 +22,8 @@ import types
 
 from java.lang import System
 
-from modjy_exceptions import *
-from modjy_write import write_object
+from .modjy_exceptions import *
+from .modjy_write import write_object
 
 # From: http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.5.1
 
@@ -56,8 +56,8 @@ class start_response_object:
             try:
                 try:
                     self.http_resp.reset()
-                except IllegalStateException, isx:
-                    raise exc_info[0], exc_info[1], exc_info[2]
+                except IllegalStateException as isx:
+                    raise exc_info[0](exc_info[1]).with_traceback(exc_info[2])
             finally:
                 exc_info = None
         else:
@@ -65,9 +65,9 @@ class start_response_object:
                 raise StartResponseCalledTwice("Start response callback may only be called once, without exception information.")
         status_str = args[0]
         headers_list = args[1]
-        if not isinstance(status_str, types.StringType):
+        if not isinstance(status_str, bytes):
             raise BadArgument("Start response callback requires string as first argument")
-        if not isinstance(headers_list, types.ListType):
+        if not isinstance(headers_list, list):
             raise BadArgument("Start response callback requires list as second argument")
         try:
             status_code, status_message_str = status_str.split(" ", 1)
@@ -78,22 +78,22 @@ class start_response_object:
         try:
             for header_name, header_value in headers_list:
                 header_name_lower = header_name.lower()
-                if hop_by_hop_headers.has_key(header_name_lower):
+                if header_name_lower in hop_by_hop_headers:
                     raise HopByHopHeaderSet("Under WSGI, it is illegal to set hop-by-hop headers, i.e. '%s'" % header_name)
                 if header_name_lower == "content-length":
                     try:
                         self.set_content_length(int(header_value))
-                    except ValueError, v:
+                    except ValueError as v:
                         raise BadArgument("Content-Length header value must be a string containing an integer, not '%s'" % header_value)
                 else:
                     final_value = header_value.encode('latin-1')
                     # Here would be the place to check for control characters, whitespace, etc
                     self.http_resp.addHeader(header_name, final_value)
-        except (AttributeError, TypeError), t:
+        except (AttributeError, TypeError) as t:
             raise BadArgument("Start response callback headers must contain a list of (<string>,<string>) tuples")
-        except UnicodeError, u:
+        except UnicodeError as u:
             raise BadArgument("Encoding error: header values may only contain latin-1 characters, not '%s'" % repr(header_value))
-        except ValueError, v:
+        except ValueError as v:
             raise BadArgument("Headers list must contain 2-tuples")
         self.called += 1
         return self.write_callable
@@ -108,6 +108,6 @@ class start_response_object:
     def make_write_object(self):
         try:
             self.write_callable = write_object(self.http_resp.getOutputStream())
-        except IOException, iox:
+        except IOException as iox:
             raise IOError(iox)
         return self.write_callable

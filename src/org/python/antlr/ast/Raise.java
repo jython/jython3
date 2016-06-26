@@ -30,48 +30,35 @@ import java.util.ArrayList;
 @ExposedType(name = "_ast.Raise", base = stmt.class)
 public class Raise extends stmt {
 public static final PyType TYPE = PyType.fromClass(Raise.class);
-    private expr type;
-    public expr getInternalType() {
-        return type;
+    private expr exc;
+    public expr getInternalExc() {
+        return exc;
     }
-    @ExposedGet(name = "type")
-    public PyObject getExceptType() {
-        return type;
+    @ExposedGet(name = "exc")
+    public PyObject getExc() {
+        return exc;
     }
-    @ExposedSet(name = "type")
-    public void setExceptType(PyObject type) {
-        this.type = AstAdapters.py2expr(type);
-    }
-
-    private expr inst;
-    public expr getInternalInst() {
-        return inst;
-    }
-    @ExposedGet(name = "inst")
-    public PyObject getInst() {
-        return inst;
-    }
-    @ExposedSet(name = "inst")
-    public void setInst(PyObject inst) {
-        this.inst = AstAdapters.py2expr(inst);
+    @ExposedSet(name = "exc")
+    public void setExc(PyObject exc) {
+        this.exc = AstAdapters.py2expr(exc);
     }
 
-    private expr tback;
-    public expr getInternalTback() {
-        return tback;
+    private expr cause;
+    public expr getInternalCause() {
+        return cause;
     }
-    @ExposedGet(name = "tback")
-    public PyObject getTback() {
-        return tback;
+    @ExposedGet(name = "cause")
+    public PyObject getCause() {
+        return cause;
     }
-    @ExposedSet(name = "tback")
-    public void setTback(PyObject tback) {
-        this.tback = AstAdapters.py2expr(tback);
+    @ExposedSet(name = "cause")
+    public void setCause(PyObject cause) {
+        this.cause = AstAdapters.py2expr(cause);
     }
 
 
     private final static PyString[] fields =
-    new PyString[] {new PyString("type"), new PyString("inst"), new PyString("tback")};
+    new PyString[] {new PyString("exc"), new PyString("cause")};
     @ExposedGet(name = "_fields")
     public PyString[] get_fields() { return fields; }
 
@@ -90,56 +77,48 @@ public static final PyType TYPE = PyType.fromClass(Raise.class);
     @ExposedMethod
     public void Raise___init__(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("Raise", args, keywords, new String[]
-            {"type", "inst", "tback", "lineno", "col_offset"}, 3, true);
-        setExceptType(ap.getPyObject(0, Py.None));
-        setInst(ap.getPyObject(1, Py.None));
-        setTback(ap.getPyObject(2, Py.None));
-        int lin = ap.getInt(3, -1);
+            {"exc", "cause", "lineno", "col_offset"}, 2, true);
+        setExc(ap.getPyObject(0, Py.None));
+        setCause(ap.getPyObject(1, Py.None));
+        int lin = ap.getInt(2, -1);
         if (lin != -1) {
             setLineno(lin);
         }
 
-        int col = ap.getInt(4, -1);
+        int col = ap.getInt(3, -1);
         if (col != -1) {
             setLineno(col);
         }
 
     }
 
-    public Raise(PyObject type, PyObject inst, PyObject tback) {
-        setExceptType(type);
-        setInst(inst);
-        setTback(tback);
+    public Raise(PyObject exc, PyObject cause) {
+        setExc(exc);
+        setCause(cause);
     }
 
-    public Raise(Token token, expr type, expr inst, expr tback) {
+    public Raise(Token token, expr exc, expr cause) {
         super(token);
-        this.type = type;
-        addChild(type);
-        this.inst = inst;
-        addChild(inst);
-        this.tback = tback;
-        addChild(tback);
+        this.exc = exc;
+        addChild(exc);
+        this.cause = cause;
+        addChild(cause);
     }
 
-    public Raise(Integer ttype, Token token, expr type, expr inst, expr tback) {
+    public Raise(Integer ttype, Token token, expr exc, expr cause) {
         super(ttype, token);
-        this.type = type;
-        addChild(type);
-        this.inst = inst;
-        addChild(inst);
-        this.tback = tback;
-        addChild(tback);
+        this.exc = exc;
+        addChild(exc);
+        this.cause = cause;
+        addChild(cause);
     }
 
-    public Raise(PythonTree tree, expr type, expr inst, expr tback) {
+    public Raise(PythonTree tree, expr exc, expr cause) {
         super(tree);
-        this.type = type;
-        addChild(type);
-        this.inst = inst;
-        addChild(inst);
-        this.tback = tback;
-        addChild(tback);
+        this.exc = exc;
+        addChild(exc);
+        this.cause = cause;
+        addChild(cause);
     }
 
     @ExposedGet(name = "repr")
@@ -149,14 +128,11 @@ public static final PyType TYPE = PyType.fromClass(Raise.class);
 
     public String toStringTree() {
         StringBuffer sb = new StringBuffer("Raise(");
-        sb.append("type=");
-        sb.append(dumpThis(type));
+        sb.append("exc=");
+        sb.append(dumpThis(exc));
         sb.append(",");
-        sb.append("inst=");
-        sb.append(dumpThis(inst));
-        sb.append(",");
-        sb.append("tback=");
-        sb.append(dumpThis(tback));
+        sb.append("cause=");
+        sb.append(dumpThis(cause));
         sb.append(",");
         sb.append(")");
         return sb.toString();
@@ -167,12 +143,10 @@ public static final PyType TYPE = PyType.fromClass(Raise.class);
     }
 
     public void traverse(VisitorIF<?> visitor) throws Exception {
-        if (type != null)
-            type.accept(visitor);
-        if (inst != null)
-            inst.accept(visitor);
-        if (tback != null)
-            tback.accept(visitor);
+        if (exc != null)
+            exc.accept(visitor);
+        if (cause != null)
+            cause.accept(visitor);
     }
 
     public PyObject __dict__;

@@ -26,7 +26,7 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-/** Python 2.3.3 Grammar
+/** Python 3.5.1 Grammar
  *
  *  Terence Parr and Loring Craymer
  *  February 2004
@@ -62,6 +62,7 @@
  *  like this:
  *
  *  Python source->Python.g->AST (org/python/parser/ast/*)->CodeCompiler(ASM)->.class
+ *  May 2016 Modified by Isaiah Peng to match Python 3.5.1 syntax
  */
 
 grammar Python;
@@ -84,11 +85,16 @@ import org.antlr.runtime.CommonToken;
 import org.python.antlr.ParseException;
 import org.python.antlr.PythonTree;
 import org.python.antlr.ast.alias;
+import org.python.antlr.ast.arg;
 import org.python.antlr.ast.arguments;
 import org.python.antlr.ast.Assert;
 import org.python.antlr.ast.Assign;
+import org.python.antlr.ast.AsyncFor;
+import org.python.antlr.ast.AsyncFunctionDef;
+import org.python.antlr.ast.AsyncWith;
 import org.python.antlr.ast.Attribute;
 import org.python.antlr.ast.AugAssign;
+import org.python.antlr.ast.Await;
 import org.python.antlr.ast.BinOp;
 import org.python.antlr.ast.BoolOp;
 import org.python.antlr.ast.boolopType;
@@ -112,6 +118,7 @@ import org.python.antlr.ast.Expression;
 import org.python.antlr.ast.expr_contextType;
 import org.python.antlr.ast.ExtSlice;
 import org.python.antlr.ast.For;
+import org.python.antlr.ast.FunctionDef;
 import org.python.antlr.ast.GeneratorExp;
 import org.python.antlr.ast.Global;
 import org.python.antlr.ast.If;
@@ -125,6 +132,7 @@ import org.python.antlr.ast.ListComp;
 import org.python.antlr.ast.Lambda;
 import org.python.antlr.ast.Module;
 import org.python.antlr.ast.Name;
+import org.python.antlr.ast.NameConstant;
 import org.python.antlr.ast.Nonlocal;
 import org.python.antlr.ast.Num;
 import org.python.antlr.ast.operatorType;
@@ -146,6 +154,7 @@ import org.python.antlr.ast.unaryopType;
 import org.python.antlr.ast.UnaryOp;
 import org.python.antlr.ast.While;
 import org.python.antlr.ast.With;
+import org.python.antlr.ast.withitem;
 import org.python.antlr.ast.Yield;
 import org.python.antlr.ast.YieldFrom;
 import org.python.antlr.base.excepthandler;
@@ -410,6 +419,9 @@ name_or_print
     : NAME {
         $tok = $name_or_print.start;
     }
+    | ASYNC {
+        $tok = $name_or_print.start;
+    }
     | {printFunction}? => PRINT {
         $tok = $name_or_print.start;
     }
@@ -424,6 +436,8 @@ attr
     | AND
     | AS
     | ASSERT
+    | ASYNC
+    | AWAIT
     | BREAK
     | CLASS
     | CONTINUE
@@ -465,8 +479,7 @@ decorator
     ( LPAREN
       ( arglist
         {
-            $etype = actions.makeCall($LPAREN, $dotted_attr.etype, $arglist.args, $arglist.keywords,
-                     $arglist.starargs, $arglist.kwargs);
+            $etype = actions.makeCall($LPAREN, $dotted_attr.etype, $arglist.args, $arglist.keywords);
         }
       |
         {
@@ -490,10 +503,49 @@ decorators
       }
     ;
 
-//decorated: decorators (classdef | funcdef)
-//XXX: refactor to use decorated. Hopefully this will elimated the predicate in compound_stmt.
+//async_funcdef: ASYNC funcdef
+async_funcdef
+@init {
+    stmt stype = null;
+}
 
-//FIXME implement -> AST support.
+@after {
+    $async_funcdef.tree = stype;
+}
+    : ASYNC funcdef
+    {
+        stype = actions.makeAsyncFuncdef($ASYNC, $funcdef.tree);
+    }
+    ;
+
+//decorated: decorators (classdef | funcdef | async_funcdef)
+decorated
+@init {
+    stmt stype = null;
+}
+
+@after {
+    $decorated.tree = stype;
+}
+    : decorators
+        ( classdef
+        {
+            stype = actions.castStmt($classdef.tree);
+            ((ClassDef) stype).setDecorator_list(actions.castExprs($decorators.etypes));
+        }
+        | funcdef
+        {
+            stype = actions.castStmt($funcdef.tree);
+            ((FunctionDef) stype).setDecorator_list(actions.castExprs($decorators.etypes));
+        }
+        | async_funcdef
+        {
+            stype = actions.castStmt($async_funcdef.tree);
+            ((AsyncFunctionDef) stype).setDecorator_list(actions.castExprs($decorators.etypes));
+        }
+        )
+    ;
+
 //funcdef: 'def' NAME parameters ['->' test] ':' suite
 funcdef
 @init {
@@ -503,13 +555,9 @@ funcdef
 @after {
     $funcdef.tree = stype;
 }
-    : decorators? DEF name_or_print parameters (ARROW test[null])? COLON suite[false]
+    : DEF name_or_print parameters (ARROW test[expr_contextType.Load])? COLON suite[false]
     {
-        Token t = $DEF;
-        if ($decorators.start != null) {
-            t = $decorators.start;
-        }
-        stype = actions.makeFuncdef(t, $name_or_print.start, $parameters.args, $suite.stypes, $decorators.etypes);
+        stype = actions.makeFuncdef($DEF, $name_or_print.start, $parameters.args, $suite.stypes, actions.castExpr($test.tree));
     }
     ;
 
@@ -523,7 +571,8 @@ parameters
         }
       |
         {
-            $args = new arguments($parameters.start, new ArrayList<expr>(), (Name)null, null, new ArrayList<expr>());
+            $args = new arguments($parameters.start, new ArrayList<arg>(), (arg)null,
+            new ArrayList<arg>(), new ArrayList<expr>(), (arg) null, new ArrayList<expr>());
         }
       )
       RPAREN
@@ -531,17 +580,17 @@ parameters
 
 //not in CPython's Grammar file
 tdefparameter
-    [List defaults] returns [expr etype]
+    [List defaults] returns [arg etype]
 @after {
    $tdefparameter.tree = $etype;
 }
-    : tfpdef[expr_contextType.Param] (ASSIGN test[expr_contextType.Load])?
+    : tfpdef (ASSIGN test[expr_contextType.Load])?
       {
-          $etype = actions.castExpr($tfpdef.tree);
+          $etype = actions.castArg($tfpdef.tree);
           if ($ASSIGN != null) {
               defaults.add($test.tree);
-          } else if (!defaults.isEmpty()) {
-              throw new ParseException("non-default argument follows default argument", $tfpdef.tree);
+          } else {
+              defaults.add(null);
           }
       }
     ;
@@ -557,102 +606,101 @@ vdefparameter
           $etype = actions.castExpr($vfpdef.tree);
           if ($ASSIGN != null) {
               defaults.add($test.tree);
-          } else if (!defaults.isEmpty()) {
-              throw new ParseException("non-default argument follows default argument", $vfpdef.tree);
+          } else {
+              defaults.add(null);
           }
       }
     ;
 
-
-//typedargslist: ((tfpdef ['=' test] ',')*
-//              ('*' NAME [',' '**' NAME] | '**' NAME) |
-//              tfpdef ['=' test] (',' tfpdef ['=' test])* [','])
+//typedargslist: (tfpdef ['=' test] (',' tfpdef ['=' test])* [',' [
+//        '*' [tfpdef] (',' tfpdef ['=' test])* [',' ['**' tfpdef [',']]]
+//      | '**' tfpdef [',']]]
+//  | '*' [tfpdef] (',' tfpdef ['=' test])* [',' ['**' tfpdef [',']]]
+//  | '**' tfpdef [','])
 typedargslist
     returns [arguments args]
 @init {
     List defaults = new ArrayList();
+    List kw_defaults = new ArrayList();
 }
     : d+=tdefparameter[defaults] (options {greedy=true;}:COMMA d+=tdefparameter[defaults])*
       (COMMA
-          (STAR (starargs=NAME)? (COMMA d+=tdefparameter[defaults] (options {greedy=true;}:COMMA d+=tdefparameter[defaults])*)? (COMMA DOUBLESTAR kwargs=NAME)?
-          | DOUBLESTAR kwargs=NAME
+          (STAR (vararg=tfpdef)? (COMMA kw+=tdefparameter[kw_defaults] (options {greedy=true;}:COMMA kw+=tdefparameter[kw_defaults])*)? (COMMA DOUBLESTAR kwarg=tfpdef)?
+          | DOUBLESTAR kwarg=tfpdef
           )?
       )?
       {
-          $args = actions.makeArgumentsType($typedargslist.start, $d, $starargs, $kwargs, defaults);
+          $args = new arguments($typedargslist.start, actions.castArgs($d),
+          actions.castArg($vararg.tree), actions.castArgs($kw),
+          kw_defaults, actions.castArg($kwarg.tree), defaults);
       }
-    | STAR (starargs=NAME)? (COMMA d+=tdefparameter[defaults] (options {greedy=true;}:COMMA d+=tdefparameter[defaults])*)? (COMMA DOUBLESTAR kwargs=NAME)?
+    | STAR (vararg=tfpdef)? (COMMA kw+=tdefparameter[kw_defaults] (options {greedy=true;}:COMMA kw+=tdefparameter[kw_defaults])*)? (COMMA DOUBLESTAR kwarg=tfpdef)?
       {
-          $args = actions.makeArgumentsType($typedargslist.start, $d, $starargs, $kwargs, defaults);
+          $args = new arguments($typedargslist.start, actions.castArgs($d),
+          actions.castArg($vararg.tree), actions.castArgs($kw),
+          kw_defaults, actions.castArg($kwarg.tree), defaults);
       }
-    | DOUBLESTAR kwargs=NAME
+    | DOUBLESTAR kwarg=tfpdef
       {
-          $args = actions.makeArgumentsType($typedargslist.start, $d, null, $kwargs, defaults);
+          $args = new arguments($typedargslist.start, actions.castArgs($d), null,
+          actions.castArgs($kw), kw_defaults, actions.castArg($kwarg.tree), defaults);
       }
     ;
 
 //tfpdef: NAME [':' test]
-//FIXME: remove fplist
-tfpdef[expr_contextType ctype]
+tfpdef returns [arg etype]
 @init {
-    expr etype = null;
+  arg etype = null;
 }
 @after {
-    if (etype != null) {
-        $tfpdef.tree = etype;
+    if ($etype != null) {
+        $tfpdef.tree = $etype;
     }
-    actions.checkAssign(actions.castExpr($tfpdef.tree));
 }
-    : NAME (COLON test[null])?
+    : NAME (COLON test[expr_contextType.Load])?
       {
-          etype = new Name($NAME, $NAME.text, ctype);
-      }
-    | (LPAREN tfpdef[null] COMMA) => LPAREN fplist RPAREN
-      {
-          etype = new Tuple($fplist.start, actions.castExprs($fplist.etypes), expr_contextType.Store);
-      }
-    | LPAREN! fplist RPAREN!
-    ;
-
-//fplist: vfpdef (',' vfpdef)* [',']
-fplist
-    returns [List etypes]
-    : f+=vfpdef[expr_contextType.Store]
-      (options {greedy=true;}:COMMA f+=vfpdef[expr_contextType.Store])* (COMMA)?
-      {
-          $etypes = $f;
+          $etype = new arg($NAME, $NAME.text, actions.castExpr($test.tree));
       }
     ;
 
-
-//varargslist: ((vfpdef ['=' test] ',')*
-//              ('*' NAME [',' '**' NAME] | '**' NAME) |
-//              vfpdef ['=' test] (',' vfpdef ['=' test])* [','])
+//varargslist: (vfpdef ['=' test] (',' vfpdef ['=' test])* [',' [
+//        '*' [vfpdef] (',' vfpdef ['=' test])* [',' ['**' vfpdef [',']]]
+//      | '**' vfpdef [',']]]
+//  | '*' [vfpdef] (',' vfpdef ['=' test])* [',' ['**' vfpdef [',']]]
+//  | '**' vfpdef [',']
+//)
 varargslist
     returns [arguments args]
 @init {
     List defaults = new ArrayList();
+    List kw_defaults = new ArrayList();
 }
     : d+=vdefparameter[defaults] (options {greedy=true;}:COMMA d+=vdefparameter[defaults])*
       (COMMA
-          (STAR starargs=NAME (COMMA DOUBLESTAR kwargs=NAME)?
-          | DOUBLESTAR kwargs=NAME
+          (STAR (vararg=vfpdef[expr_contextType.Param])? (COMMA kw+=vdefparameter[kw_defaults] (options {greedy=true;}:COMMA kw+=vdefparameter[kw_defaults])*)? (COMMA DOUBLESTAR kwarg=vfpdef[expr_contextType.Param])?
+          | DOUBLESTAR kwarg=vfpdef[expr_contextType.Param]
           )?
       )?
       {
-          $args = actions.makeArgumentsType($varargslist.start, $d, $starargs, $kwargs, defaults);
+          $args = new arguments($varargslist.start, actions.castArgs($d),
+          actions.castArg($vararg.tree), actions.castArgs($kw),
+          kw_defaults, actions.castArg($kwarg.tree), defaults);
       }
-    | STAR starargs=NAME (COMMA DOUBLESTAR kwargs=NAME)?
+    | STAR (vararg=vfpdef[expr_contextType.Param])? (COMMA kw+=vdefparameter[kw_defaults] (options {greedy=true;}:COMMA kw+=vdefparameter[kw_defaults])*)? (COMMA DOUBLESTAR kwarg=vfpdef[expr_contextType.Param])?
       {
-          $args = actions.makeArgumentsType($varargslist.start, $d, $starargs, $kwargs, defaults);
+          $args = new arguments($varargslist.start, actions.castArgs($d),
+          actions.castArg($vararg.tree),
+          actions.castArgs($kw), kw_defaults, actions.castArg($kwarg.tree), defaults);
       }
-    | DOUBLESTAR kwargs=NAME
+    | DOUBLESTAR kwarg=vfpdef[expr_contextType.Param]
       {
-          $args = actions.makeArgumentsType($varargslist.start, $d, null, $kwargs, defaults);
+          $args = new arguments($varargslist.start, actions.castArgs($d), null,
+          actions.castArgs($kw), kw_defaults,
+          actions.castArg($kwarg.tree), defaults);
       }
     ;
 
-//vfpdef: NAME | '(' fplist ')'
+//vfpdef: NAME
 vfpdef[expr_contextType ctype]
 @init {
     expr etype = null;
@@ -661,17 +709,11 @@ vfpdef[expr_contextType ctype]
     if (etype != null) {
         $vfpdef.tree = etype;
     }
-    actions.checkAssign(actions.castExpr($vfpdef.tree));
 }
     : NAME
       {
           etype = new Name($NAME, $NAME.text, ctype);
       }
-    | (LPAREN vfpdef[null] COMMA) => LPAREN fplist RPAREN
-      {
-          etype = new Tuple($fplist.start, actions.castExprs($fplist.etypes), expr_contextType.Store);
-      }
-    | LPAREN! fplist RPAREN!
     ;
 
 //stmt: simple_stmt | compound_stmt
@@ -699,7 +741,6 @@ simple_stmt
 
 //small_stmt: (expr_stmt | del_stmt | pass_stmt | flow_stmt |
 //             import_stmt | global_stmt | nonlocal_stmt | assert_stmt)
-//XXX: remove print, exec when 3.x Lib works.
 small_stmt : expr_stmt
            | del_stmt
            | pass_stmt
@@ -707,9 +748,7 @@ small_stmt : expr_stmt
            | import_stmt
            | global_stmt
            | nonlocal_stmt
-           | exec_stmt
            | assert_stmt
-           | {!printFunction}? => print_stmt
            ;
 
 //star_expr: '*' expr
@@ -1023,11 +1062,10 @@ yield_stmt
       }
     ;
 
-//FIXME: for now, allow old python2 style exceptions.
-//raise_stmt: 'raise' [test [',' test [',' test]]]
-//
-//FIXME: when we fully switch to python3 this is the rule:
 //raise_stmt: 'raise' [test ['from' test]]
+raise_stmt
+    ;
+
 raise_stmt
 @init {
     stmt stype = null;
@@ -1035,11 +1073,10 @@ raise_stmt
 @after {
    $raise_stmt.tree = stype;
 }
-    : RAISE (t1=test[expr_contextType.Load] (FROM t4=test[expr_contextType.Load])? (COMMA t2=test[expr_contextType.Load]
-        (COMMA t3=test[expr_contextType.Load])?)?)?
-      {
-          stype = new Raise($RAISE, actions.castExpr($t1.tree), actions.castExpr($t2.tree), actions.castExpr($t3.tree));
-      }
+    : RAISE (t1=test[expr_contextType.Load] (FROM t2=test[expr_contextType.Load])?)?
+    {
+        stype = new Raise($RAISE, actions.castExpr($t1.tree), actions.castExpr($t2.tree));
+    }
     ;
 
 //import_stmt: import_name | import_from
@@ -1230,17 +1267,41 @@ assert_stmt
       }
     ;
 
-//compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef
-//XXX: refactor to use decorated like:
-//compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated
+//compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated | async_stmt
 compound_stmt
     : if_stmt
     | while_stmt
     | for_stmt
     | try_stmt
     | with_stmt
-    | (decorators? DEF) => funcdef
+    | funcdef
     | classdef
+    | decorated
+    | async_stmt
+    ;
+
+//async_stmt: ASYNC (funcdef | with_stmt | for_stmt)
+async_stmt
+@init {
+    stmt stype = null;
+}
+@after {
+   $async_stmt.tree = stype;
+}
+    : ASYNC
+        ( funcdef
+        {
+            stype = actions.makeAsyncFuncdef($ASYNC, $funcdef.tree);
+        }
+        | with_stmt
+        {
+            stype = actions.makeAsyncWith($ASYNC, $with_stmt.tree);
+        }
+        | for_stmt
+        {
+            stype = actions.makeAsyncFor($ASYNC, $for_stmt.tree);
+        }
+        )
     ;
 
 //if_stmt: 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite]
@@ -1356,15 +1417,15 @@ with_stmt
    $with_stmt.tree = stype;
 }
     : WITH w+=with_item (options {greedy=true;}:COMMA w+=with_item)* COLON suite[false]
-      {
-          stype = actions.makeWith($WITH, $w, $suite.stypes);
-      }
+    {
+        stype = actions.makeWith($WITH, $w, $suite.stypes);
+    }
     ;
 
 //with_item: test ['as' expr]
 with_item
 @init {
-    stmt stype = null;
+    withitem stype = null;
 }
 @after {
    $with_item.tree = stype;
@@ -1377,11 +1438,11 @@ with_item
               var = actions.castExpr($expr.tree);
               actions.checkAssign(var);
           }
-          stype = new With($test.start, item, var, null);
+          stype = new withitem($test.start, item, var);
       }
     ;
 
-//except_clause: 'except' [test [('as' | ',') test]]
+//except_clause: 'except' [test ['as' NAME]]
 except_clause
 @init {
     excepthandler extype = null;
@@ -1389,9 +1450,13 @@ except_clause
 @after {
    $except_clause.tree = extype;
 }
-    : EXCEPT (t1=test[expr_contextType.Load] ((COMMA | AS) t2=test[expr_contextType.Store])?)? COLON suite[!$suite.isEmpty() && $suite::continueIllegal]
+    : EXCEPT (t1=test[expr_contextType.Load] (AS NAME)?)? COLON suite[!$suite.isEmpty() && $suite::continueIllegal]
       {
-          extype = new ExceptHandler($EXCEPT, actions.castExpr($t1.tree), actions.castExpr($t2.tree),
+          String name = null;
+          if ($NAME != null) {
+              name = $NAME.getText();
+          }
+          extype = new ExceptHandler($EXCEPT, actions.castExpr($t1.tree), name,
               actions.castStmts($suite.stypes));
       }
     ;
@@ -1444,6 +1509,28 @@ test[expr_contextType ctype]
       )
     | lambdef
     ;
+
+//test_nocond: or_test | lambdef_nocond
+test_nocond[expr_contextType ctype]
+@init {
+    expr etype = null;
+}
+@after {
+   if (etype != null) {
+       $test_nocond.tree = etype;
+   }
+}
+    : o1=or_test[ctype]
+      ( (IF or_test[null] ORELSE) => IF o2=or_test[ctype] ORELSE e=test[expr_contextType.Load]
+         {
+             etype = new IfExp($o1.start, actions.castExpr($o2.tree), actions.castExpr($o1.tree), actions.castExpr($e.tree));
+         }
+      |
+     -> or_test
+      )
+    | lambdef_nocond
+    ;
+
 
 //or_test: and_test ('or' and_test)*
 or_test
@@ -1817,13 +1904,31 @@ factor
       }
     ;
 
-//power: atom trailer* ['**' factor]
+//power: atom_expr ['**' factor]
 power
     returns [expr etype, Token lparen = null]
 @after {
     $power.tree = $etype;
 }
-    : atom (t+=trailer[$atom.start, $atom.tree])* (options {greedy=true;}:d=DOUBLESTAR factor)?
+    : atom_expr (options {greedy=true;}:d=DOUBLESTAR factor)?
+      {
+          $lparen = $atom_expr.lparen;
+          $etype = actions.castExpr($atom_expr.tree);
+          if ($d != null) {
+              List right = new ArrayList();
+              right.add($factor.tree);
+              $etype = actions.makeBinOp($atom_expr.start, $etype, operatorType.Pow, right);
+          }
+      }
+    ;
+
+//atom_expr: [AWAIT] atom trailer*
+atom_expr
+    returns [expr etype, Token lparen = null]
+@after {
+    $atom_expr.tree = $etype;
+}
+    : AWAIT? atom (t+=trailer[$atom.start, $atom.tree])*
       {
           $lparen = $atom.lparen;
           //XXX: This could be better.
@@ -1847,19 +1952,17 @@ power
                   }
               }
           }
-          if ($d != null) {
-              List right = new ArrayList();
-              right.add($factor.tree);
-              $etype = actions.makeBinOp($atom.start, $etype, operatorType.Pow, right);
+          if ($AWAIT != null) {
+              $etype = new Await($AWAIT, $etype);
           }
       }
     ;
 
-//atom: ('(' [yield_expr|testlist_gexp] ')' |
-//       '[' [listmaker] ']' |
+//atom: ('(' [yield_expr|testlist_comp] ')' |
+//       '[' [testlist_comp] ']' |
 //       '{' [dictorsetmaker] '}' |
 //       '`' testlist1 '`' |
-//       NAME | NUMBER | STRING+)
+//       NAME | NUMBER | STRING+ | '...' | 'True' | 'False' | 'None')
 atom
     returns [Token lparen = null]
 @init {
@@ -1878,8 +1981,8 @@ atom
         {
             etype = $yield_expr.etype;
         }
-      | testlist_gexp
-     -> testlist_gexp
+      | testlist_comp[$LPAREN]
+     -> testlist_comp
       |
         {
             etype = new Tuple($LPAREN, new ArrayList<expr>(), $expr::ctype);
@@ -1887,8 +1990,8 @@ atom
       )
       RPAREN
     | LBRACK
-      (listmaker[$LBRACK]
-     -> listmaker
+      (testlist_comp[$LBRACK]
+     -> testlist_comp
       |
        {
            etype = new org.python.antlr.ast.List($LBRACK, new ArrayList<expr>(), $expr::ctype);
@@ -1904,9 +2007,9 @@ atom
         }
        )
        RCURLY
-     | lb=BACKQUOTE testlist[expr_contextType.Load] rb=BACKQUOTE
+     | NAME_CONSTANT
        {
-           etype = new Repr($lb, actions.castExpr($testlist.tree));
+           etype = new NameConstant($NAME_CONSTANT.tree);
        }
      | name_or_print
        {
@@ -1938,48 +2041,33 @@ atom
        }
      ;
 
-//listmaker: test ( list_for | (',' test)* [','] )
-listmaker[Token lbrack]
-@init {
-    List gens = new ArrayList();
-    expr etype = null;
-}
-@after {
-   $listmaker.tree = etype;
-}
-    : t+=test_or_star_expr[$expr::ctype]
-        (list_for[gens]
-         {
-             Collections.reverse(gens);
-             List<comprehension> c = gens;
-             etype = new ListComp($listmaker.start, actions.castExpr($t.get(0)), c);
-         }
-        | (options {greedy=true;}:COMMA t+=test_or_star_expr[$expr::ctype])*
-           {
-               etype = new org.python.antlr.ast.List($lbrack, actions.castExprs($t), $expr::ctype);
-           }
-        ) (COMMA)?
-    ;
-
-//XXX: rename to testlist_comp when further down the 3.x path.
 //testlist_comp: (test|star_expr) ( comp_for | (',' (test|star_expr))* [','] )
-testlist_gexp
+testlist_comp[Token lpar]
 @init {
     expr etype = null;
     List gens = new ArrayList();
 }
 @after {
     if (etype != null) {
-        $testlist_gexp.tree = etype;
+        $testlist_comp.tree = etype;
     }
 }
     : t+=test_or_star_expr[$expr::ctype]
         ( (options {k=2;}: c1=COMMA t+=test_or_star_expr[$expr::ctype])* (c2=COMMA)?
-         { $c1 != null || $c2 != null }? 
+         { $c1 != null || $c2 != null }?
            {
-               etype = new Tuple($testlist_gexp.start, actions.castExprs($t), $expr::ctype);
+               if ($lpar.getText().equals("(")) {
+                  etype = new Tuple($lpar, actions.castExprs($t), $expr::ctype);
+               } else {
+                  etype = new org.python.antlr.ast.List($lpar, actions.castExprs($t), $expr::ctype);
+               }
            }
-        | -> test_or_star_expr
+        |
+           {
+               if ($lpar.getText().equals("[")) {
+                  etype = new org.python.antlr.ast.List($lpar, actions.castExprs($t), $expr::ctype);
+               }
+           }
         | (comp_for[gens]
            {
                Collections.reverse(gens);
@@ -1988,7 +2076,12 @@ testlist_gexp
                if (e instanceof Context) {
                    ((Context)e).setContext(expr_contextType.Load);
                }
-               etype = new GeneratorExp($testlist_gexp.start, actions.castExpr($t.get(0)), c);
+
+               if ($lpar.getText().equals("(")) {
+                  etype = new GeneratorExp($testlist_comp.start, e, c);
+               } else {
+                  etype = new ListComp($testlist_comp.start, e, c);
+               }
            }
           )
         )
@@ -2006,11 +2099,31 @@ lambdef
       {
           arguments a = $varargslist.args;
           if (a == null) {
-              a = new arguments($LAMBDA, new ArrayList<expr>(), (Name)null, null, new ArrayList<expr>());
+              a = new arguments($LAMBDA, new ArrayList<arg>(), (arg)null,
+              new ArrayList<arg>(), new ArrayList<expr>(), (arg)null, new ArrayList<expr>());
           }
           etype = new Lambda($LAMBDA, a, actions.castExpr($test.tree));
       }
     ;
+
+//lambdef_nocond: 'lambda' [varargslist] ':' test_nocond
+lambdef_nocond
+@init {
+    expr etype = null;
+}
+@after {
+    $lambdef_nocond.tree = etype;
+}
+    : LAMBDA (varargslist)? COLON test_nocond[expr_contextType.Load]
+      {
+          arguments a = $varargslist.args;
+          if (a == null) {
+              a = new arguments($LAMBDA, new ArrayList<arg>(), (arg)null, new ArrayList<arg>(), new ArrayList<expr>(), (arg) null, new ArrayList<expr>());
+          }
+          etype = new Lambda($LAMBDA, a, actions.castExpr($test_nocond.tree));
+      }
+    ;
+
 
 //trailer: '(' [arglist] ')' | '[' subscriptlist ']' | '.' NAME
 trailer [Token begin, PythonTree ptree]
@@ -2026,11 +2139,11 @@ trailer [Token begin, PythonTree ptree]
       (arglist
        {
            etype = new Call($begin, actions.castExpr($ptree), actions.castExprs($arglist.args),
-             actions.makeKeywords($arglist.keywords), $arglist.starargs, $arglist.kwargs);
+             actions.makeKeywords($arglist.keywords));
        }
       |
        {
-           etype = new Call($begin, actions.castExpr($ptree), new ArrayList<expr>(), new ArrayList<keyword>(), null, null);
+           etype = new Call($begin, actions.castExpr($ptree), new ArrayList<expr>(), new ArrayList<keyword>());
        }
       )
       RPAREN
@@ -2141,8 +2254,10 @@ testlist[expr_contextType ctype]
     | test[ctype]
     ;
 
-//dictorsetmaker: ( (test ':' test (comp_for | (',' test ':' test)* [','])) |
-//                  (test (comp_for | (',' test)* [','])) )
+//dictorsetmaker: ( ((test ':' test | '**' expr)
+//                   (comp_for | (',' (test ':' test | '**' expr))* [','])) |
+//                  ((test | star_expr)
+//                   (comp_for | (',' (test | star_expr))* [','])) )
 dictorsetmaker[Token lcurly]
 @init {
     List gens = new ArrayList();
@@ -2153,27 +2268,20 @@ dictorsetmaker[Token lcurly]
         $dictorsetmaker.tree = etype;
     }
 }
-    : k+=test[expr_contextType.Load]
-         (
-             (COLON v+=test[expr_contextType.Load]
-               ( comp_for[gens]
-                 {
-                     Collections.reverse(gens);
-                     List<comprehension> c = gens;
-                     etype = new DictComp($dictorsetmaker.start, actions.castExpr($k.get(0)), actions.castExpr($v.get(0)), c);
-                 }
-               | (options {k=2;}:COMMA k+=test[expr_contextType.Load] COLON v+=test[expr_contextType.Load])*
-                 {
-                     etype = new Dict($lcurly, actions.castExprs($k), actions.castExprs($v));
-                 }
-               )
-             |(COMMA k+=test[expr_contextType.Load])*
-              {
-                  etype = new Set($lcurly, actions.castExprs($k));
-              }
-             )
-             (COMMA)?
-         | comp_for[gens]
+    : (test[expr_contextType.Load] COLON | DOUBLESTAR) => (k+=test[expr_contextType.Load] COLON v+=test[expr_contextType.Load] | DOUBLESTAR uv+=expr[expr_contextType.Load])
+         ( comp_for[gens]
+           {
+              Collections.reverse(gens);
+              List<comprehension> c = gens;
+              etype = new DictComp($dictorsetmaker.start, actions.castExpr($k.get(0)), actions.castExpr($v.get(0)), c);
+           }
+         | (options {k=2;}:COMMA (k+=test[expr_contextType.Load] COLON v+=test[expr_contextType.Load] | DOUBLESTAR uv+=expr[expr_contextType.Load]))*
+           {
+              etype = new Dict($lcurly, actions.castExprs($k), actions.castExprs($v, $uv));
+           }
+         (COMMA)?)
+    | (k+=test[expr_contextType.Load] | s+=star_expr[expr_contextType.Load])
+         ( comp_for[gens]
            {
                Collections.reverse(gens);
                List<comprehension> c = gens;
@@ -2183,7 +2291,11 @@ dictorsetmaker[Token lcurly]
                }
                etype = new SetComp($lcurly, actions.castExpr($k.get(0)), c);
            }
-         )
+         | (COMMA (k+=test[expr_contextType.Load] | s+=star_expr[expr_contextType.Load]))*
+           {
+               etype = new Set($lcurly, actions.castExprs($k, $s));
+           }
+         (COMMA)?)
     ;
 
 //classdef: 'class' NAME ['(' [arglist] ')'] ':' suite
@@ -2194,126 +2306,85 @@ classdef
 @after {
    $classdef.tree = stype;
 }
-    : decorators? CLASS NAME (LPAREN arglist? RPAREN)? COLON suite[false]
+    : CLASS NAME (LPAREN arglist? RPAREN)? COLON suite[false]
       {
-          Token t = $CLASS;
-          if ($decorators.start != null) {
-              t = $decorators.start;
-          }
-          stype = actions.makeClass(t, $NAME,
+          stype = actions.makeClass($CLASS, $NAME,
                                     $arglist.args,
                                     $arglist.keywords,
-                                    $arglist.starargs,
-                                    $arglist.kwargs,
-                                    $suite.stypes,
-                                    $decorators.etypes);
+                                    $suite.stypes);
       }
     ;
 
 //arglist: (argument ',')* (argument [',']
-//                         |'*' test (',' argument)* [',' '**' test]
-//                         |'**' test)
 arglist
-    returns [List args, List keywords, expr starargs, expr kwargs]
+    returns [List args, List keywords]
 @init {
-    List arguments = new ArrayList();
-    List kws = new ArrayList();
+    List args = new ArrayList();
+    List keywords = new ArrayList();
     List gens = new ArrayList();
+    boolean first = true;
 }
-    : argument[arguments, kws, gens, true, false] (COMMA argument[arguments, kws, gens, false, false])*
-          (COMMA
-              ( STAR s=test[expr_contextType.Load] (COMMA argument[arguments, kws, gens, false, true])* (COMMA DOUBLESTAR k=test[expr_contextType.Load])?
-              | DOUBLESTAR k=test[expr_contextType.Load]
-              )?
-          )?
+    : argument[args, keywords, gens, first] (COMMA argument[args, keywords, gens, first])* COMMA?
       {
-          if (arguments.size() > 1 && gens.size() > 0) {
-              actions.errorGenExpNotSoleArg(new PythonTree($arglist.start));
-          }
-          $args=arguments;
-          $keywords=kws;
-          $starargs=actions.castExpr($s.tree);
-          $kwargs=actions.castExpr($k.tree);
+        $args = args;
+        $keywords = keywords;
       }
-    | STAR s=test[expr_contextType.Load] (COMMA argument[arguments, kws, gens, false, true])* (COMMA DOUBLESTAR k=test[expr_contextType.Load])?
-      {
-          $starargs=actions.castExpr($s.tree);
-          $keywords=kws;
-          $kwargs=actions.castExpr($k.tree);
-      }
+    ;
+
+//argument: ( test [comp_for] |
+//            test '=' test |
+//            '**' test |
+//            '*' test )
+argument
+    [List args, List keywords, List gens, boolean first] returns [boolean genarg]
+    : t1=test[expr_contextType.Load]
+      ( comp_for[$gens]
+        {
+            if (!first) {
+                actions.errorGenExpNotSoleArg($comp_for.tree);
+            }
+            $first = false;
+            $genarg = true;
+            Collections.reverse($gens);
+            List<comprehension> c = $gens;
+            $args.add(new GeneratorExp($t1.start, actions.castExpr($t1.tree), c));
+        }
+      | ASSIGN t2=test[expr_contextType.Load]
+        {
+            expr newkey = actions.castExpr($t1.tree);
+            //Loop through all current keys and fail on duplicate.
+            for(Object o: $keywords) {
+                List list = (List)o;
+                Object oldkey = list.get(0);
+                if (oldkey instanceof Name && newkey instanceof Name) {
+                    if (((Name)oldkey).getId().equals(((Name)newkey).getId())) {
+                        errorHandler.error("keyword arguments repeated", $t1.tree);
+                    }
+                }
+            }
+            List<expr> exprs = new ArrayList<expr>();
+            exprs.add(newkey);
+            exprs.add(actions.castExpr($t2.tree));
+            $keywords.add(exprs);
+
+        }
+      |
+        {
+            $args.add($t1.tree);
+        }
+      )
+    | STAR s=test[expr_contextType.Load]
+        {
+            expr etype = new Starred($STAR, actions.castExpr($s.tree), expr_contextType.Load);
+            $args.add(etype);
+        }
+
     | DOUBLESTAR k=test[expr_contextType.Load]
       {
-          $kwargs=actions.castExpr($k.tree);
-      }
-    ;
-
-//argument: test [comp_for] | test '=' test  # Really [keyword '='] test
-argument
-    [List arguments, List kws, List gens, boolean first, boolean afterStar] returns [boolean genarg]
-    : t1=test[expr_contextType.Load]
-        ((ASSIGN t2=test[expr_contextType.Load])
-          {
-              expr newkey = actions.castExpr($t1.tree);
-              //Loop through all current keys and fail on duplicate.
-              for(Object o: $kws) {
-                  List list = (List)o;
-                  Object oldkey = list.get(0);
-                  if (oldkey instanceof Name && newkey instanceof Name) {
-                      if (((Name)oldkey).getId().equals(((Name)newkey).getId())) {
-                          errorHandler.error("keyword arguments repeated", $t1.tree);
-                      }
-                  }
-              }
-              List<expr> exprs = new ArrayList<expr>();
-              exprs.add(newkey);
-              exprs.add(actions.castExpr($t2.tree));
-              $kws.add(exprs);
-          }
-        | comp_for[$gens]
-          {
-              if (!first) {
-                  actions.errorGenExpNotSoleArg($comp_for.tree);
-              }
-              $genarg = true;
-              Collections.reverse($gens);
-              List<comprehension> c = $gens;
-              arguments.add(new GeneratorExp($t1.start, actions.castExpr($t1.tree), c));
-          }
-        |
-          {
-              if (kws.size() > 0) {
-                  errorHandler.error("non-keyword arg after keyword arg", $t1.tree);
-              } else if (afterStar) {
-                  errorHandler.error("only named arguments may follow *expression", $t1.tree);
-              }
-              $arguments.add($t1.tree);
-          }
-        )
-    ;
-
-//list_iter: list_for | list_if
-list_iter [List gens, List ifs]
-    : list_for[gens]
-    | list_if[gens, ifs]
-    ;
-
-//list_for: 'for' exprlist 'in' testlist_safe [list_iter]
-list_for [List gens]
-@init {
-    List ifs = new ArrayList();
-}
-    : FOR exprlist[expr_contextType.Store] IN testlist[expr_contextType.Load] (list_iter[gens, ifs])?
-      {
-          Collections.reverse(ifs);
-          gens.add(new comprehension($FOR, $exprlist.etype, actions.castExpr($testlist.tree), ifs));
-      }
-    ;
-
-//list_if: 'if' test [list_iter]
-list_if[List gens, List ifs]
-    : IF test[expr_contextType.Load] (list_iter[gens, ifs])?
-      {
-        ifs.add(actions.castExpr($test.tree));
+          List<expr> exprs = new ArrayList<>();
+          exprs.add(null);
+          exprs.add(actions.castExpr($k.tree));
+          $keywords.add(exprs);
       }
     ;
 
@@ -2335,11 +2406,11 @@ comp_for [List gens]
       }
     ;
 
-//comp_if: 'if' old_test [comp_iter]
+//comp_if: 'if' test_nocond [comp_iter]
 comp_if[List gens, List ifs]
-    : IF test[expr_contextType.Load] comp_iter[gens, ifs]?
+    : IF test_nocond[expr_contextType.Load] comp_iter[gens, ifs]?
       {
-        ifs.add(actions.castExpr($test.tree));
+        ifs.add(actions.castExpr($test_nocond.tree));
       }
     ;
 
@@ -2384,6 +2455,8 @@ yield_arg
 //START OF LEXER RULES
 AS        : 'as' ;
 ASSERT    : 'assert' ;
+ASYNC     : 'async' ;
+AWAIT     : 'await' ;
 BREAK     : 'break' ;
 CLASS     : 'class' ;
 CONTINUE  : 'continue' ;
@@ -2391,7 +2464,7 @@ DEF       : 'def' ;
 DELETE    : 'del' ;
 ELIF      : 'elif' ;
 EXCEPT    : 'except' ;
-EXEC      : 'exec' ;
+EXEC      : 'exec1' ;
 FINALLY   : 'finally' ;
 FROM      : 'from' ;
 FOR       : 'for' ;
@@ -2550,11 +2623,13 @@ NAME:    ( 'a' .. 'z' | 'A' .. 'Z' | '_')
         ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
     ;
 
+NAME_CONSTANT: 'None' | 'True' | 'False' ;
+
 /** Match various string types.  Note that greedy=false implies '''
  *  should make us exit loop not continue.
  */
 STRING
-    :   ('r'|'u'|'b'|'ur'|'br'|'R'|'U'|'B'|'UR'|'BR'|'uR'|'Ur'|'Br'|'bR')?
+    :   ('r'|'u'|'b'|'ur'|'br'|'R'|'U'|'B'|'UR'|'BR'|'uR'|'Ur'|'Br'|'bR'|'rb'|'rB'|'Rb'|'RB')?
         (   '\'\'\'' (options {greedy=false;}:TRIAPOS)* '\'\'\''
         |   '"""' (options {greedy=false;}:TRIQUOTE)* '"""'
         |   '"' (ESC|~('\\'|'\n'|'"'))* '"'

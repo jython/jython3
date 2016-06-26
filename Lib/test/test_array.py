@@ -4,12 +4,12 @@
 """
 
 import unittest
-from test import test_support
+from test import support
 from weakref import proxy
-import array, cStringIO
-from cPickle import loads, dumps, HIGHEST_PROTOCOL
+import array, io
+from pickle import loads, dumps, HIGHEST_PROTOCOL
 
-if test_support.is_jython:
+if support.is_jython:
     import operator
     from test_weakref import extra_collect
 
@@ -69,12 +69,12 @@ class BaseTest(unittest.TestCase):
         bi = a.buffer_info()
         self.assertIsInstance(bi, tuple)
         self.assertEqual(len(bi), 2)
-        self.assertIsInstance(bi[0], (int, long))
+        self.assertIsInstance(bi[0], (int, int))
         self.assertIsInstance(bi[1], int)
         self.assertEqual(bi[1], len(a))
 
     def test_byteswap(self):
-        if test_support.is_jython and self.typecode == 'u':
+        if support.is_jython and self.typecode == 'u':
             # Jython unicodes are already decoded from utf16,
             # so this doesn't make sense
             return
@@ -170,19 +170,19 @@ class BaseTest(unittest.TestCase):
     def test_tofromfile(self):
         a = array.array(self.typecode, 2*self.example)
         self.assertRaises(TypeError, a.tofile)
-        self.assertRaises(TypeError, a.tofile, cStringIO.StringIO())
-        test_support.unlink(test_support.TESTFN)
-        f = open(test_support.TESTFN, 'wb')
+        self.assertRaises(TypeError, a.tofile, io.StringIO())
+        support.unlink(support.TESTFN)
+        f = open(support.TESTFN, 'wb')
         try:
             a.tofile(f)
             f.close()
             b = array.array(self.typecode)
-            f = open(test_support.TESTFN, 'rb')
+            f = open(support.TESTFN, 'rb')
             self.assertRaises(TypeError, b.fromfile)
             self.assertRaises(
                 TypeError,
                 b.fromfile,
-                cStringIO.StringIO(), len(self.example)
+                io.StringIO(), len(self.example)
             )
             b.fromfile(f, len(self.example))
             self.assertEqual(b, array.array(self.typecode, self.example))
@@ -194,27 +194,27 @@ class BaseTest(unittest.TestCase):
         finally:
             if not f.closed:
                 f.close()
-            test_support.unlink(test_support.TESTFN)
+            support.unlink(support.TESTFN)
 
     def test_fromfile_ioerror(self):
         # Issue #5395: Check if fromfile raises a proper IOError
         # instead of EOFError.
         a = array.array(self.typecode)
-        f = open(test_support.TESTFN, 'wb')
+        f = open(support.TESTFN, 'wb')
         try:
             self.assertRaises(IOError, a.fromfile, f, len(self.example))
         finally:
             f.close()
-            test_support.unlink(test_support.TESTFN)
+            support.unlink(support.TESTFN)
 
     def test_filewrite(self):
         a = array.array(self.typecode, 2*self.example)
-        f = open(test_support.TESTFN, 'wb')
+        f = open(support.TESTFN, 'wb')
         try:
             f.write(a)
             f.close()
             b = array.array(self.typecode)
-            f = open(test_support.TESTFN, 'rb')
+            f = open(support.TESTFN, 'rb')
             b.fromfile(f, len(self.example))
             self.assertEqual(b, array.array(self.typecode, self.example))
             self.assertNotEqual(a, b)
@@ -224,7 +224,7 @@ class BaseTest(unittest.TestCase):
         finally:
             if not f.closed:
                 f.close()
-            test_support.unlink(test_support.TESTFN)
+            support.unlink(support.TESTFN)
 
     def test_tofromlist(self):
         a = array.array(self.typecode, 2*self.example)
@@ -247,13 +247,13 @@ class BaseTest(unittest.TestCase):
         if a.itemsize>1 and self.typecode not in ('b', 'B'):
             self.assertRaises(ValueError, b.fromstring, "x")
         # Test from byte string available via buffer API (Jython addition)
-        if test_support.is_jython:
+        if support.is_jython:
             for buftype in (buffer, memoryview, bytearray):
                 b = array.array(self.typecode)
                 b.fromstring(buftype(a.tostring()))
                 self.assertEqual(a, b)
 
-    @unittest.skipUnless(test_support.is_jython, "Jython supports memoryview slices")
+    @unittest.skipUnless(support.is_jython, "Jython supports memoryview slices")
     def test_tofromstring_sliced(self):
         a = array.array(self.typecode, self.example)
         r = bytearray(a.tostring())
@@ -282,12 +282,12 @@ class BaseTest(unittest.TestCase):
 
     def test_filewrite(self):
         a = array.array(self.typecode, 2*self.example)
-        f = open(test_support.TESTFN, 'wb')
+        f = open(support.TESTFN, 'wb')
         try:
             f.write(a)
             f.close()
             b = array.array(self.typecode)
-            f = open(test_support.TESTFN, 'rb')
+            f = open(support.TESTFN, 'rb')
             b.fromfile(f, len(self.example))
             self.assertEqual(b, array.array(self.typecode, self.example))
             self.assertNotEqual(a, b)
@@ -297,7 +297,7 @@ class BaseTest(unittest.TestCase):
         finally:
             if not f.closed:
                 f.close()
-            test_support.unlink(test_support.TESTFN)
+            support.unlink(support.TESTFN)
 
     def test_repr(self):
         a = array.array(self.typecode, 2*self.example)
@@ -355,7 +355,7 @@ class BaseTest(unittest.TestCase):
         )
 
         b = array.array(self.badtypecode())
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertRaises(TypeError, operator.add, a, b)
             self.assertRaises(TypeError, operator.add, a, "bad")
         else:
@@ -379,7 +379,7 @@ class BaseTest(unittest.TestCase):
         )
 
         b = array.array(self.badtypecode())
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertRaises(TypeError, operator.add, a, b)
             self.assertRaises(TypeError, operator.iadd, a, "bad")
         else:
@@ -411,7 +411,7 @@ class BaseTest(unittest.TestCase):
             array.array(self.typecode)
         )
 
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertRaises(TypeError, operator.mul, a, "bad")
         else:
             self.assertRaises(TypeError, a.__mul__, "bad")
@@ -443,7 +443,7 @@ class BaseTest(unittest.TestCase):
         a *= -1
         self.assertEqual(a, array.array(self.typecode))
 
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertRaises(TypeError, operator.imul, a, "bad")
         else:
             self.assertRaises(TypeError, a.__imul__, "bad")
@@ -451,9 +451,9 @@ class BaseTest(unittest.TestCase):
     def test_getitem(self):
         a = array.array(self.typecode, self.example)
         self.assertEntryEqual(a[0], self.example[0])
-        self.assertEntryEqual(a[0L], self.example[0])
+        self.assertEntryEqual(a[0], self.example[0])
         self.assertEntryEqual(a[-1], self.example[-1])
-        self.assertEntryEqual(a[-1L], self.example[-1])
+        self.assertEntryEqual(a[-1], self.example[-1])
         self.assertEntryEqual(a[len(self.example)-1], self.example[-1])
         self.assertEntryEqual(a[-len(self.example)], self.example[0])
         self.assertRaises(TypeError, a.__getitem__)
@@ -466,7 +466,7 @@ class BaseTest(unittest.TestCase):
         self.assertEntryEqual(a[0], a[-1])
 
         a = array.array(self.typecode, self.example)
-        a[0L] = a[-1]
+        a[0] = a[-1]
         self.assertEntryEqual(a[0], a[-1])
 
         a = array.array(self.typecode, self.example)
@@ -474,7 +474,7 @@ class BaseTest(unittest.TestCase):
         self.assertEntryEqual(a[0], a[-1])
 
         a = array.array(self.typecode, self.example)
-        a[-1L] = a[0]
+        a[-1] = a[0]
         self.assertEntryEqual(a[0], a[-1])
 
         a = array.array(self.typecode, self.example)
@@ -832,7 +832,7 @@ class BaseTest(unittest.TestCase):
 
     def test_buffer(self):
         a = array.array(self.typecode, self.example)
-        with test_support.check_py3k_warnings():
+        with support.check_py3k_warnings():
             b = buffer(a)
         self.assertEqual(b[0], a.tostring()[0])
 
@@ -841,7 +841,7 @@ class BaseTest(unittest.TestCase):
         p = proxy(s)
         self.assertEqual(p.tostring(), s.tostring())
         s = None
-        if test_support.is_jython:
+        if support.is_jython:
             extra_collect()
         self.assertRaises(ReferenceError, len, p)
 
@@ -849,17 +849,17 @@ class BaseTest(unittest.TestCase):
         import sys
         if hasattr(sys, "getrefcount"):
             for i in range(10):
-                b = array.array('B', range(64))
+                b = array.array('B', list(range(64)))
             rc = sys.getrefcount(10)
             for i in range(10):
-                b = array.array('B', range(64))
+                b = array.array('B', list(range(64)))
             self.assertEqual(rc, sys.getrefcount(10))
 
     def test_subclass_with_kwargs(self):
         # SF bug #1486663 -- this used to erroneously raise a TypeError
         ArraySubclassWithKwargs('b', newarg=1)
 
-    @unittest.skipUnless(test_support.is_jython, "array supports buffer interface in Jython")
+    @unittest.skipUnless(support.is_jython, "array supports buffer interface in Jython")
     def test_resize_forbidden(self):
         # Test that array resizing is forbidden with buffer exports (Jython addition).
         # Test adapted from corresponding one in test_bytes.
@@ -956,39 +956,39 @@ class CharacterTest(StringTest):
         self.assertEqual(s.color, "blue")
         s.color = "red"
         self.assertEqual(s.color, "red")
-        self.assertEqual(s.__dict__.keys(), ["color"])
+        self.assertEqual(list(s.__dict__.keys()), ["color"])
 
     def test_nounicode(self):
         a = array.array(self.typecode, self.example)
-        self.assertRaises(ValueError, a.fromunicode, unicode(''))
+        self.assertRaises(ValueError, a.fromunicode, str(''))
         self.assertRaises(ValueError, a.tounicode)
 
 tests.append(CharacterTest)
 
-if test_support.have_unicode:
+if support.have_unicode:
     class UnicodeTest(StringTest):
         typecode = 'u'
-        example = unicode(r'\x01\u263a\x00\ufeff', 'unicode-escape')
-        smallerexample = unicode(r'\x01\u263a\x00\ufefe', 'unicode-escape')
-        biggerexample = unicode(r'\x01\u263a\x01\ufeff', 'unicode-escape')
-        outside = unicode('\x33')
+        example = str(r'\x01\u263a\x00\ufeff', 'unicode-escape')
+        smallerexample = str(r'\x01\u263a\x00\ufefe', 'unicode-escape')
+        biggerexample = str(r'\x01\u263a\x01\ufeff', 'unicode-escape')
+        outside = str('\x33')
         minitemsize = 2
 
         def test_unicode(self):
-            self.assertRaises(TypeError, array.array, 'b', unicode('foo', 'ascii'))
+            self.assertRaises(TypeError, array.array, 'b', str('foo', 'ascii'))
 
-            a = array.array('u', unicode(r'\xa0\xc2\u1234', 'unicode-escape'))
-            a.fromunicode(unicode(' ', 'ascii'))
-            a.fromunicode(unicode('', 'ascii'))
-            a.fromunicode(unicode('', 'ascii'))
-            a.fromunicode(unicode(r'\x11abc\xff\u1234', 'unicode-escape'))
+            a = array.array('u', str(r'\xa0\xc2\u1234', 'unicode-escape'))
+            a.fromunicode(str(' ', 'ascii'))
+            a.fromunicode(str('', 'ascii'))
+            a.fromunicode(str('', 'ascii'))
+            a.fromunicode(str(r'\x11abc\xff\u1234', 'unicode-escape'))
             s = a.tounicode()
             self.assertEqual(
                 s,
-                unicode(r'\xa0\xc2\u1234 \x11abc\xff\u1234', 'unicode-escape')
+                str(r'\xa0\xc2\u1234 \x11abc\xff\u1234', 'unicode-escape')
             )
 
-            s = unicode(r'\x00="\'a\\b\x80\xff\u0000\u0001\u1234', 'unicode-escape')
+            s = str(r'\x00="\'a\\b\x80\xff\u0000\u0001\u1234', 'unicode-escape')
             a = array.array('u', s)
             self.assertEqual(
                 repr(a),
@@ -1002,58 +1002,58 @@ if test_support.have_unicode:
 class NumberTest(BaseTest):
 
     def test_extslice(self):
-        a = array.array(self.typecode, range(5))
+        a = array.array(self.typecode, list(range(5)))
         self.assertEqual(a[::], a)
-        self.assertEqual(a[::2], array.array(self.typecode, [0,2,4]))
-        self.assertEqual(a[1::2], array.array(self.typecode, [1,3]))
-        self.assertEqual(a[::-1], array.array(self.typecode, [4,3,2,1,0]))
-        self.assertEqual(a[::-2], array.array(self.typecode, [4,2,0]))
-        self.assertEqual(a[3::-2], array.array(self.typecode, [3,1]))
+        self.assertEqual(a[::2], array.array(self.typecode, [0, 2, 4]))
+        self.assertEqual(a[1::2], array.array(self.typecode, [1, 3]))
+        self.assertEqual(a[::-1], array.array(self.typecode, [4, 3, 2, 1, 0]))
+        self.assertEqual(a[::-2], array.array(self.typecode, [4, 2, 0]))
+        self.assertEqual(a[3::-2], array.array(self.typecode, [3, 1]))
         self.assertEqual(a[-100:100:], a)
         self.assertEqual(a[100:-100:-1], a[::-1])
-        self.assertEqual(a[-100L:100L:2L], array.array(self.typecode, [0,2,4]))
+        self.assertEqual(a[-100:100:2], array.array(self.typecode, [0, 2, 4]))
         self.assertEqual(a[1000:2000:2], array.array(self.typecode, []))
         self.assertEqual(a[-1000:-2000:-2], array.array(self.typecode, []))
 
     def test_delslice(self):
-        a = array.array(self.typecode, range(5))
+        a = array.array(self.typecode, list(range(5)))
         del a[::2]
-        self.assertEqual(a, array.array(self.typecode, [1,3]))
-        a = array.array(self.typecode, range(5))
+        self.assertEqual(a, array.array(self.typecode, [1, 3]))
+        a = array.array(self.typecode, list(range(5)))
         del a[1::2]
-        self.assertEqual(a, array.array(self.typecode, [0,2,4]))
-        a = array.array(self.typecode, range(5))
+        self.assertEqual(a, array.array(self.typecode, [0, 2, 4]))
+        a = array.array(self.typecode, list(range(5)))
         del a[1::-2]
-        self.assertEqual(a, array.array(self.typecode, [0,2,3,4]))
-        a = array.array(self.typecode, range(10))
+        self.assertEqual(a, array.array(self.typecode, [0, 2, 3, 4]))
+        a = array.array(self.typecode, list(range(10)))
         del a[::1000]
-        self.assertEqual(a, array.array(self.typecode, [1,2,3,4,5,6,7,8,9]))
+        self.assertEqual(a, array.array(self.typecode, [1, 2, 3, 4, 5, 6, 7, 8, 9]))
         # test issue7788
-        a = array.array(self.typecode, range(10))
+        a = array.array(self.typecode, list(range(10)))
         del a[9::1<<333]
-        self.assertEqual(a, array.array(self.typecode, range(9)))
+        self.assertEqual(a, array.array(self.typecode, list(range(9))))
 
     def test_assignment(self):
-        a = array.array(self.typecode, range(10))
+        a = array.array(self.typecode, list(range(10)))
         a[::2] = array.array(self.typecode, [42]*5)
         self.assertEqual(a, array.array(self.typecode, [42, 1, 42, 3, 42, 5, 42, 7, 42, 9]))
-        a = array.array(self.typecode, range(10))
+        a = array.array(self.typecode, list(range(10)))
         a[::-4] = array.array(self.typecode, [10]*3)
-        self.assertEqual(a, array.array(self.typecode, [0, 10, 2, 3, 4, 10, 6, 7, 8 ,10]))
-        a = array.array(self.typecode, range(4))
+        self.assertEqual(a, array.array(self.typecode, [0, 10, 2, 3, 4, 10, 6, 7, 8, 10]))
+        a = array.array(self.typecode, list(range(4)))
         a[::-1] = a
         self.assertEqual(a, array.array(self.typecode, [3, 2, 1, 0]))
-        a = array.array(self.typecode, range(10))
+        a = array.array(self.typecode, list(range(10)))
         b = a[:]
         c = a[:]
-        ins = array.array(self.typecode, range(2))
+        ins = array.array(self.typecode, list(range(2)))
         a[2:3] = ins
-        b[slice(2,3)] = ins
+        b[slice(2, 3)] = ins
         c[2:3:] = ins
 
     def test_iterationcontains(self):
-        a = array.array(self.typecode, range(10))
-        self.assertEqual(list(a), range(10))
+        a = array.array(self.typecode, list(range(10)))
+        self.assertEqual(list(a), list(range(10)))
         b = array.array(self.typecode, [20])
         self.assertEqual(a[-1] in a, True)
         self.assertEqual(b[0] not in a, True)
@@ -1101,8 +1101,8 @@ class SignedNumberTest(NumberTest):
 
     def test_overflow(self):
         a = array.array(self.typecode)
-        lower = -1 * long(pow(2, a.itemsize * 8 - 1))
-        upper = long(pow(2, a.itemsize * 8 - 1)) - 1L
+        lower = -1 * int(pow(2, a.itemsize * 8 - 1))
+        upper = int(pow(2, a.itemsize * 8 - 1)) - 1
         self.check_overflow(lower, upper)
 
 class UnsignedNumberTest(NumberTest):
@@ -1115,13 +1115,13 @@ class UnsignedNumberTest(NumberTest):
         a = array.array(self.typecode)
         lower = 0
         itemsize = a.itemsize
-        if test_support.is_jython:
+        if support.is_jython:
             #  unsigned itemsizes are larger than would be expected
             # in CPython because Jython promotes to the next size
             # (Java has no unsiged integers except for char)
-            upper = long(pow(2, a.itemsize * 8 - 1)) - 1L
+            upper = int(pow(2, a.itemsize * 8 - 1)) - 1
         else:
-            upper = long(pow(2, a.itemsize * 8)) - 1L
+            upper = int(pow(2, a.itemsize * 8)) - 1
         self.check_overflow(lower, upper)
 
 
@@ -1221,21 +1221,21 @@ tests.append(DoubleTest)
 def test_main(verbose=None):
     import sys
 
-    if test_support.is_jython:
+    if support.is_jython:
         # CPython specific; returns a memory address
         del BaseTest.test_buffer_info
 
-    test_support.run_unittest(*tests)
+    support.run_unittest(*tests)
 
     # verify reference counting
     if verbose and hasattr(sys, "gettotalrefcount"):
         import gc
         counts = [None] * 5
-        for i in xrange(len(counts)):
-            test_support.run_unittest(*tests)
+        for i in range(len(counts)):
+            support.run_unittest(*tests)
             gc.collect()
             counts[i] = sys.gettotalrefcount()
-        print counts
+        print(counts)
 
 if __name__ == "__main__":
     test_main(verbose=True)

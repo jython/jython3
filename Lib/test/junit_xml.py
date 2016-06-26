@@ -5,7 +5,7 @@ import sys
 import time
 import traceback
 import unittest
-from StringIO import StringIO
+from io import StringIO
 from xml.sax import saxutils
 
 # Invalid XML characters (control chars)
@@ -256,13 +256,13 @@ def exc_message(exc_info):
     exc = exc_info[1]
     if exc is None:
         return safe_str(exc_info[0])
-    if isinstance(exc, BaseException) and isinstance(exc.args[0], unicode):
+    if isinstance(exc, BaseException) and isinstance(exc.args[0], str):
         return safe_str(exc.args[0])
     try:
         return safe_str(str(exc))
     except UnicodeEncodeError:
         try:
-            val = unicode(exc)
+            val = str(exc)
             return safe_str(val)
         except UnicodeDecodeError:
             return '?'
@@ -275,7 +275,7 @@ def escape_cdata(cdata):
 
 def safe_str(base):
     """Return a str valid for UTF-8 XML from a basestring"""
-    if isinstance(base, unicode):
+    if isinstance(base, str):
         return remove_evil(base.encode('utf-8', 'replace'))
     return remove_evil(base.decode('utf-8', 'replace').encode('utf-8',
                                                               'replace'))

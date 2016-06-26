@@ -2,16 +2,13 @@
 
 package org.python.compiler;
 
+import org.python.antlr.PythonTree;
+
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Hashtable;
 import java.util.Vector;
-
-import org.python.antlr.ParseException;
-import org.python.antlr.PythonTree;
-import org.python.antlr.ast.Return;
-import org.python.antlr.base.expr;
 
 public class ScopeInfo extends Object implements ScopeConstants {
 
@@ -19,6 +16,8 @@ public class ScopeInfo extends Object implements ScopeConstants {
     public String scope_name;
     public int level;
     public int func_level;
+    public boolean needs_class_closure;
+    public boolean async;
 
     public void dump() { // for debugging
         if (org.python.core.Options.verbose < org.python.core.Py.DEBUG)
@@ -71,6 +70,17 @@ public class ScopeInfo extends Object implements ScopeConstants {
     public Map<String, SymInfo> tbl = new LinkedHashMap<String, SymInfo>();
     public Vector<String> names = new Vector<String>();
 
+    public int addNonlocal(String name) {
+        SymInfo info = tbl.get(name);
+        if (info == null) {
+            tbl.put(name,new SymInfo(FREE));
+            return -1;
+        }
+        int prev = info.flags;
+        info.flags |= FREE;
+        return prev;
+    }
+
     public int addGlobal(String name) {
         // global kind = func vs. class
         int global = kind==CLASSSCOPE?CLASS_GLOBAL:NGLOBAL;
@@ -104,13 +114,15 @@ public class ScopeInfo extends Object implements ScopeConstants {
             tbl.put(name, new SymInfo(BOUND));
             return;
         }
-        info.flags |= BOUND;
+        // don't bound nonlocal variables
+        if ((info.flags & FREE) == 0) {
+            info.flags |= BOUND;
+        }
     }
 
     public void addUsed(String name) {
         if (tbl.get(name) == null) {
             tbl.put(name, new SymInfo(0));
-            return;
         }
     }
 
@@ -273,19 +285,11 @@ public class ScopeInfo extends Object implements ScopeConstants {
                 System.identityHashCode(this);
     }
 
-    public void defineAsGenerator(expr node) {
+    public void defineAsGenerator() {
         generator = true;
-        if (hasReturnWithValue) {
-            throw new ParseException("'return' with argument " +
-                    "inside generator", node);
-        }
     }
 
-    public void noteReturnValue(Return node) {
-        if (generator) {
-            throw new ParseException("'return' with argument " +
-                    "inside generator", node);
-        }
+    public void noteReturnValue() {
         hasReturnWithValue = true;
     }
 }

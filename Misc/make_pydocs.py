@@ -1,6 +1,9 @@
-import sys
-import builtins as __builtin__
 import io
+import types
+import re
+import itertools
+import builtins
+import _multiprocessing
 
 def print_doc(out, obj, meth):
     if meth == '__doc__':
@@ -16,26 +19,22 @@ def print_doc(out, obj, meth):
 
     if doc is None:
         doc = ""
+    if not isinstance(doc, str):
+        print(obj, meth)
     lines = doc.split("\n")
     outstring = '\\n" + \n        "'.join(format(line) for line in lines)
-    print(('    public final static String %s = ' % bdname), file=out)
+    print('    public final static String %s = ' % bdname, file=out)
     print('        "%s";\n' % outstring, file=outfile)
 
 format = lambda line: line.replace('\\', '\\\\').replace('"', r'\"')
-opt = lambda n: getattr(__builtin__, n, None)
 
-def f(): pass
-try:
-    raise Exception
-except:
-    _, _, tb = sys.exc_info() 
+async def foo(): pass
 
-class C:
-    f = f
-
-m = C.f
+coro = foo()
+coro.close()
 
 types_list = [
+builtins,
 object,
 type,
 bytes,
@@ -59,11 +58,24 @@ frozenset,
 BaseException,
 bytearray,
 memoryview,
-type(f),
-# type(m),
-type(f.__code__),
-type(sys._getframe()),
-type(tb),
+types.GeneratorType,
+types.CoroutineType,
+type(coro.__await__()),
+types.FunctionType,
+#types.MemberDescriptorType,
+types.CodeType,
+types.SimpleNamespace,
+types.FrameType,
+types.TracebackType,
+type(re.compile("f")),
+type(re.compile("f").match("f")),
+type(range(1).__iter__()),
+type(list().__iter__()),
+type(itertools.chain(map(lambda x:x, list()))),
+type(None),
+type(NotImplemented),
+type(Ellipsis),
+_multiprocessing.SemLock,
 io.TextIOBase
 ]
 

@@ -398,7 +398,7 @@ def expandvars(path):
 def normpath(path):
     """Normalize path, eliminating double slashes, etc."""
     # Preserve unicode (if path is unicode)
-    backslash, dot = (u'\\', u'.') if isinstance(path, unicode) else ('\\', '.')
+    backslash, dot = ('\\', '.') if isinstance(path, str) else ('\\', '.')
     if path.startswith(('\\\\.\\', '\\\\?\\')):
         # in the case of paths with these prefixes:
         # \\.\ -> device names
@@ -458,13 +458,13 @@ except ImportError: # no built-in nt module - maybe it's Jython ;)
         def abspath(path):
             """Return the absolute version of a path."""
             try:
-                if isinstance(path, unicode):
+                if isinstance(path, str):
                     # Result must be unicode
                     if path:
                         path = sys.getPath(path)
                     else:
                         # Empty path must return current working directory
-                        path = os.getcwdu()
+                        path = os.getcwd()
                 else:
                     # Result must be bytes
                     if path:
@@ -481,13 +481,13 @@ except ImportError: # no built-in nt module - maybe it's Jython ;)
         def abspath(path):
             """Return the absolute version of a path."""
             try:
-                if isinstance(path, unicode):
+                if isinstance(path, str):
                     # Result must be unicode
                     if path:
-                        path = join(os.getcwdu(), path)
+                        path = join(os.getcwd(), path)
                     else:
                         # Empty path must return current working directory
-                        path = os.getcwdu()
+                        path = os.getcwd()
                 else:
                     # Result must be bytes
                     if path:
@@ -508,8 +508,8 @@ else:  # use native Windows method on Windows
                 path = _getfullpathname(path)
             except WindowsError:
                 pass # Bad path - return unchanged.
-        elif isinstance(path, unicode):
-            path = os.getcwdu()
+        elif isinstance(path, str):
+            path = os.getcwd()
         else:
             path = os.getcwd()
         return normpath(path)

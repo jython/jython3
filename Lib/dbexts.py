@@ -73,12 +73,12 @@ def console(rows, headers=()):
 
     # Check row entry lengths
     output = []
-    headers = map(lambda header: header.upper(), list(map(lambda x: x or "", headers)))
-    collen = map(len,headers)
+    headers = [header.upper() for header in list([x or "" for x in headers])]
+    collen = list(map(len,headers))
     output.append(headers)
     if rows and len(rows) > 0:
         for row in rows:
-            row = map(lambda x: str(x), row)
+            row = [str(x) for x in row]
             for i in range(len(row)):
                 entry = row[i]
                 if collen[i] < len(entry):
@@ -109,14 +109,14 @@ def html(rows, headers=()):
     output = []
     output.append('<table class="results">')
     output.append('<tr class="headers">')
-    headers = map(lambda x: '<td class="header">%s</td>' % (x.upper()), list(headers))
-    map(output.append, headers)
+    headers = ['<td class="header">%s</td>' % (x.upper()) for x in list(headers)]
+    list(map(output.append, headers))
     output.append('</tr>')
     if rows and len(rows) > 0:
         for row in rows:
             output.append('<tr class="row">')
-            row = map(lambda x: '<td class="value">%s</td>' % (x), row)
-            map(output.append, row)
+            row = ['<td class="value">%s</td>' % (x) for x in row]
+            list(map(output.append, row))
             output.append('</tr>')
     output.append('</table>')
     return output
@@ -196,17 +196,17 @@ class dbexts:
             if not jndiname:
                 t = self.dbs[("jdbc", dbname)]
                 self.dburl, dbuser, dbpwd, jdbcdriver = t['url'], t['user'], t['pwd'], t['driver']
-                if t.has_key('datahandler'):
+                if 'datahandler' in t:
                     self.datahandler = []
                     for dh in t['datahandler'].split(','):
                         classname = dh.split(".")[-1]
                         datahandlerclass = __import__(dh, globals(), locals(), classname)
                         self.datahandler.append(datahandlerclass)
-                keys = [x for x in t.keys() if x not in ['url', 'user', 'pwd', 'driver', 'datahandler', 'name']]
+                keys = [x for x in list(t.keys()) if x not in ['url', 'user', 'pwd', 'driver', 'datahandler', 'name']]
                 props = {}
                 for a in keys:
                     props[a] = t[a]
-                self.db = apply(database.connect, (self.dburl, dbuser, dbpwd, jdbcdriver), props)
+                self.db = database.connect(*(self.dburl, dbuser, dbpwd, jdbcdriver), **props)
             else:
                 self.db = database.lookup(jndiname)
             self.db.autocommit = self.autocommit
@@ -227,7 +227,7 @@ class dbexts:
             self.db = database.Connect(self.dburl, dbuser, dbpwd, clear_auto_commit=1)
 
         self.dbname = dbname
-        for a in database.sqltype.keys():
+        for a in list(database.sqltype.keys()):
             setattr(self, database.sqltype[a], a)
         for a in dir(database):
             try:
@@ -305,7 +305,7 @@ class dbexts:
             res = self.results
             if res:
                 print >> self.out, ""
-                for a in self.formatter(res, map(lambda x: x[0], self.headers)):
+                for a in self.formatter(res, [x[0] for x in self.headers]):
                     print >> self.out, a
                 print >> self.out, ""
 
@@ -332,10 +332,9 @@ class dbexts:
         if delim:
             headers = []
             results = []
-            if type(sql) == type(StringType):
+            if isinstance(sql, type(StringType)):
                 if comments: sql = comments(sql)
-                statements = filter(lambda x: len(x) > 0,
-                        map(lambda statement: statement.strip(), sql.split(delim)))
+                statements = [x for x in [statement.strip() for statement in sql.split(delim)] if len(x) > 0]
             else:
                 statements = [sql]
             for a in statements:
@@ -427,14 +426,14 @@ class dbexts:
 
     def bulkcopy(self, dst, table, include=[], exclude=[], autobatch=0, executor=executor):
         """Returns a Bulkcopy object using the given table."""
-        if type(dst) == type(""):
+        if isinstance(dst, type("")):
             dst = dbexts(dst, cfg=self.dbs)
         bcp = Bulkcopy(dst, table, include=include, exclude=exclude, autobatch=autobatch, executor=executor)
         return bcp
 
     def bcp(self, src, table, where='(1=1)', params=[], include=[], exclude=[], autobatch=0, executor=executor):
         """Bulkcopy of rows from a src database to the current database for a given table and where clause."""
-        if type(src) == type(""):
+        if isinstance(src, type("")):
             src = dbexts(src, cfg=self.dbs)
         bcp = self.bulkcopy(self, table, include, exclude, autobatch, executor)
         num = bcp.transfer(src, where, params)
@@ -455,8 +454,8 @@ class Bulkcopy:
         self.autobatch = autobatch
         self.bindings = {}
 
-        include = map(lambda x: x.lower(), include)
-        exclude = map(lambda x: x.lower(), exclude)
+        include = [x.lower() for x in include]
+        exclude = [x.lower() for x in exclude]
 
         _verbose = self.dst.verbose
         self.dst.verbose = 0
@@ -466,8 +465,8 @@ class Bulkcopy:
                 colmap = {}
                 for a in self.dst.results:
                     colmap[a[3].lower()] = a[4]
-                cols = self.__filter__(colmap.keys(), include, exclude)
-                for a in zip(range(len(cols)), cols):
+                cols = self.__filter__(list(colmap.keys()), include, exclude)
+                for a in zip(list(range(len(cols))), cols):
                     self.bindings[a[0]] = colmap[a[1]]
                 colmap = None
             else:
@@ -488,11 +487,11 @@ class Bulkcopy:
             return self.executor.cols
 
     def __filter__(self, values, include, exclude):
-        cols = map(lambda col: col.lower(), values)
+        cols = [col.lower() for col in values]
         if exclude:
-            cols = filter(lambda x, ex=exclude: x not in ex, cols)
+            cols = list(filter(lambda x, ex=exclude: x not in ex, cols))
         if include:
-            cols = filter(lambda x, inc=include: x in inc, cols)
+            cols = list(filter(lambda x, inc=include: x in inc, cols))
         return cols
 
     def format(self, column, type):
@@ -518,7 +517,7 @@ class Bulkcopy:
         sql = "select %s from %s where %s" % (", ".join(self.columns), self.table, where)
         h, d = src.raw(sql, params)
         if d:
-            map(self.rowxfer, d)
+            list(map(self.rowxfer, d))
             return self.done()
         return 0
 
@@ -543,7 +542,7 @@ class Unload:
         headers, results = self.db.raw(sql)
         w = open(self.filename, mode)
         if self.includeheaders:
-            w.write("%s\n" % (self.delimiter.join(map(lambda x: x[0], headers))))
+            w.write("%s\n" % (self.delimiter.join([x[0] for x in headers])))
         if results:
             for a in results:
                 w.write("%s\n" % (self.delimiter.join(map(self.format, a))))
@@ -570,14 +569,14 @@ class Schema:
         self.columns = []
         # (column name, type_name, size, nullable)
         if self.db.results:
-            self.columns = map(lambda x: (x[3], x[5], x[6], x[10]), self.db.results)
+            self.columns = [(x[3], x[5], x[6], x[10]) for x in self.db.results]
             if self.sort: self.columns.sort(lambda x, y: cmp(x[0], y[0]))
 
         self.db.fk(None, self.table)
         # (pk table name, pk column name, fk column name, fk name, pk name)
         self.imported = []
         if self.db.results:
-            self.imported = map(lambda x: (x[2], x[3], x[7], x[11], x[12]), self.db.results)
+            self.imported = [(x[2], x[3], x[7], x[11], x[12]) for x in self.db.results]
             if self.sort: self.imported.sort(lambda x, y: cmp(x[2], y[2]))
 
         self.exported = []
@@ -585,14 +584,14 @@ class Schema:
             self.db.fk(self.table, None)
             # (pk column name, fk table name, fk column name, fk name, pk name)
             if self.db.results:
-                self.exported = map(lambda x: (x[3], x[6], x[7], x[11], x[12]), self.db.results)
+                self.exported = [(x[3], x[6], x[7], x[11], x[12]) for x in self.db.results]
                 if self.sort: self.exported.sort(lambda x, y: cmp(x[1], y[1]))
 
         self.db.pk(self.table)
         self.primarykeys = []
         if self.db.results:
             # (column name, key_seq, pk name)
-            self.primarykeys = map(lambda x: (x[3], x[4], x[5]), self.db.results)
+            self.primarykeys = [(x[3], x[4], x[5]) for x in self.db.results]
             if self.sort: self.primarykeys.sort(lambda x, y: cmp(x[1], y[1]))
 
         try:
@@ -603,7 +602,7 @@ class Schema:
             if self.db.results:
                 idxdict = {}
                 # mxODBC returns a row of None's, so filter it out
-                idx = map(lambda x: (x[3], x[5].strip(), x[6], x[7], x[8]), filter(lambda x: x[5], self.db.results))
+                idx = [(x[3], x[5].strip(), x[6], x[7], x[8]) for x in [x for x in self.db.results if x[5]]]
                 def cckmp(x, y):
                     c = cmp(x[1], y[1])
                     if c == 0: c = cmp(x[3], y[3])
@@ -611,10 +610,10 @@ class Schema:
                 # sort this regardless, this gets the indicies lined up
                 idx.sort(cckmp)
                 for a in idx:
-                    if not idxdict.has_key(a[1]):
+                    if a[1] not in idxdict:
                         idxdict[a[1]] = []
                     idxdict[a[1]].append(a)
-                self.indices = idxdict.values()
+                self.indices = list(idxdict.values())
                 if self.sort: self.indices.sort(lambda x, y: cmp(x[0][1], y[0][1]))
         except:
             pass
@@ -643,7 +642,7 @@ class Schema:
         else:
             for a in self.indices:
                 unique = choose(a[0][0], "non-unique", "unique")
-                cname = ", ".join(map(lambda x: x[4], a))
+                cname = ", ".join([x[4] for x in a])
                 d.append("  %s index {%s} on (%s)" % (unique, a[0][1], cname))
         return "\n".join(d)
 
@@ -660,14 +659,14 @@ class IniParser:
         fp = open(self.cfg, "r")
         data = fp.readlines()
         fp.close()
-        lines = filter(lambda x: len(x) > 0 and x[0] not in ['#', ';'], map(lambda x: x.strip(), data))
+        lines = [x for x in [x.strip() for x in data] if len(x) > 0 and x[0] not in ['#', ';']]
         current = None
         for i in range(len(lines)):
             line = lines[i]
             g = self.ctypeRE.match(line)
             if g:   # a section header
                 current = {}
-                if not self.records.has_key(g.group(1)):
+                if g.group(1) not in self.records:
                     self.records[g.group(1)] = []
                 self.records[g.group(1)].append(current)
             else:
@@ -675,11 +674,12 @@ class IniParser:
                 if g:
                     current[g.group(1)] = g.group(2)
 
-    def __getitem__(self, (ctype, skey)):
+    def __getitem__(self, xxx_todo_changeme):
+        (ctype, skey) = xxx_todo_changeme
         if skey == self.key: return self.records[ctype][0][skey]
-        t = filter(lambda x, p=self.key, s=skey: x[p] == s, self.records[ctype])
+        t = list(filter(lambda x, p=self.key, s=skey: x[p] == s, self.records[ctype]))
         if not t or len(t) > 1:
-            raise KeyError, "invalid key ('%s', '%s')" % (ctype, skey)
+            raise KeyError("invalid key ('%s', '%s')" % (ctype, skey))
         return t[0]
 
 def random_table_name(prefix, num_chars):
@@ -696,12 +696,12 @@ class ResultSetRow:
         self.row = row
         self.rs = rs
     def __getitem__(self, i):
-        if type(i) == type(""):
+        if isinstance(i, type("")):
             i = self.rs.index(i)
         return self.row[i]
     def __getslice__(self, i, j):
-        if type(i) == type(""): i = self.rs.index(i)
-        if type(j) == type(""): j = self.rs.index(j)
+        if isinstance(i, type("")): i = self.rs.index(i)
+        if isinstance(j, type("")): j = self.rs.index(j)
         return self.row[i:j]
     def __len__(self):
         return len(self.row)
@@ -710,13 +710,13 @@ class ResultSetRow:
 
 class ResultSet:
     def __init__(self, headers, results=[]):
-        self.headers = map(lambda x: x.upper(), headers)
+        self.headers = [x.upper() for x in headers]
         self.results = results
     def index(self, i):
         return self.headers.index(i.upper())
     def __getitem__(self, i):
         return ResultSetRow(self, self.results[i])
     def __getslice__(self, i, j):
-        return map(lambda x, rs=self: ResultSetRow(rs, x), self.results[i:j])
+        return list(map(lambda x, rs=self: ResultSetRow(rs, x), self.results[i:j]))
     def __repr__(self):
         return "<%s instance {cols [%d], rows [%d]} at %s>" % (self.__class__, len(self.headers), len(self.results), id(self))

@@ -4,9 +4,9 @@ import sys
 import threading
 import unittest
 
-from test import test_support
+from test import support
 
-from java.lang import (Boolean, Class, ClassLoader, Comparable,Integer, Object, Runnable, String,
+from java.lang import (Boolean, Class, ClassLoader, Comparable, Integer, Object, Runnable, String,
                        Thread, ThreadGroup, InterruptedException, UnsupportedOperationException)
 from java.util import AbstractList, ArrayList, Date, Hashtable, HashSet, Vector
 from java.util.concurrent import Callable, Executors
@@ -28,9 +28,9 @@ class InterfaceTest(unittest.TestCase):
             def call(self, extraarg=None):
                 called.append(extraarg)
         Callbacker.callNoArg(PyCallback())
-        Callbacker.callOneArg(PyCallback(), 4294967295L)
-        self.assertEquals(None, called[0])
-        self.assertEquals(4294967295L, called[1])
+        Callbacker.callOneArg(PyCallback(), 4294967295)
+        self.assertEqual(None, called[0])
+        self.assertEqual(4294967295, called[1])
         class PyBadCallback(Callbacker.Callback):
             def call(pyself, extraarg):
                 self.fail("Shouldn't be callable with a no args")
@@ -50,7 +50,7 @@ class InterfaceTest(unittest.TestCase):
         c = ComparableRunner()
         c.compareTo(None)
         c.run()
-        self.assertEquals(calls, ["ComparableRunner.compareTo", "Runner.run"])
+        self.assertEqual(calls, ["ComparableRunner.compareTo", "Runner.run"])
 
     def test_inherit_interface_twice(self):
         # http://bugs.jython.org/issue1504
@@ -65,7 +65,7 @@ class TableModelTest(unittest.TestCase):
     def test_class_coercion(self):
         '''Python type instances coerce to a corresponding Java wrapper type in Object.getClass'''
         class TableModel(AbstractTableModel):
-            columnNames = "First Name", "Last Name","Sport","# of Years","Vegetarian"
+            columnNames = "First Name", "Last Name", "Sport", "# of Years", "Vegetarian"
             data = [("Mary", "Campione", "Snowboarding", 5, False)]
 
             def getColumnCount(self):
@@ -88,7 +88,7 @@ class TableModelTest(unittest.TestCase):
 
         model = TableModel()
         for i, expectedClass in enumerate([String, String, String, Integer, Boolean]):
-            self.assertEquals(expectedClass, model.getColumnClass(i))
+            self.assertEqual(expectedClass, model.getColumnClass(i))
 
 class AutoSuperTest(unittest.TestCase):
     def test_auto_super(self):
@@ -98,14 +98,14 @@ class AutoSuperTest(unittest.TestCase):
         class Explicit(Rectangle):
             def __init__(self):
                 Rectangle.__init__(self, 6, 7)
-        self.assert_("width=6,height=7" in Implicit().toString())
-        self.assert_("width=6,height=7" in Explicit().toString())
+        self.assertTrue("width=6,height=7" in Implicit().toString())
+        self.assertTrue("width=6,height=7" in Explicit().toString())
 
     def test_no_default_constructor(self):
         "Check autocreation when java superclass misses a default constructor."
         class A(ThreadGroup):
             def __init__(self):
-                print self.name
+                print(self.name)
         self.assertRaises(TypeError, A)
 
 # The no-arg constructor for proxies attempts to look up its Python class by the Python class' name,
@@ -149,11 +149,11 @@ class PythonSubclassesTest(unittest.TestCase):
             def toString(self):
                 return 'SubSubDate -> ' + SubDate.toString(self)
 
-        self.assertEquals("SubDate -> Date", SubDate().toString())
-        self.assertEquals("SubSubDate -> SubDate -> Date", SubSubDate().toString())
-        self.assertEquals("SubDateMethod", SubSubDate().method())
+        self.assertEqual("SubDate -> Date", SubDate().toString())
+        self.assertEqual("SubSubDate -> SubDate -> Date", SubSubDate().toString())
+        self.assertEqual("SubDateMethod", SubSubDate().method())
         Coercions.runRunnable(SubSubDate())
-        self.assertEquals(["SubDate"], runs)
+        self.assertEqual(["SubDate"], runs)
 
     def test_passthrough(self):
         class CallbackPassthrough(Callbacker.Callback):
@@ -168,9 +168,9 @@ class PythonSubclassesTest(unittest.TestCase):
         collector = Callbacker.CollectingCallback()
         c = CallbackPassthrough(collector)
         Callbacker.callNoArg(c)
-        self.assertEquals("call()", collector.calls[0])
+        self.assertEqual("call()", collector.calls[0])
         c.call(7)
-        self.assertEquals("call(7)", collector.calls[1])
+        self.assertEqual("call(7)", collector.calls[1])
 
     def test_Class_newInstance_works_on_proxies(self):
         Class.newInstance(ModuleVisibleJavaSubclass)
@@ -178,12 +178,12 @@ class PythonSubclassesTest(unittest.TestCase):
     def test_override(self):
         class Foo(Runnable):
             def toString(self): return "Foo"
-        self.assertEquals(String.valueOf(Foo()), "Foo", "toString not overridden in interface")
+        self.assertEqual(String.valueOf(Foo()), "Foo", "toString not overridden in interface")
 
         class A(Object):
             def toString(self):
                 return 'name'
-        self.assertEquals('name', String.valueOf(A()), 'toString not overriden in subclass')
+        self.assertEqual('name', String.valueOf(A()), 'toString not overriden in subclass')
 
     def test_can_subclass_abstract(self):
         class A(Component):
@@ -198,7 +198,7 @@ class PythonSubclassesTest(unittest.TestCase):
         ht = Hashtable()
         fv = FooVector()
         ht.put("a", fv)
-        self.failUnless(fv is ht.get("a"))
+        self.assertTrue(fv is ht.get("a"))
 
     def test_proxy_generates_protected_methods(self):
         """Jython proxies should generate methods for protected methods on their superclasses
@@ -218,14 +218,14 @@ class PythonSubclassesTest(unittest.TestCase):
                 return self.__class__()
 
         for a in FinalizingBean(), RegularBean():
-            self.assertEquals("init", output.pop())
+            self.assertEqual("init", output.pop())
             a.getName()
-            self.assertEquals("getName", output.pop())
+            self.assertEqual("getName", output.pop())
             aa = a.clone()
             if isinstance(a, FinalizingBean):
-                self.assertEquals("init", output.pop())
+                self.assertEqual("init", output.pop())
             aa.name
-            self.assertEquals("getName", output.pop())
+            self.assertEqual("getName", output.pop())
 
     def test_python_subclass_of_python_subclass_of_java_class_overriding(self):
         '''Test for http://bugs.jython.org/issue1297.
@@ -238,7 +238,7 @@ class PythonSubclassesTest(unittest.TestCase):
             def getValue(self):
                 return 10
 
-        self.assertEquals(10, SecondSubclass().callGetValue())
+        self.assertEqual(10, SecondSubclass().callGetValue())
 
 
     def test_deep_subclasses(self):
@@ -334,7 +334,7 @@ class ContextClassloaderTest(unittest.TestCase):
             def method(self):
                 called.append(True)
         A()
-        self.assertEquals(len(called), 1)
+        self.assertEqual(len(called), 1)
 
 
 class MetaClass(type):
@@ -390,7 +390,7 @@ class AbstractMethodTest(unittest.TestCase):
 
         c = C()
         self.assertEqual(c.size(), 7)
-        self.assertEqual([c.get(i) for i in xrange(7)], range(0, 14, 2))
+        self.assertEqual([c.get(i) for i in range(7)], list(range(0, 14, 2)))
 
     def test_abstract_method_not_implemented(self):
         class C(AbstractList):
@@ -403,7 +403,7 @@ class AbstractMethodTest(unittest.TestCase):
         # 3.x
         c = C()
         self.assertEqual(c.size(), 47)
-        with self.assertRaisesRegexp(NotImplementedError, r"^$"):
+        with self.assertRaisesRegex(NotImplementedError, r"^$"):
             C().get(42)
 
     def test_concrete_method(self):
@@ -434,7 +434,7 @@ class AbstractMethodTest(unittest.TestCase):
         class C(Callable):
             pass
         
-        with self.assertRaisesRegexp(NotImplementedError, r"^$"):
+        with self.assertRaisesRegex(NotImplementedError, r"^$"):
             C().call()
 
 
@@ -601,7 +601,7 @@ class ChooseCorrectToJavaTest(unittest.TestCase):
                         # this condition variable is never notified, so will only
                         # succeed if interrupted
                         cv.wait()
-                    except InterruptedException, e:
+                    except InterruptedException as e:
                         break
 
         unfair_condition = threading.Condition()
@@ -610,7 +610,7 @@ class ChooseCorrectToJavaTest(unittest.TestCase):
                 name="thread #%d" % i,
                 target=wait_until_interrupted,
                 args=(unfair_condition,))
-            for i in xrange(5)]
+            for i in range(5)]
 
         for thread in threads:
             thread.start()
@@ -626,7 +626,7 @@ class ChooseCorrectToJavaTest(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         InterfaceTest,
         TableModelTest,
         AutoSuperTest,

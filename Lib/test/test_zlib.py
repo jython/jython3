@@ -1,8 +1,8 @@
 import unittest
-from test.test_support import TESTFN, run_unittest, import_module, unlink, requires
+from test.support import TESTFN, run_unittest, import_module, unlink, requires
 import binascii
 import random
-from test.test_support import precisionbigmemtest, _1G, _4G, is_jython
+from test.support import precisionbigmemtest, _1G, _4G, is_jython
 import sys
 
 try:
@@ -44,15 +44,15 @@ class ChecksumTestCase(unittest.TestCase):
     def assertEqual32(self, seen, expected):
         # 32-bit values masked -- checksums on 32- vs 64- bit machines
         # This is important if bit 31 (0x08000000L) is set.
-        self.assertEqual(seen & 0x0FFFFFFFFL, expected & 0x0FFFFFFFFL)
+        self.assertEqual(seen & 0x0FFFFFFFF, expected & 0x0FFFFFFFF)
 
     def test_penguins(self):
-        self.assertEqual32(zlib.crc32("penguin", 0), 0x0e5c1a120L)
+        self.assertEqual32(zlib.crc32("penguin", 0), 0x0e5c1a120)
         self.assertEqual32(zlib.crc32("penguin", 1), 0x43b6aa94)
         self.assertEqual32(zlib.adler32("penguin", 1), 0x0bd602f7)
 
         self.assertEqual(zlib.crc32("penguin"), zlib.crc32("penguin", 0))
-        self.assertEqual(zlib.adler32("penguin"),zlib.adler32("penguin",1))
+        self.assertEqual(zlib.adler32("penguin"), zlib.adler32("penguin", 1))
 
     @unittest.skipIf(is_jython, "jython uses java.util.zip.Adler32, \
                 which does not support a start value other than 1")
@@ -77,9 +77,9 @@ class ChecksumTestCase(unittest.TestCase):
         # The range of valid input values for the crc state should be
         # -2**31 through 2**32-1 to allow inputs artifically constrained
         # to a signed 32-bit integer.
-        self.assertEqual(zlib.crc32('ham', -1), zlib.crc32('ham', 0xffffffffL))
+        self.assertEqual(zlib.crc32('ham', -1), zlib.crc32('ham', 0xffffffff))
         self.assertEqual(zlib.crc32('spam', -3141593),
-                         zlib.crc32('spam',  0xffd01027L))
+                         zlib.crc32('spam',  0xffd01027))
         self.assertEqual(zlib.crc32('spam', -(2**31)),
                          zlib.crc32('spam',  (2**31)))
 
@@ -178,7 +178,7 @@ class CompressTestCase(BaseCompressTestCase, unittest.TestCase):
     def test_incomplete_stream(self):
         # An useful error message is given
         x = zlib.compress(HAMLET_SCENE)
-        self.assertRaisesRegexp(zlib.error,
+        self.assertRaisesRegex(zlib.error,
             "Error -5 while decompressing data: incomplete or truncated stream",
             zlib.decompress, x[:-1])
 
@@ -194,7 +194,7 @@ class CompressTestCase(BaseCompressTestCase, unittest.TestCase):
         """
         This is NOT testing for a 'size=_1G + 1024 * 1024', because of the definition of 
         the precisionbigmemtest decorator, which resets the value to 5147, based on 
-        the definition of test_support.real_max_memuse == 0
+        the definition of support.real_max_memuse == 0
         This is the case on my windows installation of python 2.7.3.
         Python 2.7.3 (default, Apr 10 2012, 23:31:26) [MSC v.1500 32 bit (Intel)] on win32
         And on my build of jython 2.7
@@ -332,7 +332,7 @@ class CompressObjectTestCase(BaseCompressTestCase, unittest.TestCase):
             max_length = 1 + len(cb)//10
             chunk = dco.decompress(cb, max_length)
             self.assertFalse(len(chunk) > max_length,
-                        'chunk too big (%d>%d)' % (len(chunk),max_length))
+                        'chunk too big (%d>%d)' % (len(chunk), max_length))
             bufs.append(chunk)
             cb = dco.unconsumed_tail
         if flush:
@@ -341,7 +341,7 @@ class CompressObjectTestCase(BaseCompressTestCase, unittest.TestCase):
             while chunk:
                 chunk = dco.decompress('', max_length)
                 self.assertFalse(len(chunk) > max_length,
-                            'chunk too big (%d>%d)' % (len(chunk),max_length))
+                            'chunk too big (%d>%d)' % (len(chunk), max_length))
                 bufs.append(chunk)
         self.assertEqual(data, ''.join(bufs), 'Wrong data retrieved')
 
@@ -378,7 +378,7 @@ class CompressObjectTestCase(BaseCompressTestCase, unittest.TestCase):
                 b = obj.flush( sync )
                 c = obj.compress( data[3000:] )
                 d = obj.flush()
-                self.assertEqual(zlib.decompress(''.join([a,b,c,d])),
+                self.assertEqual(zlib.decompress(''.join([a, b, c, d])),
                                  data, ("Decompress failed: flush "
                                         "mode=%i, level=%i") % (sync, level))
                 del obj
@@ -470,8 +470,8 @@ class CompressObjectTestCase(BaseCompressTestCase, unittest.TestCase):
             bufs1.append(c1.flush())
             s1 = ''.join(bufs1)
 
-            self.assertEqual(zlib.decompress(s0),data0+data0)
-            self.assertEqual(zlib.decompress(s1),data0+data1)
+            self.assertEqual(zlib.decompress(s0), data0+data0)
+            self.assertEqual(zlib.decompress(s1), data0+data1)
 
         def test_badcompresscopy(self):
             # Test copying a compression object in an inconsistent state
@@ -499,8 +499,8 @@ class CompressObjectTestCase(BaseCompressTestCase, unittest.TestCase):
             bufs1.append(d1.decompress(comp[32:]))
             s1 = ''.join(bufs1)
 
-            self.assertEqual(s0,s1)
-            self.assertEqual(s0,data)
+            self.assertEqual(s0, s1)
+            self.assertEqual(s0, data)
 
         def test_baddecompresscopy(self):
             # Test copying a compression object in an inconsistent state
@@ -523,7 +523,7 @@ class CompressObjectTestCase(BaseCompressTestCase, unittest.TestCase):
         """
         This is NOT testing for a 'size=_1G + 1024 * 1024', because of the definition of 
         the precisionbigmemtest decorator, which resets the value to 5147, based on 
-        the definition of test_support.real_max_memuse == 0
+        the definition of support.real_max_memuse == 0
         This is the case on my windows installation of python 2.7.3.
         Python 2.7.3 (default, Apr 10 2012, 23:31:26) [MSC v.1500 32 bit (Intel)] on win32
         And on my build of jython 2.7
@@ -544,7 +544,7 @@ def genblock(seed, length, step=1024, generator=random):
         step = length
     blocks = []
     for i in range(0, length, step):
-        blocks.append(''.join([chr(randint(0,255))
+        blocks.append(''.join([chr(randint(0, 255))
                                for x in range(step)]))
     return ''.join(blocks)[:length]
 

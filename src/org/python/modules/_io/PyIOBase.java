@@ -9,6 +9,7 @@ import org.python.core.PyBuffer;
 import org.python.core.PyByteArray;
 import org.python.core.PyException;
 import org.python.core.PyList;
+import org.python.core.PyLong;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -21,11 +22,13 @@ import org.python.core.finalization.FinalizeTrigger;
 import org.python.core.io.FileIO;
 import org.python.core.Traverseproc;
 import org.python.core.Visitproc;
+import org.python.core.io.RawIOBase;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedSet;
 import org.python.expose.ExposedType;
+import org.python.util.FilenoUtil;
 
 /**
  * The Python module <code>_io._IOBase</code>, on which the <code>io</code> module depends directly.
@@ -626,7 +629,10 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
 
             }
 
-            return res.__str__();
+            PyBuffer buf = res.getBuffer(PyBUF.FULL_RO);
+            byte[] bytes = new byte[buf.getLen()];
+            buf.copyTo(bytes, 0);
+            return new PyString(new String(bytes));
         }
 
     }
@@ -645,7 +651,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
     // _IOBase___iter__ = _IOBase___enter__
 
     @Override
-    public PyObject __iternext__() {
+    public PyObject __next__() {
         PyObject line = invoke("readline");
         return (!line.__bool__()) ? null : line;
     }
@@ -664,10 +670,10 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
 
     @ExposedMethod(doc = "x.__next__() <==> next(x)")
     final PyObject _IOBase_next() throws PyException {
-        // Implement directly. Calling __iternext__() fails when PyIOBaseDerived is considered.
+        // Implement directly. Calling __next__() fails when PyIOBaseDerived is considered.
         PyObject line = invoke("readline");
         if (!line.__bool__()) {
-            throw Py.StopIteration("");
+            throw Py.StopIteration();
         }
         return line;
     }
@@ -729,6 +735,23 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
         for (PyObject line : lines.asIterable()) {
             writeMethod.__call__(line);
         }
+    }
+
+    @Override
+    public PyObject __lt__(PyObject other) {
+        return _IOBase___lt__(other);
+    }
+
+    @ExposedMethod
+    final PyObject _IOBase___lt__(PyObject other) {
+        if (other instanceof PyLong) {
+            PyObject fdObj = fileno();
+            Object io = fdObj.__tojava__(RawIOBase.class);
+            if (io != Py.NoConversion) {
+                return Py.newBoolean(FilenoUtil.filenoFrom(((RawIOBase) io).getChannel()) < ((PyLong) other).asInt());
+            }
+        }
+        return fileno().__lt__(other);
     }
 
     @Override

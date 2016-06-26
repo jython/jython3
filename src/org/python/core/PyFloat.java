@@ -4,6 +4,7 @@ package org.python.core;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import org.python.core.stringlib.FloatFormatter;
 import org.python.core.stringlib.InternalFormat;
@@ -227,23 +228,23 @@ public class PyFloat extends PyObject {
     }
 
     @Override
-    public PyString __str__() {
+    public PyUnicode __str__() {
         return float___str__();
     }
 
     @ExposedMethod(doc = BuiltinDocs.float___str___doc)
-    final PyString float___str__() {
-        return Py.newString(formatDouble(SPEC_STR));
+    final PyUnicode float___str__() {
+        return Py.newUnicode(formatDouble(SPEC_STR));
     }
 
     @Override
-    public PyString __repr__() {
+    public PyUnicode __repr__() {
         return float___repr__();
     }
 
     @ExposedMethod(doc = BuiltinDocs.float___repr___doc)
-    final PyString float___repr__() {
-        return Py.newString(formatDouble(SPEC_REPR));
+    final PyUnicode float___repr__() {
+        return Py.newUnicode(formatDouble(SPEC_REPR));
     }
 
     /**
@@ -310,12 +311,21 @@ public class PyFloat extends PyObject {
 
     @Override
     public PyObject __eq__(PyObject other) {
+        return float___eq__(other);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.float___eq___doc)
+    final PyObject float___eq__(PyObject other) {
         // preclude _cmp_unsafe's this == other shortcut because NaN != anything, even
         // itself
         if (Double.isNaN(getValue())) {
             return Py.False;
         }
-        return null;
+        int cmp = __cmp__(other);
+        if (cmp < -1) {
+            return null;
+        }
+        return Py.newBoolean(cmp == 0);
     }
 
     @Override
@@ -346,11 +356,23 @@ public class PyFloat extends PyObject {
 
     @Override
     public PyObject __lt__(PyObject other) {
+        return float___lt__(other);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.float___lt___doc)
+    final PyObject float___lt__(PyObject other) {
         // NaN < anything is always false.
         if (Double.isNaN(getValue())) {
             return Py.False;
         }
-        return null;
+        if (other instanceof PyInteger) {
+           return Py.newBoolean(value < ((PyInteger) other).getValue());
+        } else if (other instanceof PyLong) {
+            return Py.newBoolean(new BigDecimal(value).compareTo(new BigDecimal(((PyLong) other).getValue())) < 0);
+        } else if (other instanceof PyFloat) {
+            return Py.newBoolean(value < ((PyFloat) other).value);
+        }
+        throw Py.TypeError(String.format("unorderable types: %s < %s", getType(), other.getType()));
     }
 
     @Override
@@ -364,12 +386,6 @@ public class PyFloat extends PyObject {
 
     @Override
     public int __cmp__(PyObject other) {
-        return float___cmp__(other);
-    }
-
-    // XXX: needs __doc__
-    @ExposedMethod(type = MethodType.CMP)
-    final int float___cmp__(PyObject other) {
         double i = getValue();
         double j;
 
@@ -388,7 +404,7 @@ public class PyFloat extends PyObject {
             j = ((PyInteger)other).getValue();
         } else if (other instanceof PyLong) {
             BigDecimal v = new BigDecimal(getValue());
-            BigDecimal w = new BigDecimal(((PyLong)other).getValue());
+            BigDecimal w = new BigDecimal(((PyLong) other).getValue());
             return v.compareTo(w);
         } else {
             return -2;

@@ -7,7 +7,7 @@ Still need testing:
 """
 
 import sys
-from test import test_support
+from test import support
 import unittest
 from unittest import TestCase
 import types
@@ -46,8 +46,8 @@ class TestEquality(object):
     # Check for a valid __ne__ implementation
     def test_ne(self):
         for obj_1, obj_2 in self.ne_pairs:
-            self.failIfEqual(obj_1, obj_2)
-            self.failIfEqual(obj_2, obj_1)
+            self.assertNotEqual(obj_1, obj_2)
+            self.assertNotEqual(obj_2, obj_1)
 
 class TestHashing(object):
     # Check for a valid __hash__ implementation
@@ -59,7 +59,7 @@ class TestHashing(object):
                 raise
             except AssertionError:
                 self.fail("%s and %s do not hash equal" % (obj_1, obj_2))
-            except Exception, e:
+            except Exception as e:
                 self.fail("Problem hashing %s and %s: %s" % (obj_1, obj_2, e))
 
         for obj_1, obj_2 in self.ne_pairs:
@@ -69,7 +69,7 @@ class TestHashing(object):
                 raise
             except AssertionError:
                 self.fail("%s and %s hash equal, but shouldn't" % (obj_1, obj_2))
-            except Exception, e:
+            except Exception as e:
                 self.fail("Problem hashing %s and %s: %s" % (obj_1, obj_2, e))
 
 
@@ -141,10 +141,10 @@ class Test_TestLoader(TestCase):
 
         loader = unittest.TestLoader()
         # This has to be false for the test to succeed
-        self.failIf('runTest'.startswith(loader.testMethodPrefix))
+        self.assertFalse('runTest'.startswith(loader.testMethodPrefix))
 
         suite = loader.loadTestsFromTestCase(Foo)
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
         self.assertEqual(list(suite), [Foo('runTest')])
 
     ################################################################
@@ -163,7 +163,7 @@ class Test_TestLoader(TestCase):
 
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromModule(m)
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
 
         expected = [loader.suiteClass([MyTestCase('test')])]
         self.assertEqual(list(suite), expected)
@@ -176,7 +176,7 @@ class Test_TestLoader(TestCase):
 
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromModule(m)
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
         self.assertEqual(list(suite), [])
 
     # "This method searches `module` for classes derived from TestCase"
@@ -190,7 +190,7 @@ class Test_TestLoader(TestCase):
 
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromModule(m)
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
 
         self.assertEqual(list(suite), [loader.suiteClass()])
 
@@ -235,7 +235,7 @@ class Test_TestLoader(TestCase):
 
         try:
             loader.loadTestsFromName('')
-        except ValueError, e:
+        except ValueError as e:
             self.assertEqual(str(e), "Empty module name")
         else:
             self.fail("TestLoader.loadTestsFromName failed to raise ValueError")
@@ -268,7 +268,7 @@ class Test_TestLoader(TestCase):
 
         try:
             loader.loadTestsFromName('sdasfasfasdf')
-        except ImportError, e:
+        except ImportError as e:
             self.assertEqual(str(e), "No module named sdasfasfasdf")
         else:
             self.fail("TestLoader.loadTestsFromName failed to raise ImportError")
@@ -284,7 +284,7 @@ class Test_TestLoader(TestCase):
 
         try:
             loader.loadTestsFromName('unittest.sdasfasfasdf')
-        except AttributeError, e:
+        except AttributeError as e:
             self.assertEqual(str(e), "'module' object has no attribute 'sdasfasfasdf'")
         else:
             self.fail("TestLoader.loadTestsFromName failed to raise AttributeError")
@@ -301,7 +301,7 @@ class Test_TestLoader(TestCase):
 
         try:
             loader.loadTestsFromName('sdasfasfasdf', unittest)
-        except AttributeError, e:
+        except AttributeError as e:
             self.assertEqual(str(e), "'module' object has no attribute 'sdasfasfasdf'")
         else:
             self.fail("TestLoader.loadTestsFromName failed to raise AttributeError")
@@ -322,7 +322,7 @@ class Test_TestLoader(TestCase):
 
         try:
             loader.loadTestsFromName('', unittest)
-        except AttributeError, e:
+        except AttributeError as e:
             pass
         else:
             self.fail("Failed to raise AttributeError")
@@ -402,7 +402,7 @@ class Test_TestLoader(TestCase):
 
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromName('testcase_1', m)
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
         self.assertEqual(list(suite), [MyTestCase('test')])
 
     # "The specifier name is a ``dotted name'' that may resolve either to
@@ -418,7 +418,7 @@ class Test_TestLoader(TestCase):
 
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromName('testsuite', m)
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
 
         self.assertEqual(list(suite), [MyTestCase('test')])
 
@@ -433,7 +433,7 @@ class Test_TestLoader(TestCase):
 
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromName('testcase_1.test', m)
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
 
         self.assertEqual(list(suite), [MyTestCase('test')])
 
@@ -455,7 +455,7 @@ class Test_TestLoader(TestCase):
         loader = unittest.TestLoader()
         try:
             loader.loadTestsFromName('testcase_1.testfoo', m)
-        except AttributeError, e:
+        except AttributeError as e:
             self.assertEqual(str(e), "type object 'MyTestCase' has no attribute 'testfoo'")
         else:
             self.fail("Failed to raise AttributeError")
@@ -472,7 +472,7 @@ class Test_TestLoader(TestCase):
 
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromName('return_TestSuite', m)
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
         self.assertEqual(list(suite), [testcase_1, testcase_2])
 
     # "The specifier name is a ``dotted name'' that may resolve ... to
@@ -486,7 +486,7 @@ class Test_TestLoader(TestCase):
 
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromName('return_TestCase', m)
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
         self.assertEqual(list(suite), [testcase_1])
 
     # "The specifier name is a ``dotted name'' that may resolve ... to
@@ -521,7 +521,7 @@ class Test_TestLoader(TestCase):
         loader = unittest.TestLoader()
 
         suite = loader.loadTestsFromNames([])
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
         self.assertEqual(list(suite), [])
 
     # "Similar to loadTestsFromName(), but takes a sequence of names rather
@@ -536,7 +536,7 @@ class Test_TestLoader(TestCase):
         loader = unittest.TestLoader()
 
         suite = loader.loadTestsFromNames([], unittest)
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
         self.assertEqual(list(suite), [])
 
     # "The specifier name is a ``dotted name'' that may resolve either to
@@ -550,7 +550,7 @@ class Test_TestLoader(TestCase):
 
         try:
             loader.loadTestsFromNames([''])
-        except ValueError, e:
+        except ValueError as e:
             self.assertEqual(str(e), "Empty module name")
         else:
             self.fail("TestLoader.loadTestsFromNames failed to raise ValueError")
@@ -585,7 +585,7 @@ class Test_TestLoader(TestCase):
 
         try:
             loader.loadTestsFromNames(['sdasfasfasdf'])
-        except ImportError, e:
+        except ImportError as e:
             self.assertEqual(str(e), "No module named sdasfasfasdf")
         else:
             self.fail("TestLoader.loadTestsFromNames failed to raise ImportError")
@@ -601,7 +601,7 @@ class Test_TestLoader(TestCase):
 
         try:
             loader.loadTestsFromNames(['unittest.sdasfasfasdf', 'unittest'])
-        except AttributeError, e:
+        except AttributeError as e:
             self.assertEqual(str(e), "'module' object has no attribute 'sdasfasfasdf'")
         else:
             self.fail("TestLoader.loadTestsFromNames failed to raise AttributeError")
@@ -620,7 +620,7 @@ class Test_TestLoader(TestCase):
 
         try:
             loader.loadTestsFromNames(['sdasfasfasdf'], unittest)
-        except AttributeError, e:
+        except AttributeError as e:
             self.assertEqual(str(e), "'module' object has no attribute 'sdasfasfasdf'")
         else:
             self.fail("TestLoader.loadTestsFromName failed to raise AttributeError")
@@ -639,7 +639,7 @@ class Test_TestLoader(TestCase):
 
         try:
             loader.loadTestsFromNames(['TestCase', 'sdasfasfasdf'], unittest)
-        except AttributeError, e:
+        except AttributeError as e:
             self.assertEqual(str(e), "'module' object has no attribute 'sdasfasfasdf'")
         else:
             self.fail("TestLoader.loadTestsFromName failed to raise AttributeError")
@@ -737,7 +737,7 @@ class Test_TestLoader(TestCase):
 
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromNames(['testcase_1'], m)
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
 
         expected = loader.suiteClass([MyTestCase('test')])
         self.assertEqual(list(suite), [expected])
@@ -753,7 +753,7 @@ class Test_TestLoader(TestCase):
 
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromNames(['testsuite'], m)
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
 
         self.assertEqual(list(suite), [m.testsuite])
 
@@ -768,7 +768,7 @@ class Test_TestLoader(TestCase):
 
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromNames(['testcase_1.test'], m)
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
 
         ref_suite = unittest.TestSuite([MyTestCase('test')])
         self.assertEqual(list(suite), [ref_suite])
@@ -788,7 +788,7 @@ class Test_TestLoader(TestCase):
         loader = unittest.TestLoader()
         try:
             loader.loadTestsFromNames(['testcase_1.testfoo'], m)
-        except AttributeError, e:
+        except AttributeError as e:
             self.assertEqual(str(e), "type object 'MyTestCase' has no attribute 'testfoo'")
         else:
             self.fail("Failed to raise AttributeError")
@@ -805,7 +805,7 @@ class Test_TestLoader(TestCase):
 
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromNames(['return_TestSuite'], m)
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
 
         expected = unittest.TestSuite([testcase_1, testcase_2])
         self.assertEqual(list(suite), [expected])
@@ -821,7 +821,7 @@ class Test_TestLoader(TestCase):
 
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromNames(['return_TestCase'], m)
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
 
         ref_suite = unittest.TestSuite([testcase_1])
         self.assertEqual(list(suite), [ref_suite])
@@ -845,7 +845,7 @@ class Test_TestLoader(TestCase):
 
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromNames(['Foo.foo'], m)
-        self.failUnless(isinstance(suite, loader.suiteClass))
+        self.assertTrue(isinstance(suite, loader.suiteClass))
 
         ref_suite = unittest.TestSuite([testcase_1])
         self.assertEqual(list(suite), [ref_suite])
@@ -1038,7 +1038,7 @@ class Test_TestLoader(TestCase):
     # "The default value is 'test'"
     def test_testMethodPrefix__default_value(self):
         loader = unittest.TestLoader()
-        self.failUnless(loader.testMethodPrefix == 'test')
+        self.assertTrue(loader.testMethodPrefix == 'test')
 
     ################################################################
     ### /Tests for TestLoader.testMethodPrefix
@@ -1137,7 +1137,7 @@ class Test_TestLoader(TestCase):
     # "The default value is the built-in cmp() function"
     def test_sortTestMethodsUsing__default_value(self):
         loader = unittest.TestLoader()
-        self.failUnless(loader.sortTestMethodsUsing is cmp)
+        self.assertTrue(loader.sortTestMethodsUsing is cmp)
 
     # "it can be set to None to disable the sort."
     #
@@ -1224,7 +1224,7 @@ class Test_TestLoader(TestCase):
     # "The default value is the TestSuite class"
     def test_suiteClass__default_value(self):
         loader = unittest.TestLoader()
-        self.failUnless(loader.suiteClass is unittest.TestSuite)
+        self.assertTrue(loader.suiteClass is unittest.TestSuite)
 
     ################################################################
     ### /Tests for TestLoader.suiteClass
@@ -1251,14 +1251,14 @@ class Test_TestSuite(TestCase, TestEquality):
 
     # Used by TestEquality.test_eq
     eq_pairs = [(unittest.TestSuite(), unittest.TestSuite())
-               ,(unittest.TestSuite(), unittest.TestSuite([]))
-               ,(_mk_TestSuite('test_1'), _mk_TestSuite('test_1'))]
+               , (unittest.TestSuite(), unittest.TestSuite([]))
+               , (_mk_TestSuite('test_1'), _mk_TestSuite('test_1'))]
 
     # Used by TestEquality.test_ne
     ne_pairs = [(unittest.TestSuite(), _mk_TestSuite('test_1'))
-               ,(unittest.TestSuite([]), _mk_TestSuite('test_1'))
-               ,(_mk_TestSuite('test_1', 'test_2'), _mk_TestSuite('test_1', 'test_3'))
-               ,(_mk_TestSuite('test_1'), _mk_TestSuite('test_2'))]
+               , (unittest.TestSuite([]), _mk_TestSuite('test_1'))
+               , (_mk_TestSuite('test_1', 'test_2'), _mk_TestSuite('test_1', 'test_3'))
+               , (_mk_TestSuite('test_1'), _mk_TestSuite('test_2'))]
 
     ################################################################
     ### /Set up attributes needed by inherited tests
@@ -1637,7 +1637,7 @@ class Test_FunctionTestCase(TestCase):
     def test_id(self):
         test = unittest.FunctionTestCase(lambda: None)
 
-        self.failUnless(isinstance(test.id(), basestring))
+        self.assertTrue(isinstance(test.id(), str))
 
     # "Returns a one-line description of the test, or None if no description
     # has been provided. The default implementation of this method returns
@@ -1669,7 +1669,7 @@ class Test_TestResult(TestCase):
     def test_init(self):
         result = unittest.TestResult()
 
-        self.failUnless(result.wasSuccessful())
+        self.assertTrue(result.wasSuccessful())
         self.assertEqual(len(result.errors), 0)
         self.assertEqual(len(result.failures), 0)
         self.assertEqual(result.testsRun, 0)
@@ -1698,7 +1698,7 @@ class Test_TestResult(TestCase):
 
         result.startTest(test)
 
-        self.failUnless(result.wasSuccessful())
+        self.assertTrue(result.wasSuccessful())
         self.assertEqual(len(result.errors), 0)
         self.assertEqual(len(result.failures), 0)
         self.assertEqual(result.testsRun, 1)
@@ -1719,7 +1719,7 @@ class Test_TestResult(TestCase):
 
         result.startTest(test)
 
-        self.failUnless(result.wasSuccessful())
+        self.assertTrue(result.wasSuccessful())
         self.assertEqual(len(result.errors), 0)
         self.assertEqual(len(result.failures), 0)
         self.assertEqual(result.testsRun, 1)
@@ -1728,7 +1728,7 @@ class Test_TestResult(TestCase):
         result.stopTest(test)
 
         # Same tests as above; make sure nothing has changed
-        self.failUnless(result.wasSuccessful())
+        self.assertTrue(result.wasSuccessful())
         self.assertEqual(len(result.errors), 0)
         self.assertEqual(len(result.failures), 0)
         self.assertEqual(result.testsRun, 1)
@@ -1766,7 +1766,7 @@ class Test_TestResult(TestCase):
         result.addSuccess(test)
         result.stopTest(test)
 
-        self.failUnless(result.wasSuccessful())
+        self.assertTrue(result.wasSuccessful())
         self.assertEqual(len(result.errors), 0)
         self.assertEqual(len(result.failures), 0)
         self.assertEqual(result.testsRun, 1)
@@ -1811,15 +1811,15 @@ class Test_TestResult(TestCase):
         result.addFailure(test, exc_info_tuple)
         result.stopTest(test)
 
-        self.failIf(result.wasSuccessful())
+        self.assertFalse(result.wasSuccessful())
         self.assertEqual(len(result.errors), 0)
         self.assertEqual(len(result.failures), 1)
         self.assertEqual(result.testsRun, 1)
         self.assertEqual(result.shouldStop, False)
 
         test_case, formatted_exc = result.failures[0]
-        self.failUnless(test_case is test)
-        self.failUnless(isinstance(formatted_exc, str))
+        self.assertTrue(test_case is test)
+        self.assertTrue(isinstance(formatted_exc, str))
 
     # "addError(test, err)"
     # ...
@@ -1861,15 +1861,15 @@ class Test_TestResult(TestCase):
         result.addError(test, exc_info_tuple)
         result.stopTest(test)
 
-        self.failIf(result.wasSuccessful())
+        self.assertFalse(result.wasSuccessful())
         self.assertEqual(len(result.errors), 1)
         self.assertEqual(len(result.failures), 0)
         self.assertEqual(result.testsRun, 1)
         self.assertEqual(result.shouldStop, False)
 
         test_case, formatted_exc = result.errors[0]
-        self.failUnless(test_case is test)
-        self.failUnless(isinstance(formatted_exc, str))
+        self.assertTrue(test_case is test)
+        self.assertTrue(isinstance(formatted_exc, str))
 
 ### Support code for Test_TestCase
 ################################################################
@@ -1894,8 +1894,8 @@ class Test_TestCase(TestCase, TestEquality, TestHashing):
 
     # Used by TestEquality.test_ne
     ne_pairs = [(Foo('test1'), Foo('runTest'))
-               ,(Foo('test1'), Bar('test1'))
-               ,(Foo('test1'), Bar('test2'))]
+               , (Foo('test1'), Bar('test1'))
+               , (Foo('test1'), Bar('test2'))]
 
     ################################################################
     ### /Set up attributes used by inherited tests
@@ -2081,7 +2081,7 @@ class Test_TestCase(TestCase, TestEquality, TestHashing):
             def test(self):
                 pass
 
-        self.failUnless(Foo('test').failureException is AssertionError)
+        self.assertTrue(Foo('test').failureException is AssertionError)
 
     # "This class attribute gives the exception raised by the test() method.
     # If a test framework needs to use a specialized exception, possibly to
@@ -2099,7 +2099,7 @@ class Test_TestCase(TestCase, TestEquality, TestHashing):
 
             failureException = RuntimeError
 
-        self.failUnless(Foo('test').failureException is RuntimeError)
+        self.assertTrue(Foo('test').failureException is RuntimeError)
 
 
         Foo('test').run(result)
@@ -2122,7 +2122,7 @@ class Test_TestCase(TestCase, TestEquality, TestHashing):
 
             failureException = RuntimeError
 
-        self.failUnless(Foo('test').failureException is RuntimeError)
+        self.assertTrue(Foo('test').failureException is RuntimeError)
 
 
         Foo('test').run(result)
@@ -2158,7 +2158,7 @@ class Test_TestCase(TestCase, TestEquality, TestHashing):
             def runTest(self):
                 pass
 
-        self.failUnless(isinstance(Foo().id(), basestring))
+        self.assertTrue(isinstance(Foo().id(), str))
 
     # "Returns a one-line description of the test, or None if no description
     # has been provided. The default implementation of this method returns
@@ -2213,23 +2213,23 @@ class Test_TestCase(TestCase, TestEquality, TestHashing):
 
 class Test_Assertions(TestCase):
     def test_AlmostEqual(self):
-        self.failUnlessAlmostEqual(1.00000001, 1.0)
-        self.failIfAlmostEqual(1.0000001, 1.0)
+        self.assertAlmostEqual(1.00000001, 1.0)
+        self.assertNotAlmostEqual(1.0000001, 1.0)
         self.assertRaises(AssertionError,
-                          self.failUnlessAlmostEqual, 1.0000001, 1.0)
+                          self.assertAlmostEqual, 1.0000001, 1.0)
         self.assertRaises(AssertionError,
-                          self.failIfAlmostEqual, 1.00000001, 1.0)
+                          self.assertNotAlmostEqual, 1.00000001, 1.0)
 
-        self.failUnlessAlmostEqual(1.1, 1.0, places=0)
+        self.assertAlmostEqual(1.1, 1.0, places=0)
         self.assertRaises(AssertionError,
-                          self.failUnlessAlmostEqual, 1.1, 1.0, places=1)
+                          self.assertAlmostEqual, 1.1, 1.0, places=1)
 
-        self.failUnlessAlmostEqual(0, .1+.1j, places=0)
-        self.failIfAlmostEqual(0, .1+.1j, places=1)
+        self.assertAlmostEqual(0, .1+.1j, places=0)
+        self.assertNotAlmostEqual(0, .1+.1j, places=1)
         self.assertRaises(AssertionError,
-                          self.failUnlessAlmostEqual, 0, .1+.1j, places=1)
+                          self.assertAlmostEqual, 0, .1+.1j, places=1)
         self.assertRaises(AssertionError,
-                          self.failIfAlmostEqual, 0, .1+.1j, places=0)
+                          self.assertNotAlmostEqual, 0, .1+.1j, places=0)
 
 
 
@@ -2238,7 +2238,7 @@ class Test_Assertions(TestCase):
 ######################################################################
 
 def test_main():
-    test_support.run_unittest(Test_TestCase, Test_TestLoader,
+    support.run_unittest(Test_TestCase, Test_TestLoader,
         Test_TestSuite, Test_TestResult, Test_FunctionTestCase,
         Test_Assertions)
 

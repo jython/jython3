@@ -232,13 +232,13 @@ public class codecs {
         ArgParser ap = new ArgParser("replace_errors", args, kws, "exc");
         PyObject exc = ap.getPyObject(0);
         if (Py.isInstance(exc, Py.UnicodeEncodeError)) {
-            int end = exceptions.getEnd(exc, true);
+            int end = Exceptions.getEnd(exc, true);
             return new PyTuple(new PyUnicode("?"), Py.newInteger(end));
         } else if (Py.isInstance(exc, Py.UnicodeDecodeError)) {
-            int end = exceptions.getEnd(exc, false);
+            int end = Exceptions.getEnd(exc, false);
             return new PyTuple(new PyUnicode(Py_UNICODE_REPLACEMENT_CHARACTER), Py.newInteger(end));
         } else if (Py.isInstance(exc, Py.UnicodeTranslateError)) {
-            int end = exceptions.getEnd(exc, true);
+            int end = Exceptions.getEnd(exc, true);
             return new PyTuple(new PyUnicode(Py_UNICODE_REPLACEMENT_CHARACTER), Py.newInteger(end));
         }
         throw wrong_exception_type(exc);
@@ -1559,14 +1559,16 @@ public class codecs {
 
         // Handle the two special cases "ignore" and "replace" locally
         if (errors != null) {
-            if (errors.equals(IGNORE)) {
-                // Just skip to the first non-problem byte
-                return end;
-            } else if (errors.equals(REPLACE)) {
-                // Insert *one* Unicode replacement character and skip
-                partialDecode.appendCodePoint(Py_UNICODE_REPLACEMENT_CHARACTER);
-                return end;
-            }
+            partialDecode.appendCodePoint(Py_UNICODE_REPLACEMENT_CHARACTER);
+            return end;
+//            if (errors.equals(IGNORE)) {
+//                // Just skip to the first non-problem byte
+//                return end;
+//            } else if (errors.equals(REPLACE)) {
+//                // Insert *one* Unicode replacement character and skip
+//                partialDecode.appendCodePoint(Py_UNICODE_REPLACEMENT_CHARACTER);
+//                return end;
+//            }
         }
 
         // If errors not one of those, invoke the generic mechanism
@@ -1615,7 +1617,7 @@ public class codecs {
      */
     private static void checkErrorHandlerReturn(String errors, PyObject replacementSpec) {
         if (!(replacementSpec instanceof PyTuple) || replacementSpec.__len__() != 2
-                || !(replacementSpec.__getitem__(0) instanceof PyBaseString)
+                || !(replacementSpec.__getitem__(0) instanceof PyString)
                 || !(replacementSpec.__getitem__(1) instanceof PyInteger)) {
             throw new PyException(Py.TypeError, "error_handler " + errors
                     + " must return a tuple of (replacement, new position)");
@@ -1692,8 +1694,8 @@ public class codecs {
         }
 
         public PyTuple lookup(String encoding) {
-            PyString v = new PyString(normalizestring(encoding));
-            PyObject cached = searchCache.__finditem__(v);
+            String normalizedEncoding = normalizestring(encoding);
+            PyObject cached = searchCache.__finditem__(normalizedEncoding);
             if (cached != null) {
                 return (PyTuple)cached;
             }
@@ -1703,6 +1705,7 @@ public class codecs {
                         "no codec search functions registered: can't find encoding '" + encoding + "'");
             }
 
+            PyString v = new PyString(normalizedEncoding);
             for (PyObject func : searchPath.asIterable()) {
                 PyObject created = func.__call__(v);
                 if (created == Py.None) {

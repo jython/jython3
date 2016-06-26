@@ -4,6 +4,990 @@ package org.python.core;
 
 public class BuiltinDocs {
 
+    // Docs for <module 'builtins' (built-in)>
+    public final static String builtins_ArithmeticError_doc = 
+        "Base class for arithmetic errors.";
+
+    public final static String builtins_AssertionError_doc = 
+        "Assertion failed.";
+
+    public final static String builtins_AttributeError_doc = 
+        "Attribute not found.";
+
+    public final static String builtins_BaseException_doc = 
+        "Common base class for all exceptions";
+
+    public final static String builtins_BlockingIOError_doc = 
+        "I/O operation would block.";
+
+    public final static String builtins_BrokenPipeError_doc = 
+        "Broken pipe.";
+
+    public final static String builtins_BufferError_doc = 
+        "Buffer error.";
+
+    public final static String builtins_BytesWarning_doc = 
+        "Base class for warnings about bytes and buffer related problems, mostly\n" + 
+        "related to conversion from str or comparing to str.";
+
+    public final static String builtins_ChildProcessError_doc = 
+        "Child process error.";
+
+    public final static String builtins_ConnectionAbortedError_doc = 
+        "Connection aborted.";
+
+    public final static String builtins_ConnectionError_doc = 
+        "Connection error.";
+
+    public final static String builtins_ConnectionRefusedError_doc = 
+        "Connection refused.";
+
+    public final static String builtins_ConnectionResetError_doc = 
+        "Connection reset.";
+
+    public final static String builtins_DeprecationWarning_doc = 
+        "Base class for warnings about deprecated features.";
+
+    public final static String builtins_EOFError_doc = 
+        "Read beyond end of file.";
+
+    public final static String builtins_Ellipsis_doc = 
+        "";
+
+    public final static String builtins_EnvironmentError_doc = 
+        "Base class for I/O related errors.";
+
+    public final static String builtins_Exception_doc = 
+        "Common base class for all non-exit exceptions.";
+
+    public final static String builtins_False_doc = 
+        "bool(x) -> bool\n" + 
+        "\n" + 
+        "Returns True when the argument x is true, False otherwise.\n" + 
+        "The builtins True and False are the only two instances of the class bool.\n" + 
+        "The class bool is a subclass of the class int, and cannot be subclassed.";
+
+    public final static String builtins_FileExistsError_doc = 
+        "File already exists.";
+
+    public final static String builtins_FileNotFoundError_doc = 
+        "File not found.";
+
+    public final static String builtins_FloatingPointError_doc = 
+        "Floating point operation failed.";
+
+    public final static String builtins_FutureWarning_doc = 
+        "Base class for warnings about constructs that will change semantically\n" + 
+        "in the future.";
+
+    public final static String builtins_GeneratorExit_doc = 
+        "Request that a generator exit.";
+
+    public final static String builtins_IOError_doc = 
+        "Base class for I/O related errors.";
+
+    public final static String builtins_ImportError_doc = 
+        "Import can't find module, or can't find name in module.";
+
+    public final static String builtins_ImportWarning_doc = 
+        "Base class for warnings about probable mistakes in module imports";
+
+    public final static String builtins_IndentationError_doc = 
+        "Improper indentation.";
+
+    public final static String builtins_IndexError_doc = 
+        "Sequence index out of range.";
+
+    public final static String builtins_InterruptedError_doc = 
+        "Interrupted by signal.";
+
+    public final static String builtins_IsADirectoryError_doc = 
+        "Operation doesn't work on directories.";
+
+    public final static String builtins_KeyError_doc = 
+        "Mapping key not found.";
+
+    public final static String builtins_KeyboardInterrupt_doc = 
+        "Program interrupted by user.";
+
+    public final static String builtins_LookupError_doc = 
+        "Base class for lookup errors.";
+
+    public final static String builtins_MemoryError_doc = 
+        "Out of memory.";
+
+    public final static String builtins_NameError_doc = 
+        "Name not found globally.";
+
+    public final static String builtins_None_doc = 
+        "";
+
+    public final static String builtins_NotADirectoryError_doc = 
+        "Operation only works on directories.";
+
+    public final static String builtins_NotImplemented_doc = 
+        "";
+
+    public final static String builtins_NotImplementedError_doc = 
+        "Method or function hasn't been implemented yet.";
+
+    public final static String builtins_OSError_doc = 
+        "Base class for I/O related errors.";
+
+    public final static String builtins_OverflowError_doc = 
+        "Result too large to be represented.";
+
+    public final static String builtins_PendingDeprecationWarning_doc = 
+        "Base class for warnings about features which will be deprecated\n" + 
+        "in the future.";
+
+    public final static String builtins_PermissionError_doc = 
+        "Not enough permissions.";
+
+    public final static String builtins_ProcessLookupError_doc = 
+        "Process not found.";
+
+    public final static String builtins_RecursionError_doc = 
+        "Recursion limit exceeded.";
+
+    public final static String builtins_ReferenceError_doc = 
+        "Weak ref proxy used after referent went away.";
+
+    public final static String builtins_ResourceWarning_doc = 
+        "Base class for warnings about resource usage.";
+
+    public final static String builtins_RuntimeError_doc = 
+        "Unspecified run-time error.";
+
+    public final static String builtins_RuntimeWarning_doc = 
+        "Base class for warnings about dubious runtime behavior.";
+
+    public final static String builtins_StopAsyncIteration_doc = 
+        "Signal the end from iterator.__anext__().";
+
+    public final static String builtins_StopIteration_doc = 
+        "Signal the end from iterator.__next__().";
+
+    public final static String builtins_SyntaxError_doc = 
+        "Invalid syntax.";
+
+    public final static String builtins_SyntaxWarning_doc = 
+        "Base class for warnings about dubious syntax.";
+
+    public final static String builtins_SystemError_doc = 
+        "Internal error in the Python interpreter.\n" + 
+        "\n" + 
+        "Please report this to the Python maintainer, along with the traceback,\n" + 
+        "the Python version, and the hardware/OS platform and version.";
+
+    public final static String builtins_SystemExit_doc = 
+        "Request to exit from the interpreter.";
+
+    public final static String builtins_TabError_doc = 
+        "Improper mixture of spaces and tabs.";
+
+    public final static String builtins_TimeoutError_doc = 
+        "Timeout expired.";
+
+    public final static String builtins_True_doc = 
+        "bool(x) -> bool\n" + 
+        "\n" + 
+        "Returns True when the argument x is true, False otherwise.\n" + 
+        "The builtins True and False are the only two instances of the class bool.\n" + 
+        "The class bool is a subclass of the class int, and cannot be subclassed.";
+
+    public final static String builtins_TypeError_doc = 
+        "Inappropriate argument type.";
+
+    public final static String builtins_UnboundLocalError_doc = 
+        "Local name referenced but not bound to a value.";
+
+    public final static String builtins_UnicodeDecodeError_doc = 
+        "Unicode decoding error.";
+
+    public final static String builtins_UnicodeEncodeError_doc = 
+        "Unicode encoding error.";
+
+    public final static String builtins_UnicodeError_doc = 
+        "Unicode related error.";
+
+    public final static String builtins_UnicodeTranslateError_doc = 
+        "Unicode translation error.";
+
+    public final static String builtins_UnicodeWarning_doc = 
+        "Base class for warnings about Unicode related problems, mostly\n" + 
+        "related to conversion problems.";
+
+    public final static String builtins_UserWarning_doc = 
+        "Base class for warnings generated by user code.";
+
+    public final static String builtins_ValueError_doc = 
+        "Inappropriate argument value (of correct type).";
+
+    public final static String builtins_Warning_doc = 
+        "Base class for warning categories.";
+
+    public final static String builtins_ZeroDivisionError_doc = 
+        "Second argument to a division or modulo operation was zero.";
+
+    public final static String builtins___build_class___doc = 
+        "__build_class__(func, name, *bases, metaclass=None, **kwds) -> class\n" + 
+        "\n" + 
+        "Internal helper function used by the class statement.";
+
+    public final static String builtins___debug___doc = 
+        "bool(x) -> bool\n" + 
+        "\n" + 
+        "Returns True when the argument x is true, False otherwise.\n" + 
+        "The builtins True and False are the only two instances of the class bool.\n" + 
+        "The class bool is a subclass of the class int, and cannot be subclassed.";
+
+    public final static String builtins_doc = 
+        "Built-in functions, exceptions, and other objects.\n" + 
+        "\n" + 
+        "Noteworthy: None is the `nil' object; Ellipsis represents `...' in slices.";
+
+    public final static String builtins___import___doc = 
+        "__import__(name, globals=None, locals=None, fromlist=(), level=0) -> module\n" + 
+        "\n" + 
+        "Import a module. Because this function is meant for use by the Python\n" + 
+        "interpreter and not for general use it is better to use\n" + 
+        "importlib.import_module() to programmatically import a module.\n" + 
+        "\n" + 
+        "The globals argument is only used to determine the context;\n" + 
+        "they are not modified.  The locals argument is unused.  The fromlist\n" + 
+        "should be a list of names to emulate ``from name import ...'', or an\n" + 
+        "empty list to emulate ``import name''.\n" + 
+        "When importing a module from a package, note that __import__('A.B', ...)\n" + 
+        "returns package A when fromlist is empty, but its submodule B when\n" + 
+        "fromlist is not empty.  Level is used to determine whether to perform \n" + 
+        "absolute or relative imports. 0 is absolute while a positive number\n" + 
+        "is the number of parent directories to search relative to the current module.";
+
+    public final static String builtins___loader___doc = 
+        "Meta path import for built-in modules.\n" + 
+        "\n" + 
+        "    All methods are either class or static methods to avoid the need to\n" + 
+        "    instantiate the class.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String builtins___name___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String builtins___package___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String builtins___spec___doc = 
+        "The specification for a module, used for loading.\n" + 
+        "\n" + 
+        "    A module's spec is the source for information about the module.  For\n" + 
+        "    data associated with the module, including source, use the spec's\n" + 
+        "    loader.\n" + 
+        "\n" + 
+        "    `name` is the absolute name of the module.  `loader` is the loader\n" + 
+        "    to use when loading the module.  `parent` is the name of the\n" + 
+        "    package the module is in.  The parent is derived from the name.\n" + 
+        "\n" + 
+        "    `is_package` determines if the module is considered a package or\n" + 
+        "    not.  On modules this is reflected by the `__path__` attribute.\n" + 
+        "\n" + 
+        "    `origin` is the specific location used by the loader from which to\n" + 
+        "    load the module, if that information is available.  When filename is\n" + 
+        "    set, origin will match.\n" + 
+        "\n" + 
+        "    `has_location` indicates that a spec's \"origin\" reflects a location.\n" + 
+        "    When this is True, `__file__` attribute of the module is set.\n" + 
+        "\n" + 
+        "    `cached` is the location of the cached bytecode file, if any.  It\n" + 
+        "    corresponds to the `__cached__` attribute.\n" + 
+        "\n" + 
+        "    `submodule_search_locations` is the sequence of path entries to\n" + 
+        "    search when importing submodules.  If set, is_package should be\n" + 
+        "    True--and False otherwise.\n" + 
+        "\n" + 
+        "    Packages are simply modules that (may) have submodules.  If a spec\n" + 
+        "    has a non-None value in `submodule_search_locations`, the import\n" + 
+        "    system will consider modules loaded from the spec as packages.\n" + 
+        "\n" + 
+        "    Only finders (see importlib.abc.MetaPathFinder and\n" + 
+        "    importlib.abc.PathEntryFinder) should modify ModuleSpec instances.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String builtins_abs_doc = 
+        "Return the absolute value of the argument.";
+
+    public final static String builtins_all_doc = 
+        "Return True if bool(x) is True for all values x in the iterable.\n" + 
+        "\n" + 
+        "If the iterable is empty, return True.";
+
+    public final static String builtins_any_doc = 
+        "Return True if bool(x) is True for any x in the iterable.\n" + 
+        "\n" + 
+        "If the iterable is empty, return False.";
+
+    public final static String builtins_ascii_doc = 
+        "Return an ASCII-only representation of an object.\n" + 
+        "\n" + 
+        "As repr(), return a string containing a printable representation of an\n" + 
+        "object, but escape the non-ASCII characters in the string returned by\n" + 
+        "repr() using \\\\x, \\\\u or \\\\U escapes. This generates a string similar\n" + 
+        "to that returned by repr() in Python 2.";
+
+    public final static String builtins_bin_doc = 
+        "Return the binary representation of an integer.\n" + 
+        "\n" + 
+        "   >>> bin(2796202)\n" + 
+        "   '0b1010101010101010101010'";
+
+    public final static String builtins_bool_doc = 
+        "bool(x) -> bool\n" + 
+        "\n" + 
+        "Returns True when the argument x is true, False otherwise.\n" + 
+        "The builtins True and False are the only two instances of the class bool.\n" + 
+        "The class bool is a subclass of the class int, and cannot be subclassed.";
+
+    public final static String builtins_bytearray_doc = 
+        "bytearray(iterable_of_ints) -> bytearray\n" + 
+        "bytearray(string, encoding[, errors]) -> bytearray\n" + 
+        "bytearray(bytes_or_buffer) -> mutable copy of bytes_or_buffer\n" + 
+        "bytearray(int) -> bytes array of size given by the parameter initialized with null bytes\n" + 
+        "bytearray() -> empty bytes array\n" + 
+        "\n" + 
+        "Construct an mutable bytearray object from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - a bytes or a buffer object\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String builtins_bytes_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String builtins_callable_doc = 
+        "Return whether the object is callable (i.e., some kind of function).\n" + 
+        "\n" + 
+        "Note that classes are callable, as are instances of classes with a\n" + 
+        "__call__() method.";
+
+    public final static String builtins_chr_doc = 
+        "Return a Unicode string of one character with ordinal i; 0 <= i <= 0x10ffff.";
+
+    public final static String builtins_classmethod_doc = 
+        "classmethod(function) -> method\n" + 
+        "\n" + 
+        "Convert a function to be a class method.\n" + 
+        "\n" + 
+        "A class method receives the class as implicit first argument,\n" + 
+        "just like an instance method receives the instance.\n" + 
+        "To declare a class method, use this idiom:\n" + 
+        "\n" + 
+        "  class C:\n" + 
+        "      def f(cls, arg1, arg2, ...): ...\n" + 
+        "      f = classmethod(f)\n" + 
+        "\n" + 
+        "It can be called either on the class (e.g. C.f()) or on an instance\n" + 
+        "(e.g. C().f()).  The instance is ignored except for its class.\n" + 
+        "If a class method is called for a derived class, the derived class\n" + 
+        "object is passed as the implied first argument.\n" + 
+        "\n" + 
+        "Class methods are different than C++ or Java static methods.\n" + 
+        "If you want those, see the staticmethod builtin.";
+
+    public final static String builtins_compile_doc = 
+        "Compile source into a code object that can be executed by exec() or eval().\n" + 
+        "\n" + 
+        "The source code may represent a Python module, statement or expression.\n" + 
+        "The filename will be used for run-time error messages.\n" + 
+        "The mode must be 'exec' to compile a module, 'single' to compile a\n" + 
+        "single (interactive) statement, or 'eval' to compile an expression.\n" + 
+        "The flags argument, if present, controls which future statements influence\n" + 
+        "the compilation of the code.\n" + 
+        "The dont_inherit argument, if true, stops the compilation inheriting\n" + 
+        "the effects of any future statements in effect in the code calling\n" + 
+        "compile; if absent or false these statements do influence the compilation,\n" + 
+        "in addition to any features explicitly specified.";
+
+    public final static String builtins_complex_doc = 
+        "complex(real[, imag]) -> complex number\n" + 
+        "\n" + 
+        "Create a complex number from a real part and an optional imaginary part.\n" + 
+        "This is equivalent to (real + imag*1j) where imag defaults to 0.";
+
+    public final static String builtins_copyright_doc = 
+        "interactive prompt objects for printing the license text, a list of\n" + 
+        "    contributors and the copyright notice.";
+
+    public final static String builtins_credits_doc = 
+        "interactive prompt objects for printing the license text, a list of\n" + 
+        "    contributors and the copyright notice.";
+
+    public final static String builtins_delattr_doc = 
+        "Deletes the named attribute from the given object.\n" + 
+        "\n" + 
+        "delattr(x, 'y') is equivalent to ``del x.y''";
+
+    public final static String builtins_dict_doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String builtins_dir_doc = 
+        "dir([object]) -> list of strings\n" + 
+        "\n" + 
+        "If called without an argument, return the names in the current scope.\n" + 
+        "Else, return an alphabetized list of names comprising (some of) the attributes\n" + 
+        "of the given object, and of attributes reachable from it.\n" + 
+        "If the object supplies a method named __dir__, it will be used; otherwise\n" + 
+        "the default dir() logic is used and returns:\n" + 
+        "  for a module object: the module's attributes.\n" + 
+        "  for a class object:  its attributes, and recursively the attributes\n" + 
+        "    of its bases.\n" + 
+        "  for any other object: its attributes, its class's attributes, and\n" + 
+        "    recursively the attributes of its class's base classes.";
+
+    public final static String builtins_divmod_doc = 
+        "Return the tuple ((x-x%y)/y, x%y).  Invariant: div*y + mod == x.";
+
+    public final static String builtins_enumerate_doc = 
+        "enumerate(iterable[, start]) -> iterator for index, value of iterable\n" + 
+        "\n" + 
+        "Return an enumerate object.  iterable must be another object that supports\n" + 
+        "iteration.  The enumerate object yields pairs containing a count (from\n" + 
+        "start, which defaults to zero) and a value yielded by the iterable argument.\n" + 
+        "enumerate is useful for obtaining an indexed list:\n" + 
+        "    (0, seq[0]), (1, seq[1]), (2, seq[2]), ...";
+
+    public final static String builtins_eval_doc = 
+        "Evaluate the given source in the context of globals and locals.\n" + 
+        "\n" + 
+        "The source may be a string representing a Python expression\n" + 
+        "or a code object as returned by compile().\n" + 
+        "The globals must be a dictionary and locals can be any mapping,\n" + 
+        "defaulting to the current globals and locals.\n" + 
+        "If only globals is given, locals defaults to it.";
+
+    public final static String builtins_exec_doc = 
+        "Execute the given source in the context of globals and locals.\n" + 
+        "\n" + 
+        "The source may be a string representing one or more Python statements\n" + 
+        "or a code object as returned by compile().\n" + 
+        "The globals must be a dictionary and locals can be any mapping,\n" + 
+        "defaulting to the current globals and locals.\n" + 
+        "If only globals is given, locals defaults to it.";
+
+    public final static String builtins_exit_doc = 
+        "";
+
+    public final static String builtins_filter_doc = 
+        "filter(function or None, iterable) --> filter object\n" + 
+        "\n" + 
+        "Return an iterator yielding those items of iterable for which function(item)\n" + 
+        "is true. If function is None, return the items that are true.";
+
+    public final static String builtins_float_doc = 
+        "float(x) -> floating point number\n" + 
+        "\n" + 
+        "Convert a string or number to a floating point number, if possible.";
+
+    public final static String builtins_format_doc = 
+        "Return value.__format__(format_spec)\n" + 
+        "\n" + 
+        "format_spec defaults to the empty string";
+
+    public final static String builtins_frozenset_doc = 
+        "frozenset() -> empty frozenset object\n" + 
+        "frozenset(iterable) -> frozenset object\n" + 
+        "\n" + 
+        "Build an immutable unordered collection of unique elements.";
+
+    public final static String builtins_getattr_doc = 
+        "getattr(object, name[, default]) -> value\n" + 
+        "\n" + 
+        "Get a named attribute from an object; getattr(x, 'y') is equivalent to x.y.\n" + 
+        "When a default argument is given, it is returned when the attribute doesn't\n" + 
+        "exist; without it, an exception is raised in that case.";
+
+    public final static String builtins_globals_doc = 
+        "Return the dictionary containing the current scope's global variables.\n" + 
+        "\n" + 
+        "NOTE: Updates to this dictionary *will* affect name lookups in the current\n" + 
+        "global scope and vice-versa.";
+
+    public final static String builtins_hasattr_doc = 
+        "Return whether the object has an attribute with the given name.\n" + 
+        "\n" + 
+        "This is done by calling getattr(obj, name) and catching AttributeError.";
+
+    public final static String builtins_hash_doc = 
+        "Return the hash value for the given object.\n" + 
+        "\n" + 
+        "Two objects that compare equal must also have the same hash value, but the\n" + 
+        "reverse is not necessarily true.";
+
+    public final static String builtins_help_doc = 
+        "Define the builtin 'help'.\n" + 
+        "\n" + 
+        "    This is a wrapper around pydoc.help that provides a helpful message\n" + 
+        "    when 'help' is typed at the Python interactive prompt.\n" + 
+        "\n" + 
+        "    Calling help() at the Python prompt starts an interactive help session.\n" + 
+        "    Calling help(thing) prints help for the python object 'thing'.\n" + 
+        "    ";
+
+    public final static String builtins_hex_doc = 
+        "Return the hexadecimal representation of an integer.\n" + 
+        "\n" + 
+        "   >>> hex(12648430)\n" + 
+        "   '0xc0ffee'";
+
+    public final static String builtins_id_doc = 
+        "Return the identity of an object.\n" + 
+        "\n" + 
+        "This is guaranteed to be unique among simultaneously existing objects.\n" + 
+        "(CPython uses the object's memory address.)";
+
+    public final static String builtins_input_doc = 
+        "Read a string from standard input.  The trailing newline is stripped.\n" + 
+        "\n" + 
+        "The prompt string, if given, is printed to standard output without a\n" + 
+        "trailing newline before reading input.\n" + 
+        "\n" + 
+        "If the user hits EOF (*nix: Ctrl-D, Windows: Ctrl-Z+Return), raise EOFError.\n" + 
+        "On *nix systems, readline is used if available.";
+
+    public final static String builtins_int_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String builtins_isinstance_doc = 
+        "Return whether an object is an instance of a class or of a subclass thereof.\n" + 
+        "\n" + 
+        "A tuple, as in ``isinstance(x, (A, B, ...))``, may be given as the target to\n" + 
+        "check against. This is equivalent to ``isinstance(x, A) or isinstance(x, B)\n" + 
+        "or ...`` etc.";
+
+    public final static String builtins_issubclass_doc = 
+        "Return whether 'cls' is a derived from another class or is the same class.\n" + 
+        "\n" + 
+        "A tuple, as in ``issubclass(x, (A, B, ...))``, may be given as the target to\n" + 
+        "check against. This is equivalent to ``issubclass(x, A) or issubclass(x, B)\n" + 
+        "or ...`` etc.";
+
+    public final static String builtins_iter_doc = 
+        "iter(iterable) -> iterator\n" + 
+        "iter(callable, sentinel) -> iterator\n" + 
+        "\n" + 
+        "Get an iterator from an object.  In the first form, the argument must\n" + 
+        "supply its own iterator, or be a sequence.\n" + 
+        "In the second form, the callable is called until it returns the sentinel.";
+
+    public final static String builtins_len_doc = 
+        "Return the number of items in a container.";
+
+    public final static String builtins_license_doc = 
+        "interactive prompt objects for printing the license text, a list of\n" + 
+        "    contributors and the copyright notice.";
+
+    public final static String builtins_list_doc = 
+        "list() -> new empty list\n" + 
+        "list(iterable) -> new list initialized from iterable's items";
+
+    public final static String builtins_locals_doc = 
+        "Return a dictionary containing the current scope's local variables.\n" + 
+        "\n" + 
+        "NOTE: Whether or not updates to this dictionary will affect name lookups in\n" + 
+        "the local scope and vice-versa is *implementation dependent* and not\n" + 
+        "covered by any backwards compatibility guarantees.";
+
+    public final static String builtins_map_doc = 
+        "map(func, *iterables) --> map object\n" + 
+        "\n" + 
+        "Make an iterator that computes the function using arguments from\n" + 
+        "each of the iterables.  Stops when the shortest iterable is exhausted.";
+
+    public final static String builtins_max_doc = 
+        "max(iterable, *[, default=obj, key=func]) -> value\n" + 
+        "max(arg1, arg2, *args, *[, key=func]) -> value\n" + 
+        "\n" + 
+        "With a single iterable argument, return its biggest item. The\n" + 
+        "default keyword-only argument specifies an object to return if\n" + 
+        "the provided iterable is empty.\n" + 
+        "With two or more arguments, return the largest argument.";
+
+    public final static String builtins_memoryview_doc = 
+        "Create a new memoryview object which references the given object.";
+
+    public final static String builtins_min_doc = 
+        "min(iterable, *[, default=obj, key=func]) -> value\n" + 
+        "min(arg1, arg2, *args, *[, key=func]) -> value\n" + 
+        "\n" + 
+        "With a single iterable argument, return its smallest item. The\n" + 
+        "default keyword-only argument specifies an object to return if\n" + 
+        "the provided iterable is empty.\n" + 
+        "With two or more arguments, return the smallest argument.";
+
+    public final static String builtins_next_doc = 
+        "next(iterator[, default])\n" + 
+        "\n" + 
+        "Return the next item from the iterator. If default is given and the iterator\n" + 
+        "is exhausted, it is returned instead of raising StopIteration.";
+
+    public final static String builtins_object_doc = 
+        "The most base type";
+
+    public final static String builtins_oct_doc = 
+        "Return the octal representation of an integer.\n" + 
+        "\n" + 
+        "   >>> oct(342391)\n" + 
+        "   '0o1234567'";
+
+    public final static String builtins_open_doc = 
+        "Open file and return a stream.  Raise IOError upon failure.\n" + 
+        "\n" + 
+        "file is either a text or byte string giving the name (and the path\n" + 
+        "if the file isn't in the current working directory) of the file to\n" + 
+        "be opened or an integer file descriptor of the file to be\n" + 
+        "wrapped. (If a file descriptor is given, it is closed when the\n" + 
+        "returned I/O object is closed, unless closefd is set to False.)\n" + 
+        "\n" + 
+        "mode is an optional string that specifies the mode in which the file\n" + 
+        "is opened. It defaults to 'r' which means open for reading in text\n" + 
+        "mode.  Other common values are 'w' for writing (truncating the file if\n" + 
+        "it already exists), 'x' for creating and writing to a new file, and\n" + 
+        "'a' for appending (which on some Unix systems, means that all writes\n" + 
+        "append to the end of the file regardless of the current seek position).\n" + 
+        "In text mode, if encoding is not specified the encoding used is platform\n" + 
+        "dependent: locale.getpreferredencoding(False) is called to get the\n" + 
+        "current locale encoding. (For reading and writing raw bytes use binary\n" + 
+        "mode and leave encoding unspecified.) The available modes are:\n" + 
+        "\n" + 
+        "========= ===============================================================\n" + 
+        "Character Meaning\n" + 
+        "--------- ---------------------------------------------------------------\n" + 
+        "'r'       open for reading (default)\n" + 
+        "'w'       open for writing, truncating the file first\n" + 
+        "'x'       create a new file and open it for writing\n" + 
+        "'a'       open for writing, appending to the end of the file if it exists\n" + 
+        "'b'       binary mode\n" + 
+        "'t'       text mode (default)\n" + 
+        "'+'       open a disk file for updating (reading and writing)\n" + 
+        "'U'       universal newline mode (deprecated)\n" + 
+        "========= ===============================================================\n" + 
+        "\n" + 
+        "The default mode is 'rt' (open for reading text). For binary random\n" + 
+        "access, the mode 'w+b' opens and truncates the file to 0 bytes, while\n" + 
+        "'r+b' opens the file without truncation. The 'x' mode implies 'w' and\n" + 
+        "raises an `FileExistsError` if the file already exists.\n" + 
+        "\n" + 
+        "Python distinguishes between files opened in binary and text modes,\n" + 
+        "even when the underlying operating system doesn't. Files opened in\n" + 
+        "binary mode (appending 'b' to the mode argument) return contents as\n" + 
+        "bytes objects without any decoding. In text mode (the default, or when\n" + 
+        "'t' is appended to the mode argument), the contents of the file are\n" + 
+        "returned as strings, the bytes having been first decoded using a\n" + 
+        "platform-dependent encoding or using the specified encoding if given.\n" + 
+        "\n" + 
+        "'U' mode is deprecated and will raise an exception in future versions\n" + 
+        "of Python.  It has no effect in Python 3.  Use newline to control\n" + 
+        "universal newlines mode.\n" + 
+        "\n" + 
+        "buffering is an optional integer used to set the buffering policy.\n" + 
+        "Pass 0 to switch buffering off (only allowed in binary mode), 1 to select\n" + 
+        "line buffering (only usable in text mode), and an integer > 1 to indicate\n" + 
+        "the size of a fixed-size chunk buffer.  When no buffering argument is\n" + 
+        "given, the default buffering policy works as follows:\n" + 
+        "\n" + 
+        "* Binary files are buffered in fixed-size chunks; the size of the buffer\n" + 
+        "  is chosen using a heuristic trying to determine the underlying device's\n" + 
+        "  \"block size\" and falling back on `io.DEFAULT_BUFFER_SIZE`.\n" + 
+        "  On many systems, the buffer will typically be 4096 or 8192 bytes long.\n" + 
+        "\n" + 
+        "* \"Interactive\" text files (files for which isatty() returns True)\n" + 
+        "  use line buffering.  Other text files use the policy described above\n" + 
+        "  for binary files.\n" + 
+        "\n" + 
+        "encoding is the name of the encoding used to decode or encode the\n" + 
+        "file. This should only be used in text mode. The default encoding is\n" + 
+        "platform dependent, but any encoding supported by Python can be\n" + 
+        "passed.  See the codecs module for the list of supported encodings.\n" + 
+        "\n" + 
+        "errors is an optional string that specifies how encoding errors are to\n" + 
+        "be handled---this argument should not be used in binary mode. Pass\n" + 
+        "'strict' to raise a ValueError exception if there is an encoding error\n" + 
+        "(the default of None has the same effect), or pass 'ignore' to ignore\n" + 
+        "errors. (Note that ignoring encoding errors can lead to data loss.)\n" + 
+        "See the documentation for codecs.register or run 'help(codecs.Codec)'\n" + 
+        "for a list of the permitted encoding error strings.\n" + 
+        "\n" + 
+        "newline controls how universal newlines works (it only applies to text\n" + 
+        "mode). It can be None, '', '\\n', '\\r', and '\\r\\n'.  It works as\n" + 
+        "follows:\n" + 
+        "\n" + 
+        "* On input, if newline is None, universal newlines mode is\n" + 
+        "  enabled. Lines in the input can end in '\\n', '\\r', or '\\r\\n', and\n" + 
+        "  these are translated into '\\n' before being returned to the\n" + 
+        "  caller. If it is '', universal newline mode is enabled, but line\n" + 
+        "  endings are returned to the caller untranslated. If it has any of\n" + 
+        "  the other legal values, input lines are only terminated by the given\n" + 
+        "  string, and the line ending is returned to the caller untranslated.\n" + 
+        "\n" + 
+        "* On output, if newline is None, any '\\n' characters written are\n" + 
+        "  translated to the system default line separator, os.linesep. If\n" + 
+        "  newline is '' or '\\n', no translation takes place. If newline is any\n" + 
+        "  of the other legal values, any '\\n' characters written are translated\n" + 
+        "  to the given string.\n" + 
+        "\n" + 
+        "If closefd is False, the underlying file descriptor will be kept open\n" + 
+        "when the file is closed. This does not work when a file name is given\n" + 
+        "and must be True in that case.\n" + 
+        "\n" + 
+        "A custom opener can be used by passing a callable as *opener*. The\n" + 
+        "underlying file descriptor for the file object is then obtained by\n" + 
+        "calling *opener* with (*file*, *flags*). *opener* must return an open\n" + 
+        "file descriptor (passing os.open as *opener* results in functionality\n" + 
+        "similar to passing None).\n" + 
+        "\n" + 
+        "open() returns a file object whose type depends on the mode, and\n" + 
+        "through which the standard file operations such as reading and writing\n" + 
+        "are performed. When open() is used to open a file in a text mode ('w',\n" + 
+        "'r', 'wt', 'rt', etc.), it returns a TextIOWrapper. When used to open\n" + 
+        "a file in a binary mode, the returned class varies: in read binary\n" + 
+        "mode, it returns a BufferedReader; in write binary and append binary\n" + 
+        "modes, it returns a BufferedWriter, and in read/write mode, it returns\n" + 
+        "a BufferedRandom.\n" + 
+        "\n" + 
+        "It is also possible to use a string or bytearray as a file for both\n" + 
+        "reading and writing. For strings StringIO can be used like a file\n" + 
+        "opened in a text mode, and for bytes a BytesIO can be used like a file\n" + 
+        "opened in a binary mode.";
+
+    public final static String builtins_ord_doc = 
+        "Return the Unicode code point for a one-character string.";
+
+    public final static String builtins_pow_doc = 
+        "Equivalent to x**y (with two arguments) or x**y % z (with three arguments)\n" + 
+        "\n" + 
+        "Some types, such as ints, are able to use a more efficient algorithm when\n" + 
+        "invoked using the three argument form.";
+
+    public final static String builtins_print_doc = 
+        "print(value, ..., sep=' ', end='\\n', file=sys.stdout, flush=False)\n" + 
+        "\n" + 
+        "Prints the values to a stream, or to sys.stdout by default.\n" + 
+        "Optional keyword arguments:\n" + 
+        "file:  a file-like object (stream); defaults to the current sys.stdout.\n" + 
+        "sep:   string inserted between values, default a space.\n" + 
+        "end:   string appended after the last value, default a newline.\n" + 
+        "flush: whether to forcibly flush the stream.";
+
+    public final static String builtins_property_doc = 
+        "property(fget=None, fset=None, fdel=None, doc=None) -> property attribute\n" + 
+        "\n" + 
+        "fget is a function to be used for getting an attribute value, and likewise\n" + 
+        "fset is a function for setting, and fdel a function for del'ing, an\n" + 
+        "attribute.  Typical use is to define a managed attribute x:\n" + 
+        "\n" + 
+        "class C(object):\n" + 
+        "    def getx(self): return self._x\n" + 
+        "    def setx(self, value): self._x = value\n" + 
+        "    def delx(self): del self._x\n" + 
+        "    x = property(getx, setx, delx, \"I'm the 'x' property.\")\n" + 
+        "\n" + 
+        "Decorators make defining new properties or modifying existing ones easy:\n" + 
+        "\n" + 
+        "class C(object):\n" + 
+        "    @property\n" + 
+        "    def x(self):\n" + 
+        "        \"I am the 'x' property.\"\n" + 
+        "        return self._x\n" + 
+        "    @x.setter\n" + 
+        "    def x(self, value):\n" + 
+        "        self._x = value\n" + 
+        "    @x.deleter\n" + 
+        "    def x(self):\n" + 
+        "        del self._x\n" + 
+        "";
+
+    public final static String builtins_quit_doc = 
+        "";
+
+    public final static String builtins_range_doc = 
+        "range(stop) -> range object\n" + 
+        "range(start, stop[, step]) -> range object\n" + 
+        "\n" + 
+        "Return an object that produces a sequence of integers from start (inclusive)\n" + 
+        "to stop (exclusive) by step.  range(i, j) produces i, i+1, i+2, ..., j-1.\n" + 
+        "start defaults to 0, and stop is omitted!  range(4) produces 0, 1, 2, 3.\n" + 
+        "These are exactly the valid indices for a list of 4 elements.\n" + 
+        "When step is given, it specifies the increment (or decrement).";
+
+    public final static String builtins_repr_doc = 
+        "Return the canonical string representation of the object.\n" + 
+        "\n" + 
+        "For many object types, including most builtins, eval(repr(obj)) == obj.";
+
+    public final static String builtins_reversed_doc = 
+        "reversed(sequence) -> reverse iterator over values of the sequence\n" + 
+        "\n" + 
+        "Return a reverse iterator";
+
+    public final static String builtins_round_doc = 
+        "round(number[, ndigits]) -> number\n" + 
+        "\n" + 
+        "Round a number to a given precision in decimal digits (default 0 digits).\n" + 
+        "This returns an int when called with one argument, otherwise the\n" + 
+        "same type as the number. ndigits may be negative.";
+
+    public final static String builtins_set_doc = 
+        "set() -> new empty set object\n" + 
+        "set(iterable) -> new set object\n" + 
+        "\n" + 
+        "Build an unordered collection of unique elements.";
+
+    public final static String builtins_setattr_doc = 
+        "Sets the named attribute on the given object to the specified value.\n" + 
+        "\n" + 
+        "setattr(x, 'y', v) is equivalent to ``x.y = v''";
+
+    public final static String builtins_slice_doc = 
+        "slice(stop)\n" + 
+        "slice(start, stop[, step])\n" + 
+        "\n" + 
+        "Create a slice object.  This is used for extended slicing (e.g. a[0:10:2]).";
+
+    public final static String builtins_sorted_doc = 
+        "Return a new list containing all items from the iterable in ascending order.\n" + 
+        "\n" + 
+        "A custom key function can be supplied to customise the sort order, and the\n" + 
+        "reverse flag can be set to request the result in descending order.";
+
+    public final static String builtins_staticmethod_doc = 
+        "staticmethod(function) -> method\n" + 
+        "\n" + 
+        "Convert a function to be a static method.\n" + 
+        "\n" + 
+        "A static method does not receive an implicit first argument.\n" + 
+        "To declare a static method, use this idiom:\n" + 
+        "\n" + 
+        "     class C:\n" + 
+        "     def f(arg1, arg2, ...): ...\n" + 
+        "     f = staticmethod(f)\n" + 
+        "\n" + 
+        "It can be called either on the class (e.g. C.f()) or on an instance\n" + 
+        "(e.g. C().f()).  The instance is ignored except for its class.\n" + 
+        "\n" + 
+        "Static methods in Python are similar to those found in Java or C++.\n" + 
+        "For a more advanced concept, see the classmethod builtin.";
+
+    public final static String builtins_str_doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String builtins_sum_doc = 
+        "Return the sum of a 'start' value (default: 0) plus an iterable of numbers\n" + 
+        "\n" + 
+        "When the iterable is empty, return the start value.\n" + 
+        "This function is intended specifically for use with numeric values and may\n" + 
+        "reject non-numeric types.";
+
+    public final static String builtins_super_doc = 
+        "super() -> same as super(__class__, <first argument>)\n" + 
+        "super(type) -> unbound super object\n" + 
+        "super(type, obj) -> bound super object; requires isinstance(obj, type)\n" + 
+        "super(type, type2) -> bound super object; requires issubclass(type2, type)\n" + 
+        "Typical use to call a cooperative superclass method:\n" + 
+        "class C(B):\n" + 
+        "    def meth(self, arg):\n" + 
+        "        super().meth(arg)\n" + 
+        "This works for class methods too:\n" + 
+        "class C(B):\n" + 
+        "    @classmethod\n" + 
+        "    def cmeth(cls, arg):\n" + 
+        "        super().cmeth(arg)\n" + 
+        "";
+
+    public final static String builtins_tuple_doc = 
+        "tuple() -> empty tuple\n" + 
+        "tuple(iterable) -> tuple initialized from iterable's items\n" + 
+        "\n" + 
+        "If the argument is a tuple, the return value is the same object.";
+
+    public final static String builtins_type_doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String builtins_vars_doc = 
+        "vars([object]) -> dictionary\n" + 
+        "\n" + 
+        "Without arguments, equivalent to locals().\n" + 
+        "With an argument, equivalent to object.__dict__.";
+
+    public final static String builtins_zip_doc = 
+        "zip(iter1 [,iter2 [...]]) --> zip object\n" + 
+        "\n" + 
+        "Return a zip object whose .__next__() method returns a tuple where\n" + 
+        "the i-th element comes from the i-th iterable argument.  The .__next__()\n" + 
+        "method continues until the shortest iterable in the argument sequence\n" + 
+        "is exhausted and then it raises StopIteration.";
+
     // Docs for <class 'object'>
     public final static String object___class___doc = 
         "type(object_or_name, bases, dict)\n" + 
@@ -393,6 +1377,9 @@ public class BuiltinDocs {
     public final static String bytes___lt___doc = 
         "Return self<value.";
 
+    public final static String bytes___mod___doc = 
+        "Return self%value.";
+
     public final static String bytes___mul___doc = 
         "Return self*value.n";
 
@@ -411,6 +1398,9 @@ public class BuiltinDocs {
     public final static String bytes___repr___doc = 
         "Return repr(self).";
 
+    public final static String bytes___rmod___doc = 
+        "Return value%self.";
+
     public final static String bytes___rmul___doc = 
         "Return self*value.";
 
@@ -418,7 +1408,8 @@ public class BuiltinDocs {
         "Implement setattr(self, name, value).";
 
     public final static String bytes___sizeof___doc = 
-        "B.__sizeof__() -> size of B in memory, in bytes";
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
 
     public final static String bytes___str___doc = 
         "Return str(self).";
@@ -452,14 +1443,16 @@ public class BuiltinDocs {
         "as in slice notation.";
 
     public final static String bytes_decode_doc = 
-        "B.decode(encoding='utf-8', errors='strict') -> str\n" + 
+        "Decode the bytes using the codec registered for encoding.\n" + 
         "\n" + 
-        "Decode B using the codec registered for encoding. Default encoding\n" + 
-        "is 'utf-8'. errors may be given to set a different error\n" + 
-        "handling scheme.  Default is 'strict' meaning that encoding errors raise\n" + 
-        "a UnicodeDecodeError.  Other possible values are 'ignore' and 'replace'\n" + 
-        "as well as any other name registerd with codecs.register_error that is\n" + 
-        "able to handle UnicodeDecodeErrors.";
+        "  encoding\n" + 
+        "    The encoding with which to decode the bytes.\n" + 
+        "  errors\n" + 
+        "    The error handling scheme to use for the handling of decoding errors.\n" + 
+        "    The default is 'strict' meaning that decoding errors raise a\n" + 
+        "    UnicodeDecodeError. Other possible values are 'ignore' and 'replace'\n" + 
+        "    as well as any other name registered with codecs.register_error that\n" + 
+        "    can handle UnicodeDecodeErrors.";
 
     public final static String bytes_endswith_doc = 
         "B.endswith(suffix[, start[, end]]) -> bool\n" + 
@@ -485,11 +1478,16 @@ public class BuiltinDocs {
         "Return -1 on failure.";
 
     public final static String bytes_fromhex_doc = 
-        "bytes.fromhex(string) -> bytes\n" + 
-        "\n" + 
         "Create a bytes object from a string of hexadecimal numbers.\n" + 
+        "\n" + 
         "Spaces between two numbers are accepted.\n" + 
-        "Example: bytes.fromhex('B9 01EF') -> b'\\xb9\\x01\\xef'.";
+        "Example: bytes.fromhex('B9 01EF') -> b'\\\\xb9\\\\x01\\\\xef'.";
+
+    public final static String bytes_hex_doc = 
+        "B.hex() -> string\n" + 
+        "\n" + 
+        "Create a string of hexadecimal numbers from a bytes object.\n" + 
+        "Example: b'\\xb9\\x01\\xef'.hex() -> 'b901ef'.";
 
     public final static String bytes_index_doc = 
         "B.index(sub[, start[, end]]) -> int\n" + 
@@ -541,9 +1539,12 @@ public class BuiltinDocs {
         "at least one cased character in B, False otherwise.";
 
     public final static String bytes_join_doc = 
-        "B.join(iterable_of_bytes) -> bytes\n" + 
+        "Concatenate any number of bytes objects.\n" + 
         "\n" + 
-        "Concatenate any number of bytes objects, with B in between each pair.\n" + 
+        "The bytes whose method is called is inserted in between each pair.\n" + 
+        "\n" + 
+        "The result is returned as a new bytes object.\n" + 
+        "\n" + 
         "Example: b'.'.join([b'ab', b'pq', b'rs']) -> b'ab.pq.rs'.";
 
     public final static String bytes_ljust_doc = 
@@ -558,32 +1559,37 @@ public class BuiltinDocs {
         "Return a copy of B with all ASCII characters converted to lowercase.";
 
     public final static String bytes_lstrip_doc = 
-        "B.lstrip([bytes]) -> bytes\n" + 
-        "\n" + 
         "Strip leading bytes contained in the argument.\n" + 
-        "If the argument is omitted, strip leading ASCII whitespace.";
+        "\n" + 
+        "If the argument is omitted or None, strip leading  ASCII whitespace.";
 
     public final static String bytes_maketrans_doc = 
-        "B.maketrans(frm, to) -> translation table\n" + 
+        "Return a translation table useable for the bytes or bytearray translate method.\n" + 
         "\n" + 
-        "Return a translation table (a bytes object of length 256) suitable\n" + 
-        "for use in the bytes or bytearray translate method where each byte\n" + 
-        "in frm is mapped to the byte at the same position in to.\n" + 
+        "The returned table will be one where each byte in frm is mapped to the byte at\n" + 
+        "the same position in to.\n" + 
+        "\n" + 
         "The bytes objects frm and to must be of the same length.";
 
     public final static String bytes_partition_doc = 
-        "B.partition(sep) -> (head, sep, tail)\n" + 
+        "Partition the bytes into three parts using the given separator.\n" + 
         "\n" + 
-        "Search for the separator sep in B, and return the part before it,\n" + 
-        "the separator itself, and the part after it.  If the separator is not\n" + 
-        "found, returns B and two empty bytes objects.";
+        "This will search for the separator sep in the bytes. If the separator is found,\n" + 
+        "returns a 3-tuple containing the part before the separator, the separator\n" + 
+        "itself, and the part after it.\n" + 
+        "\n" + 
+        "If the separator is not found, returns a 3-tuple containing the original bytes\n" + 
+        "object and two empty bytes objects.";
 
     public final static String bytes_replace_doc = 
-        "B.replace(old, new[, count]) -> bytes\n" + 
+        "Return a copy with all occurrences of substring old replaced by new.\n" + 
         "\n" + 
-        "Return a copy of B with all occurrences of subsection\n" + 
-        "old replaced by new.  If the optional argument count is\n" + 
-        "given, only first count occurances are replaced.";
+        "  count\n" + 
+        "    Maximum number of occurrences to replace.\n" + 
+        "    -1 (the default value) means replace all occurrences.\n" + 
+        "\n" + 
+        "If the optional argument count is given, only the first count occurrences are\n" + 
+        "replaced.";
 
     public final static String bytes_rfind_doc = 
         "B.rfind(sub[, start[, end]]) -> int\n" + 
@@ -606,42 +1612,49 @@ public class BuiltinDocs {
         "done using the specified fill character (default is a space)";
 
     public final static String bytes_rpartition_doc = 
-        "B.rpartition(sep) -> (head, sep, tail)\n" + 
+        "Partition the bytes into three parts using the given separator.\n" + 
         "\n" + 
-        "Search for the separator sep in B, starting at the end of B,\n" + 
-        "and return the part before it, the separator itself, and the\n" + 
-        "part after it.  If the separator is not found, returns two empty\n" + 
-        "bytes objects and B.";
+        "This will search for the separator sep in the bytes, starting and the end. If\n" + 
+        "the separator is found, returns a 3-tuple containing the part before the\n" + 
+        "separator, the separator itself, and the part after it.\n" + 
+        "\n" + 
+        "If the separator is not found, returns a 3-tuple containing two empty bytes\n" + 
+        "objects and the original bytes object.";
 
     public final static String bytes_rsplit_doc = 
-        "B.rsplit(sep=None, maxsplit=-1) -> list of bytes\n" + 
+        "Return a list of the sections in the bytes, using sep as the delimiter.\n" + 
         "\n" + 
-        "Return a list of the sections in B, using sep as the delimiter,\n" + 
-        "starting at the end of B and working to the front.\n" + 
-        "If sep is not given, B is split on ASCII whitespace characters\n" + 
-        "(space, tab, return, newline, formfeed, vertical tab).\n" + 
-        "If maxsplit is given, at most maxsplit splits are done.";
+        "  sep\n" + 
+        "    The delimiter according which to split the bytes.\n" + 
+        "    None (the default value) means split on ASCII whitespace characters\n" + 
+        "    (space, tab, return, newline, formfeed, vertical tab).\n" + 
+        "  maxsplit\n" + 
+        "    Maximum number of splits to do.\n" + 
+        "    -1 (the default value) means no limit.\n" + 
+        "\n" + 
+        "Splitting is done starting at the end of the bytes and working to the front.";
 
     public final static String bytes_rstrip_doc = 
-        "B.rstrip([bytes]) -> bytes\n" + 
-        "\n" + 
         "Strip trailing bytes contained in the argument.\n" + 
-        "If the argument is omitted, strip trailing ASCII whitespace.";
+        "\n" + 
+        "If the argument is omitted or None, strip trailing ASCII whitespace.";
 
     public final static String bytes_split_doc = 
-        "B.split(sep=None, maxsplit=-1) -> list of bytes\n" + 
+        "Return a list of the sections in the bytes, using sep as the delimiter.\n" + 
         "\n" + 
-        "Return a list of the sections in B, using sep as the delimiter.\n" + 
-        "If sep is not specified or is None, B is split on ASCII whitespace\n" + 
-        "characters (space, tab, return, newline, formfeed, vertical tab).\n" + 
-        "If maxsplit is given, at most maxsplit splits are done.";
+        "  sep\n" + 
+        "    The delimiter according which to split the bytes.\n" + 
+        "    None (the default value) means split on ASCII whitespace characters\n" + 
+        "    (space, tab, return, newline, formfeed, vertical tab).\n" + 
+        "  maxsplit\n" + 
+        "    Maximum number of splits to do.\n" + 
+        "    -1 (the default value) means no limit.";
 
     public final static String bytes_splitlines_doc = 
-        "B.splitlines([keepends]) -> list of lines\n" + 
+        "Return a list of the lines in the bytes, breaking at line boundaries.\n" + 
         "\n" + 
-        "Return a list of the lines in B, breaking at line boundaries.\n" + 
-        "Line breaks are not included in the resulting list unless keepends\n" + 
-        "is given and true.";
+        "Line breaks are not included in the resulting list unless keepends is given and\n" + 
+        "true.";
 
     public final static String bytes_startswith_doc = 
         "B.startswith(prefix[, start[, end]]) -> bool\n" + 
@@ -652,10 +1665,9 @@ public class BuiltinDocs {
         "prefix can also be a tuple of bytes to try.";
 
     public final static String bytes_strip_doc = 
-        "B.strip([bytes]) -> bytes\n" + 
-        "\n" + 
         "Strip leading and trailing bytes contained in the argument.\n" + 
-        "If the argument is omitted, strip leading and trailing ASCII whitespace.";
+        "\n" + 
+        "If the argument is omitted or None, strip leading and trailing ASCII whitespace.";
 
     public final static String bytes_swapcase_doc = 
         "B.swapcase() -> copy of B\n" + 
@@ -670,12 +1682,14 @@ public class BuiltinDocs {
         "characters, all remaining cased characters have lowercase.";
 
     public final static String bytes_translate_doc = 
-        "B.translate(table[, deletechars]) -> bytes\n" + 
+        "translate(table, [deletechars])\n" + 
+        "Return a copy with each character mapped by the given translation table.\n" + 
         "\n" + 
-        "Return a copy of B, where all characters occurring in the\n" + 
-        "optional argument deletechars are removed, and the remaining\n" + 
-        "characters have been mapped through the given translation\n" + 
-        "table, which must be a bytes object of length 256.";
+        "  table\n" + 
+        "    Translation table, which must be a bytes object of length 256.\n" + 
+        "\n" + 
+        "All characters occurring in the optional argument deletechars are removed.\n" + 
+        "The remaining characters are mapped through the given translation table.";
 
     public final static String bytes_upper_doc = 
         "B.upper() -> copy of B\n" + 
@@ -1820,9 +2834,7 @@ public class BuiltinDocs {
         "\n" + 
         "Return the integer represented by the given array of bytes.\n" + 
         "\n" + 
-        "The bytes argument must either support the buffer protocol or be an\n" + 
-        "iterable object producing bytes.  Bytes and bytearray are examples of\n" + 
-        "built-in objects that support the buffer protocol.\n" + 
+        "The bytes argument must be a bytes-like object (e.g. bytes or bytearray).\n" + 
         "\n" + 
         "The byteorder argument determines the byte order used to represent the\n" + 
         "integer.  If byteorder is 'big', the most significant byte is at the\n" + 
@@ -1950,7 +2962,8 @@ public class BuiltinDocs {
         "Implement setattr(self, name, value).";
 
     public final static String tuple___sizeof___doc = 
-        "T.__sizeof__() -- size of T in memory, in bytes";
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
 
     public final static String tuple___str___doc = 
         "Return str(self).";
@@ -2370,11 +3383,12 @@ public class BuiltinDocs {
     public final static String str_translate_doc = 
         "S.translate(table) -> str\n" + 
         "\n" + 
-        "Return a copy of the string S, where all characters have been mapped\n" + 
-        "through the given translation table, which must be a mapping of\n" + 
-        "Unicode ordinals to Unicode ordinals, strings, or None.\n" + 
-        "Unmapped characters are left untouched. Characters mapped to None\n" + 
-        "are deleted.";
+        "Return a copy of the string S in which each character has been mapped\n" + 
+        "through the given translation table. The table must implement\n" + 
+        "lookup/indexing via __getitem__, for instance a dictionary or list,\n" + 
+        "mapping Unicode ordinals to Unicode ordinals, strings, or None. If\n" + 
+        "this operation raises LookupError, the character is left untouched.\n" + 
+        "Characters mapped to None are deleted.";
 
     public final static String str_upper_doc = 
         "S.upper() -> str\n" + 
@@ -2539,7 +3553,11 @@ public class BuiltinDocs {
         "range(stop) -> range object\n" + 
         "range(start, stop[, step]) -> range object\n" + 
         "\n" + 
-        "Return a sequence of numbers from start to stop by step.";
+        "Return an object that produces a sequence of integers from start (inclusive)\n" + 
+        "to stop (exclusive) by step.  range(i, j) produces i, i+1, i+2, ..., j-1.\n" + 
+        "start defaults to 0, and stop is omitted!  range(4) produces 0, 1, 2, 3.\n" + 
+        "These are exactly the valid indices for a list of 4 elements.\n" + 
+        "When step is given, it specifies the increment (or decrement).";
 
     public final static String range___eq___doc = 
         "Return self==value.";
@@ -3010,9 +4028,7 @@ public class BuiltinDocs {
         "\n" + 
         "Return the integer represented by the given array of bytes.\n" + 
         "\n" + 
-        "The bytes argument must either support the buffer protocol or be an\n" + 
-        "iterable object producing bytes.  Bytes and bytearray are examples of\n" + 
-        "built-in objects that support the buffer protocol.\n" + 
+        "The bytes argument must be a bytes-like object (e.g. bytes or bytearray).\n" + 
         "\n" + 
         "The byteorder argument determines the byte order used to represent the\n" + 
         "integer.  If byteorder is 'big', the most significant byte is at the\n" + 
@@ -3677,6 +4693,9 @@ public class BuiltinDocs {
     public final static String bytearray___lt___doc = 
         "Return self<value.";
 
+    public final static String bytearray___mod___doc = 
+        "Return self%value.";
+
     public final static String bytearray___mul___doc = 
         "Return self*value.n";
 
@@ -3695,6 +4714,9 @@ public class BuiltinDocs {
     public final static String bytearray___repr___doc = 
         "Return repr(self).";
 
+    public final static String bytearray___rmod___doc = 
+        "Return value%self.";
+
     public final static String bytearray___rmul___doc = 
         "Return self*value.";
 
@@ -3705,9 +4727,7 @@ public class BuiltinDocs {
         "Set self[key] to value.";
 
     public final static String bytearray___sizeof___doc = 
-        "B.__sizeof__() -> int\n" + 
-        " \n" + 
-        "Returns the size of B in memory, in bytes";
+        "Returns the size of the bytearray object in memory, in bytes.";
 
     public final static String bytearray___str___doc = 
         "Return str(self).";
@@ -3722,9 +4742,10 @@ public class BuiltinDocs {
         "";
 
     public final static String bytearray_append_doc = 
-        "B.append(int) -> None\n" + 
+        "Append a single item to the end of the bytearray.\n" + 
         "\n" + 
-        "Append a single item to the end of B.";
+        "  item\n" + 
+        "    The item to be appended.";
 
     public final static String bytearray_capitalize_doc = 
         "B.capitalize() -> copy of B\n" + 
@@ -3739,13 +4760,9 @@ public class BuiltinDocs {
         "done using the specified fill character (default is a space).";
 
     public final static String bytearray_clear_doc = 
-        "B.clear() -> None\n" + 
-        "\n" + 
-        "Remove all items from B.";
+        "Remove all items from the bytearray.";
 
     public final static String bytearray_copy_doc = 
-        "B.copy() -> bytearray\n" + 
-        "\n" + 
         "Return a copy of B.";
 
     public final static String bytearray_count_doc = 
@@ -3756,14 +4773,16 @@ public class BuiltinDocs {
         "as in slice notation.";
 
     public final static String bytearray_decode_doc = 
-        "B.decode(encoding='utf-8', errors='strict') -> str\n" + 
+        "Decode the bytearray using the codec registered for encoding.\n" + 
         "\n" + 
-        "Decode B using the codec registered for encoding. Default encoding\n" + 
-        "is 'utf-8'. errors may be given to set a different error\n" + 
-        "handling scheme.  Default is 'strict' meaning that encoding errors raise\n" + 
-        "a UnicodeDecodeError.  Other possible values are 'ignore' and 'replace'\n" + 
-        "as well as any other name registered with codecs.register_error that is\n" + 
-        "able to handle UnicodeDecodeErrors.";
+        "  encoding\n" + 
+        "    The encoding with which to decode the bytearray.\n" + 
+        "  errors\n" + 
+        "    The error handling scheme to use for the handling of decoding errors.\n" + 
+        "    The default is 'strict' meaning that decoding errors raise a\n" + 
+        "    UnicodeDecodeError. Other possible values are 'ignore' and 'replace'\n" + 
+        "    as well as any other name registered with codecs.register_error that\n" + 
+        "    can handle UnicodeDecodeErrors.";
 
     public final static String bytearray_endswith_doc = 
         "B.endswith(suffix[, start[, end]]) -> bool\n" + 
@@ -3780,10 +4799,10 @@ public class BuiltinDocs {
         "If tabsize is not given, a tab size of 8 characters is assumed.";
 
     public final static String bytearray_extend_doc = 
-        "B.extend(iterable_of_ints) -> None\n" + 
+        "Append all the items from the iterator or sequence to the end of the bytearray.\n" + 
         "\n" + 
-        "Append all the elements from the iterator or sequence to the\n" + 
-        "end of B.";
+        "  iterable_of_ints\n" + 
+        "    The iterable of items to append.";
 
     public final static String bytearray_find_doc = 
         "B.find(sub[, start[, end]]) -> int\n" + 
@@ -3795,11 +4814,16 @@ public class BuiltinDocs {
         "Return -1 on failure.";
 
     public final static String bytearray_fromhex_doc = 
-        "bytearray.fromhex(string) -> bytearray (static method)\n" + 
-        "\n" + 
         "Create a bytearray object from a string of hexadecimal numbers.\n" + 
+        "\n" + 
         "Spaces between two numbers are accepted.\n" + 
-        "Example: bytearray.fromhex('B9 01EF') -> bytearray(b'\\xb9\\x01\\xef').";
+        "Example: bytearray.fromhex('B9 01EF') -> bytearray(b'\\\\xb9\\\\x01\\\\xef')";
+
+    public final static String bytearray_hex_doc = 
+        "B.hex() -> string\n" + 
+        "\n" + 
+        "Create a string of hexadecimal numbers from a bytearray object.\n" + 
+        "Example: bytearray([0xb9, 0x01, 0xef]).hex() -> 'b901ef'.";
 
     public final static String bytearray_index_doc = 
         "B.index(sub[, start[, end]]) -> int\n" + 
@@ -3807,9 +4831,12 @@ public class BuiltinDocs {
         "Like B.find() but raise ValueError when the subsection is not found.";
 
     public final static String bytearray_insert_doc = 
-        "B.insert(index, int) -> None\n" + 
+        "Insert a single item into the bytearray before the given index.\n" + 
         "\n" + 
-        "Insert a single item into the bytearray before the given index.";
+        "  index\n" + 
+        "    The index where the value is to be inserted.\n" + 
+        "  item\n" + 
+        "    The item to be inserted.";
 
     public final static String bytearray_isalnum_doc = 
         "B.isalnum() -> bool\n" + 
@@ -3856,10 +4883,11 @@ public class BuiltinDocs {
         "at least one cased character in B, False otherwise.";
 
     public final static String bytearray_join_doc = 
-        "B.join(iterable_of_bytes) -> bytearray\n" + 
+        "Concatenate any number of bytes/bytearray objects.\n" + 
         "\n" + 
-        "Concatenate any number of bytes/bytearray objects, with B\n" + 
-        "in between each pair, and return the result as a new bytearray.";
+        "The bytearray whose method is called is inserted in between each pair.\n" + 
+        "\n" + 
+        "The result is returned as a new bytearray object.";
 
     public final static String bytearray_ljust_doc = 
         "B.ljust(width[, fillchar]) -> copy of B\n" + 
@@ -3873,48 +4901,54 @@ public class BuiltinDocs {
         "Return a copy of B with all ASCII characters converted to lowercase.";
 
     public final static String bytearray_lstrip_doc = 
-        "B.lstrip([bytes]) -> bytearray\n" + 
+        "Strip leading bytes contained in the argument.\n" + 
         "\n" + 
-        "Strip leading bytes contained in the argument\n" + 
-        "and return the result as a new bytearray.\n" + 
-        "If the argument is omitted, strip leading ASCII whitespace.";
+        "If the argument is omitted or None, strip leading ASCII whitespace.";
 
     public final static String bytearray_maketrans_doc = 
-        "B.maketrans(frm, to) -> translation table\n" + 
+        "Return a translation table useable for the bytes or bytearray translate method.\n" + 
         "\n" + 
-        "Return a translation table (a bytes object of length 256) suitable\n" + 
-        "for use in the bytes or bytearray translate method where each byte\n" + 
-        "in frm is mapped to the byte at the same position in to.\n" + 
+        "The returned table will be one where each byte in frm is mapped to the byte at\n" + 
+        "the same position in to.\n" + 
+        "\n" + 
         "The bytes objects frm and to must be of the same length.";
 
     public final static String bytearray_partition_doc = 
-        "B.partition(sep) -> (head, sep, tail)\n" + 
+        "Partition the bytearray into three parts using the given separator.\n" + 
         "\n" + 
-        "Search for the separator sep in B, and return the part before it,\n" + 
-        "the separator itself, and the part after it.  If the separator is not\n" + 
-        "found, returns B and two empty bytearray objects.";
+        "This will search for the separator sep in the bytearray. If the separator is\n" + 
+        "found, returns a 3-tuple containing the part before the separator, the\n" + 
+        "separator itself, and the part after it.\n" + 
+        "\n" + 
+        "If the separator is not found, returns a 3-tuple containing the original\n" + 
+        "bytearray object and two empty bytearray objects.";
 
     public final static String bytearray_pop_doc = 
-        "B.pop([index]) -> int\n" + 
+        "Remove and return a single item from B.\n" + 
         "\n" + 
-        "Remove and return a single item from B. If no index\n" + 
-        "argument is given, will pop the last value.";
+        "  index\n" + 
+        "    The index from where to remove the item.\n" + 
+        "    -1 (the default value) means remove the last item.\n" + 
+        "\n" + 
+        "If no index argument is given, will pop the last item.";
 
     public final static String bytearray_remove_doc = 
-        "B.remove(int) -> None\n" + 
+        "Remove the first occurrence of a value in the bytearray.\n" + 
         "\n" + 
-        "Remove the first occurrence of a value in B.";
+        "  value\n" + 
+        "    The value to remove.";
 
     public final static String bytearray_replace_doc = 
-        "B.replace(old, new[, count]) -> bytearray\n" + 
+        "Return a copy with all occurrences of substring old replaced by new.\n" + 
         "\n" + 
-        "Return a copy of B with all occurrences of subsection\n" + 
-        "old replaced by new.  If the optional argument count is\n" + 
-        "given, only the first count occurrences are replaced.";
+        "  count\n" + 
+        "    Maximum number of occurrences to replace.\n" + 
+        "    -1 (the default value) means replace all occurrences.\n" + 
+        "\n" + 
+        "If the optional argument count is given, only the first count occurrences are\n" + 
+        "replaced.";
 
     public final static String bytearray_reverse_doc = 
-        "B.reverse() -> None\n" + 
-        "\n" + 
         "Reverse the order of the values in B in place.";
 
     public final static String bytearray_rfind_doc = 
@@ -3938,43 +4972,49 @@ public class BuiltinDocs {
         "done using the specified fill character (default is a space)";
 
     public final static String bytearray_rpartition_doc = 
-        "B.rpartition(sep) -> (head, sep, tail)\n" + 
+        "Partition the bytes into three parts using the given separator.\n" + 
         "\n" + 
-        "Search for the separator sep in B, starting at the end of B,\n" + 
-        "and return the part before it, the separator itself, and the\n" + 
-        "part after it.  If the separator is not found, returns two empty\n" + 
-        "bytearray objects and B.";
+        "This will search for the separator sep in the bytearray, starting and the end.\n" + 
+        "If the separator is found, returns a 3-tuple containing the part before the\n" + 
+        "separator, the separator itself, and the part after it.\n" + 
+        "\n" + 
+        "If the separator is not found, returns a 3-tuple containing two empty bytearray\n" + 
+        "objects and the original bytearray object.";
 
     public final static String bytearray_rsplit_doc = 
-        "B.rsplit(sep=None, maxsplit=-1) -> list of bytearrays\n" + 
+        "Return a list of the sections in the bytearray, using sep as the delimiter.\n" + 
         "\n" + 
-        "Return a list of the sections in B, using sep as the delimiter,\n" + 
-        "starting at the end of B and working to the front.\n" + 
-        "If sep is not given, B is split on ASCII whitespace characters\n" + 
-        "(space, tab, return, newline, formfeed, vertical tab).\n" + 
-        "If maxsplit is given, at most maxsplit splits are done.";
+        "  sep\n" + 
+        "    The delimiter according which to split the bytearray.\n" + 
+        "    None (the default value) means split on ASCII whitespace characters\n" + 
+        "    (space, tab, return, newline, formfeed, vertical tab).\n" + 
+        "  maxsplit\n" + 
+        "    Maximum number of splits to do.\n" + 
+        "    -1 (the default value) means no limit.\n" + 
+        "\n" + 
+        "Splitting is done starting at the end of the bytearray and working to the front.";
 
     public final static String bytearray_rstrip_doc = 
-        "B.rstrip([bytes]) -> bytearray\n" + 
+        "Strip trailing bytes contained in the argument.\n" + 
         "\n" + 
-        "Strip trailing bytes contained in the argument\n" + 
-        "and return the result as a new bytearray.\n" + 
-        "If the argument is omitted, strip trailing ASCII whitespace.";
+        "If the argument is omitted or None, strip trailing ASCII whitespace.";
 
     public final static String bytearray_split_doc = 
-        "B.split(sep=None, maxsplit=-1) -> list of bytearrays\n" + 
+        "Return a list of the sections in the bytearray, using sep as the delimiter.\n" + 
         "\n" + 
-        "Return a list of the sections in B, using sep as the delimiter.\n" + 
-        "If sep is not given, B is split on ASCII whitespace characters\n" + 
-        "(space, tab, return, newline, formfeed, vertical tab).\n" + 
-        "If maxsplit is given, at most maxsplit splits are done.";
+        "  sep\n" + 
+        "    The delimiter according which to split the bytearray.\n" + 
+        "    None (the default value) means split on ASCII whitespace characters\n" + 
+        "    (space, tab, return, newline, formfeed, vertical tab).\n" + 
+        "  maxsplit\n" + 
+        "    Maximum number of splits to do.\n" + 
+        "    -1 (the default value) means no limit.";
 
     public final static String bytearray_splitlines_doc = 
-        "B.splitlines([keepends]) -> list of lines\n" + 
+        "Return a list of the lines in the bytearray, breaking at line boundaries.\n" + 
         "\n" + 
-        "Return a list of the lines in B, breaking at line boundaries.\n" + 
-        "Line breaks are not included in the resulting list unless keepends\n" + 
-        "is given and true.";
+        "Line breaks are not included in the resulting list unless keepends is given and\n" + 
+        "true.";
 
     public final static String bytearray_startswith_doc = 
         "B.startswith(prefix[, start[, end]]) -> bool\n" + 
@@ -3985,11 +5025,9 @@ public class BuiltinDocs {
         "prefix can also be a tuple of bytes to try.";
 
     public final static String bytearray_strip_doc = 
-        "B.strip([bytes]) -> bytearray\n" + 
+        "Strip leading and trailing bytes contained in the argument.\n" + 
         "\n" + 
-        "Strip leading and trailing bytes contained in the argument\n" + 
-        "and return the result as a new bytearray.\n" + 
-        "If the argument is omitted, strip ASCII whitespace.";
+        "If the argument is omitted or None, strip leading and trailing ASCII whitespace.";
 
     public final static String bytearray_swapcase_doc = 
         "B.swapcase() -> copy of B\n" + 
@@ -4004,12 +5042,14 @@ public class BuiltinDocs {
         "characters, all remaining cased characters have lowercase.";
 
     public final static String bytearray_translate_doc = 
-        "B.translate(table[, deletechars]) -> bytearray\n" + 
+        "translate(table, [deletechars])\n" + 
+        "Return a copy with each character mapped by the given translation table.\n" + 
         "\n" + 
-        "Return a copy of B, where all characters occurring in the\n" + 
-        "optional argument deletechars are removed, and the remaining\n" + 
-        "characters have been mapped through the given translation\n" + 
-        "table, which must be a bytes object of length 256.";
+        "  table\n" + 
+        "    Translation table, which must be a bytes object of length 256.\n" + 
+        "\n" + 
+        "All characters occurring in the optional argument deletechars are removed.\n" + 
+        "The remaining characters are mapped through the given translation table.";
 
     public final static String bytearray_upper_doc = 
         "B.upper() -> copy of B\n" + 
@@ -4039,8 +5079,6 @@ public class BuiltinDocs {
         "default dir() implementation";
 
     public final static String memoryview_doc = 
-        "memoryview(object)\n" + 
-        "\n" + 
         "Create a new memoryview object which references the given object.";
 
     public final static String memoryview___enter___doc = 
@@ -4123,8 +5161,6 @@ public class BuiltinDocs {
         "A bool indicating whether the memory is C contiguous.";
 
     public final static String memoryview_cast_doc = 
-        "M.cast(format[, shape]) -> memoryview\n" + 
-        "\n" + 
         "Cast a memoryview to a new format or shape.";
 
     public final static String memoryview_contiguous_doc = 
@@ -4136,6 +5172,9 @@ public class BuiltinDocs {
     public final static String memoryview_format_doc = 
         "A string containing the format (in struct module style)\n" + 
         " for each element in the view.";
+
+    public final static String memoryview_hex_doc = 
+        "Return the data in the buffer as a string of hexadecimal numbers.";
 
     public final static String memoryview_itemsize_doc = 
         "The size in bytes of each element of the memoryview.";
@@ -4155,8 +5194,6 @@ public class BuiltinDocs {
         "A bool indicating whether the memory is read only.";
 
     public final static String memoryview_release_doc = 
-        "M.release() -> None\n" + 
-        "\n" + 
         "Release the underlying buffer exposed by the memoryview object.";
 
     public final static String memoryview_shape_doc = 
@@ -4171,14 +5208,367 @@ public class BuiltinDocs {
         "A tuple of integers used internally for PIL-style arrays.";
 
     public final static String memoryview_tobytes_doc = 
-        "M.tobytes() -> bytes\n" + 
-        "\n" + 
         "Return the data in the buffer as a byte string.";
 
     public final static String memoryview_tolist_doc = 
-        "M.tolist() -> list\n" + 
-        "\n" + 
         "Return the data in the buffer as a list of elements.";
+
+    // Docs for <class 'generator'>
+    public final static String generator___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String generator___del___doc = 
+        "";
+
+    public final static String generator___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String generator___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String generator_doc = 
+        "";
+
+    public final static String generator___eq___doc = 
+        "Return self==value.";
+
+    public final static String generator___format___doc = 
+        "default object formatter";
+
+    public final static String generator___ge___doc = 
+        "Return self>=value.";
+
+    public final static String generator___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String generator___gt___doc = 
+        "Return self>value.";
+
+    public final static String generator___hash___doc = 
+        "Return hash(self).";
+
+    public final static String generator___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String generator___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String generator___le___doc = 
+        "Return self<=value.";
+
+    public final static String generator___lt___doc = 
+        "Return self<value.";
+
+    public final static String generator___name___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String generator___ne___doc = 
+        "Return self!=value.";
+
+    public final static String generator___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String generator___next___doc = 
+        "Implement next(self).";
+
+    public final static String generator___qualname___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String generator___reduce___doc = 
+        "helper for pickle";
+
+    public final static String generator___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String generator___repr___doc = 
+        "Return repr(self).";
+
+    public final static String generator___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String generator___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String generator___str___doc = 
+        "Return str(self).";
+
+    public final static String generator___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String generator_close_doc = 
+        "close() -> raise GeneratorExit inside generator.";
+
+    public final static String generator_gi_code_doc = 
+        "";
+
+    public final static String generator_gi_frame_doc = 
+        "";
+
+    public final static String generator_gi_running_doc = 
+        "";
+
+    public final static String generator_gi_yieldfrom_doc = 
+        "object being iterated by yield from, or None";
+
+    public final static String generator_send_doc = 
+        "send(arg) -> send 'arg' into generator,\n" + 
+        "return next yielded value or raise StopIteration.";
+
+    public final static String generator_throw_doc = 
+        "throw(typ[,val[,tb]]) -> raise exception in generator,\n" + 
+        "return next yielded value or raise StopIteration.";
+
+    // Docs for <class 'coroutine'>
+    public final static String coroutine___await___doc = 
+        "Return an iterator to be used in await expression.";
+
+    public final static String coroutine___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String coroutine___del___doc = 
+        "";
+
+    public final static String coroutine___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String coroutine___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String coroutine_doc = 
+        "";
+
+    public final static String coroutine___eq___doc = 
+        "Return self==value.";
+
+    public final static String coroutine___format___doc = 
+        "default object formatter";
+
+    public final static String coroutine___ge___doc = 
+        "Return self>=value.";
+
+    public final static String coroutine___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String coroutine___gt___doc = 
+        "Return self>value.";
+
+    public final static String coroutine___hash___doc = 
+        "Return hash(self).";
+
+    public final static String coroutine___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String coroutine___le___doc = 
+        "Return self<=value.";
+
+    public final static String coroutine___lt___doc = 
+        "Return self<value.";
+
+    public final static String coroutine___name___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String coroutine___ne___doc = 
+        "Return self!=value.";
+
+    public final static String coroutine___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String coroutine___qualname___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String coroutine___reduce___doc = 
+        "helper for pickle";
+
+    public final static String coroutine___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String coroutine___repr___doc = 
+        "Return repr(self).";
+
+    public final static String coroutine___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String coroutine___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String coroutine___str___doc = 
+        "Return str(self).";
+
+    public final static String coroutine___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String coroutine_close_doc = 
+        "close() -> raise GeneratorExit inside coroutine.";
+
+    public final static String coroutine_cr_await_doc = 
+        "object being awaited on, or None";
+
+    public final static String coroutine_cr_code_doc = 
+        "";
+
+    public final static String coroutine_cr_frame_doc = 
+        "";
+
+    public final static String coroutine_cr_running_doc = 
+        "";
+
+    public final static String coroutine_send_doc = 
+        "send(arg) -> send 'arg' into coroutine,\n" + 
+        "return next iterated value or raise StopIteration.";
+
+    public final static String coroutine_throw_doc = 
+        "throw(typ[,val[,tb]]) -> raise exception in coroutine,\n" + 
+        "return next iterated value or raise StopIteration.";
+
+    // Docs for <class 'coroutine_wrapper'>
+    public final static String coroutine_wrapper___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String coroutine_wrapper___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String coroutine_wrapper___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String coroutine_wrapper_doc = 
+        "A wrapper object implementing __await__ for coroutines.";
+
+    public final static String coroutine_wrapper___eq___doc = 
+        "Return self==value.";
+
+    public final static String coroutine_wrapper___format___doc = 
+        "default object formatter";
+
+    public final static String coroutine_wrapper___ge___doc = 
+        "Return self>=value.";
+
+    public final static String coroutine_wrapper___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String coroutine_wrapper___gt___doc = 
+        "Return self>value.";
+
+    public final static String coroutine_wrapper___hash___doc = 
+        "Return hash(self).";
+
+    public final static String coroutine_wrapper___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String coroutine_wrapper___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String coroutine_wrapper___le___doc = 
+        "Return self<=value.";
+
+    public final static String coroutine_wrapper___lt___doc = 
+        "Return self<value.";
+
+    public final static String coroutine_wrapper___ne___doc = 
+        "Return self!=value.";
+
+    public final static String coroutine_wrapper___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String coroutine_wrapper___next___doc = 
+        "Implement next(self).";
+
+    public final static String coroutine_wrapper___reduce___doc = 
+        "helper for pickle";
+
+    public final static String coroutine_wrapper___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String coroutine_wrapper___repr___doc = 
+        "Return repr(self).";
+
+    public final static String coroutine_wrapper___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String coroutine_wrapper___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String coroutine_wrapper___str___doc = 
+        "Return str(self).";
+
+    public final static String coroutine_wrapper___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String coroutine_wrapper_close_doc = 
+        "close() -> raise GeneratorExit inside coroutine.";
+
+    public final static String coroutine_wrapper_send_doc = 
+        "send(arg) -> send 'arg' into coroutine,\n" + 
+        "return next iterated value or raise StopIteration.";
+
+    public final static String coroutine_wrapper_throw_doc = 
+        "throw(typ[,val[,tb]]) -> raise exception in coroutine,\n" + 
+        "return next iterated value or raise StopIteration.";
 
     // Docs for <class 'function'>
     public final static String function___annotations___doc = 
@@ -4450,6 +5840,88 @@ public class BuiltinDocs {
     public final static String code_co_varnames_doc = 
         "";
 
+    // Docs for <class 'types.SimpleNamespace'>
+    public final static String SimpleNamespace___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String SimpleNamespace___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String SimpleNamespace___dict___doc = 
+        "";
+
+    public final static String SimpleNamespace___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String SimpleNamespace_doc = 
+        "A simple attribute-based namespace.\n" + 
+        "\n" + 
+        "SimpleNamespace(**kwargs)";
+
+    public final static String SimpleNamespace___eq___doc = 
+        "Return self==value.";
+
+    public final static String SimpleNamespace___format___doc = 
+        "default object formatter";
+
+    public final static String SimpleNamespace___ge___doc = 
+        "Return self>=value.";
+
+    public final static String SimpleNamespace___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String SimpleNamespace___gt___doc = 
+        "Return self>value.";
+
+    public final static String SimpleNamespace___hash___doc = 
+        "";
+
+    public final static String SimpleNamespace___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String SimpleNamespace___le___doc = 
+        "Return self<=value.";
+
+    public final static String SimpleNamespace___lt___doc = 
+        "Return self<value.";
+
+    public final static String SimpleNamespace___ne___doc = 
+        "Return self!=value.";
+
+    public final static String SimpleNamespace___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String SimpleNamespace___reduce___doc = 
+        "Return state information for pickling";
+
+    public final static String SimpleNamespace___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String SimpleNamespace___repr___doc = 
+        "Return repr(self).";
+
+    public final static String SimpleNamespace___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String SimpleNamespace___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String SimpleNamespace___str___doc = 
+        "Return str(self).";
+
+    public final static String SimpleNamespace___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
     // Docs for <class 'frame'>
     public final static String frame___class___doc = 
         "type(object_or_name, bases, dict)\n" + 
@@ -4641,6 +6113,909 @@ public class BuiltinDocs {
     public final static String traceback_tb_next_doc = 
         "";
 
+    // Docs for <class '_sre.SRE_Pattern'>
+    public final static String SRE_Pattern___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String SRE_Pattern___copy___doc = 
+        "";
+
+    public final static String SRE_Pattern___deepcopy___doc = 
+        "";
+
+    public final static String SRE_Pattern___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String SRE_Pattern___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String SRE_Pattern_doc = 
+        "Compiled regular expression objects";
+
+    public final static String SRE_Pattern___eq___doc = 
+        "Return self==value.";
+
+    public final static String SRE_Pattern___format___doc = 
+        "default object formatter";
+
+    public final static String SRE_Pattern___ge___doc = 
+        "Return self>=value.";
+
+    public final static String SRE_Pattern___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String SRE_Pattern___gt___doc = 
+        "Return self>value.";
+
+    public final static String SRE_Pattern___hash___doc = 
+        "Return hash(self).";
+
+    public final static String SRE_Pattern___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String SRE_Pattern___le___doc = 
+        "Return self<=value.";
+
+    public final static String SRE_Pattern___lt___doc = 
+        "Return self<value.";
+
+    public final static String SRE_Pattern___ne___doc = 
+        "Return self!=value.";
+
+    public final static String SRE_Pattern___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String SRE_Pattern___reduce___doc = 
+        "helper for pickle";
+
+    public final static String SRE_Pattern___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String SRE_Pattern___repr___doc = 
+        "Return repr(self).";
+
+    public final static String SRE_Pattern___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String SRE_Pattern___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String SRE_Pattern___str___doc = 
+        "Return str(self).";
+
+    public final static String SRE_Pattern___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String SRE_Pattern_findall_doc = 
+        "Return a list of all non-overlapping matches of pattern in string.";
+
+    public final static String SRE_Pattern_finditer_doc = 
+        "Return an iterator over all non-overlapping matches for the RE pattern in string.\n" + 
+        "\n" + 
+        "For each match, the iterator returns a match object.";
+
+    public final static String SRE_Pattern_flags_doc = 
+        "";
+
+    public final static String SRE_Pattern_fullmatch_doc = 
+        "Matches against all of the string";
+
+    public final static String SRE_Pattern_groupindex_doc = 
+        "A dictionary mapping group names to group numbers.";
+
+    public final static String SRE_Pattern_groups_doc = 
+        "";
+
+    public final static String SRE_Pattern_match_doc = 
+        "Matches zero or more characters at the beginning of the string.";
+
+    public final static String SRE_Pattern_pattern_doc = 
+        "";
+
+    public final static String SRE_Pattern_scanner_doc = 
+        "";
+
+    public final static String SRE_Pattern_search_doc = 
+        "Scan through string looking for a match, and return a corresponding match object instance.\n" + 
+        "\n" + 
+        "Return None if no position in the string matches.";
+
+    public final static String SRE_Pattern_split_doc = 
+        "Split string by the occurrences of pattern.";
+
+    public final static String SRE_Pattern_sub_doc = 
+        "Return the string obtained by replacing the leftmost non-overlapping occurrences of pattern in string by the replacement repl.";
+
+    public final static String SRE_Pattern_subn_doc = 
+        "Return the tuple (new_string, number_of_subs_made) found by replacing the leftmost non-overlapping occurrences of pattern with the replacement repl.";
+
+    // Docs for <class '_sre.SRE_Match'>
+    public final static String SRE_Match___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String SRE_Match___copy___doc = 
+        "";
+
+    public final static String SRE_Match___deepcopy___doc = 
+        "";
+
+    public final static String SRE_Match___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String SRE_Match___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String SRE_Match_doc = 
+        "The result of re.match() and re.search().\n" + 
+        "Match objects always have a boolean value of True.";
+
+    public final static String SRE_Match___eq___doc = 
+        "Return self==value.";
+
+    public final static String SRE_Match___format___doc = 
+        "default object formatter";
+
+    public final static String SRE_Match___ge___doc = 
+        "Return self>=value.";
+
+    public final static String SRE_Match___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String SRE_Match___gt___doc = 
+        "Return self>value.";
+
+    public final static String SRE_Match___hash___doc = 
+        "Return hash(self).";
+
+    public final static String SRE_Match___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String SRE_Match___le___doc = 
+        "Return self<=value.";
+
+    public final static String SRE_Match___lt___doc = 
+        "Return self<value.";
+
+    public final static String SRE_Match___ne___doc = 
+        "Return self!=value.";
+
+    public final static String SRE_Match___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String SRE_Match___reduce___doc = 
+        "helper for pickle";
+
+    public final static String SRE_Match___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String SRE_Match___repr___doc = 
+        "Return repr(self).";
+
+    public final static String SRE_Match___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String SRE_Match___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String SRE_Match___str___doc = 
+        "Return str(self).";
+
+    public final static String SRE_Match___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String SRE_Match_end_doc = 
+        "Return index of the end of the substring matched by group.";
+
+    public final static String SRE_Match_endpos_doc = 
+        "";
+
+    public final static String SRE_Match_expand_doc = 
+        "Return the string obtained by doing backslash substitution on the string template, as done by the sub() method.";
+
+    public final static String SRE_Match_group_doc = 
+        "group([group1, ...]) -> str or tuple.\n" + 
+        "    Return subgroup(s) of the match by indices or names.\n" + 
+        "    For 0 returns the entire match.";
+
+    public final static String SRE_Match_groupdict_doc = 
+        "Return a dictionary containing all the named subgroups of the match, keyed by the subgroup name.\n" + 
+        "\n" + 
+        "  default\n" + 
+        "    Is used for groups that did not participate in the match.";
+
+    public final static String SRE_Match_groups_doc = 
+        "Return a tuple containing all the subgroups of the match, from 1.\n" + 
+        "\n" + 
+        "  default\n" + 
+        "    Is used for groups that did not participate in the match.";
+
+    public final static String SRE_Match_lastgroup_doc = 
+        "";
+
+    public final static String SRE_Match_lastindex_doc = 
+        "";
+
+    public final static String SRE_Match_pos_doc = 
+        "";
+
+    public final static String SRE_Match_re_doc = 
+        "";
+
+    public final static String SRE_Match_regs_doc = 
+        "";
+
+    public final static String SRE_Match_span_doc = 
+        "For MatchObject m, return the 2-tuple (m.start(group), m.end(group)).";
+
+    public final static String SRE_Match_start_doc = 
+        "Return index of the start of the substring matched by group.";
+
+    public final static String SRE_Match_string_doc = 
+        "";
+
+    // Docs for <class 'range_iterator'>
+    public final static String range_iterator___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String range_iterator___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String range_iterator___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String range_iterator_doc = 
+        "";
+
+    public final static String range_iterator___eq___doc = 
+        "Return self==value.";
+
+    public final static String range_iterator___format___doc = 
+        "default object formatter";
+
+    public final static String range_iterator___ge___doc = 
+        "Return self>=value.";
+
+    public final static String range_iterator___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String range_iterator___gt___doc = 
+        "Return self>value.";
+
+    public final static String range_iterator___hash___doc = 
+        "Return hash(self).";
+
+    public final static String range_iterator___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String range_iterator___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String range_iterator___le___doc = 
+        "Return self<=value.";
+
+    public final static String range_iterator___length_hint___doc = 
+        "Private method returning an estimate of len(list(it)).";
+
+    public final static String range_iterator___lt___doc = 
+        "Return self<value.";
+
+    public final static String range_iterator___ne___doc = 
+        "Return self!=value.";
+
+    public final static String range_iterator___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String range_iterator___next___doc = 
+        "Implement next(self).";
+
+    public final static String range_iterator___reduce___doc = 
+        "Return state information for pickling.";
+
+    public final static String range_iterator___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String range_iterator___repr___doc = 
+        "Return repr(self).";
+
+    public final static String range_iterator___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String range_iterator___setstate___doc = 
+        "Set state information for unpickling.";
+
+    public final static String range_iterator___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String range_iterator___str___doc = 
+        "Return str(self).";
+
+    public final static String range_iterator___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    // Docs for <class 'list_iterator'>
+    public final static String list_iterator___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String list_iterator___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String list_iterator___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String list_iterator_doc = 
+        "";
+
+    public final static String list_iterator___eq___doc = 
+        "Return self==value.";
+
+    public final static String list_iterator___format___doc = 
+        "default object formatter";
+
+    public final static String list_iterator___ge___doc = 
+        "Return self>=value.";
+
+    public final static String list_iterator___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String list_iterator___gt___doc = 
+        "Return self>value.";
+
+    public final static String list_iterator___hash___doc = 
+        "Return hash(self).";
+
+    public final static String list_iterator___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String list_iterator___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String list_iterator___le___doc = 
+        "Return self<=value.";
+
+    public final static String list_iterator___length_hint___doc = 
+        "Private method returning an estimate of len(list(it)).";
+
+    public final static String list_iterator___lt___doc = 
+        "Return self<value.";
+
+    public final static String list_iterator___ne___doc = 
+        "Return self!=value.";
+
+    public final static String list_iterator___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String list_iterator___next___doc = 
+        "Implement next(self).";
+
+    public final static String list_iterator___reduce___doc = 
+        "Return state information for pickling.";
+
+    public final static String list_iterator___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String list_iterator___repr___doc = 
+        "Return repr(self).";
+
+    public final static String list_iterator___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String list_iterator___setstate___doc = 
+        "Set state information for unpickling.";
+
+    public final static String list_iterator___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String list_iterator___str___doc = 
+        "Return str(self).";
+
+    public final static String list_iterator___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    // Docs for <class 'itertools.chain'>
+    public final static String chain___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String chain___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String chain___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String chain_doc = 
+        "chain(*iterables) --> chain object\n" + 
+        "\n" + 
+        "Return a chain object whose .__next__() method returns elements from the\n" + 
+        "first iterable until it is exhausted, then elements from the next\n" + 
+        "iterable, until all of the iterables are exhausted.";
+
+    public final static String chain___eq___doc = 
+        "Return self==value.";
+
+    public final static String chain___format___doc = 
+        "default object formatter";
+
+    public final static String chain___ge___doc = 
+        "Return self>=value.";
+
+    public final static String chain___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String chain___gt___doc = 
+        "Return self>value.";
+
+    public final static String chain___hash___doc = 
+        "Return hash(self).";
+
+    public final static String chain___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String chain___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String chain___le___doc = 
+        "Return self<=value.";
+
+    public final static String chain___lt___doc = 
+        "Return self<value.";
+
+    public final static String chain___ne___doc = 
+        "Return self!=value.";
+
+    public final static String chain___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String chain___next___doc = 
+        "Implement next(self).";
+
+    public final static String chain___reduce___doc = 
+        "Return state information for pickling.";
+
+    public final static String chain___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String chain___repr___doc = 
+        "Return repr(self).";
+
+    public final static String chain___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String chain___setstate___doc = 
+        "Set state information for unpickling.";
+
+    public final static String chain___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String chain___str___doc = 
+        "Return str(self).";
+
+    public final static String chain___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String chain_from_iterable_doc = 
+        "chain.from_iterable(iterable) --> chain object\n" + 
+        "\n" + 
+        "Alternate chain() contructor taking a single iterable argument\n" + 
+        "that evaluates lazily.";
+
+    // Docs for <class 'NoneType'>
+    public final static String NoneType___bool___doc = 
+        "self != 0";
+
+    public final static String NoneType___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String NoneType___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String NoneType___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String NoneType_doc = 
+        "";
+
+    public final static String NoneType___eq___doc = 
+        "Return self==value.";
+
+    public final static String NoneType___format___doc = 
+        "default object formatter";
+
+    public final static String NoneType___ge___doc = 
+        "Return self>=value.";
+
+    public final static String NoneType___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String NoneType___gt___doc = 
+        "Return self>value.";
+
+    public final static String NoneType___hash___doc = 
+        "Return hash(self).";
+
+    public final static String NoneType___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String NoneType___le___doc = 
+        "Return self<=value.";
+
+    public final static String NoneType___lt___doc = 
+        "Return self<value.";
+
+    public final static String NoneType___ne___doc = 
+        "Return self!=value.";
+
+    public final static String NoneType___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String NoneType___reduce___doc = 
+        "helper for pickle";
+
+    public final static String NoneType___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String NoneType___repr___doc = 
+        "Return repr(self).";
+
+    public final static String NoneType___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String NoneType___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String NoneType___str___doc = 
+        "Return str(self).";
+
+    public final static String NoneType___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    // Docs for <class 'NotImplementedType'>
+    public final static String NotImplementedType___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String NotImplementedType___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String NotImplementedType___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String NotImplementedType_doc = 
+        "";
+
+    public final static String NotImplementedType___eq___doc = 
+        "Return self==value.";
+
+    public final static String NotImplementedType___format___doc = 
+        "default object formatter";
+
+    public final static String NotImplementedType___ge___doc = 
+        "Return self>=value.";
+
+    public final static String NotImplementedType___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String NotImplementedType___gt___doc = 
+        "Return self>value.";
+
+    public final static String NotImplementedType___hash___doc = 
+        "Return hash(self).";
+
+    public final static String NotImplementedType___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String NotImplementedType___le___doc = 
+        "Return self<=value.";
+
+    public final static String NotImplementedType___lt___doc = 
+        "Return self<value.";
+
+    public final static String NotImplementedType___ne___doc = 
+        "Return self!=value.";
+
+    public final static String NotImplementedType___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String NotImplementedType___reduce___doc = 
+        "";
+
+    public final static String NotImplementedType___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String NotImplementedType___repr___doc = 
+        "Return repr(self).";
+
+    public final static String NotImplementedType___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String NotImplementedType___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String NotImplementedType___str___doc = 
+        "Return str(self).";
+
+    public final static String NotImplementedType___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    // Docs for <class 'ellipsis'>
+    public final static String ellipsis___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String ellipsis___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String ellipsis___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String ellipsis_doc = 
+        "";
+
+    public final static String ellipsis___eq___doc = 
+        "Return self==value.";
+
+    public final static String ellipsis___format___doc = 
+        "default object formatter";
+
+    public final static String ellipsis___ge___doc = 
+        "Return self>=value.";
+
+    public final static String ellipsis___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String ellipsis___gt___doc = 
+        "Return self>value.";
+
+    public final static String ellipsis___hash___doc = 
+        "Return hash(self).";
+
+    public final static String ellipsis___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String ellipsis___le___doc = 
+        "Return self<=value.";
+
+    public final static String ellipsis___lt___doc = 
+        "Return self<value.";
+
+    public final static String ellipsis___ne___doc = 
+        "Return self!=value.";
+
+    public final static String ellipsis___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String ellipsis___reduce___doc = 
+        "";
+
+    public final static String ellipsis___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String ellipsis___repr___doc = 
+        "Return repr(self).";
+
+    public final static String ellipsis___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String ellipsis___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String ellipsis___str___doc = 
+        "Return str(self).";
+
+    public final static String ellipsis___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    // Docs for <class '_multiprocessing.SemLock'>
+    public final static String SemLock_SEM_VALUE_MAX_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String SemLock___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String SemLock___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String SemLock___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String SemLock_doc = 
+        "Semaphore/Mutex type";
+
+    public final static String SemLock___enter___doc = 
+        "enter the semaphore/lock";
+
+    public final static String SemLock___eq___doc = 
+        "Return self==value.";
+
+    public final static String SemLock___exit___doc = 
+        "exit the semaphore/lock";
+
+    public final static String SemLock___format___doc = 
+        "default object formatter";
+
+    public final static String SemLock___ge___doc = 
+        "Return self>=value.";
+
+    public final static String SemLock___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String SemLock___gt___doc = 
+        "Return self>value.";
+
+    public final static String SemLock___hash___doc = 
+        "Return hash(self).";
+
+    public final static String SemLock___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String SemLock___le___doc = 
+        "Return self<=value.";
+
+    public final static String SemLock___lt___doc = 
+        "Return self<value.";
+
+    public final static String SemLock___ne___doc = 
+        "Return self!=value.";
+
+    public final static String SemLock___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String SemLock___reduce___doc = 
+        "helper for pickle";
+
+    public final static String SemLock___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String SemLock___repr___doc = 
+        "Return repr(self).";
+
+    public final static String SemLock___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String SemLock___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String SemLock___str___doc = 
+        "Return str(self).";
+
+    public final static String SemLock___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String SemLock__after_fork_doc = 
+        "rezero the net acquisition count after fork()";
+
+    public final static String SemLock__count_doc = 
+        "num of `acquire()`s minus num of `release()`s for this process";
+
+    public final static String SemLock__get_value_doc = 
+        "get the value of the semaphore";
+
+    public final static String SemLock__is_mine_doc = 
+        "whether the lock is owned by this thread";
+
+    public final static String SemLock__is_zero_doc = 
+        "returns whether semaphore has value zero";
+
+    public final static String SemLock__rebuild_doc = 
+        "";
+
+    public final static String SemLock_acquire_doc = 
+        "acquire the semaphore/lock";
+
+    public final static String SemLock_handle_doc = 
+        "";
+
+    public final static String SemLock_kind_doc = 
+        "";
+
+    public final static String SemLock_maxvalue_doc = 
+        "";
+
+    public final static String SemLock_name_doc = 
+        "";
+
+    public final static String SemLock_release_doc = 
+        "release the semaphore/lock";
+
     // Docs for <class 'io.TextIOBase'>
     public final static String TextIOBase___abstractmethods___doc = 
         "";
@@ -4806,8 +7181,7 @@ public class BuiltinDocs {
     public final static String TextIOBase_close_doc = 
         "Flush and close the IO object.\n" + 
         "\n" + 
-        "This method has no effect if the file is already closed.\n" + 
-        "";
+        "This method has no effect if the file is already closed.";
 
     public final static String TextIOBase_closed_doc = 
         "";
@@ -4834,20 +7208,17 @@ public class BuiltinDocs {
     public final static String TextIOBase_fileno_doc = 
         "Returns underlying file descriptor if one exists.\n" + 
         "\n" + 
-        "An IOError is raised if the IO object does not use a file descriptor.\n" + 
-        "";
+        "An IOError is raised if the IO object does not use a file descriptor.";
 
     public final static String TextIOBase_flush_doc = 
         "Flush write buffers, if applicable.\n" + 
         "\n" + 
-        "This is not implemented for read-only and non-blocking streams.\n" + 
-        "";
+        "This is not implemented for read-only and non-blocking streams.";
 
     public final static String TextIOBase_isatty_doc = 
         "Return whether this is an 'interactive' stream.\n" + 
         "\n" + 
-        "Return False if it can't be determined.\n" + 
-        "";
+        "Return False if it can't be determined.";
 
     public final static String TextIOBase_newlines_doc = 
         "Line endings translated so far.\n" + 

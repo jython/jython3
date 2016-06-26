@@ -3,7 +3,7 @@
 """
 import unittest
 import time
-from test import test_support
+from test import support
 
 import java
 import jarray
@@ -44,14 +44,14 @@ Dog().bark()
             create_proxies()
         # Ensure the reaper thread can run and clear out weak refs, so
         # use this supporting function
-        test_support.gc_collect()
+        support.gc_collect()
         # Given that taking the len (or size()) of Guava weak maps is
         # eventually consistent, we should instead take a len of its
         # keys.
         start_size = len(list(class_to_type_map))
         for i in xrange(5):
             create_proxies()
-        test_support.gc_collect()
+        support.gc_collect()
         self.assertEqual(start_size, len(list(class_to_type_map)))
 
 
@@ -280,7 +280,7 @@ class ModuleTest(unittest.TestCase):
         self.assertEquals(len(test.__dict__), 5)
 
 def test_main():
-    test_support.run_unittest(__name__)
+    support.run_unittest(__name__)
 
 if __name__ == "__main__":
     test_main()

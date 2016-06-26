@@ -35,7 +35,7 @@ public class _functools implements ClassDictInit {
         PyObject result = z;
         PyObject iter = Py.iter(l, "reduce() arg 2 must support iteration");
 
-        for (PyObject item; (item = iter.__iternext__()) != null;) {
+        for (PyObject item; (item = iter.__next__()) != null;) {
             if (result == null) {
                 result = item;
             } else {

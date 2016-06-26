@@ -22,7 +22,6 @@ from _weakref import (
 
 from _weakrefset import WeakSet
 
-from exceptions import ReferenceError
 from jythonlib import MapMaker, dict_builder
 
 
@@ -53,7 +52,7 @@ class WeakValueDictionary(dict):
         keep the values around longer than needed.
 
         """
-        for value in self.itervalues():
+        for value in list(self.values()):
             yield ref(value) 
 
     def valuerefs(self):
@@ -66,7 +65,7 @@ class WeakValueDictionary(dict):
         keep the values around longer than needed.
 
         """
-        return [ref(value) for value in self.itervalues()]
+        return [ref(value) for value in list(self.values())]
 
 WeakValueDictionaryBuilder = dict_builder(MapMaker().weakValues().makeMap, WeakValueDictionary)
 
@@ -95,7 +94,7 @@ class WeakKeyDictionary(dict):
         keep the keys around longer than needed.
 
         """
-        for key in self.iterkeys():
+        for key in list(self.keys()):
             yield ref(key)
 
     def keyrefs(self):
@@ -108,7 +107,7 @@ class WeakKeyDictionary(dict):
         keep the keys around longer than needed.
 
         """
-        return [ref(key) for key in self.iterkeys()]
+        return [ref(key) for key in list(self.keys())]
 
 WeakKeyDictionaryBuilder = dict_builder(MapMaker().weakKeys().makeMap, WeakKeyDictionary)
 

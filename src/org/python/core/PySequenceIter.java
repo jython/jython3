@@ -14,7 +14,7 @@ public class PySequenceIter extends PyIterator {
         this.seq = seq;
     }
 
-    public PyObject __iternext__() {
+    public PyObject __next__() {
         if (seq == null) {
             return null;
         }

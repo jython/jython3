@@ -2,6 +2,9 @@
 package org.python.modules.itertools;
 
 import org.python.core.ArgParser;
+import org.python.core.BuiltinDocs;
+import org.python.core.Py;
+import org.python.core.PyException;
 import org.python.core.PyIterator;
 import org.python.core.PyObject;
 import org.python.core.PyTuple;
@@ -12,17 +15,11 @@ import org.python.expose.ExposedNew;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedType;
 
-@ExposedType(name = "itertools.chain", base = PyObject.class, doc = chain.chain_doc)
+@ExposedType(name = "itertools.chain", base = PyObject.class, doc = BuiltinDocs.chain_doc)
 public class chain extends PyIterator {
 
     public static final PyType TYPE = PyType.fromClass(chain.class);
     private itertools.ItertoolsIterator iter;
-
-    public static final String chain_doc =
-        "chain(*iterables) --> chain object\n\n" +
-        "Return a chain object whose .next() method returns elements from the\n" +
-        "first iterable until it is exhausted, then elements from the next\n" +
-        "iterable, until all of the iterables are exhausted.";
 
     public chain() {
         super();
@@ -59,38 +56,42 @@ public class chain extends PyIterator {
     private void chain___init__(final PyObject superIterator) {
 
         iter = new itertools.ItertoolsIterator() {
+            PyObject currentIterator = superIterator.__next__().__iter__();
 
-            int iteratorIndex = 0;
-            PyObject currentIterator = new PyObject();
-
-            public PyObject __iternext__() {
-                PyObject nextIterable;
-                PyObject next = null;
-                do {
-                    next = nextElement(currentIterator);
-                    if (next != null) {
-                        break;
+            public PyObject __next__() {
+                try {
+                    return currentIterator.__next__();
+                } catch (PyException e) {
+                    if (e.match(Py.StopIteration)) {
+                        currentIterator = superIterator.__next__().__iter__();
+                        return __next__();
                     }
-
+                    throw e;
                 }
-                while ((nextIterable = nextElement(superIterator)) != null &&
-                       (currentIterator = nextIterable.__iter__()) != null);
-                return next;
             }
 
         };
     }
 
-    public PyObject __iternext__() {
-        return iter.__iternext__();
-    }
-
-    @ExposedMethod
     @Override
-    public PyObject next() {
-        return doNext(__iternext__());
+    public PyObject __iter__() {
+        return chain___iter__();
     }
 
+    @ExposedMethod(doc = BuiltinDocs.chain___iter___doc)
+    final PyObject chain___iter__() {
+        return this;
+    }
+
+    @Override
+    public PyObject __next__() {
+        return chain___next__();
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.chain___next___doc)
+    final PyObject chain___next__() {
+        return iter.__next__();
+    }
 
     /* Traverseproc implementation */
     @Override

@@ -4,11 +4,11 @@ Various tests for synchronization primitives.
 
 import sys
 import time
-from thread import start_new_thread, get_ident
+from _thread import start_new_thread, get_ident
 import threading
 import unittest
 
-from test import test_support as support
+from test import support as support
 
 
 def _wait():
@@ -420,7 +420,7 @@ class BaseSemaphoreTests(BaseTestCase):
 
     def test_constructor(self):
         self.assertRaises(ValueError, self.semtype, value = -1)
-        self.assertRaises(ValueError, self.semtype, value = -sys.maxint)
+        self.assertRaises(ValueError, self.semtype, value = -sys.maxsize)
 
     def test_acquire(self):
         sem = self.semtype(1)

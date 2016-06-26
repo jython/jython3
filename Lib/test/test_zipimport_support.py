@@ -2,8 +2,8 @@
 # for working with modules located inside zipfiles
 # The tests are centralised in this fashion to make it easy to drop them
 # if a platform doesn't support zipimport
-import test.test_support
-from test.test_support import is_jython
+import test.support
+from test.support import is_jython
 import unittest
 import os
 import os.path
@@ -19,7 +19,7 @@ import warnings
 from test.script_helper import (spawn_python, kill_python, run_python,
                                 temp_dir, make_script, make_zip_script)
 
-verbose = test.test_support.verbose
+verbose = test.support.verbose
 
 # Library modules covered by this test set
 #  pdb (Issue 4201)
@@ -58,7 +58,7 @@ def _run_object_doctest(obj, module):
     # Direct doctest output (normally just errors) to real stdout; doctest
     # output shouldn't be compared by regrtest.
     save_stdout = sys.stdout
-    sys.stdout = test.test_support.get_original_stdout()
+    sys.stdout = test.support.get_original_stdout()
     try:
         finder = doctest.DocTestFinder(verbose=verbose, recurse=False)
         runner = doctest.DocTestRunner(verbose=verbose)
@@ -72,11 +72,11 @@ def _run_object_doctest(obj, module):
             runner.run(example)
         f, t = runner.failures, runner.tries
         if f:
-            raise test.test_support.TestFailed("%d of %d doctests failed" % (f, t))
+            raise test.support.TestFailed("%d of %d doctests failed" % (f, t))
     finally:
         sys.stdout = save_stdout
     if verbose:
-        print 'doctest (%s) ... %d tests with zero failures' % (module.__name__, t)
+        print('doctest (%s) ... %d tests with zero failures' % (module.__name__, t))
     return f, t
 
 
@@ -138,12 +138,12 @@ class ZipSupportTests(ImportHooksBaseTestCase):
             zip_name, run_name = make_zip_script(d, 'test_zip',
                                                 script_name)
             z = zipfile.ZipFile(zip_name, 'a')
-            for mod_name, src in sample_sources.items():
+            for mod_name, src in list(sample_sources.items()):
                 z.writestr(mod_name + ".py", src)
             z.close()
             if verbose:
                 zip_file = zipfile.ZipFile(zip_name, 'r')
-                print 'Contents of %r:' % zip_name
+                print('Contents of %r:' % zip_name)
                 zip_file.printdir()
                 zip_file.close()
             os.remove(script_name)
@@ -207,7 +207,7 @@ class ZipSupportTests(ImportHooksBaseTestCase):
                 deprecations += [
                     ("backquote not supported", SyntaxWarning),
                     ("execfile.. not supported", DeprecationWarning)]
-            with test.test_support.check_warnings(*deprecations):
+            with test.support.check_warnings(*deprecations):
                 for obj in known_good_tests:
                     _run_object_doctest(obj, test_zipped_doctest)
 
@@ -226,18 +226,18 @@ class ZipSupportTests(ImportHooksBaseTestCase):
             exit_code, data = run_python(script_name)
             expected = pattern % (script_name, "__main__.Test")
             if verbose:
-                print "Expected line", expected
-                print "Got stdout:"
-                print data
+                print("Expected line", expected)
+                print("Got stdout:")
+                print(data)
             self.assertIn(expected, data)
             zip_name, run_name = make_zip_script(d, "test_zip",
                                                 script_name, '__main__.py')
             exit_code, data = run_python(zip_name)
             expected = pattern % (run_name, "__main__.Test")
             if verbose:
-                print "Expected line", expected
-                print "Got stdout:"
-                print data
+                print("Expected line", expected)
+                print("Got stdout:")
+                print(data)
             self.assertIn(expected, data)
 
     def test_pdb_issue4201(self):
@@ -267,8 +267,8 @@ class ZipSupportTests(ImportHooksBaseTestCase):
 
 
 def test_main():
-    test.test_support.run_unittest(ZipSupportTests)
-    test.test_support.reap_children()
+    test.support.run_unittest(ZipSupportTests)
+    test.support.reap_children()
 
 if __name__ == '__main__':
     test_main()

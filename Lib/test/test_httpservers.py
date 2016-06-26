@@ -9,21 +9,21 @@ import sys
 import re
 import base64
 import shutil
-import urllib
-import httplib
+import urllib.request, urllib.parse, urllib.error
+import http.client
 import tempfile
 import unittest
-import CGIHTTPServer
+import http.server
 
 
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from SimpleHTTPServer import SimpleHTTPRequestHandler
-from CGIHTTPServer import CGIHTTPRequestHandler
-from StringIO import StringIO
-from test import test_support
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import SimpleHTTPRequestHandler
+from http.server import CGIHTTPRequestHandler
+from io import StringIO
+from test import support
 
 
-threading = test_support.import_module('threading')
+threading = support.import_module('threading')
 
 
 class NoLogRequestHandler:
@@ -69,8 +69,8 @@ class TestServerThread(threading.Thread):
 
 class BaseTestCase(unittest.TestCase):
     def setUp(self):
-        self._threads = test_support.threading_setup()
-        os.environ = test_support.EnvironmentVarGuard()
+        self._threads = support.threading_setup()
+        os.environ = support.EnvironmentVarGuard()
         self.server_started = threading.Event()
         self.thread = TestServerThread(self, self.request_handler)
         self.thread.start()
@@ -79,10 +79,10 @@ class BaseTestCase(unittest.TestCase):
     def tearDown(self):
         self.thread.stop()
         os.environ.__exit__()
-        test_support.threading_cleanup(*self._threads)
+        support.threading_cleanup(*self._threads)
 
     def request(self, uri, method='GET', body=None, headers={}):
-        self.connection = httplib.HTTPConnection('localhost', self.PORT)
+        self.connection = http.client.HTTPConnection('localhost', self.PORT)
         self.connection.request(method, uri, body, headers)
         return self.connection.getresponse()
 
@@ -179,7 +179,7 @@ class BaseHTTPServerTestCase(BaseTestCase):
 
     def setUp(self):
         BaseTestCase.setUp(self)
-        self.con = httplib.HTTPConnection('localhost', self.PORT)
+        self.con = http.client.HTTPConnection('localhost', self.PORT)
         self.con.connect()
 
     def test_command(self):
@@ -334,7 +334,7 @@ class SimpleHTTPServerTestCase(BaseTestCase):
             os.chmod(self.tempdir, 0)
             response = self.request(self.tempdir_name + '/')
             self.check_status_and_reason(response, 404)
-            os.chmod(self.tempdir, 0755)
+            os.chmod(self.tempdir, 0o755)
 
     def test_head(self):
         response = self.request(
@@ -399,12 +399,12 @@ class CGIHTTPServerTestCase(BaseTestCase):
         self.file1_path = os.path.join(self.cgi_dir, 'file1.py')
         with open(self.file1_path, 'w') as file1:
             file1.write(cgi_file1 % self.pythonexe)
-        os.chmod(self.file1_path, 0777)
+        os.chmod(self.file1_path, 0o777)
 
         self.file2_path = os.path.join(self.cgi_dir, 'file2.py')
         with open(self.file2_path, 'w') as file2:
             file2.write(cgi_file2 % self.pythonexe)
-        os.chmod(self.file2_path, 0777)
+        os.chmod(self.file2_path, 0o777)
 
         self.cwd = os.getcwd()
         os.chdir(self.parent_dir)
@@ -453,12 +453,12 @@ class CGIHTTPServerTestCase(BaseTestCase):
             '/a/b/c/../d/e/../../../../f/..': '//',
             '/a/b/c/../d/e/../../../../f/../.': '//',
         }
-        for path, expected in test_vectors.iteritems():
+        for path, expected in test_vectors.items():
             if isinstance(expected, type) and issubclass(expected, Exception):
                 self.assertRaises(expected,
-                                  CGIHTTPServer._url_collapse_path, path)
+                                  http.server._url_collapse_path, path)
             else:
-                actual = CGIHTTPServer._url_collapse_path(path)
+                actual = http.server._url_collapse_path(path)
                 self.assertEqual(expected, actual,
                                  msg='path = %r\nGot:    %r\nWanted: %r' %
                                  (path, actual, expected))
@@ -469,7 +469,7 @@ class CGIHTTPServerTestCase(BaseTestCase):
             (res.read(), res.getheader('Content-type'), res.status))
 
     def test_post(self):
-        params = urllib.urlencode({'spam' : 1, 'eggs' : 'python', 'bacon' : 123456})
+        params = urllib.parse.urlencode({'spam' : 1, 'eggs' : 'python', 'bacon' : 123456})
         headers = {'Content-type' : 'application/x-www-form-urlencoded'}
         res = self.request('/cgi-bin/file2.py', 'POST', params, headers)
 
@@ -527,7 +527,7 @@ class SimpleHTTPRequestHandlerTestCase(unittest.TestCase):
 def test_main(verbose=None):
     try:
         cwd = os.getcwd()
-        test_support.run_unittest(BaseHTTPRequestHandlerTestCase,
+        support.run_unittest(BaseHTTPRequestHandlerTestCase,
                                   SimpleHTTPRequestHandlerTestCase,
                                   BaseHTTPServerTestCase,
                                   SimpleHTTPServerTestCase,

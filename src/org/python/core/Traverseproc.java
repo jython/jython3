@@ -289,7 +289,7 @@ import org.python.modules.gc;
  *   ContextGuard:                   - no PyObject<br>
  *     ContextCode                   - Traverseproc<br>
  *     GeneratorContextManager       - Traverseproc<br>
- *   exceptions                      - no refs, untraversable<br>
+ *   Exceptions                      - no refs, untraversable<br>
  *     BoundStaticJavaMethod         - no refs, untraversable<br>
  *   JavaImporter                    - no refs, untraversable<br>
  *   JavaProxyList:<br>
@@ -311,7 +311,6 @@ import org.python.modules.gc;
  *   PyArray                         - Traverseproc, traverses via reflection<br>
  *   PyBaseCode                      - no refs, abstract class<br>
  *   PyBaseException                 - Traverseproc<br>
- *   PyBaseString                    - no refs, abstract class<br>
  *   PyBeanEvent                     - no refs, untraversable<br>
  *   PyBeanEventProperty             - no refs, untraversable<br>
  *   PyBeanProperty                  - no refs, untraversable<br>
@@ -426,7 +425,7 @@ import org.python.modules.gc;
  *     EncodingMap                   - no refs, untraversable<br>
  *   _hashlib:<br>
  *     Hash                          - no refs, untraversable<br>
- *   _marshal:<br>
+ *   marshal:<br>
  *     Marshaller                    - Traverseproc<br>
  *     Unmarshaller                  - Traverseproc<br>
  *   cStringIO:<br>

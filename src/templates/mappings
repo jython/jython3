@@ -35,6 +35,7 @@ permutations.derived:org.python.modules.itertools.permutationsDerived
 repeat.derived:org.python.modules.itertools.repeatDerived
 starmap.derived:org.python.modules.itertools.starmapDerived
 takewhile.derived:org.python.modules.itertools.takewhileDerived
+bytes.derived:org.python.core.PyStringDerived
 complex.derived:org.python.core.PyComplexDerived
 defaultdict.derived:org.python.modules._collections.PyDefaultDictDerived
 deque.derived:org.python.modules._collections.PyDequeDerived
@@ -54,11 +55,10 @@ partial.derived:org.python.modules._functools.PyPartialDerived
 property.derived:org.python.core.PyPropertyDerived
 random.derived:org.python.modules.random.PyRandomDerived
 set.derived:org.python.core.PySetDerived
-str.derived:org.python.core.PyStringDerived
 super.derived:org.python.core.PySuperDerived
 tuple.derived:org.python.core.PyTupleDerived
 type.derived:org.python.core.PyTypeDerived
-unicode.derived:org.python.core.PyUnicodeDerived
+str.derived:org.python.core.PyUnicodeDerived
 weakref.derived:org.python.modules._weakref.ReferenceTypeDerived
 zipimporter.derived:org.python.modules.zipimport.zipimporterDerived
 ast_Assert.derived:org.python.antlr.ast.AssertDerived

@@ -30,30 +30,17 @@ import java.util.ArrayList;
 @ExposedType(name = "_ast.With", base = stmt.class)
 public class With extends stmt {
 public static final PyType TYPE = PyType.fromClass(With.class);
-    private expr context_expr;
-    public expr getInternalContext_expr() {
-        return context_expr;
+    private java.util.List<withitem> items;
+    public java.util.List<withitem> getInternalItems() {
+        return items;
     }
-    @ExposedGet(name = "context_expr")
-    public PyObject getContext_expr() {
-        return context_expr;
+    @ExposedGet(name = "items")
+    public PyObject getItems() {
+        return new AstList(items, AstAdapters.withitemAdapter);
     }
-    @ExposedSet(name = "context_expr")
-    public void setContext_expr(PyObject context_expr) {
-        this.context_expr = AstAdapters.py2expr(context_expr);
-    }
-
-    private expr optional_vars;
-    public expr getInternalOptional_vars() {
-        return optional_vars;
-    }
-    @ExposedGet(name = "optional_vars")
-    public PyObject getOptional_vars() {
-        return optional_vars;
-    }
-    @ExposedSet(name = "optional_vars")
-    public void setOptional_vars(PyObject optional_vars) {
-        this.optional_vars = AstAdapters.py2expr(optional_vars);
+    @ExposedSet(name = "items")
+    public void setItems(PyObject items) {
+        this.items = AstAdapters.py2withitemList(items);
     }
 
     private java.util.List<stmt> body;
@@ -71,8 +58,7 @@ public static final PyType TYPE = PyType.fromClass(With.class);
 
 
     private final static PyString[] fields =
-    new PyString[] {new PyString("context_expr"), new PyString("optional_vars"), new
-                     PyString("body")};
+    new PyString[] {new PyString("items"), new PyString("body")};
     @ExposedGet(name = "_fields")
     public PyString[] get_fields() { return fields; }
 
@@ -91,34 +77,35 @@ public static final PyType TYPE = PyType.fromClass(With.class);
     @ExposedMethod
     public void With___init__(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("With", args, keywords, new String[]
-            {"context_expr", "optional_vars", "body", "lineno", "col_offset"}, 3, true);
-        setContext_expr(ap.getPyObject(0, Py.None));
-        setOptional_vars(ap.getPyObject(1, Py.None));
-        setBody(ap.getPyObject(2, Py.None));
-        int lin = ap.getInt(3, -1);
+            {"items", "body", "lineno", "col_offset"}, 2, true);
+        setItems(ap.getPyObject(0, Py.None));
+        setBody(ap.getPyObject(1, Py.None));
+        int lin = ap.getInt(2, -1);
         if (lin != -1) {
             setLineno(lin);
         }
 
-        int col = ap.getInt(4, -1);
+        int col = ap.getInt(3, -1);
         if (col != -1) {
             setLineno(col);
         }
 
     }
 
-    public With(PyObject context_expr, PyObject optional_vars, PyObject body) {
-        setContext_expr(context_expr);
-        setOptional_vars(optional_vars);
+    public With(PyObject items, PyObject body) {
+        setItems(items);
         setBody(body);
     }
 
-    public With(Token token, expr context_expr, expr optional_vars, java.util.List<stmt> body) {
+    public With(Token token, java.util.List<withitem> items, java.util.List<stmt> body) {
         super(token);
-        this.context_expr = context_expr;
-        addChild(context_expr);
-        this.optional_vars = optional_vars;
-        addChild(optional_vars);
+        this.items = items;
+        if (items == null) {
+            this.items = new ArrayList<withitem>();
+        }
+        for(PythonTree t : this.items) {
+            addChild(t);
+        }
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
@@ -128,13 +115,16 @@ public static final PyType TYPE = PyType.fromClass(With.class);
         }
     }
 
-    public With(Integer ttype, Token token, expr context_expr, expr optional_vars,
-    java.util.List<stmt> body) {
+    public With(Integer ttype, Token token, java.util.List<withitem> items, java.util.List<stmt>
+    body) {
         super(ttype, token);
-        this.context_expr = context_expr;
-        addChild(context_expr);
-        this.optional_vars = optional_vars;
-        addChild(optional_vars);
+        this.items = items;
+        if (items == null) {
+            this.items = new ArrayList<withitem>();
+        }
+        for(PythonTree t : this.items) {
+            addChild(t);
+        }
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
@@ -144,12 +134,15 @@ public static final PyType TYPE = PyType.fromClass(With.class);
         }
     }
 
-    public With(PythonTree tree, expr context_expr, expr optional_vars, java.util.List<stmt> body) {
+    public With(PythonTree tree, java.util.List<withitem> items, java.util.List<stmt> body) {
         super(tree);
-        this.context_expr = context_expr;
-        addChild(context_expr);
-        this.optional_vars = optional_vars;
-        addChild(optional_vars);
+        this.items = items;
+        if (items == null) {
+            this.items = new ArrayList<withitem>();
+        }
+        for(PythonTree t : this.items) {
+            addChild(t);
+        }
         this.body = body;
         if (body == null) {
             this.body = new ArrayList<stmt>();
@@ -166,11 +159,8 @@ public static final PyType TYPE = PyType.fromClass(With.class);
 
     public String toStringTree() {
         StringBuffer sb = new StringBuffer("With(");
-        sb.append("context_expr=");
-        sb.append(dumpThis(context_expr));
-        sb.append(",");
-        sb.append("optional_vars=");
-        sb.append(dumpThis(optional_vars));
+        sb.append("items=");
+        sb.append(dumpThis(items));
         sb.append(",");
         sb.append("body=");
         sb.append(dumpThis(body));
@@ -184,10 +174,12 @@ public static final PyType TYPE = PyType.fromClass(With.class);
     }
 
     public void traverse(VisitorIF<?> visitor) throws Exception {
-        if (context_expr != null)
-            context_expr.accept(visitor);
-        if (optional_vars != null)
-            optional_vars.accept(visitor);
+        if (items != null) {
+            for (PythonTree t : items) {
+                if (t != null)
+                    t.accept(visitor);
+            }
+        }
         if (body != null) {
             for (PythonTree t : body) {
                 if (t != null)

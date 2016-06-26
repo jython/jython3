@@ -5,7 +5,7 @@
 #
 #----------------------------------------------------------------------
 
-from test import test_support
+from test import support
 import os, struct, stat, sys
 
 try:
@@ -19,55 +19,54 @@ except (ImportError, AttributeError):
 
 
 # create >2GB file (2GB = 2147483648 bytes)
-size = 2500000000L
-name = test_support.TESTFN
+size = 2500000000
+name = support.TESTFN
 
 
 # On Windows and Mac OSX this test comsumes large resources; It takes
 # a long time to build the >2GB file and takes >2GB of disk space
 # therefore the resource must be enabled to run this test.  If not,
 # nothing after this line stanza will be executed.
-if sys.platform[:3] == 'win' or sys.platform == 'darwin' or test_support.is_jython:
-    test_support.requires(
+if sys.platform[:3] == 'win' or sys.platform == 'darwin' or support.is_jython:
+    support.requires(
         'largefile',
         'test requires %s bytes and a long time to run' % str(size))
 else:
     # Only run if the current filesystem supports large files.
     # (Skip this test on Windows, since we now always support large files.)
-    f = open(test_support.TESTFN, 'wb')
+    f = open(support.TESTFN, 'wb')
     try:
         # 2**31 == 2147483648
-        f.seek(2147483649L)
+        f.seek(2147483649)
         # Seeking is not enough of a test: you must write and flush, too!
         f.write("x")
         f.flush()
     except (IOError, OverflowError):
         f.close()
-        os.unlink(test_support.TESTFN)
-        raise test_support.TestSkipped, \
-              "filesystem does not have largefile support"
+        os.unlink(support.TESTFN)
+        raise support.TestSkipped("filesystem does not have largefile support")
     else:
         f.close()
 
 
 def expect(got_this, expect_this):
-    if test_support.verbose:
-        print '%r =?= %r ...' % (got_this, expect_this),
+    if support.verbose:
+        print('%r =?= %r ...' % (got_this, expect_this), end=' ')
     if got_this != expect_this:
-        if test_support.verbose:
-            print 'no'
-        raise test_support.TestFailed, 'got %r, but expected %r' %\
-              (got_this, expect_this)
+        if support.verbose:
+            print('no')
+        raise support.TestFailed('got %r, but expected %r' %\
+              (got_this, expect_this))
     else:
-        if test_support.verbose:
-            print 'yes'
+        if support.verbose:
+            print('yes')
 
 
 # test that each file function works as expected for a large (i.e. >2GB, do
 # we have to check >4GB) files
 
-if test_support.verbose:
-    print 'create large file via seek (may be sparse file) ...'
+if support.verbose:
+    print('create large file via seek (may be sparse file) ...')
 f = open(name, 'wb')
 try:
     f.write('z')
@@ -76,17 +75,17 @@ try:
     f.write('a')
     f.flush()
     if hasattr(os, 'fstat'):
-        if test_support.verbose:
-            print 'check file size with os.fstat'
+        if support.verbose:
+            print('check file size with os.fstat')
         expect(os.fstat(f.fileno())[stat.ST_SIZE], size+1)
 finally:
     f.close()
-if test_support.verbose:
-    print 'check file size with os.stat'
+if support.verbose:
+    print('check file size with os.stat')
 expect(os.stat(name)[stat.ST_SIZE], size+1)
 
-if test_support.verbose:
-    print 'play around with seek() and read() with the built largefile'
+if support.verbose:
+    print('play around with seek() and read() with the built largefile')
 f = open(name, 'rb')
 try:
     expect(f.tell(), 0)
@@ -119,8 +118,8 @@ try:
 finally:
     f.close()
 
-if test_support.verbose:
-    print 'play around with os.lseek() with the built largefile'
+if support.verbose:
+    print('play around with os.lseek() with the built largefile')
 f = open(name, 'rb')
 try:
     expect(os.lseek(f.fileno(), 0, 0), 0)
@@ -136,8 +135,8 @@ finally:
     f.close()
 
 if hasattr(f, 'truncate'):
-    if test_support.verbose:
-        print 'try truncate'
+    if support.verbose:
+        print('try truncate')
     f = open(name, 'r+b')
     try:
         f.seek(0, 2)

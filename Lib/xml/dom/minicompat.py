@@ -53,11 +53,11 @@ __all__ = ["NodeList", "EmptyNodeList", "NewStyle",
 import xml.dom
 
 try:
-    unicode
+    str
 except NameError:
     StringTypes = type(''),
 else:
-    StringTypes = type(''), type(unicode(''))
+    StringTypes = type(''), type(str(''))
 
 
 # define True and False only if not defined as built-ins
@@ -156,12 +156,12 @@ except NameError:
     class GetattrMagic:
         def __getattr__(self, key):
             if key.startswith("_"):
-                raise AttributeError, key
+                raise AttributeError(key)
 
             try:
                 get = getattr(self, "_get_" + key)
             except AttributeError:
-                raise AttributeError, key
+                raise AttributeError(key)
             return get()
 
     class NewStyle:
@@ -169,7 +169,7 @@ except NameError:
 
 else:
     def defproperty(klass, name, doc):
-        get = getattr(klass, ("_get_" + name)).im_func
+        get = getattr(klass, ("_get_" + name)).__func__
         def set(self, value, name=name):
             raise xml.dom.NoModificationAllowedErr(
                 "attempt to modify read-only attribute " + repr(name))

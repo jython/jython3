@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import java.util.Map;
 
 import org.python.core.ClassDictInit;
+import org.python.core.Exceptions;
 import org.python.core.Py;
 import org.python.core.PyBoolean;
 import org.python.core.PyBuiltinCallable;
@@ -41,7 +42,6 @@ import org.python.core.PyType;
 import org.python.core.PyUnicode;
 import org.python.core.__builtin__;
 import org.python.core.codecs;
-import org.python.core.exceptions;
 import org.python.core.imp;
 import org.python.util.Generic;
 
@@ -374,7 +374,7 @@ public class cPickle implements ClassDictInit {
     public static final int HIGHEST_PROTOCOL = 2;
 
     public static String[] __depends__ = new String[] {
-        "copy_reg",
+        "copyreg",
     };
 
     public static PyObject PickleError;
@@ -494,7 +494,7 @@ public class cPickle implements ClassDictInit {
         // sys.modules.
         imp.importName("__builtin__", true);
 
-        PyModule copyreg = (PyModule)importModule("copy_reg");
+        PyModule copyreg = (PyModule)importModule("copyreg");
 
         dispatch_table = (PyDictionary)copyreg.__getattr__("dispatch_table");
         extension_registry = (PyDictionary)copyreg.__getattr__("_extension_registry");
@@ -1225,7 +1225,7 @@ public class cPickle implements ClassDictInit {
                 do {
                     // Get next group of (no more than) BATCHSIZE elements.
                     for (n = 0; n < BATCHSIZE; n++) {
-                        obj = object.__iternext__();
+                        obj = object.__next__();
                         if (obj == null) {
                             break;
                         }
@@ -2253,6 +2253,6 @@ public class cPickle implements ClassDictInit {
     }
 
     private static PyObject getJavaFunc(String name, String methodName) {
-        return exceptions.bindStaticJavaMethod(name, cPickle.class, methodName);
+        return Exceptions.bindStaticJavaMethod(name, cPickle.class, methodName);
     }
 }

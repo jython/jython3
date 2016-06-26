@@ -1,7 +1,7 @@
 "Tests for cmp() compatibility with CPython"
 import UserDict
 import unittest
-from test import test_support
+from test import support
 
 class CmpGeneralTestCase(unittest.TestCase):
 
@@ -16,13 +16,13 @@ class CmpGeneralTestCase(unittest.TestCase):
 class UnicodeDerivedCmp(unittest.TestCase):
     "Test for http://bugs.jython.org/issue1889394"
     def testCompareWithString(self):
-        class Test(unicode):
+        class Test(str):
             pass
         test = Test('{1:1}')
         self.assertNotEqual(test, {1:1})
     def testCompareEmptyDerived(self):
-        class A(unicode): pass
-        class B(unicode): pass
+        class A(str): pass
+        class B(str): pass
         self.assertEqual(A(), B())
 
 
@@ -101,7 +101,7 @@ class CustomCmp(unittest.TestCase):
         self.assertEqual(cmp(100, baz), 0)
         baz.cmp = lambda other : NotImplemented
         # CPython is faulty here (returns 1)
-        self.assertEqual(cmp(100, baz), -1 if test_support.is_jython else 1)
+        self.assertEqual(cmp(100, baz), -1 if support.is_jython else 1)
         baz.cmp = lambda other: Bar()
         self.assertRaises(ValueError, cmp, 100, baz)
         baz.cmp = lambda other: 1 / 0
@@ -118,7 +118,7 @@ class CustomCmp(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
             CmpGeneralTestCase,
             UnicodeDerivedCmp,
             LongDerivedCmp,

@@ -10,6 +10,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.python.core.BytecodeLoader;
+import org.python.core.PyUnicode;
 
 /**
  * Base class that handles the basics of generating a single class with asm. Subclass to supply the
@@ -237,14 +238,14 @@ public abstract class Exposer implements Opcodes, PyTypes {
             getStatic(PY, "None", PYOBJ);
             mv.visitJumpInsn(GOTO, end);
             mv.visitLabel(newString);
-            callStatic(PY, "newString", PYSTR, STRING);
+            callStatic(PY, "newUnicode", PYSTR, STRING);
             mv.visitLabel(end);
         } else if(inputType.equals(BOOLEAN)) {
             callStatic(PY, "newBoolean", PYBOOLEAN, BOOLEAN);
         } else if(inputType.equals(INT) || inputType.equals(BYTE) || inputType.equals(SHORT)) {
             callStatic(PY, "newInteger", PYINTEGER, INT);
         } else if(inputType.equals(CHAR)) {
-            callStatic(PY, "makeCharacter", PYSTR, CHAR);
+            callStatic(PY, "makeCharacter", PYBYTES, CHAR);
         } else if(inputType.equals(Type.DOUBLE_TYPE)) {
             callStatic(PY, "newFloat", PYFLOAT, Type.DOUBLE_TYPE);
         } else if(inputType.equals(Type.FLOAT_TYPE)) {

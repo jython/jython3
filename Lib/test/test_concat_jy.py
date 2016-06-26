@@ -3,7 +3,7 @@
 Made for Jython.
 """
 import unittest
-import test.test_support
+import test.support
 
 class StrUnicodeConcatTestCase(unittest.TestCase):
 
@@ -11,21 +11,21 @@ class StrUnicodeConcatTestCase(unittest.TestCase):
         class s(str):
             pass
 
-        class u(unicode):
+        class u(str):
             pass
 
-        for t1 in (str, unicode, s, u):
-            for t2 in (str, unicode, s, u):
+        for t1 in (str, str, s, u):
+            for t2 in (str, str, s, u):
                 a = t1('a')
                 b = t2('b')
                 resType = str
-                if issubclass(t1, unicode) or issubclass(t2, unicode):
-                    resType = unicode
+                if issubclass(t1, str) or issubclass(t2, str):
+                    resType = str
                 res = a.__add__(b)
-                self.assertEquals(type(res), resType,
+                self.assertEqual(type(res), resType,
                                   '%r is a %s, not a %s' % (res, type(res),
                                                             resType))
-                self.assertEquals(res, 'ab',
+                self.assertEqual(res, 'ab',
                                   '%r (%s) != %r (%s)' % (res, type(res), 'ab',
                                                  str))
 
@@ -36,13 +36,13 @@ class StrUnicodeConcatOverridesTestCase(unittest.TestCase):
         self._test_concat(str, str)
 
     def test_unicode_concat(self):
-        self._test_concat(unicode, unicode)
+        self._test_concat(str, str)
 
     def test_str_unicode_concat(self):
-        self._test_concat(str, unicode)
+        self._test_concat(str, str)
 
     def test_unicode_str_concat(self):
-        self._test_concat(unicode, str)
+        self._test_concat(str, str)
 
     def check(self, value, expected):
         self.assertEqual(type(value), type(expected),
@@ -54,8 +54,8 @@ class StrUnicodeConcatOverridesTestCase(unittest.TestCase):
 
     def _test_concat(self, t1, t2):
         tprecedent = str
-        if issubclass(t1, unicode) or issubclass(t2, unicode):
-            tprecedent = unicode
+        if issubclass(t1, str) or issubclass(t2, str):
+            tprecedent = str
 
         class SubclassB(t2):
             def __add__(self, other):
@@ -83,7 +83,7 @@ class StrUnicodeConcatOverridesTestCase(unittest.TestCase):
 
 
 def test_main():
-    test.test_support.run_unittest(StrUnicodeConcatTestCase,
+    test.support.run_unittest(StrUnicodeConcatTestCase,
                                    StrUnicodeConcatOverridesTestCase)
 
 if __name__ == "__main__":

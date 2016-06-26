@@ -2,7 +2,7 @@ import inspect
 import os.path
 import sys
 import unittest
-from test import test_support
+from test import support
 from regrtest import runtest
 
 def make_fib_function():
@@ -34,15 +34,15 @@ fib = make_fib_function()
 class PyBytecodeTest(unittest.TestCase):
 
     def test_fib(self):
-        expected_fib = [1,1,2,3,5,8,13,21,34,55]
+        expected_fib = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
         for i in range(10):
-            self.assertEquals(fib(i), expected_fib[i])
+            self.assertEqual(fib(i), expected_fib[i])
 
 class AdhocRegrtest(unittest.TestCase):
 
     def setUp(self):
-        self.old_verbosity = test_support.verbose
-        test_support.verbose = 0
+        self.old_verbosity = support.verbose
+        support.verbose = 0
         import pycimport
         sys.path.insert(0, os.path.join(os.path.split(inspect.getfile(self.__class__))[0], 'pbcvm'))
 
@@ -55,18 +55,18 @@ class AdhocRegrtest(unittest.TestCase):
             'test_exceptions_pyc'):
             test_times = []
             ok = runtest(test, False, True, test_times)
-            print "got", ok
+            print("got", ok)
             self.assertTrue(ok > 0)
 
     def tearDown(self):
         # typical unsafe ops we have to do in testing...
-        test_support.verbose = self.old_verbosity
+        support.verbose = self.old_verbosity
         sys.path.pop(0)
         sys.meta_path.pop(0)
 
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         PyBytecodeTest,
         # AdhocRegrtest   # reinstate once we have Python bytecode compilation, too hard to coordinate otherwise
     )

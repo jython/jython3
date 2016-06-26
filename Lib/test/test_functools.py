@@ -1,6 +1,6 @@
 import functools
 import unittest
-from test import test_support
+from test import support
 from weakref import proxy
 
 @staticmethod
@@ -28,7 +28,7 @@ class TestPartial(unittest.TestCase):
         self.assertEqual(p(3, 4, b=30, c=40),
                          ((1, 2, 3, 4), dict(a=10, b=30, c=40)))
         p = self.thetype(map, lambda x: x*10)
-        self.assertEqual(p([1,2,3,4]), [10, 20, 30, 40])
+        self.assertEqual(p([1, 2, 3, 4]), [10, 20, 30, 40])
 
     def test_attributes(self):
         p = self.thetype(capture, 1, 2, a=10, b=20)
@@ -68,10 +68,10 @@ class TestPartial(unittest.TestCase):
         # object or the caller
         p = self.thetype(capture)
         self.assertEqual(p(), ((), {}))
-        self.assertEqual(p(1,2), ((1,2), {}))
+        self.assertEqual(p(1, 2), ((1, 2), {}))
         p = self.thetype(capture, 1, 2)
-        self.assertEqual(p(), ((1,2), {}))
-        self.assertEqual(p(3,4), ((1,2,3,4), {}))
+        self.assertEqual(p(), ((1, 2), {}))
+        self.assertEqual(p(3, 4), ((1, 2, 3, 4), {}))
 
     def test_kw_combinations(self):
         # exercise special code paths for no keyword args in
@@ -87,11 +87,11 @@ class TestPartial(unittest.TestCase):
 
     def test_positional(self):
         # make sure positional arguments are captured correctly
-        for args in [(), (0,), (0,1), (0,1,2), (0,1,2,3)]:
+        for args in [(), (0,), (0, 1), (0, 1, 2), (0, 1, 2, 3)]:
             p = self.thetype(capture, *args)
             expected = args + ('x',)
             got, empty = p('x')
-            self.failUnless(expected == got and empty == {})
+            self.assertTrue(expected == got and empty == {})
 
     def test_keyword(self):
         # make sure keyword arguments are captured correctly
@@ -99,15 +99,15 @@ class TestPartial(unittest.TestCase):
             p = self.thetype(capture, a=a)
             expected = {'a':a,'x':None}
             empty, got = p(x=None)
-            self.failUnless(expected == got and empty == ())
+            self.assertTrue(expected == got and empty == ())
 
     def test_no_side_effects(self):
         # make sure there are no side effects that affect subsequent calls
         p = self.thetype(capture, 0, a=1)
         args1, kw1 = p(1, b=2)
-        self.failUnless(args1 == (0,1) and kw1 == {'a':1,'b':2})
+        self.assertTrue(args1 == (0, 1) and kw1 == {'a':1,'b':2})
         args2, kw2 = p()
-        self.failUnless(args2 == (0,) and kw2 == {'a':1})
+        self.assertTrue(args2 == (0,) and kw2 == {'a':1})
 
     def test_error_propagation(self):
         def f(x, y):
@@ -134,13 +134,13 @@ class TestPartial(unittest.TestCase):
         p = proxy(f)
         self.assertEqual(f.func, p.func)
         f = None
-        if test_support.is_jython:
+        if support.is_jython:
             from test_weakref import extra_collect
             extra_collect()
         self.assertRaises(ReferenceError, getattr, p, 'func')
 
     def test_with_bound_and_unbound_methods(self):
-        data = map(str, range(10))
+        data = list(map(str, list(range(10))))
         join = self.thetype(str.join, '')
         self.assertEqual(join(data), '0123456789')
         join = self.thetype(''.join)
@@ -165,13 +165,13 @@ class TestUpdateWrapper(unittest.TestCase):
                       updated=functools.WRAPPER_UPDATES):
         # Check attributes were assigned
         for name in assigned:
-            self.failUnless(getattr(wrapper, name) == getattr(wrapped, name))
+            self.assertTrue(getattr(wrapper, name) == getattr(wrapped, name))
         # Check attributes were updated
         for name in updated:
             wrapper_attr = getattr(wrapper, name)
             wrapped_attr = getattr(wrapped, name)
             for key in wrapped_attr:
-                self.failUnless(wrapped_attr[key] is wrapper_attr[key])
+                self.assertTrue(wrapped_attr[key] is wrapper_attr[key])
 
     def test_default_update(self):
         def f():
@@ -197,7 +197,7 @@ class TestUpdateWrapper(unittest.TestCase):
         self.check_wrapper(wrapper, f, (), ())
         self.assertEqual(wrapper.__name__, 'wrapper')
         self.assertEqual(wrapper.__doc__, None)
-        self.failIf(hasattr(wrapper, 'attr'))
+        self.assertFalse(hasattr(wrapper, 'attr'))
 
     def test_selective_update(self):
         def f():
@@ -243,7 +243,7 @@ class TestWraps(TestUpdateWrapper):
         self.check_wrapper(wrapper, f, (), ())
         self.assertEqual(wrapper.__name__, 'wrapper')
         self.assertEqual(wrapper.__doc__, None)
-        self.failIf(hasattr(wrapper, 'attr'))
+        self.assertFalse(hasattr(wrapper, 'attr'))
 
     def test_selective_update(self):
         def f():
@@ -276,17 +276,17 @@ def test_main(verbose=None):
         TestUpdateWrapper,
         TestWraps
     )
-    test_support.run_unittest(*test_classes)
+    support.run_unittest(*test_classes)
 
     # verify reference counting
     if verbose and hasattr(sys, "gettotalrefcount"):
         import gc
         counts = [None] * 5
-        for i in xrange(len(counts)):
-            test_support.run_unittest(*test_classes)
+        for i in range(len(counts)):
+            support.run_unittest(*test_classes)
             gc.collect()
             counts[i] = sys.gettotalrefcount()
-        print counts
+        print(counts)
 
 if __name__ == '__main__':
     test_main(verbose=True)

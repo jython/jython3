@@ -68,7 +68,7 @@ class NetrcTestCase(unittest.TestCase):
             machine bar.domain.com login foo password pass
             """)
 
-    @unittest.skipIf(test_support.is_jython, "FIXME: not working on Jython")
+    @unittest.skipIf(support.is_jython, "FIXME: not working on Jython")
     def test_comment_before_machine_line_no_space(self):
         self._test_comment("""\
             #comment
@@ -76,7 +76,7 @@ class NetrcTestCase(unittest.TestCase):
             machine bar.domain.com login foo password pass
             """)
 
-    @unittest.skipIf(test_support.is_jython, "FIXME: not working on Jython")
+    @unittest.skipIf(support.is_jython, "FIXME: not working on Jython")
     def test_comment_before_machine_line_hash_only(self):
         self._test_comment("""\
             #
@@ -84,21 +84,21 @@ class NetrcTestCase(unittest.TestCase):
             machine bar.domain.com login foo password pass
             """)
 
-    @unittest.skipIf(test_support.is_jython, "FIXME: not working on Jython")
+    @unittest.skipIf(support.is_jython, "FIXME: not working on Jython")
     def test_comment_at_end_of_machine_line(self):
         self._test_comment("""\
             machine foo.domain.com login bar password pass # comment
             machine bar.domain.com login foo password pass
             """)
 
-    @unittest.skipIf(test_support.is_jython, "FIXME: not working on Jython")
+    @unittest.skipIf(support.is_jython, "FIXME: not working on Jython")
     def test_comment_at_end_of_machine_line_no_space(self):
         self._test_comment("""\
             machine foo.domain.com login bar password pass #comment
             machine bar.domain.com login foo password pass
             """)
 
-    @unittest.skipIf(test_support.is_jython, "FIXME: not working on Jython")
+    @unittest.skipIf(support.is_jython, "FIXME: not working on Jython")
     def test_comment_at_end_of_machine_line_pass_has_hash(self):
         self._test_comment("""\
             machine foo.domain.com login bar password #pass #comment

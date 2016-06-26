@@ -7,11 +7,11 @@ as not skipped.
 """
 
 import unittest
-from test import test_support
+from test import support
 import time
 import gc
 import weakref
-from Queue import Queue
+from queue import Queue
 
 try:
     from java.lang import System, Runnable, Class
@@ -93,7 +93,7 @@ class GCTests_Jy_CyclicGarbage(unittest.TestCase):
             self.fail("didn't find obj in garbage (finalizer)")
         gc.garbage.remove(obj)
 
-    @unittest.skipUnless(test_support.is_jython,
+    @unittest.skipUnless(support.is_jython,
         'CPython has no monitor state')
     def test_manual_monitoring(self):
         # since tuples are immutable we close the loop with a list
@@ -111,7 +111,7 @@ class GCTests_Jy_CyclicGarbage(unittest.TestCase):
         self.assertEqual(gc.collect(), 1)
 
 
-@unittest.skipUnless(test_support.is_jython,
+@unittest.skipUnless(support.is_jython,
         'CPython has no gc preprocess and postprocess features')
 class GCTests_Jy_preprocess_and_postprocess(unittest.TestCase):
 
@@ -231,7 +231,7 @@ class GCTests_Jy_preprocess_and_postprocess(unittest.TestCase):
         gc.unregisterPostFinalizationProcess(postPr)
 
 
-@unittest.skipUnless(test_support.is_jython,
+@unittest.skipUnless(support.is_jython,
         'This class tests detailed Jython-specific behavior.')
 class GCTests_Jy_Delayed_Finalization(unittest.TestCase):
 
@@ -435,7 +435,7 @@ class GCTests_Jy_Monitoring(unittest.TestCase):
         except Exception:
             pass
 
-    @unittest.skipUnless(test_support.is_jython, 'CPython has no monitor-state.')
+    @unittest.skipUnless(support.is_jython, 'CPython has no monitor-state.')
     def test_monitor_status_after_delayed_finalization(self):
         resurrect = []
         comments = []
@@ -644,7 +644,7 @@ class GCTests_Jy_Weakref(unittest.TestCase):
         except Exception:
             pass
 
-    @unittest.skipUnless(test_support.is_jython, '')
+    @unittest.skipUnless(support.is_jython, '')
     def test_weakref_after_resurrection_threadsafe(self):
         resurrect = []
         comments = []
@@ -698,7 +698,7 @@ class GCTests_Jy_Weakref(unittest.TestCase):
         self.assertEqual(wc(), None)
 
 
-@unittest.skipUnless(test_support.is_jython,
+@unittest.skipUnless(support.is_jython,
         '''
         The test involves Java-classes and is thus not supported by
         non-Jython interpreters.
@@ -747,7 +747,7 @@ class GCTests_Jy_TraverseByReflection(unittest.TestCase):
         self.assertEqual(gc.collect(), 0)
 
 
-@unittest.skipUnless(test_support.is_jython,
+@unittest.skipUnless(support.is_jython,
         '''
         The test involves Jython-specifics and is thus not supported by
         non-Jython interpreters.

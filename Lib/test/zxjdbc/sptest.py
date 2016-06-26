@@ -46,10 +46,10 @@ class OracleSPTest(zxCoreTestCase):
             errors = c.fetchall()
             try:
                 assert not errors, "found errors"
-            except AssertionError, e:
-                print "printing errors:"
+            except AssertionError as e:
+                print("printing errors:")
                 for a in errors:
-                    print a
+                    print(a)
                 raise e
         finally:
             c.close()
@@ -87,10 +87,10 @@ class OracleSPTest(zxCoreTestCase):
 
             c.callproc("funccur", ("z",))
             data = c.fetchall()
-            self.assertEquals(5, len(data))
+            self.assertEqual(5, len(data))
             c.callproc("funccur", ("c",))
             data = c.fetchall()
-            self.assertEquals(2, len(data))
+            self.assertEqual(2, len(data))
 
         finally:
             c.close()
@@ -100,9 +100,9 @@ class OracleSPTest(zxCoreTestCase):
         try:
             params = ["testProcin"]
             c.callproc("procin", params)
-            self.assertEquals([], c.fetchall())
+            self.assertEqual([], c.fetchall())
             c.execute("select * from sptest")
-            self.assertEquals(1, len(c.fetchall()))
+            self.assertEqual(1, len(c.fetchall()))
         finally:
             c.close()
 
@@ -115,8 +115,8 @@ class OracleSPTest(zxCoreTestCase):
             assert data is None, "data was not None"
             c.execute("select * from sptest")
             data = c.fetchone()
-            self.assertEquals("testing", data[0])
-            self.assertEquals("tested", params[0])
+            self.assertEqual("testing", data[0])
+            self.assertEqual("tested", params[0])
         finally:
             c.close()
 
@@ -126,8 +126,8 @@ class OracleSPTest(zxCoreTestCase):
             c.callproc("funcnone")
             data = c.fetchone()
             assert data is not None, "data was None"
-            self.assertEquals(1, len(data))
-            self.assertEquals("tested", data[0])
+            self.assertEqual(1, len(data))
+            self.assertEqual("tested", data[0])
         finally:
             c.close()
 
@@ -136,11 +136,11 @@ class OracleSPTest(zxCoreTestCase):
         try:
             params = ["testing"]
             c.callproc("funcin", params)
-            self.assertEquals(1, c.rowcount)
+            self.assertEqual(1, c.rowcount)
             data = c.fetchone()
             assert data is not None, "data was None"
-            self.assertEquals(1, len(data))
-            self.assertEquals("testingtesting", data[0])
+            self.assertEqual(1, len(data))
+            self.assertEqual("testingtesting", data[0])
         finally:
             c.close()
 
@@ -149,11 +149,11 @@ class OracleSPTest(zxCoreTestCase):
         try:
             params = ["testing"]
             c.callproc("funcin", params=params)
-            self.assertEquals(1, c.rowcount)
+            self.assertEqual(1, c.rowcount)
             data = c.fetchone()
             assert data is not None, "data was None"
-            self.assertEquals(1, len(data))
-            self.assertEquals("testingtesting", data[0])
+            self.assertEqual(1, len(data))
+            self.assertEqual("testingtesting", data[0])
         finally:
             c.close()
 
@@ -164,9 +164,9 @@ class OracleSPTest(zxCoreTestCase):
             c.callproc("funcout", params)
             data = c.fetchone()
             assert data is not None, "data was None"
-            self.assertEquals(1, len(data))
-            self.assertEquals("returned", data[0])
-            self.assertEquals("tested", params[0].strip())
+            self.assertEqual(1, len(data))
+            self.assertEqual("returned", data[0])
+            self.assertEqual("tested", params[0].strip())
         finally:
             c.close()
 
@@ -203,12 +203,12 @@ class SQLServerSPTest(zxCoreTestCase):
 
             c.callproc("sp_proctest", (2,))
             data = c.fetchall()
-            self.assertEquals(2, len(data))
-            self.assertEquals(2, len(c.description))
+            self.assertEqual(2, len(data))
+            self.assertEqual(2, len(c.description))
             assert c.nextset() is not None, "expected an additional result set"
             data = c.fetchall()
-            self.assertEquals(1, len(data))
-            self.assertEquals(1, len(c.description))
+            self.assertEqual(1, len(data))
+            self.assertEqual(1, len(c.description))
         finally:
             c.close()
 

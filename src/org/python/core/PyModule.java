@@ -14,6 +14,8 @@ import org.python.expose.ExposedType;
  */
 @ExposedType(name = "module")
 public class PyModule extends PyObject implements Traverseproc {
+    public static final PyType TYPE = PyType.fromClass(PyModule.class);
+
     private final PyObject moduleDoc = new PyString(
         "module(name[, doc])\n" +
         "\n" +
@@ -42,9 +44,9 @@ public class PyModule extends PyObject implements Traverseproc {
     }
 
     public PyModule(String name, PyObject dict) {
-        super();
+        super(TYPE);
         __dict__ = dict;
-        module___init__(new PyString(name), Py.None);
+        module___init__(new PyUnicode(name), Py.None);
     }
 
     @ExposedNew
@@ -60,7 +62,7 @@ public class PyModule extends PyObject implements Traverseproc {
         ensureDict();
         __dict__.__setitem__("__name__", name);
         __dict__.__setitem__("__doc__", doc);
-        if (name.equals(new PyString("__main__"))) {
+        if (name.equals(new PyUnicode("__main__"))) {
             __dict__.__setitem__("__builtins__", Py.getSystemState().modules.__finditem__("__builtin__"));
             __dict__.__setitem__("__package__", Py.None);
         }

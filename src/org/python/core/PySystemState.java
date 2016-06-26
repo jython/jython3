@@ -1,6 +1,18 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.core;
 
+import jnr.posix.util.Platform;
+import org.python.Version;
+import org.python.core.adapter.ClassicPyObjectAdapter;
+import org.python.core.adapter.ExtensiblePyObjectAdapter;
+import org.python.core.packagecache.PackageManager;
+import org.python.core.packagecache.SysPackageManager;
+import org.python.expose.ExposedGet;
+import org.python.expose.ExposedType;
+import org.python.modules.PyNamespace;
+import org.python.modules.Setup;
+import org.python.util.Generic;
+
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
@@ -34,18 +46,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import jnr.posix.util.Platform;
-
-import org.python.Version;
-import org.python.core.adapter.ClassicPyObjectAdapter;
-import org.python.core.adapter.ExtensiblePyObjectAdapter;
-import org.python.core.packagecache.PackageManager;
-import org.python.core.packagecache.SysPackageManager;
-import org.python.expose.ExposedGet;
-import org.python.expose.ExposedType;
-import org.python.modules.Setup;
-import org.python.util.Generic;
-
 /**
  * The "sys" module.
  */
@@ -70,12 +70,12 @@ public class PySystemState extends PyObject implements AutoCloseable,
     private static final String VFS_PREFIX = "vfs:";
 
     // XXX: should this be "mbcs" on Windows, like on CPython?
-    private static final PyString fileSystemEncoding = new PyString(System.getProperty("file.encoding")); 
+    private static final PyUnicode fileSystemEncoding = new PyUnicode(System.getProperty("file.encoding"));
 
-    public static final PyString version = new PyString(Version.getVersion());
+    public static final PyUnicode version = new PyUnicode(Version.getVersion());
 
-    public static final PyTuple subversion = new PyTuple(new PyString("Jython"), Py.newString(""),
-            Py.newString(""));
+    public static final PyTuple subversion = new PyTuple(new PyUnicode("Jython"), Py.EmptyUnicode,
+            Py.EmptyUnicode);
 
     public static final int hexversion = ((Version.PY_MAJOR_VERSION << 24)
             | (Version.PY_MINOR_VERSION << 16) | (Version.PY_MICRO_VERSION << 8)
@@ -89,21 +89,21 @@ public class PySystemState extends PyObject implements AutoCloseable,
     // for tests that would need to pass but today would not.
     public final static int maxsize = Integer.MAX_VALUE;
 
-    public final static PyString float_repr_style = Py.newString("short");
+    public final static PyUnicode float_repr_style = Py.newUnicode("short");
 
     public static boolean py3kwarning = false;
 
     public final static Class flags = Options.class;
 
     public final static PyTuple _mercurial = new PyTuple(
-            Py.newString("Jython"),
-            Py.newString(Version.getHGIdentifier()),
-            Py.newString(Version.getHGVersion()));
+            Py.newUnicode("Jython"),
+            Py.newUnicode(Version.getHGIdentifier()),
+            Py.newUnicode(Version.getHGVersion()));
     /**
      * The copyright notice for this release.
      */
 
-    public static final PyObject copyright = Py.newString(
+    public static final PyObject copyright = Py.newUnicode(
             "Copyright (c) 2000-2015 Jython Developers.\n" + "All rights reserved.\n\n" +
             "Copyright (c) 2000 BeOpen.com.\n" + "All Rights Reserved.\n\n" +
             "Copyright (c) 2000 The Apache Software Foundation.\n" + "All rights reserved.\n\n" +
@@ -124,7 +124,9 @@ public class PySystemState extends PyObject implements AutoCloseable,
 
     public static Properties registry; // = init_registry();
     public static PyObject prefix;
+    public static PyObject base_prefix;
     public static PyObject exec_prefix = Py.EmptyString;
+    public static PyObject base_exec_prefix = exec_prefix;
 
     public static final PyString byteorder = new PyString("big");
     public static final int maxint = Integer.MAX_VALUE;
@@ -143,8 +145,10 @@ public class PySystemState extends PyObject implements AutoCloseable,
 
     public PyList warnoptions = new PyList();
     public PyObject builtins;
-    private static PyObject defaultPlatform = new PyString("java");
-    public PyObject platform = defaultPlatform;
+    private static PyObject defaultPlatform = Py.newUnicode("java");
+    public PyObject platform;
+
+    public PyNamespace implementation;
 
     public PyList meta_path;
     public PyList path_hooks;
@@ -169,7 +173,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
     public PyObject last_type = Py.None;
     public PyObject last_traceback = Py.None;
 
-    public PyObject __name__ = new PyString("sys");
+    public PyObject __name__ = new PyUnicode("sys");
 
     public PyObject __dict__;
 
@@ -198,6 +202,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
 
     public PySystemState() {
         initialize();
+        initImplementation();
         closer = new PySystemStateCloser(this);
         modules = new PyStringMap();
         modules_reloading = new HashMap<String, PyModule>();
@@ -206,8 +211,8 @@ public class PySystemState extends PyObject implements AutoCloseable,
 
         argv = (PyList)defaultArgv.repeat(1);
         path = (PyList)defaultPath.repeat(1);
-        path.append(Py.newString(JavaImporter.JAVA_IMPORT_PATH_ENTRY));
-        path.append(Py.newString(ClasspathPyImporter.PYCLASSPATH_PREFIX));
+        path.append(Py.newUnicode(JavaImporter.JAVA_IMPORT_PATH_ENTRY));
+        path.append(Py.newUnicode(ClasspathPyImporter.PYCLASSPATH_PREFIX));
         executable = defaultExecutable;
         builtins = getDefaultBuiltins();
         platform = defaultPlatform;
@@ -291,6 +296,17 @@ public class PySystemState extends PyObject implements AutoCloseable,
         ((PyFile)stderr).setEncoding(encoding, "backslashreplace");
     }
 
+    private void initImplementation() {
+        Map<String, PyObject> dict = new HashMap<>();
+        dict.put("cache_tag", new PyUnicode("jython-" + Version.getVersion()));
+        dict.put("hexversion", new PyLong(hexversion));
+        dict.put("name", new PyUnicode("Jython"));
+        dict.put("version", version_info);
+        dict.put("release_level", new PyUnicode("alpha"));
+        dict.put("serial", new PyLong(0));
+        implementation = new PyNamespace(dict);
+    }
+
     @Deprecated
     public void shadow() {
         // Now a no-op
@@ -303,6 +319,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
         static PyObject fillin() {
             PyObject temp = new PyStringMap();
             __builtin__.fillWithBuiltins(temp);
+            __builtin__.fillWithBuiltinExceptions(temp);
             return temp;
         }
     }
@@ -362,19 +379,19 @@ public class PySystemState extends PyObject implements AutoCloseable,
     @Override
     public PyObject __findattr_ex__(String name) {
         if (name == "exc_value") {
-            PyException exc = Py.getThreadState().exception;
+            PyException exc = Py.getThreadState().exceptions.peek();
             if (exc == null) {
                 return null;
             }
             return exc.value;
         } else if (name == "exc_type") {
-            PyException exc = Py.getThreadState().exception;
+            PyException exc = Py.getThreadState().exceptions.peek();
             if (exc == null) {
                 return null;
             }
             return exc.type;
         } else if (name == "exc_traceback") {
-            PyException exc = Py.getThreadState().exception;
+            PyException exc = Py.getThreadState().exceptions.peek();
             if (exc == null) {
                 return null;
             }
@@ -485,8 +502,8 @@ public class PySystemState extends PyObject implements AutoCloseable,
         }
     }
 
-    public PyString getdefaultencoding() {
-        return new PyString(codecs.getDefaultEncoding());
+    public PyUnicode getdefaultencoding() {
+        return new PyUnicode(codecs.getDefaultEncoding());
     }
 
     public void setdefaultencoding(String encoding) {
@@ -693,7 +710,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
                 exitfunc.__call__();
             } catch (PyException exc) {
                 if (!exc.match(Py.SystemExit)) {
-                    Py.println(stderr, Py.newString("Error in sys.exitfunc:"));
+                    Py.println(stderr, Py.newUnicode("Error in sys.exitfunc:"));
                 }
                 Py.printException(exc);
             }
@@ -771,7 +788,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
         if (version.equals("12")) {
             version = "1.2";
         }
-        defaultPlatform = new PyString("java" + version);
+        defaultPlatform = new PyUnicode("java" + version);
     }
 
     private static void initRegistry(Properties preProperties, Properties postProperties,
@@ -800,10 +817,12 @@ public class PySystemState extends PyObject implements AutoCloseable,
             }
         }
         if (prefix != null) {
-            PySystemState.prefix = Py.newString(prefix);
+            PySystemState.prefix = Py.newUnicode(prefix);
+            PySystemState.base_prefix = PySystemState.prefix;
         }
         if (exec_prefix != null) {
-            PySystemState.exec_prefix = Py.newString(exec_prefix);
+            PySystemState.exec_prefix = Py.newUnicode(exec_prefix);
+            PySystemState.base_exec_prefix = Py.newUnicode(exec_prefix);
         }
         try {
             String pythonpath = System.getenv("PYTHONPATH");
@@ -1099,7 +1118,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
                 Py.newInteger(Version.PY_MAJOR_VERSION),
                 Py.newInteger(Version.PY_MINOR_VERSION),
                 Py.newInteger(Version.PY_MICRO_VERSION),
-                Py.newString(s),
+                Py.newUnicode(s),
                 Py.newInteger(Version.PY_RELEASE_SERIAL));
     }
 
@@ -1134,7 +1153,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
         PyList argv = new PyList();
         if (args != null) {
             for (String arg : args) {
-                argv.append(Py.newStringOrUnicode(arg));
+                argv.append(Py.newUnicode(arg));
             }
         }
         return argv;
@@ -1162,7 +1181,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
         if (!executableFile.isFile()) {
             return Py.None;
         }
-        return new PyString(executableFile.getPath());
+        return new PyUnicode(executableFile.getPath());
     }
 
     /**
@@ -1292,7 +1311,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
         PyObject[] built_mod = new PyObject[n];
         int i = 0;
         for (String key : builtinNames.keySet()) {
-            built_mod[i++] = Py.newString(key);
+            built_mod[i++] = Py.newUnicode(key);
         }
         builtin_module_names = new PyTuple(built_mod);
     }
@@ -1306,7 +1325,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
         addPaths(path, props.getProperty("python.path", ""));
         if (prefix != null) {
             String libpath = new File(prefix.toString(), "Lib").toString();
-            path.append(new PyString(libpath));
+            path.append(new PyUnicode(libpath));
         }
         if (standalone) {
             // standalone jython: add the /Lib directory inside JYTHON_JAR to the path
@@ -1408,7 +1427,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
     private static void addPaths(PyList path, String pypath) {
         StringTokenizer tok = new StringTokenizer(pypath, java.io.File.pathSeparator);
         while (tok.hasMoreTokens()) {
-            path.append(new PyString(tok.nextToken().trim()));
+            path.append(new PyUnicode(tok.nextToken().trim()));
         }
     }
 
@@ -1505,7 +1524,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
     }
 
     public static PyTuple exc_info() {
-        PyException exc = Py.getThreadState().exception;
+        PyException exc = Py.getThreadState().exceptions.peek();
         if (exc == null) {
             return new PyTuple(Py.None, Py.None, Py.None);
         }
@@ -1515,7 +1534,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
     }
 
     public static void exc_clear() {
-        Py.getThreadState().exception = null;
+        Py.getThreadState().exceptions.clear();
     }
 
     public static PyFrame _getframe() {

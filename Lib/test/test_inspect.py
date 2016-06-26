@@ -5,10 +5,10 @@ import unittest
 import inspect
 import linecache
 import datetime
-from UserList import UserList
+from collections import UserList
 from UserDict import UserDict
 
-from test.test_support import run_unittest, check_py3k_warnings, is_jython
+from test.support import run_unittest, check_py3k_warnings, is_jython
 
 with check_py3k_warnings(
         ("tuple parameter unpacking has been removed", SyntaxWarning),
@@ -35,12 +35,12 @@ if modfile.endswith(('c', 'o')):
 elif modfile.endswith('$py.class'):
     modfile = modfile[:-9] + '.py'
 
-import __builtin__
+import builtins
 
 try:
     1 // 0
 except:
-    tb = sys.exc_traceback
+    tb = sys.exc_info()[2]
 
 git = mod.StupidGit()
 
@@ -61,12 +61,12 @@ class IsTestBase(unittest.TestCase):
             self.assertFalse(other(obj), 'not %s(%s)' % (other.__name__, exp))
 
 def generator_function_example(self):
-    for i in xrange(2):
+    for i in range(2):
         yield i
 
 class TestPredicates(IsTestBase):
     def test_sixteen(self):
-        count = len(filter(lambda x:x.startswith('is'), dir(inspect)))
+        count = len([x for x in dir(inspect) if x.startswith('is')])
         # This test is here for remember you to update Doc/library/inspect.rst
         # which claims there are 16 such functions
         expected = 16
@@ -293,10 +293,10 @@ class TestRetrievingSourceCode(GetSourceBase):
         m = sys.modules[name] = ModuleType(name)
         m.__file__ = "<string>" # hopefully not a real filename...
         m.__loader__ = "dummy"  # pretend the filename is understood by a loader
-        exec "def x(): pass" in m.__dict__
-        self.assertEqual(inspect.getsourcefile(m.x.func_code), '<string>')
+        exec("def x(): pass", m.__dict__)
+        self.assertEqual(inspect.getsourcefile(m.x.__code__), '<string>')
         del sys.modules[name]
-        inspect.getmodule(compile('a=10','','single'))
+        inspect.getmodule(compile('a=10', '', 'single'))
 
     def test_proceed_with_fake_filename(self):
         '''doctest monkeypatches linecache to enable inspection'''
@@ -310,7 +310,7 @@ class TestRetrievingSourceCode(GetSourceBase):
         linecache.getlines = monkey
         try:
             ns = {}
-            exec compile(source, fn, 'single') in ns
+            exec(compile(source, fn, 'single'), ns)
             inspect.getsource(ns["x"])
         finally:
             linecache.getlines = getlines
@@ -405,7 +405,7 @@ class TestBuggyCases(GetSourceBase):
         self.assertRaises(IOError, inspect.findsource, co)
         self.assertRaises(IOError, inspect.getsource, co)
         linecache.cache[co.co_filename] = (1, None, lines, co.co_filename)
-        self.assertEqual(inspect.findsource(co), (lines,0))
+        self.assertEqual(inspect.findsource(co), (lines, 0))
         self.assertEqual(inspect.getsource(co), lines[0])
 
 
@@ -492,10 +492,10 @@ class TestClassesAndFunctions(unittest.TestCase):
         with check_py3k_warnings(
                 ("tuple parameter unpacking has been removed", SyntaxWarning),
                 ("parenthesized argument names are invalid", SyntaxWarning)):
-            exec 'def sublistOfOne((foo,)): return 1'
+            exec('def sublistOfOne((foo,)): return 1')
             self.assertArgSpecEquals(sublistOfOne, [['foo']])
 
-            exec 'def fakeSublistOfOne((foo)): return 1'
+            exec('def fakeSublistOfOne((foo)): return 1')
             self.assertArgSpecEquals(fakeSublistOfOne, ['foo'])
 
 
@@ -653,14 +653,14 @@ class TestGetcallargsFunctions(unittest.TestCase):
         locs = dict(locs or {}, func=func)
         try:
             eval('func(%s)' % call_param_string, None, locs)
-        except Exception, ex1:
+        except Exception as ex1:
             pass
         else:
             self.fail('Exception not raised')
         try:
             eval('inspect.getcallargs(func, %s)' % call_param_string, None,
                  locs)
-        except Exception, ex2:
+        except Exception as ex2:
             pass
         else:
             self.fail('Exception not raised')
@@ -788,7 +788,7 @@ class TestGetcallargsFunctions(unittest.TestCase):
             self.assertEqualException(f, '2, c=3')
             self.assertEqualException(f, '2, 3, c=4')
             self.assertEqualException(f, '2, c=4, b=3')
-            self.assertEqualException(f, '**{u"\u03c0\u03b9": 4}')
+            self.assertEqualException(f, '**{u"\\u03c0\\u03b9": 4}')
             # f got multiple values for keyword argument
             self.assertEqualException(f, '1, a=2')
             self.assertEqualException(f, '1, **{"a":2}')

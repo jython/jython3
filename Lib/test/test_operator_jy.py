@@ -6,7 +6,7 @@ import collections
 import operator
 import sys
 import unittest
-from test import test_support
+from test import support
 
 class OperatorTestCase(unittest.TestCase):
 
@@ -34,14 +34,14 @@ class OperatorTestCase(unittest.TestCase):
         (globals(), False, True, False), # stringmap
         ({}, False, True, False),
         ('', False, False, True),
-        (u'', False, False, True),
+        ('', False, False, True),
         ([], False, False, True),
         ((), False, False, True),
-        (xrange(5), False, False, True),
+        (range(5), False, False, True),
         (set(), False, False, False),
         (frozenset(), False, False, False),
         (1, True, False, False),
-        (2L, True, False, False),
+        (2, True, False, False),
         (3.0, True, False, False),
         (4j, True, False, False),
         (None, False, False, False),
@@ -75,7 +75,7 @@ class OperatorTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(OperatorTestCase)
+    support.run_unittest(OperatorTestCase)
 
 
 if __name__ == "__main__":

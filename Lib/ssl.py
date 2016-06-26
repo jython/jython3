@@ -41,13 +41,13 @@ log = logging.getLogger("_socket")
 
 # Pretend to be OpenSSL
 OPENSSL_VERSION = "OpenSSL 1.0.0 (as emulated by Java SSL)"
-OPENSSL_VERSION_NUMBER = 0x1000000L
+OPENSSL_VERSION_NUMBER = 0x1000000
 OPENSSL_VERSION_INFO = (1, 0, 0, 0, 0)
 
-CERT_NONE, CERT_OPTIONAL, CERT_REQUIRED = range(3)
+CERT_NONE, CERT_OPTIONAL, CERT_REQUIRED = list(range(3))
 
 # Do not support PROTOCOL_SSLv2, it is highly insecure and it is optional
-_, PROTOCOL_SSLv3, PROTOCOL_SSLv23, PROTOCOL_TLSv1 = range(4)
+_, PROTOCOL_SSLv3, PROTOCOL_SSLv23, PROTOCOL_TLSv1 = list(range(4))
 _PROTOCOL_NAMES = {
     PROTOCOL_SSLv3: 'SSLv3', 
     PROTOCOL_SSLv23: 'SSLv23',
@@ -161,7 +161,7 @@ class SSLSocket(object):
         time.sleep(0.001)  # Necessary apparently for the handler to get into a good state
         try:
             self._sock._handle_channel_future(handshake, "SSL handshake")
-        except socket_error, e:
+        except socket_error as e:
             raise SSLError(SSL_ERROR_SSL, e.strerror)
 
     # Various pass through methods to the wrapped socket

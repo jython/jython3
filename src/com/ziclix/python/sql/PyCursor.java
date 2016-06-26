@@ -322,9 +322,9 @@ public class PyCursor extends PyObject implements ClassDictInit, WarningListener
      * @since Jython 2.2, DB API 2.0+
      */
     public PyObject next() {
-        PyObject row = __iternext__();
+        PyObject row = __next__();
         if (row == null) {
-            throw Py.StopIteration("");
+            throw Py.StopIteration();
         }
         return row;
     }
@@ -338,7 +338,7 @@ public class PyCursor extends PyObject implements ClassDictInit, WarningListener
      * @return PyObject
      */
     @Override
-    public PyObject __iternext__() {
+    public PyObject __next__() {
         PyObject row = fetchone();
         return row.__bool__() ? row : null;
     }

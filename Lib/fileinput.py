@@ -80,6 +80,7 @@ XXX Possible additions:
 """
 
 import sys, os
+import collections
 
 __all__ = ["input", "close", "nextfile", "filename", "lineno", "filelineno",
            "isfirstline", "isstdin", "FileInput"]
@@ -230,7 +231,7 @@ class FileInput:
         if openhook:
             if inplace:
                 raise ValueError("FileInput cannot use an opening hook in inplace mode")
-            if not callable(openhook):
+            if not isinstance(openhook, collections.Callable):
                 raise ValueError("FileInput openhook must be callable")
         self._openhook = openhook
 
@@ -420,7 +421,7 @@ def _test():
     for o, a in opts:
         if o == '-i': inplace = True
         if o == '-b': backup = a
-    for line in input(args, inplace=inplace, backup=backup):
+    for line in eval(input(args, inplace=inplace, backup=backup)):
         if line[-1:] == '\n': line = line[:-1]
         if line[-1:] == '\r': line = line[:-1]
         print("%d: %s[%d]%s %s" % (lineno(), filename(), filelineno(),

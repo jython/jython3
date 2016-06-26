@@ -69,36 +69,9 @@ public static final PyType TYPE = PyType.fromClass(Call.class);
         this.keywords = AstAdapters.py2keywordList(keywords);
     }
 
-    private expr starargs;
-    public expr getInternalStarargs() {
-        return starargs;
-    }
-    @ExposedGet(name = "starargs")
-    public PyObject getStarargs() {
-        return starargs;
-    }
-    @ExposedSet(name = "starargs")
-    public void setStarargs(PyObject starargs) {
-        this.starargs = AstAdapters.py2expr(starargs);
-    }
-
-    private expr kwargs;
-    public expr getInternalKwargs() {
-        return kwargs;
-    }
-    @ExposedGet(name = "kwargs")
-    public PyObject getKwargs() {
-        return kwargs;
-    }
-    @ExposedSet(name = "kwargs")
-    public void setKwargs(PyObject kwargs) {
-        this.kwargs = AstAdapters.py2expr(kwargs);
-    }
-
 
     private final static PyString[] fields =
-    new PyString[] {new PyString("func"), new PyString("args"), new PyString("keywords"), new
-                     PyString("starargs"), new PyString("kwargs")};
+    new PyString[] {new PyString("func"), new PyString("args"), new PyString("keywords")};
     @ExposedGet(name = "_fields")
     public PyString[] get_fields() { return fields; }
 
@@ -117,35 +90,30 @@ public static final PyType TYPE = PyType.fromClass(Call.class);
     @ExposedMethod
     public void Call___init__(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("Call", args, keywords, new String[]
-            {"func", "args", "keywords", "starargs", "kwargs", "lineno", "col_offset"}, 5, true);
+            {"func", "args", "keywords", "lineno", "col_offset"}, 3, true);
         setFunc(ap.getPyObject(0, Py.None));
         setArgs(ap.getPyObject(1, Py.None));
         setKeywords(ap.getPyObject(2, Py.None));
-        setStarargs(ap.getPyObject(3, Py.None));
-        setKwargs(ap.getPyObject(4, Py.None));
-        int lin = ap.getInt(5, -1);
+        int lin = ap.getInt(3, -1);
         if (lin != -1) {
             setLineno(lin);
         }
 
-        int col = ap.getInt(6, -1);
+        int col = ap.getInt(4, -1);
         if (col != -1) {
             setLineno(col);
         }
 
     }
 
-    public Call(PyObject func, PyObject args, PyObject keywords, PyObject starargs, PyObject
-    kwargs) {
+    public Call(PyObject func, PyObject args, PyObject keywords) {
         setFunc(func);
         setArgs(args);
         setKeywords(keywords);
-        setStarargs(starargs);
-        setKwargs(kwargs);
     }
 
     public Call(Token token, expr func, java.util.List<expr> args, java.util.List<keyword>
-    keywords, expr starargs, expr kwargs) {
+    keywords) {
         super(token);
         this.func = func;
         addChild(func);
@@ -163,14 +131,10 @@ public static final PyType TYPE = PyType.fromClass(Call.class);
         for(PythonTree t : this.keywords) {
             addChild(t);
         }
-        this.starargs = starargs;
-        addChild(starargs);
-        this.kwargs = kwargs;
-        addChild(kwargs);
     }
 
     public Call(Integer ttype, Token token, expr func, java.util.List<expr> args,
-    java.util.List<keyword> keywords, expr starargs, expr kwargs) {
+    java.util.List<keyword> keywords) {
         super(ttype, token);
         this.func = func;
         addChild(func);
@@ -188,14 +152,10 @@ public static final PyType TYPE = PyType.fromClass(Call.class);
         for(PythonTree t : this.keywords) {
             addChild(t);
         }
-        this.starargs = starargs;
-        addChild(starargs);
-        this.kwargs = kwargs;
-        addChild(kwargs);
     }
 
     public Call(PythonTree tree, expr func, java.util.List<expr> args, java.util.List<keyword>
-    keywords, expr starargs, expr kwargs) {
+    keywords) {
         super(tree);
         this.func = func;
         addChild(func);
@@ -213,10 +173,6 @@ public static final PyType TYPE = PyType.fromClass(Call.class);
         for(PythonTree t : this.keywords) {
             addChild(t);
         }
-        this.starargs = starargs;
-        addChild(starargs);
-        this.kwargs = kwargs;
-        addChild(kwargs);
     }
 
     @ExposedGet(name = "repr")
@@ -234,12 +190,6 @@ public static final PyType TYPE = PyType.fromClass(Call.class);
         sb.append(",");
         sb.append("keywords=");
         sb.append(dumpThis(keywords));
-        sb.append(",");
-        sb.append("starargs=");
-        sb.append(dumpThis(starargs));
-        sb.append(",");
-        sb.append("kwargs=");
-        sb.append(dumpThis(kwargs));
         sb.append(",");
         sb.append(")");
         return sb.toString();
@@ -264,10 +214,6 @@ public static final PyType TYPE = PyType.fromClass(Call.class);
                     t.accept(visitor);
             }
         }
-        if (starargs != null)
-            starargs.accept(visitor);
-        if (kwargs != null)
-            kwargs.accept(visitor);
     }
 
     public PyObject __dict__;

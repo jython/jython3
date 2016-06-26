@@ -1,4 +1,4 @@
-from test import test_support
+from test import support
 from test.test_collections import ABCTestCase
 from collections import (
     Hashable, Iterable, Iterator,
@@ -17,7 +17,7 @@ class TestJavaInterfaces(ABCTestCase):
         # Check some non-iterables
         non_samples = [
             java.lang.Integer(42),
-            java.lang.Long(sys.maxint+1)]
+            java.lang.Long(sys.maxsize+1)]
         for x in non_samples:
             self.assertNotIsInstance(x, Iterable)
             self.assertFalse(issubclass(type(x), Iterable), repr(type(x)))
@@ -26,9 +26,9 @@ class TestJavaInterfaces(ABCTestCase):
             java.util.HashMap(),
             java.util.ArrayList(),
             java.util.LinkedList(),
-            java.util.HashMap().keys(),
-            java.util.HashMap().items(),
-            java.util.HashMap().values()]
+            list(java.util.HashMap().keys()),
+            list(java.util.HashMap().items()),
+            list(java.util.HashMap().values())]
         for x in samples:
             self.assertIsInstance(x, Iterable)
             self.assertTrue(issubclass(type(x), Iterable), repr(type(x)))
@@ -38,7 +38,7 @@ class TestJavaInterfaces(ABCTestCase):
         non_samples = [
             java.lang.String(),
             java.lang.Integer(42),
-            java.lang.Long(sys.maxint+1)]
+            java.lang.Long(sys.maxsize+1)]
         for x in non_samples:
             self.assertNotIsInstance(x, Container)
             self.assertFalse(issubclass(type(x), Container), repr(type(x)))
@@ -47,9 +47,9 @@ class TestJavaInterfaces(ABCTestCase):
             java.util.HashMap(),
             java.util.ArrayList(),
             java.util.LinkedList(),
-            java.util.HashMap().keys(),
-            java.util.HashMap().items(),
-            java.util.HashMap().values()]
+            list(java.util.HashMap().keys()),
+            list(java.util.HashMap().items()),
+            list(java.util.HashMap().values())]
         for x in samples:
             self.assertIsInstance(x, Container)
             self.assertTrue(issubclass(type(x), Container), repr(type(x)))
@@ -58,7 +58,7 @@ class TestJavaInterfaces(ABCTestCase):
         # Check some objects that do not support MutableMapping 
         non_samples = [
             java.util.ArrayList(),
-            java.util.HashMap().keys(),
+            list(java.util.HashMap().keys()),
             java.util.HashSet(),
             java.util.LinkedList(),
             java.util.TreeSet(),
@@ -90,7 +90,7 @@ class TestJavaInterfaces(ABCTestCase):
         samples = [
             java.util.ArrayList(),
             java.util.LinkedList(),
-            java.util.HashMap().keys(),
+            list(java.util.HashMap().keys()),
         ]
         for x in samples:
             self.assertIsInstance(x, MutableSequence)
@@ -119,7 +119,7 @@ class TestJavaInterfaces(ABCTestCase):
 
 def test_main():
     test_classes = [TestJavaInterfaces]
-    test_support.run_unittest(*test_classes)
+    support.run_unittest(*test_classes)
 
 if __name__ == "__main__":
     test_main()

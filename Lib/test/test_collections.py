@@ -1,10 +1,10 @@
 
 import unittest, doctest, operator
 import inspect
-from test import test_support
+from test import support
 from collections import namedtuple, Counter, OrderedDict
 from test import mapping_tests
-import pickle, cPickle, copy
+import pickle, pickle, copy
 from random import randrange, shuffle
 import keyword
 import re
@@ -40,9 +40,9 @@ class TestNamedTuple(unittest.TestCase):
         namedtuple('Point0', 'x1 y2')   # Verify that numbers are allowed in names
         namedtuple('_', 'a b c')        # Test leading underscores in a typename
 
-        nt = namedtuple('nt', u'the quick brown fox')                       # check unicode input
+        nt = namedtuple('nt', 'the quick brown fox')                       # check unicode input
         self.assertNotIn("u'", repr(nt._fields))
-        nt = namedtuple('nt', (u'the', u'quick'))                           # check unicode input
+        nt = namedtuple('nt', ('the', 'quick'))                           # check unicode input
         self.assertNotIn("u'", repr(nt._fields))
 
         self.assertRaises(TypeError, Point._make, [11])                     # catch too few args
@@ -144,19 +144,19 @@ class TestNamedTuple(unittest.TestCase):
                                   for j in range(10)]) for i in range(n)))
         n = len(names)
         #XXX: currently Jython's classfile limits are exceeded by Big tests.
-        if not test_support.is_jython:
+        if not support.is_jython:
             Big = namedtuple('Big', names)
-            b = Big(*range(n))
+            b = Big(*list(range(n)))
             self.assertEqual(b, tuple(range(n)))
-            self.assertEqual(Big._make(range(n)), tuple(range(n)))
+            self.assertEqual(Big._make(list(range(n))), tuple(range(n)))
             for pos, name in enumerate(names):
                 self.assertEqual(getattr(b, name), pos)
             repr(b)                                 # make sure repr() doesn't blow-up
             d = b._asdict()
-            d_expected = dict(zip(names, range(n)))
+            d_expected = dict(list(zip(names, list(range(n)))))
             self.assertEqual(d, d_expected)
-            b2 = b._replace(**dict([(names[1], 999),(names[-5], 42)]))
-            b2_expected = range(n)
+            b2 = b._replace(**dict([(names[1], 999), (names[-5], 42)]))
+            b2_expected = list(range(n))
             b2_expected[1] = 999
             b2_expected[-5] = 42
             self.assertEqual(b2, tuple(b2_expected))
@@ -184,12 +184,12 @@ class TestNamedTuple(unittest.TestCase):
         # failed when used as field names.  Test to make sure these now work.
         T = namedtuple('T', 'itemgetter property self cls tuple')
         t = T(1, 2, 3, 4, 5)
-        self.assertEqual(t, (1,2,3,4,5))
+        self.assertEqual(t, (1, 2, 3, 4, 5))
         newt = t._replace(itemgetter=10, property=20, self=30, cls=40, tuple=50)
-        self.assertEqual(newt, (10,20,30,40,50))
+        self.assertEqual(newt, (10, 20, 30, 40, 50))
 
         # Broader test of all interesting names in a template
-        with test_support.captured_stdout() as template:
+        with support.captured_stdout() as template:
             T = namedtuple('T', 'x', verbose=True)
         words = set(re.findall('[A-Za-z]+', template.getvalue()))
         words -= set(keyword.kwlist)
@@ -198,7 +198,7 @@ class TestNamedTuple(unittest.TestCase):
         values = tuple(range(len(words)))
         t = T(*values)
         self.assertEqual(t, values)
-        t = T(**dict(zip(T._fields, values)))
+        t = T(**dict(list(zip(T._fields, values))))
         self.assertEqual(t, values)
         # test _make
         t = T._make(values)
@@ -206,11 +206,11 @@ class TestNamedTuple(unittest.TestCase):
         # exercise __repr__
         repr(t)
         # test _asdict
-        self.assertEqual(t._asdict(), dict(zip(T._fields, values)))
+        self.assertEqual(t._asdict(), dict(list(zip(T._fields, values))))
         # test _replace
         t = T._make(values)
         newvalues = tuple(v*10 for v in values)
-        newt = t._replace(**dict(zip(T._fields, newvalues)))
+        newt = t._replace(**dict(list(zip(T._fields, newvalues))))
         self.assertEqual(newt, newvalues)
         # test _fields
         self.assertEqual(T._fields, tuple(words))
@@ -244,7 +244,7 @@ class ABCTestCase(unittest.TestCase):
         class C: pass
 
         # XXX: not working in Jython old style classes. Do we care?
-        if not test_support.is_jython:
+        if not support.is_jython:
             setattr(C, name, stub)
             self.assertIsInstance(C(), abc)
             self.assertTrue(issubclass(C, abc))
@@ -281,12 +281,12 @@ class ABCTestCase(unittest.TestCase):
             __rxor__ = __eq__
             __rsub__ = __eq__
 
-        for name, op in operators.items():
+        for name, op in list(operators.items()):
             if not hasattr(instance, name):
                 continue
             other = Other()
             op(instance, other)
-            self.assertTrue(other.right_side,'Right side not called for %s.%s'
+            self.assertTrue(other.right_side, 'Right side not called for %s.%s'
                             % (type(instance), name))
 
 class TestOneTrickPonyABCs(ABCTestCase):
@@ -328,7 +328,7 @@ class TestOneTrickPonyABCs(ABCTestCase):
         # Check some iterables
         samples = [str(),
                    tuple(), list(), set(), frozenset(), dict(),
-                   dict().keys(), dict().items(), dict().values(),
+                   list(dict().keys()), list(dict().items()), list(dict().values()),
                    (lambda: (yield))(),
                    (x for x in []),
                    ]
@@ -353,8 +353,8 @@ class TestOneTrickPonyABCs(ABCTestCase):
         samples = [iter(str()),
                    iter(tuple()), iter(list()), iter(dict()),
                    iter(set()), iter(frozenset()),
-                   iter(dict().keys()), iter(dict().items()),
-                   iter(dict().values()),
+                   iter(list(dict().keys())), iter(list(dict().items())),
+                   iter(list(dict().values())),
                    (lambda: (yield))(),
                    (x for x in []),
                    ]
@@ -385,7 +385,7 @@ class TestOneTrickPonyABCs(ABCTestCase):
             self.assertFalse(issubclass(type(x), Sized), repr(type(x)))
         samples = [str(),
                    tuple(), list(), set(), frozenset(), dict(),
-                   dict().keys(), dict().items(), dict().values(),
+                   list(dict().keys()), list(dict().items()), list(dict().values()),
                    ]
         for x in samples:
             self.assertIsInstance(x, Sized)
@@ -403,7 +403,7 @@ class TestOneTrickPonyABCs(ABCTestCase):
             self.assertFalse(issubclass(type(x), Container), repr(type(x)))
         samples = [str(),
                    tuple(), list(), set(), frozenset(), dict(),
-                   dict().keys(), dict().items(),
+                   list(dict().keys()), list(dict().items()),
                    ]
         for x in samples:
             self.assertIsInstance(x, Container)
@@ -522,29 +522,29 @@ class TestCollectionABCs(ABCTestCase):
                 if items is None:
                     items=[]
                 self.__s=set(items)
-            def __contains__(self,v):
+            def __contains__(self, v):
                 return v in self.__s
             def __iter__(self):
                 return iter(self.__s)
             def __len__(self):
                 return len(self.__s)
-            def add(self,v):
+            def add(self, v):
                 result=v not in self.__s
                 self.__s.add(v)
                 return result
-            def discard(self,v):
+            def discard(self, v):
                 result=v in self.__s
                 self.__s.discard(v)
                 return result
             def __repr__(self):
                 return "MySet(%s)" % repr(list(self))
-        values = [5,43,2,1]
+        values = [5, 43, 2, 1]
         s = MySet(values)
         self.assertIn(s.pop(), values)
 
     def test_issue8750(self):
         empty = WithSet()
-        full = WithSet(range(10))
+        full = WithSet(list(range(10)))
         s = WithSet(full)
         s -= s
         self.assertEqual(s, empty)
@@ -583,8 +583,8 @@ class TestCollectionABCs(ABCTestCase):
         for sample in [tuple, list, str]:
             self.assertIsInstance(sample(), Sequence)
             self.assertTrue(issubclass(sample, Sequence))
-        self.assertTrue(issubclass(basestring, Sequence))
-        self.assertIsInstance(range(10), Sequence)
+        self.assertTrue(issubclass(str, Sequence))
+        self.assertIsInstance(list(range(10)), Sequence)
         self.assertTrue(issubclass(xrange, Sequence))
         self.assertTrue(issubclass(str, Sequence))
         self.validate_abstract_methods(Sequence, '__contains__', '__iter__', '__len__',
@@ -597,7 +597,7 @@ class TestCollectionABCs(ABCTestCase):
         for sample in [list]:
             self.assertIsInstance(sample(), MutableSequence)
             self.assertTrue(issubclass(sample, MutableSequence))
-        self.assertFalse(issubclass(basestring, MutableSequence))
+        self.assertFalse(issubclass(str, MutableSequence))
         self.validate_abstract_methods(MutableSequence, '__contains__', '__iter__',
             '__len__', '__getitem__', '__setitem__', '__delitem__', 'insert')
 
@@ -620,9 +620,9 @@ class TestCounter(unittest.TestCase):
                          [('a', 3), ('b', 2), ('c', 1)])
         self.assertEqual(c['b'], 2)
         self.assertEqual(c['z'], 0)
-        with test_support.check_py3k_warnings():
-            self.assertEqual(c.has_key('c'), True)
-            self.assertEqual(c.has_key('z'), False)
+        with support.check_py3k_warnings():
+            self.assertEqual('c' in c, True)
+            self.assertEqual('z' in c, False)
         self.assertEqual(c.__contains__('c'), True)
         self.assertEqual(c.__contains__('z'), False)
         self.assertEqual(c.get('b', 10), 2)
@@ -680,10 +680,10 @@ class TestCounter(unittest.TestCase):
                     pickle.loads(pickle.dumps(words, 1)),
                     pickle.loads(pickle.dumps(words, 2)),
                     pickle.loads(pickle.dumps(words, -1)),
-                    cPickle.loads(cPickle.dumps(words, 0)),
-                    cPickle.loads(cPickle.dumps(words, 1)),
-                    cPickle.loads(cPickle.dumps(words, 2)),
-                    cPickle.loads(cPickle.dumps(words, -1)),
+                    pickle.loads(pickle.dumps(words, 0)),
+                    pickle.loads(pickle.dumps(words, 1)),
+                    pickle.loads(pickle.dumps(words, 2)),
+                    pickle.loads(pickle.dumps(words, -1)),
                     eval(repr(words)),
                     update_test,
                     Counter(words),
@@ -708,7 +708,7 @@ class TestCounter(unittest.TestCase):
         s = 'she sells sea shells by the sea shore'
         self.assertEqual(sorted(Counter(s).elements()), sorted(s))
         self.assertEqual(sorted(Counter(s)), sorted(set(s)))
-        self.assertEqual(dict(Counter(s)), dict(Counter(s).items()))
+        self.assertEqual(dict(Counter(s)), dict(list(Counter(s).items())))
         self.assertEqual(set(Counter(s)), set(s))
 
     def test_invariant_for_the_in_operator(self):
@@ -725,22 +725,22 @@ class TestCounter(unittest.TestCase):
         elements = 'abcd'
         for i in range(1000):
             # test random pairs of multisets
-            p = Counter(dict((elem, randrange(-2,4)) for elem in elements))
+            p = Counter(dict((elem, randrange(-2, 4)) for elem in elements))
             p.update(e=1, f=-1, g=0)
-            q = Counter(dict((elem, randrange(-2,4)) for elem in elements))
+            q = Counter(dict((elem, randrange(-2, 4)) for elem in elements))
             q.update(h=1, i=-1, j=0)
             for counterop, numberop in [
                 (Counter.__add__, lambda x, y: max(0, x+y)),
                 (Counter.__sub__, lambda x, y: max(0, x-y)),
-                (Counter.__or__, lambda x, y: max(0,x,y)),
-                (Counter.__and__, lambda x, y: max(0, min(x,y))),
+                (Counter.__or__, lambda x, y: max(0, x, y)),
+                (Counter.__and__, lambda x, y: max(0, min(x, y))),
             ]:
                 result = counterop(p, q)
                 for x in elements:
                     self.assertEqual(numberop(p[x], q[x]), result[x],
                                      (counterop, x, p, q))
                 # verify that results exclude non-positive counts
-                self.assertTrue(x>0 for x in result.values())
+                self.assertTrue(x>0 for x in list(result.values()))
 
         elements = 'abcdef'
         for i in range(100):
@@ -757,10 +757,10 @@ class TestCounter(unittest.TestCase):
                 self.assertEqual(counter_result, dict.fromkeys(set_result, 1))
 
     def test_subtract(self):
-        c = Counter(a=-5, b=0, c=5, d=10, e=15,g=40)
+        c = Counter(a=-5, b=0, c=5, d=10, e=15, g=40)
         c.subtract(a=1, b=2, c=-3, d=10, e=20, f=30, h=-50)
         self.assertEqual(c, Counter(a=-6, b=-2, c=8, d=0, e=-5, f=-30, g=40, h=50))
-        c = Counter(a=-5, b=0, c=5, d=10, e=15,g=40)
+        c = Counter(a=-5, b=0, c=5, d=10, e=15, g=40)
         c.subtract(Counter(a=1, b=2, c=-3, d=10, e=20, f=30, h=-50))
         self.assertEqual(c, Counter(a=-6, b=-2, c=8, d=0, e=-5, f=-30, g=40, h=50))
         c = Counter('aaabbcd')
@@ -859,12 +859,12 @@ class TestOrderedDict(unittest.TestCase):
         shuffle(pairs)
         od = OrderedDict(pairs)
         self.assertEqual(list(od), [t[0] for t in pairs])
-        self.assertEqual(od.keys()[:], [t[0] for t in pairs])
-        self.assertEqual(od.values()[:], [t[1] for t in pairs])
-        self.assertEqual(od.items()[:], pairs)
-        self.assertEqual(list(od.iterkeys()), [t[0] for t in pairs])
-        self.assertEqual(list(od.itervalues()), [t[1] for t in pairs])
-        self.assertEqual(list(od.iteritems()), pairs)
+        self.assertEqual(list(od.keys())[:], [t[0] for t in pairs])
+        self.assertEqual(list(od.values())[:], [t[1] for t in pairs])
+        self.assertEqual(list(od.items())[:], pairs)
+        self.assertEqual(list(od.keys()), [t[0] for t in pairs])
+        self.assertEqual(list(od.values()), [t[1] for t in pairs])
+        self.assertEqual(list(od.items()), pairs)
         self.assertEqual(list(reversed(od)),
                          [t[0] for t in reversed(pairs)])
 
@@ -949,7 +949,7 @@ class TestOrderedDict(unittest.TestCase):
         od = OrderedDict(pairs)
         # yaml.dump(od) -->
         # '!!python/object/apply:__main__.OrderedDict\n- - [a, 1]\n  - [b, 2]\n'
-        self.assertTrue(all(type(pair)==list for pair in od.__reduce__()[1]))
+        self.assertTrue(all(isinstance(pair, list) for pair in od.__reduce__()[1]))
 
     def test_reduce_not_too_fat(self):
         # do not save instance dictionary if not needed
@@ -1004,9 +1004,9 @@ class TestOrderedDict(unittest.TestCase):
     def test_views(self):
         s = 'the quick brown fox jumped over a lazy dog yesterday before dawn'.split()
         od = OrderedDict.fromkeys(s)
-        self.assertEqual(list(od.viewkeys()),  s)
-        self.assertEqual(list(od.viewvalues()),  [None for k in s])
-        self.assertEqual(list(od.viewitems()),  [(k, None) for k in s])
+        self.assertEqual(list(od.keys()),  s)
+        self.assertEqual(list(od.values()),  [None for k in s])
+        self.assertEqual(list(od.items()),  [(k, None) for k in s])
 
     def test_override_update(self):
         # Verify that subclasses can override update() without breaking __init__()
@@ -1040,8 +1040,8 @@ def test_main(verbose=None):
     test_classes = [TestNamedTuple, NamedTupleDocs, TestOneTrickPonyABCs,
                     TestCollectionABCs, TestCounter,
                     TestOrderedDict, GeneralMappingTests, SubclassMappingTests]
-    test_support.run_unittest(*test_classes)
-    test_support.run_doctest(collections, verbose)
+    support.run_unittest(*test_classes)
+    support.run_doctest(collections, verbose)
 
 if __name__ == "__main__":
     test_main(verbose=True)

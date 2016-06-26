@@ -1,12 +1,12 @@
 # Tests StringIO and cStringIO
 
 import unittest
-import StringIO
-import cStringIO
+import io
+import io
 import types
 import array
 import sys
-from test import test_support
+from test import support
 
 
 class TestGenericStringIO(unittest.TestCase):
@@ -102,13 +102,13 @@ class TestGenericStringIO(unittest.TestCase):
             i += 1
         eq(i, 5)
         self._fp.close()
-        self.assertRaises(ValueError, self._fp.next)
+        self.assertRaises(ValueError, self._fp.__next__)
 
     def test_getvalue(self):
         self._fp.close()
         self.assertRaises(ValueError, self._fp.getvalue)
 
-    @test_support.bigmemtest(test_support._2G + 2**26, memuse=2.001)
+    @support.bigmemtest(support._2G + 2**26, memuse=2.001)
     def test_reads_from_large_stream(self, size):
         linesize = 2**26 # 64 MiB
         lines = ['x' * (linesize - 1) + '\n'] * (size // linesize) + \
@@ -134,7 +134,7 @@ class TestGenericStringIO(unittest.TestCase):
 
     # In worst case cStringIO requires 2 + 1 + 1/2 + 1/2**2 + ... = 4
     # bytes per input character.
-    @test_support.bigmemtest(test_support._2G, memuse=4)
+    @support.bigmemtest(support._2G, memuse=4)
     def test_writes_to_large_stream(self, size):
         s = 'x' * 2**26 # 64 MiB
         f = self.MODULE.StringIO()
@@ -152,7 +152,7 @@ class TestStringIO(TestGenericStringIO):
 
     def test_unicode(self):
 
-        if not test_support.have_unicode: return
+        if not support.have_unicode: return
 
         # The StringIO module also supports concatenating Unicode
         # snippets to larger Unicode strings. This is tested by this
@@ -161,45 +161,45 @@ class TestStringIO(TestGenericStringIO):
         f = self.MODULE.StringIO()
         f.write(self._line[:6])
         f.seek(3)
-        f.write(unicode(self._line[20:26]))
-        f.write(unicode(self._line[52]))
+        f.write(str(self._line[20:26]))
+        f.write(str(self._line[52]))
         s = f.getvalue()
-        self.assertEqual(s, unicode('abcuvwxyz!'))
-        self.assertEqual(type(s), types.UnicodeType)
+        self.assertEqual(s, str('abcuvwxyz!'))
+        self.assertEqual(type(s), str)
 
 class TestcStringIO(TestGenericStringIO):
     MODULE = cStringIO
 
     def test_array_support(self):
         # Issue #1730114: cStringIO should accept array objects
-        a = array.array('B', [0,1,2])
+        a = array.array('B', [0, 1, 2])
         f = self.MODULE.StringIO(a)
         self.assertEqual(f.getvalue(), '\x00\x01\x02')
 
     def test_unicode(self):
 
-        if not test_support.have_unicode: return
+        if not support.have_unicode: return
 
         # The cStringIO module converts Unicode strings to character
         # strings when writing them to cStringIO objects.
         # Check that this works.
 
         f = self.MODULE.StringIO()
-        f.write(u'abcde')
+        f.write('abcde')
         s = f.getvalue()
         self.assertEqual(s, 'abcde')
         self.assertEqual(type(s), str)
 
-        f = self.MODULE.StringIO(u'abcde')
+        f = self.MODULE.StringIO('abcde')
         s = f.getvalue()
         self.assertEqual(s, 'abcde')
         self.assertEqual(type(s), str)
 
-        if not test_support.is_jython:  # FIXME re-enable in a future release
+        if not support.is_jython:  # FIXME re-enable in a future release
             # On Jython, this should raise UnicodeEncodeError, however, we
             # have to do more work on preventing inadvertent mixing of Unicode
             # into String-supporting objects like StringBuilder
-            self.assertRaises(UnicodeEncodeError, self.MODULE.StringIO, u'\xf4')
+            self.assertRaises(UnicodeEncodeError, self.MODULE.StringIO, '\xf4')
 
 
 import sys
@@ -216,10 +216,10 @@ class TestBuffercStringIO(TestcStringIO):
 
 
 def test_main():
-    test_support.run_unittest(TestStringIO, TestcStringIO)
-    with test_support.check_py3k_warnings(("buffer.. not supported",
+    support.run_unittest(TestStringIO, TestcStringIO)
+    with support.check_py3k_warnings(("buffer.. not supported",
                                              DeprecationWarning)):
-        test_support.run_unittest(TestBufferStringIO, TestBuffercStringIO)
+        support.run_unittest(TestBufferStringIO, TestBuffercStringIO)
 
 if __name__ == '__main__':
     test_main()

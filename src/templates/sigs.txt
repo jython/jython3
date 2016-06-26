@@ -24,7 +24,7 @@ __delslice__
 ,__len__
 
 ,__iter__ 
-,__iternext__ 
+,__next__
 
 ,__finditem__ o
 (__getitem__ o)

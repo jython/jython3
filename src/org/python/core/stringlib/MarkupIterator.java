@@ -55,8 +55,8 @@ public class MarkupIterator extends PyObject {
     }
 
     @Override
-    public PyObject __iternext__() {
-        return formatteriterator___iternext__();
+    public PyObject __next__() {
+        return formatteriterator___next__();
     }
 
     /**
@@ -75,7 +75,7 @@ public class MarkupIterator extends PyObject {
      * @return <code>PyTuple</code> chunk or <code>null</code>
      */
     @ExposedMethod
-    final PyObject formatteriterator___iternext__() {
+    final PyObject formatteriterator___next__() {
         try {
             // Parse off the next literal text and replacement field
             Chunk chunk = nextChunk();
@@ -142,7 +142,7 @@ public class MarkupIterator extends PyObject {
     /**
      * Return the next {@link Chunk} from the iterator, which is a structure containing parsed
      * elements of the replacement field (if any), and its preceding text. This is the Java
-     * equivalent of the tuple returned by {@link __iternext__()}. This finds use in the
+     * equivalent of the tuple returned by {@link __next__()}. This finds use in the
      * implementation of <code>str.format</code> and <code>unicode.format</code>.
      *
      * @return the chunk

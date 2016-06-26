@@ -27,13 +27,13 @@ sys.add_package("javax.servlet")
 sys.add_package("javax.servlet.http")
 sys.add_package("org.python.core")
 
-from modjy_exceptions import *
-from modjy_log import *
-from modjy_params import modjy_param_mgr, modjy_servlet_params 
-from modjy_wsgi import modjy_wsgi
-from modjy_response import start_response_object
-from modjy_impl import modjy_impl
-from modjy_publish import modjy_publisher
+from .modjy_exceptions import *
+from .modjy_log import *
+from .modjy_params import modjy_param_mgr, modjy_servlet_params 
+from .modjy_wsgi import modjy_wsgi
+from .modjy_response import start_response_object
+from .modjy_impl import modjy_impl
+from .modjy_publish import modjy_publisher
 
 from javax.servlet.http import HttpServlet
 
@@ -67,14 +67,14 @@ class modjy_servlet(HttpServlet, modjy_publisher, modjy_wsgi, modjy_impl):
         self.get_params()
         self.init_impl()
         self.init_publisher()
-        import modjy_exceptions
+        from . import modjy_exceptions
         self.exc_handler = getattr(modjy_exceptions, '%s_handler' % self.params['exc_handler'])()
 
     def service (self, req, resp):
         wsgi_environ = {}
         try:
             self.dispatch_to_application(req, resp, wsgi_environ)
-        except ModjyException, mx:
+        except ModjyException as mx:
             self.log.error("Exception servicing request: %s" % str(mx))
             typ, value, tb = sys.exc_info()[:]
             self.exc_handler.handle(req, resp, wsgi_environ, mx, (typ, value, tb) )
@@ -97,9 +97,9 @@ class modjy_servlet(HttpServlet, modjy_publisher, modjy_wsgi, modjy_impl):
             if app_return is None:
                 raise ReturnNotIterable("Application returned None: must return an iterable")
             self.deal_with_app_return(environ, response_callable, app_return)
-        except ModjyException, mx:
+        except ModjyException as mx:
             self.raise_exc(mx.__class__, str(mx))
-        except Exception, x:
+        except Exception as x:
             self.raise_exc(ApplicationException, str(x))
 
     def call_application(self, app_callable, environ, response_callable):

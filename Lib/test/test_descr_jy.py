@@ -4,7 +4,7 @@ Made for Jython.
 """
 import types
 import unittest
-from test import test_support
+from test import support
 
 class Old:
     pass
@@ -24,9 +24,9 @@ class TestDescrTestCase(unittest.TestCase):
         class FooMeta(type):
             def __new__(meta, name, bases, class_dict):
                 cls = type.__new__(meta, name, bases, class_dict)
-                self.assert_('foo' not in class_dict)
+                self.assertTrue('foo' not in class_dict)
                 cls.foo = 'bar'
-                self.assert_('foo' not in class_dict)
+                self.assertTrue('foo' not in class_dict)
                 return cls
 
         class Foo(object, metaclass=FooMeta):
@@ -47,16 +47,16 @@ class TestDescrTestCase(unittest.TestCase):
         self.assertEqual(Foo.bar.__get__(None, Foo), Foo.bar)
 
         bound = Foo.hello.__get__(foo)
-        self.assert_(isinstance(bound, types.MethodType))
-        self.assert_(bound.im_self is foo)
+        self.assertTrue(isinstance(bound, types.MethodType))
+        self.assertTrue(bound.__self__ is foo)
         self.assertEqual(Foo.hello.__get__(None, Foo), Foo.hello)
 
         bound = Foo.hi.__get__(foo)
-        self.assert_(isinstance(bound, types.MethodType))
-        self.assert_(bound.im_self is foo)
+        self.assertTrue(isinstance(bound, types.MethodType))
+        self.assertTrue(bound.__self__ is foo)
         unbound = Foo.hi.__get__(None, foo)
-        self.assert_(isinstance(unbound, types.MethodType))
-        self.assert_(unbound.im_self is None)
+        self.assertTrue(isinstance(unbound, types.MethodType))
+        self.assertTrue(unbound.__self__ is None)
 
     def test_ints(self):
         class C(int):
@@ -66,13 +66,13 @@ class TestDescrTestCase(unittest.TestCase):
         except TypeError:
             pass
         else:
-            self.assert_(False, "should have raised TypeError")
+            self.assertTrue(False, "should have raised TypeError")
         try:
             foo = C(None)
         except TypeError:
             pass
         else:
-            self.assert_(False, "should have raised TypeError")
+            self.assertTrue(False, "should have raised TypeError")
 
     def test_raising_custom_attribute_error(self):
         class RaisesCustomMsg(object):
@@ -93,9 +93,9 @@ class TestDescrTestCase(unittest.TestCase):
         self.assertRaises(CustomAttributeError, lambda: Foo().custom_err)
         try:
             Foo().custom_msg
-            self.assert_(False) # Previous line should raise AttributteError
-        except AttributeError, e:
-            self.assertEquals("Custom message", str(e))
+            self.assertTrue(False) # Previous line should raise AttributteError
+        except AttributeError as e:
+            self.assertEqual("Custom message", str(e))
 
     def test_set_without_get(self):
         class Descr(object):
@@ -168,12 +168,12 @@ class SubclassDescrTestCase(unittest.TestCase):
         def raises(exc, expected, callable, *args):
             try:
                 callable(*args)
-            except exc, msg:
+            except exc as msg:
                 if str(msg) != expected:
-                    self.assert_(False, "Message %r, expected %r" % (str(msg),
+                    self.assertTrue(False, "Message %r, expected %r" % (str(msg),
                                                                      expected))
             else:
-                self.assert_(False, "Expected %s" % exc)
+                self.assertTrue(False, "Expected %s" % exc)
 
         class B(object):
             pass
@@ -194,12 +194,12 @@ class SubclassDescrTestCase(unittest.TestCase):
                         "'foo' + C()"))
         # XXX: There's probably work to be done here besides just emulating this
         # message
-        if test_support.is_jython:
-            mapping.append((lambda o: u'foo' + o,
+        if support.is_jython:
+            mapping.append((lambda o: 'foo' + o,
                             TypeError, "cannot concatenate 'unicode' and 'B' objects",
                             "u'foo' + C()"))
         else:
-            mapping.append((lambda o: u'foo' + o,
+            mapping.append((lambda o: 'foo' + o,
                             TypeError,
                             'coercing to Unicode: need string or buffer, B found',
                             "u'foo' + C()"))
@@ -214,7 +214,7 @@ class SubclassDescrTestCase(unittest.TestCase):
         mapping.append((lambda o: 'foo' * o,
                         TypeError, "can't multiply sequence by non-int of type 'B'",
                         "'foo' * C()"))
-        mapping.append((lambda o: u'foo' * o,
+        mapping.append((lambda o: 'foo' * o,
                         TypeError, "can't multiply sequence by non-int of type 'B'",
                         "u'foo' * C()"))
         mapping.append((lambda o: [1, 2] * o,
@@ -241,7 +241,7 @@ class SubclassDescrTestCase(unittest.TestCase):
                 return 2 * (self.value * other.value)
         class AnotherDoubler(DoublerBase):
             pass
-        self.assertEquals(DoublerBase(2) * AnotherDoubler(3), 12)
+        self.assertEqual(DoublerBase(2) * AnotherDoubler(3), 12)
 
     def test_oldstyle_binop_notimplemented(self):
         class Foo:
@@ -311,7 +311,7 @@ class InPlaceTestCase(unittest.TestCase):
                 return [1]
         foo = Foo([2])
         foo *= 3
-        if test_support.is_jython:
+        if support.is_jython:
             self.assertEqual(foo, [2, 2, 2])
         else:
             # CPython ignores list.__imul__ on a subclass with __mul__
@@ -402,15 +402,15 @@ class GetAttrTestCase(unittest.TestCase):
 
         try:
             Foo().x
-            self.assert_(False) # Previous line should raise AttributteError
-        except AttributeError, e:
-            self.assertEquals("Custom message", str(e))
+            self.assertTrue(False) # Previous line should raise AttributteError
+        except AttributeError as e:
+            self.assertEqual("Custom message", str(e))
 
         try:
             FooClassic().x
-            self.assert_(False) # Previous line should raise AttributteError
-        except AttributeError, e:
-            self.assertEquals("Custom message", str(e))
+            self.assertTrue(False) # Previous line should raise AttributteError
+        except AttributeError as e:
+            self.assertEqual("Custom message", str(e))
 
 
 class Base(object):
@@ -443,7 +443,7 @@ def refop(x, y, opname, ropname):
             return rop(y, x)
     if op is None:
         return "TypeError"
-    return op(x,y)
+    return op(x, y)
 
 
 def do_test(X, Y, name, impl):
@@ -504,7 +504,7 @@ class BinopCombinationsTestCase(unittest.TestCase):
 
         fail = do_test(X, Y, 'mul', lambda x, y: x*y)
         #print len(fail)
-        self.assert_(not fail)
+        self.assertTrue(not fail)
 
     def test_binop_combinations_sub(self):
         class X(Base):
@@ -514,7 +514,7 @@ class BinopCombinationsTestCase(unittest.TestCase):
 
         fail = do_test(X, Y, 'sub', lambda x, y: x-y)
         #print len(fail)
-        self.assert_(not fail)
+        self.assertTrue(not fail)
 
     def test_binop_combinations_pow(self):
         class X(Base):
@@ -524,7 +524,7 @@ class BinopCombinationsTestCase(unittest.TestCase):
 
         fail = do_test(X, Y, 'pow', lambda x, y: x**y)
         #print len(fail)
-        self.assert_(not fail)
+        self.assertTrue(not fail)
 
     def test_binop_combinations_more_exhaustive(self):
         class X(Base):
@@ -550,11 +550,11 @@ class BinopCombinationsTestCase(unittest.TestCase):
 
         fail = do_test(X, Y, 'sub', lambda x, y: x - y)
         #print len(fail)
-        self.assert_(not fail)
+        self.assertTrue(not fail)
 
 
 def test_main():
-    test_support.run_unittest(TestDescrTestCase,
+    support.run_unittest(TestDescrTestCase,
                               SubclassDescrTestCase,
                               InPlaceTestCase,
                               DescrExceptionsTestCase,

@@ -3,7 +3,6 @@ package org.python.modules._csv;
 
 import org.python.core.ArgParser;
 import org.python.core.Py;
-import org.python.core.PyBaseString;
 import org.python.core.PyInteger;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
@@ -180,7 +179,7 @@ public class PyDialect extends PyObject {
         if (src == Py.None) {
             return null;
         }
-        if (!(src instanceof PyBaseString)) {
+        if (!(src instanceof PyString)) {
             throw Py.TypeError(String.format("\"%s\" must be an string", name));
         }
         return src.toString();

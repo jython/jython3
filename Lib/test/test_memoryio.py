@@ -676,12 +676,12 @@ class PyStringIOTest(MemoryTestMixin, MemorySeekTestMixin,
 
     def test_lone_surrogates(self):
         # Issue #20424
-        memio = self.ioclass('\ud800')
-        self.assertEqual(memio.read(), '\ud800')
+        memio = self.ioclass('\\ud800')
+        self.assertEqual(memio.read(), '\\ud800')
 
         memio = self.ioclass()
-        memio.write('\ud800')
-        self.assertEqual(memio.getvalue(), '\ud800')
+        memio.write('\\ud800')
+        self.assertEqual(memio.getvalue(), '\\ud800')
 
     # Re-instate test_detach skipped by Jython in PyBytesIOTest
     if support.is_jython: # FIXME: Jython issue 1996
@@ -802,7 +802,7 @@ class CStringIOTest(PyStringIOTest):
     # accept what tell() returns.
     @unittest.skipIf(support.is_jython, "Exact value of tell() is CPython specific")
     def test_widechar(self):
-        buf = self.buftype("\U0002030a\U00020347")
+        buf = self.buftype("\\U0002030a\\U00020347")
         memio = self.ioclass(buf)
 
         self.assertEqual(memio.getvalue(), buf)
@@ -817,7 +817,7 @@ class CStringIOTest(PyStringIOTest):
     # that tell() return a particular absolute value. Conceived for Jython, but
     # probably universal.
     def test_widechar_seek(self):
-        buf = self.buftype("\U0002030aX\u00ca\U00020347\u05d1Y\u0628Z")
+        buf = self.buftype("\\U0002030aX\\u00ca\\U00020347\\u05d1Y\\u0628Z")
         memio = self.ioclass(buf)
         self.assertEqual(memio.getvalue(), buf)
 
@@ -829,7 +829,7 @@ class CStringIOTest(PyStringIOTest):
             self.assertEqual(memio.read(1), ch)
 
         # For each character in buf, seek to it and check it's there
-        chpos = zip(chars, tells)
+        chpos = list(zip(chars, tells))
         chpos.reverse()
         for ch, pos in chpos:
             memio.seek(pos)

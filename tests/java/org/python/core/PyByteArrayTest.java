@@ -313,7 +313,7 @@ public class PyByteArrayTest extends BaseBytesTest {
         BaseBytes a = getInstance(aRef);
         List<PyInteger> bList = new ArrayList<PyInteger>(L);
 
-        // Need interpreter (for Py.None and exceptions)
+        // Need interpreter (for Py.None and Exceptions)
         interp = new PythonInterpreter();
 
         final int[] posStart = new int[] {0, 8, 16, L - 5, L - 1};
@@ -398,7 +398,7 @@ public class PyByteArrayTest extends BaseBytesTest {
         BaseBytes a = getInstance(aRef);
         List<PyInteger> bList = new ArrayList<PyInteger>(L);
 
-        // Need interpreter (for Py.None and exceptions)
+        // Need interpreter (for Py.None and Exceptions)
         interp = new PythonInterpreter();
 
         // Positive step
@@ -555,7 +555,7 @@ public class PyByteArrayTest extends BaseBytesTest {
             assertEquals(b, ai);
         }
 
-        // Check ValueError exceptions generated
+        // Check ValueError Exceptions generated
         int[] badValue = {256, Integer.MAX_VALUE, -1, -2, -100, -0x10000, Integer.MIN_VALUE};
         for (int i : badValue) {
             PyInteger b = new PyInteger(i);
@@ -570,7 +570,7 @@ public class PyByteArrayTest extends BaseBytesTest {
             }
         }
 
-        // Check IndexError exceptions generated
+        // Check IndexError Exceptions generated
         PyInteger x = new PyInteger(10);
         for (int i : new int[] {-1 - MEDIUM, -100 - MEDIUM, MEDIUM, MEDIUM + 1}) {
             try {
@@ -688,7 +688,7 @@ public class PyByteArrayTest extends BaseBytesTest {
         final int L = ver.length();
         int[] uRef = toInts(ver);
 
-        // Need interpreter (for Py.None and exceptions)
+        // Need interpreter (for Py.None and Exceptions)
         interp = new PythonInterpreter();
 
         // Source of assigned values.
@@ -1224,7 +1224,7 @@ public class PyByteArrayTest extends BaseBytesTest {
         final int L = ver.length();
         int[] uRef = toInts(ver);
 
-        // Need interpreter (for Py.None and exceptions)
+        // Need interpreter (for Py.None and Exceptions)
         interp = new PythonInterpreter();
 
         final int[] posStart = new int[] {0, 3, 7, 16, L - 1};

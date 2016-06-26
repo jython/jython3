@@ -66,7 +66,7 @@ public class imp {
     }
 
     /** A non-empty fromlist for __import__'ing sub-modules. */
-    private static final PyObject nonEmptyFromlist = new PyTuple(Py.newString("__doc__"));
+    private static final PyObject nonEmptyFromlist = new PyTuple(Py.newUnicode("__doc__"));
 
     public static ClassLoader getSyspathJavaLoader() {
         return Py.getSystemState().getSyspathJavaLoader();
@@ -212,7 +212,7 @@ public class imp {
         } catch (IOException ioe) {
             if (!testing) {
                 throw Py.ImportError(ioe.getMessage() + "[name=" + name + ", source=" + sourceName
-                        + ", compiled=" + compiledName + "]");
+                        + ", compiled=" + compiledName + "]", name);
             }
         }
         if (testing && data == null) {
@@ -265,7 +265,7 @@ public class imp {
                 return null;
             } else {
                 String fmt = "compiled unit contains version %d code (%d required): %.200s";
-                throw Py.ImportError(String.format(fmt, api, APIVersion, name));
+                throw Py.ImportError(String.format(fmt, api, APIVersion, name), name);
             }
         }
         if (testing && mtime != NO_MTIME) {
@@ -418,7 +418,7 @@ public class imp {
         }
 
         if (moduleLocation != null) {
-            module.__setattr__("__file__", new PyString(moduleLocation));
+            module.__setattr__("__file__", new PyUnicode(moduleLocation));
         } else if (module.__findattr__("__file__") == null) {
             // Should probably never happen (but maybe with an odd custom builtins, or
             // Java Integration)
@@ -471,7 +471,7 @@ public class imp {
 
         // nothing in the cache, so check all hooks
         PyObject iter = hooks.__iter__();
-        for (PyObject hook; (hook = iter.__iternext__()) != null;) {
+        for (PyObject hook; (hook = iter.__next__()) != null;) {
             try {
                 importer = hook.__call__(p);
                 break;
@@ -509,7 +509,7 @@ public class imp {
         for (PyObject importer : metaPath.asIterable()) {
             PyObject findModule = importer.__getattr__("find_module");
             loader = findModule.__call__(new PyObject[] { //
-                    new PyString(moduleName), path == null ? Py.None : path});
+                    new PyUnicode(moduleName), path == null ? Py.None : path});
             if (loader != Py.None) {
                 return loadFromLoader(loader, moduleName);
             }
@@ -526,7 +526,7 @@ public class imp {
             PyObject importer = getPathImporter(sys.path_importer_cache, sys.path_hooks, p);
             if (importer != Py.None) {
                 PyObject findModule = importer.__getattr__("find_module");
-                loader = findModule.__call__(new PyObject[] {new PyString(moduleName)});
+                loader = findModule.__call__(new PyObject[] {new PyUnicode(moduleName)});
                 if (loader != Py.None) {
                     return loadFromLoader(loader, moduleName);
                 }
@@ -548,7 +548,7 @@ public class imp {
             Py.writeComment(IMPORT_LOG, "'" + name + "' as sys in builtin modules");
             return Py.java2py(Py.getSystemState());
         }
-        if (name == "__builtin__") {
+        if (name == "__builtin__" || name == "builtins") {
             Py.writeComment(IMPORT_LOG, "'" + name + "' as __builtin__ in builtin modules");
             return new PyModule("__builtin__", Py.getSystemState().builtins);
         }
@@ -563,7 +563,7 @@ public class imp {
                     }
                     return createFromClass(name, c);
                 } catch (NoClassDefFoundError e) {
-                    throw Py.ImportError("Cannot import " + name + ", missing class " + c.getName());
+                    throw Py.ImportError("Cannot import " + name + ", missing class " + c.getName(), name);
                 }
             }
         }
@@ -576,7 +576,7 @@ public class imp {
         ReentrantLock importLock = Py.getSystemState().getImportLock();
         importLock.lock();
         try {
-            return load_module.__call__(new PyObject[] {new PyString(name)});
+            return load_module.__call__(new PyObject[] {new PyUnicode(name)});
         } finally {
             importLock.unlock();
         }
@@ -628,7 +628,7 @@ public class imp {
             compiledFile = new File(dirName, compiledName);
         } else {
             PyModule m = addModule(modName);
-            PyObject filename = new PyString(new File(displayDirName, name).getPath());
+            PyObject filename = new PyUnicode(new File(displayDirName, name).getPath());
             m.__dict__.__setitem__("__path__", new PyList(new PyObject[] {filename}));
         }
 
@@ -740,10 +740,10 @@ public class imp {
 
         PyObject tmp = dict.__finditem__("__package__");
         if (tmp != null && tmp != Py.None) {
-            if (!Py.isInstance(tmp, PyString.TYPE)) {
+            if (!Py.isInstance(tmp, PyUnicode.TYPE)) {
                 throw Py.ValueError("__package__ set to non-string");
             }
-            modname = ((PyString)tmp).getString();
+            modname = ((PyUnicode)tmp).getString();
         } else {
             // __package__ not set, so figure it out and set it.
 
@@ -757,7 +757,7 @@ public class imp {
             tmp = dict.__finditem__("__path__");
             if (tmp instanceof PyList) {
                 // __path__ is set, so modname is already the package name.
-                dict.__setitem__("__package__", new PyString(modname));
+                dict.__setitem__("__package__", new PyUnicode(modname));
             } else {
                 // __name__ is not a package name, try one level upwards.
                 int dot = modname.lastIndexOf('.');
@@ -771,7 +771,7 @@ public class imp {
                 }
                 // modname should be the package name.
                 modname = modname.substring(0, dot);
-                dict.__setitem__("__package__", new PyString(modname));
+                dict.__setitem__("__package__", new PyUnicode(modname));
             }
         }
 
@@ -842,7 +842,7 @@ public class imp {
     private static PyObject import_first(String name, StringBuilder parentNameBuffer) {
         PyObject ret = import_next(null, parentNameBuffer, name, null, null);
         if (ret == null || ret == Py.None) {
-            throw Py.ImportError("No module named " + name);
+            throw Py.ImportError("No module named " + name, name);
         }
         return ret;
     }
@@ -856,7 +856,7 @@ public class imp {
             }
         }
         if (ret == null || ret == Py.None) {
-            throw Py.ImportError("No module named " + name);
+            throw Py.ImportError("No module named " + name, name);
         }
         return ret;
     }
@@ -890,7 +890,7 @@ public class imp {
                 mod = import_next(jpkg, parentNameBuffer, name, fullName, fromlist);
             }
             if (mod == null || mod == Py.None) {
-                throw Py.ImportError("No module named " + name);
+                throw Py.ImportError("No module named " + name, name);
             }
             last_dot = dot + 1;
         } while (dot != -1);
@@ -985,7 +985,7 @@ public class imp {
 
         StringBuilder modNameBuffer = new StringBuilder(name);
         for (PyObject item : fromlist.asIterable()) {
-            if (!Py.isInstance(item, PyBaseString.TYPE)) {
+            if (!Py.isInstance(item, PyUnicode.TYPE)) {
                 throw Py.TypeError("Item in ``from list'' not a string");
             }
             if (item.toString().equals("*")) {
@@ -999,7 +999,7 @@ public class imp {
                 }
             }
 
-            if (mod.__findattr__((PyString)item) == null) {
+            if (mod.__findattr__((PyUnicode)item) == null) {
                 String fullName = modNameBuffer.toString() + "." + item.toString();
                 import_next(mod, modNameBuffer, item.toString(), fullName, null);
             }
@@ -1126,7 +1126,7 @@ public class imp {
             PyFrame frame, int level) {
         PyObject[] pyNames = new PyObject[names.length];
         for (int i = 0; i < names.length; i++) {
-            pyNames[i] = Py.newString(names[i]);
+            pyNames[i] = Py.newUnicode(names[i]);
         }
 
         PyObject module =
@@ -1142,14 +1142,14 @@ public class imp {
             // end temporary fix.
 
             if (submod == null) {
-                throw Py.ImportError("cannot import name " + names[i]);
+                throw Py.ImportError("cannot import name " + names[i], names[i]);
             }
             submods[i] = submod;
         }
         return submods;
     }
 
-    private final static PyTuple all = new PyTuple(Py.newString('*'));
+    private final static PyTuple all = new PyTuple(Py.newUnicode('*'));
 
     /**
      * Called from jython generated code when a statement like "from spam.eggs import *" is
@@ -1236,7 +1236,7 @@ public class imp {
         String name = m.__getattr__("__name__").toString().intern();
         PyModule nm = (PyModule)modules.__finditem__(name);
         if (nm == null || !nm.__getattr__("__name__").toString().equals(name)) {
-            throw Py.ImportError("reload(): module " + name + " not in sys.modules");
+            throw Py.ImportError("reload(): module " + name + " not in sys.modules", name);
         }
         PyModule existing_module = modules_reloading.get(name);
         if (existing_module != null) {
@@ -1254,13 +1254,13 @@ public class imp {
             String iname = name.substring(0, dot).intern();
             PyObject pkg = modules.__finditem__(iname);
             if (pkg == null) {
-                throw Py.ImportError("reload(): parent not in sys.modules");
+                throw Py.ImportError("reload(): parent not in sys.modules", name);
             }
             path = (PyList)pkg.__getattr__("__path__");
             name = name.substring(dot + 1, name.length()).intern();
         }
 
-        nm.__setattr__("__name__", new PyString(modName)); // FIXME necessary?!
+        nm.__setattr__("__name__", new PyUnicode(modName)); // FIXME necessary?!
         try {
             PyObject ret = find_module(name, modName, path);
             modules.__setitem__(modName, ret);

@@ -22,27 +22,18 @@ public class PyFastSequenceIter extends PyIterator {
         this.seq = seq;
     }
 
-    @ExposedMethod(doc = "x.next() -> the next value, or raise StopIteration")
-    final PyObject fastsequenceiterator_next() {
+    @ExposedMethod(doc = BuiltinDocs.list_iterator___next___doc)
+    final PyObject fastsequenceiterator___next__() {
         return super.next();
     }
 
     @Override
-    public PyObject __iternext__() {
+    public PyObject __next__() {
         if (seq == null) {
             return null;
         }
 
-        PyObject result;
-        try {
-            result = seq.seq___finditem__(index++);
-        } catch (PyException pye) {
-            if (pye.match(Py.StopIteration)) {
-                seq = null;
-                return null;
-            }
-            throw pye;
-        }
+        PyObject result = seq.seq___finditem__(index++);
 
         if (result == null) {
             seq = null;
@@ -50,6 +41,10 @@ public class PyFastSequenceIter extends PyIterator {
         return result;
     }
 
+    @Override
+    public int __len__() {
+        return seq.__len__();
+    }
 
     /* Traverseproc implementation */
     @Override

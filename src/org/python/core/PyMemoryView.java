@@ -126,6 +126,16 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
         return backing.isReadonly();
     }
 
+    @ExposedMethod(doc = BuiltinDocs.memoryview_hex_doc)
+    final PyObject memoryview_hex() {
+        int n = backing.getLen();
+        StringBuilder sb = new StringBuilder(n);
+        for (int i = 0; i < n; i++) {
+            sb.append(String.format("%02x", backing.byteAt(i)));
+        }
+        return new PyUnicode(sb.toString());
+    }
+
     /**
      * Implementation of Python <code>tobytes()</code>. Return the data in the buffer as a byte
      * string (an object of class <code>str</code>).
@@ -170,7 +180,7 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
         int n = backing.getLen();
         PyList list = new PyList();
         for (int i = 0; i < n; i++) {
-            list.add(new PyInteger(backing.intAt(i)));
+            list.add(new PyLong(backing.intAt(i)));
         }
         return list;
     }

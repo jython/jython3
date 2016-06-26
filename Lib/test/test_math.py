@@ -1,7 +1,7 @@
 # Python test set -- math module
 # XXXX Should not do tests around zero only
 
-from test.test_support import run_unittest, verbose, is_jython
+from test.support import run_unittest, verbose, is_jython
 import unittest
 import math
 import os
@@ -265,7 +265,7 @@ class MathTests(unittest.TestCase):
         self.assertRaises(TypeError, math.ceil)
         # These types will be int in py3k.
         self.assertEqual(float, type(math.ceil(1)))
-        self.assertEqual(float, type(math.ceil(1L)))
+        self.assertEqual(float, type(math.ceil(1)))
         self.assertEqual(float, type(math.ceil(1.0)))
         self.ftest('ceil(0.5)', math.ceil(0.5), 1)
         self.ftest('ceil(1.0)', math.ceil(1.0), 1)
@@ -373,10 +373,10 @@ class MathTests(unittest.TestCase):
             for i in range(1, int(n)+1):
                 result *= i
             return result
-        values = range(10) + [50, 100, 500]
+        values = list(range(10)) + [50, 100, 500]
         random.shuffle(values)
         for x in values:
-            for cast in (int, long, float):
+            for cast in (int, int, float):
                 self.assertEqual(math.factorial(cast(x)), fact(x), (x, fact(x), math.factorial(x)))
         self.assertRaises(ValueError, math.factorial, -1)
         self.assertRaises(ValueError, math.factorial, math.pi)
@@ -385,7 +385,7 @@ class MathTests(unittest.TestCase):
         self.assertRaises(TypeError, math.floor)
         # These types will be int in py3k.
         self.assertEqual(float, type(math.floor(1)))
-        self.assertEqual(float, type(math.floor(1L)))
+        self.assertEqual(float, type(math.floor(1)))
         self.assertEqual(float, type(math.floor(1.0)))
         self.ftest('floor(0.5)', math.floor(0.5), 0)
         self.ftest('floor(1.0)', math.floor(1.0), 1)
@@ -416,12 +416,12 @@ class MathTests(unittest.TestCase):
 
     def testFmod(self):
         self.assertRaises(TypeError, math.fmod)
-        self.ftest('fmod(10,1)', math.fmod(10,1), 0)
-        self.ftest('fmod(10,0.5)', math.fmod(10,0.5), 0)
-        self.ftest('fmod(10,1.5)', math.fmod(10,1.5), 1)
-        self.ftest('fmod(-10,1)', math.fmod(-10,1), 0)
-        self.ftest('fmod(-10,0.5)', math.fmod(-10,0.5), 0)
-        self.ftest('fmod(-10,1.5)', math.fmod(-10,1.5), -1)
+        self.ftest('fmod(10,1)', math.fmod(10, 1), 0)
+        self.ftest('fmod(10,0.5)', math.fmod(10, 0.5), 0)
+        self.ftest('fmod(10,1.5)', math.fmod(10, 1.5), 1)
+        self.ftest('fmod(-10,1)', math.fmod(-10, 1), 0)
+        self.ftest('fmod(-10,0.5)', math.fmod(-10, 0.5), 0)
+        self.ftest('fmod(-10,1.5)', math.fmod(-10, 1.5), -1)
         self.assertTrue(math.isnan(math.fmod(NAN, 1.)))
         self.assertTrue(math.isnan(math.fmod(1., NAN)))
         self.assertTrue(math.isnan(math.fmod(NAN, NAN)))
@@ -443,7 +443,7 @@ class MathTests(unittest.TestCase):
             (mant, exp), (emant, eexp) = result, expected
             if abs(mant-emant) > eps or exp != eexp:
                 self.fail('%s returned %r, expected %r'%\
-                          (name, (mant, exp), (emant,eexp)))
+                          (name, (mant, exp), (emant, eexp)))
 
         testfrexp('frexp(-1)', math.frexp(-1), (-0.5, 1))
         testfrexp('frexp(0)', math.frexp(0), (0, 0))
@@ -533,10 +533,10 @@ class MathTests(unittest.TestCase):
             self.assertEqual(actual, expected)
 
         from random import random, gauss, shuffle
-        for j in xrange(1000):
+        for j in range(1000):
             vals = [7, 1e100, -7, -1e100, -9e-20, 8e-20] * 10
             s = 0
-            for i in xrange(200):
+            for i in range(200):
                 v = gauss(0, random()) ** 7 - s
                 s += v
                 vals.append(v)
@@ -547,8 +547,8 @@ class MathTests(unittest.TestCase):
 
     def testHypot(self):
         self.assertRaises(TypeError, math.hypot)
-        self.ftest('hypot(0,0)', math.hypot(0,0), 0)
-        self.ftest('hypot(3,4)', math.hypot(3,4), 5)
+        self.ftest('hypot(0,0)', math.hypot(0, 0), 0)
+        self.ftest('hypot(3,4)', math.hypot(3, 4), 5)
         self.assertEqual(math.hypot(NAN, INF), INF)
         self.assertEqual(math.hypot(INF, NAN), INF)
         self.assertEqual(math.hypot(NAN, NINF), INF)
@@ -558,10 +558,10 @@ class MathTests(unittest.TestCase):
 
     def testLdexp(self):
         self.assertRaises(TypeError, math.ldexp)
-        self.ftest('ldexp(0,1)', math.ldexp(0,1), 0)
-        self.ftest('ldexp(1,1)', math.ldexp(1,1), 2)
-        self.ftest('ldexp(1,-1)', math.ldexp(1,-1), 0.5)
-        self.ftest('ldexp(-1,1)', math.ldexp(-1,1), -2)
+        self.ftest('ldexp(0,1)', math.ldexp(0, 1), 0)
+        self.ftest('ldexp(1,1)', math.ldexp(1, 1), 2)
+        self.ftest('ldexp(1,-1)', math.ldexp(1, -1), 0.5)
+        self.ftest('ldexp(-1,1)', math.ldexp(-1, 1), -2)
         self.assertRaises(OverflowError, math.ldexp, 1., 1000000)
         self.assertRaises(OverflowError, math.ldexp, -1., 1000000)
         self.assertEqual(math.ldexp(1., -1000000), 0.)
@@ -571,7 +571,7 @@ class MathTests(unittest.TestCase):
         self.assertTrue(math.isnan(math.ldexp(NAN, 0)))
 
         # large second argument
-        for n in [10**5, 10L**5, 10**10, 10L**10, 10**20, 10**40]:
+        for n in [10**5, 10**5, 10**10, 10**10, 10**20, 10**40]:
             self.assertEqual(math.ldexp(INF, -n), INF)
             self.assertEqual(math.ldexp(NINF, -n), NINF)
             self.assertEqual(math.ldexp(1., -n), 0.)
@@ -593,7 +593,7 @@ class MathTests(unittest.TestCase):
         self.ftest('log(1/e)', math.log(1/math.e), -1)
         self.ftest('log(1)', math.log(1), 0)
         self.ftest('log(e)', math.log(math.e), 1)
-        self.ftest('log(32,2)', math.log(32,2), 5)
+        self.ftest('log(32,2)', math.log(32, 2), 5)
         self.ftest('log(10**40, 10)', math.log(10**40, 10), 40)
         self.ftest('log(10**40, 10**20)', math.log(10**40, 10**20), 2)
         self.assertEqual(math.log(INF), INF)
@@ -629,7 +629,7 @@ class MathTests(unittest.TestCase):
             (v1, v2), (e1, e2) = result, expected
             if abs(v1-e1) > eps or abs(v2-e2):
                 self.fail('%s returned %r, expected %r'%\
-                          (name, (v1,v2), (e1,e2)))
+                          (name, (v1, v2), (e1, e2)))
 
         testmodf('modf(1.5)', math.modf(1.5), (0.5, 1.0))
         testmodf('modf(-1.5)', math.modf(-1.5), (-0.5, -1.0))
@@ -643,10 +643,10 @@ class MathTests(unittest.TestCase):
 
     def testPow(self):
         self.assertRaises(TypeError, math.pow)
-        self.ftest('pow(0,1)', math.pow(0,1), 0)
-        self.ftest('pow(1,0)', math.pow(1,0), 1)
-        self.ftest('pow(2,1)', math.pow(2,1), 2)
-        self.ftest('pow(2,-1)', math.pow(2,-1), 0.5)
+        self.ftest('pow(0,1)', math.pow(0, 1), 0)
+        self.ftest('pow(1,0)', math.pow(1, 0), 1)
+        self.ftest('pow(2,1)', math.pow(2, 1), 2)
+        self.ftest('pow(2,-1)', math.pow(2, -1), 0.5)
         self.assertEqual(math.pow(INF, 1), INF)
         self.assertEqual(math.pow(NINF, 1), NINF)
         self.assertEqual((math.pow(1, INF)), 1.)

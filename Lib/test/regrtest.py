@@ -124,7 +124,7 @@ example, to run all the tests except for the bsddb tests, give the
 option '-uall,-bsddb'.
 """
 
-import cStringIO
+import io
 import getopt
 import os
 import random
@@ -143,7 +143,7 @@ import imp
 # putting them in test_grammar.py has no effect:
 warnings.filterwarnings("ignore", "hex/oct constants", FutureWarning,
                         ".*test.test_grammar$")
-if sys.maxint > 0x7fffffff:
+if sys.maxsize > 0x7fffffff:
     # Also suppress them in <string>, because for 64-bit platforms,
     # that's where test_grammar.py hides them.
     warnings.filterwarnings("ignore", "hex/oct constants", FutureWarning,
@@ -174,15 +174,15 @@ if sys.platform == 'darwin':
         resource.setrlimit(resource.RLIMIT_STACK, (newsoft, hard))
 
 import test as _test
-from test import test_support
+from test import support
 
 RESOURCE_NAMES = ('audio', 'curses', 'largefile', 'network', 'bsddb',
                   'decimal', 'compiler', 'subprocess', 'urlfetch')
 
 
 def usage(code, msg=''):
-    print __doc__
-    if msg: print msg
+    print(__doc__)
+    if msg: print(msg)
     sys.exit(code)
 
 
@@ -213,7 +213,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
     values that would normally be set by flags on the command line.
     """
 
-    test_support.record_original_stdout(sys.stdout)
+    support.record_original_stdout(sys.stdout)
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'hvqxsSrf:lu:t:TD:NLR:wM:em:j:',
                                    ['help', 'verbose', 'quiet', 'exclude',
@@ -223,7 +223,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
                                     'huntrleaks=', 'verbose2', 'memlimit=',
                                     'expected', 'memo'
                                     ])
-    except getopt.error, msg:
+    except getopt.error as msg:
         usage(2, msg)
 
     # Defaults
@@ -274,7 +274,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
         elif o in ('-R', '--huntrleaks'):
             huntrleaks = a.split(':')
             if len(huntrleaks) != 3:
-                print a, huntrleaks
+                print(a, huntrleaks)
                 usage(2, '-R takes three colon-separated arguments')
             if len(huntrleaks[0]) == 0:
                 huntrleaks[0] = 5
@@ -287,7 +287,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
             if len(huntrleaks[2]) == 0:
                 huntrleaks[2] = "reflog.txt"
         elif o in ('-M', '--memlimit'):
-            test_support.set_memlimit(a)
+            support.set_memlimit(a)
         elif o in ('-u', '--use'):
             u = [x.lower() for x in a.split(',')]
             for r in u:
@@ -306,8 +306,8 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
                 elif r not in use_resources:
                     use_resources.append(r)
         else:
-            print >>sys.stderr, ("No handler for option {0}.  Please "
-                "report this as a bug at http://bugs.python.org.").format(o)
+            print(("No handler for option {0}.  Please "
+                "report this as a bug at http://bugs.python.org.").format(o), file=sys.stderr)
             sys.exit(1)
     if single and fromfile:
         usage(2, "-s and -f don't go together!")
@@ -319,11 +319,11 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
 
     if findleaks:
         try:
-            if test_support.is_jython:
+            if support.is_jython:
                 raise ImportError()
             import gc
         except ImportError:
-            print 'No GC available, disabling findleaks.'
+            print('No GC available, disabling findleaks.')
             findleaks = False
         else:
             # Uncomment the line below to report garbage that is not
@@ -354,10 +354,10 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
 
     # Strip .py extensions.
     if args:
-        args = map(removepy, args)
+        args = list(map(removepy, args))
         allran = False
     if tests:
-        tests = map(removepy, tests)
+        tests = list(map(removepy, tests))
 
     stdtests = STDTESTS[:]
     nottests = list(NOTTESTS)
@@ -378,10 +378,10 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
                              trace=False, count=True)
 
     test_times = []
-    test_support.verbose = verbose      # Tell tests to be moderately quiet
-    test_support.use_resources = use_resources
-    test_support.junit_xml_dir = junit_xml
-    save_modules = sys.modules.keys()
+    support.verbose = verbose      # Tell tests to be moderately quiet
+    support.use_resources = use_resources
+    support.junit_xml_dir = junit_xml
+    save_modules = list(sys.modules.keys())
 
     skips = _ExpectedSkips()
     failures = _ExpectedFailures()
@@ -402,7 +402,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
 
     for test in tests:
         if not quiet:
-            print test
+            print(test)
             sys.stdout.flush()
         if trace:
             # If we're tracing code coverage, then we don't exit with status
@@ -416,7 +416,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
                              testdir, huntrleaks, junit_xml)
             except KeyboardInterrupt:
                 # print a newline separate from the ^C
-                print
+                print()
                 break
             except:
                 raise
@@ -431,49 +431,49 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
         if findleaks:
             gc.collect()
             if gc.garbage:
-                print "Warning: test created", len(gc.garbage),
-                print "uncollectable object(s)."
+                print("Warning: test created", len(gc.garbage), end=' ')
+                print("uncollectable object(s).")
                 # move the uncollectable objects somewhere so we don't see
                 # them again
                 found_garbage.extend(gc.garbage)
                 del gc.garbage[:]
         # Unload the newly imported modules (best effort finalization)
-        for module in sys.modules.keys():
+        for module in list(sys.modules.keys()):
             if module not in save_modules and module.startswith("test."):
-                test_support.unload(module)
+                support.unload(module)
                 module = module[5:]
                 if hasattr(_test, module):
                     delattr(_test, module)
 
     if good and not quiet:
         if not bad and not skipped and len(good) > 1:
-            print "All",
-        print count(len(good), "test"), "OK."
+            print("All", end=' ')
+        print(count(len(good), "test"), "OK.")
     if print_slow:
         test_times.sort(reverse=True)
-        print "10 slowest tests:"
+        print("10 slowest tests:")
         for time, test in test_times[:10]:
-            print "%s: %.1fs" % (test, time)
+            print("%s: %.1fs" % (test, time))
     surprises = 0
     if skipped and not quiet:
-        print count(len(skipped), "test"), "skipped:"
+        print(count(len(skipped), "test"), "skipped:")
         surprises += countsurprises(skips, skipped, 'skip', 'ran', allran, resource_denieds)
     if bad:
-         print count(len(bad), "test"), "failed:"
+         print(count(len(bad), "test"), "failed:")
          surprises += countsurprises(failures, bad, 'fail', 'passed', allran, resource_denieds)
 
     if verbose2 and bad:
-        print "Re-running failed tests in verbose mode"
+        print("Re-running failed tests in verbose mode")
         for test in bad:
-            print "Re-running test %r in verbose mode" % test
+            print("Re-running test %r in verbose mode" % test)
             sys.stdout.flush()
             try:
-                test_support.verbose = True
+                support.verbose = True
                 ok = runtest(test, True, quiet, test_times, testdir,
                              huntrleaks)
             except KeyboardInterrupt:
                 # print a newline separate from the ^C
-                print
+                print()
                 break
             except:
                 raise
@@ -525,7 +525,7 @@ STDTESTS = [
    ]
 
 NOTTESTS = {
-    'test_support',
+    'support',
     'test_future1',
     'test_future2',
 }
@@ -569,13 +569,13 @@ def runtest(test, verbose, quiet, test_times,
 
 def runtest_inner(test, verbose, quiet, test_times,
                   testdir=None, huntrleaks=False, junit_xml_dir=None):
-    test_support.unload(test)
+    support.unload(test)
     if not testdir:
         testdir = findtestdir()
     if verbose:
         capture_stdout = None
     else:
-        capture_stdout = cStringIO.StringIO()
+        capture_stdout = io.StringIO()
 
     from test.junit_xml import Tee, write_direct_test
     try:
@@ -619,9 +619,9 @@ def runtest_inner(test, verbose, quiet, test_times,
             if junit_xml_dir:
                 sys.stderr = save_stderr
                 test_time = time.time() - start_time
-    except test_support.ResourceDenied, msg:
+    except support.ResourceDenied as msg:
         if not quiet:
-            print test, "skipped --", msg
+            print(test, "skipped --", msg)
             sys.stdout.flush()
         if junit_xml_dir:
             write_direct_test(junit_xml_dir, abstest, test_time,
@@ -629,9 +629,9 @@ def runtest_inner(test, verbose, quiet, test_times,
                               stdout=stdout.getvalue(),
                               stderr=stderr.getvalue())
         return -2
-    except (ImportError, unittest.SkipTest), msg:
+    except (ImportError, unittest.SkipTest) as msg:
         if not quiet:
-            print test, "skipped --", msg
+            print(test, "skipped --", msg)
             sys.stdout.flush()
         if junit_xml_dir:
             write_direct_test(junit_xml_dir, abstest, test_time,
@@ -641,8 +641,8 @@ def runtest_inner(test, verbose, quiet, test_times,
         return -1
     except KeyboardInterrupt:
         raise
-    except test_support.TestFailed, msg:
-        print "test", test, "failed --", msg
+    except support.TestFailed as msg:
+        print("test", test, "failed --", msg)
         sys.stdout.flush()
         if junit_xml_dir and indirect_test is None:
             write_direct_test(junit_xml_dir, abstest, test_time,
@@ -652,7 +652,7 @@ def runtest_inner(test, verbose, quiet, test_times,
         return 0
     except:
         type, value = sys.exc_info()[:2]
-        print "test", test, "crashed --", str(type) + ":", value
+        print("test", test, "crashed --", str(type) + ":", value)
         sys.stdout.flush()
         if verbose:
             traceback.print_exc(file=sys.stdout)
@@ -670,10 +670,10 @@ def runtest_inner(test, verbose, quiet, test_times,
         output = capture_stdout.getvalue()
         if not output:
             return 1
-        print "test", test, "produced unexpected output:"
-        print "*" * 70
-        print output
-        print "*" * 70
+        print("test", test, "produced unexpected output:")
+        print("*" * 70)
+        print(output)
+        print("*" * 70)
         sys.stdout.flush()
         return 0
 
@@ -686,7 +686,7 @@ def cleanup_test_droppings(testname, verbose):
     # since if a test leaves a file open, it cannot be deleted by name (while
     # there's nothing we can do about that here either, we can display the
     # name of the offending test, which is a real help).
-    for name in (test_support.TESTFN,
+    for name in (support.TESTFN,
                  "db_home",
                 ):
         if not os.path.exists(name):
@@ -694,7 +694,7 @@ def cleanup_test_droppings(testname, verbose):
 
         # work around tests depending on refcounting files,
         # but this doesn't work with respect to Windows
-        test_support.gc_collect()
+        support.gc_collect()
 
         if os.path.isdir(name):
             kind, nuker = "directory", shutil.rmtree
@@ -705,16 +705,16 @@ def cleanup_test_droppings(testname, verbose):
                               "directory nor file" % name)
 
         if verbose:
-            print "%r left behind %s %r" % (testname, kind, name)
+            print("%r left behind %s %r" % (testname, kind, name))
         try:
             nuker(name)
-        except Exception, msg:
-            print >> sys.stderr, ("%r left behind %s %r and it couldn't be "
-                "removed: %s" % (testname, kind, name, msg))
+        except Exception as msg:
+            print(("%r left behind %s %r and it couldn't be "
+                "removed: %s" % (testname, kind, name, msg)), file=sys.stderr)
 
 def dash_R(the_module, test, indirect_test, huntrleaks):
     # This code is hackish and inelegant, but it seems to do the job.
-    import copy_reg, _abcoll, io
+    import copyreg, _abcoll, io
 
     if not hasattr(sys, 'gettotalrefcount'):
         raise Exception("Tracking reference leaks requires a debug build "
@@ -722,7 +722,7 @@ def dash_R(the_module, test, indirect_test, huntrleaks):
 
     # Save current values for dash_R_cleanup() to restore.
     fs = warnings.filters[:]
-    ps = copy_reg.dispatch_table.copy()
+    ps = copyreg.dispatch_table.copy()
     pic = sys.path_importer_cache.copy()
     abcs = {}
     modules = _abcoll, io
@@ -743,8 +743,8 @@ def dash_R(the_module, test, indirect_test, huntrleaks):
     deltas = []
     nwarmup, ntracked, fname = huntrleaks
     repcount = nwarmup + ntracked
-    print >> sys.stderr, "beginning", repcount, "repetitions"
-    print >> sys.stderr, ("1234567890"*(repcount//10 + 1))[:repcount]
+    print("beginning", repcount, "repetitions", file=sys.stderr)
+    print(("1234567890"*(repcount//10 + 1))[:repcount], file=sys.stderr)
     dash_R_cleanup(fs, ps, pic, abcs)
     for i in range(repcount):
         rc = sys.gettotalrefcount()
@@ -753,31 +753,31 @@ def dash_R(the_module, test, indirect_test, huntrleaks):
         dash_R_cleanup(fs, ps, pic, abcs)
         if i >= nwarmup:
             deltas.append(sys.gettotalrefcount() - rc - 2)
-    print >> sys.stderr
+    print(file=sys.stderr)
     if any(deltas):
         msg = '%s leaked %s references, sum=%s' % (test, deltas, sum(deltas))
-        print >> sys.stderr, msg
+        print(msg, file=sys.stderr)
         refrep = open(fname, "a")
-        print >> refrep, msg
+        print(msg, file=refrep)
         refrep.close()
 
 def dash_R_cleanup(fs, ps, pic, abcs):
-    import gc, copy_reg
+    import gc, copyreg
     import _strptime, linecache
-    dircache = test_support.import_module('dircache', deprecated=True)
-    import urlparse, urllib, urllib2, mimetypes, doctest
+    dircache = support.import_module('dircache', deprecated=True)
+    import urllib.parse, urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error, urllib.parse, mimetypes, doctest
     import struct, filecmp
     from distutils.dir_util import _path_created
 
     # Clear the warnings registry, so they can be displayed again
-    for mod in sys.modules.values():
+    for mod in list(sys.modules.values()):
         if hasattr(mod, '__warningregistry__'):
             del mod.__warningregistry__
 
     # Restore some original values.
     warnings.filters[:] = fs
-    copy_reg.dispatch_table.clear()
-    copy_reg.dispatch_table.update(ps)
+    copyreg.dispatch_table.clear()
+    copyreg.dispatch_table.update(ps)
     sys.path_importer_cache.clear()
     sys.path_importer_cache.update(pic)
 
@@ -785,7 +785,7 @@ def dash_R_cleanup(fs, ps, pic, abcs):
     sys._clear_type_cache()
 
     # Clear ABC registries, restoring previously saved ABC registries.
-    for abc, registry in abcs.items():
+    for abc, registry in list(abcs.items()):
         abc._abc_registry = registry.copy()
         abc._abc_cache.clear()
         abc._abc_negative_cache.clear()
@@ -794,9 +794,9 @@ def dash_R_cleanup(fs, ps, pic, abcs):
     _path_created.clear()
     re.purge()
     _strptime._regex_cache.clear()
-    urlparse.clear_cache()
-    urllib.urlcleanup()
-    urllib2.install_opener(None)
+    urllib.parse.clear_cache()
+    urllib.request.urlcleanup()
+    urllib.request.install_opener(None)
     dircache.reset()
     linecache.clearcache()
     mimetypes._default_mime_types()
@@ -832,23 +832,23 @@ def printlist(x, width=70, indent=4):
     from textwrap import fill
     blanks = ' ' * indent
     # Print the sorted list: 'x' may be a '--random' list or a set()
-    print fill(' '.join(str(elt) for elt in sorted(x)), width,
-               initial_indent=blanks, subsequent_indent=blanks)
+    print(fill(' '.join(str(elt) for elt in sorted(x)), width,
+               initial_indent=blanks, subsequent_indent=blanks))
 
 def countsurprises(expected, actual, action, antiaction, allran, resource_denieds):
     """returns the number of items in actual that aren't in expected."""
     printlist(actual)
     if not expected.isvalid():
-        print "Ask someone to teach regrtest.py about which tests are"
-        print "expected to %s on %s." % (action, sys.platform)
+        print("Ask someone to teach regrtest.py about which tests are")
+        print("expected to %s on %s." % (action, sys.platform))
         return 1#Surprising not to know what to expect....
     good_surprise = expected.getexpected() - set(actual)
     if allran and good_surprise:
-        print count(len(good_surprise), 'test'), antiaction, 'unexpectedly:'
+        print(count(len(good_surprise), 'test'), antiaction, 'unexpectedly:')
         printlist(good_surprise)
     bad_surprise = set(actual) - expected.getexpected() - set(resource_denieds)
     if bad_surprise:
-        print count(len(bad_surprise), action), "unexpected:"
+        print(count(len(bad_surprise), action), "unexpected:")
         printlist(bad_surprise)
     return len(bad_surprise)
 
@@ -1372,7 +1372,7 @@ class _ExpectedSkips:
             if test_timeout.skip_expected:
                 self.expected.add('test_timeout')
 
-            if sys.maxint == 9223372036854775807L:
+            if sys.maxsize == 9223372036854775807:
                 self.expected.add('test_imageop')
 
             if not sys.platform in ("mac", "darwin"):
@@ -1381,7 +1381,7 @@ class _ExpectedSkips:
                             "test_applesingle"]
                 for skip in MAC_ONLY:
                     self.expected.add(skip)
-            elif len(u'\0'.encode('unicode-internal')) == 4:
+            elif len('\0'.encode('unicode-internal')) == 4:
                 self.expected.add("test_macostools")
 
             if sys.platform != "win32":
@@ -1406,7 +1406,7 @@ class _ExpectedSkips:
             if not sys.py3kwarning:
                 self.expected.add('test_py3kwarn')
 
-            if test_support.is_jython:
+            if support.is_jython:
                 if os._name != 'posix':
                     self.expected.update([
                             'test_grp', 'test_mhlib', 'test_posix', 'test_pwd',
@@ -1461,20 +1461,20 @@ def savememo(memo,good,bad,skipped):
     f = open(memo,'w')
     try:
         for n,l in [('good',good),('bad',bad),('skipped',skipped)]:
-            print >>f,"%s = [" % n
+            print("%s = [" % n, file=f)
             for x in l:
-                print >>f,"    %r," % x
-            print >>f," ]"
+                print("    %r," % x, file=f)
+            print(" ]", file=f)
     finally:
         f.close()
 
 if __name__ == '__main__':
     # Remove regrtest.py's own directory from the module search path.  This
     # prevents relative imports from working, and relative imports will screw
-    # up the testing framework.  E.g. if both test.test_support and
-    # test_support are imported, they will not contain the same globals, and
+    # up the testing framework.  E.g. if both test.support and
+    # support are imported, they will not contain the same globals, and
     # much of the testing framework relies on the globals in the
-    # test.test_support module.
+    # test.support module.
     mydir = os.path.abspath(os.path.normpath(os.path.dirname(sys.argv[0])))
     i = len(sys.path)
     while i >= 0:

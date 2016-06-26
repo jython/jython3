@@ -27,9 +27,8 @@ Import related tests:
 The reference is C-python.
 '''
 import unittest
-import exceptions
 import imp
-import __builtin__
+import builtins
 import sys
 import types
 
@@ -40,25 +39,25 @@ def dump_module(m):
     "Print values of attributes relevant to import mechanism"
     if isinstance(m, types.ModuleType):
         m = m.__dict__
-    print "  Module name:     {}".format(m.get('__name__', ''))
+    print("  Module name:     {}".format(m.get('__name__', '')))
     for n in ['__package__', '__path__']:
-        print "    {:12s} = {}".format(n, m.get(n,''))
+        print("    {:12s} = {}".format(n, m.get(n, '')))
 
 origImport = __import__ 
 
-class TestImportStatementTell(exceptions.ImportError):
+class TestImportStatementTell(ImportError):
     # Raised by TestImportStatement.importFunction to tell us how it was called
     def __init__(self, args):
         # Smuggle the arguments of importFunction() through the call stack
-        if EXPLAIN: print "\nimport:"
+        if EXPLAIN: print("\nimport:")
         names = ['name', 'globals', 'locals', 'fromlist', 'level']
         self.len = len(args)
         for a in args:
             n = names.pop(0)
             setattr(self, n, a)
             if EXPLAIN:
-                too_long = not isinstance(a, (int, tuple, str, unicode))
-                print "    {:12s}= {}".format(n, a if not too_long else type(a))
+                too_long = not isinstance(a, (int, tuple, str))
+                print("    {:12s}= {}".format(n, a if not too_long else type(a)))
         for n in names:
             setattr(self, n, None)
 
@@ -80,19 +79,19 @@ class TestImportStatement(unittest.TestCase):
     importFunction = staticmethod(importFunction)
 
     def setUp(self):
-        __builtin__.__import__ = self.importFunction
+        builtins.__import__ = self.importFunction
 
     def tearDown(self):
-        __builtin__.__import__ = origImport
+        builtins.__import__ = origImport
 
     def runImport(self, statement):
         l = {}
         g = {}
         try:
-            exec statement in g, l 
-        except TestImportStatementTell, e:
-            self.assert_(e.globals is g, "globals is changed")
-            self.assert_(e.locals is l, "locals is changed")
+            exec(statement, g, l) 
+        except TestImportStatementTell as e:
+            self.assertTrue(e.globals is g, "globals is changed")
+            self.assertTrue(e.locals is l, "locals is changed")
             return e
         self.fail("Expected a TestImportStatementTell")
 
@@ -202,7 +201,7 @@ class TestImportStatement(unittest.TestCase):
         self.assertEqual(a.level, 0)
 
 
-class TestImportFunctionSuccess(exceptions.ImportError):
+class TestImportFunctionSuccess(ImportError):
     pass
 
 class TestImportFunction(unittest.TestCase):
@@ -254,7 +253,7 @@ class TestImportFunction(unittest.TestCase):
             sys.meta_path.remove(self)
         except ValueError:
             pass
-        for k in sys.modules.keys():
+        for k in list(sys.modules.keys()):
             if k.startswith(self.nameX):
                 del sys.modules[k]
 
@@ -290,9 +289,9 @@ class TestImportFunction(unittest.TestCase):
     def find_module(self, fullname, path=None):
         # Simulate the operation of a module finder object on the sys.meta_path
         if EXPLAIN:
-            print "find_module:"
-            print "    fullname   =", fullname
-            print "    path       =", path
+            print("find_module:")
+            print("    fullname   =", fullname)
+            print("    path       =", path)
         if self.expected and self.expected != fullname:
             # Equivalent of "import name" was called and the import mechanism is
             # trying something other than the expected full name. For example, X
@@ -313,16 +312,16 @@ class TestImportFunction(unittest.TestCase):
         if isinstance(globals, types.ModuleType):
             globals = globals.__dict__
         if EXPLAIN:
-            print "\nrunImport:"
+            print("\nrunImport:")
             dotname = ('.'*level if level>0 else '') + name
             callername = globals['__name__']
             callerpkg = globals.get('__package__', None)
             if fromlist:
-                print "    from {} import {} # in {} in package {}".format(
-                            dotname, fromlist, callername, callerpkg)
+                print("    from {} import {} # in {} in package {}".format(
+                            dotname, fromlist, callername, callerpkg))
             else:
-                print "    import {} # in {} in package {}".format(
-                            dotname, callername, callerpkg)
+                print("    import {} # in {} in package {}".format(
+                            dotname, callername, callerpkg))
         try:
             if level is not None:
                 __import__(name, globals, None, fromlist, level)
@@ -492,12 +491,12 @@ class TestImportFunction(unittest.TestCase):
 
 
 try:
-    from test import test_support
+    from test import support
 except ImportError:
     test_main = unittest.main
 else:
     def test_main():
-        test_support.run_unittest(
+        support.run_unittest(
                 TestImportStatement,
                 TestImportFunction,
                 )

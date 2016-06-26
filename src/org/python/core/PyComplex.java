@@ -152,23 +152,23 @@ public class PyComplex extends PyObject {
     }
 
     @Override
-    public PyString __str__() {
+    public PyUnicode __str__() {
         return complex___str__();
     }
 
     @ExposedMethod(doc = BuiltinDocs.complex___str___doc)
-    final PyString complex___str__() {
-        return Py.newString(formatComplex(SPEC_STR));
+    final PyUnicode complex___str__() {
+        return Py.newUnicode(formatComplex(SPEC_STR));
     }
 
     @Override
-    public PyString __repr__() {
+    public PyUnicode __repr__() {
         return complex___repr__();
     }
 
     @ExposedMethod(doc = BuiltinDocs.complex___repr___doc)
-    final PyString complex___repr__() {
-        return Py.newString(formatComplex(SPEC_REPR));
+    final PyUnicode complex___repr__() {
+        return Py.newUnicode(formatComplex(SPEC_REPR));
     }
 
     /**
@@ -284,7 +284,7 @@ public class PyComplex extends PyObject {
                 } else {
                     // Delegate the logic to PyFloat
                     PyFloat f = new PyFloat(r);
-                    equal = (f.float___cmp__(other) == 0);
+                    equal = (f.__cmp__(other) == 0);
                 }
             } else {
                 // No other primitive can have an imaginary part.

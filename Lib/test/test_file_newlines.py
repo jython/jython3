@@ -5,7 +5,7 @@ Made for Jython.
 import os
 import sys
 import tempfile
-import test.test_support as test_support
+import test.support as support
 import unittest
 
 assert not os.linesep == '\r', ('os.linesep of  %r is not supported' %
@@ -367,7 +367,7 @@ def test_main():
                       TextReadaheadBoundary5TestCase,
                       TextCRAtReadheadBoundaryTestCase,
                       TextCRAtReadheadBoundary2TestCase])
-    test_support.run_unittest(*tests)
+    support.run_unittest(*tests)
 
 if __name__ == '__main__':
     test_main()

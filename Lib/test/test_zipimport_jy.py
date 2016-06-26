@@ -3,13 +3,13 @@ import sys
 import os.path
 import java.lang.Package
 
-from test import test_support
+from test import support
 from zipimport import zipimporter
 
 class SyspathZipimportTest(unittest.TestCase):
     def setUp(self):
         self.orig_path = sys.path
-        sys.path.insert(0, test_support.findfile("syspath_import.jar"))
+        sys.path.insert(0, support.findfile("syspath_import.jar"))
 
         # TODO confirm that package is unloaded via a phantom ref or something like that
 
@@ -36,7 +36,7 @@ class SyspathZipimportTest(unittest.TestCase):
     def test_zipimporter_subclass(self):
         class MyJavaClass(zipimporter):
            def __init__(self):
-               zipimporter.__init__(self, test_support.findfile('zipdir.zip'))
+               zipimporter.__init__(self, support.findfile('zipdir.zip'))
                self.bar = "bar"
 
         # Previously failed with AttributeError: 'MyJavaClass' object
@@ -51,8 +51,8 @@ class ZipImporterDictTest(unittest.TestCase):
         A(path).somevar = 1
 
 def test_main():
-    test_support.run_unittest(SyspathZipimportTest)
-    test_support.run_unittest(ZipImporterDictTest)
+    support.run_unittest(SyspathZipimportTest)
+    support.run_unittest(ZipImporterDictTest)
 
 if __name__ == "__main__":
     test_main()

@@ -1,4 +1,4 @@
-from test.test_support import run_unittest, verbose
+from test.support import run_unittest, verbose
 from test.test_math import parse_testfile, test_file
 import unittest
 import cmath, math
@@ -131,7 +131,7 @@ class CMathTests(unittest.TestCase):
 
         # a variety of non-complex numbers, used to check that
         # non-complex return values from __complex__ give an error
-        non_complexes = ["not complex", 1, 5L, 2., None,
+        non_complexes = ["not complex", 1, 5, 2., None,
                          object(), NotImplemented]
 
         # Now we introduce a variety of classes whose instances might
@@ -168,11 +168,11 @@ class CMathTests(unittest.TestCase):
             pass
         class MyInt(object):
             def __int__(self): return 2
-            def __long__(self): return 2L
+            def __long__(self): return 2
             def __index__(self): return 2
         class MyIntOS:
             def __int__(self): return 2
-            def __long__(self): return 2L
+            def __long__(self): return 2
             def __index__(self): return 2
 
         # other possible combinations of __float__ and __complex__
@@ -224,7 +224,7 @@ class CMathTests(unittest.TestCase):
         # ints and longs should be acceptable inputs to all cmath
         # functions, by virtue of providing a __float__ method
         for f in self.test_functions:
-            for arg in [2, 2L, 2.]:
+            for arg in [2, 2, 2.]:
                 self.assertEqual(f(arg), f(arg.__float__()))
 
         # but strings should give a TypeError
@@ -272,7 +272,7 @@ class CMathTests(unittest.TestCase):
             'tan' : real_line,
             'tanh' : real_line}
 
-        for fn, values in test_functions.items():
+        for fn, values in list(test_functions.items()):
             float_fn = getattr(math, fn)
             complex_fn = getattr(cmath, fn)
             for v in values:
@@ -378,7 +378,7 @@ class CMathTests(unittest.TestCase):
             except BaseException as ex:
                 failures += 1
                 if verbose :
-                    print(raised_fmt.format(id, fn, ar, ai, ex, er, ei))
+                    print((raised_fmt.format(id, fn, ar, ai, ex, er, ei)))
 
         if failures :
             self.fail('{} discrepancies'.format(failures))
@@ -387,7 +387,7 @@ class CMathTests(unittest.TestCase):
     def assertCISEqual(self, a, b):
         eps = 1E-7
         if abs(a[0] - b[0]) > eps or abs(a[1] - b[1]) > eps:
-            self.fail((a ,b))
+            self.fail((a, b))
 
     def test_polar(self):
         self.assertCISEqual(polar(0), (0., 0.))
@@ -468,7 +468,7 @@ class CMathTests(unittest.TestCase):
     def assertCEqual(self, a, b):
         eps = 1E-7
         if abs(a.real - b[0]) > eps or abs(a.imag - b[1]) > eps:
-            self.fail((a ,b))
+            self.fail((a, b))
 
     def test_rect(self):
         self.assertCEqual(rect(0, 0), (0, 0))

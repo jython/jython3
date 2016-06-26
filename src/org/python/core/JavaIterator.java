@@ -14,7 +14,7 @@ public class JavaIterator extends PyIterator {
         this.proxy = proxy;
     }
 
-    public PyObject __iternext__() {
+    public PyObject __next__() {
         return proxy.hasNext() ? Py.java2py(proxy.next()) : null;
     }
 }

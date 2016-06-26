@@ -4,10 +4,14 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
+import org.python.antlr.ast.AsyncFor;
+import org.python.antlr.ast.AsyncFunctionDef;
+import org.python.antlr.ast.AsyncWith;
 import org.python.antlr.ast.Attribute;
 import org.python.antlr.ast.BinOp;
 import org.python.antlr.ast.BoolOp;
@@ -37,6 +41,7 @@ import org.python.antlr.ast.While;
 import org.python.antlr.ast.With;
 import org.python.antlr.ast.Yield;
 import org.python.antlr.ast.alias;
+import org.python.antlr.ast.arg;
 import org.python.antlr.ast.arguments;
 import org.python.antlr.ast.boolopType;
 import org.python.antlr.ast.cmpopType;
@@ -44,6 +49,7 @@ import org.python.antlr.ast.expr_contextType;
 import org.python.antlr.ast.keyword;
 import org.python.antlr.ast.operatorType;
 import org.python.antlr.ast.unaryopType;
+import org.python.antlr.ast.withitem;
 import org.python.antlr.base.excepthandler;
 import org.python.antlr.base.expr;
 import org.python.antlr.base.slice;
@@ -157,6 +163,27 @@ public class GrammarActions {
         errorHandler.error("Generator expression must be parenthesized if not sole argument", t);
     }
 
+    arg castArg(Object o) {
+        if (o instanceof arg) {
+            return (arg)o;
+        } else if (o instanceof Name) {
+            Name name = (Name) o;
+            return new arg(name.getToken(), name.getInternalId(), null);
+        }
+        return null;
+    }
+
+    List<arg> castArgs(List<Object> args) {
+        List<arg> ret = new ArrayList<>();
+        if (args == null) {
+            return ret;
+        }
+        for (Object o : args) {
+            ret.add(castArg(o));
+        }
+        return ret;
+    }
+
     expr castExpr(Object o) {
         if (o instanceof expr) {
             return (expr)o;
@@ -185,6 +212,16 @@ public class GrammarActions {
             }
         }
         return result;
+    }
+
+    List<expr> castExprs(List exprs1, List exprs2) {
+        List exprs = exprs1;
+        if (exprs == null) {
+            exprs = exprs2;
+        } else if (exprs2 != null) {
+            exprs.addAll(exprs2);
+        }
+        return castExprs(exprs);
     }
 
     List<stmt> makeElse(List elseSuite, PythonTree elif) {
@@ -246,18 +283,29 @@ public class GrammarActions {
         return new While(t, test, b, o);
     }
 
-    stmt makeWith(Token t, List<With> items, List<stmt> body) {
+    stmt makeAsyncWith(Token t, Object stmt) {
+        With with = (With) castStmt(stmt);
+        return new AsyncWith(t, with.getInternalItems(), with.getInternalBody());
+    }
+
+    stmt makeWith(Token t, List<withitem> items, List<stmt> body) {
         int last = items.size() - 1;
         With result = null;
         for (int i = last; i>=0; i--) {
-            With current = items.get(i);
+            withitem current = items.get(i);
             if (i != last) {
                 body = new ArrayList<stmt>();
                 body.add(result);
             }
-            result = new With(current.getToken(), current.getInternalContext_expr(), current.getInternalOptional_vars(), body);
+            result = new With(current.getToken(), Arrays.asList(current), body);
         }
         return result;
+    }
+
+    stmt makeAsyncFor(Token t, Object stmt) {
+        For forStmt = (For) castStmt(stmt);
+        return new AsyncFor(t, forStmt.getInternalTarget(), forStmt.getInternalIter(),
+                forStmt.getInternalBody(), forStmt.getInternalOrelse());
     }
 
     stmt makeFor(Token t, expr target, expr iter, List body, List orelse) {
@@ -291,20 +339,25 @@ public class GrammarActions {
         return new TryFinally(t, b, f);
     }
 
-    stmt makeFuncdef(Token t, Token nameToken, arguments args, List funcStatements, List decorators) {
+    stmt makeAsyncFuncdef(Token t, Object def) {
+        FunctionDef func = (FunctionDef) castStmt(def);
+        return new AsyncFunctionDef(t, func.getInternalNameNode(), func.getInternalArgs(),
+                func.getInternalBody(), func.getInternalReturnNode());
+    }
+
+    stmt makeFuncdef(Token t, Token nameToken, arguments args, List funcStatements, expr returnNode) {
         if (nameToken == null) {
             return errorHandler.errorStmt(new PythonTree(t));
         }
         Name n = cantBeNoneName(nameToken);
-        arguments a;
-        if (args != null) {
-            a = args;
-        } else {
-            a = new arguments(t, new ArrayList<expr>(), (Name)null, null, new ArrayList<expr>());
+        arguments a = args;
+        if (a == null) {
+            a = new arguments(t, new ArrayList<arg>(), (arg)null,
+                    // kwonlyargs, kw_defaults, kwarg, defaults
+                    new ArrayList<arg>(), new ArrayList<expr>(), (arg) null, new ArrayList<expr>());
         }
         List<stmt> s = castStmts(funcStatements);
-        List<expr> d = castExprs(decorators);
-        return new FunctionDef(t, n, a, s, d);
+        return new FunctionDef(t, n, a, s, returnNode);
     }
 
     List<expr> makeAssignTargets(expr lhs, List rhs) {
@@ -351,26 +404,6 @@ public class GrammarActions {
         }
     }
 
-    arguments makeArgumentsType(Token t, List params, Token snameToken,
-        Token knameToken, List defaults) {
-
-        List<expr> p = castExprs(params);
-        List<expr> d = castExprs(defaults);
-        Name s;
-        Name k;
-        if (snameToken == null) {
-            s = null;
-        } else {
-            s = cantBeNoneName(snameToken);
-        }
-        if (knameToken == null) {
-            k = null;
-        } else {
-            k = cantBeNoneName(knameToken);
-        }
-        return new arguments(t, p, s, k, d);
-    }
-
     List<expr> extractArgs(List args) {
         return castExprs(args);
     }
@@ -384,8 +417,10 @@ public class GrammarActions {
                 Object v = e.get(1);
                 checkAssign(castExpr(k));
                 if (k instanceof Name) {
-                    Name arg = (Name)k;
+                    Name arg = (Name) k;
                     keywords.add(new keyword(arg, arg.getInternalId(), castExpr(v)));
+                } else if (k == null) {
+                    keywords.add(new keyword(null, castExpr(v)));
                 } else {
                     errorHandler.error("keyword must be a name", (PythonTree)k);
                 }
@@ -473,7 +508,7 @@ public class GrammarActions {
             sb.append(sp.getString());
         }
         if (ustring) {
-            return new PyUnicode(sb.toString());
+            return new PyUnicode(sb.toString(), true);
         }
         return new PyString(sb.toString());
     }
@@ -547,22 +582,25 @@ public class GrammarActions {
         return makeCall(t, func, null, null, null, null);
     }
 
-    expr makeCall(Token t, expr func, List args, List keywords, expr starargs, expr kwargs) {
+    expr makeCall(Token t, expr func, List args, List keywords) {
         if (func == null) {
             return errorHandler.errorExpr(new PythonTree(t));
         }
         List<keyword> k = makeKeywords(keywords);
         List<expr> a = castExprs(args);
-        return new Call(t, func, a, k, starargs, kwargs);
+        return new Call(t, func, a, k);
     }
 
-    stmt makeClass(Token t, Token nameToken, List args, List ktypes, expr starargs, expr kwargs, List stypes, List dtypes) {
+    expr makeCall(Token t, expr func, List args, List keywords, expr starargs, expr kwargs) {
+        return makeCall(t, func, args, keywords);
+    }
+
+    stmt makeClass(Token t, Token nameToken, List args, List ktypes, List stypes) {
         String name = cantBeNone(nameToken);
         List<expr> bases = castExprs(args);
         List<stmt> statements = castStmts(stypes);
         List<keyword> keywords = makeKeywords(ktypes);
-        List<expr> decorators = castExprs(dtypes);
-        return new ClassDef(t, name, bases, keywords, starargs, kwargs, statements, decorators);
+        return new ClassDef(t, name, bases, keywords, statements, new ArrayList<expr>());
     }
 
     expr negate(Token t, expr o) {

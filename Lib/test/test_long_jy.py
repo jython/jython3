@@ -2,7 +2,7 @@
 
 Made for Jython.
 """
-from test import test_support
+from test import support
 import unittest
 
 class MyLong(long):
@@ -17,7 +17,7 @@ class LongTestCase(unittest.TestCase):
         self.assertEqual(repr(val), '42L')
 
     def test_long_repr(self):
-        self._test_long_repr(long)
+        self._test_long_repr(int)
 
     def test_long_subclass_repr(self):
         self._test_long_repr(MyLong)
@@ -27,14 +27,14 @@ class LongTestCase(unittest.TestCase):
         self.assertTrue(bool(MyLong(42)))
 
     def test_long_pow(self):
-        self.assertEquals(pow(10L, 10L, None), 10000000000L)
-        self.assertEquals(long.__pow__(10L, 10L, None), 10000000000L)
-        self.assertEquals((10L).__pow__(10L, None), 10000000000L)
-        self.assertEquals((10L).__pow__(10, None), 10000000000L)
+        self.assertEqual(pow(10, 10, None), 10000000000)
+        self.assertEqual(int.__pow__(10, 10, None), 10000000000)
+        self.assertEqual((10).__pow__(10, None), 10000000000)
+        self.assertEqual((10).__pow__(10, None), 10000000000)
 
 
 def test_main():
-    test_support.run_unittest(LongTestCase)
+    support.run_unittest(LongTestCase)
 
 if __name__ == '__main__':
     test_main()

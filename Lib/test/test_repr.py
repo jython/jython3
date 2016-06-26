@@ -8,9 +8,9 @@ import os
 import shutil
 import unittest
 
-from test.test_support import run_unittest, check_py3k_warnings
-from repr import repr as r # Don't shadow builtin repr
-from repr import Repr
+from test.support import run_unittest, check_py3k_warnings
+from reprlib import repr as r # Don't shadow builtin repr
+from reprlib import Repr
 
 
 def nestedTuple(nesting):
@@ -24,7 +24,7 @@ class ReprTests(unittest.TestCase):
     def test_string(self):
         eq = self.assertEqual
         eq(r("abc"), "'abc'")
-        eq(r("abcdefghijklmnop"),"'abcdefghijklmnop'")
+        eq(r("abcdefghijklmnop"), "'abcdefghijklmnop'")
 
         s = "a"*30+"b"*30
         expected = repr(s)[:13] + "..." + repr(s)[-14:]
@@ -103,10 +103,10 @@ class ReprTests(unittest.TestCase):
     def test_numbers(self):
         eq = self.assertEqual
         eq(r(123), repr(123))
-        eq(r(123L), repr(123L))
+        eq(r(123), repr(123))
         eq(r(1.0/3), repr(1.0/3))
 
-        n = 10L**100
+        n = 10**100
         expected = repr(n)[:18] + "..." + repr(n)[-19:]
         eq(r(n), expected)
 
@@ -150,9 +150,9 @@ class ReprTests(unittest.TestCase):
 
     def test_xrange(self):
         eq = self.assertEqual
-        eq(repr(xrange(1)), 'xrange(1)')
-        eq(repr(xrange(1, 2)), 'xrange(1, 2)')
-        eq(repr(xrange(1, 2, 3)), 'xrange(1, 4, 3)')
+        eq(repr(range(1)), 'xrange(1)')
+        eq(repr(range(1, 2)), 'xrange(1, 2)')
+        eq(repr(range(1, 2, 3)), 'xrange(1, 4, 3)')
 
     def test_nesting(self):
         eq = self.assertEqual

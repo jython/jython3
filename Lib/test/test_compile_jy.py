@@ -1,4 +1,4 @@
-import __builtin__
+import builtins
 import compileall
 import os
 import py_compile
@@ -7,7 +7,7 @@ import subprocess
 import sys
 import textwrap
 import unittest
-from test.test_support import TESTFN, is_jython, run_unittest, temp_cwd
+from test.support import TESTFN, is_jython, run_unittest, temp_cwd
 
 
 class TestMtime(unittest.TestCase):
@@ -46,11 +46,11 @@ class TestMtime(unittest.TestCase):
 
             # make sure the source file's mtime is artificially younger than
             # the compiled path's mtime.
-            os.utime(source_path, (1,1))
+            os.utime(source_path, (1, 1))
 
             sys.path.append(TESTFN)
             import mod1
-            self.assertEquals(mod1.foo(), 'second')
+            self.assertEqual(mod1.foo(), 'second')
         finally:
             shutil.rmtree(TESTFN)
 

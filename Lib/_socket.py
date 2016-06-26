@@ -15,9 +15,10 @@ from functools import partial, wraps
 from itertools import chain
 from jythonlib import MapMaker, dict_builder
 from numbers import Number
-from StringIO import StringIO
+from io import StringIO
 from threading import Condition, Lock
-from types import MethodType, NoneType
+from types import MethodType
+NoneType = type(None)
 
 import java
 from java.io import IOException, InterruptedIOException
@@ -355,9 +356,9 @@ def raises_java_exception(method_or_function):
         try:
             try:
                 return method_or_function(*args, **kwargs)
-            except java.lang.Exception, jlx:
+            except java.lang.Exception as jlx:
                 raise _map_exception(jlx)
-        except error, e:
+        except error as e:
             if is_socket:
                 args[0]._last_error = e[0]
             raise
@@ -603,11 +604,11 @@ class ChildSocketHandler(ChannelInitializer):
         #
         # It's OK that this copy could occur without a mutex, given that such iteration
         # is guaranteed to be weakly consistent
-        child.options = dict(((option, value) for option, value in self.parent_socket.options.iteritems()))
+        child.options = dict(((option, value) for option, value in list(self.parent_socket.options.items())))
         if child.options:
             log.debug("Setting inherited options %s", child.options, extra={"sock": child})
             config = child_channel.config()
-            for option, value in child.options.iteritems():
+            for option, value in list(child.options.items()):
                 _set_option(config.setOption, option, value)
 
         log.debug("Notifing listeners of parent socket %s", self.parent_socket, extra={"sock": child})
@@ -636,7 +637,7 @@ class ChildSocketHandler(ChannelInitializer):
 
 
 # FIXME raise exceptions for ops not permitted on client socket, server socket
-UNKNOWN_SOCKET, CLIENT_SOCKET, SERVER_SOCKET, DATAGRAM_SOCKET = range(4)
+UNKNOWN_SOCKET, CLIENT_SOCKET, SERVER_SOCKET, DATAGRAM_SOCKET = list(range(4))
 _socket_types = {
     UNKNOWN_SOCKET:  "unknown",
     CLIENT_SOCKET:   "client", 
@@ -768,7 +769,7 @@ class _realsocket(object):
             log.debug("Syncing on future %s for %s", future, reason, extra={"sock": self})
             return future.sync()
         elif self.timeout:
-            self._handle_timeout(future.await, reason)
+            self._handle_timeout(future.awaitUninterruptibly, reason)
             if not future.isSuccess():
                 log.debug("Got this failure %s during %s", future.cause(), reason, extra={"sock": self})
                 print("Got this failure %s during %s (%s)" % (future.cause(), reason, self))
@@ -839,7 +840,7 @@ class _realsocket(object):
         self.connected = True
         self.python_inbound_handler = PythonInboundHandler(self)
         bootstrap = Bootstrap().group(NIO_GROUP).channel(NioSocketChannel)
-        for option, value in self.options.iteritems():
+        for option, value in list(self.options.items()):
             _set_option(bootstrap.option, option, value)
 
         # FIXME really this is just for SSL handling, so make more
@@ -917,7 +918,7 @@ class _realsocket(object):
         b.group(self.parent_group, self.child_group)
         b.channel(NioServerSocketChannel)
         b.option(ChannelOption.SO_BACKLOG, backlog)
-        for option, value in self.options.iteritems():
+        for option, value in list(self.options.items()):
             _set_option(b.option, option, value)
             # Note that child options are set in the child handler so
             # that they can take into account any subsequent changes,
@@ -964,7 +965,7 @@ class _realsocket(object):
             self.python_inbound_handler = PythonInboundHandler(self)
             bootstrap = Bootstrap().group(NIO_GROUP).channel(NioDatagramChannel)
             bootstrap.handler(self.python_inbound_handler)
-            for option, value in self.options.iteritems():
+            for option, value in list(self.options.items()):
                 _set_option(bootstrap.option, option, value)
 
             future = bootstrap.register()
@@ -1260,7 +1261,7 @@ class _realsocket(object):
         if local_addr.getAddress().isAnyLocalAddress():
             # Netty 4 will default to an IPv6 "any" address from a channel even if it was originally bound to an IPv4 "any" address
             # so, as a workaround, let's construct a new "any" address using the port information gathered above
-            if type(self.bind_addr.getAddress()) != type(local_addr.getAddress()):
+            if not isinstance(self.bind_addr.getAddress(), type(local_addr.getAddress())):
                 return _socktuple(java.net.InetSocketAddress(self.bind_addr.getAddress(), local_addr.getPort()))
         return _socktuple(local_addr)
 
@@ -1396,7 +1397,7 @@ class ChildSocket(_realsocket):
 
     def _wait_on_latch(self):
         log.debug("Waiting for activity", extra={"sock": self})
-        self.active_latch.await()
+        self.active_latch.awaitUninterruptibly()
         log.debug("Latch released, can now proceed", extra={"sock": self})
 
     # FIXME raise exception for accept, listen, bind, connect, connect_ex
@@ -1578,10 +1579,10 @@ def _get_jsockaddr2(address_object, family, sock_type, proto, flags):
     if not isinstance(address_object, tuple) or \
        ((family == AF_INET and len(address_object) != 2) or \
         (family == AF_INET6 and len(address_object) not in [2,4] )) or \
-       not isinstance(address_object[0], (basestring, NoneType)) or \
-       not isinstance(address_object[1], (int, long)):
+       not isinstance(address_object[0], (str, NoneType)) or \
+       not isinstance(address_object[1], (int, int)):
         raise TypeError(error_message)
-    if len(address_object) == 4 and not isinstance(address_object[3], (int, long)):
+    if len(address_object) == 4 and not isinstance(address_object[3], (int, int)):
         raise TypeError(error_message)
     hostname = address_object[0]
     if hostname is not None:
@@ -1594,7 +1595,7 @@ def _get_jsockaddr2(address_object, family, sock_type, proto, flags):
             hostname = {AF_INET: INADDR_ANY, AF_INET6: IN6ADDR_ANY_INIT}[family]
         else:
             hostname = "localhost"
-    if isinstance(hostname, unicode):
+    if isinstance(hostname, str):
         hostname = encodings.idna.ToASCII(hostname)
     addresses = getaddrinfo(hostname, port, family, sock_type, proto, flags)
     if len(addresses) == 0:
@@ -1633,7 +1634,7 @@ def _use_ipv4_addresses_only(value):
 
 
 def _getaddrinfo_get_host(host, family, flags):
-    if not isinstance(host, basestring) and host is not None:
+    if not isinstance(host, str) and host is not None:
         raise TypeError("getaddrinfo() argument 1 must be string or None")
     if flags & AI_NUMERICHOST:
         if not is_ip_address(host):
@@ -1642,13 +1643,13 @@ def _getaddrinfo_get_host(host, family, flags):
             raise gaierror(EAI_ADDRFAMILY, "Address family for hostname not supported")
         if family == AF_INET6 and not is_ipv6_address(host):
             raise gaierror(EAI_ADDRFAMILY, "Address family for hostname not supported")
-    if isinstance(host, unicode):
+    if isinstance(host, str):
         host = encodings.idna.ToASCII(host)
     return host
 
 
 def _getaddrinfo_get_port(port, flags):
-    if isinstance(port, basestring):
+    if isinstance(port, str):
         try:
             int_port = int(port)
         except ValueError:
@@ -1661,7 +1662,7 @@ def _getaddrinfo_get_port(port, flags):
                 raise gaierror(EAI_SERVICE, "Servname not supported for ai_socktype")
     elif port is None:
         int_port = 0
-    elif not isinstance(port, (int, long)):
+    elif not isinstance(port, (int, int)):
         raise error("Int or String expected")
     else:
         int_port = int(port)
@@ -1852,9 +1853,9 @@ except ImportError:
 
 
 def _getnameinfo_get_host(address, flags):
-    if not isinstance(address, basestring):
+    if not isinstance(address, str):
         raise TypeError("getnameinfo() address 1 must be string, not None")
-    if isinstance(address, unicode):
+    if isinstance(address, str):
         address = encodings.idna.ToASCII(address)
     jia = InetAddress.getByName(address)
     result = jia.getCanonicalHostName()
@@ -1869,7 +1870,7 @@ def _getnameinfo_get_host(address, flags):
     return result
 
 def _getnameinfo_get_port(port, flags):
-    if not isinstance(port, (int, long)):
+    if not isinstance(port, (int, int)):
         raise TypeError("getnameinfo() port number must be an integer")
     if flags & NI_NUMERICSERV:
         return port
@@ -1985,7 +1986,7 @@ class _fileobject(object):
     def writelines(self, list):
         # XXX We could do better here for very long lists
         # XXX Should really reject non-string non-buffers
-        lines = filter(None, map(str, list))
+        lines = [_f for _f in map(str, list) if _f]
         self._wbuf_len += sum(map(len, lines))
         self._wbuf.extend(lines)
         if (self._wbufsize <= 1 or
@@ -2008,7 +2009,7 @@ class _fileobject(object):
             while True:
                 try:
                     data = self._sock.recv(rbufsize)
-                except error, e:
+                except error as e:
                     if e.args[0] == errno.EINTR:
                         continue
                     raise
@@ -2037,7 +2038,7 @@ class _fileobject(object):
                 # fragmentation issues on many platforms.
                 try:
                     data = self._sock.recv(left)
-                except error, e:
+                except error as e:
                     if e.args[0] == errno.EINTR:
                         continue
                     raise
@@ -2090,7 +2091,7 @@ class _fileobject(object):
                             if not data:
                                 break
                             buffers.append(data)
-                    except error, e:
+                    except error as e:
                         # The try..except to catch EINTR was moved outside the
                         # recv loop to avoid the per byte overhead.
                         if e.args[0] == errno.EINTR:
@@ -2104,7 +2105,7 @@ class _fileobject(object):
             while True:
                 try:
                     data = self._sock.recv(self._rbufsize)
-                except error, e:
+                except error as e:
                     if e.args[0] == errno.EINTR:
                         continue
                     raise
@@ -2133,7 +2134,7 @@ class _fileobject(object):
             while True:
                 try:
                     data = self._sock.recv(self._rbufsize)
-                except error, e:
+                except error as e:
                     if e.args[0] == errno.EINTR:
                         continue
                     raise
@@ -2185,7 +2186,7 @@ class _fileobject(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         line = self.readline()
         if not line:
             raise StopIteration

@@ -383,64 +383,45 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
     }
 
     @Override
-    public PyString __repr__() {
+    public PyUnicode __repr__() {
         return instance___repr__();
     }
 
     @ExposedMethod
-    final PyString instance___repr__() {
+    final PyUnicode instance___repr__() {
         PyObject ret = invoke_ex("__repr__");
         if (ret == null) {
             return makeDefaultRepr();
         }
-        if (!(ret instanceof PyString))
+        if (!(ret instanceof PyUnicode))
             throw Py.TypeError("__repr__ method must return a string");
-        return (PyString) ret;
+        return (PyUnicode) ret;
     }
 
     /**
      * If a class doesn't define a __repr__ method of its own, the return
      * value from this method is used.
      */
-    protected PyString makeDefaultRepr() {
+    protected PyUnicode makeDefaultRepr() {
         PyObject mod = instclass.__dict__.__finditem__("__module__");
         String modStr = (mod == null || !Py.isInstance(mod, PyString.TYPE)) ? "?" : mod.toString();
-        return new PyString(String.format("<%s.%s instance at %s>", modStr, instclass.__name__,
+        return new PyUnicode(String.format("<%s.%s instance at %s>", modStr, instclass.__name__,
                 Py.idstr(this)));
     }
 
     @Override
-    public PyString __str__() {
+    public PyUnicode __str__() {
         return instance___str__();
     }
 
     @ExposedMethod
-    final PyString instance___str__() {
+    final PyUnicode instance___str__() {
         PyObject ret = invoke_ex("__str__");
         if (ret == null)
             return __repr__();
-        if (!(ret instanceof PyString))
+        if (!(ret instanceof PyUnicode))
             throw Py.TypeError("__str__ method must return a string");
-        return (PyString) ret;
-    }
-
-    @Override
-    public PyUnicode __unicode__() {
-        return instance___unicode__();
-    }
-
-    @ExposedMethod
-    final PyUnicode instance___unicode__() {
-        PyObject ret = invoke_ex("__unicode__");
-        if (ret == null) {
-            return super.__unicode__();
-        } else if (ret instanceof PyUnicode) {
-            return (PyUnicode) ret;
-        } else if (ret instanceof PyString) {
-            return new PyUnicode((PyString) ret);
-        } else {
-            throw Py.TypeError("__unicode__ must return unicode or str");
-        }
+        return (PyUnicode) ret;
     }
 
     @Override
@@ -746,7 +727,7 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
     }
 
     @Override
-    public PyObject __iternext__() {
+    public PyObject __next__() {
         PyObject func = __findattr__("next");
         if (func != null) {
             try {

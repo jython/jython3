@@ -4,14 +4,14 @@
 """
 import cmath
 import unittest
-from test import test_support
-from test.test_support import verbose
+from test import support
+from test.support import verbose
 
 p = cmath.pi
 e = cmath.e
 if verbose:
-    print 'PI = ', abs(p)
-    print 'E = ', abs(e)
+    print('PI = ', abs(p))
+    print('E = ', abs(e))
 
 
 class CmathTestCase(unittest.TestCase):
@@ -121,7 +121,7 @@ class CmathTestCase(unittest.TestCase):
 
 
 def test_main():
-    test_support.run_unittest(CmathTestCase)
+    support.run_unittest(CmathTestCase)
 
 if __name__ == "__main__":
     test_main()

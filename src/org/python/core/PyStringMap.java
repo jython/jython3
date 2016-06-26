@@ -160,7 +160,7 @@ public class PyStringMap extends PyObject implements Traverseproc {
 
     @ExposedMethod(doc = BuiltinDocs.dict___iter___doc)
     final PyObject stringmap___iter__() {
-        return stringmap_iterkeys();
+        return stringmap_keys();
     }
 
     @Override
@@ -213,6 +213,21 @@ public class PyStringMap extends PyObject implements Traverseproc {
         }
     }
 
+    @ExposedMethod(doc = BuiltinDocs.dict_items_doc)
+    final PyObject stringmap_items() {
+        return new ItemsIter(table.entrySet());
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.dict_keys_doc)
+    final PyObject stringmap_keys() {
+        return new KeysIter(table.keySet());
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.dict_values_doc)
+    final PyObject stringmap_values() {
+        return new ValuesIter(table.values());
+    }
+
     /**
      * Remove all items from the dictionary.
      */
@@ -242,7 +257,7 @@ public class PyStringMap extends PyObject implements Traverseproc {
             if (key instanceof String) {
                 // This is a bit complicated, but prevents us to duplicate
                 // PyString#__repr__ logic here.
-                buf.append(new PyString((String)key).__repr__().toString());
+                buf.append(new PyUnicode((String)key).__repr__().toString());
             } else {
                 buf.append(((PyObject)key).__repr__().toString());
             }
@@ -277,10 +292,10 @@ public class PyStringMap extends PyObject implements Traverseproc {
         if (an > bn) {
             return 1;
         }
-        PyList akeys = keys();
+        PyList akeys = (PyList) keys();
         PyList bkeys = null;
         if (other instanceof PyStringMap) {
-            bkeys = ((PyStringMap)other).keys();
+            bkeys = (PyList) ((PyStringMap)other).keys();
         } else {
             bkeys = ((PyDictionary)other).keys_as_list();
         }
@@ -418,7 +433,7 @@ public class PyStringMap extends PyObject implements Traverseproc {
         PyObject pairs = other.__iter__();
         PyObject pair;
 
-        for (int i = 0; (pair = pairs.__iternext__()) != null; i++) {
+        for (int i = 0; (pair = pairs.__next__()) != null; i++) {
             try {
                 pair = PySequence.fastSequence(pair, "");
             } catch(PyException pye) {
@@ -518,36 +533,19 @@ public class PyStringMap extends PyObject implements Traverseproc {
      * Return a copy of the mappings list of keys. We have to take in account that we could be
      * storing String or PyObject objects
      */
-    public PyList keys() {
-        return stringmap_keys();
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.dict_keys_doc)
-    final PyList stringmap_keys() {
-        PyObject[] keyArray = new PyObject[table.size()];
-        int i = 0;
-        for (Object key : table.keySet()) {
-            keyArray[i++] = keyToPy(key);
-        }
-        return new PyList(keyArray);
+    public PyObject keys() {
+        return new PyList(stringmap_keys());
     }
 
     /**
      * Return a copy of the mappings list of values.
      */
-    public PyList values() {
-        return stringmap_values();
+    public PyObject values() {
+        return new PyList(stringmap_values());
     }
 
-    @ExposedMethod(doc = BuiltinDocs.dict_values_doc)
-    final PyList stringmap_values() {
-        return new PyList(table.values());
-    }
-
-    final PyObject stringmap_iterkeys() {
-       // Python allows one to change the dict while iterating over it, including
-       // deletion. Java does not. Can we resolve with CHM?
-       return new KeysIter(table.keySet());
+    public PyObject items() {
+        return stringmap_items();
     }
 
     @Override
@@ -582,7 +580,7 @@ public class PyStringMap extends PyObject implements Traverseproc {
         }
 
         @Override
-        public PyObject __iternext__() {
+        public PyObject __next__() {
             if (table.size() != size) {
                 throw Py.RuntimeError("dictionary changed size during iteration");
             }
@@ -633,7 +631,7 @@ public class PyStringMap extends PyObject implements Traverseproc {
 
     private static PyObject keyToPy(Object objKey){
         if (objKey instanceof String) {
-            return PyString.fromInterned((String)objKey);
+            return PyUnicode.fromInterned((String)objKey);
         } else {
             return (PyObject)objKey;
         }

@@ -186,7 +186,7 @@ public class StreamIO extends RawIOBase {
                 inField.setAccessible(true);
                 return getInputFileDescriptor((InputStream)inField.get(stream));
             } catch (Exception e) {
-                // XXX: masking other exceptions
+                // XXX: masking other Exceptions
             } finally {
                 if (inField != null && inField.isAccessible()) {
                     inField.setAccessible(false);
@@ -211,7 +211,7 @@ public class StreamIO extends RawIOBase {
                 outField.setAccessible(true);
                 return getOutputFileDescriptor((OutputStream)outField.get(stream));
             } catch (Exception e) {
-                // XXX: masking other exceptions
+                // XXX: masking other Exceptions
             } finally {
                 if (outField != null && outField.isAccessible()) {
                     outField.setAccessible(false);

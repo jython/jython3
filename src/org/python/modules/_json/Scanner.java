@@ -205,7 +205,7 @@ public class Scanner extends PyObject implements Traverseproc {
         PyString str = pystr;
         int length = pystr.__len__();
         if (idx >= length) {
-            throw Py.StopIteration("");
+            throw Py.StopIteration();
         }
         switch (str.getInt(idx)) {
             case '"':
@@ -281,7 +281,7 @@ public class Scanner extends PyObject implements Traverseproc {
         if (str.getInt(idx) == '-') {
             idx++;
             if (idx > end_idx) {
-                throw Py.StopIteration("");
+                throw Py.StopIteration();
             }
         }
 
@@ -296,7 +296,7 @@ public class Scanner extends PyObject implements Traverseproc {
         }
         /* no integer digits, error */
         else {
-            throw Py.StopIteration("");
+            throw Py.StopIteration();
         }
 
         /* if the next char is '.' followed by a digit then read all float digits */

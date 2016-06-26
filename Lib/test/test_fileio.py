@@ -1,6 +1,6 @@
 # Adapted from test_file.py by Daniel Stutzbach
 
-from __future__ import unicode_literals
+
 
 import sys
 import os
@@ -10,9 +10,9 @@ from array import array
 from weakref import proxy
 from functools import wraps
 
-from test.test_support import (TESTFN, check_warnings, run_unittest,
+from test.support import (TESTFN, check_warnings, run_unittest,
                                make_bad_fd, is_jython, gc_collect)
-from test.test_support import py3k_bytes as bytes
+from test.support import py3k_bytes as bytes
 from test.script_helper import run_python
 
 from _io import FileIO as _FileIO
@@ -37,7 +37,7 @@ class AutoFileTests(unittest.TestCase):
     def testWeakRefs(self):
         # verify weak references
         p = proxy(self.f)
-        p.write(bytes(range(10)))
+        p.write(bytes(list(range(10))))
         self.assertEqual(self.f.tell(), p.tell())
         self.f.close()
         self.f = None
@@ -45,7 +45,7 @@ class AutoFileTests(unittest.TestCase):
         self.assertRaises(ReferenceError, getattr, p, 'tell')
 
     def testSeekTell(self):
-        self.f.write(bytes(range(20)))
+        self.f.write(bytes(list(range(20))))
         self.assertEqual(self.f.tell(), 20)
         self.f.seek(0)
         self.assertEqual(self.f.tell(), 0)
@@ -376,7 +376,7 @@ class OtherFileTests(unittest.TestCase):
 
     def testTruncate(self):
         f = self.f = _FileIO(TESTFN, 'w')
-        f.write(bytes(bytearray(range(10))))
+        f.write(bytes(bytearray(list(range(10)))))
         self.assertEqual(f.tell(), 10)
         f.truncate(5)
         self.assertEqual(f.tell(), 10)
@@ -392,12 +392,12 @@ class OtherFileTests(unittest.TestCase):
             # SF bug <http://www.python.org/sf/801631>
             # "file.truncate fault on windows"
             f = self.f = _FileIO(TESTFN, 'w')
-            f.write(bytes(range(11)))
+            f.write(bytes(list(range(11))))
             f.close()
 
-            f = self.f = _FileIO(TESTFN,'r+')
+            f = self.f = _FileIO(TESTFN, 'r+')
             data = f.read(5)
-            if data != bytes(range(5)):
+            if data != bytes(list(range(5))):
                 self.fail("Read on file opened for update failed %r" % data)
             if f.tell() != 5:
                 self.fail("File pos after read wrong %d" % f.tell())

@@ -1,13 +1,13 @@
 import gc
 import sys
 import unittest
-import UserList
+import collections
 import weakref
 import operator
 
-from test import test_support
+from test import support
 
-if test_support.is_jython:
+if support.is_jython:
     import time
 
     def extra_collect():
@@ -213,13 +213,13 @@ class ReferencesTestCase(TestBase):
         o = C()
         self.check_proxy(o, weakref.proxy(o))
 
-        L = UserList.UserList()
+        L = collections.UserList()
         p = weakref.proxy(L)
         self.assertFalse(p, "proxy for empty UserList should be false")
         p.append(12)
         self.assertEqual(len(L), 1)
         self.assertTrue(p, "proxy for non-empty UserList should be true")
-        with test_support.check_py3k_warnings():
+        with support.check_py3k_warnings():
             p[:] = [2, 3]
         self.assertEqual(len(L), 2)
         self.assertEqual(len(p), 2)
@@ -227,13 +227,13 @@ class ReferencesTestCase(TestBase):
         p[1] = 5
         self.assertEqual(L[1], 5)
         self.assertEqual(p[1], 5)
-        L2 = UserList.UserList(L)
+        L2 = collections.UserList(L)
         p2 = weakref.proxy(L2)
         self.assertEqual(p, p2)
         ## self.assertEqual(repr(L2), repr(p2))
-        L3 = UserList.UserList(range(10))
+        L3 = collections.UserList(list(range(10)))
         p3 = weakref.proxy(L3)
-        with test_support.check_py3k_warnings():
+        with support.check_py3k_warnings():
             self.assertEqual(L3[:], p3[:])
             self.assertEqual(L3[5:], p3[5:])
             self.assertEqual(L3[:5], p3[:5])
@@ -245,10 +245,10 @@ class ReferencesTestCase(TestBase):
             def __str__(self):
                 return "string"
             def __unicode__(self):
-                return u"unicode"
+                return "unicode"
         instance = C()
         self.assertIn("__unicode__", dir(weakref.proxy(instance)))
-        self.assertEqual(unicode(weakref.proxy(instance)), u"unicode")
+        self.assertEqual(str(weakref.proxy(instance)), "unicode")
 
     def test_proxy_index(self):
         class C:
@@ -308,7 +308,7 @@ class ReferencesTestCase(TestBase):
 
         self.check_proxy(o, ref1)
 
-        self.assertTrue(type(ref1) is weakref.CallableProxyType,
+        self.assertTrue(isinstance(ref1, weakref.CallableProxyType),
                      "proxy is not of callable type")
         ref1('twinkies!')
         self.assertTrue(o.bar == 'twinkies!',
@@ -604,7 +604,7 @@ class ReferencesTestCase(TestBase):
         del c1, c2, C, D
         gc.collect()
 
-    @unittest.skipIf(test_support.is_jython, "Not a valid test for Jython without significant rewriting")
+    @unittest.skipIf(support.is_jython, "Not a valid test for Jython without significant rewriting")
     def test_callback_in_cycle_resurrection(self):
         import gc
 
@@ -651,7 +651,7 @@ class ReferencesTestCase(TestBase):
         gc.collect()
         self.assertEqual(alist, [])
 
-    @unittest.skipIf(test_support.is_jython, "Not a valid test for Jython")
+    @unittest.skipIf(support.is_jython, "Not a valid test for Jython")
     def test_callbacks_on_callback(self):
         import gc
 
@@ -690,15 +690,15 @@ class ReferencesTestCase(TestBase):
         gc.collect()
         self.assertEqual(alist, [])
 
-    @unittest.skipIf(test_support.is_jython, "Not a valid test for Jython")
+    @unittest.skipIf(support.is_jython, "Not a valid test for Jython")
     def test_gc_during_ref_creation(self):
         self.check_gc_during_creation(weakref.ref)
 
-    @unittest.skipIf(test_support.is_jython, "Not a valid test for Jython")
+    @unittest.skipIf(support.is_jython, "Not a valid test for Jython")
     def test_gc_during_proxy_creation(self):
         self.check_gc_during_creation(weakref.proxy)
 
-    @unittest.skipIf(test_support.is_jython, "Not a valid test for Jython")
+    @unittest.skipIf(support.is_jython, "Not a valid test for Jython")
     def check_gc_during_creation(self, makeref):
         thresholds = gc.get_threshold()
         gc.set_threshold(1, 1, 1)
@@ -947,7 +947,7 @@ class MappingTestCase(TestBase):
         items = [RefCycle() for i in range(N)]
         dct = dict_type(cons(o) for o in items)
         # Keep an iterator alive
-        it = dct.iteritems()
+        it = iter(dct.items())
         try:
             next(it)
         except StopIteration:
@@ -979,7 +979,7 @@ class MappingTestCase(TestBase):
             dct = dict_type(cons(o) for o in items)
             del items
             # All items will be collected at next garbage collection pass
-            it = dct.iteritems()
+            it = iter(dct.items())
             try:
                 next(it)
             except StopIteration:
@@ -992,11 +992,11 @@ class MappingTestCase(TestBase):
             self.assertGreaterEqual(n2, 0)
             self.assertLessEqual(n2, n1)
 
-    @unittest.skipIf(test_support.is_jython, "Not a valid test for Jython")
+    @unittest.skipIf(support.is_jython, "Not a valid test for Jython")
     def test_weak_keyed_len_race(self):
         self.check_len_race(weakref.WeakKeyDictionary, lambda k: (k, 1))
 
-    @unittest.skipIf(test_support.is_jython, "Not a valid test for Jython")
+    @unittest.skipIf(support.is_jython, "Not a valid test for Jython")
     def test_weak_valued_len_race(self):
         self.check_len_race(weakref.WeakValueDictionary, lambda k: (1, k))
 
@@ -1006,13 +1006,13 @@ class MappingTestCase(TestBase):
         #
         dict, objects = self.make_weak_valued_dict()
         for o in objects:
-            if not test_support.is_jython:  # Such dictionaries now use MapMaker
+            if not support.is_jython:  # Such dictionaries now use MapMaker
                 self.assertTrue(weakref.getweakrefcount(o) == 1,
                                 "wrong number of weak references to %r!" % o)
             self.assertTrue(o is dict[o.arg],
                          "wrong object returned by weak dict!")
-        items1 = dict.items()
-        items2 = dict.copy().items()
+        items1 = list(dict.items())
+        items2 = list(dict.copy().items())
         items1.sort()
         items2.sort()
         self.assertTrue(items1 == items2,
@@ -1022,11 +1022,11 @@ class MappingTestCase(TestBase):
         del objects[0]
         gc.collect()
         # underlying Map.size is guaranteed only to be eventually consistent for MapMaker
-        self.assertEqual(len(list(dict.iterkeys())), self.COUNT - 1,
+        self.assertEqual(len(list(dict.keys())), self.COUNT - 1,
                      "deleting object did not cause dictionary update")
         del objects, o
         gc.collect()
-        self.assertEqual(len(list(dict.iterkeys())), 0,
+        self.assertEqual(len(list(dict.keys())), 0,
                      "deleting the values did not clear the dictionary")
         # regression on SF bug #447152:
         dict = weakref.WeakValueDictionary()
@@ -1042,24 +1042,24 @@ class MappingTestCase(TestBase):
         #
         dict, objects = self.make_weak_keyed_dict()
         for o in objects:
-            if not test_support.is_jython:  # Such dictionaries now use MapMaker
+            if not support.is_jython:  # Such dictionaries now use MapMaker
                 self.assertTrue(weakref.getweakrefcount(o) == 1,
                                 "wrong number of weak references to %r!" % o)
             self.assertTrue(o.arg is dict[o],
                          "wrong object returned by weak dict!")
-        items1 = dict.items()
-        items2 = dict.copy().items()
+        items1 = list(dict.items())
+        items2 = list(dict.copy().items())
         self.assertTrue(set(items1) == set(items2),
                      "cloning of weak-keyed dictionary did not work!")
         del items1, items2
-        self.assertEqual(len(list(dict.iterkeys())), self.COUNT)
+        self.assertEqual(len(list(dict.keys())), self.COUNT)
         del objects[0]
         gc.collect()
-        self.assertEqual(len(list(dict.iterkeys())), self.COUNT - 1,
+        self.assertEqual(len(list(dict.keys())), self.COUNT - 1,
                      "deleting object did not cause dictionary update")
         del objects, o
         gc.collect()
-        self.assertEqual(len(list(dict.iterkeys())), 0,
+        self.assertEqual(len(list(dict.keys())), 0,
                      "deleting the keys did not clear the dictionary")
         o = Object(42)
         dict[o] = "What is the meaning of the universe?"
@@ -1118,26 +1118,26 @@ class MappingTestCase(TestBase):
 
     def check_iters(self, dict):
         # item iterator:
-        items = dict.items()
-        for item in dict.iteritems():
+        items = list(dict.items())
+        for item in dict.items():
             items.remove(item)
         self.assertTrue(len(items) == 0, "iteritems() did not touch all items")
 
         # key iterator, via __iter__():
-        keys = dict.keys()
+        keys = list(dict.keys())
         for k in dict:
             keys.remove(k)
         self.assertTrue(len(keys) == 0, "__iter__() did not touch all keys")
 
         # key iterator, via iterkeys():
-        keys = dict.keys()
-        for k in dict.iterkeys():
+        keys = list(dict.keys())
+        for k in dict.keys():
             keys.remove(k)
         self.assertTrue(len(keys) == 0, "iterkeys() did not touch all keys")
 
         # value iterator:
-        values = dict.values()
-        for v in dict.itervalues():
+        values = list(dict.values())
+        for v in dict.values():
             values.remove(v)
         self.assertTrue(len(values) == 0,
                      "itervalues() did not touch all values")
@@ -1155,14 +1155,14 @@ class MappingTestCase(TestBase):
 
     def make_weak_keyed_dict(self):
         dict = weakref.WeakKeyDictionary()
-        objects = map(Object, range(self.COUNT))
+        objects = list(map(Object, list(range(self.COUNT))))
         for o in objects:
             dict[o] = o.arg
         return dict, objects
 
     def make_weak_valued_dict(self):
         dict = weakref.WeakValueDictionary()
-        objects = map(Object, range(self.COUNT))
+        objects = list(map(Object, list(range(self.COUNT))))
         for o in objects:
             dict[o.arg] = o
         return dict, objects
@@ -1226,13 +1226,13 @@ class MappingTestCase(TestBase):
         weakdict = klass()
         weakdict.update(dict)
         self.assertEqual(len(weakdict), len(dict))
-        for k in weakdict.keys():
+        for k in list(weakdict.keys()):
             self.assertIn(k, dict,
                          "mysterious new key appeared in weak dict")
             v = dict.get(k)
             self.assertIs(v, weakdict[k])
             self.assertIs(v, weakdict.get(k))
-        for k in dict.keys():
+        for k in list(dict.keys()):
             self.assertIn(k, weakdict,
                          "original key disappeared in weak dict")
             v = dict[k]
@@ -1256,7 +1256,7 @@ class MappingTestCase(TestBase):
         self.assertTrue(len(d) == 2)
         del d[o1]
         self.assertTrue(len(d) == 1)
-        self.assertTrue(d.keys() == [o2])
+        self.assertTrue(list(d.keys()) == [o2])
 
     def test_weak_valued_delitem(self):
         d = weakref.WeakValueDictionary()
@@ -1267,7 +1267,7 @@ class MappingTestCase(TestBase):
         self.assertTrue(len(d) == 2)
         del d['something']
         self.assertTrue(len(d) == 1)
-        self.assertTrue(d.items() == [('something else', o2)])
+        self.assertTrue(list(d.items()) == [('something else', o2)])
 
     def test_weak_keyed_bad_delitem(self):
         d = weakref.WeakKeyDictionary()
@@ -1283,7 +1283,7 @@ class MappingTestCase(TestBase):
 
     # Using MapMaker means that __eq__ is not called given that such
     # Google Collections based weak maps use identity, not equality.
-    @unittest.skipIf(test_support.is_jython, "Not a valid test for Jython")
+    @unittest.skipIf(support.is_jython, "Not a valid test for Jython")
     def test_weak_keyed_cascading_deletes(self):
         # SF bug 742860.  For some reason, bef1ore 2.3 __delitem__ iterated
         # over the keys via self.data.iterkeys().  If things vanished from
@@ -1309,7 +1309,7 @@ class MappingTestCase(TestBase):
             d[o] = o.value
         del o   # now the only strong references to keys are in objs
         # Find the order in which iterkeys sees the keys.
-        objs = d.keys()
+        objs = list(d.keys())
         # Reverse it, so that the iteration implementation of __delitem__
         # has to keep looping to find the first object we delete.
         objs.reverse()
@@ -1435,14 +1435,14 @@ OK
 __test__ = {'libreftest' : libreftest}
 
 def test_main():
-    test_support.run_unittest(
+    support.run_unittest(
         ReferencesTestCase,
         MappingTestCase,
         WeakValueDictionaryTestCase,
         WeakKeyDictionaryTestCase,
         SubclassableWeakrefTestCase,
         )
-    test_support.run_doctest(sys.modules[__name__])
+    support.run_doctest(sys.modules[__name__])
 
 
 if __name__ == "__main__":

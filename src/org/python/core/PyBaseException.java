@@ -8,10 +8,10 @@ import org.python.expose.ExposedSet;
 import org.python.expose.ExposedType;
 
 /**
- * The base class for all standard Python exceptions.
+ * The base class for all standard Python Exceptions.
  *
  */
-@ExposedType(name = "exceptions.BaseException", doc = BuiltinDocs.BaseException_doc)
+@ExposedType(name = "BaseException", doc = BuiltinDocs.BaseException_doc)
 public class PyBaseException extends PyObject implements Traverseproc {
 
     public static final PyType TYPE = PyType.fromClass(PyBaseException.class);
@@ -25,6 +25,19 @@ public class PyBaseException extends PyObject implements Traverseproc {
 
     /** Exception's underlying dictionary, lazily created. */
     public PyObject __dict__;
+
+    @ExposedGet(doc = BuiltinDocs.BaseException___cause___doc)
+    public PyObject __cause__;
+
+    @ExposedGet(doc = BuiltinDocs.BaseException___suppress_context___doc)
+    @ExposedSet
+    public PyObject __suppress_context__;
+
+    @ExposedGet(doc = BuiltinDocs.BaseException___context___doc)
+    public PyObject __context__;
+
+    @ExposedGet(doc = BuiltinDocs.BaseException___traceback___doc)
+    public PyObject __traceback__;
 
     public PyBaseException() {
         super();
@@ -47,6 +60,23 @@ public class PyBaseException extends PyObject implements Traverseproc {
         if (args.length == 1) {
             message = args[0];
         }
+        PyException pye = Py.getThreadState().exceptions.peek();
+        if (pye != null) {
+            __context__ = pye.value;
+        } else {
+            __context__ = Py.None;
+        }
+        __suppress_context__ = Py.False;
+    }
+
+    public PyObject with_traceback(PyObject tb) {
+        return BaseException_with_traceback(tb);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.BaseException_with_traceback_doc)
+    final PyObject BaseException_with_traceback(PyObject tb) {
+        __traceback__ = tb;
+        return this;
     }
 
     @Override
@@ -111,7 +141,7 @@ public class PyBaseException extends PyObject implements Traverseproc {
     public PyObject fastGetDict() {
         return __dict__;
     }
-    
+
     @Override
     @ExposedGet(name = "__dict__", doc = BuiltinDocs.BaseException___dict___doc)
     public PyObject getDict() {
@@ -128,6 +158,32 @@ public class PyBaseException extends PyObject implements Traverseproc {
         __dict__ = val;
     }
 
+    @ExposedSet(name = "__traceback__")
+    public void setTraceback(PyObject val) {
+        if (val != Py.None && !Py.isInstance(val, PyTraceback.TYPE)) {
+            throw Py.TypeError("__traceback__ must be a traceback");
+        }
+        __traceback__ = val;
+    }
+
+    @ExposedSet(name = "__context__")
+    public void setContext(PyObject val) {
+        ensureException(val);
+        __context__ = val;
+        __suppress_context__ = Py.True;
+    }
+
+    @ExposedSet(name = "__cause__")
+    public void setCause(PyObject val) {
+        ensureException(val);
+        if (PyException.isExceptionClass(val)) {
+            __cause__ = val.__call__(Py.EmptyObjects);
+        } else {
+            __cause__ = val;
+        }
+        __suppress_context__ = Py.True;
+    }
+
     private void ensureDict() {
         // XXX: __dict__ should really be volatile
         if (__dict__ == null) {
@@ -135,30 +191,19 @@ public class PyBaseException extends PyObject implements Traverseproc {
         }
     }
 
-    @Override
-   public PyString __str__() {
-        return BaseException___str__();
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.BaseException___str___doc)
-    final PyString BaseException___str__() {
-        switch (args.__len__()) {
-        case 0:
-            return Py.EmptyString;
-        case 1:
-            return args.__getitem__(0).__str__();
-        default:
-            return args.__str__();
+    private void ensureException(PyObject val) {
+        if (val != Py.None && !PyException.isExceptionClass(val) && !PyException.isExceptionInstance(val)) {
+            throw Py.TypeError("exception cause must be None or derive from BaseException");
         }
     }
 
     @Override
-    public PyUnicode __unicode__() {
-        return BaseException___unicode__();
+    public PyUnicode __str__() {
+        return BaseException___str__();
     }
 
     @ExposedMethod(doc = BuiltinDocs.BaseException___str___doc)
-    final PyUnicode BaseException___unicode__() {
+    final PyUnicode BaseException___str__() {
         // CPython issue6108: if __str__ has been overridden in the subclass, unicode()
         // should return the message returned by __str__ as used to happen before this
         // method was implemented
@@ -168,33 +213,33 @@ public class PyBaseException extends PyObject implements Traverseproc {
         if (str != null && where[0] != TYPE) {
             // Unlike str(), __str__ can return unicode (i.e. return the equivalent
             // of unicode(e.__str__()) instead of unicode(str(e)))
-            return str.__get__(this, type).__call__().__unicode__();
+            return str.__get__(this, type).__call__().__str__();
         }
         
         switch (args.__len__()) {
         case 0:
             return new PyUnicode("");
         case 1:
-            return args.__getitem__(0).__unicode__();
+            return args.__getitem__(0).__str__();
         default:
-            return args.__unicode__();
+            return args.__str__();
         }
     }
 
     @Override
     public String toString() {
-        return BaseException_toString();
+        return BaseException_toString().asString();
     }
 
     @ExposedMethod(names = "__repr__", doc = BuiltinDocs.BaseException___repr___doc)
-    final String BaseException_toString() {
+    final PyUnicode BaseException_toString() {
         PyObject reprSuffix = args.__repr__();
         String name = getType().fastGetName();
         int lastDot = name.lastIndexOf('.');
         if (lastDot != -1) {
             name = name.substring(lastDot + 1);
         }
-        return name + reprSuffix.toString();
+        return new PyUnicode(name + reprSuffix.toString());
     }
 
     @ExposedSet(name = "args")

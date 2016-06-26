@@ -1,4 +1,5 @@
 import dbexts, cmd, sys, os
+from functools import reduce
 
 if sys.platform.startswith("java"):
     import java.lang.String
@@ -35,7 +36,7 @@ class IsqlCmd(cmd.Cmd):
 
     def __init__(self, db=None, delimiter=";", comment=('#', '--')):
         cmd.Cmd.__init__(self, completekey=None)
-        if db is None or type(db) == type(""):
+        if db is None or isinstance(db, type("")):
             self.db = dbexts.dbexts(db)
         else:
             self.db = db
@@ -47,7 +48,7 @@ class IsqlCmd(cmd.Cmd):
 
     def parseline(self, line):
         command, arg, line = cmd.Cmd.parseline(self, line)
-        if command and command <> "EOF":
+        if command and command != "EOF":
             command = command.lower()
         return command, arg, line
 
@@ -130,7 +131,7 @@ class IsqlCmd(cmd.Cmd):
     def do_set(self, arg):
         """\nSet a parameter. Some examples:\n set owner = 'informix'\n set types = ['VIEW', 'TABLE']\nThe right hand side is evaluated using `eval()`\n"""
         if len(arg.strip()) == 0:
-            items = self.kw.items()
+            items = list(self.kw.items())
             if len(items):
                 print()
                 # format the results but don't include how many rows affected
@@ -138,9 +139,9 @@ class IsqlCmd(cmd.Cmd):
                     print(a)
                 print()
             return False
-        d = filter(lambda x: len(x) > 0, map(lambda x: x.strip(), arg.split("=")))
+        d = [x for x in [x.strip() for x in arg.split("=")] if len(x) > 0]
         if len(d) == 1:
-            if self.kw.has_key(d[0]):
+            if d[0] in self.kw:
                 del self.kw[d[0]]
         else:
             self.kw[d[0]] = eval(d[1])
@@ -202,12 +203,12 @@ class IsqlCmd(cmd.Cmd):
         raise IsqlExit()
 
     def cmdloop(self, intro=None):
-        while 1:
+        while True:
             try:
                 cmd.Cmd.cmdloop(self, intro)
-            except IsqlExit, e:
+            except IsqlExit as e:
                 break
-            except Exception, e:
+            except Exception as e:
                 print()
                 print(e)
                 print()
@@ -218,7 +219,7 @@ if __name__ == '__main__':
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "b:", [])
-    except getopt.error, msg:
+    except getopt.error as msg:
         print()
         print(msg)
         print("Try `%s --help` for more information." % (sys.argv[0]))

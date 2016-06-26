@@ -56,7 +56,7 @@ public class cycle extends PyIterator {
 
             boolean save = true;
 
-            public PyObject __iternext__() {
+            public PyObject __next__() {
                 if (save) {
                     PyObject obj = nextElement(iterator);
                     if (obj != null) {
@@ -81,14 +81,14 @@ public class cycle extends PyIterator {
         };
     }
 
-    public PyObject __iternext__() {
-        return iter.__iternext__();
+    public PyObject __next__() {
+        return iter.__next__();
     }
 
     @ExposedMethod
     @Override
     public PyObject next() {
-        return doNext(__iternext__());
+        return doNext(__next__());
     }
 
 

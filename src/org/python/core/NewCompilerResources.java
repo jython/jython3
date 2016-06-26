@@ -48,7 +48,7 @@ public class NewCompilerResources {
     private static void loadNames(PyObject names, PyObject module,
             PyObject locals, boolean filter) {
         PyObject iter = names.__iter__();
-        for (PyObject name; (name = iter.__iternext__()) != null;) {
+        for (PyObject name; (name = iter.__next__()) != null;) {
             String sname = ((PyString) name).internedString();
             if (filter && sname.startsWith("_")) {
                 continue;

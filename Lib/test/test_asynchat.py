@@ -1,9 +1,9 @@
 # test asynchat -- requires threading
 
-import thread # If this fails, we can't test this module
+import _thread # If this fails, we can't test this module
 import asyncore, asynchat, socket, threading, time
 import unittest
-from test import test_support
+from test import support
 
 HOST = "127.0.0.1"
 PORT = 54322
@@ -14,7 +14,7 @@ class echo_server(threading.Thread):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         global PORT
-        PORT = test_support.bind_port(sock, HOST)
+        PORT = support.bind_port(sock, HOST)
         sock.listen(1)
         conn, client = sock.accept()
         buffer = ""
@@ -77,7 +77,7 @@ class TestAsynchat(unittest.TestCase):
         s = echo_server()
         s.start()
         time.sleep(1) # Give server time to initialize
-        c = echo_client(6L)
+        c = echo_client(6)
         c.push("hello ")
         c.push("world\n")
         asyncore.loop()
@@ -87,7 +87,7 @@ class TestAsynchat(unittest.TestCase):
 
 
 def test_main(verbose=None):
-    test_support.run_unittest(TestAsynchat)
+    support.run_unittest(TestAsynchat)
 
 if __name__ == "__main__":
     test_main(verbose=True)

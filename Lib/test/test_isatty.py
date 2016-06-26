@@ -1,4 +1,4 @@
-import test.test_support, unittest
+import test.support, unittest
 import os, popen2, subprocess, sys
 
 def test_isatty(label, thingy):
@@ -8,15 +8,15 @@ def test_isatty(label, thingy):
     elif 'out' in label: expected = stdout_isatty
     elif 'err' in label: expected = stderr_isatty
     else: expected = False
-    print '%11s: os.isatty=%.1s | .isatty=%.1s | expected=%.1s' % \
-        (label, os_isatty, thingy_isatty, expected)
+    print('%11s: os.isatty=%.1s | .isatty=%.1s | expected=%.1s' % \
+        (label, os_isatty, thingy_isatty, expected))
     assert expected == os_isatty == thingy_isatty, \
         'expected isatty would return %s on %s' % (expected, label)
 
 def test_int_isatty(fd, expected):
     os_isatty = os.isatty(fd)
-    print '%11s: os.isatty=%.1s | expected=%.1s' % \
-        ('fd %d' % fd, os_isatty, expected)
+    print('%11s: os.isatty=%.1s | expected=%.1s' % \
+        ('fd %d' % fd, os_isatty, expected))
     assert expected == os_isatty
 
 def test_file_isatty(name):
@@ -24,12 +24,12 @@ def test_file_isatty(name):
         return
     try:
         test_isatty(name, file(name))
-    except IOError, e:
-        print e # XXX Jython prints 'no such file or directory' - probably
+    except IOError as e:
+        print(e) # XXX Jython prints 'no such file or directory' - probably
                 # 'permission denied' but Java doesn't understand?
 
 def args_list(*args):
-    return [sys.executable, __file__] + map(str, args)
+    return [sys.executable, __file__] + list(map(str, args))
 
 class IsattyTest(unittest.TestCase):
     def check_call(self, *args, **kw):
@@ -47,11 +47,10 @@ class IsattyTest(unittest.TestCase):
 
 if __name__ == '__main__':
     if len(sys.argv) != 4:
-        test.test_support.run_unittest(IsattyTest)
+        test.support.run_unittest(IsattyTest)
         sys.exit(0)
 
-    stdin_isatty, stdout_isatty, stderr_isatty = map(lambda x: x == 'True',
-                                                     sys.argv[1:])
+    stdin_isatty, stdout_isatty, stderr_isatty = [x == 'True' for x in sys.argv[1:]]
 
     test_isatty('stdin',  sys.stdin)
     test_isatty('stdout', sys.stdout)

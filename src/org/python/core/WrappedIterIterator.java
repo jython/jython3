@@ -1,5 +1,7 @@
 package org.python.core;
 
+import org.python.modules.itertools.chain;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -9,9 +11,7 @@ import java.util.NoSuchElementException;
 public abstract class WrappedIterIterator<E> implements Iterator<E> {
 
     private final PyObject iter;
-
     private PyObject next;
-
     private boolean checkedForNext;
 
     public WrappedIterIterator(PyObject iter) {
@@ -20,7 +20,15 @@ public abstract class WrappedIterIterator<E> implements Iterator<E> {
 
     public boolean hasNext() {
         if (!checkedForNext) {
-            next = iter.__iternext__();
+            try {
+                next = iter.__next__();
+            } catch (PyException e) {
+                if (e.match(Py.StopIteration)) {
+                    next = null;
+                } else {
+                    throw e;
+                }
+            }
             checkedForNext = true;
         }
         return next != null;

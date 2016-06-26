@@ -5,12 +5,15 @@ import org.python.antlr.base.*;
 import org.python.antlr.op.*;
 import org.python.core.*;
 
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
+
 /**
  * AstAdapter turns Python and Java objects into ast nodes.
  */
 public class AstAdapters {
     public final static AliasAdapter aliasAdapter = new AliasAdapter();
+    public final static ArgAdapter argAdapter = new ArgAdapter();
     public final static CmpopAdapter cmpopAdapter = new CmpopAdapter();
     public final static ComprehensionAdapter comprehensionAdapter = new ComprehensionAdapter();
     public final static ExcepthandlerAdapter excepthandlerAdapter = new ExcepthandlerAdapter();
@@ -19,9 +22,14 @@ public class AstAdapters {
     public final static KeywordAdapter keywordAdapter = new KeywordAdapter();
     public final static SliceAdapter sliceAdapter = new SliceAdapter();
     public final static StmtAdapter stmtAdapter = new StmtAdapter();
+    public static AstAdapter withitemAdapter = new WithitemAdapter();
 
     public static java.util.List<alias> py2aliasList(PyObject o) {
         return (java.util.List<alias>)aliasAdapter.iter2ast(o);
+    }
+
+    public static java.util.List<arg> py2argList(PyObject o) {
+        return (java.util.List<arg>)argAdapter.iter2ast(o);
     }
 
     public static java.util.List<cmpopType> py2cmpopList(PyObject o) {
@@ -54,6 +62,10 @@ public class AstAdapters {
 
     public static java.util.List<stmt> py2stmtList(PyObject o) {
         return (java.util.List<stmt>)stmtAdapter.iter2ast(o);
+    }
+
+    public static arg py2arg(PyObject o) {
+        return (arg) argAdapter.py2ast(o);
     }
 
     public static expr py2expr(PyObject o) {
@@ -311,5 +323,9 @@ public class AstAdapters {
             }
         }
         return unaryopType.UNDEFINED;
+    }
+
+    public static List<withitem> py2withitemList(PyObject items) {
+        return (java.util.List<withitem>)withitemAdapter.iter2ast(items);
     }
 }
