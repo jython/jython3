@@ -9,8 +9,8 @@ public class AsyncContextGuard implements AsyncContextManager {
     private PyException exception;
 
     public AsyncContextGuard(PyObject manager) {
-        __aenter__method = manager.__getattr__("__aenter__");
         __aexit__method = manager.__getattr__("__aexit__");
+        __aenter__method = manager.__getattr__("__aenter__");
     }
 
     public static AsyncContextManager getManager(PyObject manager) {
