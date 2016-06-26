@@ -3139,7 +3139,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.ifne(label_end);
         // raise
         // # The exception is swallowed if exit() returns true
-        doRaise();
+        // Note: cannot use doRaise here
+        code.aload(mgr_tmp);
+        code.invokeinterface(p(AsyncContextManager.class), "exception", sig(PyException.class), true);
         code.checkcast(p(Throwable.class));
         code.athrow();
 
