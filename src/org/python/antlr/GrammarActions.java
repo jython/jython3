@@ -283,9 +283,18 @@ public class GrammarActions {
         return new While(t, test, b, o);
     }
 
-    stmt makeAsyncWith(Token t, Object stmt) {
-        With with = (With) castStmt(stmt);
-        return new AsyncWith(t, with.getInternalItems(), with.getInternalBody());
+    stmt makeAsyncWith(Token t, List<withitem> items, List<stmt> body) {
+        int last = items.size() - 1;
+        AsyncWith result = null;
+        for (int i = last; i>=0; i--) {
+            withitem current = items.get(i);
+            if (i != last) {
+                body = new ArrayList<stmt>();
+                body.add(result);
+            }
+            result = new AsyncWith(current.getToken(), Arrays.asList(current), body);
+        }
+        return result;
     }
 
     stmt makeWith(Token t, List<withitem> items, List<stmt> body) {

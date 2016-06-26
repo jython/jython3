@@ -456,7 +456,8 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
 
     @Override
     public Object visitAsyncWith(AsyncWith node) throws Exception {
-        cur.defineAsGenerator();
+//        cur.defineAsGenerator();
+        cur.max_with_count++;
         traverse(node);
         return null;
     }
