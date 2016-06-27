@@ -47,8 +47,9 @@ def _get_exports_list(module):
 
 # Any new dependencies of the os module and/or changes in path separator
 # requires updating importlib as well.
+name = 'java'
 if 'posix' in _names:
-    name = 'posix'
+    _name = 'posix'
     linesep = '\n'
     from posix import *
     try:
@@ -68,7 +69,7 @@ if 'posix' in _names:
     del posix
 
 elif 'nt' in _names:
-    name = 'nt'
+    _name = 'nt'
     linesep = '\r\n'
     from nt import *
     try:
@@ -88,7 +89,7 @@ elif 'nt' in _names:
         pass
 
 elif 'ce' in _names:
-    name = 'ce'
+    _name = 'ce'
     linesep = '\r\n'
     from ce import *
     try:
