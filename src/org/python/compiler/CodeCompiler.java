@@ -765,95 +765,6 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     }
 
     @Override
-    public Object visitAwait(Await node) throws Exception {
-       setline(node);
-        if (!fast_locals) {
-            throw new ParseException("'await' outside function", node);
-        }
-
-        int stackState = saveStack();
-        visit(node.getInternalValue());
-
-        yield_count++;
-        setLastI(yield_count);
-        code.invokestatic(p(Py.class), "getAwaitable", sig(PyObject.class, PyObject.class));
-        loadFrame();
-        code.swap();
-        code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
-
-        Label restart = new Label();
-        yields.addElement(restart);
-        code.label(restart);
-        restoreLocals();
-        restoreStack(stackState);
-
-        loadFrame();
-        code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyFrame.class));
-        code.areturn();
-        yield_count++;
-        Label nonYieldSection = new Label();
-        yields.addElement(nonYieldSection);
-        code.label(nonYieldSection);
-        restoreLocals();
-        restoreStack(stackState);
-
-        // restore return value from subgenerator
-        loadFrame();
-        code.invokevirtual(p(PyFrame.class), "getf_stacktop", sig(PyObject.class));
-        return null;
-    }
-
-    /**
-     * use the same mechanism as yield, but use two labels to guard the execution, e.g.
-     * #1 print(a)
-     * #2 yield from b
-     * #3 print(x)
-     * vtable f_lasti
-     * 0 goto #1
-     * 1 goto #2
-     * 2 goto #3
-     *
-     * so it can return to yield from repeatly, until f_lasti is modified by the generator
-     */
-    @Override
-    public Object visitYieldFrom(YieldFrom node) throws Exception {
-        setline(node);
-        if (!fast_locals) {
-            throw new ParseException("'yield from' outside function", node);
-        }
-
-        int stackState = saveStack();
-        visit(node.getInternalValue());
-
-        yield_count++;
-        setLastI(yield_count);
-        code.invokestatic(p(Py.class), "getYieldFromIter", sig(PyObject.class, PyObject.class));
-        loadFrame();
-        code.swap();
-        code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
-        saveLocals();
-
-        Label restart = new Label();
-        yields.addElement(restart);
-        code.label(restart);
-
-        loadFrame();
-        code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyFrame.class));
-        code.areturn();
-        yield_count++;
-        Label nonYieldSection = new Label();
-        yields.addElement(nonYieldSection);
-        code.label(nonYieldSection);
-        restoreLocals();
-        restoreStack(stackState);
-
-        // restore return value from subgenerator
-        loadFrame();
-        code.invokevirtual(p(PyFrame.class), "getf_stacktop", sig(PyObject.class));
-        return null;
-    }
-
-    @Override
     public Object visitYield(Yield node) throws Exception {
         setline(node);
         if (!fast_locals) {
@@ -3198,7 +3109,6 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.freeLocal(value_tmp);
 
         // BLOCK + FINALLY if non-local-goto
-        Object blockResult = suite(node.getInternalBody());
         normalExit.bodyDone = true;
         exceptionHandlers.pop();
         exceptionHandlers.pop();
