@@ -401,6 +401,14 @@ public final class Py {
             }
         }
     }
+    public static PyObject StopAsyncIteration;
+    public static PyException StopAsyncIteration() {
+        return new PyException(Py.StopAsyncIteration);
+    }
+    public static PyException StopAsyncIteration(PyObject value) {
+        return new PyException(Py.StopAsyncIteration, new PyTuple(value));
+    }
+
     public static PyObject StopIteration;
 
     public static PyException StopIteration() {
@@ -935,6 +943,7 @@ public final class Py {
         BaseException = initExc("BaseException", exc, dict);
         Exception = initExc("Exception", exc, dict);
         SystemExit = initExc("SystemExit", exc, dict);
+        StopAsyncIteration = initExc("StopAsyncIteration", exc, dict);
         StopIteration = initExc("StopIteration", exc, dict);
         GeneratorExit = initExc("GeneratorExit", exc, dict);
         StandardError = initExc("StandardError", exc, dict);
