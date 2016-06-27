@@ -1064,9 +1064,6 @@ yield_stmt
 
 //raise_stmt: 'raise' [test ['from' test]]
 raise_stmt
-    ;
-
-raise_stmt
 @init {
     stmt stype = null;
 }
