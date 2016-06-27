@@ -394,7 +394,7 @@ class install (Command):
     def dump_dirs (self, msg):
         if DEBUG:
             from distutils.fancy_getopt import longopt_xlate
-            print((msg + ":"))
+            print(msg + ":")
             for opt in self.user_options:
                 opt_name = opt[0]
                 if opt_name[-1] == "=":
@@ -406,7 +406,7 @@ class install (Command):
                 else:
                     opt_name = string.translate(opt_name, longopt_xlate)
                     val = getattr(self, opt_name)
-                print(("  %s: %s" % (opt_name, val)))
+                print("  %s: %s" % (opt_name, val))
 
 
     def finalize_unix (self):

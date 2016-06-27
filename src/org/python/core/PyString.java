@@ -257,7 +257,6 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes___str___doc)
     final PyUnicode bytes___str__() {
-//        return new PyUnicode(String.format("b'%s'", string));
         if (getClass() == PyString.class) {
             return __unicode__();
         }

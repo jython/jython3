@@ -2007,7 +2007,6 @@ public final class Py {
                 state.frame.f_globals, Py.EmptyObjects, new PyDictionary(), new PyTuple(closure_cells));
         return makeClass(name, bases, dict, metaclass);
     }
-
     public static PyObject makeClass(String name, PyObject base, PyObject dict) {
         return makeClass(name, base, dict, null);
     }
