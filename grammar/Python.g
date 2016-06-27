@@ -1209,7 +1209,7 @@ async_stmt
         }
         | with_stmt
         {
-            stype = actions.makeAsyncWith($ASYNC, $with_stmt.tree);
+            stype = actions.makeAsyncWith($ASYNC, $with_stmt.items, $with_stmt.stypes);
         }
         | for_stmt
         {
@@ -1323,7 +1323,7 @@ try_stmt
       ;
 
 //with_stmt: 'with' with_item (',' with_item)*  ':' suite
-with_stmt
+with_stmt returns [List items, List stypes]
 @init {
     stmt stype = null;
 }
@@ -1332,6 +1332,8 @@ with_stmt
 }
     : WITH w+=with_item (options {greedy=true;}:COMMA w+=with_item)* COLON suite[false]
     {
+        $items = $w;
+        $stypes = $suite.stypes;
         stype = actions.makeWith($WITH, $w, $suite.stypes);
     }
     ;
