@@ -586,10 +586,9 @@ public class PyObject implements Serializable {
             System.arraycopy(keywords, 0, newkeywords, 0, keywords.length);
 
             PyObject keys = kwargs.invoke("keys");
-            PyObject key;
             int i = 0;
             Iterator<PyObject> keysIter = keys.asIterable().iterator();
-            for (; keysIter.hasNext();) {
+            for (PyObject key; keysIter.hasNext();) {
                 key = keysIter.next();
                 if (!(key instanceof PyString))
                     throw Py.TypeError(name + "keywords must be strings");

@@ -6,7 +6,7 @@ import org.python.core.*;
 import org.python.core.finalization.FinalizeTrigger;
 import org.python.core.finalization.FinalizablePyObjectDerived;
 
-public class ifilterfalseDerived extends ifilterfalse implements Slotted,FinalizablePyObjectDerived,TraverseprocDerived {
+public class filterfalseDerived extends filterfalse implements Slotted,FinalizablePyObjectDerived,TraverseprocDerived {
 
     public PyObject getSlot(int index) {
         return slots[index];
@@ -73,7 +73,7 @@ public class ifilterfalseDerived extends ifilterfalse implements Slotted,Finaliz
         dict=new PyStringMap();
     }
 
-    public ifilterfalseDerived(PyType subtype) {
+    public filterfalseDerived(PyType subtype) {
         super(subtype);
         slots=new PyObject[subtype.getNumSlots()];
         dict=subtype.instDict();

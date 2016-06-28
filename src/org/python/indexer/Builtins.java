@@ -1404,7 +1404,7 @@ public class Builtins {
 
             for (String s : list("chain", "combinations", "count", "cycle",
                                  "dropwhile", "groupby", "ifilter",
-                                 "ifilterfalse", "imap", "islice", "izip",
+                                 "filterfalse", "imap", "islice", "izip",
                                  "izip_longest", "permutations", "product",
                                  "repeat", "starmap", "takewhile", "tee")) {
                 addClass(s, liburl("itertool-functions"), iterator);

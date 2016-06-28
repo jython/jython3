@@ -128,6 +128,7 @@ public class Exceptions {
 
         buildClass(dict, "StopIteration", "Exception", StopIteration(),
                 "Signal the end from iterator.__next__().");
+
         buildClass(dict, "StopAsyncIteration", "Exception", StopIteration(),
                 "Signal the end from iterator.__anext__().");
 

@@ -1515,6 +1515,8 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
         PyObject attr = lookup(name);
 
         if (attr != null) {
+            if (attr instanceof PyFunction)
+                return attr;
             PyObject res = attr.__get__(null, this);
             if (res != null) {
                 return res;

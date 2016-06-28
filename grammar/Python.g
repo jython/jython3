@@ -272,7 +272,7 @@ private ErrorHandler errorHandler;
                 if (implicitLineJoiningLevel > 0) {
                     eofWhileNested = true;
                 }
-                return Token.EOF_TOKEN;
+                return getEOFToken();
             }
             try {
                 mTokens();
@@ -298,6 +298,16 @@ private ErrorHandler errorHandler;
             }
         }
     }
+
+    public Token getEOFToken() {
+        Token eof = new CommonToken(input,Token.EOF,
+            Token.DEFAULT_CHANNEL,
+            input.index(),input.index());
+        eof.setLine(getLine());
+        eof.setCharPositionInLine(getCharPositionInLine());
+        return eof;
+    }
+
     @Override
     public void displayRecognitionError(String[] tokenNames, RecognitionException e) {
         //Do nothing. We will handle error display elsewhere.
@@ -413,7 +423,6 @@ dotted_attr
     ;
 
 //not in CPython's Grammar file
-// This is used to allow PRINT as a NAME for the __future__ print_function.
 name_or_print
     returns [Token tok]
     : NAME {
@@ -422,7 +431,7 @@ name_or_print
     | ASYNC {
         $tok = $name_or_print.start;
     }
-    | {printFunction}? => PRINT {
+    | AWAIT {
         $tok = $name_or_print.start;
     }
     ;
@@ -460,7 +469,6 @@ attr
     | OR
     | ORELSE
     | PASS
-    | PRINT
     | RAISE
     | RETURN
     | TRY
@@ -657,9 +665,9 @@ tfpdef returns [arg etype]
         $tfpdef.tree = $etype;
     }
 }
-    : NAME (COLON test[expr_contextType.Load])?
+    : name_or_print (COLON test[expr_contextType.Load])?
       {
-          $etype = new arg($NAME, $NAME.text, actions.castExpr($test.tree));
+          $etype = new arg($name_or_print.tree, $name_or_print.text, actions.castExpr($test.tree));
       }
     ;
 
@@ -892,26 +900,6 @@ augassign
         {
             $op = operatorType.FloorDiv;
         }
-    ;
-
-//XXX: would be nice if printlist and printlist2 could be merged.
-//not in CPython's Grammar file
-printlist2
-    returns [boolean newline, List elts]
-    : (test[null] COMMA test[null]) =>
-       t+=test[expr_contextType.Load] (options {k=2;}: COMMA t+=test[expr_contextType.Load])* (trailcomma=COMMA)?
-       { $elts=$t;
-           if ($trailcomma == null) {
-               $newline = true;
-           } else {
-               $newline = false;
-           }
-       }
-    | t+=test[expr_contextType.Load]
-      {
-          $elts=$t;
-          $newline = true;
-      }
     ;
 
 //del_stmt: 'del' exprlist
@@ -1189,21 +1177,6 @@ nonlocal_stmt
       }
     ;
 
-
-//exec_stmt: 'exec' expr ['in' test [',' test]]
-exec_stmt
-@init {
-    stmt stype = null;
-}
-@after {
-   $exec_stmt.tree = stype;
-}
-    : EXEC expr[expr_contextType.Load] (IN t1=test[expr_contextType.Load] (COMMA t2=test[expr_contextType.Load])?)?
-      {
-         stype = new Exec($EXEC, actions.castExpr($expr.tree), actions.castExpr($t1.tree), actions.castExpr($t2.tree));
-      }
-    ;
-
 //assert_stmt: 'assert' test [',' test]
 assert_stmt
 @init {
@@ -1246,7 +1219,7 @@ async_stmt
         }
         | with_stmt
         {
-            stype = actions.makeAsyncWith($ASYNC, $with_stmt.tree);
+            stype = actions.makeAsyncWith($ASYNC, $with_stmt.items, $with_stmt.stypes);
         }
         | for_stmt
         {
@@ -1360,7 +1333,7 @@ try_stmt
       ;
 
 //with_stmt: 'with' with_item (',' with_item)*  ':' suite
-with_stmt
+with_stmt returns [List items, List stypes]
 @init {
     stmt stype = null;
 }
@@ -1369,6 +1342,8 @@ with_stmt
 }
     : WITH w+=with_item (options {greedy=true;}:COMMA w+=with_item)* COLON suite[false]
     {
+        $items = $w;
+        $stypes = $suite.stypes;
         stype = actions.makeWith($WITH, $w, $suite.stypes);
     }
     ;
@@ -1879,7 +1854,7 @@ atom_expr
 @after {
     $atom_expr.tree = $etype;
 }
-    : AWAIT? atom (t+=trailer[$atom.start, $atom.tree])*
+    : (AWAIT? atom) => AWAIT? atom (t+=trailer[$atom.start, $atom.tree])*
       {
           $lparen = $atom.lparen;
           //XXX: This could be better.
@@ -1906,6 +1881,11 @@ atom_expr
           if ($AWAIT != null) {
               $etype = new Await($AWAIT, $etype);
           }
+      }
+    // XXX remove this once await becomes a proper keyword
+    | AWAIT
+      {
+          $etype = new Name($AWAIT, $AWAIT.text, expr_contextType.Load);
       }
     ;
 
@@ -1958,13 +1938,9 @@ atom
         }
        )
        RCURLY
-     | NAME_CONSTANT
+     | NAME
        {
-           etype = new NameConstant($NAME_CONSTANT.tree);
-       }
-     | name_or_print
-       {
-           etype = new Name($name_or_print.start, $name_or_print.text, $expr::ctype);
+            etype = new Name($NAME, $NAME.text, $expr::ctype);
        }
      | INT
        {
@@ -2428,7 +2404,6 @@ LAMBDA    : 'lambda' ;
 NONLOCAL  : 'nonlocal' ;
 ORELSE    : 'else' ;
 PASS      : 'pass'  ;
-PRINT     : 'print' ;
 RAISE     : 'raise' ;
 RETURN    : 'return' ;
 TRY       : 'try' ;
@@ -2573,8 +2548,6 @@ DIGITS : ( '0' .. '9' )+ ;
 NAME:    ( 'a' .. 'z' | 'A' .. 'Z' | '_')
         ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
     ;
-
-NAME_CONSTANT: 'None' | 'True' | 'False' ;
 
 /** Match various string types.  Note that greedy=false implies '''
  *  should make us exit loop not continue.

@@ -61,6 +61,7 @@ public class ScopeInfo extends Object implements ScopeConstants {
     public boolean from_import_star;
     public boolean contains_ns_free_vars;
     public boolean generator;
+    public boolean comprehension;
     private boolean hasReturnWithValue;
     public int yield_count;
     public int max_with_count;
@@ -289,7 +290,15 @@ public class ScopeInfo extends Object implements ScopeConstants {
         generator = true;
     }
 
+    public void defineAsComprehension() {
+        comprehension = true;
+    }
+
     public void noteReturnValue() {
         hasReturnWithValue = true;
+    }
+
+    public boolean isFunction() {
+        return kind == FUNCSCOPE;
     }
 }

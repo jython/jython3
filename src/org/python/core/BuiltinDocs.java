@@ -1215,16 +1215,7 @@ public class BuiltinDocs {
         "If the argument is a tuple, the return value is the same object.";
 
     public final static String type___name___doc = 
-        "str(object='') -> str\n" + 
-        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
-        "\n" + 
-        "Create a new string object from the given object. If encoding or\n" + 
-        "errors is specified, then the object must expose a data buffer\n" + 
-        "that will be decoded using the given encoding and error handler.\n" + 
-        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
-        "or repr(object).\n" + 
-        "encoding defaults to sys.getdefaultencoding().\n" + 
-        "errors defaults to 'strict'.";
+        "";
 
     public final static String type___ne___doc = 
         "Return self!=value.";
@@ -1237,16 +1228,7 @@ public class BuiltinDocs {
         "used to create the namespace for the class statement";
 
     public final static String type___qualname___doc = 
-        "str(object='') -> str\n" + 
-        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
-        "\n" + 
-        "Create a new string object from the given object. If encoding or\n" + 
-        "errors is specified, then the object must expose a data buffer\n" + 
-        "that will be decoded using the given encoding and error handler.\n" + 
-        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
-        "or repr(object).\n" + 
-        "encoding defaults to sys.getdefaultencoding().\n" + 
-        "errors defaults to 'strict'.";
+        "";
 
     public final static String type___reduce___doc = 
         "helper for pickle";
@@ -5263,16 +5245,7 @@ public class BuiltinDocs {
         "Return self<value.";
 
     public final static String generator___name___doc = 
-        "str(object='') -> str\n" + 
-        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
-        "\n" + 
-        "Create a new string object from the given object. If encoding or\n" + 
-        "errors is specified, then the object must expose a data buffer\n" + 
-        "that will be decoded using the given encoding and error handler.\n" + 
-        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
-        "or repr(object).\n" + 
-        "encoding defaults to sys.getdefaultencoding().\n" + 
-        "errors defaults to 'strict'.";
+        "name of the generator";
 
     public final static String generator___ne___doc = 
         "Return self!=value.";
@@ -5284,16 +5257,7 @@ public class BuiltinDocs {
         "Implement next(self).";
 
     public final static String generator___qualname___doc = 
-        "str(object='') -> str\n" + 
-        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
-        "\n" + 
-        "Create a new string object from the given object. If encoding or\n" + 
-        "errors is specified, then the object must expose a data buffer\n" + 
-        "that will be decoded using the given encoding and error handler.\n" + 
-        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
-        "or repr(object).\n" + 
-        "encoding defaults to sys.getdefaultencoding().\n" + 
-        "errors defaults to 'strict'.";
+        "qualified name of the generator";
 
     public final static String generator___reduce___doc = 
         "helper for pickle";
@@ -5396,16 +5360,7 @@ public class BuiltinDocs {
         "Return self<value.";
 
     public final static String coroutine___name___doc = 
-        "str(object='') -> str\n" + 
-        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
-        "\n" + 
-        "Create a new string object from the given object. If encoding or\n" + 
-        "errors is specified, then the object must expose a data buffer\n" + 
-        "that will be decoded using the given encoding and error handler.\n" + 
-        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
-        "or repr(object).\n" + 
-        "encoding defaults to sys.getdefaultencoding().\n" + 
-        "errors defaults to 'strict'.";
+        "name of the coroutine";
 
     public final static String coroutine___ne___doc = 
         "Return self!=value.";
@@ -5414,16 +5369,7 @@ public class BuiltinDocs {
         "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String coroutine___qualname___doc = 
-        "str(object='') -> str\n" + 
-        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
-        "\n" + 
-        "Create a new string object from the given object. If encoding or\n" + 
-        "errors is specified, then the object must expose a data buffer\n" + 
-        "that will be decoded using the given encoding and error handler.\n" + 
-        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
-        "or repr(object).\n" + 
-        "encoding defaults to sys.getdefaultencoding().\n" + 
-        "errors defaults to 'strict'.";
+        "qualified name of the coroutine";
 
     public final static String coroutine___reduce___doc = 
         "helper for pickle";
@@ -5658,16 +5604,7 @@ public class BuiltinDocs {
         "errors defaults to 'strict'.";
 
     public final static String function___name___doc = 
-        "str(object='') -> str\n" + 
-        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
-        "\n" + 
-        "Create a new string object from the given object. If encoding or\n" + 
-        "errors is specified, then the object must expose a data buffer\n" + 
-        "that will be decoded using the given encoding and error handler.\n" + 
-        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
-        "or repr(object).\n" + 
-        "encoding defaults to sys.getdefaultencoding().\n" + 
-        "errors defaults to 'strict'.";
+        "";
 
     public final static String function___ne___doc = 
         "Return self!=value.";
@@ -5676,16 +5613,7 @@ public class BuiltinDocs {
         "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String function___qualname___doc = 
-        "str(object='') -> str\n" + 
-        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
-        "\n" + 
-        "Create a new string object from the given object. If encoding or\n" + 
-        "errors is specified, then the object must expose a data buffer\n" + 
-        "that will be decoded using the given encoding and error handler.\n" + 
-        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
-        "or repr(object).\n" + 
-        "encoding defaults to sys.getdefaultencoding().\n" + 
-        "errors defaults to 'strict'.";
+        "";
 
     public final static String function___reduce___doc = 
         "helper for pickle";

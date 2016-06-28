@@ -6,10 +6,11 @@ package org.python.core;
 public class AsyncContextGuard implements AsyncContextManager {
     private final PyObject __aenter__method;
     private final PyObject __aexit__method;
+    private PyException exception;
 
     public AsyncContextGuard(PyObject manager) {
-        __aenter__method = manager.__finditem__("__aenter__");
-        __aexit__method = manager.__finditem__("__aexit__");
+        __aexit__method = manager.__getattr__("__aexit__");
+        __aenter__method = manager.__getattr__("__aenter__");
     }
 
     public static AsyncContextManager getManager(PyObject manager) {
@@ -24,7 +25,8 @@ public class AsyncContextGuard implements AsyncContextManager {
     }
 
     @Override
-    public boolean __aexit__(ThreadState ts, PyException exception) {
+    public PyObject __aexit__(ThreadState ts, PyException exception) {
+        this.exception = exception;
         final PyObject type, value, traceback;
         if (exception != null) {
             type = exception.type;
@@ -35,6 +37,11 @@ public class AsyncContextGuard implements AsyncContextManager {
         }
         return __aexit__method.__call__(ts, type,
                 value == null ? Py.None : value,
-                traceback == null ? Py.None : traceback).__bool__();
+                traceback == null ? Py.None : traceback);
+    }
+
+    @Override
+    public PyException exception() {
+        return exception;
     }
 }

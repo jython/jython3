@@ -25,9 +25,11 @@ import org.python.antlr.base.mod;
 import org.python.antlr.base.stmt;
 import org.python.core.AsyncContextGuard;
 import org.python.core.AsyncContextManager;
+import org.python.core.AsyncIterator;
 import org.python.core.CompilerFlags;
 import org.python.core.ContextGuard;
 import org.python.core.ContextManager;
+import org.python.core.PyCoroutine;
 import org.python.core.PyGenerator;
 import org.python.core.imp;
 import org.python.core.Py;
@@ -685,26 +687,21 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
     @Override
     public Object visitAwait(Await node) throws Exception {
-       setline(node);
-        if (!fast_locals) {
-            throw new ParseException("'await' outside function", node);
-        }
-
+        setline(node);
         int stackState = saveStack();
         visit(node.getInternalValue());
 
         yield_count++;
         setLastI(yield_count);
-        code.invokestatic(p(Py.class), "getAwaitable", sig(PyObject.class, PyObject.class));
+        code.invokestatic(p(Py.class), "getAwaitableIter", sig(PyObject.class, PyObject.class));
         loadFrame();
         code.swap();
         code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
+        saveLocals();
 
         Label restart = new Label();
         yields.addElement(restart);
         code.label(restart);
-        restoreLocals();
-        restoreStack(stackState);
 
         loadFrame();
         code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyFrame.class));
@@ -746,7 +743,8 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
         yield_count++;
         setLastI(yield_count);
-        code.invokestatic(p(Py.class), "getYieldFromIter", sig(PyObject.class, PyObject.class));
+        loadFrame();
+        code.invokestatic(p(Py.class), "getYieldFromIter", sig(PyObject.class, PyObject.class, PyFrame.class));
         loadFrame();
         code.swap();
         code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
@@ -973,29 +971,19 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         int tmp = 0;
         if (node.getInternalValue() != null) {
             visit(node.getInternalValue());
-            if (my_scope.generator) { //&& !(node instanceof LambdaSyntheticReturn)) {
-                code.invokestatic(p(Py.class), "StopIteration", sig(PyException.class, PyObject.class));
-                code.athrow();
-            } else {
-                tmp = code.getReturnLocal();
-                code.astore(tmp);
-            }
-        } else if (my_scope.generator) {
-            code.invokestatic(p(Py.class), "StopIteration", sig(PyException.class));
-            code.athrow();
+            tmp = code.getReturnLocal();
+            code.astore(tmp);
         }
-        if (!my_scope.generator) {
-            doFinallysDownTo(0);
+        doFinallysDownTo(0);
 
-            setLastI(-1);
+        setLastI(-1);
 
-            if (node.getInternalValue() != null) {
-                code.aload(tmp);
-            } else {
-                getNone();
-            }
-            code.areturn();
+        if (node.getInternalValue() != null) {
+            code.aload(tmp);
+        } else {
+            getNone();
         }
+        code.areturn();
         return Exit;
     }
 
@@ -1290,6 +1278,136 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     }
 
     @Override
+    public Object visitAsyncFor(AsyncFor node) throws Exception {
+        int savebcf = beginLoop();
+        Label continue_loop = continueLabels.peek();
+        Label break_loop = breakLabels.peek();
+        Label start_loop = new Label();
+        Label next_loop = new Label();
+        Label start = new Label();
+        Label end = new Label();
+        Label handler = new Label();
+        setline(node);
+
+        // iter = (ITER)
+        visit(node.getInternalIter());
+
+        int iter_tmp = code.getLocal(p(Object.class));
+        int expr_tmp = code.getLocal(p(PyObject.class));
+        // iter = type(iter).__aiter__(iter)
+        code.invokestatic(p(AsyncIterator.class), "getIter", sig(Object.class, PyObject.class));
+        code.dup();
+        code.astore(iter_tmp);
+        // initialize target var with null
+        code.aconst_null();
+        code.astore(expr_tmp);
+        saveLocals();
+        // __aiter__ expect asynchronous iterator directly after 3.5.2
+        code.instanceof_(p(PyCoroutine.class));
+        Label newAIter = new Label();
+        code.ifeq(newAIter);
+        yield_count++;
+        setLastI(yield_count);
+        loadFrame();
+        code.aload(iter_tmp);
+        code.checkcast(p(PyObject.class));
+        code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
+
+        Label restartIter = new Label();
+        yields.addElement(restartIter);
+        code.label(restartIter);
+
+        loadFrame();
+        code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyFrame.class));
+        code.areturn();
+        yield_count++;
+        Label nonYieldSectionIter = new Label();
+        yields.addElement(nonYieldSectionIter);
+        code.label(nonYieldSectionIter);
+        restoreLocals();
+
+        // restore return value from subgenerator
+        code.new_(p(AsyncIterator.class));
+        code.dup();
+        loadFrame();
+        code.invokevirtual(p(PyFrame.class), "getf_stacktop", sig(PyObject.class));
+        code.invokespecial(p(AsyncIterator.class), "<init>", sig(Void.TYPE, PyObject.class));
+        code.astore(iter_tmp);
+        saveLocals();
+
+        code.label(newAIter);
+        code.goto_(next_loop);
+
+        code.label(start_loop);
+        // set iter variable to current entry in list
+        set(node.getInternalTarget(), expr_tmp);
+        // evaluate for body
+        suite(node.getInternalBody());
+
+        code.label(continue_loop);
+
+        code.label(next_loop);
+        code.label(start);
+        setline(node);
+        restoreLocals();
+        // TARGET = await type(iter).__anext__(iter)
+        code.aload(iter_tmp);
+        code.checkcast(p(AsyncIterator.class));
+        code.invokevirtual(p(AsyncIterator.class), "__anext__", sig(PyObject.class));
+        yield_count++;
+        setLastI(yield_count);
+        loadFrame();
+        code.swap();
+        code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
+
+        Label restart = new Label();
+        yields.addElement(restart);
+        code.label(restart);
+
+        loadFrame();
+        code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyFrame.class));
+        code.areturn();
+        yield_count++;
+        Label nonYieldSection = new Label();
+        yields.addElement(nonYieldSection);
+        code.label(nonYieldSection);
+//        restoreLocals();
+
+        // restore return value from subgenerator
+        loadFrame();
+        code.invokevirtual(p(PyFrame.class), "getf_stacktop", sig(PyObject.class));
+        code.astore(expr_tmp);
+        code.goto_(start_loop);
+        code.label(end);
+        code.label(handler);
+        int exc = code.getLocal(p(Throwable.class));
+        code.astore(exc);
+        code.aload(exc);
+        code.checkcast(p(PyException.class));
+        code.getstatic(p(Py.class), "StopAsyncIteration", ci(PyObject.class));
+        code.invokevirtual(p(PyException.class), "match", sig(Boolean.TYPE, PyObject.class));
+        code.ifne(break_loop);
+        code.aload(exc);
+        code.athrow();
+        code.freeLocal(exc);
+
+        finishLoop(savebcf);
+
+        if (node.getInternalOrelse() != null) {
+            // Do else clause if provided
+            suite(node.getInternalOrelse());
+        }
+
+        code.label(break_loop);
+
+        code.freeLocal(iter_tmp);
+        code.freeLocal(expr_tmp);
+
+        code.trycatch(start, end, handler, p(PyException.class));
+        return null;
+    }
+
+    @Override
     public Object visitFor(For node) throws Exception {
         int savebcf = beginLoop();
         Label continue_loop = continueLabels.peek();
@@ -1305,12 +1423,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         visit(node.getInternalIter());
 
         int iter_tmp = code.getLocal(p(PyObject.class));
-        int expr_tmp = code.getLocal(p(PyObject.class));
 
         // set up the loop iterator
         code.invokevirtual(p(PyObject.class), "__iter__", sig(PyObject.class));
         code.astore(iter_tmp);
 
+        int expr_tmp = code.getLocal(p(PyObject.class));
         // do check at end of loop. Saves one opcode ;-)
         code.goto_(next_loop);
 
@@ -1549,7 +1667,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             code.label(else_end);
         }
 
-        popException();
+//        popException();
         code.freeFinallyLocal(exc);
         handler.addExceptionHandlers(handler_start);
         return null;
@@ -3000,8 +3118,8 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         // mgr = (EXPR)
         visit(item.getInternalContext_expr());
 
-        // wrap the manager with the ContextGuard (or get it directly if it
-        // supports the ContextManager interface)
+        // wrap the manager with the AsyncContextGuard (or get it directly if it
+        // supports the AsyncContextManager interface)
         code.invokestatic(p(AsyncContextGuard.class),
                 "getManager", sig(AsyncContextManager.class, PyObject.class));
         code.dup();
@@ -3013,13 +3131,13 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         loadThreadState();
         code.invokeinterface(p(AsyncContextManager.class),
                 "__aenter__", sig(PyObject.class, ThreadState.class), true);
-        int value_tmp = code.getLocal(p(PyObject.class));
         yield_count++;
         setLastI(yield_count);
-        code.invokestatic(p(Py.class), "getAwaitable", sig(PyObject.class, PyObject.class));
+        code.invokestatic(p(Py.class), "getAwaitableIter", sig(PyObject.class, PyObject.class));
         loadFrame();
         code.swap();
         code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
+        saveLocals();
 
         Label restart = new Label();
         yields.addElement(restart);
@@ -3032,10 +3150,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         Label nonYieldSection = new Label();
         yields.addElement(nonYieldSection);
         code.label(nonYieldSection);
+        restoreLocals();
 
         // restore return value from subgenerator
         loadFrame();
         code.invokevirtual(p(PyFrame.class), "getf_stacktop", sig(PyObject.class));
+        int value_tmp = code.getLocal(p(PyObject.class));
         code.astore(value_tmp);
 
         // exc = True # not necessary, since we don't exec finally if exception
@@ -3055,33 +3175,36 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
             @Override
             public void finalBody(CodeCompiler compiler) throws Exception {
+                compiler.restoreLocals();
                 compiler.code.aload(mgr_tmp);
-                loadThreadState();
+                compiler.loadThreadState();
                 compiler.code.aconst_null();
                 compiler.code.invokeinterface(p(AsyncContextManager.class),
-                        "__aexit__", sig(Boolean.TYPE, ThreadState.class, PyException.class), true);
-                yield_count++;
-                setLastI(yield_count);
-                code.invokestatic(p(Py.class), "getAwaitable", sig(PyObject.class, PyObject.class));
-                loadFrame();
-                code.swap();
-                code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
+                        "__aexit__", sig(PyObject.class, ThreadState.class, PyException.class), true);
+                compiler.yield_count++;
+                compiler.setLastI(compiler.yield_count);
+                compiler.code.invokestatic(p(Py.class), "getAwaitableIter", sig(PyObject.class, PyObject.class));
+                compiler.loadFrame();
+                compiler.code.swap();
+                compiler.code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
+                compiler.saveLocals();
 
                 Label restart = new Label();
-                yields.addElement(restart);
-                code.label(restart);
+                compiler.yields.addElement(restart);
+                compiler.code.label(restart);
 
-                loadFrame();
-                code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyFrame.class));
-                code.areturn();
-                yield_count++;
+                compiler.loadFrame();
+                compiler.code.invokestatic(p(Py.class), "yieldFrom", sig(PyObject.class, PyFrame.class));
+                compiler.code.areturn();
+                compiler.yield_count++;
                 Label nonYieldSection = new Label();
-                yields.addElement(nonYieldSection);
-                code.label(nonYieldSection);
+                compiler.yields.addElement(nonYieldSection);
+                compiler.code.label(nonYieldSection);
+                compiler.restoreLocals();
 
                 // restore return value from subgenerator
-                loadFrame();
-                code.invokevirtual(p(PyFrame.class), "getf_stacktop", sig(PyObject.class));
+                compiler.loadFrame();
+                compiler.code.invokevirtual(p(PyFrame.class), "getf_stacktop", sig(PyObject.class));
                 compiler.code.pop();
             }
         };
@@ -3129,19 +3252,21 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         loadFrame();
         code.invokestatic(p(Py.class), "setException",
                 sig(PyException.class, Throwable.class, PyFrame.class));
+        restoreLocals();
         code.aload(mgr_tmp);
         code.swap();
         loadThreadState();
         code.swap();
         code.invokeinterface(p(AsyncContextManager.class),
-                "__aexit__", sig(Boolean.TYPE, ThreadState.class, PyException.class), true);
+                "__aexit__", sig(PyObject.class, ThreadState.class, PyException.class), true);
 
         yield_count++;
         setLastI(yield_count);
-        code.invokestatic(p(Py.class), "getAwaitable", sig(PyObject.class, PyObject.class));
+        code.invokestatic(p(Py.class), "getAwaitableIter", sig(PyObject.class, PyObject.class));
         loadFrame();
         code.swap();
         code.putfield(p(PyFrame.class), "f_yieldfrom", ci(PyObject.class));
+        saveLocals();
 
         restart = new Label();
         yields.addElement(restart);
@@ -3154,6 +3279,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         nonYieldSection = new Label();
         yields.addElement(nonYieldSection);
         code.label(nonYieldSection);
+        restoreLocals();
 
         // restore return value from subgenerator
         loadFrame();
@@ -3161,10 +3287,13 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         // # The exceptional case is handled here
         // exc = False # implicit
         // if not exit(*sys.exc_info()):
+        code.invokevirtual(p(PyObject.class), "__bool__", sig(Boolean.TYPE));
         code.ifne(label_end);
         // raise
         // # The exception is swallowed if exit() returns true
-        doRaise();
+        // Note: cannot use doRaise here
+        code.aload(mgr_tmp);
+        code.invokeinterface(p(AsyncContextManager.class), "exception", sig(PyException.class), true);
         code.checkcast(p(Throwable.class));
         code.athrow();
 
@@ -3282,7 +3411,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         code.athrow();
 
         code.label(label_catch_end);
-        popException();
+//        popException();
         code.label(label_end);
         code.freeLocal(mgr_tmp);
 

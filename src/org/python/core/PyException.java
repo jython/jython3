@@ -79,9 +79,10 @@ public class PyException extends RuntimeException implements Traverseproc
             }
         }
 
-        this.value = value;
         if (value == null) {
             this.value = Py.None;
+        } else {
+            this.value = value;
         }
     }
 
@@ -142,6 +143,10 @@ public class PyException extends RuntimeException implements Traverseproc
             inClass = value.fastGetClass();
         }
 
+        if (type instanceof PyJavaType) {
+            // if this is a java exception, get it's string repr
+            value = new PyUnicode(value.toString());
+        }
         if (isExceptionClass(type)) {
             if (inClass == null || !Py.isSubClass(inClass, type)) {
                 PyObject[] args;

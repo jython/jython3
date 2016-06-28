@@ -401,13 +401,21 @@ public final class Py {
             }
         }
     }
+    public static PyObject StopAsyncIteration;
+    public static PyException StopAsyncIteration() {
+        return new PyException(Py.StopAsyncIteration);
+    }
+    public static PyException StopAsyncIteration(PyObject value) {
+        return new PyException(Py.StopAsyncIteration, new PyTuple(value));
+    }
+
     public static PyObject StopIteration;
 
     public static PyException StopIteration() {
         return new PyException(Py.StopIteration);
     }
     public static PyException StopIteration(PyObject value) {
-        return new PyException(Py.StopIteration, value);
+        return new PyException(Py.StopIteration, new PyTuple(value));
     }
     public static PyObject GeneratorExit;
     public static PyException GeneratorExit() {
@@ -935,6 +943,7 @@ public final class Py {
         BaseException = initExc("BaseException", exc, dict);
         Exception = initExc("Exception", exc, dict);
         SystemExit = initExc("SystemExit", exc, dict);
+        StopAsyncIteration = initExc("StopAsyncIteration", exc, dict);
         StopIteration = initExc("StopIteration", exc, dict);
         GeneratorExit = initExc("GeneratorExit", exc, dict);
         StandardError = initExc("StandardError", exc, dict);
@@ -1118,8 +1127,12 @@ public final class Py {
         return Class.forName(name, true, loader);
     }
 
-    public static PyObject getYieldFromIter(PyObject iter) {
+    public static PyObject getYieldFromIter(PyObject iter, PyFrame frame) {
         if (iter instanceof PyCoroutine) {
+            CompilerFlags flags = frame.f_code.co_flags;
+            if (flags.isFlagSet(CodeFlag.CO_COROUTINE) || flags.isFlagSet(CodeFlag.CO_ITERABLE_COROUTINE)) {
+                return iter;
+            }
             throw Py.TypeError("cannot 'yield from' a coroutine object in a non-coroutine generator");
         } else if (iter instanceof PyGenerator) {
             return iter;
@@ -1127,8 +1140,33 @@ public final class Py {
         return iter.__iter__();
     }
 
-    public static PyObject getAwaitable(PyObject iter) {
-        return ((PyCoroutine) iter).__await__();
+    public static PyObject getAwaitableIter(PyObject obj) {
+        if (obj instanceof PyCoroutine) return obj;
+        if (obj instanceof PyGenerator &&
+                ((PyBaseCode) ((PyGenerator) obj).gi_code).co_flags.isFlagSet(CodeFlag.CO_ITERABLE_COROUTINE)) {
+            return obj;
+        } else {
+            PyObject imp = obj.__findattr__("__await__");
+            if (imp != null) {
+                PyObject res = imp.__call__();
+                if (res != null) {
+                    if (res instanceof PyCoroutine ||
+                            (res instanceof PyGenerator &&
+                                    ((PyBaseCode) ((PyGenerator) res).gi_code).co_flags.isFlagSet(CodeFlag.CO_ITERABLE_COROUTINE))) {
+                        throw Py.TypeError("__await__() returned a coroutine");
+                    } else {
+                        PyObject nxt = res.__findattr__("__next__");
+                        if (nxt == null) {
+                            throw Py.TypeError(String.format("__await__() returned non-iterator of type '%.100s'",
+                                    res.getType().fastGetName()));
+                        }
+                    }
+                    return res;
+                }
+            }
+        }
+        throw Py.TypeError(String.format("object %.100s can't be used in 'await' expression",
+                obj.getType().fastGetName()));
     }
 
     public static PyObject yieldFrom(PyFrame frame) {

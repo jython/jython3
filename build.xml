@@ -148,8 +148,7 @@
           <pathelement path="${oracle.jar}" />
           <pathelement path="${extlibs.dir}/mysql-connector-java-5.1.6.jar" />
           <pathelement path="${extlibs.dir}/postgresql-8.3-603.jdbc4.jar" />
-          <pathelement path="${extlibs.dir}/antlr-3.1.3.jar" />
-          <pathelement path="${extlibs.dir}/stringtemplate-3.2.1.jar" />
+          <pathelement path="${extlibs.dir}/antlr-3.4-complete.jar" />
           <pathelement path="${extlibs.dir}/commons-compress-1.9.jar"/>
           <pathelement path="${extlibs.dir}/asm-5.1.jar" />
           <pathelement path="${extlibs.dir}/asm-commons-5.1.jar" />
@@ -578,7 +577,7 @@
       <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="extlibs/jarjar-1.4.jar"/>
       <jarjar destfile="${dist.dir}/${jython.deploy.jar}">
         <zipfileset src="${dist.dir}/${jython.dev.jar}"/>
-        <zipfileset src="extlibs/antlr-runtime-3.1.3.jar"/>
+        <zipfileset src="extlibs/antlr-runtime-3.4.jar"/>
         <rule pattern="org.antlr.runtime.**" result="org.python.antlr.runtime.@1"/>
         <zipfileset src="extlibs/asm-5.1.jar"/>
         <zipfileset src="extlibs/asm-commons-5.1.jar"/>
@@ -889,12 +888,11 @@
           <exclude name="${jython.javadoc.jar}"/>
           <exclude name="${jython.sources.jar}"/>
           <exclude name="callbacker_test.jar"/>
-          <exclude name="extlibs/antlr*.jar" />
+          <exclude name="extlibs/antlr-runtime*.jar" />
           <exclude name="extlibs/asm*.jar" />
           <exclude name="extlibs/jarjar*.jar" />
           <exclude name="extlibs/junit*.jar" />
           <exclude name="extlibs/servlet-api*.jar" />
-          <exclude name="extlibs/stringtemplate*.jar" />
           <exclude name="extlibs/xerces*.jar" />
         </fileset>
         <manifest>

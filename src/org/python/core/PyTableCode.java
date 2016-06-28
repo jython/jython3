@@ -134,6 +134,11 @@ public class PyTableCode extends PyBaseCode
         return Py.newLong(co_flags.toBits());
     }
 
+    @ExposedGet
+    final PyObject co_kwonlyargcount() {
+        return Py.newLong(co_kwonlyargcount);
+    }
+
     @Override
     public PyObject call(ThreadState ts, PyFrame frame, PyObject closure) {
         if (ts.systemState == null) {

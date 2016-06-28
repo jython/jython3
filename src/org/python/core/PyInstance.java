@@ -186,7 +186,7 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
         if (getter == null)
             return null;
 
-        return getter.__call__(this, new PyString(name));
+        return getter.__call__(this, new PyUnicode(name));
     }
 
     @Override
@@ -811,7 +811,7 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
     // Unary ops
 
     @Override
-    public PyString __hex__() {
+    public PyUnicode __hex__() {
         return instance___hex__();
     }
 
@@ -820,15 +820,15 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
      * in the instance's dictionary and calling it if it is found.
      */
     @ExposedMethod
-    final PyString instance___hex__() {
+    final PyUnicode instance___hex__() {
         PyObject ret = invoke("__hex__");
-        if (ret instanceof PyString)
-            return (PyString) ret;
+        if (ret instanceof PyUnicode)
+            return (PyUnicode) ret;
         throw Py.TypeError("__hex__() should return a string");
     }
 
     @Override
-    public PyString __oct__() {
+    public PyUnicode __oct__() {
         return instance___oct__();
     }
 
@@ -837,10 +837,10 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
      * in the instance's dictionary and calling it if it is found.
      */
     @ExposedMethod
-    final PyString instance___oct__() {
+    final PyUnicode instance___oct__() {
         PyObject ret = invoke("__oct__");
-        if (ret instanceof PyString)
-            return (PyString) ret;
+        if (ret instanceof PyUnicode)
+            return (PyUnicode) ret;
         throw Py.TypeError("__oct__() should return a string");
     }
 

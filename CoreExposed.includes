@@ -12,6 +12,8 @@ org/python/core/PyClass.class
 org/python/core/PyClassMethod.class
 org/python/core/PyClassMethodDescr.class
 org/python/core/PyComplex.class
+org/python/core/PyCoroutine.class
+org/python/core/PyCoroutineWrapper.class
 org/python/core/PyDataDescr.class
 org/python/core/PyDictionary.class
 org/python/core/PyDictionary$PyDictionaryViewValues.class

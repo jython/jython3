@@ -112,10 +112,10 @@ public abstract class PyBaseCode extends PyCode {
             return call(state, Py.EmptyObjects, Py.NoKeywords, globals, defaults,
                         kw_defaults, closure);
         PyFrame frame = new PyFrame(this, globals);
-        if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR)) {
-            return new PyGenerator(frame, closure);
-        } else if (co_flags.isFlagSet(CodeFlag.CO_COROUTINE)) {
+        if (co_flags.isFlagSet(CodeFlag.CO_COROUTINE)) {
             return new PyCoroutine(frame, closure);
+        } else if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR)) {
+            return new PyGenerator(frame, closure);
         }
         return call(state, frame, closure);
     }
@@ -129,10 +129,10 @@ public abstract class PyBaseCode extends PyCode {
                         Py.NoKeywords, globals, defaults, kw_defaults, closure);
         PyFrame frame = new PyFrame(this, globals);
         frame.f_fastlocals[0] = arg1;
-        if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR)) {
-            return new PyGenerator(frame, closure);
-        } else if (co_flags.isFlagSet(CodeFlag.CO_COROUTINE)) {
+        if (co_flags.isFlagSet(CodeFlag.CO_COROUTINE)) {
             return new PyCoroutine(frame, closure);
+        } else if (co_flags.isFlagSet(CodeFlag.CO_GENERATOR)) {
+            return new PyGenerator(frame, closure);
         }
         return call(state, frame, closure);
     }

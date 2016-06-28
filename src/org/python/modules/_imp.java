@@ -9,7 +9,7 @@ import org.python.core.PyFile;
 import org.python.core.PyList;
 import org.python.core.PyModule;
 import org.python.core.PyObject;
-import org.python.core.PyString;
+import org.python.core.PyUnicode;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
 import org.python.core.imp;
@@ -27,7 +27,7 @@ import java.io.InputStream;
  */
 
 public class _imp {
-    public static PyString __doc__ = new PyString(
+    public static PyUnicode __doc__ = new PyUnicode(
         "This module provides the components needed to build your own\n"+
         "__import__ function.  Undocumented functions are obsolete.\n"
     );
@@ -207,10 +207,10 @@ public class _imp {
                 continue;
             }
             return new PyTuple(mi.file,
-                               new PyString(mi.filename),
-                               new PyTuple(new PyString(mi.suffix),
-                                           new PyString(mi.mode),
-                                           Py.newInteger(mi.type)));
+                               new PyUnicode(mi.filename),
+                               new PyTuple(new PyUnicode(mi.suffix),
+                                           new PyUnicode(mi.mode),
+                                           Py.newLong(mi.type)));
         }
         throw Py.ImportError("No module named " + name, name);
     }
@@ -259,7 +259,7 @@ public class _imp {
                     ModuleInfo mi = findFromSource(name, filename.toString(), true, true);
                     type = mi.type;
                     file = mi.file;
-                    filename = new PyString(mi.filename);
+                    filename = new PyUnicode(mi.filename);
                     break;
                 default:
                     throw Py.ImportError("No module named " + name, name);
@@ -285,16 +285,16 @@ public class _imp {
     }
 
     public static PyObject get_magic() {
-	return new PyString("\u0003\u00f3\r\n");
+	return new PyUnicode("\u0003\u00f3\r\n");
     }
     
     public static PyObject get_suffixes() {
-        return new PyList(new PyObject[] {new PyTuple(new PyString(".py"),
-                                                      new PyString("r"),
-                                                      Py.newInteger(PY_SOURCE)),
-                                          new PyTuple(new PyString("$py.class"),
-                                                      new PyString("rb"),
-                                                      Py.newInteger(PY_COMPILED)),});
+        return new PyList(new PyObject[] {new PyTuple(new PyUnicode(".py"),
+                                                      new PyUnicode("r"),
+                                                      Py.newLong(PY_SOURCE)),
+                                          new PyTuple(new PyUnicode("$py.class"),
+                                                      new PyUnicode("rb"),
+                                                      Py.newLong(PY_COMPILED)),});
     }
 
     public static PyModule new_module(String name) {

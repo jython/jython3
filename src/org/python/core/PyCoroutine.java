@@ -1,5 +1,6 @@
 package org.python.core;
 
+import org.python.core.finalization.FinalizeTrigger;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedType;
@@ -22,6 +23,7 @@ public class PyCoroutine extends PyGenerator {
         cr_frame = gi_frame;
         cr_code = gi_code;
         cr_running = gi_running;
+        FinalizeTrigger.ensureFinalizer(this);
     }
 
     public PyObject send(PyObject value) {
@@ -42,6 +44,16 @@ public class PyCoroutine extends PyGenerator {
         return generator_throw$(type, value, tb);
     }
 
+    @Override
+    public PyObject __iter__() {
+        return coroutine___iter__();
+    }
+
+    @ExposedMethod()
+    final PyObject coroutine___iter__() {
+        throw Py.TypeError("'coroutine' object is not iterable");
+    }
+
     public PyObject close() {
         return coroutine_close();
     }
@@ -58,5 +70,16 @@ public class PyCoroutine extends PyGenerator {
     @ExposedMethod(doc = BuiltinDocs.coroutine___await___doc)
     final PyObject coroutine___await__() {
         return new PyCoroutineWrapper(this);
+    }
+
+    // Simply those attributes are not inherited
+    @ExposedGet(doc = BuiltinDocs.coroutine___name___doc)
+    final String __name__() {
+        return getName();
+    }
+
+    @ExposedGet(doc = BuiltinDocs.coroutine___qualname___doc)
+    final String __qualname__() {
+        return getQualname();
     }
 }

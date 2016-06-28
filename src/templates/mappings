@@ -24,7 +24,7 @@ cycle.derived:org.python.modules.itertools.cycleDerived
 dropwhile.derived:org.python.modules.itertools.dropwhileDerived
 groupby.derived:org.python.modules.itertools.groupbyDerived
 ifilter.derived:org.python.modules.itertools.ifilterDerived
-ifilterfalse.derived:org.python.modules.itertools.ifilterfalseDerived
+ifilterfalse.derived:org.python.modules.itertools.filterfalseDerived
 islice.derived:org.python.modules.itertools.isliceDerived
 izip.derived:org.python.modules.itertools.izipDerived
 izipLongest.derived:org.python.modules.itertools.izipLongestDerived
