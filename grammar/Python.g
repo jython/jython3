@@ -272,7 +272,7 @@ private ErrorHandler errorHandler;
                 if (implicitLineJoiningLevel > 0) {
                     eofWhileNested = true;
                 }
-                return Token.EOF_TOKEN;
+                return getEOFToken();
             }
             try {
                 mTokens();
@@ -298,6 +298,16 @@ private ErrorHandler errorHandler;
             }
         }
     }
+
+    public Token getEOFToken() {
+        Token eof = new CommonToken(input,Token.EOF,
+            Token.DEFAULT_CHANNEL,
+            input.index(),input.index());
+        eof.setLine(getLine());
+        eof.setCharPositionInLine(getCharPositionInLine());
+        return eof;
+    }
+
     @Override
     public void displayRecognitionError(String[] tokenNames, RecognitionException e) {
         //Do nothing. We will handle error display elsewhere.
@@ -1928,13 +1938,9 @@ atom
         }
        )
        RCURLY
-     | NAME_CONSTANT
-       {
-           etype = new NameConstant($NAME_CONSTANT.tree);
-       }
      | NAME
        {
-           etype = new Name($NAME, $NAME.text, $expr::ctype);
+            etype = new Name($NAME, $NAME.text, $expr::ctype);
        }
      | INT
        {
@@ -2542,8 +2548,6 @@ DIGITS : ( '0' .. '9' )+ ;
 NAME:    ( 'a' .. 'z' | 'A' .. 'Z' | '_')
         ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
     ;
-
-NAME_CONSTANT: 'None' | 'True' | 'False' ;
 
 /** Match various string types.  Note that greedy=false implies '''
  *  should make us exit loop not continue.

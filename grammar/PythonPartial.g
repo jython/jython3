@@ -115,6 +115,16 @@ private ErrorHandler errorHandler;
         this.errorHandler = eh;
     }
 
+    public Token getEOFToken() {
+        Token eof = new CommonToken(input,Token.EOF,
+            Token.DEFAULT_CHANNEL,
+            input.index(),input.index());
+        eof.setLine(getLine());
+        eof.setCharPositionInLine(getCharPositionInLine());
+        return eof;
+    }
+
+
     /**
      *  Taken directly from antlr's Lexer.java -- needs to be re-integrated every time
      *  we upgrade from Antlr (need to consider a Lexer subclass, though the issue would
@@ -133,7 +143,7 @@ private ErrorHandler errorHandler;
                 if (implicitLineJoiningLevel > 0) {
                     eofWhileNested = true;
                 }
-                return Token.EOF_TOKEN;
+                return getEOFToken();
             }
             try {
                 mTokens();

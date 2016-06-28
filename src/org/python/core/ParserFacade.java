@@ -61,7 +61,6 @@ public class ParserFacade {
             }
             return text + "\n";
         } catch (IOException ioe) {
-            System.out.println("foo");
         }
         return text;
     }
