@@ -894,52 +894,6 @@ augassign
         }
     ;
 
-//print_stmt: 'print' ( [ test (',' test)* [','] ] |
-//                      '>>' test [ (',' test)+ [','] ] )
-print_stmt
-@init {
-    stmt stype = null;
-}
-
-@after {
-    $print_stmt.tree = stype;
-}
-    : PRINT
-      (t1=printlist
-       {
-           stype = new Print($PRINT, null, actions.castExprs($t1.elts), $t1.newline);
-       }
-      | RIGHTSHIFT t2=printlist2
-       {
-           stype = new Print($PRINT, actions.castExpr($t2.elts.get(0)), actions.castExprs($t2.elts, 1), $t2.newline);
-       }
-      |
-       {
-           stype = new Print($PRINT, null, new ArrayList<expr>(), true);
-       }
-      )
-      ;
-
-//not in CPython's Grammar file
-printlist
-    returns [boolean newline, List elts]
-    : (test[null] COMMA) =>
-       t+=test[expr_contextType.Load] (options {k=2;}: COMMA t+=test[expr_contextType.Load])* (trailcomma=COMMA)?
-       {
-           $elts=$t;
-           if ($trailcomma == null) {
-               $newline = true;
-           } else {
-               $newline = false;
-           }
-       }
-    | t+=test[expr_contextType.Load]
-      {
-          $elts=$t;
-          $newline = true;
-      }
-    ;
-
 //XXX: would be nice if printlist and printlist2 could be merged.
 //not in CPython's Grammar file
 printlist2
@@ -1063,9 +1017,6 @@ yield_stmt
     ;
 
 //raise_stmt: 'raise' [test ['from' test]]
-raise_stmt
-    ;
-
 raise_stmt
 @init {
     stmt stype = null;
