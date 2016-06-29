@@ -27,25 +27,25 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@ExposedType(name = "_ast.NameConstant", base = expr.class)
-public class NameConstant extends expr {
-public static final PyType TYPE = PyType.fromClass(NameConstant.class);
-    private singleton value;
-    public singleton getInternalValue() {
-        return value;
+@ExposedType(name = "_ast.JoinedStr", base = expr.class)
+public class JoinedStr extends expr {
+public static final PyType TYPE = PyType.fromClass(JoinedStr.class);
+    private java.util.List<expr> values;
+    public java.util.List<expr> getInternalValues() {
+        return values;
     }
-    @ExposedGet(name = "value")
-    public PyObject getValue() {
-        return value;
+    @ExposedGet(name = "values")
+    public PyObject getValues() {
+        return new AstList(values, AstAdapters.exprAdapter);
     }
-    @ExposedSet(name = "value")
-    public void setValue(PyObject value) {
-        this.value = AstAdapters.py2singleton(value);
+    @ExposedSet(name = "values")
+    public void setValues(PyObject values) {
+        this.values = AstAdapters.py2exprList(values);
     }
 
 
     private final static PyString[] fields =
-    new PyString[] {new PyString("value")};
+    new PyString[] {new PyString("values")};
     @ExposedGet(name = "_fields")
     public PyString[] get_fields() { return fields; }
 
@@ -54,18 +54,18 @@ public static final PyType TYPE = PyType.fromClass(NameConstant.class);
     @ExposedGet(name = "_attributes")
     public PyString[] get_attributes() { return attributes; }
 
-    public NameConstant(PyType subType) {
+    public JoinedStr(PyType subType) {
         super(subType);
     }
-    public NameConstant() {
+    public JoinedStr() {
         this(TYPE);
     }
     @ExposedNew
     @ExposedMethod
-    public void NameConstant___init__(PyObject[] args, String[] keywords) {
-        ArgParser ap = new ArgParser("NameConstant", args, keywords, new String[]
-            {"value", "lineno", "col_offset"}, 1, true);
-        setValue(ap.getPyObject(0, Py.None));
+    public void JoinedStr___init__(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("JoinedStr", args, keywords, new String[]
+            {"values", "lineno", "col_offset"}, 1, true);
+        setValues(ap.getPyObject(0, Py.None));
         int lin = ap.getInt(1, -1);
         if (lin != -1) {
             setLineno(lin);
@@ -78,46 +78,68 @@ public static final PyType TYPE = PyType.fromClass(NameConstant.class);
 
     }
 
-    public NameConstant(PyObject value) {
-        setValue(value);
+    public JoinedStr(PyObject values) {
+        setValues(values);
     }
 
-    public NameConstant(Token token, singleton value) {
+    public JoinedStr(Token token, java.util.List<expr> values) {
         super(token);
-        this.value = value;
+        this.values = values;
+        if (values == null) {
+            this.values = new ArrayList<expr>();
+        }
+        for(PythonTree t : this.values) {
+            addChild(t);
+        }
     }
 
-    public NameConstant(Integer ttype, Token token, singleton value) {
+    public JoinedStr(Integer ttype, Token token, java.util.List<expr> values) {
         super(ttype, token);
-        this.value = value;
+        this.values = values;
+        if (values == null) {
+            this.values = new ArrayList<expr>();
+        }
+        for(PythonTree t : this.values) {
+            addChild(t);
+        }
     }
 
-    public NameConstant(PythonTree tree, singleton value) {
+    public JoinedStr(PythonTree tree, java.util.List<expr> values) {
         super(tree);
-        this.value = value;
+        this.values = values;
+        if (values == null) {
+            this.values = new ArrayList<expr>();
+        }
+        for(PythonTree t : this.values) {
+            addChild(t);
+        }
     }
 
     @ExposedGet(name = "repr")
     public String toString() {
-        return "NameConstant";
+        return "JoinedStr";
     }
 
     public String toStringTree() {
-        StringBuffer sb = new StringBuffer("NameConstant(");
-        sb.append("value=");
-        sb.append(dumpThis(value));
+        StringBuffer sb = new StringBuffer("JoinedStr(");
+        sb.append("values=");
+        sb.append(dumpThis(values));
         sb.append(",");
         sb.append(")");
         return sb.toString();
     }
 
     public <R> R accept(VisitorIF<R> visitor) throws Exception {
-        return visitor.visitNameConstant(this);
+        return visitor.visitJoinedStr(this);
     }
 
     public void traverse(VisitorIF<?> visitor) throws Exception {
-        if (value != null)
-            value.accept(visitor);
+        if (values != null) {
+            for (PythonTree t : values) {
+                if (t != null)
+                    t.accept(visitor);
+            }
+        }
     }
 
     public PyObject __dict__;

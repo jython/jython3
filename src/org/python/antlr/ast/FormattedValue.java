@@ -27,11 +27,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@ExposedType(name = "_ast.NameConstant", base = expr.class)
-public class NameConstant extends expr {
-public static final PyType TYPE = PyType.fromClass(NameConstant.class);
-    private singleton value;
-    public singleton getInternalValue() {
+@ExposedType(name = "_ast.FormattedValue", base = expr.class)
+public class FormattedValue extends expr {
+public static final PyType TYPE = PyType.fromClass(FormattedValue.class);
+    private expr value;
+    public expr getInternalValue() {
         return value;
     }
     @ExposedGet(name = "value")
@@ -40,12 +40,38 @@ public static final PyType TYPE = PyType.fromClass(NameConstant.class);
     }
     @ExposedSet(name = "value")
     public void setValue(PyObject value) {
-        this.value = AstAdapters.py2singleton(value);
+        this.value = AstAdapters.py2expr(value);
+    }
+
+    private Integer conversion;
+    public Integer getInternalConversion() {
+        return conversion;
+    }
+    @ExposedGet(name = "conversion")
+    public PyObject getConversion() {
+        return Py.newInteger(conversion);
+    }
+    @ExposedSet(name = "conversion")
+    public void setConversion(PyObject conversion) {
+        this.conversion = AstAdapters.py2int(conversion);
+    }
+
+    private expr format_spec;
+    public expr getInternalFormat_spec() {
+        return format_spec;
+    }
+    @ExposedGet(name = "format_spec")
+    public PyObject getFormat_spec() {
+        return format_spec;
+    }
+    @ExposedSet(name = "format_spec")
+    public void setFormat_spec(PyObject format_spec) {
+        this.format_spec = AstAdapters.py2expr(format_spec);
     }
 
 
     private final static PyString[] fields =
-    new PyString[] {new PyString("value")};
+    new PyString[] {new PyString("value"), new PyString("conversion"), new PyString("format_spec")};
     @ExposedGet(name = "_fields")
     public PyString[] get_fields() { return fields; }
 
@@ -54,70 +80,95 @@ public static final PyType TYPE = PyType.fromClass(NameConstant.class);
     @ExposedGet(name = "_attributes")
     public PyString[] get_attributes() { return attributes; }
 
-    public NameConstant(PyType subType) {
+    public FormattedValue(PyType subType) {
         super(subType);
     }
-    public NameConstant() {
+    public FormattedValue() {
         this(TYPE);
     }
     @ExposedNew
     @ExposedMethod
-    public void NameConstant___init__(PyObject[] args, String[] keywords) {
-        ArgParser ap = new ArgParser("NameConstant", args, keywords, new String[]
-            {"value", "lineno", "col_offset"}, 1, true);
+    public void FormattedValue___init__(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("FormattedValue", args, keywords, new String[]
+            {"value", "conversion", "format_spec", "lineno", "col_offset"}, 3, true);
         setValue(ap.getPyObject(0, Py.None));
-        int lin = ap.getInt(1, -1);
+        setConversion(ap.getPyObject(1, Py.None));
+        setFormat_spec(ap.getPyObject(2, Py.None));
+        int lin = ap.getInt(3, -1);
         if (lin != -1) {
             setLineno(lin);
         }
 
-        int col = ap.getInt(2, -1);
+        int col = ap.getInt(4, -1);
         if (col != -1) {
             setLineno(col);
         }
 
     }
 
-    public NameConstant(PyObject value) {
+    public FormattedValue(PyObject value, PyObject conversion, PyObject format_spec) {
         setValue(value);
+        setConversion(conversion);
+        setFormat_spec(format_spec);
     }
 
-    public NameConstant(Token token, singleton value) {
+    public FormattedValue(Token token, expr value, Integer conversion, expr format_spec) {
         super(token);
         this.value = value;
+        addChild(value);
+        this.conversion = conversion;
+        this.format_spec = format_spec;
+        addChild(format_spec);
     }
 
-    public NameConstant(Integer ttype, Token token, singleton value) {
+    public FormattedValue(Integer ttype, Token token, expr value, Integer conversion, expr
+    format_spec) {
         super(ttype, token);
         this.value = value;
+        addChild(value);
+        this.conversion = conversion;
+        this.format_spec = format_spec;
+        addChild(format_spec);
     }
 
-    public NameConstant(PythonTree tree, singleton value) {
+    public FormattedValue(PythonTree tree, expr value, Integer conversion, expr format_spec) {
         super(tree);
         this.value = value;
+        addChild(value);
+        this.conversion = conversion;
+        this.format_spec = format_spec;
+        addChild(format_spec);
     }
 
     @ExposedGet(name = "repr")
     public String toString() {
-        return "NameConstant";
+        return "FormattedValue";
     }
 
     public String toStringTree() {
-        StringBuffer sb = new StringBuffer("NameConstant(");
+        StringBuffer sb = new StringBuffer("FormattedValue(");
         sb.append("value=");
         sb.append(dumpThis(value));
+        sb.append(",");
+        sb.append("conversion=");
+        sb.append(dumpThis(conversion));
+        sb.append(",");
+        sb.append("format_spec=");
+        sb.append(dumpThis(format_spec));
         sb.append(",");
         sb.append(")");
         return sb.toString();
     }
 
     public <R> R accept(VisitorIF<R> visitor) throws Exception {
-        return visitor.visitNameConstant(this);
+        return visitor.visitFormattedValue(this);
     }
 
     public void traverse(VisitorIF<?> visitor) throws Exception {
         if (value != null)
             value.accept(visitor);
+        if (format_spec != null)
+            format_spec.accept(visitor);
     }
 
     public PyObject __dict__;

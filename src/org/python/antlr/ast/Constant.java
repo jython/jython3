@@ -27,11 +27,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@ExposedType(name = "_ast.NameConstant", base = expr.class)
-public class NameConstant extends expr {
-public static final PyType TYPE = PyType.fromClass(NameConstant.class);
-    private singleton value;
-    public singleton getInternalValue() {
+@ExposedType(name = "_ast.Constant", base = expr.class)
+public class Constant extends expr {
+public static final PyType TYPE = PyType.fromClass(Constant.class);
+    private constant value;
+    public constant getInternalValue() {
         return value;
     }
     @ExposedGet(name = "value")
@@ -40,7 +40,7 @@ public static final PyType TYPE = PyType.fromClass(NameConstant.class);
     }
     @ExposedSet(name = "value")
     public void setValue(PyObject value) {
-        this.value = AstAdapters.py2singleton(value);
+        this.value = AstAdapters.py2constant(value);
     }
 
 
@@ -54,16 +54,16 @@ public static final PyType TYPE = PyType.fromClass(NameConstant.class);
     @ExposedGet(name = "_attributes")
     public PyString[] get_attributes() { return attributes; }
 
-    public NameConstant(PyType subType) {
+    public Constant(PyType subType) {
         super(subType);
     }
-    public NameConstant() {
+    public Constant() {
         this(TYPE);
     }
     @ExposedNew
     @ExposedMethod
-    public void NameConstant___init__(PyObject[] args, String[] keywords) {
-        ArgParser ap = new ArgParser("NameConstant", args, keywords, new String[]
+    public void Constant___init__(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("Constant", args, keywords, new String[]
             {"value", "lineno", "col_offset"}, 1, true);
         setValue(ap.getPyObject(0, Py.None));
         int lin = ap.getInt(1, -1);
@@ -78,32 +78,32 @@ public static final PyType TYPE = PyType.fromClass(NameConstant.class);
 
     }
 
-    public NameConstant(PyObject value) {
+    public Constant(PyObject value) {
         setValue(value);
     }
 
-    public NameConstant(Token token, singleton value) {
+    public Constant(Token token, constant value) {
         super(token);
         this.value = value;
     }
 
-    public NameConstant(Integer ttype, Token token, singleton value) {
+    public Constant(Integer ttype, Token token, constant value) {
         super(ttype, token);
         this.value = value;
     }
 
-    public NameConstant(PythonTree tree, singleton value) {
+    public Constant(PythonTree tree, constant value) {
         super(tree);
         this.value = value;
     }
 
     @ExposedGet(name = "repr")
     public String toString() {
-        return "NameConstant";
+        return "Constant";
     }
 
     public String toStringTree() {
-        StringBuffer sb = new StringBuffer("NameConstant(");
+        StringBuffer sb = new StringBuffer("Constant(");
         sb.append("value=");
         sb.append(dumpThis(value));
         sb.append(",");
@@ -112,7 +112,7 @@ public static final PyType TYPE = PyType.fromClass(NameConstant.class);
     }
 
     public <R> R accept(VisitorIF<R> visitor) throws Exception {
-        return visitor.visitNameConstant(this);
+        return visitor.visitConstant(this);
     }
 
     public void traverse(VisitorIF<?> visitor) throws Exception {

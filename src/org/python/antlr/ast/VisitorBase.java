@@ -91,12 +91,6 @@ public abstract class VisitorBase<R> implements VisitorIF<R> {
         return ret;
     }
 
-    public R visitPrint(Print node) throws Exception {
-        R ret = unhandled_node(node);
-        traverse(node);
-        return ret;
-    }
-
     public R visitFor(For node) throws Exception {
         R ret = unhandled_node(node);
         traverse(node);
@@ -139,13 +133,7 @@ public abstract class VisitorBase<R> implements VisitorIF<R> {
         return ret;
     }
 
-    public R visitTryExcept(TryExcept node) throws Exception {
-        R ret = unhandled_node(node);
-        traverse(node);
-        return ret;
-    }
-
-    public R visitTryFinally(TryFinally node) throws Exception {
+    public R visitTry(Try node) throws Exception {
         R ret = unhandled_node(node);
         traverse(node);
         return ret;
@@ -164,12 +152,6 @@ public abstract class VisitorBase<R> implements VisitorIF<R> {
     }
 
     public R visitImportFrom(ImportFrom node) throws Exception {
-        R ret = unhandled_node(node);
-        traverse(node);
-        return ret;
-    }
-
-    public R visitExec(Exec node) throws Exception {
         R ret = unhandled_node(node);
         traverse(node);
         return ret;
@@ -307,12 +289,6 @@ public abstract class VisitorBase<R> implements VisitorIF<R> {
         return ret;
     }
 
-    public R visitRepr(Repr node) throws Exception {
-        R ret = unhandled_node(node);
-        traverse(node);
-        return ret;
-    }
-
     public R visitNum(Num node) throws Exception {
         R ret = unhandled_node(node);
         traverse(node);
@@ -325,6 +301,24 @@ public abstract class VisitorBase<R> implements VisitorIF<R> {
         return ret;
     }
 
+    public R visitFormattedValue(FormattedValue node) throws Exception {
+        R ret = unhandled_node(node);
+        traverse(node);
+        return ret;
+    }
+
+    public R visitJoinedStr(JoinedStr node) throws Exception {
+        R ret = unhandled_node(node);
+        traverse(node);
+        return ret;
+    }
+
+    public R visitBytes(Bytes node) throws Exception {
+        R ret = unhandled_node(node);
+        traverse(node);
+        return ret;
+    }
+
     public R visitNameConstant(NameConstant node) throws Exception {
         R ret = unhandled_node(node);
         traverse(node);
@@ -332,6 +326,12 @@ public abstract class VisitorBase<R> implements VisitorIF<R> {
     }
 
     public R visitEllipsis(Ellipsis node) throws Exception {
+        R ret = unhandled_node(node);
+        traverse(node);
+        return ret;
+    }
+
+    public R visitConstant(Constant node) throws Exception {
         R ret = unhandled_node(node);
         traverse(node);
         return ret;

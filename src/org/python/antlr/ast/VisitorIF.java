@@ -13,7 +13,6 @@ public interface VisitorIF<R> {
     public R visitDelete(Delete node) throws Exception;
     public R visitAssign(Assign node) throws Exception;
     public R visitAugAssign(AugAssign node) throws Exception;
-    public R visitPrint(Print node) throws Exception;
     public R visitFor(For node) throws Exception;
     public R visitAsyncFor(AsyncFor node) throws Exception;
     public R visitWhile(While node) throws Exception;
@@ -21,12 +20,10 @@ public interface VisitorIF<R> {
     public R visitWith(With node) throws Exception;
     public R visitAsyncWith(AsyncWith node) throws Exception;
     public R visitRaise(Raise node) throws Exception;
-    public R visitTryExcept(TryExcept node) throws Exception;
-    public R visitTryFinally(TryFinally node) throws Exception;
+    public R visitTry(Try node) throws Exception;
     public R visitAssert(Assert node) throws Exception;
     public R visitImport(Import node) throws Exception;
     public R visitImportFrom(ImportFrom node) throws Exception;
-    public R visitExec(Exec node) throws Exception;
     public R visitGlobal(Global node) throws Exception;
     public R visitNonlocal(Nonlocal node) throws Exception;
     public R visitExpr(Expr node) throws Exception;
@@ -49,11 +46,14 @@ public interface VisitorIF<R> {
     public R visitYieldFrom(YieldFrom node) throws Exception;
     public R visitCompare(Compare node) throws Exception;
     public R visitCall(Call node) throws Exception;
-    public R visitRepr(Repr node) throws Exception;
     public R visitNum(Num node) throws Exception;
     public R visitStr(Str node) throws Exception;
+    public R visitFormattedValue(FormattedValue node) throws Exception;
+    public R visitJoinedStr(JoinedStr node) throws Exception;
+    public R visitBytes(Bytes node) throws Exception;
     public R visitNameConstant(NameConstant node) throws Exception;
     public R visitEllipsis(Ellipsis node) throws Exception;
+    public R visitConstant(Constant node) throws Exception;
     public R visitAttribute(Attribute node) throws Exception;
     public R visitSubscript(Subscript node) throws Exception;
     public R visitStarred(Starred node) throws Exception;

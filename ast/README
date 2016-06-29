@@ -1,6 +1,6 @@
 Files in this project:
-Python.asdl - zephyr file taken directly from CPython release25-maint
-asdl.py - base asdl program copied from CPython release25-maint
+Python.asdl - zephyr file taken directly from CPython 3.6-trunk
+asdl.py - base asdl program copied from CPython 3.6-trunk
 asdl_java.py - copied from CPython sandbox for reference
 asdl_anltr.py - adapted from asdl_java.py to produce antlr style ast classes
 astlip.py - adapted from Jim Baker's ast -> s-expression utility
@@ -16,7 +16,6 @@ jastlib.py - adapted from astlib.py to produce a reasonable s-expression
 regr - a runner for release25 files that should succeed
 run - runs grammar and walker on a file (note add any second param to get a
       print of the trees) - empty output means a successful walk.
-spark.py - copied from CPython -- used by asdl
 
 known bugs:
 * The following files in release25 completely blow up astlib.py:

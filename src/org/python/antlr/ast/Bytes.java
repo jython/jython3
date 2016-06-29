@@ -27,25 +27,25 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@ExposedType(name = "_ast.NameConstant", base = expr.class)
-public class NameConstant extends expr {
-public static final PyType TYPE = PyType.fromClass(NameConstant.class);
-    private singleton value;
-    public singleton getInternalValue() {
-        return value;
+@ExposedType(name = "_ast.Bytes", base = expr.class)
+public class Bytes extends expr {
+public static final PyType TYPE = PyType.fromClass(Bytes.class);
+    private bytes s;
+    public bytes getInternalS() {
+        return s;
     }
-    @ExposedGet(name = "value")
-    public PyObject getValue() {
-        return value;
+    @ExposedGet(name = "s")
+    public PyObject getS() {
+        return s;
     }
-    @ExposedSet(name = "value")
-    public void setValue(PyObject value) {
-        this.value = AstAdapters.py2singleton(value);
+    @ExposedSet(name = "s")
+    public void setS(PyObject s) {
+        this.s = AstAdapters.py2bytes(s);
     }
 
 
     private final static PyString[] fields =
-    new PyString[] {new PyString("value")};
+    new PyString[] {new PyString("s")};
     @ExposedGet(name = "_fields")
     public PyString[] get_fields() { return fields; }
 
@@ -54,18 +54,18 @@ public static final PyType TYPE = PyType.fromClass(NameConstant.class);
     @ExposedGet(name = "_attributes")
     public PyString[] get_attributes() { return attributes; }
 
-    public NameConstant(PyType subType) {
+    public Bytes(PyType subType) {
         super(subType);
     }
-    public NameConstant() {
+    public Bytes() {
         this(TYPE);
     }
     @ExposedNew
     @ExposedMethod
-    public void NameConstant___init__(PyObject[] args, String[] keywords) {
-        ArgParser ap = new ArgParser("NameConstant", args, keywords, new String[]
-            {"value", "lineno", "col_offset"}, 1, true);
-        setValue(ap.getPyObject(0, Py.None));
+    public void Bytes___init__(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("Bytes", args, keywords, new String[]
+            {"s", "lineno", "col_offset"}, 1, true);
+        setS(ap.getPyObject(0, Py.None));
         int lin = ap.getInt(1, -1);
         if (lin != -1) {
             setLineno(lin);
@@ -78,46 +78,46 @@ public static final PyType TYPE = PyType.fromClass(NameConstant.class);
 
     }
 
-    public NameConstant(PyObject value) {
-        setValue(value);
+    public Bytes(PyObject s) {
+        setS(s);
     }
 
-    public NameConstant(Token token, singleton value) {
+    public Bytes(Token token, bytes s) {
         super(token);
-        this.value = value;
+        this.s = s;
     }
 
-    public NameConstant(Integer ttype, Token token, singleton value) {
+    public Bytes(Integer ttype, Token token, bytes s) {
         super(ttype, token);
-        this.value = value;
+        this.s = s;
     }
 
-    public NameConstant(PythonTree tree, singleton value) {
+    public Bytes(PythonTree tree, bytes s) {
         super(tree);
-        this.value = value;
+        this.s = s;
     }
 
     @ExposedGet(name = "repr")
     public String toString() {
-        return "NameConstant";
+        return "Bytes";
     }
 
     public String toStringTree() {
-        StringBuffer sb = new StringBuffer("NameConstant(");
-        sb.append("value=");
-        sb.append(dumpThis(value));
+        StringBuffer sb = new StringBuffer("Bytes(");
+        sb.append("s=");
+        sb.append(dumpThis(s));
         sb.append(",");
         sb.append(")");
         return sb.toString();
     }
 
     public <R> R accept(VisitorIF<R> visitor) throws Exception {
-        return visitor.visitNameConstant(this);
+        return visitor.visitBytes(this);
     }
 
     public void traverse(VisitorIF<?> visitor) throws Exception {
-        if (value != null)
-            value.accept(visitor);
+        if (s != null)
+            s.accept(visitor);
     }
 
     public PyObject __dict__;

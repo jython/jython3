@@ -1,6 +1,10 @@
--- ASDL's five builtin types are identifier, int, string, object, bool
+-- ASDL's 7 builtin types are:
+-- identifier, int, string, bytes, object, singleton, constant
+--
+-- singleton: None, True or False
+-- constant can be None, whereas None means "no value" for object.
 
-module Python version "$Revision$"
+module Python
 {
     mod = Module(stmt* body)
         | Interactive(stmt* body)
@@ -10,9 +14,10 @@ module Python version "$Revision$"
         | Suite(stmt* body)
 
     stmt = FunctionDef(identifier name, arguments args,
-                           stmt* body, expr* decorator_list)
+                       stmt* body, expr* decorator_list, expr? returns)
           | AsyncFunctionDef(identifier name, arguments args,
-              stmt* body, expr* decorator_list)
+                             stmt* body, expr* decorator_list, expr? returns)
+
           | ClassDef(identifier name,
              expr* bases,
              keyword* keywords,
@@ -24,9 +29,6 @@ module Python version "$Revision$"
           | Assign(expr* targets, expr value)
           | AugAssign(expr target, operator op, expr value)
 
-          -- not sure if bool is allowed, can always use int
-          | Print(expr? dest, expr* values, bool nl)
-
           -- use 'orelse' because else is a keyword in target languages
           | For(expr target, expr iter, stmt* body, stmt* orelse)
           | AsyncFor(expr target, expr iter, stmt* body, stmt* orelse)
@@ -36,18 +38,11 @@ module Python version "$Revision$"
           | AsyncWith(withitem* items, stmt* body)
 
           | Raise(expr? exc, expr? cause)
-
-          | TryExcept(stmt* body, excepthandler* handlers, stmt* orelse)
-          | TryFinally(stmt* body, stmt* finalbody)
+          | Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
           | Assert(expr test, expr? msg)
 
           | Import(alias* names)
           | ImportFrom(identifier? module, alias* names, int? level)
-
-          -- Doesn't capture requirement that locals must be
-          -- defined if globals is
-          -- still supports use as a function!
-          | Exec(expr body, expr? globals, expr? locals)
 
           | Global(identifier* names)
           | Nonlocal(identifier* names)
@@ -78,12 +73,14 @@ module Python version "$Revision$"
          -- x < 4 < 3 and (x < 4) < 3
          | Compare(expr left, cmpop* ops, expr* comparators)
          | Call(expr func, expr* args, keyword* keywords)
-         | Repr(expr value)
          | Num(object n) -- a number as a PyObject.
          | Str(string s) -- need to specify raw, unicode, etc?
-         -- other literals? bools?
-         | NameConstant(identifier value)
+         | FormattedValue(expr value, int? conversion, expr? format_spec)
+         | JoinedStr(expr* values)
+         | Bytes(bytes s)
+         | NameConstant(singleton value)
          | Ellipsis
+         | Constant(constant value)
 
          -- the following expression can appear in assignment context
          | Attribute(expr value, identifier attr, expr_context ctx)
@@ -113,7 +110,6 @@ module Python version "$Revision$"
 
     comprehension = (expr target, expr iter, expr* ifs)
 
-    -- not sure what to call the first argument for raise and except
     excepthandler = ExceptHandler(expr? type, identifier? name, stmt* body)
                     attributes (int lineno, int col_offset)
 
@@ -121,11 +117,14 @@ module Python version "$Revision$"
                  arg? kwarg, expr* defaults)
 
     arg = (identifier arg, expr? annotation)
+           attributes (int lineno, int col_offset)
 
     -- keyword arguments supplied to call (NULL identifier for **kwargs)
     keyword = (identifier? arg, expr value)
 
     -- import name with optional 'as' alias.
     alias = (identifier name, identifier? asname)
+
     withitem = (expr context_expr, expr? optional_vars)
 }
+
