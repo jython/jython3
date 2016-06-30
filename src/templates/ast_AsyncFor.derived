@@ -1,4 +1,4 @@
-base_class: Repr
+base_class: AsyncFor
 want_dict: true
 ctr
 incl: object

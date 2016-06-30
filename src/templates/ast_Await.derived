@@ -1,4 +1,4 @@
-base_class: Exec
+base_class: Await
 want_dict: true
 ctr
 incl: object

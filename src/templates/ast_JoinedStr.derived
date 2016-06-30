@@ -1,4 +1,4 @@
-base_class: Print
+base_class: JoinedStr
 want_dict: true
 ctr
 incl: object
