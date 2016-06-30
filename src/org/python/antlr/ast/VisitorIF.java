@@ -20,7 +20,8 @@ public interface VisitorIF<R> {
     public R visitWith(With node) throws Exception;
     public R visitAsyncWith(AsyncWith node) throws Exception;
     public R visitRaise(Raise node) throws Exception;
-    public R visitTry(Try node) throws Exception;
+    public R visitTryExcept(TryExcept node) throws Exception;
+    public R visitTryFinally(TryFinally node) throws Exception;
     public R visitAssert(Assert node) throws Exception;
     public R visitImport(Import node) throws Exception;
     public R visitImportFrom(ImportFrom node) throws Exception;

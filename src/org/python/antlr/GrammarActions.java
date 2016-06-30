@@ -1,13 +1,5 @@
 package org.python.antlr;
 
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
 import org.antlr.runtime.Token;
 import org.python.antlr.ast.AsyncFor;
 import org.python.antlr.ast.AsyncFunctionDef;
@@ -29,7 +21,6 @@ import org.python.antlr.ast.Lambda;
 import org.python.antlr.ast.ListComp;
 import org.python.antlr.ast.Name;
 import org.python.antlr.ast.Num;
-import org.python.antlr.ast.Repr;
 import org.python.antlr.ast.SetComp;
 import org.python.antlr.ast.Slice;
 import org.python.antlr.ast.Str;
@@ -63,6 +54,14 @@ import org.python.core.PyString;
 import org.python.core.PyUnicode;
 import org.python.core.codecs;
 import org.python.core.util.StringUtil;
+
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class GrammarActions {
     private ErrorHandler errorHandler = null;
@@ -687,8 +686,6 @@ public class GrammarActions {
             errorHandler.error("can't assign to lambda", e);
         } else if (e instanceof Call) {
             errorHandler.error("can't assign to function call", e);
-        } else if (e instanceof Repr) {
-            errorHandler.error("can't assign to repr", e);
         } else if (e instanceof IfExp) {
             errorHandler.error("can't assign to conditional expression", e);
         } else if (e instanceof ListComp) {

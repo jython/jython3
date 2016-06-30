@@ -40,13 +40,8 @@ public class AstModule implements ClassDictInit {
         dict.__setitem__("Delete", Delete.TYPE);
         dict.__setitem__("Dict", Dict.TYPE);
         dict.__setitem__("Ellipsis", Ellipsis.TYPE);
-//        dict.__setitem__("ErrorExpr", ErrorExpr.TYPE);
-//        dict.__setitem__("ErrorMod", ErrorMod.TYPE);
-//        dict.__setitem__("ErrorSlice", ErrorSlice.TYPE);
-//        dict.__setitem__("ErrorStmt", ErrorStmt.TYPE);
+
         dict.__setitem__("ExceptHandler", ExceptHandler.TYPE);
-        dict.__setitem__("Exec", Exec.TYPE);
-        dict.__setitem__("Expr", Expr.TYPE);
         dict.__setitem__("Expression", Expression.TYPE);
         dict.__setitem__("ExtSlice", ExtSlice.TYPE);
         dict.__setitem__("For", For.TYPE);
@@ -66,9 +61,7 @@ public class AstModule implements ClassDictInit {
         dict.__setitem__("Name", Name.TYPE);
         dict.__setitem__("Num", Num.TYPE);
         dict.__setitem__("Pass", Pass.TYPE);
-        dict.__setitem__("Print", Print.TYPE);
         dict.__setitem__("Raise", Raise.TYPE);
-        dict.__setitem__("Repr", Repr.TYPE);
         dict.__setitem__("Return", Return.TYPE);
         dict.__setitem__("SetComp", SetComp.TYPE);
         dict.__setitem__("Slice", Slice.TYPE);

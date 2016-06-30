@@ -601,51 +601,6 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     }
 
     @Override
-    public Object visitPrint(Print node) throws Exception {
-        setline(node);
-        int tmp = -1;
-
-        if (node.getInternalDest() != null) {
-            visit(node.getInternalDest());
-            tmp = storeTop();
-        }
-        if (node.getInternalValues() == null || node.getInternalValues().size() == 0) {
-            if (node.getInternalDest() != null) {
-                code.aload(tmp);
-                code.invokestatic(p(Py.class), "printlnv", sig(Void.TYPE, PyObject.class));
-            } else {
-                code.invokestatic(p(Py.class), "println", sig(Void.TYPE));
-            }
-        } else {
-            for (int i = 0; i < node.getInternalValues().size(); i++) {
-                if (node.getInternalDest() != null) {
-                    code.aload(tmp);
-                    visit(node.getInternalValues().get(i));
-                    if (node.getInternalNl() && i == node.getInternalValues().size() - 1) {
-                        code.invokestatic(p(Py.class), "println",
-                                sig(Void.TYPE, PyObject.class, PyObject.class));
-                    } else {
-                        code.invokestatic(p(Py.class), "printComma",
-                                sig(Void.TYPE, PyObject.class, PyObject.class));
-                    }
-                } else {
-                    visit(node.getInternalValues().get(i));
-                    if (node.getInternalNl() && i == node.getInternalValues().size() - 1) {
-                        code.invokestatic(p(Py.class), "println", sig(Void.TYPE, PyObject.class));
-                    } else {
-                        code.invokestatic(p(Py.class), "printComma", sig(Void.TYPE, PyObject.class));
-                    }
-
-                }
-            }
-        }
-        if (node.getInternalDest() != null) {
-            code.freeLocal(tmp);
-        }
-        return null;
-    }
-
-    @Override
     public Object visitDelete(Delete node) throws Exception {
         setline(node);
         traverse(node);
@@ -2533,17 +2488,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         return null;
     }
 
-    @Override
-    public Object visitRepr(Repr node) throws Exception {
-        visit(node.getInternalValue());
-        code.invokevirtual(p(PyObject.class), "__repr__", sig(PyUnicode.class));
-        return null;
-    }
-
     // a marker class to distinguish this usage; future generator rewriting may likely
     // want to remove this support
     private class LambdaSyntheticReturn extends Return {
-
         private LambdaSyntheticReturn(PythonTree tree, expr value) {
             super(tree, value);
         }
@@ -2697,7 +2644,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             arguments args = new arguments(node, new ArrayList<arg>(),
                     new arg(node, vararg, null), new ArrayList<arg>(), new ArrayList<expr>(),
                     new arg(node, kwarg, null), new ArrayList<expr>());
-            FunctionDef funcdef = new FunctionDef(node.getToken(), outer, args, bod, new ArrayList<expr>());
+            FunctionDef funcdef = new FunctionDef(node.getToken(), outer, args, bod, new ArrayList<expr>(), null);
 
             ScopeInfo funcScope = scope.up;
             funcScope.setup_closure();

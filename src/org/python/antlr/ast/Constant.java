@@ -30,13 +30,13 @@ import java.util.ArrayList;
 @ExposedType(name = "_ast.Constant", base = expr.class)
 public class Constant extends expr {
 public static final PyType TYPE = PyType.fromClass(Constant.class);
-    private constant value;
-    public constant getInternalValue() {
+    private String value;
+    public String getInternalValue() {
         return value;
     }
     @ExposedGet(name = "value")
     public PyObject getValue() {
-        return value;
+        return AstAdapters.constant2py(value);
     }
     @ExposedSet(name = "value")
     public void setValue(PyObject value) {
@@ -82,17 +82,17 @@ public static final PyType TYPE = PyType.fromClass(Constant.class);
         setValue(value);
     }
 
-    public Constant(Token token, constant value) {
+    public Constant(Token token, String value) {
         super(token);
         this.value = value;
     }
 
-    public Constant(Integer ttype, Token token, constant value) {
+    public Constant(Integer ttype, Token token, String value) {
         super(ttype, token);
         this.value = value;
     }
 
-    public Constant(PythonTree tree, constant value) {
+    public Constant(PythonTree tree, String value) {
         super(tree);
         this.value = value;
     }
@@ -116,8 +116,6 @@ public static final PyType TYPE = PyType.fromClass(Constant.class);
     }
 
     public void traverse(VisitorIF<?> visitor) throws Exception {
-        if (value != null)
-            value.accept(visitor);
     }
 
     public PyObject __dict__;

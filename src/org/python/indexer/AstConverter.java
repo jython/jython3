@@ -21,7 +21,6 @@ import org.python.antlr.ast.Delete;
 import org.python.antlr.ast.Dict;
 import org.python.antlr.ast.Ellipsis;
 import org.python.antlr.ast.ExceptHandler;
-import org.python.antlr.ast.Exec;
 import org.python.antlr.ast.Expr;
 import org.python.antlr.ast.For;
 import org.python.antlr.ast.FunctionDef;
@@ -38,9 +37,7 @@ import org.python.antlr.ast.Module;
 import org.python.antlr.ast.Name;
 import org.python.antlr.ast.Num;
 import org.python.antlr.ast.Pass;
-import org.python.antlr.ast.Print;
 import org.python.antlr.ast.Raise;
-import org.python.antlr.ast.Repr;
 import org.python.antlr.ast.Return;
 import org.python.antlr.ast.Slice;
 import org.python.antlr.ast.Str;
@@ -83,7 +80,7 @@ import org.python.indexer.ast.NDelete;
 import org.python.indexer.ast.NDict;
 import org.python.indexer.ast.NEllipsis;
 import org.python.indexer.ast.NExceptHandler;
-import org.python.indexer.ast.NExec;
+import org.python.indexer.ast.NExprStmt;
 import org.python.indexer.ast.NFor;
 import org.python.indexer.ast.NFunctionDef;
 import org.python.indexer.ast.NGeneratorExp;
@@ -102,12 +99,9 @@ import org.python.indexer.ast.NName;
 import org.python.indexer.ast.NNode;
 import org.python.indexer.ast.NNum;
 import org.python.indexer.ast.NPass;
-import org.python.indexer.ast.NPrint;
 import org.python.indexer.ast.NQname;
 import org.python.indexer.ast.NRaise;
-import org.python.indexer.ast.NRepr;
 import org.python.indexer.ast.NReturn;
-import org.python.indexer.ast.NExprStmt;
 import org.python.indexer.ast.NSlice;
 import org.python.indexer.ast.NStr;
 import org.python.indexer.ast.NSubscript;
@@ -453,14 +447,6 @@ public class AstConverter extends Visitor {
     }
 
     @Override
-    public Object visitExec(Exec n) throws Exception {
-        return new NExec(convExpr(n.getInternalBody()),
-                         convExpr(n.getInternalGlobals()),
-                         convExpr(n.getInternalLocals()),
-                         start(n), stop(n));
-    }
-
-    @Override
     public Object visitExpr(Expr n) throws Exception {
         return new NExprStmt(convExpr(n.getInternalValue()), start(n), stop(n));
     }
@@ -605,12 +591,6 @@ public class AstConverter extends Visitor {
         return new NPass(start(n), stop(n));
     }
 
-    @Override
-    public Object visitPrint(Print n) throws Exception {
-        return new NPrint(convExpr(n.getInternalDest()),
-                          convertListExpr(n.getInternalValues()),
-                          start(n), stop(n));
-    }
 
     @Override
     public Object visitRaise(Raise n) throws Exception {
@@ -620,12 +600,7 @@ public class AstConverter extends Visitor {
                           start(n), stop(n));
     }
 
-    @Override
-    public Object visitRepr(Repr n) throws Exception {
-        return new NRepr(convExpr(n.getInternalValue()), start(n), stop(n));
-    }
-
-    @Override
+   @Override
     public Object visitReturn(Return n) throws Exception {
         return new NReturn(convExpr(n.getInternalValue()), start(n), stop(n));
     }

@@ -133,7 +133,13 @@ public abstract class VisitorBase<R> implements VisitorIF<R> {
         return ret;
     }
 
-    public R visitTry(Try node) throws Exception {
+    public R visitTryExcept(TryExcept node) throws Exception {
+        R ret = unhandled_node(node);
+        traverse(node);
+        return ret;
+    }
+
+    public R visitTryFinally(TryFinally node) throws Exception {
         R ret = unhandled_node(node);
         traverse(node);
         return ret;

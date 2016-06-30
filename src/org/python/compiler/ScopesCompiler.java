@@ -248,16 +248,6 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
     }
 
     @Override
-    public Object visitExec(Exec node) throws Exception {
-        cur.exec = true;
-        if (node.getInternalGlobals() == null && node.getInternalLocals() == null) {
-            cur.unqual_exec = true;
-        }
-        traverse(node);
-        return null;
-    }
-
-    @Override
     public Object visitClassDef(ClassDef node) throws Exception {
         String outer = "<outer" + node.getInternalName() + ">";
         String clsname = node.getInternalName();
@@ -276,7 +266,7 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         arguments args = new arguments(node, new ArrayList<arg>(),
                 new arg(node, vararg, null), new ArrayList<arg>(), new ArrayList<expr>(),
                 new arg(node, kwarg, null), new ArrayList<expr>());
-        FunctionDef funcdef = new FunctionDef(node.getToken(), outer, args, bod, new ArrayList<expr>());
+        FunctionDef funcdef = new FunctionDef(node.getToken(), outer, args, bod, new ArrayList<expr>(), null);
 
         ArgListCompiler ac = new ArgListCompiler();
         ac.visitArgs(args);

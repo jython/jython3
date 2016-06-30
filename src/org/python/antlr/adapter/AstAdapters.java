@@ -5,7 +5,6 @@ import org.python.antlr.base.*;
 import org.python.antlr.op.*;
 import org.python.core.*;
 
-import java.util.*;
 import java.util.List;
 
 /**
@@ -327,5 +326,29 @@ public class AstAdapters {
 
     public static List<withitem> py2withitemList(PyObject items) {
         return (java.util.List<withitem>)withitemAdapter.iter2ast(items);
+    }
+
+    public static PyString bytes2py(byte[] bytes) {
+        return new PyString(new String(bytes));
+    }
+
+    public static byte[] py2bytes(PyObject obj) {
+        return obj.toString().getBytes();
+    }
+
+    public static PyUnicode constant2py(String c) {
+        return new PyUnicode(c);
+    }
+
+    public static String py2constant(PyObject obj) {
+        return obj.toString();
+    }
+
+    public static PyUnicode singleton2py(String s) {
+        return new PyUnicode(s);
+    }
+
+    public static String py2singleton(PyObject obj) {
+        return obj.toString();
     }
 }

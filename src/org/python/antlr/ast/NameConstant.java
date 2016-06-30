@@ -30,13 +30,13 @@ import java.util.ArrayList;
 @ExposedType(name = "_ast.NameConstant", base = expr.class)
 public class NameConstant extends expr {
 public static final PyType TYPE = PyType.fromClass(NameConstant.class);
-    private singleton value;
-    public singleton getInternalValue() {
+    private String value;
+    public String getInternalValue() {
         return value;
     }
     @ExposedGet(name = "value")
     public PyObject getValue() {
-        return value;
+        return AstAdapters.singleton2py(value);
     }
     @ExposedSet(name = "value")
     public void setValue(PyObject value) {
@@ -82,17 +82,17 @@ public static final PyType TYPE = PyType.fromClass(NameConstant.class);
         setValue(value);
     }
 
-    public NameConstant(Token token, singleton value) {
+    public NameConstant(Token token, String value) {
         super(token);
         this.value = value;
     }
 
-    public NameConstant(Integer ttype, Token token, singleton value) {
+    public NameConstant(Integer ttype, Token token, String value) {
         super(ttype, token);
         this.value = value;
     }
 
-    public NameConstant(PythonTree tree, singleton value) {
+    public NameConstant(PythonTree tree, String value) {
         super(tree);
         this.value = value;
     }
@@ -116,8 +116,6 @@ public static final PyType TYPE = PyType.fromClass(NameConstant.class);
     }
 
     public void traverse(VisitorIF<?> visitor) throws Exception {
-        if (value != null)
-            value.accept(visitor);
     }
 
     public PyObject __dict__;

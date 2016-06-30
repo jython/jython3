@@ -38,7 +38,9 @@ module Python
           | AsyncWith(withitem* items, stmt* body)
 
           | Raise(expr? exc, expr? cause)
-          | Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
+          -- | Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
+          | TryExcept(stmt* body, excepthandler* handlers, stmt* orelse)
+          | TryFinally(stmt* body, stmt* finalbody)
           | Assert(expr test, expr? msg)
 
           | Import(alias* names)

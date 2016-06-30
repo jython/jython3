@@ -17,7 +17,7 @@ def is_simple(sum):
     A sum is simple if its types have no fields, e.g.
     unaryop = Invert | Not | UAdd | USub
     """
-    if not hasattr(sum, 'types'):
+    if not isinstance(sum, asdl.Sum):
         return False
     for t in sum.types:
         if t.fields:
@@ -605,7 +605,7 @@ class JavaVisitor(EmitVisitor):
                 self.emit("return Py.False;", depth+1)
             elif str(field.type) == 'int':
                 self.emit("return Py.newInteger(%s);" % field.name, depth+1)
-            elif is_simple(field.typedef):
+            elif is_simple(field.typedef) or str(field.type) in self.bltinnames:
                 self.emit("return AstAdapters.%s2py(%s);" % (str(field.type), field.name), depth+1)
             else:
                 self.emit("return %s;" % field.name, depth+1)
@@ -624,7 +624,10 @@ class JavaVisitor(EmitVisitor):
     bltinnames = {
         'int' : 'Integer',
         'bool' : 'Boolean',
+        'bytes' : 'byte[]',
         'identifier' : 'String',
+        'constant' : 'String',
+        'singleton' : 'String',
         'string' : 'Object',
         'object' : 'Object', # was PyObject
 
