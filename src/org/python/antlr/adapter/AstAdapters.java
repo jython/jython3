@@ -328,12 +328,12 @@ public class AstAdapters {
         return (java.util.List<withitem>)withitemAdapter.iter2ast(items);
     }
 
-    public static PyString bytes2py(byte[] bytes) {
-        return new PyString(new String(bytes));
+    public static PyString bytes2py(String bytes) {
+        return new PyString(bytes);
     }
 
-    public static byte[] py2bytes(PyObject obj) {
-        return obj.toString().getBytes();
+    public static String py2bytes(PyObject obj) {
+        return obj.toString();
     }
 
     public static PyUnicode constant2py(String c) {

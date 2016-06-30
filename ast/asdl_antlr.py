@@ -624,7 +624,7 @@ class JavaVisitor(EmitVisitor):
     bltinnames = {
         'int' : 'Integer',
         'bool' : 'Boolean',
-        'bytes' : 'byte[]',
+        'bytes' : 'String',
         'identifier' : 'String',
         'constant' : 'String',
         'singleton' : 'String',

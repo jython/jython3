@@ -99,6 +99,7 @@ import org.python.antlr.ast.BinOp;
 import org.python.antlr.ast.BoolOp;
 import org.python.antlr.ast.boolopType;
 import org.python.antlr.ast.Break;
+import org.python.antlr.ast.Bytes;
 import org.python.antlr.ast.Call;
 import org.python.antlr.ast.ClassDef;
 import org.python.antlr.ast.cmpopType;
@@ -1961,7 +1962,12 @@ atom
        }
      | (S+=STRING)+
        {
-           etype = new Str(actions.extractStringToken($S), actions.extractStrings($S, encoding, unicodeLiterals));
+           Object str = actions.extractStrings($S, encoding, unicodeLiterals);
+           if (str instanceof String) {
+               etype = new Bytes(actions.extractStringToken($S), (String) str);
+           } else {
+               etype = new Str(actions.extractStringToken($S), str);
+           }
        }
      ;
 

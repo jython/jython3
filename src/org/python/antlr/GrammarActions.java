@@ -502,7 +502,7 @@ public class GrammarActions {
         }
     }
 
-    PyString extractStrings(List s, String encoding, boolean unicodeLiterals) {
+    Object extractStrings(List s, String encoding, boolean unicodeLiterals) {
         boolean ustring = false;
         Token last = null;
         StringBuffer sb = new StringBuffer();
@@ -518,7 +518,7 @@ public class GrammarActions {
         if (ustring) {
             return new PyUnicode(sb.toString(), true);
         }
-        return new PyString(sb.toString());
+        return sb.toString();
     }
 
     StringPair extractString(Token t, String encoding, boolean unicodeLiterals) {

@@ -30,8 +30,8 @@ import java.util.ArrayList;
 @ExposedType(name = "_ast.Bytes", base = expr.class)
 public class Bytes extends expr {
 public static final PyType TYPE = PyType.fromClass(Bytes.class);
-    private byte[] s;
-    public byte[] getInternalS() {
+    private String s;
+    public String getInternalS() {
         return s;
     }
     @ExposedGet(name = "s")
@@ -82,17 +82,17 @@ public static final PyType TYPE = PyType.fromClass(Bytes.class);
         setS(s);
     }
 
-    public Bytes(Token token, byte[] s) {
+    public Bytes(Token token, String s) {
         super(token);
         this.s = s;
     }
 
-    public Bytes(Integer ttype, Token token, byte[] s) {
+    public Bytes(Integer ttype, Token token, String s) {
         super(ttype, token);
         this.s = s;
     }
 
-    public Bytes(PythonTree tree, byte[] s) {
+    public Bytes(PythonTree tree, String s) {
         super(tree);
         this.s = s;
     }
