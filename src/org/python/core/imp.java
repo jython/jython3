@@ -233,7 +233,7 @@ public class imp {
 
         Py.writeComment(IMPORT_LOG,
                 String.format("import %s # precompiled from %s", name, compiledName));
-        return createFromCode(name, code, compiledName);
+        return createFromCode(name, code, sourceName);
     }
 
     public static byte[] readCode(String name, InputStream fp, boolean testing) throws IOException {
