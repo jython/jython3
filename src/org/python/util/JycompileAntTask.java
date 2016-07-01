@@ -1,14 +1,17 @@
 package org.python.util;
 
-import java.io.File;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.tools.ant.BuildException;
+import org.python.Version;
 import org.python.core.PyException;
 import org.python.core.PySystemState;
 import org.python.core.imp;
 import org.python.modules._py_compile;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Compiles all python files in a directory to bytecode, and writes them to another directory,
@@ -31,11 +34,21 @@ public class JycompileAntTask extends GlobMatchingTask {
         for (File src : toCompile) {
             try {
                 String name = _py_compile.getModuleName(src);
-                String compiledFilePath = name.replace('.', '/');
+                String compiledFilePath = name.replace('.', File.separatorChar);
+                Path classPath = Paths.get(compiledFilePath);
                 if (src.getName().endsWith("__init__.py")) {
-                    compiledFilePath += "/__init__";
+                    classPath = classPath.resolve(Paths.get(imp.PY_CACHE, "__init__"));
+                } else {
+                    Path cache = Paths.get(imp.PY_CACHE, classPath.getFileName().toString());
+                    if (classPath.getParent() == null) {
+                        classPath = cache;
+                    } else {
+                        classPath = classPath.getParent().resolve(cache);
+                    }
                 }
-                File compiled = new File(destDir, compiledFilePath + "$py.class");
+                File compiled = Paths.get(destDir.toString(),
+                        classPath.getParent().toString(),
+                        classPath.getFileName().toString() + Version.PY_CACHE_TAG + ".class").toFile();
                 compile(src, compiled, name);
             } catch (RuntimeException e) {
                 log("Could not compile " + src);
@@ -45,7 +58,7 @@ public class JycompileAntTask extends GlobMatchingTask {
     }
 
     /**
-     * Compiles the python file <code>src</code> to bytecode filling in <code>moduleName</code> as
+     * Compiles the python file <code>src</code> to bytecode filling in <code>moduleName</code> a
      * its name, and stores it in <code>compiled</code>. This is called by process for every file
      * that's compiled, so subclasses can override this method to affect or track the compilation.
      */

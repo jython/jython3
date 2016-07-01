@@ -32,6 +32,7 @@ __all__ = ['BASIC_FORMAT', 'BufferingFormatter', 'CRITICAL', 'DEBUG', 'ERROR',
            'captureWarnings', 'critical', 'debug', 'disable', 'error',
            'exception', 'fatal', 'getLevelName', 'getLogger', 'getLoggerClass',
            'info', 'log', 'makeLogRecord', 'setLoggerClass', 'warn', 'warning']
+import imp
 
 try:
     import codecs
@@ -60,7 +61,7 @@ if hasattr(sys, 'frozen'): #support for py2exe
     _srcfile = "logging%s__init__%s" % (os.sep, __file__[-4:])
 elif __file__[-4:].lower() in ['.pyc', '.pyo']:
     _srcfile = __file__[:-4] + '.py'
-elif __file__.endswith('$py.class'):
+elif __file__.endswith(imp.get_tag() + '.class'):
     _srcfile = __file__[:-9] + '.py'
 else:
     _srcfile = __file__

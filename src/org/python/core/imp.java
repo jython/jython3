@@ -8,9 +8,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.python.Version;
 import org.python.compiler.Module;
 import org.python.core.util.FileUtil;
 import org.python.core.util.PlatformUtil;
@@ -24,6 +27,7 @@ import org.python.core.util.PlatformUtil;
  * import.c.
  */
 public class imp {
+    public static final String PY_CACHE = "__pycache__";
 
     private static final String IMPORT_LOG = "import";
 
@@ -221,7 +225,7 @@ public class imp {
         }
         PyCode code;
         try {
-            code = BytecodeLoader.makeCode(name + "$py", data.getBytes(), //
+            code = BytecodeLoader.makeCode(name + Version.PY_CACHE_TAG, data.getBytes(), //
                     source == CodeImport.compiled_only ? data.getFilename() : sourceName);
         } catch (Throwable t) {
             if (testing) {
@@ -296,7 +300,11 @@ public class imp {
     }
 
     public static String makeCompiledFilename(String filename) {
-        return filename.substring(0, filename.length() - 3) + "$py.class";
+        Path source = Paths.get(filename);
+        Path base = source.getParent();
+        Path file = source.getFileName();
+        String classPath = file.toString().substring(0, filename.length() - 3) + Version.PY_CACHE_TAG + ".class";
+        return base.resolve(Paths.get(imp.PY_CACHE, classPath)).toString();
     }
 
     /**
@@ -364,7 +372,7 @@ public class imp {
             CompilerFlags cflags = new CompilerFlags();
             bufReader = ParserFacade.prepBufReader(fp, cflags, filename, false);
             node = ParserFacade.parseOnly(bufReader, CompileMode.exec, filename, cflags);
-            Module.compile(node, ofp, name + "$py", filename, true, false, null, mtime);
+            Module.compile(node, ofp, name + Version.PY_CACHE_TAG, filename, true, false, null, mtime);
             return ofp.toByteArray();
         } catch (Throwable t) {
             throw ParserFacade.fixParseError(bufReader, t, filename);
@@ -395,7 +403,7 @@ public class imp {
 
         Py.writeComment(IMPORT_LOG, "'" + name + "' as " + filename);
 
-        PyCode code = BytecodeLoader.makeCode(name + "$py", bytes, filename);
+        PyCode code = BytecodeLoader.makeCode(name + Version.PY_CACHE_TAG, bytes, filename);
         return createFromCode(name, code, filename);
     }
 
@@ -410,7 +418,7 @@ public class imp {
     /**
      * Returns a module with the given name whose contents are the results of running c. Sets
      * __file__ on the module to be moduleLocation unless moduleLocation is null. If c comes from a
-     * local .py file or compiled $py.class class moduleLocation should be the result of running new
+     * local .py file or compiled ".{cache_tag}.class" class moduleLocation should be the result of running new
      * File(moduleLocation).getAbsolutePath(). If c comes from a remote file or is a jar
      * moduleLocation should be the full uri for c.
      */
@@ -596,23 +604,24 @@ public class imp {
     static PyObject loadFromSource(PySystemState sys, String name, String modName, String entry) {
         String dirName = sys.getPath(entry);
         String sourceName = "__init__.py";
-        String compiledName = "__init__$py.class";
+        String compiledName = "__init__" + Version.PY_CACHE_TAG + ".class";
         // display names are for identification purposes (e.g. __file__): when entry is
         // null it forces java.io.File to be a relative path (e.g. foo/bar.py instead of
         // /tmp/foo/bar.py)
-        String displayDirName = entry.equals("") ? null : entry.toString();
-        String displaySourceName = new File(new File(displayDirName, name), sourceName).getPath();
-        String displayCompiledName =
-                new File(new File(displayDirName, name), compiledName).getPath();
+        Path sourcePath = Paths.get(entry, name, sourceName).toAbsolutePath();
+        Path classPath =
+                Paths.get(entry, name, PY_CACHE, compiledName).toAbsolutePath();
 
         // First check for packages
         File dir = new File(dirName, name);
-        File sourceFile = new File(dir, sourceName);
-        File compiledFile = new File(dir, compiledName);
+        File sourceFile;
+        File compiledFile;
 
         boolean pkg = false;
         try {
             if (dir.isDirectory()) {
+                sourceFile = sourcePath.toFile();
+                compiledFile = classPath.toFile();
                 if (caseok(dir, name) && (sourceFile.isFile() || compiledFile.isFile())) {
                     pkg = true;
                 } else {
@@ -627,17 +636,17 @@ public class imp {
         if (!pkg) {
             Py.writeDebug(IMPORT_LOG, "trying source " + dir.getPath());
             sourceName = name + ".py";
-            compiledName = name + "$py.class";
-            displaySourceName = new File(displayDirName, sourceName).getPath();
-            displayCompiledName = new File(displayDirName, compiledName).getPath();
-            sourceFile = new File(dirName, sourceName);
-            compiledFile = new File(dirName, compiledName);
+            compiledName = name + Version.PY_CACHE_TAG + ".class";
+            sourcePath = Paths.get(dirName, sourceName);
+            classPath = Paths.get(dirName, PY_CACHE, compiledName);
         } else {
             PyModule m = addModule(modName);
-            PyObject filename = new PyUnicode(new File(displayDirName, name).getPath());
+            PyObject filename = new PyUnicode(dir.getAbsolutePath());
             m.__dict__.__setitem__("__path__", new PyList(new PyObject[] {filename}));
         }
 
+        sourceFile = sourcePath.toFile();
+        compiledFile = classPath.toFile();
         try {
             if (sourceFile.isFile() && caseok(sourceFile, sourceName)) {
                 long pyTime = sourceFile.lastModified();
@@ -647,15 +656,15 @@ public class imp {
                     if (classTime >= pyTime) {
                         PyObject ret = createFromPyClass(modName, makeStream(compiledFile), //
                                 true, // OK to fail here as we have the source
-                                displaySourceName, displayCompiledName, pyTime);
+                                sourcePath.toString(), sourcePath.toString(), pyTime);
                         if (ret != null) {
                             return ret;
                         }
                     }
-                    return createFromSource(modName, makeStream(sourceFile), displaySourceName,
+                    return createFromSource(modName, makeStream(sourceFile), sourcePath.toString(),
                             compiledFile.getPath(), pyTime);
                 }
-                return createFromSource(modName, makeStream(sourceFile), displaySourceName,
+                return createFromSource(modName, makeStream(sourceFile), sourcePath.toString(),
                         compiledFile.getPath(), pyTime);
             }
 
@@ -664,7 +673,7 @@ public class imp {
             if (compiledFile.isFile() && caseok(compiledFile, compiledName)) {
                 return createFromPyClass(modName, makeStream(compiledFile), //
                         false, // throw ImportError here if this fails
-                        displaySourceName, displayCompiledName, NO_MTIME, CodeImport.compiled_only);
+                        sourcePath.toString(), classPath.toString(), NO_MTIME, CodeImport.compiled_only);
             }
         } catch (SecurityException e) {
             // ok

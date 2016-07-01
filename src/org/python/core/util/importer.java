@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.EnumSet;
 
+import org.python.Version;
 import org.python.core.BytecodeLoader;
 import org.python.core.Py;
 import org.python.core.PyCode;
@@ -81,11 +82,11 @@ public abstract class importer<T> extends PyObject {
 
     private SearchOrderEntry[] makeSearchOrder(){
         return new SearchOrderEntry[] {
-            new SearchOrderEntry(getSeparator() + "__init__$py.class",
+            new SearchOrderEntry(getSeparator() + "__init__" + Version.PY_CACHE_TAG + ".class",
                                  EnumSet.of(EntryType.IS_PACKAGE, EntryType.IS_BYTECODE)),
             new SearchOrderEntry(getSeparator() + "__init__.py",
                                  EnumSet.of(EntryType.IS_PACKAGE, EntryType.IS_SOURCE)),
-            new SearchOrderEntry("$py.class", EnumSet.of(EntryType.IS_BYTECODE)),
+            new SearchOrderEntry(Version.PY_CACHE_TAG + ".class", EnumSet.of(EntryType.IS_BYTECODE)),
             new SearchOrderEntry(".py", EnumSet.of(EntryType.IS_SOURCE)),};
     }
 
@@ -231,7 +232,7 @@ public abstract class importer<T> extends PyObject {
                 bundle.close();
             }
 
-            PyCode code = BytecodeLoader.makeCode(fullname + "$py", codeBytes, fullSearchPath);
+            PyCode code = BytecodeLoader.makeCode(fullname + Version.PY_CACHE_TAG, codeBytes, fullSearchPath);
             return new ModuleCodeData(code, isPackage, fullSearchPath);
         }
         return null;

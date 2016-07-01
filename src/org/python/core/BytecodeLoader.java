@@ -6,6 +6,7 @@ import java.net.URLClassLoader;
 import java.util.List;
 
 import org.objectweb.asm.ClassReader;
+import org.python.Version;
 import org.python.util.Generic;
 
 /**
@@ -106,7 +107,7 @@ public class BytecodeLoader {
         }
 
         public Class<?> loadClassFromBytes(String name, byte[] data) {
-            if (name.endsWith("$py")) {
+            if (name.endsWith(Version.PY_CACHE_TAG)) {
                 try {
                     // Get the real class name: we might request a 'bar'
                     // Jython module that was compiled as 'foo.bar', or

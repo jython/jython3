@@ -2,6 +2,7 @@ from contextlib import contextmanager
 import linecache
 import os
 import io
+import imp
 import sys
 import unittest
 import subprocess
@@ -16,7 +17,7 @@ py_warnings = support.import_fresh_module('warnings', blocked=['_warnings'])
 c_warnings = support.import_fresh_module('warnings', fresh=['_warnings'])
 
 warning_tests_py = os.path.splitext(warning_tests.__file__)[0]
-warning_tests_py = warning_tests_py.replace('$py', '') + '.py'
+warning_tests_py = warning_tests_py.replace(imp.get_tag(), '') + '.py'
 
 @contextmanager
 def warnings_state(module):

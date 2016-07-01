@@ -46,7 +46,7 @@ public class _py_compile {
         }
 
         // Make the compiled classfile's name fully qualified with a package by walking up the
-        // directory tree looking for __init__.py files. Don't check for __init__$py.class since
+        // directory tree looking for __init__.py files. Don't check for __init__.${cache_tag}.class since
         // we're compiling source here and the existence of a class file without corresponding
         // source probably doesn't indicate a package.
         while (dir != null && (new File(dir, "__init__.py").exists())) {

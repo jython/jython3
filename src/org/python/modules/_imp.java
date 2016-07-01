@@ -1,6 +1,7 @@
 
 package org.python.modules;
 
+import org.python.Version;
 import org.python.compiler.Module;
 import org.python.core.PyCode;
 import org.python.core.__builtin__;
@@ -18,6 +19,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /*
  * A bogus implementation of the CPython builtin module "imp".
@@ -78,7 +81,7 @@ public class _imp {
     static ModuleInfo findFromSource(String name, String entry, boolean findingPackage,
                                      boolean preferSource) {
         String sourceName = "__init__.py";
-        String compiledName = "__init__$py.class";
+        String compiledName = "__init__" + Version.PY_CACHE_TAG + ".class";
         String directoryName = PySystemState.getPathLazy(entry);
         // displayDirName is for identification purposes: when null it
         // forces java.io.File to be a relative path (e.g. foo/bar.py
@@ -86,23 +89,23 @@ public class _imp {
         String displayDirName = entry.equals("") ? null : entry;
 
         // First check for packages
-        File dir = findingPackage ? new File(directoryName) : new File(directoryName, name);
-        File sourceFile = new File(dir, sourceName);
-        File compiledFile = new File(dir, compiledName);
+        Path dir = findingPackage ? Paths.get(directoryName) : Paths.get(directoryName, name);
+        File sourceFile = Paths.get(dir.toString(), sourceName).toFile();
+        File compiledFile = Paths.get(dir.toString(), imp.PY_CACHE, compiledName).toFile();
 
-        boolean pkg = dir.isDirectory() && caseok(dir, name) && (sourceFile.isFile()
+        boolean pkg = dir.toFile().isDirectory() && caseok(dir.toFile(), name) && (sourceFile.isFile()
                                                                  || compiledFile.isFile());
 
         if(!findingPackage) {
             if(pkg) {
-                return new ModuleInfo(Py.None, new File(displayDirName, name).getPath(),
+                return new ModuleInfo(Py.None, Paths.get(displayDirName, name).toString(),
                                       "", "", PKG_DIRECTORY);
             } else {
-                Py.writeDebug("import", "trying source " + dir.getPath());
+                Py.writeDebug("import", "trying source " + dir.toString());
                 sourceName = name + ".py";
-                compiledName = name + "$py.class";
+                compiledName = name + Version.PY_CACHE_TAG + ".class";
                 sourceFile = new File(directoryName, sourceName);
-                compiledFile = new File(directoryName, compiledName);
+                compiledFile = Paths.get(directoryName, imp.PY_CACHE, compiledName).toFile();
             }
         }
 
@@ -181,8 +184,8 @@ public class _imp {
         // XXX: Ideally we wouldn't care about sourceName here (see
         // http://bugs.jython.org/issue1605847 msg3805)
         String sourceName = pathname;
-        if (sourceName.endsWith("$py.class")) {
-            sourceName = sourceName.substring(0, sourceName.length() - 9) + ".py";
+        if (sourceName.endsWith(Version.PY_CACHE_TAG +".class")) {
+            sourceName = sourceName.substring(0, sourceName.length() - 6 - Version.PY_CACHE_TAG.length()) + ".py";
         }
         return org.python.core.imp.loadFromCompiled(name.intern(), stream, sourceName, pathname);
     }
@@ -292,7 +295,7 @@ public class _imp {
         return new PyList(new PyObject[] {new PyTuple(new PyUnicode(".py"),
                                                       new PyUnicode("r"),
                                                       Py.newLong(PY_SOURCE)),
-                                          new PyTuple(new PyUnicode("$py.class"),
+                                          new PyTuple(new PyUnicode(Version.PY_CACHE_TAG + ".class"),
                                                       new PyUnicode("rb"),
                                                       Py.newLong(PY_COMPILED)),});
     }

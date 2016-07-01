@@ -3,13 +3,14 @@
 
 package org.python.core.packagecache;
 
-import org.python.core.imp;
+import org.python.Version;
 import org.python.core.Py;
 import org.python.core.PyJavaPackage;
 import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyUnicode;
+import org.python.core.imp;
 import org.python.core.util.RelativeFile;
 
 import java.io.BufferedInputStream;
@@ -76,7 +77,7 @@ public abstract class PathPackageManager extends CachedJarsPackageManager {
         private boolean python;
 
         public boolean accept(File dir, String name) {
-            if(name.endsWith(".py") || name.endsWith("$py.class") || name.endsWith("$_PyInner.class")) {
+            if(name.endsWith(".py") || name.endsWith(Version.PY_CACHE_TAG + ".class") || name.endsWith("$_PyInner.class")) {
                 python = true;
             }else if (name.endsWith(".class")) {
                 java = true;

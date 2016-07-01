@@ -1,6 +1,7 @@
 package org.python.util;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
@@ -15,7 +16,7 @@ public abstract class GlobMatchingTask extends MatchingTask {
 
     protected File destDir;
 
-    private Set<File> toExpose = Generic.set();
+    private Set<File> toExpose = new HashSet<>();
 
     /**
      * Set the source directories to find the class files to be exposed.
