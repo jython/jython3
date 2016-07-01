@@ -18,8 +18,43 @@ import java.util.Set;
  * possibly the same one.
  */
 public class JycompileAntTask extends GlobMatchingTask {
-
     @Override
+    public void execute() throws BuildException {
+        checkParameters();
+        toExpose.clear();
+
+        for (String srcEntry : src.list()) {
+            File srcDir = getProject().resolveFile(srcEntry);
+            if (!srcDir.exists()) {
+                throw new BuildException("srcdir '" + srcDir.getPath() + "' does not exist!",
+                                         getLocation());
+            }
+            File[] files = srcDir.listFiles();
+            filter(files);
+        }
+        process(toExpose);
+    }
+
+    private void filter(File[] files) {
+        for (File src : files) {
+            if (src.isDirectory()) {
+                if (!src.toPath().endsWith(imp.PY_CACHE) && !src.toPath().endsWith("test")) {
+                    filter(src.listFiles());
+                }
+                continue;
+            }
+            if (!src.getName().endsWith(".py")) {
+                continue;
+            }
+            Path classPath = src.toPath().resolveSibling(
+                    Paths.get(imp.PY_CACHE, src.getName().substring(0, src.getName().length() - 3) + Version.PY_CACHE_TAG + ".class"));
+            File classFile = classPath.toFile();
+            if (classFile.exists() && classFile.lastModified() > src.lastModified())
+                continue;
+            toExpose.add(src);
+        }
+    }
+
     public void process(Set<File> toCompile) throws BuildException {
         if (toCompile.size() == 0) {
             return;
@@ -75,13 +110,5 @@ public class JycompileAntTask extends GlobMatchingTask {
             throw new BuildException("Unable to make directory for compiled file: " + compiled);
         }
         imp.cacheCompiledSource(src.getAbsolutePath(), compiled.getAbsolutePath(), bytes);
-    }
-
-    protected String getFrom() {
-        return "*.py";
-    }
-
-    protected String getTo() {
-        return "*$py.class";
     }
 }

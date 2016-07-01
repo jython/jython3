@@ -7,24 +7,40 @@ import java.io.IOException;
 import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.util.GlobPatternMapper;
+import org.apache.tools.ant.util.SourceFileScanner;
 import org.objectweb.asm.ClassWriter;
 import org.python.core.Py;
 import org.python.core.Options;
 import org.python.util.GlobMatchingTask;
 
 public class ExposeTask extends GlobMatchingTask {
-
     @Override
-    protected String getFrom() {
-        return "*.class";
+    public void execute() throws BuildException {
+        checkParameters();
+        toExpose.clear();
+        for (String srcEntry : src.list()) {
+            File srcDir = getProject().resolveFile(srcEntry);
+            if (!srcDir.exists()) {
+                throw new BuildException("srcdir '" + srcDir.getPath() + "' does not exist!",
+                                         getLocation());
+            }
+            String[] files = getDirectoryScanner(srcDir).getIncludedFiles();
+            filter(srcDir, files);
+        }
+        process(toExpose);
     }
 
-    @Override
-    protected String getTo() {
-        return "*.class";
+    protected void filter(File srcDir, String[] files) {
+        GlobPatternMapper m = new GlobPatternMapper();
+        m.setFrom("*.class");
+        m.setTo("*.class");
+        SourceFileScanner sfs = new SourceFileScanner(this);
+        for (File file : sfs.restrictAsFiles(files, srcDir, destDir, m)) {
+            toExpose.add(file);
+        }
     }
 
-    @Override
     public void process(Set<File> toExpose) throws BuildException {
         if (toExpose.size() > 1) {
             log("Exposing " + toExpose.size() + " classes");

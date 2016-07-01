@@ -303,7 +303,7 @@ public class imp {
         Path source = Paths.get(filename);
         Path base = source.getParent();
         Path file = source.getFileName();
-        String classPath = file.toString().substring(0, filename.length() - 3) + Version.PY_CACHE_TAG + ".class";
+        String classPath = file.toString().substring(0, file.toString().length() - 3) + Version.PY_CACHE_TAG + ".class";
         return base.resolve(Paths.get(imp.PY_CACHE, classPath)).toString();
     }
 

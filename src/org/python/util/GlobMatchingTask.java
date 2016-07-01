@@ -12,11 +12,11 @@ import org.apache.tools.ant.util.SourceFileScanner;
 
 public abstract class GlobMatchingTask extends MatchingTask {
 
-    private Path src;
+    protected Path src;
 
     protected File destDir;
 
-    private Set<File> toExpose = new HashSet<>();
+    protected Set<File> toExpose = new HashSet<>();
 
     /**
      * Set the source directories to find the class files to be exposed.
@@ -53,38 +53,6 @@ public abstract class GlobMatchingTask extends MatchingTask {
      */
     public File getDestdir() {
         return destDir;
-    }
-
-    @Override
-    public void execute() throws BuildException {
-        checkParameters();
-        toExpose.clear();
-        for (String srcEntry : src.list()) {
-            File srcDir = getProject().resolveFile(srcEntry);
-            if (!srcDir.exists()) {
-                throw new BuildException("srcdir '" + srcDir.getPath() + "' does not exist!",
-                                         getLocation());
-            }
-            String[] files = getDirectoryScanner(srcDir).getIncludedFiles();
-            scanDir(srcDir, destDir != null ? destDir : srcDir, files);
-        }
-        process(toExpose);
-    }
-
-    protected abstract void process(Set<File> matches);
-
-    protected abstract String getFrom();
-
-    protected abstract String getTo();
-
-    protected void scanDir(File srcDir, File destDir, String[] files) {
-        GlobPatternMapper m = new GlobPatternMapper();
-        m.setFrom(getFrom());
-        m.setTo(getTo());
-        SourceFileScanner sfs = new SourceFileScanner(this);
-        for (File file : sfs.restrictAsFiles(files, srcDir, destDir, m)) {
-            toExpose.add(file);
-        }
     }
 
     /**
