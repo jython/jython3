@@ -1012,7 +1012,7 @@ public class PyObject implements Serializable {
     public final PyObject __getattr__(String name) {
         PyType selfType = getType();
         PyObject getattr = selfType.lookup("__getattribute__");
-        return getattr.__get__(this, selfType).__call__(new PyString(name));
+        return getattr.__get__(this, selfType).__call__(new PyUnicode(name));
     }
 
     public void noAttributeError(String name) {

@@ -1264,9 +1264,7 @@ public class __builtin__ {
      */
     private static String asName(PyObject name, String function) {
         if (name instanceof PyUnicode) {
-            return ((PyUnicode)name).encode().intern();
-        } else if (name instanceof PyString) {
-            return ((PyString)name).internedString();
+            return ((PyUnicode)name).toString().intern();
         }
         throw Py.TypeError(function + "(): attribute name must be string");
     }

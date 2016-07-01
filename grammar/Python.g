@@ -2548,9 +2548,12 @@ COMPLEX
 fragment
 DIGITS : ( '0' .. '9' )+ ;
 
-NAME:    ( 'a' .. 'z' | 'A' .. 'Z' | '_')
-        ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
-    ;
+fragment
+LETTER :   'a'..'z'|'A'..'Z'|'\u00C0'..'\u00D6'|'\u00D8'..'\u00F6'|'\u00F8'..'\u00FF'|'\u0100'..'\uFFFE'|'_'
+       ;
+
+NAME : LETTER ( LETTER | DIGITS)*
+     ;
 
 /** Match various string types.  Note that greedy=false implies '''
  *  should make us exit loop not continue.
