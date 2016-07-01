@@ -714,6 +714,9 @@ public class PosixModule implements ClassDictInit {
         String[] names = file.list();
 
         if (names == null) {
+            if (!file.exists()) {
+                throw Py.OSError(Errno.ENOENT, path);
+            }
             if (!file.isDirectory()) {
                 throw Py.OSError(Errno.ENOTDIR, path);
             }
