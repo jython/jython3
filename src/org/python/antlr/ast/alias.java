@@ -15,6 +15,7 @@ import org.python.core.AstList;
 import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
+import org.python.core.PyUnicode;
 import org.python.core.PyStringMap;
 import org.python.core.PyType;
 import org.python.core.Visitproc;
@@ -37,7 +38,7 @@ public class alias extends PythonTree {
     @ExposedGet(name = "name")
     public PyObject getName() {
         if (name == null) return Py.None;
-        return new PyString(name);
+        return new PyUnicode(name);
     }
     @ExposedSet(name = "name")
     public void setName(PyObject name) {
@@ -51,7 +52,7 @@ public class alias extends PythonTree {
     @ExposedGet(name = "asname")
     public PyObject getAsname() {
         if (asname == null) return Py.None;
-        return new PyString(asname);
+        return new PyUnicode(asname);
     }
     @ExposedSet(name = "asname")
     public void setAsname(PyObject asname) {
@@ -59,14 +60,14 @@ public class alias extends PythonTree {
     }
 
 
-    private final static PyString[] fields =
-    new PyString[] {new PyString("name"), new PyString("asname")};
+    private final static PyUnicode[] fields =
+    new PyUnicode[] {new PyUnicode("name"), new PyUnicode("asname")};
     @ExposedGet(name = "_fields")
-    public PyString[] get_fields() { return fields; }
+    public PyUnicode[] get_fields() { return fields; }
 
-    private final static PyString[] attributes = new PyString[0];
+    private final static PyUnicode[] attributes = new PyUnicode[0];
     @ExposedGet(name = "_attributes")
-    public PyString[] get_attributes() { return attributes; }
+    public PyUnicode[] get_attributes() { return attributes; }
 
     public alias(PyType subType) {
         super(subType);

@@ -15,6 +15,7 @@ import org.python.core.AstList;
 import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
+import org.python.core.PyUnicode;
 import org.python.core.PyStringMap;
 import org.python.core.PyType;
 import org.python.core.Visitproc;
@@ -44,14 +45,14 @@ public static final PyType TYPE = PyType.fromClass(Index.class);
     }
 
 
-    private final static PyString[] fields =
-    new PyString[] {new PyString("value")};
+    private final static PyUnicode[] fields =
+    new PyUnicode[] {new PyUnicode("value")};
     @ExposedGet(name = "_fields")
-    public PyString[] get_fields() { return fields; }
+    public PyUnicode[] get_fields() { return fields; }
 
-    private final static PyString[] attributes = new PyString[0];
+    private final static PyUnicode[] attributes = new PyUnicode[0];
     @ExposedGet(name = "_attributes")
-    public PyString[] get_attributes() { return attributes; }
+    public PyUnicode[] get_attributes() { return attributes; }
 
     public Index(PyType subType) {
         super(subType);

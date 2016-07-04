@@ -15,6 +15,7 @@ import org.python.core.AstList;
 import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
+import org.python.core.PyUnicode;
 import org.python.core.PyStringMap;
 import org.python.core.PyType;
 import org.python.core.Visitproc;
@@ -37,7 +38,7 @@ public static final PyType TYPE = PyType.fromClass(ImportFrom.class);
     @ExposedGet(name = "module")
     public PyObject getModule() {
         if (module == null) return Py.None;
-        return new PyString(module);
+        return new PyUnicode(module);
     }
     @ExposedSet(name = "module")
     public void setModule(PyObject module) {
@@ -71,15 +72,15 @@ public static final PyType TYPE = PyType.fromClass(ImportFrom.class);
     }
 
 
-    private final static PyString[] fields =
-    new PyString[] {new PyString("module"), new PyString("names"), new PyString("level")};
+    private final static PyUnicode[] fields =
+    new PyUnicode[] {new PyUnicode("module"), new PyUnicode("names"), new PyUnicode("level")};
     @ExposedGet(name = "_fields")
-    public PyString[] get_fields() { return fields; }
+    public PyUnicode[] get_fields() { return fields; }
 
-    private final static PyString[] attributes =
-    new PyString[] {new PyString("lineno"), new PyString("col_offset")};
+    private final static PyUnicode[] attributes =
+    new PyUnicode[] {new PyUnicode("lineno"), new PyUnicode("col_offset")};
     @ExposedGet(name = "_attributes")
-    public PyString[] get_attributes() { return attributes; }
+    public PyUnicode[] get_attributes() { return attributes; }
 
     public ImportFrom(PyType subType) {
         super(subType);

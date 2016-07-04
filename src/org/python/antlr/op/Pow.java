@@ -7,6 +7,7 @@ import org.python.antlr.PythonTree;
 import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
+import org.python.core.PyUnicode;
 import org.python.core.PyType;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
@@ -29,13 +30,13 @@ public Pow(PyType subType) {
 @ExposedMethod
 public void Pow___init__(PyObject[] args, String[] keywords) {}
 
-    private final static PyString[] fields = new PyString[0];
+    private final static PyUnicode[] fields = new PyUnicode[0];
     @ExposedGet(name = "_fields")
-    public PyString[] get_fields() { return fields; }
+    public PyUnicode[] get_fields() { return fields; }
 
-    private final static PyString[] attributes = new PyString[0];
+    private final static PyUnicode[] attributes = new PyUnicode[0];
     @ExposedGet(name = "_attributes")
-    public PyString[] get_attributes() { return attributes; }
+    public PyUnicode[] get_attributes() { return attributes; }
 
     @ExposedMethod
     public PyObject __int__() {

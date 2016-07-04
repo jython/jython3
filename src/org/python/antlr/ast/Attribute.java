@@ -15,6 +15,7 @@ import org.python.core.AstList;
 import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
+import org.python.core.PyUnicode;
 import org.python.core.PyStringMap;
 import org.python.core.PyType;
 import org.python.core.Visitproc;
@@ -50,7 +51,7 @@ public static final PyType TYPE = PyType.fromClass(Attribute.class);
     @ExposedGet(name = "attr")
     public PyObject getAttr() {
         if (attr == null) return Py.None;
-        return new PyString(attr);
+        return new PyUnicode(attr);
     }
     @ExposedSet(name = "attr")
     public void setAttr(PyObject attr) {
@@ -71,15 +72,15 @@ public static final PyType TYPE = PyType.fromClass(Attribute.class);
     }
 
 
-    private final static PyString[] fields =
-    new PyString[] {new PyString("value"), new PyString("attr"), new PyString("ctx")};
+    private final static PyUnicode[] fields =
+    new PyUnicode[] {new PyUnicode("value"), new PyUnicode("attr"), new PyUnicode("ctx")};
     @ExposedGet(name = "_fields")
-    public PyString[] get_fields() { return fields; }
+    public PyUnicode[] get_fields() { return fields; }
 
-    private final static PyString[] attributes =
-    new PyString[] {new PyString("lineno"), new PyString("col_offset")};
+    private final static PyUnicode[] attributes =
+    new PyUnicode[] {new PyUnicode("lineno"), new PyUnicode("col_offset")};
     @ExposedGet(name = "_attributes")
-    public PyString[] get_attributes() { return attributes; }
+    public PyUnicode[] get_attributes() { return attributes; }
 
     public Attribute(PyType subType) {
         super(subType);

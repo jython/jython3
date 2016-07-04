@@ -15,6 +15,7 @@ import org.python.core.AstList;
 import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
+import org.python.core.PyUnicode;
 import org.python.core.PyStringMap;
 import org.python.core.PyType;
 import org.python.core.Visitproc;
@@ -57,15 +58,15 @@ public static final PyType TYPE = PyType.fromClass(UnaryOp.class);
     }
 
 
-    private final static PyString[] fields =
-    new PyString[] {new PyString("op"), new PyString("operand")};
+    private final static PyUnicode[] fields =
+    new PyUnicode[] {new PyUnicode("op"), new PyUnicode("operand")};
     @ExposedGet(name = "_fields")
-    public PyString[] get_fields() { return fields; }
+    public PyUnicode[] get_fields() { return fields; }
 
-    private final static PyString[] attributes =
-    new PyString[] {new PyString("lineno"), new PyString("col_offset")};
+    private final static PyUnicode[] attributes =
+    new PyUnicode[] {new PyUnicode("lineno"), new PyUnicode("col_offset")};
     @ExposedGet(name = "_attributes")
-    public PyString[] get_attributes() { return attributes; }
+    public PyUnicode[] get_attributes() { return attributes; }
 
     public UnaryOp(PyType subType) {
         super(subType);
