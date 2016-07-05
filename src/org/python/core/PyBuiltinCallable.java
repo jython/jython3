@@ -63,8 +63,8 @@ public abstract class PyBuiltinCallable extends PyObject {
         if (self == null) {
             return String.format("<built-in function %s>", info.getName());
         } else {
-            return String.format("<built-in method %s of %s object at %s>", info.getName(),
-                                 self.getType().fastGetName(), Py.idstr(self));
+            return String.format("<function %s.%s>", self.getType().fastGetName(),
+                info.getName());
         }
     }
 
