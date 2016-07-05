@@ -3927,8 +3927,12 @@ public class PyObject implements Serializable {
                 return __getattr.__call__(arg0);
             }
             ret = __findattr_ex__(name);
-            if (ret == null)
+            if (ret == null) {
+                if (name.equals("__cause__") || name.equals("__context__") || name.equals("__suppress_context__")) {
+                    return Py.None;
+                }
                 noAttributeError(name);
+            }
         }
         return ret;
     }

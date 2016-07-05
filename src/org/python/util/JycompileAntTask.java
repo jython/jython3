@@ -38,7 +38,7 @@ public class JycompileAntTask extends GlobMatchingTask {
     private void filter(File[] files) {
         for (File src : files) {
             if (src.isDirectory()) {
-                if (!src.toPath().endsWith(imp.PY_CACHE) && !src.toPath().endsWith("test")) {
+                if (!src.toPath().endsWith(imp.CACHEDIR) && !src.toPath().endsWith("test")) {
                     filter(src.listFiles());
                 }
                 continue;
@@ -47,7 +47,7 @@ public class JycompileAntTask extends GlobMatchingTask {
                 continue;
             }
             Path classPath = src.toPath().resolveSibling(
-                    Paths.get(imp.PY_CACHE, src.getName().substring(0, src.getName().length() - 3) + Version.PY_CACHE_TAG + ".class"));
+                    Paths.get(imp.CACHEDIR, src.getName().substring(0, src.getName().length() - 3) + Version.PY_CACHE_TAG + ".class"));
             File classFile = classPath.toFile();
             if (classFile.exists() && classFile.lastModified() > src.lastModified())
                 continue;
@@ -72,9 +72,9 @@ public class JycompileAntTask extends GlobMatchingTask {
                 String compiledFilePath = name.replace('.', File.separatorChar);
                 Path classPath = Paths.get(compiledFilePath);
                 if (src.getName().endsWith("__init__.py")) {
-                    classPath = classPath.resolve(Paths.get(imp.PY_CACHE, "__init__"));
+                    classPath = classPath.resolve(Paths.get(imp.CACHEDIR, "__init__"));
                 } else {
-                    Path cache = Paths.get(imp.PY_CACHE, classPath.getFileName().toString());
+                    Path cache = Paths.get(imp.CACHEDIR, classPath.getFileName().toString());
                     if (classPath.getParent() == null) {
                         classPath = cache;
                     } else {

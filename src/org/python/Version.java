@@ -77,7 +77,7 @@ public class Version {
                 PY_MICRO_VERSION = Integer.valueOf(properties.getProperty("jython.micro_version"));
                 PY_RELEASE_LEVEL = Integer.valueOf(properties.getProperty("jython.release_level"));
                 PY_RELEASE_SERIAL = Integer.valueOf(properties.getProperty("jython.release_serial"));
-                PY_CACHE_TAG = ".jython-" + PY_MAJOR_VERSION + PY_MINOR_VERSION;
+                PY_CACHE_TAG = "$jython-" + PY_MAJOR_VERSION + PY_MINOR_VERSION;
                 DATE = properties.getProperty("jython.build.date");
                 TIME = properties.getProperty("jython.build.time");
                 HG_BRANCH = properties.getProperty("jython.build.hg_branch");

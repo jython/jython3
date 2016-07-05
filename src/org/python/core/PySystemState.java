@@ -150,6 +150,8 @@ public class PySystemState extends PyObject implements AutoCloseable,
 
     public PyNamespace implementation;
 
+    // _frozen_importlib
+    public PyObject importlib;
     public PyList meta_path;
     public PyList path_hooks;
     public PyObject path_importer_cache;
@@ -1094,7 +1096,12 @@ public class PySystemState extends PyObject implements AutoCloseable,
 
         // Cause sys to export the console handler that was installed
         Py.defaultSystemState.__setattr__("_jy_console", Py.java2py(Py.getConsole()));
-
+        PyObject importlib = imp.importName("importlib", true);
+        PyObject _frozen_importlib = importlib.__findattr__("_bootstrap");
+        PyObject _frozen_importlib_external = importlib.__findattr__("_bootstrap_external");
+        Py.defaultSystemState.importlib = importlib;
+        Py.defaultSystemState.meta_path.append(_frozen_importlib.__findattr__("BuiltinImporter"));
+        Py.defaultSystemState.meta_path.append(_frozen_importlib_external.__findattr__("PathFinder"));
         return Py.defaultSystemState;
     }
 

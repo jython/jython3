@@ -4,10 +4,10 @@ package org.python.core;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -27,7 +27,7 @@ import org.python.core.util.PlatformUtil;
  * import.c.
  */
 public class imp {
-    public static final String PY_CACHE = "__pycache__";
+    public static final String CACHEDIR = "__pycache__";
 
     private static final String IMPORT_LOG = "import";
 
@@ -304,7 +304,7 @@ public class imp {
         Path base = source.getParent();
         Path file = source.getFileName();
         String classPath = file.toString().substring(0, file.toString().length() - 3) + Version.PY_CACHE_TAG + ".class";
-        return base.resolve(Paths.get(imp.PY_CACHE, classPath)).toString();
+        return base.resolve(Paths.get(imp.CACHEDIR, classPath)).toString();
     }
 
     /**
@@ -331,7 +331,10 @@ public class imp {
             if (man != null) {
                 man.checkWrite(compiledFilename);
             }
-            fop = new FileOutputStream(compiledFilename);
+            File compiledFile = new File(compiledFilename);
+            File parent = compiledFile.getParentFile();
+            parent.mkdirs(); // makesure __pycache__ exists
+            fop = new FileOutputStream(compiledFile);
             fop.write(compiledSource);
             fop.close();
             return compiledFilename;
@@ -557,7 +560,7 @@ public class imp {
         return ret;
     }
 
-    private static PyObject loadBuiltin(String name) {
+    public static PyObject loadBuiltin(String name) {
         if (name == "sys") {
             Py.writeComment(IMPORT_LOG, "'" + name + "' as sys in builtin modules");
             return Py.java2py(Py.getSystemState());
@@ -610,7 +613,7 @@ public class imp {
         // /tmp/foo/bar.py)
         Path sourcePath = Paths.get(entry, name, sourceName).toAbsolutePath();
         Path classPath =
-                Paths.get(entry, name, PY_CACHE, compiledName).toAbsolutePath();
+                Paths.get(entry, name, CACHEDIR, compiledName).toAbsolutePath();
 
         // First check for packages
         File dir = new File(dirName, name);
@@ -633,16 +636,17 @@ public class imp {
             // ok
         }
 
-        if (!pkg) {
+        if (pkg) {
+            PyModule m = addModule(modName);
+            PyObject filename = new PyUnicode(dir.getAbsolutePath());
+            m.__dict__.__setitem__("__path__", new PyList(new PyObject[] {filename}));
+            m.__dict__.__setitem__("__package__", new PyUnicode(modName));
+        } else {
             Py.writeDebug(IMPORT_LOG, "trying source " + dir.getPath());
             sourceName = name + ".py";
             compiledName = name + Version.PY_CACHE_TAG + ".class";
             sourcePath = Paths.get(dirName, sourceName);
-            classPath = Paths.get(dirName, PY_CACHE, compiledName);
-        } else {
-            PyModule m = addModule(modName);
-            PyObject filename = new PyUnicode(dir.getAbsolutePath());
-            m.__dict__.__setitem__("__path__", new PyList(new PyObject[] {filename}));
+            classPath = Paths.get(dirName, CACHEDIR, compiledName);
         }
 
         sourceFile = sourcePath.toFile();
@@ -911,6 +915,45 @@ public class imp {
         } while (dot != -1);
 
         return mod;
+    }
+
+    // PyImport_ImportModuleLevelObject
+    private static PyObject importModuleLevelObject(String name, boolean top, PyObject modDict,
+            PyObject fromlist, int level) {
+                PyObject pkg, spec;
+        if (level < 0) {
+            throw Py.ValueError("level must be >= 0");
+        } else if (level > 0) {
+            pkg = modDict.__findattr__("__package__");
+            spec = modDict.__findattr__("__spec__");
+            if (pkg != null && pkg != Py.None) {
+                if (!(pkg instanceof PyUnicode)) {
+                    throw Py.TypeError("package must be a string");
+                } else if (spec != null && spec != Py.None) {
+                    PyObject parent = spec.__getattr__("parent");
+                    int eq = parent._cmp(pkg);
+                    if (eq == 0) {
+                        Py.ImportWarning("__package__ != __spec__.parent");
+                    }
+                }
+            } else if (spec != null && spec != Py.None) {
+                pkg = spec.__getattr__("parent");
+            } else {
+                Py.ImportWarning("can't resolve package from __spec or __package__, failing back on __name__ and __path__");
+                pkg = modDict.__findattr__("__name__");
+                if (pkg == null) {
+                    throw Py.KeyError("'__name__' not in globals");
+                }
+                if ((pkg instanceof PyUnicode)) {
+                    throw Py.TypeError("package must be a string");
+                }
+                if (modDict.__findattr__("__path__") == null) {
+                    int dot;
+                    //XXX
+                }
+            }
+        }
+        return null;
     }
 
     /**

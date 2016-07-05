@@ -2,7 +2,6 @@
 package org.python.modules;
 
 import org.python.Version;
-import org.python.compiler.Module;
 import org.python.core.PyCode;
 import org.python.core.__builtin__;
 import org.python.core.Py;
@@ -91,7 +90,7 @@ public class _imp {
         // First check for packages
         Path dir = findingPackage ? Paths.get(directoryName) : Paths.get(directoryName, name);
         File sourceFile = Paths.get(dir.toString(), sourceName).toFile();
-        File compiledFile = Paths.get(dir.toString(), imp.PY_CACHE, compiledName).toFile();
+        File compiledFile = Paths.get(dir.toString(), imp.CACHEDIR, compiledName).toFile();
 
         boolean pkg = dir.toFile().isDirectory() && caseok(dir.toFile(), name) && (sourceFile.isFile()
                                                                  || compiledFile.isFile());
@@ -105,7 +104,7 @@ public class _imp {
                 sourceName = name + ".py";
                 compiledName = name + Version.PY_CACHE_TAG + ".class";
                 sourceFile = new File(directoryName, sourceName);
-                compiledFile = Paths.get(directoryName, imp.PY_CACHE, compiledName).toFile();
+                compiledFile = Paths.get(directoryName, imp.CACHEDIR, compiledName).toFile();
             }
         }
 
@@ -275,8 +274,7 @@ public class _imp {
 
     public static PyObject create_builtin(PyObject spec) {
         PyObject name = spec.__getattr__("name");
-        if (name == null) return null;
-        return addModuleObject(name);
+        return imp.loadBuiltin(name.toString());
     }
 
     public static int exec_builtin(PyObject mod) {
