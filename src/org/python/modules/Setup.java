@@ -41,7 +41,7 @@ public class Setup {
             "_posixsubprocess",
             "_py_compile",
             "_random:org.python.modules.random.RandomModule",
-            "_sre",
+//            "_sre",
 //            "_string",
             "_systemrestart",
             "_threading:org.python.modules._threading._threading",
@@ -74,6 +74,7 @@ public class Setup {
     };
 
     public static String[] newbuiltinModules = {
+            "_sre",
             "_string",
             "_types",
             "hello:org.python.modules.SimpleModule",

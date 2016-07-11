@@ -52,7 +52,7 @@ public class _types {
      * @param obj
      * @return function
      */
-    @ExposedClassMethod
+    @ExposedFunction
     public static PyObject coroutine(PyType self, PyObject obj) {
         if (!(obj instanceof PyFunction)) {
             throw Py.TypeError("coroutine expects a function");

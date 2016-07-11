@@ -183,6 +183,11 @@ public class ExposedModuleProcessor implements Opcodes, PyTypes {
 
                 @Override
                 public void handleResult(ClassMethodExposer exposer) {
+                    throwInvalid("module cannot have class method");
+                }
+
+                @Override
+                public void handleResult(FunctionExposer exposer) {
                     methodExposers.add(exposer);
                 }
 

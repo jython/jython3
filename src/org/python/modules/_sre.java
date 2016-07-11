@@ -14,38 +14,60 @@
  */
 package org.python.modules;
 
+import org.python.core.ArgParser;
+import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
+import org.python.core.PyType;
+import org.python.expose.ExposedClassMethod;
+import org.python.expose.ExposedConst;
+import org.python.expose.ExposedFunction;
+import org.python.expose.ExposedModule;
 import org.python.modules.sre.PatternObject;
 import org.python.modules.sre.SRE_STATE;
 
+@ExposedModule
 public class _sre {
-    public static int MAGIC = SRE_STATE.SRE_MAGIC;
+    @ExposedConst
+    public static final int MAGIC = SRE_STATE.SRE_MAGIC;
 
     // probably the right number for Jython since we are UTF-16.
-    public static int MAXREPEAT = 65535;
+    @ExposedConst
+    public static final int MAXREPEAT = 65535;
 
-    public static int MAXGROUPS = 100;
+    @ExposedConst
+    public static final int MAXGROUPS = 100;
  
     // workaround the fact that H, I types are unsigned, but we are not really using them as such
     // XXX: May not be the right size, but I suspect it is -- see sre_compile.py
-    public static int CODESIZE = 4;
+    @ExposedConst
+    public static final int CODESIZE = 4;
 
-    public static PatternObject compile(PyString pattern, int flags, PyObject code, int groups,
-                                        PyObject groupindex, PyObject indexgroup) {
+    @ExposedFunction
+    public static PatternObject compile(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("compile", args, keywords,
+                "pattern", "flags", "code", "groups", "groupindex", "indexgroup");
+        PyObject pattern = ap.getPyObject(0);
+        int flags = ap.getInt(1);
+        PyObject code = ap.getPyObject(2);
+        int groups = ap.getInt(3);
+        PyObject groupindex = ap.getPyObject(4);
+        PyObject indexgroup = ap.getPyObject(5);
         int[] ccode = new int[code.__len__()];
         int i = 0;
         for (PyObject item : code.asIterable()) {
             ccode[i++] = (int)item.asLong();
         }
-        return new PatternObject(pattern, flags, ccode, groups, groupindex, indexgroup);
+        return new PatternObject((PyString) pattern, flags, ccode, groups, groupindex, indexgroup);
     }
 
+    @ExposedFunction
     public static int getcodesize() {
         return CODESIZE;
     }
 
-    public static int getlower(int ch, int flags) {
-        return SRE_STATE.getlower(ch, flags);
+    @ExposedFunction
+    public static int getlower(PyObject ch, PyObject flags) {
+        return SRE_STATE.getlower(ch.asInt(), flags.asInt());
     }
 }

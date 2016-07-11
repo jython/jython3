@@ -18,7 +18,7 @@ public abstract class ExposedMethodFinder extends MethodVisitor implements PyTyp
 
     private Exposer newExp;
 
-    private ExposedMethodVisitor methVisitor, classMethVisitor;
+    private ExposedMethodVisitor methVisitor, classMethVisitor, functionVisitor;
 
     private Type onType;
 
@@ -58,6 +58,12 @@ public abstract class ExposedMethodFinder extends MethodVisitor implements PyTyp
 
     /**
      * @param exposer -
+     *                the FunctionExposer built as a result of visiting ExposedFunction
+     */
+    public abstract void handleResult(FunctionExposer exposer);
+
+    /**
+     * @param exposer -
      *            the newExposer built as a result of visiting ExposeNew
      */
     public abstract void handleNewExposer(Exposer exposer);
@@ -88,6 +94,9 @@ public abstract class ExposedMethodFinder extends MethodVisitor implements PyTyp
         } else if(desc.equals(EXPOSED_CLASS_METHOD.getDescriptor())){
             classMethVisitor = new ExposedMethodVisitor();
             return classMethVisitor;
+        } else if(desc.equals(EXPOSED_FUNCTION.getDescriptor())){
+            functionVisitor = new ExposedMethodVisitor();
+            return functionVisitor;
         } else if(desc.equals(EXPOSED_GET.getDescriptor())) {
             return new DescriptorVisitor(methodName) {
 
@@ -214,6 +223,16 @@ public abstract class ExposedMethodFinder extends MethodVisitor implements PyTyp
                                                 classMethVisitor.names,
                                                 classMethVisitor.defaults,
                                                 classMethVisitor.doc));
+        }
+        if (functionVisitor != null) {
+             handleResult(new FunctionExposer(onType,
+                                                access,
+                                                methodName,
+                                                methodDesc,
+                                                typeName,
+                                                functionVisitor.names,
+                                                functionVisitor.defaults,
+                                                functionVisitor.doc));
         }
         super.visitEnd();
     }

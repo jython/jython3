@@ -22,6 +22,7 @@ import org.python.expose.ExposeAsSuperclass;
 import org.python.expose.ExposedClassMethod;
 import org.python.expose.ExposedConst;
 import org.python.expose.ExposedDelete;
+import org.python.expose.ExposedFunction;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedModule;
@@ -88,6 +89,8 @@ public interface PyTypes {
     public static final Type EXPOSED_MODULE = Type.getType(ExposedModule.class);
 
     public static final Type EXPOSED_METHOD = Type.getType(ExposedMethod.class);
+
+    public static final Type EXPOSED_FUNCTION = Type.getType(ExposedFunction.class);
 
     public static final Type EXPOSED_CLASS_METHOD = Type.getType(ExposedClassMethod.class);
 
