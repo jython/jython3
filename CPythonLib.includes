@@ -123,6 +123,7 @@ nturl2path.py
 opcode.py
 operator.py
 optparse.py
+pathlib.py
 pdb.py
 pickle.py
 pickletools.py

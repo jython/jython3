@@ -42,10 +42,10 @@ public class Setup {
             "_py_compile",
             "_random:org.python.modules.random.RandomModule",
             "_sre",
-            "_string",
+//            "_string",
             "_systemrestart",
             "_threading:org.python.modules._threading._threading",
-            "_types",
+//            "_types",
             "_warnings",
             "_weakref:org.python.modules._weakref.WeakrefModule",
             "array:org.python.modules.ArrayModule",
@@ -69,6 +69,13 @@ public class Setup {
             "time:org.python.modules.time.Time",
             "ucnhash",
             "zipimport:org.python.modules.zipimport.zipimport",
-            PosixModule.getOSName() + ":org.python.modules.posix.PosixModule"
+//            PosixModule.getOSName() + ":org.python.modules.posix.PosixModule"
+            "posix:org.python.modules.posix.PosixModule"
+    };
+
+    public static String[] newbuiltinModules = {
+            "_string",
+            "_types",
+            "hello:org.python.modules.SimpleModule",
     };
 }

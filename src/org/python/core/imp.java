@@ -17,6 +17,7 @@ import org.python.Version;
 import org.python.compiler.Module;
 import org.python.core.util.FileUtil;
 import org.python.core.util.PlatformUtil;
+import org.python.modules.Setup;
 
 /**
  * Utility functions for "import" support.

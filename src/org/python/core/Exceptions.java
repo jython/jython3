@@ -700,7 +700,7 @@ public class Exceptions {
 
     private static PyObject buildClass(PyObject dict, String classname, String superclass,
                                        PyObject classDict, String doc) {
-        classDict.__setitem__("__doc__", Py.newString(doc));
+        classDict.__setitem__("__doc__", Py.newUnicode(doc));
         PyType type = (PyType)Py.makeClass(classname,
                                            dict.__finditem__(superclass), classDict);
         type.builtin = true;

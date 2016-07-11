@@ -1306,6 +1306,10 @@ public class PySystemState extends PyObject implements AutoCloseable,
         for (String builtinModule : Setup.builtinModules) {
             addBuiltin(builtinModule);
         }
+        for (String builtinModule : Setup.newbuiltinModules) {
+            addBuiltin(builtinModule);
+        }
+
 
         // add builtins specified in the registry file
         String builtinprop = props.getProperty("python.modules.builtin", "");

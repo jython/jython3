@@ -680,7 +680,7 @@ public class PyUnicode extends PyString implements Iterable {
 
     @ExposedMethod(doc = BuiltinDocs.str___str___doc)
     final PyUnicode str___str__() {
-        return new PyUnicode(encode());
+        return new PyUnicode(getString());
     }
 
     @Override

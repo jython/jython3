@@ -11,6 +11,7 @@ import org.python.core.PyException;
 import org.python.core.PyFloat;
 import org.python.core.PyInteger;
 import org.python.core.PyLong;
+import org.python.core.PyModule;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -19,9 +20,11 @@ import org.python.core.PyUnicode;
 import org.python.core.ThreadState;
 import org.python.expose.ExposeAsSuperclass;
 import org.python.expose.ExposedClassMethod;
+import org.python.expose.ExposedConst;
 import org.python.expose.ExposedDelete;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
+import org.python.expose.ExposedModule;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedSet;
 import org.python.expose.ExposedType;
@@ -38,6 +41,8 @@ public interface PyTypes {
     public static final Type APYOBJ = Type.getType(PyObject[].class);
 
     public static final Type PYTYPE = Type.getType(PyType.class);
+
+    public static final Type PYMODULE = Type.getType(PyModule.class);
 
     public static final Type ASSUPER = Type.getType(ExposeAsSuperclass.class);
 
@@ -80,6 +85,8 @@ public interface PyTypes {
     // Exposer Jython types
     public static final Type EXPOSED_TYPE = Type.getType(ExposedType.class);
 
+    public static final Type EXPOSED_MODULE = Type.getType(ExposedModule.class);
+
     public static final Type EXPOSED_METHOD = Type.getType(ExposedMethod.class);
 
     public static final Type EXPOSED_CLASS_METHOD = Type.getType(ExposedClassMethod.class);
@@ -91,6 +98,8 @@ public interface PyTypes {
     public static final Type EXPOSED_SET = Type.getType(ExposedSet.class);
 
     public static final Type EXPOSED_DELETE = Type.getType(ExposedDelete.class);
+
+    public static final Type EXPOSED_CONST = Type.getType(ExposedConst.class);
 
     public static final Type TYPEBUILDER = Type.getType(TypeBuilder.class);
 

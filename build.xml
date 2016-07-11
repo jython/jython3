@@ -152,6 +152,7 @@
           <pathelement path="${extlibs.dir}/commons-compress-1.9.jar"/>
           <pathelement path="${extlibs.dir}/asm-5.1.jar" />
           <pathelement path="${extlibs.dir}/asm-commons-5.1.jar" />
+          <pathelement path="${extlibs.dir}/asm-tree-5.1.jar" />
           <pathelement path="${extlibs.dir}/asm-util-5.1.jar" />
           <pathelement path="${extlibs.dir}/guava-18.0.jar" />
           <pathelement path="${extlibs.dir}/icu4j-54_1_1.jar" />
@@ -197,6 +198,9 @@
           <pathelement path="${extlibs.dir}/asm-commons-5.1.jar" />
           <pathelement path="${extlibs.dir}/asm-util-5.1.jar" />
           <pathelement path="${extlibs.dir}/junit-4.10.jar" />
+          <!--
+          <pathelement path="${extlibs.dir}/hamcrest-core-1.3.jar" />
+          -->
           <pathelement path="${exposed.dir}" />
           <pathelement path="${compile.dir}" />
           <pathelement path="${cpptasks.jar.dir}" />
@@ -568,9 +572,17 @@
           <pathelement path="${compile.dir}" />
         </classpath>
       </taskdef>
+      <taskdef name="expose_module" classname="org.python.expose.generate.ModuleExposeTask">
+        <classpath>
+          <path refid="main.classpath" />
+          <pathelement path="${compile.dir}" />
+        </classpath>
+      </taskdef>
+
       <expose srcdir="${compile.dir}"
         destdir="${exposed.dir}" 
         includesfile="${jython.base.dir}/CoreExposed.includes"/>
+      <expose_module destdir="${exposed.dir}"/>
     </target>
 
     <target name="jar-complete" depends="jar, pycompile">

@@ -3,22 +3,24 @@ package org.python.modules;
 import org.python.core.ClassDictInit;
 import org.python.core.CompilerFlags;
 import org.python.core.Py;
+import org.python.core.PyBuiltinCallable;
+import org.python.core.PyBuiltinMethod;
 import org.python.core.PyFunction;
 import org.python.core.PyObject;
 import org.python.core.PyTableCode;
+import org.python.core.PyType;
 import org.python.core.PyUnicode;
+import org.python.expose.ExposedClassMethod;
+import org.python.expose.ExposedFunction;
+import org.python.expose.ExposedModule;
 
 import static org.python.core.CodeFlag.*;
 
 /**
  * Created by isaiah on 6/17/16.
  */
-public class _types implements ClassDictInit {
-    public static void classDictInit(PyObject dict) {
-        dict.__setitem__("__name__", new PyUnicode("_types"));
-        // hide from Python
-        dict.__setitem__("classDictInit", null);
-    }
+@ExposedModule
+public class _types {
 
     /**
      * Convert regular generator function to a coroutine
@@ -50,7 +52,8 @@ public class _types implements ClassDictInit {
      * @param obj
      * @return function
      */
-    public static PyObject coroutine(PyObject obj) {
+    @ExposedClassMethod
+    public static PyObject coroutine(PyType self, PyObject obj) {
         if (!(obj instanceof PyFunction)) {
             throw Py.TypeError("coroutine expects a function");
         }

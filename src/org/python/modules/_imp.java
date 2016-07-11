@@ -3,6 +3,7 @@ package org.python.modules;
 
 import org.python.Version;
 import org.python.core.PyCode;
+import org.python.core.PyStringMap;
 import org.python.core.__builtin__;
 import org.python.core.Py;
 import org.python.core.PyFile;
@@ -18,6 +19,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -274,11 +277,57 @@ public class _imp {
 
     public static PyObject create_builtin(PyObject spec) {
         PyObject name = spec.__getattr__("name");
-        return imp.loadBuiltin(name.toString());
+        String modName = name.toString();
+        for (String newmodule : Setup.newbuiltinModules) {
+            if (modName.equals(newmodule.split(":")[0]))
+                return new PyModule(modName, new PyStringMap());
+        }
+        return imp.loadBuiltin(modName);
     }
 
     public static int exec_builtin(PyObject mod) {
+        String name = mod.__findattr__("__name__").toString();
+        String classname = null;
+        for (String newmodule : Setup.newbuiltinModules) {
+            if (name.equals(newmodule.split(":")[0])) {
+                classname = className(newmodule);
+                break;
+            }
+        }
+        if (classname == null) {
+            return 0;
+        }
+        Class c = Py.findClassEx(classname, "builtin modules");
+        if (c != null) {
+            try {
+                Method clinit = c.getMethod("clinic", PyModule.class);
+                clinit.invoke(null, (PyModule) mod);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
         return 0;
+    }
+
+    private static String className(String name) {
+        String classname;
+        String modname;
+
+        int colon = name.indexOf(':');
+        if (colon != -1) {
+            // name:fqclassname
+            modname = name.substring(0, colon).trim();
+            classname = name.substring(colon + 1, name.length()).trim();
+            if (classname.equals("null")) {
+                // name:null, i.e. remove it
+                classname = null;
+            }
+        } else {
+            modname = name.trim();
+            classname = "org.python.modules." + modname;
+        }
+        return classname + "$PyExposer";
     }
 
     private static PyObject addModuleObject(PyObject name) {
@@ -303,6 +352,7 @@ public class _imp {
     }
 
     public static boolean is_builtin(String name) {
+        if (name.equals("hello")) return true;
         return PySystemState.getBuiltin(name) != null;
     }
 

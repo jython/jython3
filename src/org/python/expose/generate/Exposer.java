@@ -99,7 +99,7 @@ public abstract class Exposer implements Opcodes, PyTypes {
         for (int i = 0; i < interfaces.length; i++) {
             interfaces[i] = interfacesImplemented[i].getInternalName();
         }
-        cv.visit(V1_5,
+        cv.visit(V1_7,
                  ACC_PUBLIC,
                  getInternalName(),
                  null,
@@ -205,6 +205,12 @@ public abstract class Exposer implements Opcodes, PyTypes {
     protected void startMethod(String name, Type ret, Type... args) {
         assert mv == null;
         mv = cv.visitMethod(ACC_PUBLIC, name, methodDesc(ret, args), null, null);
+        mv.visitCode();
+    }
+
+    protected void startStaticMethod(String name, Type ret, Type... args) {
+        assert mv == null;
+        mv = cv.visitMethod(ACC_PUBLIC | ACC_STATIC, name, methodDesc(ret, args), null, null);
         mv.visitCode();
     }
 

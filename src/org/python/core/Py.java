@@ -2138,7 +2138,7 @@ public final class Py {
             if (!pye.match(TypeError)) {
                 throw pye;
             }
-            pye.value = Py.newString(String.format("Error when calling the metaclass bases\n    "
+            pye.value = Py.newUnicode(String.format("Error when calling the metaclass bases\n    "
                                                    + "%s", pye.value.__str__().toString()));
             throw pye;
         }

@@ -20,6 +20,8 @@ public class TypeExposer extends Exposer {
 
     private boolean isBaseType;
 
+    private boolean isModule;
+
     private String doc;
 
     private Type onType;

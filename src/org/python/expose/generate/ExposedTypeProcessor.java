@@ -299,7 +299,7 @@ public class ExposedTypeProcessor implements Opcodes, PyTypes {
                                                                desc,
                                                                signature,
                                                                value);
-            return new ExposedFieldFinder(fieldName, passthroughVisitor) {
+            return new ExposedFieldFinder(access, fieldName, passthroughVisitor) {
 
                 @Override
                 public void exposeAsGet(String name, String doc) {
@@ -309,6 +309,11 @@ public class ExposedTypeProcessor implements Opcodes, PyTypes {
                 @Override
                 public void exposeAsSet(String name) {
                     getDescriptorExposer(name).addFieldSetter(fieldName, Type.getType(desc));
+                }
+
+                @Override
+                public void exposeAsConstant(String name) {
+                    throwInvalid("type cannot have constants");
                 }
             };
         }

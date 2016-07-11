@@ -35,11 +35,8 @@ def lispify_ast2(node):
     if get_lines_and_cols and hasattr(node, 'lineno') and hasattr(node, 'col_offset'):
         result = "%s (%s,%s)" % (result, node.lineno, node.col_offset)
     yield result
-    try:
-        for field in node._fields:
-            yield tuple(lispify_field(field, getattr(node, field)))
-    except:
-        pass
+    for field in node._fields:
+        yield tuple(lispify_field(field, getattr(node, field)))
 
 def lispify_field(field, child):
     yield field

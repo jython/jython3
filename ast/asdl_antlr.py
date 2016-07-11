@@ -86,6 +86,7 @@ class EmitVisitor(asdl.VisitorBase):
             print('import org.python.core.Py;', file=self.file)
             print('import org.python.core.PyObject;', file=self.file)
             print('import org.python.core.PyString;', file=self.file)
+            print('import org.python.core.PyUnicode;', file=self.file)
             print('import org.python.core.PyStringMap;', file=self.file)
             print('import org.python.core.PyType;', file=self.file)
             print('import org.python.core.Visitproc;', file=self.file)
@@ -193,6 +194,7 @@ class JavaVisitor(EmitVisitor):
             self.emit('import org.python.core.Py;', depth)
             self.emit('import org.python.core.PyObject;', depth)
             self.emit('import org.python.core.PyString;', depth)
+            self.emit('import org.python.core.PyUnicode;', depth)
             self.emit('import org.python.core.PyType;', depth)
             self.emit('import org.python.expose.ExposedGet;', depth)
             self.emit('import org.python.expose.ExposedMethod;', depth)
@@ -241,30 +243,30 @@ class JavaVisitor(EmitVisitor):
         field_list = []
         if hasattr(obj, "fields"):
             for f in obj.fields:
-                field_list.append('new PyString("%s")' % f.name)
+                field_list.append('new PyUnicode("%s")' % f.name)
         if len(field_list) > 0:
-            self.emit("private final static PyString[] fields =", depth + 1)
-            self.emit("new PyString[] {%s};" % ", ".join(field_list), depth+1)
+            self.emit("private final static PyUnicode[] fields =", depth + 1)
+            self.emit("new PyUnicode[] {%s};" % ", ".join(field_list), depth+1)
             self.emit('@ExposedGet(name = "_fields")', depth + 1)
-            self.emit("public PyString[] get_fields() { return fields; }", depth+1)
+            self.emit("public PyUnicode[] get_fields() { return fields; }", depth+1)
             self.emit("", 0)
         else:
-            self.emit("private final static PyString[] fields = new PyString[0];", depth+1)
+            self.emit("private final static PyUnicode[] fields = new PyUnicode[0];", depth+1)
             self.emit('@ExposedGet(name = "_fields")', depth + 1)
-            self.emit("public PyString[] get_fields() { return fields; }", depth+1)
+            self.emit("public PyUnicode[] get_fields() { return fields; }", depth+1)
             self.emit("", 0)
 
         if str(name) in ('stmt', 'expr', 'excepthandler'):
-            att_list = ['new PyString("lineno")', 'new PyString("col_offset")']
-            self.emit("private final static PyString[] attributes =", depth + 1)
-            self.emit("new PyString[] {%s};" % ", ".join(att_list), depth + 1)
+            att_list = ['new PyUnicode("lineno")', 'new PyUnicode("col_offset")']
+            self.emit("private final static PyUnicode[] attributes =", depth + 1)
+            self.emit("new PyUnicode[] {%s};" % ", ".join(att_list), depth + 1)
             self.emit('@ExposedGet(name = "_attributes")', depth + 1)
-            self.emit("public PyString[] get_attributes() { return attributes; }", depth + 1)
+            self.emit("public PyUnicode[] get_attributes() { return attributes; }", depth + 1)
             self.emit("", 0)
         else:
-            self.emit("private final static PyString[] attributes = new PyString[0];", depth+1)
+            self.emit("private final static PyUnicode[] attributes = new PyUnicode[0];", depth+1)
             self.emit('@ExposedGet(name = "_attributes")', depth + 1)
-            self.emit("public PyString[] get_attributes() { return attributes; }", depth+1)
+            self.emit("public PyUnicode[] get_attributes() { return attributes; }", depth+1)
             self.emit("", 0)
    
     def sum_with_constructor(self, sum, name, depth):
@@ -597,7 +599,7 @@ class JavaVisitor(EmitVisitor):
         else:
             if str(field.type) == 'identifier':
                 self.emit("if (%s == null) return Py.None;" % field.name, depth+1)
-                self.emit("return new PyString(%s);" % field.name, depth+1)
+                self.emit("return new PyUnicode(%s);" % field.name, depth+1)
             elif str(field.type) == 'string' or str(field.type) == 'object':
                 self.emit("return (PyObject)%s;" % field.name, depth+1)
             elif str(field.type) == 'bool':
