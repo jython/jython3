@@ -277,10 +277,16 @@ public class _imp {
 
     public static PyObject create_builtin(PyObject spec) {
         PyObject name = spec.__getattr__("name");
-        String modName = name.toString();
+        String modName = name.toString().intern();
         for (String newmodule : Setup.newbuiltinModules) {
             if (modName.equals(newmodule.split(":")[0]))
                 return new PyModule(modName, new PyStringMap());
+        }
+        if (modName.equals("sys")) {
+            return Py.java2py(Py.getSystemState());
+        }
+        if (modName.equals("__builtin__") || modName.equals("builtins")) {
+            return new PyModule("builtins", Py.getSystemState().builtins);
         }
         return imp.loadBuiltin(modName);
     }
@@ -352,8 +358,13 @@ public class _imp {
     }
 
     public static boolean is_builtin(String name) {
-        if (name.equals("hello")) return true;
-        return PySystemState.getBuiltin(name) != null;
+        switch(name) {
+            case "builtins":
+            case "sys":
+                return true;
+            default:
+                return PySystemState.getBuiltin(name) != null;
+        }
     }
 
     public static PyObject _fix_co_filename(PyCode code, PyObject path) {

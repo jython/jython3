@@ -16,7 +16,7 @@ import org.python.expose.ExposedModule;
 @ExposedModule(doc = "string helper module")
 public class _string {
     @ExposedFunction(doc = "parse the argument as a format string")
-    public static PyObject formatter_parser(PyType self, PyObject str) {
+    public static PyObject formatter_parser(PyObject str) {
         return new MarkupIterator((PyString) str);
     }
 

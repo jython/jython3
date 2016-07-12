@@ -47,7 +47,7 @@ public class Setup {
             "_threading:org.python.modules._threading._threading",
 //            "_types",
             "_warnings",
-            "_weakref:org.python.modules._weakref.WeakrefModule",
+//            "_weakref:org.python.modules._weakref.WeakrefModule",
             "array:org.python.modules.ArrayModule",
             "binascii",
             "bz2:org.python.modules.bz2.bz2",
@@ -65,7 +65,7 @@ public class Setup {
             "operator",
             "struct",
             "synchronize",
-            "_thread:org.python.modules.thread.thread",
+//            "_thread:org.python.modules.thread.thread",
             "time:org.python.modules.time.Time",
             "ucnhash",
             "zipimport:org.python.modules.zipimport.zipimport",
@@ -77,6 +77,8 @@ public class Setup {
             "_sre",
             "_string",
             "_types",
+            "_thread:org.python.modules.thread.thread",
+            "_weakref:org.python.modules._weakref.WeakrefModule",
             "hello:org.python.modules.SimpleModule",
     };
 }

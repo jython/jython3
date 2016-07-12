@@ -1,43 +1,30 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.modules.thread;
 
-import org.python.core.ClassDictInit;
 import org.python.core.FunctionThread;
 import org.python.core.Py;
 import org.python.core.PyException;
 import org.python.core.PyInteger;
 import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PyType;
 import org.python.core.PyTuple;
-import org.python.core.PyUnicode;
+import org.python.expose.ExposedFunction;
+import org.python.expose.ExposedModule;
 
-public class thread implements ClassDictInit {
-
+@ExposedModule(name = "_thread")
+public class thread {
     private static volatile long stack_size = 0; // XXX - can we figure out the current stack size?
     private static ThreadGroup group = new ThreadGroup("jython-threads");
 
-
-    public static PyString __doc__ = new PyString(
-        "This module provides primitive operations to write multi-threaded "+
-                "programs.\n" +
-        "The 'threading' module provides a more convenient interface."
-    );
-
     public static void classDictInit(PyObject dict) {
-        dict.__setitem__("__name__", new PyUnicode("_thread"));
-        dict.__setitem__("LockType", PyType.fromClass(PyLock.class));
+        dict.__setitem__("LockType", PyLock.TYPE);
         dict.__setitem__("_local", PyLocal.TYPE);
-
-        // hide from Python
-        dict.__setitem__("classDictInit", null);
-        dict.__setitem__("interruptAllThreads", null);
+        dict.__setitem__("error", Py.RuntimeError);
     }
 
-    public static PyObject error = new PyString("thread.error");
 
-    public static void start_new_thread(PyObject func, PyTuple args) {
-        Thread pt = _newFunctionThread(func, args);
+    @ExposedFunction
+    public static void start_new_thread(PyObject func, PyObject args) {
+        Thread pt = _newFunctionThread(func, (PyTuple) args);
         PyObject currentThread = func.__findattr__("__self__");
         if (currentThread != null) {
             PyObject isDaemon = currentThread.__findattr__("isDaemon");
@@ -78,27 +65,33 @@ public class thread implements ClassDictInit {
      * Thus, it is possible that this doesn't make all running threads to stop,
      * if SystemRestart exception is caught.
      */
+    @ExposedFunction
     public static void interruptAllThreads() {
         group.interrupt();
     }
 
+    @ExposedFunction
     public static PyLock allocate_lock() {
         return new PyLock();
     }
 
+    @ExposedFunction
     public static void exit() {
         exit_thread();
     }
 
+    @ExposedFunction
     public static void exit_thread() {
         throw new PyException(Py.SystemExit, new PyInteger(0));
     }
 
+    @ExposedFunction
     public static long get_ident() {
         return Thread.currentThread().getId();
     }
-    
-    public static long stack_size(PyObject[] args) {
+
+    @ExposedFunction
+    public static long stack_size(PyObject[] args, String[] keywords) {
         switch (args.length) {
             case 0:
                 return stack_size;
