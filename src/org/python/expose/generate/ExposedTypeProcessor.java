@@ -284,6 +284,11 @@ public class ExposedTypeProcessor implements Opcodes, PyTypes {
                         methodExposers.add(exposer);
 
                     }
+
+                    @Override
+                    public void handleResult(FunctionExposer exposer) {
+                        throwInvalid("@ExposedFunction is not allowed for class");
+                    }
                 };
             }
         }

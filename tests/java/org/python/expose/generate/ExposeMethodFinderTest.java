@@ -45,6 +45,9 @@ public class ExposeMethodFinderTest extends TestCase implements Opcodes, PyTypes
 
             @Override
             public void handleResult(ClassMethodExposer exposer) {}
+
+            @Override
+            public void handleResult(FunctionExposer exposer) {}
         };
     }
 
