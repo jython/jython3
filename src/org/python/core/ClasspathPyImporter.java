@@ -2,8 +2,11 @@
 package org.python.core;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.python.core.util.FileUtil;
@@ -26,7 +29,7 @@ public class ClasspathPyImporter extends importer<String> {
     }
 
     public ClasspathPyImporter() {
-        super();
+        super(TYPE);
     }
 
     @ExposedNew
@@ -34,11 +37,11 @@ public class ClasspathPyImporter extends importer<String> {
     final void ClasspathPyImporter___init__(PyObject[] args, String[] kwds) {
         ArgParser ap = new ArgParser("__init__", args, kwds, new String[] {"path"});
         String path = ap.getString(0);
-        if (path == null || !path.startsWith(PYCLASSPATH_PREFIX)) {
-            throw Py.ImportError("path isn't for classpath importer");
-        }
-        if (!path.endsWith("/")) {
-            path += "/";
+//        if (path == null || !path.startsWith(PYCLASSPATH_PREFIX)) {
+//            throw Py.ImportError("path isn't for classpath importer");
+//        }
+        if (!path.endsWith(File.separator)) {
+            path += File.separator;
         }
         this.path = path;
     }
@@ -58,13 +61,13 @@ public class ClasspathPyImporter extends importer<String> {
     @ExposedMethod
     final String ClasspathPyImporter_get_data(String path) {
         // Strip any leading occurrence of the hook string
-        int len = PYCLASSPATH_PREFIX.length();
-        if (len < path.length() && path.startsWith(PYCLASSPATH_PREFIX)) {
-            path = path.substring(len);
-        }
+//        int len = PYCLASSPATH_PREFIX.length();
+//        if (len < path.length() && path.startsWith(PYCLASSPATH_PREFIX)) {
+//            path = path.substring(len);
+//        }
 
         // Bundle wraps the stream together with a close operation
-        try (Bundle bundle = makeBundle(path, makeEntry(path))) {
+        try (Bundle bundle = makeBundle(makeEntry(path))) {
             byte[] data = FileUtil.readBytes(bundle.inputStream);
             return StringUtil.fromBytes(data);
         } catch (IOException ioe) {
@@ -85,39 +88,20 @@ public class ClasspathPyImporter extends importer<String> {
 
     @ExposedMethod
     final String ClasspathPyImporter_get_source(String fullname) {
-
         ModuleInfo moduleInfo = getModuleInfo(fullname);
-
-        if (moduleInfo == ModuleInfo.ERROR) {
-            return null;
-
-        } else if (moduleInfo == ModuleInfo.NOT_FOUND) {
+        if (moduleInfo.notFound()) {
             throw Py.ImportError(String.format("can't find module '%s'", fullname), fullname);
-
-        } else {
-            // Turn the module name into a source file name
-            String path = makeFilename(fullname);
-            if (moduleInfo == ModuleInfo.PACKAGE) {
-                path += File.separator + "__init__.py";
-            } else {
-                path += ".py";
-            }
-
-            // Bundle wraps the stream together with a close operation
-            try (Bundle bundle = makeBundle(path, makeEntry(path))) {
-                InputStream is = bundle.inputStream;
-                if (is != null) {
-                    byte[] data = FileUtil.readBytes(is);
-                    return StringUtil.fromBytes(data);
-                } else {
-                    // we have the module, but no source
-                    return null;
-                }
-            } catch (IOException ioe) {
-                throw Py.IOError(ioe);
-            }
         }
-
+        try (InputStream is = entries.remove(moduleInfo.getPath())) {
+            if (is != null) {
+                byte[] data = FileUtil.readBytes(is);
+                return StringUtil.fromBytes(data);
+            }
+            // we have the module, but no source
+            return null;
+        } catch (IOException ioe) {
+            throw Py.IOError(ioe);
+        }
     }
 
     /**
@@ -131,6 +115,20 @@ public class ClasspathPyImporter extends importer<String> {
     @ExposedMethod(defaults = "null")
     final PyObject ClasspathPyImporter_find_module(String fullname, String path) {
         return importer_find_module(fullname, path);
+    }
+
+    @ExposedMethod
+    final PyObject ClasspathPyImporter_find_spec(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("find_spec", args, keywords, "fullname", "path", "target");
+        String fullname = ap.getString(0);
+        PyObject path = ap.getPyObject(1, Py.None);
+        PyObject target = ap.getPyObject(2, Py.None);
+        PyObject spec = importer_find_spec(fullname);
+        if (spec == null) {
+            return Py.None;
+        }
+        spec.__setattr__("has_location", Py.True);
+        return spec;
     }
 
     /**
@@ -170,6 +168,24 @@ public class ClasspathPyImporter extends importer<String> {
         return importer_load_module(fullname);
     }
 
+    @ExposedMethod
+    final PyObject ClasspathPyImporter_create_module(PyObject spec) {
+        String fullname = spec.__getattr__("name").asString();
+        // the module *must* be in sys.modules before the loader executes the module code; the
+        // module code may (directly or indirectly) import itself
+        PyModule mod = imp.addModule(fullname);
+        mod.__setattr__("__loader__", this);
+        return mod;
+    }
+
+    @ExposedMethod
+    final PyObject ClasspathPyImporter_exec_module(PyObject module) {
+        PyModule mod = (PyModule) module;
+        String fullname = mod.__findattr__("__name__").asString();
+        ModuleCodeData moduleCodeData = getModuleCode(fullname);
+        return imp.createFromCode(fullname, moduleCodeData.code, moduleCodeData.path);
+    }
+
     @Override
     protected long getSourceMtime(String path) {
         // Can't determine this easily
@@ -177,7 +193,7 @@ public class ClasspathPyImporter extends importer<String> {
     }
 
     @Override
-    protected Bundle makeBundle(String fullFilename, String entry) {
+    protected Bundle makeBundle(String entry) {
         InputStream is = entries.remove(entry);
         return new Bundle(is) {
             @Override
@@ -193,24 +209,28 @@ public class ClasspathPyImporter extends importer<String> {
 
     @Override
     protected String makeEntry(String filename) {
-        // In some contexts, the resource string arrives as from os.path.join(*parts)
-        if (!getSeparator().equals(File.separator)) {
-            filename = filename.replace(File.separator, getSeparator());
-        }
         if (entries.containsKey(filename)) {
             return filename;
         }
         InputStream is;
-        if (Py.getSystemState().getClassLoader() != null) {
-            is = tryClassLoader(filename, Py.getSystemState().getClassLoader(), "sys");
-        } else {
-            is = tryClassLoader(filename, imp.getParentClassLoader(), "parent");
+        File input = new File(filename);
+        try {
+            is = new FileInputStream(input);
+        } catch (FileNotFoundException e) {
+            return null;
         }
-        if (is != null) {
-            entries.put(filename, is);
-            return filename;
-        }
-        return null;
+//        ClassLoader sysClassLoader = Py.getSystemState().getClassLoader();
+//        if (sysClassLoader != null) {
+//            is = tryClassLoader(filename, sysClassLoader, "sys");
+//        } else {
+//            is = tryClassLoader(filename, imp.getParentClassLoader(), "parent");
+//        }
+//        if (is == null) {
+//            return null;
+//        }
+
+        entries.put(filename, is);
+        return filename;
     }
 
     private InputStream tryClassLoader(String fullFilename, ClassLoader loader, String name) {
@@ -223,12 +243,20 @@ public class ClasspathPyImporter extends importer<String> {
 
     @Override
     protected String makeFilename(String fullname) {
-        return path.replace(PYCLASSPATH_PREFIX, "") + fullname.replace('.', '/');
+        int dot = fullname.lastIndexOf('.');
+        if (dot < 0) {
+            return fullname;
+        }
+        return fullname.substring(dot + 1);
     }
 
     @Override
     protected String makeFilePath(String fullname) {
-        return path + fullname.replace('.', '/');
+        int dot = fullname.lastIndexOf('.');
+        if (dot < 0) {
+            return path;
+        }
+        return path + fullname.substring(0, dot + 1).replace('.', File.separatorChar);
     }
 
     @Override
@@ -238,10 +266,10 @@ public class ClasspathPyImporter extends importer<String> {
 
     @Override
     protected String getSeparator() {
-        return "/";
+        return File.separator;
     }
 
-    private Map<String, InputStream> entries = Generic.map();
+    private Map<String, InputStream> entries = new HashMap<>();
 
     private String path;
 }

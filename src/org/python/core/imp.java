@@ -38,8 +38,6 @@ public class imp {
 
     public static final int NO_MTIME = -1;
 
-    // This was changed for Python 3.x; note that 2.7 allows relative
-    // imports unless `from __future__ import absolute_import`
     public static final int DEFAULT_LEVEL = 0;
 
     public static class CodeData {
@@ -453,7 +451,8 @@ public class imp {
             removeModule(name);
             throw t;
         } finally {
-            importLock.unlock();
+            if (importLock.isLocked())
+                importLock.unlock();
         }
     }
 
@@ -725,7 +724,8 @@ public class imp {
         try {
             return import_first(name, new StringBuilder());
         } finally {
-            importLock.unlock();
+            if (importLock.isLocked())
+                importLock.unlock();
         }
     }
 
@@ -834,16 +834,18 @@ public class imp {
 
         String fullName = parentNameBuffer.toString().intern();
 
-        PyObject modules = Py.getSystemState().modules;
+        PySystemState sys = Py.getSystemState();
+        PyObject modules = sys.modules;
         PyObject ret = modules.__finditem__(fullName);
         if (ret != null) {
             return ret;
         }
-        if (mod == null) {
-            ret = find_module(fullName, name, null);
-        } else {
-            ret = mod.impAttr(name.intern());
-        }
+//        if (mod == null) {
+            ret = sys.importlib.invoke("_find_and_load", new PyUnicode(fullName), sys.builtins.__finditem__("__import__"));
+//            ret = find_module(fullName, name, null);
+//        } else {
+//            ret = mod.impAttr(name.intern());
+//        }
         if (ret == null || ret == Py.None) {
             if (JavaImportHelper.tryAddPackage(outerFullName, fromlist)) {
                 ret = modules.__finditem__(fullName);
@@ -921,7 +923,7 @@ public class imp {
     // PyImport_ImportModuleLevelObject
     private static PyObject importModuleLevelObject(String name, boolean top, PyObject modDict,
             PyObject fromlist, int level) {
-                PyObject pkg, spec;
+        PyObject pkg, spec;
         if (level < 0) {
             throw Py.ValueError("level must be >= 0");
         } else if (level > 0) {
@@ -1099,7 +1101,8 @@ public class imp {
         try {
             return import_module_level(name, top, modDict, fromlist, level);
         } finally {
-            importLock.unlock();
+            if (importLock.isLocked())
+                importLock.unlock();
         }
     }
 
@@ -1118,6 +1121,26 @@ public class imp {
         PyObject module =
                 __builtin__.__import__(mod, frame.f_globals, frame.getLocals(), Py.None, level);
         return module;
+//        PyObject globals = frame.f_globals;
+//        PyObject locals = frame.getLocals();
+//        PySystemState sys = Py.getSystemState();
+//        PyObject modules = sys.modules;
+//        ReentrantLock importLock = Py.getSystemState().getImportLock();
+//        importLock.lock();
+//        PyObject builtinsImport;
+//        PyObject __import__name = new PyUnicode("__import__");
+//        try {
+//            builtinsImport = globals.__getitem__(__import__name);
+//            if (builtinsImport == null) {
+//                builtinsImport = modules.__getitem__(__import__name);
+//                if (builtinsImport == null) {
+//                    throw Py.ImportError("__import__ not found");
+//                }
+//            }
+//            PyObject module = modules.__finditem__(abs_name);
+//        } finally {
+//            importLock.unlock();
+//        }
     }
 
     /**

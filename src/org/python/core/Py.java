@@ -1390,7 +1390,8 @@ public final class Py {
         flushLine();
 
         if (tb instanceof PyTraceback) {
-            stderr.print(((PyTraceback) tb).dumpStack());
+            System.err.print(((PyTraceback) tb).dumpStack());
+//            stderr.print(((PyTraceback) tb).dumpStack());
         }
         if (__builtin__.isinstance(value, Py.SyntaxError)) {
             PyObject filename = value.__findattr__("filename");
@@ -1420,7 +1421,8 @@ public final class Py {
             }
         }
         try {
-            stderr.println(formatException(type, value));
+//            stderr.println(formatException(type, value));
+            System.err.println(formatException(type, value));
         } catch (Exception ex) {
             stderr.println(formatException(type, Py.None));
         }

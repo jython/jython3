@@ -1,24 +1,28 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.modules.thread;
 
+import org.python.core.ClassDictInit;
 import org.python.core.FunctionThread;
 import org.python.core.Py;
 import org.python.core.PyException;
 import org.python.core.PyInteger;
 import org.python.core.PyObject;
+import org.python.core.PyStringMap;
 import org.python.core.PyTuple;
 import org.python.expose.ExposedFunction;
 import org.python.expose.ExposedModule;
 
 @ExposedModule(name = "_thread")
-public class thread {
+public class thread implements ClassDictInit {
     private static volatile long stack_size = 0; // XXX - can we figure out the current stack size?
     private static ThreadGroup group = new ThreadGroup("jython-threads");
 
-    public static void classDictInit(PyObject dict) {
+    public static PyObject classDictInit() {
+        PyStringMap dict = new PyStringMap();
         dict.__setitem__("LockType", PyLock.TYPE);
         dict.__setitem__("_local", PyLocal.TYPE);
         dict.__setitem__("error", Py.RuntimeError);
+        return dict;
     }
 
 

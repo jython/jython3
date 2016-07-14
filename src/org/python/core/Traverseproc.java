@@ -495,8 +495,7 @@ import org.python.modules.gc;
  *   cycle                           - Traverseproc (with call to super)<br>
  *   dropwhile                       - Traverseproc (with call to super)<br>
  *   groupby                         - Traverseproc (with call to super)<br>
- *   ifilter                         - Traverseproc (with call to super)<br>
- *   ifiIterfalse                    - Traverseproc (with call to super)<br>
+ *   fiIterfalse                    - Traverseproc (with call to super)<br>
  *   imap                            - Traverseproc (with call to super)<br>
  *   islice                          - Traverseproc (with call to super)<br>
  *   itertools:<br>

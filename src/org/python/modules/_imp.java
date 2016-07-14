@@ -2,6 +2,7 @@
 package org.python.modules;
 
 import org.python.Version;
+import org.python.core.ClassDictInit;
 import org.python.core.PyCode;
 import org.python.core.PyStringMap;
 import org.python.core.__builtin__;
@@ -23,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.locks.ReentrantLock;
 
 /*
  * A bogus implementation of the CPython builtin module "imp".
@@ -279,8 +281,26 @@ public class _imp {
         PyObject name = spec.__getattr__("name");
         String modName = name.toString().intern();
         for (String newmodule : Setup.newbuiltinModules) {
-            if (modName.equals(newmodule.split(":")[0]))
-                return new PyModule(modName, new PyStringMap());
+            if (modName.equals(newmodule.split(":")[0])) {
+                String classname = className(newmodule);
+                Class c = Py.findClassEx(classname, "builtin module");
+                PyObject dict = null;
+                if (ClassDictInit.class.isAssignableFrom(c)) {
+                    try {
+                        Method classDictInit = c.getMethod("classDictInit");
+                        dict = (PyObject) classDictInit.invoke(null);
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    dict = new PyStringMap();
+                }
+                return new PyModule(modName, dict);
+            }
         }
         if (modName.equals("sys")) {
             return Py.java2py(Py.getSystemState());
@@ -296,7 +316,7 @@ public class _imp {
         String classname = null;
         for (String newmodule : Setup.newbuiltinModules) {
             if (name.equals(newmodule.split(":")[0])) {
-                classname = className(newmodule);
+                classname = className(newmodule) + "$PyExposer";
                 break;
             }
         }
@@ -333,7 +353,7 @@ public class _imp {
             modname = name.trim();
             classname = "org.python.modules." + modname;
         }
-        return classname + "$PyExposer";
+        return classname;
     }
 
     private static PyObject addModuleObject(PyObject name) {
@@ -404,8 +424,11 @@ public class _imp {
      */
     public static void release_lock() {
         try{
-            Py.getSystemState().getImportLock().unlock();
-        }catch(IllegalMonitorStateException e){
+            ReentrantLock importLock = Py.getSystemState().getImportLock();
+            // XXX (isaiah) remove this once we sort it out
+            if (importLock.isLocked())
+                importLock.unlock();
+        } catch(IllegalMonitorStateException e){
             throw Py.RuntimeError("not holding the import lock");
         }
     }

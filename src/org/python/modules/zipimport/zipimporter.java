@@ -213,10 +213,10 @@ public class zipimporter extends importer<PyObject> implements Traverseproc {
     @ExposedMethod
     final boolean zipimporter_is_package(String fullname) {
         ModuleInfo moduleInfo = getModuleInfo(fullname);
-        if (moduleInfo == ModuleInfo.NOT_FOUND) {
+        if (moduleInfo.notFound()) {
             throw zipimport.ZipImportError(String.format("can't find module '%s'", fullname));
         }
-        return moduleInfo == ModuleInfo.PACKAGE;
+        return moduleInfo.isPackage();
     }
 
     /**
@@ -266,15 +266,13 @@ public class zipimporter extends importer<PyObject> implements Traverseproc {
     final String zipimporter_get_source(String fullname) {
         ModuleInfo moduleInfo = getModuleInfo(fullname);
 
-        if (moduleInfo == ModuleInfo.ERROR) {
-            return null;
-        }
-        if (moduleInfo == ModuleInfo.NOT_FOUND) {
+
+        if (moduleInfo.notFound()) {
             throw zipimport.ZipImportError(String.format("can't find module '%s'", fullname));
         }
 
         String path = makeFilename(fullname);
-        if (moduleInfo == ModuleInfo.PACKAGE) {
+        if (moduleInfo.isPackage()) {
             path += File.separator + "__init__.py";
         } else {
             path += ".py";
@@ -489,8 +487,8 @@ public class zipimporter extends importer<PyObject> implements Traverseproc {
      * Convert the date/time values found in the Zip archive to a long
      * time (in milliseconds) value.
      *
-     * @param dostime a dos style timestamp (only time) integer
-     * @param dosdate a dos style date integer
+     * @param dosTime a dos style timestamp (only time) integer
+     * @param dosDate a dos style date integer
      * @return a long time (in milliseconds) value
      */
     @SuppressWarnings("deprecation")

@@ -4,14 +4,17 @@
 package org.python.core;
 
 import org.python.core.packagecache.PackageManager;
+import org.python.expose.ExposedType;
+
 import java.util.StringTokenizer;
 
 /**
  * A representation of java package.
+ * FIXME annotate with ExposedType
  */
 public class PyJavaPackage extends PyObject implements Traverseproc {
+    private static final PyObject JAVAPKG_PATH = new PyList(new PyObject[] {new PyUnicode(JavaImporter.JAVA_IMPORT_PATH_ENTRY)});
     public String __name__;
-
 
     public PyStringMap __dict__;
 
@@ -50,7 +53,7 @@ public class PyJavaPackage extends PyObject implements Traverseproc {
         clsSet= new PyStringMap();
 
         __dict__ = new PyStringMap();
-        __dict__.__setitem__("__name__", new PyString(__name__));
+        __dict__.__setitem__("__name__", new PyUnicode(__name__));
     }
 
     public PyJavaPackage addPackage(String name) {
@@ -134,13 +137,18 @@ public class PyJavaPackage extends PyObject implements Traverseproc {
         Class<?> c = __mgr__.findClass(__name__,name);
         if (c != null) return addClass(name,c);
 
-        if (name == "__name__") return new PyString(__name__);
+        if (name == "__name__") return new PyUnicode(__name__);
         if (name == "__dict__") return __dict__;
         if (name == "__mgr__") return Py.java2py(__mgr__);
         if (name == "__file__") {
-            if (__file__ != null) return new PyString(__file__);
+            if (__file__ != null) return new PyUnicode(__file__);
 
             return Py.None;
+        }
+
+        if (name.equals("__path__")) {
+            // java modules are always package, the path is ignored by the JavaImporter
+            return JAVAPKG_PATH;
         }
 
         return null;
@@ -190,5 +198,10 @@ public class PyJavaPackage extends PyObject implements Traverseproc {
     @Override
     public boolean refersDirectlyTo(PyObject ob) {
         return ob != null && (ob == __dict__ || ob == clsSet || ob == __mgr__.topLevelPackage);
+    }
+
+    @Override
+    public PyObject fastGetDict() {
+        return __dict__;
     }
 }

@@ -72,7 +72,6 @@ public class itertools implements ClassDictInit {
         dict.__setitem__("dropwhile", dropwhile.TYPE);
         dict.__setitem__("groupby", groupby.TYPE);
         dict.__setitem__("imap", imap.TYPE);
-        dict.__setitem__("ifilter", ifilter.TYPE);
         dict.__setitem__("filterfalse", filterfalse.TYPE);
         dict.__setitem__("islice", islice.TYPE);
         dict.__setitem__("izip", izip.TYPE);

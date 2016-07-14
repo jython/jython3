@@ -1,4 +1,4 @@
-base_class: ifilterfalse
+base_class: filterfalse
 want_dict: true
 ctr:
 incl: object

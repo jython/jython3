@@ -8,6 +8,7 @@
 
 BaseException.derived:org.python.core.PyBaseExceptionDerived
 ClasspathPyImporter.derived:org.python.core.ClasspathPyImporterDerived
+JavaImporter.derived:org.python.core.JavaImporterDerived
 PyBZ2File.derived:org.python.modules.bz2.PyBZ2FileDerived
 PyBZ2Compressor.derived:org.python.modules.bz2.PyBZ2CompressorDerived
 PyBZ2Decompressor.derived:org.python.modules.bz2.PyBZ2DecompressorDerived
@@ -23,7 +24,6 @@ count.derived:org.python.modules.itertools.countDerived
 cycle.derived:org.python.modules.itertools.cycleDerived
 dropwhile.derived:org.python.modules.itertools.dropwhileDerived
 groupby.derived:org.python.modules.itertools.groupbyDerived
-filter.derived:org.python.modules.itertools.filterDerived
 filterfalse.derived:org.python.modules.itertools.filterfalseDerived
 islice.derived:org.python.modules.itertools.isliceDerived
 izip.derived:org.python.modules.itertools.izipDerived

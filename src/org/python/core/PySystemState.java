@@ -17,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -214,17 +215,19 @@ public class PySystemState extends PyObject implements AutoCloseable,
         argv = (PyList)defaultArgv.repeat(1);
         path = (PyList)defaultPath.repeat(1);
         path.append(Py.newUnicode(JavaImporter.JAVA_IMPORT_PATH_ENTRY));
-        path.append(Py.newUnicode(ClasspathPyImporter.PYCLASSPATH_PREFIX));
+//        path.append(Py.newUnicode(ClasspathPyImporter.PYCLASSPATH_PREFIX));
         executable = defaultExecutable;
         builtins = getDefaultBuiltins();
         platform = defaultPlatform;
 
         meta_path = new PyList();
         path_hooks = new PyList();
-        path_hooks.append(new JavaImporter());
         path_hooks.append(org.python.modules.zipimport.zipimporter.TYPE);
         path_hooks.append(ClasspathPyImporter.TYPE);
+        path_hooks.append(JavaImporter.TYPE);
+
         path_importer_cache = new PyDictionary();
+        path_importer_cache.__setitem__(Py.newUnicode(JavaImporter.JAVA_IMPORT_PATH_ENTRY), new JavaImporter());
 
         currentWorkingDir = new File("").getAbsolutePath();
 
@@ -990,6 +993,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
         } catch (SecurityException e) {
             // Must be running in a security environment that doesn't allow access to the class
             // loader
+            e.printStackTrace(System.err);
         } catch (Exception e) {
             Py.writeWarning("initializer",
                     "Unexpected exception thrown while trying to use initializer service");
@@ -1096,12 +1100,28 @@ public class PySystemState extends PyObject implements AutoCloseable,
 
         // Cause sys to export the console handler that was installed
         Py.defaultSystemState.__setattr__("_jy_console", Py.java2py(Py.getConsole()));
-        PyObject importlib = imp.importName("importlib", true);
-        PyObject _frozen_importlib = importlib.__findattr__("_bootstrap");
-        PyObject _frozen_importlib_external = importlib.__findattr__("_bootstrap_external");
-        Py.defaultSystemState.importlib = importlib;
-        Py.defaultSystemState.meta_path.append(_frozen_importlib.__findattr__("BuiltinImporter"));
-        Py.defaultSystemState.meta_path.append(_frozen_importlib_external.__findattr__("PathFinder"));
+
+        /**
+         *  XXX this is a fake of the import_frozen("_frozen_importlib"), which should be a binary representation of the
+         * importlib/_bootstrap.py file
+         */
+//        PyObject importlib = imp.importName("importlib", true);
+//        PyObject _frozen_importlib = importlib.__findattr__("_bootstrap");
+//        PyObject _frozen_importlib_external = importlib.__findattr__("_bootstrap_external");
+//        Py.defaultSystemState.meta_path.append(_frozen_importlib.__findattr__("BuiltinImporter"));
+        try {
+            InputStream _frozen_importlib_input =  new FileInputStream(new File("dist/Lib/importlib/__pycache__/_bootstrap$jython-35.class"));
+            InputStream _frozen_importlib_external_input =  new FileInputStream(new File("dist/Lib/importlib/__pycache__/_bootstrap_external$jython-35.class"));
+            PyObject _frozen_importlib = imp.loadFromCompiled("_frozen_importlib", _frozen_importlib_input, "_bootstrap.py", "_frozen_importlib.class");
+            imp.loadFromCompiled("_frozen_importlib_external", _frozen_importlib_external_input, "_bootstrap_external.py", "_frozen_importlib_external.class");
+            Py.defaultSystemState.importlib = _frozen_importlib;
+            _frozen_importlib.invoke("_install", Py.java2py(Py.defaultSystemState), imp.loadBuiltin("_imp"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+//        PyObject modules = Py.defaultSystemState.modules;
+//        modules.__setitem__("_frozen_importlib_external", _frozen_importlib_external);
+//        _frozen_importlib.invoke("_install", Py.java2py(Py.defaultSystemState), modules.__finditem__("_imp"));
         return Py.defaultSystemState;
     }
 
@@ -1319,11 +1339,13 @@ public class PySystemState extends PyObject implements AutoCloseable,
         }
 
         int n = builtinNames.size();
-        PyObject[] built_mod = new PyObject[n];
+        PyObject[] built_mod = new PyObject[n+2];
         int i = 0;
         for (String key : builtinNames.keySet()) {
             built_mod[i++] = Py.newUnicode(key);
         }
+        built_mod[i++] = new PyUnicode("builtins");
+        built_mod[i++] = new PyUnicode("sys");
         builtin_module_names = new PyTuple(built_mod);
     }
 

@@ -29,7 +29,8 @@ Written by Marc-Andre Lemburg (mal@lemburg.com).
 """#"
 
 import codecs
-from . import aliases, _java
+from . import aliases
+from . import _java
 
 _cache = {}
 _unknown = '--unknown--'

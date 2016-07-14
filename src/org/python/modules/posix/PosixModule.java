@@ -1054,6 +1054,15 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
+    public static PyObject replace(PyObject src, PyObject dest) {
+        File destFile = absolutePath(dest).toFile();
+        if (destFile.exists()) {
+            destFile.delete();
+        }
+        absolutePath(src).toFile().renameTo(destFile);
+        return Py.None;
+    }
+
     private static PyFloat ratio(long num, long div) {
         return Py.newFloat(((double)num)/((double)div));
     }

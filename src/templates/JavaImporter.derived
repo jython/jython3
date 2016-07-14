@@ -1,0 +1,4 @@
+base_class: JavaImporter
+want_dict: false
+ctr
+incl: object

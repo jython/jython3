@@ -2,9 +2,11 @@
 package org.python.modules._weakref;
 
 import org.python.core.ArgParser;
+import org.python.core.ClassDictInit;
 import org.python.core.Py;
 import org.python.core.PyList;
 import org.python.core.PyObject;
+import org.python.core.PyStringMap;
 import org.python.expose.ExposedFunction;
 import org.python.expose.ExposedModule;
 
@@ -12,14 +14,16 @@ import org.python.expose.ExposedModule;
  * The _weakref module.
  */
 @ExposedModule(name = "_weakref", doc = "Weak-reference support module.")
-public class WeakrefModule {
+public class WeakrefModule implements ClassDictInit {
 
-    public static void classDictInit(PyObject dict)
+    public static PyObject classDictInit()
     {
+        PyStringMap dict = new PyStringMap();
         dict.__setitem__("ref", ReferenceType.TYPE);
         dict.__setitem__("ReferenceType", ReferenceType.TYPE);
         dict.__setitem__("ProxyType", ProxyType.TYPE);
         dict.__setitem__("CallableProxyType", CallableProxyType.TYPE);
+        return dict;
     }
 
     @ExposedFunction

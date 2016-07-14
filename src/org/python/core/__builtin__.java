@@ -1274,7 +1274,7 @@ public class __builtin__ {
 class ImportFunction extends PyBuiltinFunction {
     ImportFunction() {
         super("__import__",
-              "__import__(name, globals={}, locals={}, fromlist=[], level=-1) -> module\n\n" +
+              "__import__(name, globals={}, locals={}, fromlist=[], level=0) -> module\n\n" +
               "Import a module.  The globals are only used to determine the context;\n" +
               "they are not modified.  The locals are currently unused.  The fromlist\n" +
               "should be a list of names to emulate ``from name import ...'', or an\n" +
@@ -1282,8 +1282,7 @@ class ImportFunction extends PyBuiltinFunction {
               "When importing a module from a package, note that __import__('A.B', ...)\n" +
               "returns package A when fromlist is empty, but its submodule B when\n" +
               "fromlist is not empty.  Level is used to determine whether to perform \n" +
-              "absolute or relative imports.  -1 is the original strategy of attempting\n" +
-              "both absolute and relative imports, 0 is absolute, a positive number\n" +
+              "absolute or relative imports.  0 is absolute, a positive number\n" +
               "is the number of parent directories to search relative to the current module.");
     }
 
@@ -1654,13 +1653,14 @@ class CompileFunction extends PyBuiltinFunction {
     public PyObject __call__(PyObject args[], String kwds[]) {
         ArgParser ap = new ArgParser("compile", args, kwds,
                                      new String[] {"source", "filename", "mode", "flags",
-                                                   "dont_inherit"},
+                                                   "dont_inherit", "optimize"},
                                      3);
         PyObject source = ap.getPyObject(0);
         String filename = ap.getString(1);
         String mode = ap.getString(2);
         int flags = ap.getInt(3, 0);
         boolean dont_inherit = ap.getPyObject(4, Py.False).__bool__();
+        int optimize= ap.getInt(5, -1);
         return compile(source, filename, mode, flags, dont_inherit);
     }
 
