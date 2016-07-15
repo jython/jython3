@@ -943,6 +943,7 @@ _ERR_MSG = _ERR_MSG_PREFIX + '{!r}'
 def _find_and_load_unlocked(name, import_):
     path = None
     parent = name.rpartition('.')[0]
+    not_package = False
     if parent:
         if parent not in sys.modules:
             _call_with_frames_removed(import_, parent)
@@ -953,11 +954,14 @@ def _find_and_load_unlocked(name, import_):
         try:
             path = parent_module.__path__
         except AttributeError:
-            msg = (_ERR_MSG + '; {!r} is not a package').format(name, parent)
-            raise ImportError(msg, name=name) from None
+            not_package = True
     spec = _find_spec(name, path)
     if spec is None:
-        raise ImportError(_ERR_MSG.format(name), name=name)
+        if not_package:
+            msg = (_ERR_MSG + '; {!r} is not a package').format(name, parent)
+            raise ImportError(msg, name=name) from None
+        else:
+            raise ImportError(_ERR_MSG.format(name), name=name)
     else:
         module = _load_unlocked(spec)
     if parent:
