@@ -960,9 +960,9 @@ public class imp {
     }
 
     /**
-     * @param name
-     * @param top
-     * @param modDict
+     * @param name qualified name of module
+     * @param top whether to return the top module
+     * @param modDict Global namespace
      * @return a module
      */
     private static PyObject import_module_level(String name, boolean top, PyObject modDict,
@@ -1006,7 +1006,7 @@ public class imp {
             if (topMod == null && pkgMod != null) {
                 modules.__setitem__(parentNameBuffer.toString().intern(), Py.None);
             }
-            parentNameBuffer = new StringBuilder("");
+            parentNameBuffer = new StringBuilder();
             // could throw ImportError
             if (level > 0) {
                 topMod = import_first(pkgName + "." + firstName, parentNameBuffer, name, fromlist);
@@ -1061,8 +1061,8 @@ public class imp {
             }
 
             if (mod.__findattr__((PyUnicode)item) == null) {
-                String fullName = modNameBuffer.toString() + "." + item.toString();
-                import_next(mod, modNameBuffer, item.toString(), fullName, null);
+                String fullName = modNameBuffer.append(".").append(item.toString()).toString();
+                import_next(mod, new StringBuilder(name), item.toString(), fullName, null);
             }
         }
     }
@@ -1081,7 +1081,8 @@ public class imp {
         try {
             return import_module_level(name, top, null, null, DEFAULT_LEVEL);
         } finally {
-            importLock.unlock();
+            if (importLock.isLocked())
+                importLock.unlock();
         }
     }
 
@@ -1206,14 +1207,20 @@ public class imp {
      */
     public static PyObject[] importFromAs(String mod, String[] names, String[] asnames,
             PyFrame frame, int level) {
-        PyObject[] pyNames = new PyObject[names.length];
-        for (int i = 0; i < names.length; i++) {
-            pyNames[i] = Py.newUnicode(names[i]);
+//            private static PyObject import_module_level(String name, boolean top, PyObject modDict, PyObject fromlist, int level) {
+        ReentrantLock importLock = Py.getSystemState().getImportLock();
+        importLock.lock();
+        PyObject module;
+        try {
+            PyObject[] fromList = new PyObject[names.length];
+            for (int i = 0; i < names.length; i++) {
+                fromList[i] = new PyUnicode(names[i]);
+            }
+            module = import_module_level(mod, false, frame.f_globals, new PyTuple(fromList), level);
+        } finally {
+            if (importLock.isLocked())
+                importLock.unlock();
         }
-
-        PyObject module =
-                __builtin__.__import__(mod, frame.f_globals, frame.getLocals(),
-                        new PyTuple(pyNames), level);
         PyObject[] submods = new PyObject[names.length];
         for (int i = 0; i < names.length; i++) {
             PyObject submod = module.__findattr__(names[i]);

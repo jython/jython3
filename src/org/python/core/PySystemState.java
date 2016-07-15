@@ -1101,14 +1101,6 @@ public class PySystemState extends PyObject implements AutoCloseable,
         // Cause sys to export the console handler that was installed
         Py.defaultSystemState.__setattr__("_jy_console", Py.java2py(Py.getConsole()));
 
-        /**
-         *  XXX this is a fake of the import_frozen("_frozen_importlib"), which should be a binary representation of the
-         * importlib/_bootstrap.py file
-         */
-//        PyObject importlib = imp.importName("importlib", true);
-//        PyObject _frozen_importlib = importlib.__findattr__("_bootstrap");
-//        PyObject _frozen_importlib_external = importlib.__findattr__("_bootstrap_external");
-//        Py.defaultSystemState.meta_path.append(_frozen_importlib.__findattr__("BuiltinImporter"));
         try {
             InputStream _frozen_importlib_input =  new FileInputStream(new File("dist/Lib/importlib/__pycache__/_bootstrap$jython-35.class"));
             InputStream _frozen_importlib_external_input =  new FileInputStream(new File("dist/Lib/importlib/__pycache__/_bootstrap_external$jython-35.class"));
@@ -1119,9 +1111,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-//        PyObject modules = Py.defaultSystemState.modules;
-//        modules.__setitem__("_frozen_importlib_external", _frozen_importlib_external);
-//        _frozen_importlib.invoke("_install", Py.java2py(Py.defaultSystemState), modules.__finditem__("_imp"));
+
         return Py.defaultSystemState;
     }
 

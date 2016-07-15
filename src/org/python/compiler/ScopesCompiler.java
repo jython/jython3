@@ -251,7 +251,8 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
     public Object visitClassDef(ClassDef node) throws Exception {
         String outer = "<outer" + node.getInternalName() + ">";
         String clsname = node.getInternalName();
-        String inner = "<inner" + clsname +">";
+//        String inner = "<inner" + clsname +">";
+        String inner = clsname;
         Name innerName = new Name(node.getToken(), inner, expr_contextType.Store);
         def(outer);
         String vararg = "__(args)__";

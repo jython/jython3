@@ -15,6 +15,7 @@ import org.python.expose.ExposedType;
 @ExposedType(name = "module")
 public class PyModule extends PyObject implements Traverseproc {
     public static final PyType TYPE = PyType.fromClass(PyModule.class);
+    private static final PyUnicode __MAIN__ = new PyUnicode("__main__");
 
     private final PyObject moduleDoc = new PyString(
         "module(name[, doc])\n" +
@@ -63,7 +64,7 @@ public class PyModule extends PyObject implements Traverseproc {
         __dict__.__setitem__("__name__", name);
         __dict__.__setitem__("__doc__", doc);
         __dict__.__setitem__("__spec__", Py.None);
-        if (name.equals(new PyUnicode("__main__"))) {
+        if (name.equals(__MAIN__)) {
             __dict__.__setitem__("__builtins__", Py.getSystemState().modules.__finditem__("__builtin__"));
             __dict__.__setitem__("__package__", Py.None);
         }
@@ -209,4 +210,11 @@ public class PyModule extends PyObject implements Traverseproc {
     public boolean refersDirectlyTo(PyObject ob) {
         return ob != null && ob == __dict__;
     }
+
+    @Override
+    public void noAttributeError(String name) {
+        throw Py.AttributeError(String.format("'%.50s' module has no attribute '%.400s'",
+                __dict__.__finditem__("__name__") , name));
+    }
+
 }

@@ -2599,7 +2599,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         setline(node);
         if (scope.needs_class_closure) {
             scope.needs_class_closure = false;
-            inner = "<inner" + clsName + ">";
+//            inner = "<inner" + clsName + ">";
             String outer = "<outer" + clsName + ">";
             code.new_(p(PyFunction.class));
             code.dup();

@@ -188,20 +188,19 @@ public class jython {
         }
     }
 
-    private static void runModule(InteractiveConsole interp, String moduleName) {
-        runModule(interp, moduleName, false);
+    private static boolean runModule(InteractiveConsole interp, String moduleName) {
+        return runModule(interp, moduleName, false);
     }
 
-    private static void runModule(InteractiveConsole interp, String moduleName, boolean set_argv0) {
+    private static boolean runModule(InteractiveConsole interp, String moduleName, boolean set_argv0) {
         // PEP 338 - Execute module as a script
         try {
             PyObject runpy = imp.importName("runpy", true);
             PyObject runmodule = runpy.__findattr__("_run_module_as_main");
-            runmodule.__call__(Py.newStringOrUnicode(moduleName), Py.newBoolean(set_argv0));
+            runmodule.__call__(Py.newUnicode(moduleName), Py.newBoolean(set_argv0));
+            return true;
         } catch (Throwable t) {
-            Py.printException(t);
-            interp.cleanup();
-            System.exit(-1);
+            return false;
         }
     }
 
@@ -213,8 +212,7 @@ public class jython {
              /* argv0 is usable as an import source, so
                 put it in sys.path[0] and import __main__ */
             Py.getSystemState().path.insert(0, argv0);
-            runModule(interp, "__main__", true);
-            return true;
+            return runModule(interp, "__main__", false);
         }
         return false;
     }

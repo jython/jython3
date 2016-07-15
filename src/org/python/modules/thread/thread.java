@@ -28,7 +28,7 @@ public class thread implements ClassDictInit {
 
     @ExposedFunction
     public static void start_new_thread(PyObject func, PyObject args) {
-        Thread pt = _newFunctionThread(func, (PyTuple) args);
+        Thread pt = newFunctionThread(func, (PyTuple) args);
         PyObject currentThread = func.__findattr__("__self__");
         if (currentThread != null) {
             PyObject isDaemon = currentThread.__findattr__("isDaemon");
@@ -52,7 +52,12 @@ public class thread implements ClassDictInit {
      *
      * Also used from the threading.py module.
      */
-    public static FunctionThread _newFunctionThread(PyObject func, PyTuple args) {
+    @ExposedFunction
+    public static PyObject _newFunctionThread(PyObject func, PyObject args) {
+        return Py.java2py(newFunctionThread(func, (PyTuple) args));
+    }
+
+    public static FunctionThread newFunctionThread(PyObject func, PyTuple args) {
         return new FunctionThread(func, args.getArray(), stack_size, group);
     }
 

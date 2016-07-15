@@ -20,6 +20,7 @@ import org.python.core.PyString;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
+import org.python.core.PyUnicode;
 import org.python.core.Traverseproc;
 import org.python.core.Visitproc;
 import org.python.core.util.FileUtil;
@@ -187,7 +188,7 @@ public class zipimporter extends importer<PyObject> implements Traverseproc {
             throw Py.IOError(path);
         }
 
-        Bundle zipBundle = makeBundle(path, tocEntry);
+        Bundle zipBundle = makeBundle(new PyUnicode(path));
         byte[] data;
         try {
             data = FileUtil.readBytes(zipBundle.inputStream);
@@ -286,12 +287,13 @@ public class zipimporter extends importer<PyObject> implements Traverseproc {
      * Given a path to a compressed file in the archive, return the
      * file's (uncompressed) data stream in a ZipBundle.
      *
-     * @param datapath file's filename inside of the archive
+     * @param entry file's filename inside of the archive
      * @return a ZipBundle with an InputStream to the file's
      * uncompressed data
      */
     @Override
-    public ZipBundle makeBundle(String datapath, PyObject entry) {
+    public ZipBundle makeBundle(PyObject entry) {
+        String datapath = entry.asString();
         datapath = datapath.replace(File.separatorChar, '/');
         ZipFile zipArchive;
         try {

@@ -107,6 +107,7 @@ public abstract class importer<T> extends PyObject {
             spec.__setattr__("submodule_search_locations", pkgpath);
             spec.__setattr__("is_package", Py.True);
         }
+        spec.__setattr__("cached", Py.newBoolean(info.isBytecode()));
         spec.__setattr__("origin", new PyUnicode(info.getPath()));
         return spec;
     }
