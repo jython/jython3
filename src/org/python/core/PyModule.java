@@ -37,7 +37,7 @@ public class PyModule extends PyObject implements Traverseproc {
 
     public PyModule(PyType subType, String name) {
         super(subType);
-        module___init__(new PyString(name), Py.None);
+        module___init__(new PyUnicode(name), Py.None);
     }
 
     public PyModule(String name) {
@@ -88,47 +88,6 @@ public class PyModule extends PyObject implements Traverseproc {
         throw Py.TypeError("readonly attribute");
     }
 
-    protected PyObject impAttr(String name) {
-        if (__dict__ == null) {
-            return null;
-        }
-        PyObject path = __dict__.__finditem__("__path__");
-        if (path == null) {
-            path = new PyList();
-        }
-        PyObject pyName = __dict__.__finditem__("__name__");
-        if (pyName == null) {
-            return null;
-        }
-        PyObject attr = null;
-        String fullName = (pyName.__str__().toString() + '.' + name).intern();
-        if (path == Py.None) {
-            // XXX: disabled
-            //attr = imp.loadFromClassLoader(fullName,
-            //                               Py.getSystemState().getClassLoader());
-        } else if (path instanceof PyList) {
-            attr = imp.find_module(name, fullName, (PyList)path);
-        } else {
-            throw Py.TypeError("__path__ must be list or None");
-        }
-
-        if (attr == null) {
-            attr = PySystemState.packageManager.lookupName(fullName);
-        }
-
-        if (attr != null) {
-            // Allow a package component to change its own meaning
-            PyObject found = Py.getSystemState().modules.__finditem__(fullName);
-            if (found != null) {
-                attr = found;
-            }
-            __dict__.__setitem__(name, attr);
-            return attr;
-        }
-
-        return null;
-    }
-
     public void __setattr__(String name, PyObject value) {
         module___setattr__(name, value);
     }
@@ -156,7 +115,7 @@ public class PyModule extends PyObject implements Traverseproc {
 
     @ExposedMethod(names = {"__repr__"})
     final String module_toString()  {
-        PyObject name = null;
+        Object name = null;
         PyObject filename = null;
 
         if (__dict__ != null) {
@@ -164,7 +123,7 @@ public class PyModule extends PyObject implements Traverseproc {
             filename = __dict__.__finditem__("__file__");
         }
         if (name == null) {
-            name = new PyString("?");
+            name = "?";
         }
         if (filename == null) {
             return String.format("<module '%s' (built-in)>", name);

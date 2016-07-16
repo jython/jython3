@@ -32,7 +32,7 @@ public class Scanner extends PyObject implements Traverseproc {
 
     public Scanner(PyObject context) {
         super();
-        encoding = _castString(context.__getattr__("encoding"), "utf-8");
+        encoding = "utf-8";
         strict = context.__getattr__("strict").__bool__();
         object_hook = context.__getattr__("object_hook");
         pairs_hook = context.__getattr__("object_pairs_hook");
@@ -47,20 +47,6 @@ public class Scanner extends PyObject implements Traverseproc {
 
     private static boolean IS_WHITESPACE(int c) {
         return (c == ' ') || (c == '\t') || (c == '\n') || (c == '\r');
-    }
-
-    private static String _castString(PyObject pystr, String defaultValue) {
-        // Jython used to treat String as equivalent to PyString, or maybe PyUnicode, as
-        // it made sense. We need to be more careful now! Insert this cast check as necessary
-        // to ensure the appropriate compliance.
-        if (pystr == Py.None) {
-            return defaultValue;
-        }
-        if (!(pystr instanceof PyString)) {
-            throw Py.TypeError("encoding is not a string");
-        }
-        String s = pystr.toString();
-        return codecs.PyUnicode_EncodeASCII(s, s.length(), null);
     }
 
     static PyTuple valIndex(PyObject obj, int i) {

@@ -74,6 +74,7 @@ public class Setup {
     };
 
     public static String[] newbuiltinModules = {
+            "faulthandler:org.python.modules.FaultHandler",
             "_sre",
             "_string",
             "_types",

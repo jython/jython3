@@ -194,27 +194,21 @@ public class jython {
 
     private static boolean runModule(InteractiveConsole interp, String moduleName, boolean set_argv0) {
         // PEP 338 - Execute module as a script
-        try {
-            PyObject runpy = imp.importName("runpy", true);
-            PyObject runmodule = runpy.__findattr__("_run_module_as_main");
-            runmodule.__call__(Py.newUnicode(moduleName), Py.newBoolean(set_argv0));
-            return true;
-        } catch (Throwable t) {
-            return false;
-        }
+        PyObject runpy = imp.importName("runpy", true);
+        PyObject runmodule = runpy.__findattr__("_run_module_as_main");
+        runmodule.__call__(Py.newUnicode(moduleName), Py.newBoolean(set_argv0));
+        return true;
     }
 
     private static boolean runMainFromImporter(InteractiveConsole interp, String filename) {
         // Support http://bugs.python.org/issue1739468 - Allow interpreter to execute a zip file or directory
         PyUnicode argv0 = Py.newUnicode(filename);
-        PyObject importer = imp.getImporter(argv0);
-        if (!(importer instanceof PyNullImporter)) {
-             /* argv0 is usable as an import source, so
-                put it in sys.path[0] and import __main__ */
-            Py.getSystemState().path.insert(0, argv0);
+        Py.getSystemState().path.insert(0, argv0);
+        try {
             return runModule(interp, "__main__", false);
+        } catch (Throwable t) {
+            return false;
         }
-        return false;
     }
 
     public static void run(String[] args) {
@@ -398,8 +392,14 @@ public class jython {
             }
 
             if (opts.moduleName != null) {
-                runModule(interp, opts.moduleName);
-                interp.cleanup();
+                try {
+                    runModule(interp, opts.moduleName);
+                } catch (Throwable t) {
+                    Py.printException(t);
+                    System.exit(1);
+                } finally {
+                    interp.cleanup();
+                }
                 return;
             }
         }

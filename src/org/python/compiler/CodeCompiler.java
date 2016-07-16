@@ -968,32 +968,17 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         return Exit;
     }
 
-    /**
-     * Return the implied import level, which is different from the argument only if the argument is
-     * zero (no leading dots) meaning try relative then absolute (in Python 2), signified by
-     * returning level <code>-1</code>.
-     */
-    private int impliedImportLevel(int level) {
-        // already prepared for a future change of DEFAULT_LEVEL
-        // TODO: remove the compatibility code
-        if (imp.DEFAULT_LEVEL == 0 || level != 0 || module.getFutures().isAbsoluteImportOn()) {
-            return level;
-        } else {
-            return imp.DEFAULT_LEVEL;
-        }
-    }
-
     @Override
     public Object visitImport(Import node) throws Exception {
         setline(node);
         for (alias a : node.getInternalNames()) {
-            String asname = null;
+            String asname;
             if (a.getInternalAsname() != null) {
                 String name = a.getInternalName();
                 asname = a.getInternalAsname();
                 code.ldc(name);
                 loadFrame();
-                code.iconst(impliedImportLevel(0));
+                code.iconst(0);
                 code.invokestatic(p(imp.class), "importOneAs",
                         sig(PyObject.class, String.class, PyFrame.class, Integer.TYPE));
             } else {
@@ -1004,7 +989,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
                 }
                 code.ldc(name);
                 loadFrame();
-                code.iconst(impliedImportLevel(0));
+                code.iconst(0);
                 code.invokestatic(p(imp.class), "importOne",
                         sig(PyObject.class, String.class, PyFrame.class, Integer.TYPE));
             }
@@ -1037,7 +1022,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             }
 
             loadFrame();
-            code.iconst(impliedImportLevel(node.getInternalLevel()));
+            code.iconst(node.getInternalLevel());
             code.invokestatic(p(imp.class), "importAll",
                     sig(Void.TYPE, String.class, PyFrame.class, Integer.TYPE));
 
@@ -1056,7 +1041,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             code.freeLocal(strArray);
 
             loadFrame();
-            code.iconst(impliedImportLevel(node.getInternalLevel()));
+            code.iconst(node.getInternalLevel());
             code.invokestatic(
                     p(imp.class),
                     "importFrom",

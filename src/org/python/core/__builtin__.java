@@ -99,8 +99,8 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
                 return __builtin__.oct(arg1);
             case 34:
                 return Py.newUnicode(__builtin__.raw_input(arg1));
-            case 36:
-                return __builtin__.reload(arg1);
+//            case 36:
+//                return __builtin__.reload(arg1);
             case 37:
                 return __builtin__.repr(arg1);
             case 41:
@@ -157,8 +157,8 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
                 return __builtin__.iter(arg1, arg2);
             case 33:
                 return __builtin__.pow(arg1, arg2);
-            case 35:
-                return _functools.reduce(arg1, arg2);
+//            case 35:
+//                return _functools.reduce(arg1, arg2);
             case 29:
                 return fancyCall(new PyObject[] {arg1, arg2});
             case 30:
@@ -201,8 +201,8 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
                 return __builtin__.getattr(arg1, arg2, arg3);
             case 33:
                 return __builtin__.pow(arg1, arg2, arg3);
-            case 35:
-                return _functools.reduce(arg1, arg2, arg3);
+//            case 35:
+//                return _functools.reduce(arg1, arg2, arg3);
             case 39:
                 __builtin__.setattr(arg1, arg2, arg3);
                 return Py.None;
@@ -340,8 +340,8 @@ public class __builtin__ {
         dict.__setitem__("oct", new BuiltinFunctions("oct", 32, 1));
         dict.__setitem__("pow", new BuiltinFunctions("pow", 33, 2, 3));
         dict.__setitem__("input", new BuiltinFunctions("input", 34, 0, 1));
-        dict.__setitem__("reduce", new BuiltinFunctions("reduce", 35, 2, 3));
-        dict.__setitem__("reload", new BuiltinFunctions("reload", 36, 1));
+//        dict.__setitem__("reduce", new BuiltinFunctions("reduce", 35, 2, 3));
+//        dict.__setitem__("reload", new BuiltinFunctions("reload", 36, 1));
         dict.__setitem__("repr", new BuiltinFunctions("repr", 37, 1));
         dict.__setitem__("round", new RoundFunction());
         dict.__setitem__("setattr", new BuiltinFunctions("setattr", 39, 3));
@@ -1062,50 +1062,50 @@ public class __builtin__ {
         return raw_input(Py.EmptyString);
     }
 
-    public static PyObject reduce(PyObject f, PyObject l, PyObject z) {
-        PyObject result = z;
-        PyObject iter = Py.iter(l, "reduce() arg 2 must support iteration");
+//    public static PyObject reduce(PyObject f, PyObject l, PyObject z) {
+//        PyObject result = z;
+//        PyObject iter = Py.iter(l, "reduce() arg 2 must support iteration");
+//
+//        for (PyObject item; (item = iter.__next__()) != null;) {
+//            if (result == null) {
+//                result = item;
+//            } else {
+//                result = f.__call__(result, item);
+//            }
+//        }
+//        if (result == null) {
+//            throw Py.TypeError("reduce of empty sequence with no initial value");
+//        }
+//        return result;
+//    }
+//
+//    public static PyObject reduce(PyObject f, PyObject l) {
+//        return reduce(f, l, null);
+//    }
 
-        for (PyObject item; (item = iter.__next__()) != null;) {
-            if (result == null) {
-                result = item;
-            } else {
-                result = f.__call__(result, item);
-            }
-        }
-        if (result == null) {
-            throw Py.TypeError("reduce of empty sequence with no initial value");
-        }
-        return result;
-    }
-
-    public static PyObject reduce(PyObject f, PyObject l) {
-        return reduce(f, l, null);
-    }
-
-    public static PyObject reload(PyObject o) {
-        Object module = o.__tojava__(PyModule.class);
-        if (module == Py.NoConversion) {
-            if (o instanceof PySystemState) {
-                return __builtin__.reload((PySystemState)o);
-            } else if(o instanceof PyJavaType) {
-                // This has always been a no-op.  Should be disabled in py3k.
-                return o;
-            }
-            throw Py.TypeError("reload() argument must be a module");
-        }
-        return __builtin__.reload((PyModule) module);
-    }
-
-    public static PyObject reload(PyModule o) {
-        return imp.reload(o);
-    }
-
-    public static PyObject reload(PySystemState o) {
-        // reinitialize methods
-        o.reload();
-        return o;
-    }
+//    public static PyObject reload(PyObject o) {
+//        Object module = o.__tojava__(PyModule.class);
+//        if (module == Py.NoConversion) {
+//            if (o instanceof PySystemState) {
+//                return __builtin__.reload((PySystemState)o);
+//            } else if(o instanceof PyJavaType) {
+//                // This has always been a no-op.  Should be disabled in py3k.
+//                return o;
+//            }
+//            throw Py.TypeError("reload() argument must be a module");
+//        }
+//        return __builtin__.reload((PyModule) module);
+//    }
+//
+//    public static PyObject reload(PyModule o) {
+//        return imp.reload(o);
+//    }
+//
+//    public static PyObject reload(PySystemState o) {
+//        // reinitialize methods
+//        o.reload();
+//        return o;
+//    }
 
     public static PyUnicode repr(PyObject o) {
         return (PyUnicode) o.__repr__().decode();

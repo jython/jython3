@@ -236,7 +236,7 @@ public class imp {
 
         Py.writeComment(IMPORT_LOG,
                 String.format("import %s # precompiled from %s", name, compiledName));
-        return createFromCode(name, code, sourceName);
+        return createFromCode(name, code);
     }
 
     public static byte[] readCode(String name, InputStream fp, boolean testing) throws IOException {
@@ -406,15 +406,7 @@ public class imp {
         Py.writeComment(IMPORT_LOG, "'" + name + "' as " + filename);
 
         PyCode code = BytecodeLoader.makeCode(name + Version.PY_CACHE_TAG, bytes, filename);
-        return createFromCode(name, code, filename);
-    }
-
-    /**
-     * Returns a module with the given name whose contents are the results of running c. __file__ is
-     * set to whatever is in c.
-     */
-    public static PyObject createFromCode(String name, PyCode c) {
-        return createFromCode(name, c, null);
+        return createFromCode(name, code);
     }
 
     /**
@@ -424,30 +416,20 @@ public class imp {
      * File(moduleLocation).getAbsolutePath(). If c comes from a remote file or is a jar
      * moduleLocation should be the full uri for c.
      */
-    public static PyObject createFromCode(String name, PyCode c, String moduleLocation) {
+    public static PyObject createFromCode(String name, PyCode c) {
         PyUnicode.checkEncoding(name);
         PyModule module = addModule(name);
 
-        PyTableCode code = null;
-        if (c instanceof PyTableCode) {
-            code = (PyTableCode)c;
+        if (!(c instanceof PyTableCode)) {
+            throw Py.TypeError(String.format("expected TableCode, got %s", c.getType().fastGetName()));
         }
-
-        if (moduleLocation != null) {
-            module.__setattr__("__file__", new PyUnicode(moduleLocation));
-        } else if (module.__findattr__("__file__") == null) {
-            // Should probably never happen (but maybe with an odd custom builtins, or
-            // Java Integration)
-            Py.writeDebug(IMPORT_LOG, String.format("Warning: %s __file__ is unknown", name));
-        }
-
         ReentrantLock importLock = Py.getSystemState().getImportLock();
         importLock.lock();
         try {
-            PyFrame f = new PyFrame(code, module.__dict__, module.__dict__, null);
-            code.call(Py.getThreadState(), f);
+            PyFrame f = new PyFrame((PyTableCode) c, module.__dict__, module.__dict__, null);
+            c.call(Py.getThreadState(), f);
             return module;
-        } catch (RuntimeException t) {
+        } catch (Throwable t) {
             removeModule(name);
             throw t;
         } finally {
@@ -518,48 +500,6 @@ public class imp {
         return importer;
     }
 
-    static PyObject find_module(String name, String moduleName, PyList path) {
-        PyObject loader = Py.None;
-        PySystemState sys = Py.getSystemState();
-        PyObject metaPath = sys.meta_path;
-
-        for (PyObject importer : metaPath.asIterable()) {
-            PyObject findModule = importer.__getattr__("find_module");
-            loader = findModule.__call__(new PyObject[] { //
-                    new PyUnicode(moduleName), path == null ? Py.None : path});
-            if (loader != Py.None) {
-                return loadFromLoader(loader, moduleName);
-            }
-        }
-
-        PyObject ret = loadBuiltin(moduleName);
-        if (ret != null) {
-            return ret;
-        }
-
-        path = path == null ? sys.path : path;
-        for (int i = 0; i < path.__len__(); i++) {
-            PyObject p = path.__getitem__(i);
-            PyObject importer = getPathImporter(sys.path_importer_cache, sys.path_hooks, p);
-            if (importer != Py.None) {
-                PyObject findModule = importer.__getattr__("find_module");
-                loader = findModule.__call__(new PyObject[] {new PyUnicode(moduleName)});
-                if (loader != Py.None) {
-                    return loadFromLoader(loader, moduleName);
-                }
-            }
-            if (!(p instanceof PyUnicode)) {
-                p = p.__str__();
-            }
-            ret = loadFromSource(sys, name, moduleName, p.toString());
-            if (ret != null) {
-                return ret;
-            }
-        }
-
-        return ret;
-    }
-
     public static PyObject loadBuiltin(String name) {
         if (name == "sys") {
             Py.writeComment(IMPORT_LOG, "'" + name + "' as sys in builtin modules");
@@ -587,102 +527,52 @@ public class imp {
         return null;
     }
 
-    static PyObject loadFromLoader(PyObject importer, String name) {
-        PyUnicode.checkEncoding(name);
-        PyObject load_module = importer.__getattr__("load_module");
-        ReentrantLock importLock = Py.getSystemState().getImportLock();
-        importLock.lock();
-        try {
-            return load_module.__call__(new PyObject[] {new PyUnicode(name)});
-        } finally {
-            importLock.unlock();
+    private final static PyTuple all = new PyTuple(Py.newUnicode('*'));
+
+    /**
+     * Called from jython generated code when a statement like "from spam.eggs import *" is
+     * executed.
+     */
+    public static void importAll(String mod, PyFrame frame, int level) {
+        PyObject module = importName(mod, false, frame.f_globals, all, level);
+        importAll(module, frame);
+    }
+
+    public static void importAll(PyObject module, PyFrame frame) {
+        PyObject names;
+        boolean filter = true;
+        if (module instanceof PyJavaPackage) {
+            names = ((PyJavaPackage)module).fillDir();
+        } else {
+            PyObject __all__ = module.__findattr__("__all__");
+            if (__all__ != null) {
+                names = __all__;
+                filter = false;
+            } else {
+                names = module.__dir__();
+            }
         }
+
+        loadNames(names, module, frame.getLocals(), filter);
+    }
+
+    /**
+     * Called from jython generated code when a statement like "import spam" is executed.
+     */
+    public static PyObject importOne(String mod, PyFrame frame, int level) {
+        return importName(mod, true, frame.f_globals, Py.None, level);
+    }
+
+    /**
+     * Called from jython generated code when a statement like "import spam as foo" is executed.
+     */
+    public static PyObject importOneAs(String mod, PyFrame frame, int level) {
+        return importName(mod, false, frame.f_globals, Py.None, level);
     }
 
     public static PyObject loadFromCompiled(String name, InputStream stream, String sourceName,
             String compiledName) {
         return createFromPyClass(name, stream, false, sourceName, compiledName);
-    }
-
-    static PyObject loadFromSource(PySystemState sys, String name, String modName, String entry) {
-        String dirName = sys.getPath(entry);
-        String sourceName = "__init__.py";
-        String compiledName = "__init__" + Version.PY_CACHE_TAG + ".class";
-        // display names are for identification purposes (e.g. __file__): when entry is
-        // null it forces java.io.File to be a relative path (e.g. foo/bar.py instead of
-        // /tmp/foo/bar.py)
-        Path sourcePath = Paths.get(entry, name, sourceName).toAbsolutePath();
-        Path classPath =
-                Paths.get(entry, name, CACHEDIR, compiledName).toAbsolutePath();
-
-        // First check for packages
-        File dir = new File(dirName, name);
-        File sourceFile;
-        File compiledFile;
-
-        boolean pkg = false;
-        try {
-            if (dir.isDirectory()) {
-                sourceFile = sourcePath.toFile();
-                compiledFile = classPath.toFile();
-                if (caseok(dir, name) && (sourceFile.isFile() || compiledFile.isFile())) {
-                    pkg = true;
-                } else {
-                    Py.warning(Py.ImportWarning, String.format(
-                            "Not importing directory '%s': missing __init__.py", dirName));
-                }
-            }
-        } catch (SecurityException e) {
-            // ok
-        }
-
-        if (pkg) {
-            PyModule m = addModule(modName);
-            PyObject filename = new PyUnicode(dir.getAbsolutePath());
-            m.__dict__.__setitem__("__path__", new PyList(new PyObject[] {filename}));
-            m.__dict__.__setitem__("__package__", new PyUnicode(modName));
-        } else {
-            Py.writeDebug(IMPORT_LOG, "trying source " + dir.getPath());
-            sourceName = name + ".py";
-            compiledName = name + Version.PY_CACHE_TAG + ".class";
-            sourcePath = Paths.get(dirName, sourceName);
-            classPath = Paths.get(dirName, CACHEDIR, compiledName);
-        }
-
-        sourceFile = sourcePath.toFile();
-        compiledFile = classPath.toFile();
-        try {
-            if (sourceFile.isFile() && caseok(sourceFile, sourceName)) {
-                long pyTime = sourceFile.lastModified();
-                if (compiledFile.isFile() && caseok(compiledFile, compiledName)) {
-                    Py.writeDebug(IMPORT_LOG, "trying precompiled " + compiledFile.getPath());
-                    long classTime = compiledFile.lastModified();
-                    if (classTime >= pyTime) {
-                        PyObject ret = createFromPyClass(modName, makeStream(compiledFile), //
-                                true, // OK to fail here as we have the source
-                                sourcePath.toString(), sourcePath.toString(), pyTime);
-                        if (ret != null) {
-                            return ret;
-                        }
-                    }
-                    return createFromSource(modName, makeStream(sourceFile), sourcePath.toString(),
-                            compiledFile.getPath(), pyTime);
-                }
-                return createFromSource(modName, makeStream(sourceFile), sourcePath.toString(),
-                        compiledFile.getPath(), pyTime);
-            }
-
-            // If no source, try loading precompiled
-            Py.writeDebug(IMPORT_LOG, "trying precompiled with no source " + compiledFile.getPath());
-            if (compiledFile.isFile() && caseok(compiledFile, compiledName)) {
-                return createFromPyClass(modName, makeStream(compiledFile), //
-                        false, // throw ImportError here if this fails
-                        sourcePath.toString(), classPath.toString(), NO_MTIME, CodeImport.compiled_only);
-            }
-        } catch (SecurityException e) {
-            // ok
-        }
-        return null;
     }
 
     public static boolean caseok(File file, String filename) {
@@ -840,23 +730,7 @@ public class imp {
         if (ret != null) {
             return ret;
         }
-//        if (mod == null) {
-            ret = sys.importlib.invoke("_find_and_load", new PyUnicode(fullName), sys.builtins.__finditem__("__import__"));
-//            ret = find_module(fullName, name, null);
-//        } else {
-//            ret = mod.impAttr(name.intern());
-//        }
-        if (ret == null || ret == Py.None) {
-            if (JavaImportHelper.tryAddPackage(outerFullName, fromlist)) {
-                ret = modules.__finditem__(fullName);
-            }
-            return ret;
-        }
-        if (modules.__finditem__(fullName) == null) {
-            modules.__setitem__(fullName, ret);
-        } else {
-            ret = modules.__finditem__(fullName);
-        }
+        ret = sys.importlib.invoke("_find_and_load", new PyUnicode(fullName), sys.builtins.__finditem__("__import__"));
         return ret;
     }
 
@@ -1108,72 +982,6 @@ public class imp {
     }
 
     /**
-     * Called from jython generated code when a statement like "import spam" is executed.
-     */
-    @Deprecated
-    public static PyObject importOne(String mod, PyFrame frame) {
-        return importOne(mod, frame, imp.DEFAULT_LEVEL);
-    }
-
-    /**
-     * Called from jython generated code when a statement like "import spam" is executed.
-     */
-    public static PyObject importOne(String mod, PyFrame frame, int level) {
-        PyObject module =
-                __builtin__.__import__(mod, frame.f_globals, frame.getLocals(), Py.None, level);
-        return module;
-//        PyObject globals = frame.f_globals;
-//        PyObject locals = frame.getLocals();
-//        PySystemState sys = Py.getSystemState();
-//        PyObject modules = sys.modules;
-//        ReentrantLock importLock = Py.getSystemState().getImportLock();
-//        importLock.lock();
-//        PyObject builtinsImport;
-//        PyObject __import__name = new PyUnicode("__import__");
-//        try {
-//            builtinsImport = globals.__getitem__(__import__name);
-//            if (builtinsImport == null) {
-//                builtinsImport = modules.__getitem__(__import__name);
-//                if (builtinsImport == null) {
-//                    throw Py.ImportError("__import__ not found");
-//                }
-//            }
-//            PyObject module = modules.__finditem__(abs_name);
-//        } finally {
-//            importLock.unlock();
-//        }
-    }
-
-    /**
-     * Called from jython generated code when a statement like "import spam as foo" is executed.
-     */
-    @Deprecated
-    public static PyObject importOneAs(String mod, PyFrame frame) {
-        return importOneAs(mod, frame, imp.DEFAULT_LEVEL);
-    }
-
-    /**
-     * Called from jython generated code when a statement like "import spam as foo" is executed.
-     */
-    public static PyObject importOneAs(String mod, PyFrame frame, int level) {
-        PyObject module =
-                __builtin__.__import__(mod, frame.f_globals, frame.getLocals(), Py.None, level);
-        int dot = mod.indexOf('.');
-        while (dot != -1) {
-            int dot2 = mod.indexOf('.', dot + 1);
-            String name;
-            if (dot2 == -1) {
-                name = mod.substring(dot + 1);
-            } else {
-                name = mod.substring(dot + 1, dot2);
-            }
-            module = module.__getattr__(name);
-            dot = dot2;
-        }
-        return module;
-    }
-
-    /**
      * replaced by importFrom with level param. Kept for backwards compatibility.
      *
      * @deprecated use importFrom with level param.
@@ -1207,10 +1015,9 @@ public class imp {
      */
     public static PyObject[] importFromAs(String mod, String[] names, String[] asnames,
             PyFrame frame, int level) {
-//            private static PyObject import_module_level(String name, boolean top, PyObject modDict, PyObject fromlist, int level) {
+        PyObject module;
         ReentrantLock importLock = Py.getSystemState().getImportLock();
         importLock.lock();
-        PyObject module;
         try {
             PyObject[] fromList = new PyObject[names.length];
             for (int i = 0; i < names.length; i++) {
@@ -1224,11 +1031,6 @@ public class imp {
         PyObject[] submods = new PyObject[names.length];
         for (int i = 0; i < names.length; i++) {
             PyObject submod = module.__findattr__(names[i]);
-            // XXX: Temporary fix for http://bugs.jython.org/issue1900
-            if (submod == null) {
-                submod = module.impAttr(names[i]);
-            }
-            // end temporary fix.
 
             if (submod == null) {
                 throw Py.ImportError("cannot import name " + names[i], names[i]);
@@ -1236,41 +1038,6 @@ public class imp {
             submods[i] = submod;
         }
         return submods;
-    }
-
-    private final static PyTuple all = new PyTuple(Py.newUnicode('*'));
-
-    /**
-     * Called from jython generated code when a statement like "from spam.eggs import *" is
-     * executed.
-     */
-    public static void importAll(String mod, PyFrame frame, int level) {
-        PyObject module =
-                __builtin__.__import__(mod, frame.f_globals, frame.getLocals(), all, level);
-        importAll(module, frame);
-    }
-
-    @Deprecated
-    public static void importAll(String mod, PyFrame frame) {
-        importAll(mod, frame, DEFAULT_LEVEL);
-    }
-
-    public static void importAll(PyObject module, PyFrame frame) {
-        PyObject names;
-        boolean filter = true;
-        if (module instanceof PyJavaPackage) {
-            names = ((PyJavaPackage)module).fillDir();
-        } else {
-            PyObject __all__ = module.__findattr__("__all__");
-            if (__all__ != null) {
-                names = __all__;
-                filter = false;
-            } else {
-                names = module.__dir__();
-            }
-        }
-
-        loadNames(names, module, frame.getLocals(), filter);
     }
 
     /**
@@ -1303,62 +1070,6 @@ public class imp {
                     continue;
                 }
             }
-        }
-    }
-
-    static PyObject reload(PyModule m) {
-        PySystemState sys = Py.getSystemState();
-        PyObject modules = sys.modules;
-        Map<String, PyModule> modules_reloading = sys.modules_reloading;
-        ReentrantLock importLock = Py.getSystemState().getImportLock();
-        importLock.lock();
-        try {
-            return _reload(m, modules, modules_reloading);
-        } finally {
-            modules_reloading.clear();
-            importLock.unlock();
-        }
-    }
-
-    private static PyObject _reload(PyModule m, PyObject modules,
-            Map<String, PyModule> modules_reloading) {
-        String name = m.__getattr__("__name__").toString().intern();
-        PyModule nm = (PyModule)modules.__finditem__(name);
-        if (nm == null || !nm.__getattr__("__name__").toString().equals(name)) {
-            throw Py.ImportError("reload(): module " + name + " not in sys.modules", name);
-        }
-        PyModule existing_module = modules_reloading.get(name);
-        if (existing_module != null) {
-            // Due to a recursive reload, this module is already being reloaded.
-            return existing_module;
-        }
-        // Since we are already in a re-entrant lock,
-        // this test & set is guaranteed to be atomic
-        modules_reloading.put(name, nm);
-
-        PyList path = Py.getSystemState().path;
-        String modName = name;
-        int dot = name.lastIndexOf('.');
-        if (dot != -1) {
-            String iname = name.substring(0, dot).intern();
-            PyObject pkg = modules.__finditem__(iname);
-            if (pkg == null) {
-                throw Py.ImportError("reload(): parent not in sys.modules", name);
-            }
-            path = (PyList)pkg.__getattr__("__path__");
-            name = name.substring(dot + 1, name.length()).intern();
-        }
-
-        nm.__setattr__("__name__", new PyUnicode(modName)); // FIXME necessary?!
-        try {
-            PyObject ret = find_module(name, modName, path);
-            modules.__setitem__(modName, ret);
-            return ret;
-        } catch (RuntimeException t) {
-            // Need to restore module, due to the semantics of addModule, which removed it
-            // Fortunately we are in a module import lock
-            modules.__setitem__(modName, nm);
-            throw t;
         }
     }
 

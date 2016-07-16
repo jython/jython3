@@ -1102,8 +1102,8 @@ public class PySystemState extends PyObject implements AutoCloseable,
         Py.defaultSystemState.__setattr__("_jy_console", Py.java2py(Py.getConsole()));
 
         try {
-            InputStream _frozen_importlib_input =  new FileInputStream(new File("dist/Lib/importlib/__pycache__/_bootstrap$jython-35.class"));
-            InputStream _frozen_importlib_external_input =  new FileInputStream(new File("dist/Lib/importlib/__pycache__/_bootstrap_external$jython-35.class"));
+            InputStream _frozen_importlib_input =  new FileInputStream(new File("src/resources/frozen_importlib/_frozen_importlib.class"));
+            InputStream _frozen_importlib_external_input =  new FileInputStream(new File("src/resources/frozen_importlib/_frozen_importlib_external.class"));
             PyObject _frozen_importlib = imp.loadFromCompiled("_frozen_importlib", _frozen_importlib_input, "_bootstrap.py", "_frozen_importlib.class");
             imp.loadFromCompiled("_frozen_importlib_external", _frozen_importlib_external_input, "_bootstrap_external.py", "_frozen_importlib_external.class");
             Py.defaultSystemState.importlib = _frozen_importlib;

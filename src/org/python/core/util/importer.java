@@ -25,7 +25,7 @@ public abstract class importer<T> extends PyObject {
 
     enum EntryType {
         IS_SOURCE, IS_BYTECODE, IS_PACKAGE
-    };
+    }
     /** SearchOrder defines how we search for a module. */
     final SearchOrderEntry[] searchOrder;
 
@@ -85,7 +85,6 @@ public abstract class importer<T> extends PyObject {
             new SearchOrderEntry(EntryType.IS_SOURCE)};
     }
 
-    @Deprecated
     protected final PyObject importer_find_module(String fullname, String path) {
         ModuleInfo moduleInfo = getModuleInfo(fullname);
         if (moduleInfo.notFound()) {
@@ -107,12 +106,11 @@ public abstract class importer<T> extends PyObject {
             spec.__setattr__("submodule_search_locations", pkgpath);
             spec.__setattr__("is_package", Py.True);
         }
-        spec.__setattr__("cached", Py.newBoolean(info.isBytecode()));
-        spec.__setattr__("origin", new PyUnicode(info.getPath()));
+        spec.__setattr__("cached", new PyUnicode(info.getPath()));
+        spec.__setattr__("origin", new PyUnicode(info.getSourcePath()));
         return spec;
     }
 
-    @Deprecated
     protected final PyObject importer_load_module(String fullname) {
         ModuleCodeData moduleCodeData = getModuleCode(fullname);
         if (moduleCodeData == null) {
@@ -128,7 +126,7 @@ public abstract class importer<T> extends PyObject {
             pkgpath.add(makePackagePath(fullname));
             mod.__dict__.__setitem__("__path__", pkgpath);
         }
-        imp.createFromCode(fullname, moduleCodeData.code, moduleCodeData.path);
+        imp.createFromCode(fullname, moduleCodeData.code);
         Py.writeDebug("import", "import " + fullname + " # loaded from " + moduleCodeData.path);
         return mod;
     }
@@ -185,11 +183,12 @@ public abstract class importer<T> extends PyObject {
         String filePath = makeFilePath(fullname);
 
         for (SearchOrderEntry entry : searchOrder) {
-            T importEntry = makeEntry(filePath + entry.searchPath(path));
+            String entryPath = filePath + entry.searchPath(path);
+            T importEntry = makeEntry(entryPath);
             if (importEntry == null) {
                 continue;
             }
-            return new ModuleInfo(fullname, (String) importEntry, entry);
+            return new ModuleInfo(fullname, entryPath, filePath + entry.sourcePath(path), entry);
         }
         return ModuleInfo.NOT_FOUND;
     }
@@ -229,7 +228,7 @@ public abstract class importer<T> extends PyObject {
             bundle.close();
         }
 
-        PyCode code = BytecodeLoader.makeCode(fullname + Version.PY_CACHE_TAG, codeBytes, searchPath);
+        PyCode code = BytecodeLoader.makeCode(fullname + Version.PY_CACHE_TAG, codeBytes, moduleInfo.getSourcePath());
         return new ModuleCodeData(code, moduleInfo.isPackage(), searchPath);
     }
 
@@ -258,25 +257,31 @@ public abstract class importer<T> extends PyObject {
             this.types = EnumSet.of(type, types);
         }
 
+        public String sourcePath(String name) {
+            StringBuilder ret = new StringBuilder();
+            ret.append(name);
+            if (isPackage()) {
+                ret.append(File.separatorChar);
+                ret.append("__init__");
+            }
+            return ret.append(".py").toString();
+        }
+
         public String searchPath(String name) {
+            if (isSource()) return sourcePath(name);
             StringBuilder ret = new StringBuilder();
             if (isPackage()) {
                 ret.append(name);
                 ret.append(File.separatorChar);
-                if (isBytecode()) {
-                    ret.append(imp.CACHEDIR);
-                    ret.append(File.separatorChar);
-                }
+                ret.append(imp.CACHEDIR);
+                ret.append(File.separatorChar);
                 ret.append("__init__");
             } else {
-                 if (isBytecode()) {
-                    ret.append(imp.CACHEDIR);
-                    ret.append(File.separatorChar);
-                }
+                ret.append(imp.CACHEDIR);
+                ret.append(File.separatorChar);
                 ret.append(name);
             }
-            String suffix = isSource() ? ".py" : Version.PY_CACHE_TAG + ".class";
-            return ret.append(suffix).toString();
+            return ret.append(Version.PY_CACHE_TAG).append(".class").toString();
         }
 
         private boolean isPackage() {
@@ -288,7 +293,7 @@ public abstract class importer<T> extends PyObject {
         }
 
         private boolean isSource() {
-            return types.contains(EntryType.IS_SOURCE);
+            return !isBytecode();
         }
     }
 
@@ -298,6 +303,7 @@ public abstract class importer<T> extends PyObject {
     protected static class ModuleInfo {
         private String name;
         private String path;
+        private String sourcePath;
         private SearchOrderEntry entry;
 
         public static final ModuleInfo NOT_FOUND = new ModuleInfo();
@@ -306,9 +312,10 @@ public abstract class importer<T> extends PyObject {
             name = null;
         }
 
-        public ModuleInfo(String name, String path, SearchOrderEntry searchEntry) {
+        public ModuleInfo(String name, String path, String sourcePath, SearchOrderEntry searchEntry) {
             this.name = name;
             this.path = path;
+            this.sourcePath = sourcePath;
             this.entry = searchEntry;
         }
 
@@ -326,6 +333,10 @@ public abstract class importer<T> extends PyObject {
 
         public String getPath() {
             return path;
+        }
+
+        public String getSourcePath() {
+            return sourcePath;
         }
     }
 }

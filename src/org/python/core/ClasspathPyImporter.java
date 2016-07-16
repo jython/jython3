@@ -92,15 +92,11 @@ public class ClasspathPyImporter extends importer<String> {
         if (moduleInfo.notFound()) {
             throw Py.ImportError(String.format("can't find module '%s'", fullname), fullname);
         }
-        try (InputStream is = entries.remove(moduleInfo.getPath())) {
-            if (is != null) {
-                byte[] data = FileUtil.readBytes(is);
-                return StringUtil.fromBytes(data);
-            }
-            // we have the module, but no source
-            return null;
-        } catch (IOException ioe) {
-            throw Py.IOError(ioe);
+        try (InputStream is = new FileInputStream(new File(moduleInfo.getSourcePath()))) {
+            byte[] data = FileUtil.readBytes(is);
+            return StringUtil.fromBytes(data);
+        } catch (IOException e) {
+            throw Py.ImportError(String.format("source of %s not found", fullname));
         }
     }
 
@@ -183,7 +179,7 @@ public class ClasspathPyImporter extends importer<String> {
         PyModule mod = (PyModule) module;
         String fullname = mod.__findattr__("__name__").asString();
         ModuleCodeData moduleCodeData = getModuleCode(fullname);
-        return imp.createFromCode(fullname, moduleCodeData.code, moduleCodeData.path);
+        return imp.createFromCode(fullname, moduleCodeData.code);
     }
 
     @Override
