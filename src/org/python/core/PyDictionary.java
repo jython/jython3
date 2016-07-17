@@ -473,7 +473,7 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
      */
     private void mergeFromKeys(PyObject other, PyObject keys) {
         for (PyObject key : keys.asIterable()) {
-            dict___setitem__(key, other.__getitem__(key));
+            invoke("__setitem__", key, other.__getitem__(key));
         }
     }
 

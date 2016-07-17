@@ -80,6 +80,5 @@ public class Setup {
             "_types",
             "_thread:org.python.modules.thread.thread",
             "_weakref:org.python.modules._weakref.WeakrefModule",
-            "hello:org.python.modules.SimpleModule",
     };
 }
