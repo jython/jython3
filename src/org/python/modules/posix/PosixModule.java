@@ -14,9 +14,11 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.Pipe;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
+import java.nio.file.NotDirectoryException;
 import java.nio.file.NotLinkException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -731,6 +733,25 @@ public class PosixModule implements ClassDictInit {
             list.append(Py.newUnicode(name));
         }
         return list;
+    }
+
+    public static PyObject scandir(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("listdir", args, keywords, "path");
+        String path = ap.getString(0, System.getProperty("user.home"));
+        Path p = absolutePath(path);
+        List<Path> paths = new ArrayList<Path>();
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(p)) {
+            for (Path f: stream) {
+                paths.add(f);
+            }
+        } catch (NotDirectoryException e) {
+            throw Py.OSError(Errno.ENOENT, path);
+        } catch (IOException e) {
+            throw Py.OSError(Errno.ENOTDIR, path);
+        } catch (SecurityException e) {
+            throw Py.OSError(Errno.EACCES, path);
+        }
+        return new PyScandirIterator(paths.iterator());
     }
 
     public static PyString __doc__lseek = new PyString(
