@@ -30,7 +30,19 @@ public abstract class PyBuiltinCallable extends PyObject {
 
     @ExposedGet(name = "__name__")
     public PyObject fastGetName() {
-        return Py.newString(this.info.getName());
+        return new PyUnicode(this.info.getName());
+    }
+
+    @ExposedGet(name = "__qualname__")
+    public PyObject getQualname() {
+        PyObject self = getSelf();
+        String qualname;
+        if (self == null) {
+            qualname = info.getName();
+        } else {
+            qualname = self.__getattr__("__name__") + "." + info.getName();
+        }
+        return new PyUnicode(qualname);
     }
 
     @ExposedGet(name = "__doc__")
@@ -59,13 +71,7 @@ public abstract class PyBuiltinCallable extends PyObject {
 
     @Override
     public String toString() {
-        PyObject self = getSelf();
-        if (self == null) {
-            return String.format("<function %s>", info.getName());
-        } else {
-            return String.format("<function %s.%s>", self.getType().fastGetName(),
-                info.getName());
-        }
+        return String.format("<function %s>", getQualname());
     }
 
     public interface Info extends Serializable {

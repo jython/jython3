@@ -73,10 +73,22 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
     @ExposedSet
     public PyObject __module__;
 
-    public PyFunction(PyObject globals, PyObject[] defaults, PyDictionary kw_defaults, PyDictionary annotations, PyCode code, PyObject doc) {
-        this(globals, defaults, kw_defaults, annotations, code, doc, null);
+    public PyFunction(PyObject globals, PyObject[] defaults, PyDictionary kw_defaults, PyDictionary annotations, PyCode code, PyObject doc,
+                      String qualname) {
+        this(globals, defaults, kw_defaults, annotations, code, doc, (PyObject[]) null);
+        __qualname__ = qualname;
     }
 
+    public PyFunction(PyObject globals, PyObject[] defaults, PyDictionary kw_defaults, PyDictionary annotations, PyCode code, PyObject doc) {
+        this(globals, defaults, kw_defaults, annotations, code, doc, (PyObject[]) null);
+    }
+
+    public PyFunction(PyObject globals, PyObject[] defaults, PyDictionary kw_defaults, PyDictionary annotations, PyCode code, PyObject doc,
+                      String qualname, PyObject[] closure_cells) {
+         this(globals, defaults, kw_defaults, code, doc, closure_cells);
+        __annotations__ = annotations;
+        __qualname__ = qualname;
+    }
     public PyFunction(PyObject globals, PyObject[] defaults, PyDictionary kw_defaults, PyDictionary annotations, PyCode code, PyObject doc,
                       PyObject[] closure_cells) {
         this(globals, defaults, kw_defaults, code, doc, closure_cells);

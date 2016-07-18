@@ -604,17 +604,16 @@ public class PyUnicode extends PyString implements Iterable {
             return Py.EmptyUnicode;
         }
 
-        if (encoding == null) {
-            return S.__str__();
-        }
-
-        checkEncoding(errors);
-        checkEncoding(encoding);
-
         if (new_.for_type == subtype) {
             if (S == null) {
                 return new PyUnicode("");
             }
+            if (encoding == null) {
+                return S.__str__();
+            }
+            checkEncoding(errors);
+            checkEncoding(encoding);
+
             if (S instanceof PyUnicode) {
                 return new PyUnicode(((PyUnicode)S).getString());
             }

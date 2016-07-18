@@ -259,6 +259,11 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
                 code.invokevirtual(p(PyFrame.class), "setlocal",
                         sig(Void.TYPE, String.class, PyObject.class));
             }
+            loadFrame();
+            code.ldc("__qualname__");
+            code.ldc(className);
+            code.invokevirtual(p(PyFrame.class), "setlocal",
+                    sig(Void.TYPE, String.class, String.class));
         }
 
         Label genswitch = new Label();
@@ -532,17 +537,18 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         } else {
             code.aconst_null();
         }
+        code.ldc(className + "." + name);
 
         if (!makeClosure(scope)) {
             code.invokespecial(p(PyFunction.class), "<init>",
                     sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyDictionary.class,
-                            PyCode.class, PyObject.class));
+                            PyCode.class, PyObject.class, String.class));
         } else {
             code.invokespecial(
                     p(PyFunction.class),
                     "<init>",
                     sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyDictionary.class,
-                            PyCode.class, PyObject.class, PyObject[].class));
+                            PyCode.class, PyObject.class, String.class, PyObject[].class));
         }
 
         applyDecorators(decs);
