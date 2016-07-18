@@ -719,29 +719,13 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
             return null;
         }
 
-        // If there is a __cmp__ method defined, let it be called instead
-        // of our dumb function designed merely to warn. See CPython bug #7491.
-        if (__findattr__("__cmp__") != null || ((PyType)other).__findattr__("__cmp__") != null) {
-            return null;
-        }
-        
-        // Py3K warning if comparison isn't == or !=
-        if (Options.py3k_warning && op != cmpopType.Eq && op != cmpopType.NotEq) {
-            Py.warnPy3k("type inequality comparisons not supported in 3.x");
-            return null;
-        }
-
         // Compare hashes
         int hash1 = object___hash__();
         int hash2 = other.object___hash__();
         switch (op) {
-        case Lt: return hash1 < hash2 ? Py.True : Py.False;
-        case LtE: return hash1 <= hash2 ? Py.True : Py.False;
         case Eq: return hash1 == hash2 ? Py.True : Py.False;
         case NotEq: return hash1 != hash2 ? Py.True : Py.False;
-        case Gt: return hash1 > hash2 ? Py.True : Py.False;
-        case GtE: return hash1 >= hash2 ? Py.True : Py.False;
-        default: return null;
+        default: return Py.NotImplemented;
         }
     }
 
