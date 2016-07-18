@@ -465,6 +465,10 @@ public class PyLong extends PyObject {
 
     @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.int___rsub___doc)
     final PyObject long___rsub__(PyObject left) {
+        if (!canCoerce(left)) {
+            throw Py.TypeError(String.format("unsupported operand type(s) for -: '%s' and '%s'",
+                    left.getType().getName(), getType().getName()));
+        }
         return Py.newLong(coerce(left).subtract(getValue()));
     }
 

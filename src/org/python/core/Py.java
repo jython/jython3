@@ -2077,34 +2077,37 @@ public final class Py {
      */
     public static PyObject makeClass(String name, PyObject[] bases, PyObject dict, PyObject metaclass) {
         // arguments unpack
-        boolean starargs = false;
+        // As a result of the __class__ variable scoping, the bases will always be packed by the wrapper function
+        // FIXME pass the keywords parameters in directly, instead of cherry-pick metaclass
+        List<PyObject> expandBases = new ArrayList<>();
         for (PyObject base : bases) {
-            if (!(base instanceof PyType)) {
-                Py.iter(base, name + "argument after * must be a sequence");
-                starargs = true;
-                break;
-            }
-        }
-
-        if (starargs) {
-            List<PyObject> expandBases = new ArrayList<>();
-            for (PyObject base : bases) {
-                if (base instanceof PyType) {
-                    expandBases.add(base);
-                } else {
-                    PyObject iter = Py.iter(base, name + "argument after * must be a sequence");
-                    for (PyObject cur = null; ((cur = iter.__next__()) != null); ) {
+            if (base instanceof PyType) {
+                expandBases.add(base);
+            } else {
+                PyObject iter = Py.iter(base, name + "argument after * must be a sequence");
+                for (PyObject cur = iter.__next__(); cur != null; ) {
+                    if (cur instanceof PySequence) {
+                        PyObject baseIter = cur.__iter__();
+                        for (cur = baseIter.__next__(); cur != null; ) {
+                            expandBases.add(cur);
+                            cur = baseIter.__next__();
+                        }
+                    } else {
                         expandBases.add(cur);
                     }
+                    cur = iter.__next__();
                 }
             }
-            bases = new PyObject[expandBases.size()];
-            expandBases.toArray(bases);
         }
+        bases = new PyObject[expandBases.size()];
+        expandBases.toArray(bases);
 
-        // in case of kwarg
         if (metaclass instanceof PyDictionary) {
             metaclass = metaclass.__finditem__("metaclass");
+            // in case of kwarg
+            if (metaclass != null && metaclass instanceof PyDictionary) {
+                metaclass = metaclass.__finditem__("metaclass");
+            }
         }
 
         if (metaclass == null) {
