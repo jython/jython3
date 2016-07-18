@@ -139,6 +139,11 @@ public class PyTableCode extends PyBaseCode
         return Py.newLong(co_kwonlyargcount);
     }
 
+    @ExposedGet
+    final PyObject co_firstlineno() {
+        return new PyLong(co_firstlineno);
+    }
+
     @Override
     public PyObject call(ThreadState ts, PyFrame frame, PyObject closure) {
         if (ts.systemState == null) {
