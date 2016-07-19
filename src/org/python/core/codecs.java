@@ -1650,7 +1650,7 @@ public class codecs {
         private PyList searchPath;
         private PyStringMap searchCache;
         private PyStringMap errorHandlers;
-        private String default_encoding = "ascii";
+        private String default_encoding = "utf-8";
 
         public static final String[] BUILTIN_ERROR_HANDLERS = new String[]{"strict",
                 IGNORE,
@@ -1705,7 +1705,7 @@ public class codecs {
                         "no codec search functions registered: can't find encoding '" + encoding + "'");
             }
 
-            PyString v = new PyString(normalizedEncoding);
+            PyUnicode v = new PyUnicode(normalizedEncoding);
             for (PyObject func : searchPath.asIterable()) {
                 PyObject created = func.__call__(v);
                 if (created == Py.None) {
