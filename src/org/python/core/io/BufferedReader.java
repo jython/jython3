@@ -2,6 +2,7 @@
 package org.python.core.io;
 
 import java.nio.ByteBuffer;
+import java.nio.channels.Channel;
 
 /**
  * Buffer for a readable sequential RawIO object.
@@ -153,6 +154,11 @@ public class BufferedReader extends BufferedIOMixin {
         checkClosed();
         checkWritable();
         return -1;
+    }
+
+    @Override
+    public Channel getChannel() {
+        return rawIO.getChannel();
     }
 
     @Override

@@ -2,6 +2,7 @@
 package org.python.core.io;
 
 import java.nio.ByteBuffer;
+import java.nio.channels.Channel;
 
 /**
  * Buffer for a writable sequential RawIO object.
@@ -68,6 +69,11 @@ public class BufferedWriter extends BufferedIOMixin {
         }
 
         return totalToWrite;
+    }
+
+    @Override
+    public Channel getChannel() {
+        return rawIO.getChannel();
     }
 
     @Override

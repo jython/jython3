@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
  *
  * @author Philip Jenvey
  */
-public abstract class BufferedIOBase extends IOBase {
+public abstract class BufferedIOBase extends RawIOBase {
 
     /**
      * Read and return up to size bytes, contained in a ByteBuffer.
