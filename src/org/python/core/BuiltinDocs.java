@@ -374,7 +374,7 @@ public class BuiltinDocs {
         "bytearray(int) -> bytes array of size given by the parameter initialized with null bytes\n" + 
         "bytearray() -> empty bytes array\n" + 
         "\n" + 
-        "Construct an mutable bytearray object from:\n" + 
+        "Construct a mutable bytearray object from:\n" + 
         "  - an iterable yielding integers in range(256)\n" + 
         "  - a text string encoded using the specified encoding\n" + 
         "  - a bytes or a buffer object\n" + 
@@ -483,7 +483,7 @@ public class BuiltinDocs {
         "    recursively the attributes of its class's base classes.";
 
     public final static String builtins_divmod_doc = 
-        "Return the tuple ((x-x%y)/y, x%y).  Invariant: div*y + mod == x.";
+        "Return the tuple (x//y, x%y).  Invariant: div*y + mod == x.";
 
     public final static String builtins_enumerate_doc = 
         "enumerate(iterable[, start]) -> iterator for index, value of iterable\n" + 
@@ -1215,7 +1215,16 @@ public class BuiltinDocs {
         "If the argument is a tuple, the return value is the same object.";
 
     public final static String type___name___doc = 
-        "";
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
 
     public final static String type___ne___doc = 
         "Return self!=value.";
@@ -1228,7 +1237,16 @@ public class BuiltinDocs {
         "used to create the namespace for the class statement";
 
     public final static String type___qualname___doc = 
-        "";
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
 
     public final static String type___reduce___doc = 
         "helper for pickle";
@@ -4626,7 +4644,7 @@ public class BuiltinDocs {
         "bytearray(int) -> bytes array of size given by the parameter initialized with null bytes\n" + 
         "bytearray() -> empty bytes array\n" + 
         "\n" + 
-        "Construct an mutable bytearray object from:\n" + 
+        "Construct a mutable bytearray object from:\n" + 
         "  - an iterable yielding integers in range(256)\n" + 
         "  - a text string encoded using the specified encoding\n" + 
         "  - a bytes or a buffer object\n" + 
@@ -5245,7 +5263,16 @@ public class BuiltinDocs {
         "Return self<value.";
 
     public final static String generator___name___doc = 
-        "name of the generator";
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
 
     public final static String generator___ne___doc = 
         "Return self!=value.";
@@ -5257,7 +5284,16 @@ public class BuiltinDocs {
         "Implement next(self).";
 
     public final static String generator___qualname___doc = 
-        "qualified name of the generator";
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
 
     public final static String generator___reduce___doc = 
         "helper for pickle";
@@ -5360,7 +5396,16 @@ public class BuiltinDocs {
         "Return self<value.";
 
     public final static String coroutine___name___doc = 
-        "name of the coroutine";
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
 
     public final static String coroutine___ne___doc = 
         "Return self!=value.";
@@ -5369,7 +5414,16 @@ public class BuiltinDocs {
         "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String coroutine___qualname___doc = 
-        "qualified name of the coroutine";
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
 
     public final static String coroutine___reduce___doc = 
         "helper for pickle";
@@ -5604,7 +5658,16 @@ public class BuiltinDocs {
         "errors defaults to 'strict'.";
 
     public final static String function___name___doc = 
-        "";
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
 
     public final static String function___ne___doc = 
         "Return self!=value.";
@@ -5613,7 +5676,16 @@ public class BuiltinDocs {
         "Create and return a new object.  See help(type) for accurate signature.";
 
     public final static String function___qualname___doc = 
-        "";
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
 
     public final static String function___reduce___doc = 
         "helper for pickle";
@@ -7136,7 +7208,7 @@ public class BuiltinDocs {
     public final static String TextIOBase_fileno_doc = 
         "Returns underlying file descriptor if one exists.\n" + 
         "\n" + 
-        "An IOError is raised if the IO object does not use a file descriptor.";
+        "OSError is raised if the IO object does not use a file descriptor.";
 
     public final static String TextIOBase_flush_doc = 
         "Flush write buffers, if applicable.\n" + 
@@ -7166,7 +7238,7 @@ public class BuiltinDocs {
     public final static String TextIOBase_readable_doc = 
         "Return whether object was opened for reading.\n" + 
         "\n" + 
-        "If False, read() will raise UnsupportedOperation.";
+        "If False, read() will raise OSError.";
 
     public final static String TextIOBase_readline_doc = 
         "Read until newline or EOF.\n" + 
@@ -7197,7 +7269,7 @@ public class BuiltinDocs {
     public final static String TextIOBase_seekable_doc = 
         "Return whether object supports random access.\n" + 
         "\n" + 
-        "If False, seek(), tell() and truncate() will raise UnsupportedOperation.\n" + 
+        "If False, seek(), tell() and truncate() will raise OSError.\n" + 
         "This method may need to do a test seek().";
 
     public final static String TextIOBase_tell_doc = 
@@ -7212,7 +7284,7 @@ public class BuiltinDocs {
     public final static String TextIOBase_writable_doc = 
         "Return whether object was opened for writing.\n" + 
         "\n" + 
-        "If False, write() will raise UnsupportedOperation.";
+        "If False, write() will raise OSError.";
 
     public final static String TextIOBase_write_doc = 
         "Write string to stream.\n" + 
@@ -7222,5 +7294,870 @@ public class BuiltinDocs {
 
     public final static String TextIOBase_writelines_doc = 
         "";
+
+    // Docs for <module 'sys' (built-in)>
+    public final static String sys___displayhook___doc = 
+        "displayhook(object) -> None\n" + 
+        "\n" + 
+        "Print an object to sys.stdout and also save it in builtins._\n" + 
+        "";
+
+    public final static String sys_doc = 
+        "This module provides access to some objects used or maintained by the\n" + 
+        "interpreter and to functions that interact strongly with the interpreter.\n" + 
+        "\n" + 
+        "Dynamic objects:\n" + 
+        "\n" + 
+        "argv -- command line arguments; argv[0] is the script pathname if known\n" + 
+        "path -- module search path; path[0] is the script directory, else ''\n" + 
+        "modules -- dictionary of loaded modules\n" + 
+        "\n" + 
+        "displayhook -- called to show results in an interactive session\n" + 
+        "excepthook -- called to handle any uncaught exception other than SystemExit\n" + 
+        "  To customize printing in an interactive session or to install a custom\n" + 
+        "  top-level exception handler, assign other functions to replace these.\n" + 
+        "\n" + 
+        "stdin -- standard input file object; used by input()\n" + 
+        "stdout -- standard output file object; used by print()\n" + 
+        "stderr -- standard error object; used for error messages\n" + 
+        "  By assigning other file objects (or objects that behave like files)\n" + 
+        "  to these, it is possible to redirect all of the interpreter's I/O.\n" + 
+        "\n" + 
+        "last_type -- type of last uncaught exception\n" + 
+        "last_value -- value of last uncaught exception\n" + 
+        "last_traceback -- traceback of last uncaught exception\n" + 
+        "  These three are only available in an interactive session after a\n" + 
+        "  traceback has been printed.\n" + 
+        "\n" + 
+        "Static objects:\n" + 
+        "\n" + 
+        "builtin_module_names -- tuple of module names built into this interpreter\n" + 
+        "copyright -- copyright notice pertaining to this interpreter\n" + 
+        "exec_prefix -- prefix used to find the machine-specific Python library\n" + 
+        "executable -- absolute path of the executable binary of the Python interpreter\n" + 
+        "float_info -- a struct sequence with information about the float implementation.\n" + 
+        "float_repr_style -- string indicating the style of repr() output for floats\n" + 
+        "hash_info -- a struct sequence with information about the hash algorithm.\n" + 
+        "hexversion -- version information encoded as a single integer\n" + 
+        "implementation -- Python implementation information.\n" + 
+        "int_info -- a struct sequence with information about the int implementation.\n" + 
+        "maxsize -- the largest supported length of containers.\n" + 
+        "maxunicode -- the value of the largest Unicode code point\n" + 
+        "platform -- platform identifier\n" + 
+        "prefix -- prefix used to find the Python library\n" + 
+        "thread_info -- a struct sequence with information about the thread implementation.\n" + 
+        "version -- the version of this interpreter as a string\n" + 
+        "version_info -- version information as a named tuple\n" + 
+        "__stdin__ -- the original stdin; don't touch!\n" + 
+        "__stdout__ -- the original stdout; don't touch!\n" + 
+        "__stderr__ -- the original stderr; don't touch!\n" + 
+        "__displayhook__ -- the original displayhook; don't touch!\n" + 
+        "__excepthook__ -- the original excepthook; don't touch!\n" + 
+        "\n" + 
+        "Functions:\n" + 
+        "\n" + 
+        "displayhook() -- print an object to the screen, and save it in builtins._\n" + 
+        "excepthook() -- print an exception and its traceback to sys.stderr\n" + 
+        "exc_info() -- return thread-safe information about the current exception\n" + 
+        "exit() -- exit the interpreter by raising SystemExit\n" + 
+        "getdlopenflags() -- returns flags to be used for dlopen() calls\n" + 
+        "getprofile() -- get the global profiling function\n" + 
+        "getrefcount() -- return the reference count for an object (plus one :-)\n" + 
+        "getrecursionlimit() -- return the max recursion depth for the interpreter\n" + 
+        "getsizeof() -- return the size of an object in bytes\n" + 
+        "gettrace() -- get the global debug tracing function\n" + 
+        "setcheckinterval() -- control how often the interpreter checks for events\n" + 
+        "setdlopenflags() -- set the flags to be used for dlopen() calls\n" + 
+        "setprofile() -- set the global profiling function\n" + 
+        "setrecursionlimit() -- set the max recursion depth for the interpreter\n" + 
+        "settrace() -- set the global debug tracing function\n" + 
+        "";
+
+    public final static String sys___excepthook___doc = 
+        "excepthook(exctype, value, traceback) -> None\n" + 
+        "\n" + 
+        "Handle an exception by displaying it with a traceback on sys.stderr.\n" + 
+        "";
+
+    public final static String sys___interactivehook___doc = 
+        "";
+
+    public final static String sys___loader___doc = 
+        "Meta path import for built-in modules.\n" + 
+        "\n" + 
+        "    All methods are either class or static methods to avoid the need to\n" + 
+        "    instantiate the class.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String sys___name___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String sys___package___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String sys___spec___doc = 
+        "The specification for a module, used for loading.\n" + 
+        "\n" + 
+        "    A module's spec is the source for information about the module.  For\n" + 
+        "    data associated with the module, including source, use the spec's\n" + 
+        "    loader.\n" + 
+        "\n" + 
+        "    `name` is the absolute name of the module.  `loader` is the loader\n" + 
+        "    to use when loading the module.  `parent` is the name of the\n" + 
+        "    package the module is in.  The parent is derived from the name.\n" + 
+        "\n" + 
+        "    `is_package` determines if the module is considered a package or\n" + 
+        "    not.  On modules this is reflected by the `__path__` attribute.\n" + 
+        "\n" + 
+        "    `origin` is the specific location used by the loader from which to\n" + 
+        "    load the module, if that information is available.  When filename is\n" + 
+        "    set, origin will match.\n" + 
+        "\n" + 
+        "    `has_location` indicates that a spec's \"origin\" reflects a location.\n" + 
+        "    When this is True, `__file__` attribute of the module is set.\n" + 
+        "\n" + 
+        "    `cached` is the location of the cached bytecode file, if any.  It\n" + 
+        "    corresponds to the `__cached__` attribute.\n" + 
+        "\n" + 
+        "    `submodule_search_locations` is the sequence of path entries to\n" + 
+        "    search when importing submodules.  If set, is_package should be\n" + 
+        "    True--and False otherwise.\n" + 
+        "\n" + 
+        "    Packages are simply modules that (may) have submodules.  If a spec\n" + 
+        "    has a non-None value in `submodule_search_locations`, the import\n" + 
+        "    system will consider modules loaded from the spec as packages.\n" + 
+        "\n" + 
+        "    Only finders (see importlib.abc.MetaPathFinder and\n" + 
+        "    importlib.abc.PathEntryFinder) should modify ModuleSpec instances.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String sys___stderr___doc = 
+        "Character and line based layer over a BufferedIOBase object, buffer.\n" + 
+        "\n" + 
+        "encoding gives the name of the encoding that the stream will be\n" + 
+        "decoded or encoded with. It defaults to locale.getpreferredencoding(False).\n" + 
+        "\n" + 
+        "errors determines the strictness of encoding and decoding (see\n" + 
+        "help(codecs.Codec) or the documentation for codecs.register) and\n" + 
+        "defaults to \"strict\".\n" + 
+        "\n" + 
+        "newline controls how line endings are handled. It can be None, '',\n" + 
+        "'\\n', '\\r', and '\\r\\n'.  It works as follows:\n" + 
+        "\n" + 
+        "* On input, if newline is None, universal newlines mode is\n" + 
+        "  enabled. Lines in the input can end in '\\n', '\\r', or '\\r\\n', and\n" + 
+        "  these are translated into '\\n' before being returned to the\n" + 
+        "  caller. If it is '', universal newline mode is enabled, but line\n" + 
+        "  endings are returned to the caller untranslated. If it has any of\n" + 
+        "  the other legal values, input lines are only terminated by the given\n" + 
+        "  string, and the line ending is returned to the caller untranslated.\n" + 
+        "\n" + 
+        "* On output, if newline is None, any '\\n' characters written are\n" + 
+        "  translated to the system default line separator, os.linesep. If\n" + 
+        "  newline is '' or '\\n', no translation takes place. If newline is any\n" + 
+        "  of the other legal values, any '\\n' characters written are translated\n" + 
+        "  to the given string.\n" + 
+        "\n" + 
+        "If line_buffering is True, a call to flush is implied when a call to\n" + 
+        "write contains a newline character.";
+
+    public final static String sys___stdin___doc = 
+        "Character and line based layer over a BufferedIOBase object, buffer.\n" + 
+        "\n" + 
+        "encoding gives the name of the encoding that the stream will be\n" + 
+        "decoded or encoded with. It defaults to locale.getpreferredencoding(False).\n" + 
+        "\n" + 
+        "errors determines the strictness of encoding and decoding (see\n" + 
+        "help(codecs.Codec) or the documentation for codecs.register) and\n" + 
+        "defaults to \"strict\".\n" + 
+        "\n" + 
+        "newline controls how line endings are handled. It can be None, '',\n" + 
+        "'\\n', '\\r', and '\\r\\n'.  It works as follows:\n" + 
+        "\n" + 
+        "* On input, if newline is None, universal newlines mode is\n" + 
+        "  enabled. Lines in the input can end in '\\n', '\\r', or '\\r\\n', and\n" + 
+        "  these are translated into '\\n' before being returned to the\n" + 
+        "  caller. If it is '', universal newline mode is enabled, but line\n" + 
+        "  endings are returned to the caller untranslated. If it has any of\n" + 
+        "  the other legal values, input lines are only terminated by the given\n" + 
+        "  string, and the line ending is returned to the caller untranslated.\n" + 
+        "\n" + 
+        "* On output, if newline is None, any '\\n' characters written are\n" + 
+        "  translated to the system default line separator, os.linesep. If\n" + 
+        "  newline is '' or '\\n', no translation takes place. If newline is any\n" + 
+        "  of the other legal values, any '\\n' characters written are translated\n" + 
+        "  to the given string.\n" + 
+        "\n" + 
+        "If line_buffering is True, a call to flush is implied when a call to\n" + 
+        "write contains a newline character.";
+
+    public final static String sys___stdout___doc = 
+        "Character and line based layer over a BufferedIOBase object, buffer.\n" + 
+        "\n" + 
+        "encoding gives the name of the encoding that the stream will be\n" + 
+        "decoded or encoded with. It defaults to locale.getpreferredencoding(False).\n" + 
+        "\n" + 
+        "errors determines the strictness of encoding and decoding (see\n" + 
+        "help(codecs.Codec) or the documentation for codecs.register) and\n" + 
+        "defaults to \"strict\".\n" + 
+        "\n" + 
+        "newline controls how line endings are handled. It can be None, '',\n" + 
+        "'\\n', '\\r', and '\\r\\n'.  It works as follows:\n" + 
+        "\n" + 
+        "* On input, if newline is None, universal newlines mode is\n" + 
+        "  enabled. Lines in the input can end in '\\n', '\\r', or '\\r\\n', and\n" + 
+        "  these are translated into '\\n' before being returned to the\n" + 
+        "  caller. If it is '', universal newline mode is enabled, but line\n" + 
+        "  endings are returned to the caller untranslated. If it has any of\n" + 
+        "  the other legal values, input lines are only terminated by the given\n" + 
+        "  string, and the line ending is returned to the caller untranslated.\n" + 
+        "\n" + 
+        "* On output, if newline is None, any '\\n' characters written are\n" + 
+        "  translated to the system default line separator, os.linesep. If\n" + 
+        "  newline is '' or '\\n', no translation takes place. If newline is any\n" + 
+        "  of the other legal values, any '\\n' characters written are translated\n" + 
+        "  to the given string.\n" + 
+        "\n" + 
+        "If line_buffering is True, a call to flush is implied when a call to\n" + 
+        "write contains a newline character.";
+
+    public final static String sys__clear_type_cache_doc = 
+        "_clear_type_cache() -> None\n" + 
+        "Clear the internal type lookup cache.";
+
+    public final static String sys__current_frames_doc = 
+        "_current_frames() -> dictionary\n" + 
+        "\n" + 
+        "Return a dictionary mapping each current thread T's thread id to T's\n" + 
+        "current stack frame.\n" + 
+        "\n" + 
+        "This function should be used for specialized purposes only.";
+
+    public final static String sys__debugmallocstats_doc = 
+        "_debugmallocstats()\n" + 
+        "\n" + 
+        "Print summary info to stderr about the state of\n" + 
+        "pymalloc's structures.\n" + 
+        "\n" + 
+        "In Py_DEBUG mode, also perform some expensive internal consistency\n" + 
+        "checks.\n" + 
+        "";
+
+    public final static String sys__getframe_doc = 
+        "_getframe([depth]) -> frameobject\n" + 
+        "\n" + 
+        "Return a frame object from the call stack.  If optional integer depth is\n" + 
+        "given, return the frame object that many calls below the top of the stack.\n" + 
+        "If that is deeper than the call stack, ValueError is raised.  The default\n" + 
+        "for depth is zero, returning the frame at the top of the call stack.\n" + 
+        "\n" + 
+        "This function should be used for internal and specialized\n" + 
+        "purposes only.";
+
+    public final static String sys__home_doc = 
+        "";
+
+    public final static String sys__mercurial_doc = 
+        "tuple() -> empty tuple\n" + 
+        "tuple(iterable) -> tuple initialized from iterable's items\n" + 
+        "\n" + 
+        "If the argument is a tuple, the return value is the same object.";
+
+    public final static String sys__xoptions_doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String sys_abiflags_doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String sys_api_version_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String sys_argv_doc = 
+        "list() -> new empty list\n" + 
+        "list(iterable) -> new list initialized from iterable's items";
+
+    public final static String sys_base_exec_prefix_doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String sys_base_prefix_doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String sys_builtin_module_names_doc = 
+        "tuple() -> empty tuple\n" + 
+        "tuple(iterable) -> tuple initialized from iterable's items\n" + 
+        "\n" + 
+        "If the argument is a tuple, the return value is the same object.";
+
+    public final static String sys_byteorder_doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String sys_call_tracing_doc = 
+        "call_tracing(func, args) -> object\n" + 
+        "\n" + 
+        "Call func(*args), while tracing is enabled.  The tracing state is\n" + 
+        "saved, and restored afterwards.  This is intended to be called from\n" + 
+        "a debugger from a checkpoint, to recursively debug some other code.";
+
+    public final static String sys_callstats_doc = 
+        "callstats() -> tuple of integers\n" + 
+        "\n" + 
+        "Return a tuple of function call statistics, if CALL_PROFILE was defined\n" + 
+        "when Python was built.  Otherwise, return None.\n" + 
+        "\n" + 
+        "When enabled, this function returns detailed, implementation-specific\n" + 
+        "details about the number of function calls executed. The return value is\n" + 
+        "a 11-tuple where the entries in the tuple are counts of:\n" + 
+        "0. all function calls\n" + 
+        "1. calls to PyFunction_Type objects\n" + 
+        "2. PyFunction calls that do not create an argument tuple\n" + 
+        "3. PyFunction calls that do not create an argument tuple\n" + 
+        "   and bypass PyEval_EvalCodeEx()\n" + 
+        "4. PyMethod calls\n" + 
+        "5. PyMethod calls on bound methods\n" + 
+        "6. PyType calls\n" + 
+        "7. PyCFunction calls\n" + 
+        "8. generator calls\n" + 
+        "9. All other calls\n" + 
+        "10. Number of stack pops performed by call_function()";
+
+    public final static String sys_copyright_doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String sys_displayhook_doc = 
+        "displayhook(object) -> None\n" + 
+        "\n" + 
+        "Print an object to sys.stdout and also save it in builtins._\n" + 
+        "";
+
+    public final static String sys_dont_write_bytecode_doc = 
+        "bool(x) -> bool\n" + 
+        "\n" + 
+        "Returns True when the argument x is true, False otherwise.\n" + 
+        "The builtins True and False are the only two instances of the class bool.\n" + 
+        "The class bool is a subclass of the class int, and cannot be subclassed.";
+
+    public final static String sys_exc_info_doc = 
+        "exc_info() -> (type, value, traceback)\n" + 
+        "\n" + 
+        "Return information about the most recent exception caught by an except\n" + 
+        "clause in the current stack frame or in an older stack frame.";
+
+    public final static String sys_excepthook_doc = 
+        "excepthook(exctype, value, traceback) -> None\n" + 
+        "\n" + 
+        "Handle an exception by displaying it with a traceback on sys.stderr.\n" + 
+        "";
+
+    public final static String sys_exec_prefix_doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String sys_executable_doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String sys_exit_doc = 
+        "exit([status])\n" + 
+        "\n" + 
+        "Exit the interpreter by raising SystemExit(status).\n" + 
+        "If the status is omitted or None, it defaults to zero (i.e., success).\n" + 
+        "If the status is an integer, it will be used as the system exit status.\n" + 
+        "If it is another kind of object, it will be printed and the system\n" + 
+        "exit status will be one (i.e., failure).";
+
+    public final static String sys_flags_doc = 
+        "sys.flags\n" + 
+        "\n" + 
+        "Flags provided through command line arguments or environment vars.";
+
+    public final static String sys_float_info_doc = 
+        "sys.float_info\n" + 
+        "\n" + 
+        "A structseq holding information about the float type. It contains low level\n" + 
+        "information about the precision and internal representation. Please study\n" + 
+        "your system's :file:`float.h` for more information.";
+
+    public final static String sys_float_repr_style_doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String sys_get_coroutine_wrapper_doc = 
+        "get_coroutine_wrapper()\n" + 
+        "\n" + 
+        "Return the wrapper for coroutine objects set by sys.set_coroutine_wrapper.";
+
+    public final static String sys_getallocatedblocks_doc = 
+        "getallocatedblocks() -> integer\n" + 
+        "\n" + 
+        "Return the number of memory blocks currently allocated, regardless of their\n" + 
+        "size.";
+
+    public final static String sys_getcheckinterval_doc = 
+        "getcheckinterval() -> current check interval; see setcheckinterval().";
+
+    public final static String sys_getdefaultencoding_doc = 
+        "getdefaultencoding() -> string\n" + 
+        "\n" + 
+        "Return the current default string encoding used by the Unicode \n" + 
+        "implementation.";
+
+    public final static String sys_getdlopenflags_doc = 
+        "getdlopenflags() -> int\n" + 
+        "\n" + 
+        "Return the current value of the flags that are used for dlopen calls.\n" + 
+        "The flag constants are defined in the os module.";
+
+    public final static String sys_getfilesystemencoding_doc = 
+        "getfilesystemencoding() -> string\n" + 
+        "\n" + 
+        "Return the encoding used to convert Unicode filenames in\n" + 
+        "operating system filenames.";
+
+    public final static String sys_getprofile_doc = 
+        "getprofile()\n" + 
+        "\n" + 
+        "Return the profiling function set with sys.setprofile.\n" + 
+        "See the profiler chapter in the library manual.";
+
+    public final static String sys_getrecursionlimit_doc = 
+        "getrecursionlimit()\n" + 
+        "\n" + 
+        "Return the current value of the recursion limit, the maximum depth\n" + 
+        "of the Python interpreter stack.  This limit prevents infinite\n" + 
+        "recursion from causing an overflow of the C stack and crashing Python.";
+
+    public final static String sys_getrefcount_doc = 
+        "getrefcount(object) -> integer\n" + 
+        "\n" + 
+        "Return the reference count of object.  The count returned is generally\n" + 
+        "one higher than you might expect, because it includes the (temporary)\n" + 
+        "reference as an argument to getrefcount().";
+
+    public final static String sys_getsizeof_doc = 
+        "getsizeof(object, default) -> int\n" + 
+        "\n" + 
+        "Return the size of object in bytes.";
+
+    public final static String sys_getswitchinterval_doc = 
+        "getswitchinterval() -> current thread switch interval; see setswitchinterval().";
+
+    public final static String sys_gettrace_doc = 
+        "gettrace()\n" + 
+        "\n" + 
+        "Return the global debug tracing function set with sys.settrace.\n" + 
+        "See the debugger chapter in the library manual.";
+
+    public final static String sys_hash_info_doc = 
+        "hash_info\n" + 
+        "\n" + 
+        "A struct sequence providing parameters used for computing\n" + 
+        "hashes. The attributes are read only.";
+
+    public final static String sys_hexversion_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String sys_implementation_doc = 
+        "A simple attribute-based namespace.\n" + 
+        "\n" + 
+        "SimpleNamespace(**kwargs)";
+
+    public final static String sys_int_info_doc = 
+        "sys.int_info\n" + 
+        "\n" + 
+        "A struct sequence that holds information about Python's\n" + 
+        "internal representation of integers.  The attributes are read only.";
+
+    public final static String sys_intern_doc = 
+        "intern(string) -> string\n" + 
+        "\n" + 
+        "``Intern'' the given string.  This enters the string in the (global)\n" + 
+        "table of interned strings whose purpose is to speed up dictionary lookups.\n" + 
+        "Return the string itself or the previously interned string object with the\n" + 
+        "same value.";
+
+    public final static String sys_is_finalizing_doc = 
+        "is_finalizing()\n" + 
+        "Return True if Python is exiting.";
+
+    public final static String sys_maxsize_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String sys_maxunicode_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String sys_meta_path_doc = 
+        "list() -> new empty list\n" + 
+        "list(iterable) -> new list initialized from iterable's items";
+
+    public final static String sys_modules_doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String sys_path_doc = 
+        "list() -> new empty list\n" + 
+        "list(iterable) -> new list initialized from iterable's items";
+
+    public final static String sys_path_hooks_doc = 
+        "list() -> new empty list\n" + 
+        "list(iterable) -> new list initialized from iterable's items";
+
+    public final static String sys_path_importer_cache_doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String sys_platform_doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String sys_prefix_doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String sys_set_coroutine_wrapper_doc = 
+        "set_coroutine_wrapper(wrapper)\n" + 
+        "\n" + 
+        "Set a wrapper for coroutine objects.";
+
+    public final static String sys_setcheckinterval_doc = 
+        "setcheckinterval(n)\n" + 
+        "\n" + 
+        "Tell the Python interpreter to check for asynchronous events every\n" + 
+        "n instructions.  This also affects how often thread switches occur.";
+
+    public final static String sys_setdlopenflags_doc = 
+        "setdlopenflags(n) -> None\n" + 
+        "\n" + 
+        "Set the flags used by the interpreter for dlopen calls, such as when the\n" + 
+        "interpreter loads extension modules.  Among other things, this will enable\n" + 
+        "a lazy resolving of symbols when importing a module, if called as\n" + 
+        "sys.setdlopenflags(0).  To share symbols across extension modules, call as\n" + 
+        "sys.setdlopenflags(os.RTLD_GLOBAL).  Symbolic names for the flag modules\n" + 
+        "can be found in the os module (RTLD_xxx constants, e.g. os.RTLD_LAZY).";
+
+    public final static String sys_setprofile_doc = 
+        "setprofile(function)\n" + 
+        "\n" + 
+        "Set the profiling function.  It will be called on each function call\n" + 
+        "and return.  See the profiler chapter in the library manual.";
+
+    public final static String sys_setrecursionlimit_doc = 
+        "setrecursionlimit(n)\n" + 
+        "\n" + 
+        "Set the maximum depth of the Python interpreter stack to n.  This\n" + 
+        "limit prevents infinite recursion from causing an overflow of the C\n" + 
+        "stack and crashing Python.  The highest possible limit is platform-\n" + 
+        "dependent.";
+
+    public final static String sys_setswitchinterval_doc = 
+        "setswitchinterval(n)\n" + 
+        "\n" + 
+        "Set the ideal thread switching delay inside the Python interpreter\n" + 
+        "The actual frequency of switching threads can be lower if the\n" + 
+        "interpreter executes long sequences of uninterruptible code\n" + 
+        "(this is implementation-specific and workload-dependent).\n" + 
+        "\n" + 
+        "The parameter must represent the desired switching delay in seconds\n" + 
+        "A typical value is 0.005 (5 milliseconds).";
+
+    public final static String sys_settrace_doc = 
+        "settrace(function)\n" + 
+        "\n" + 
+        "Set the global debug tracing function.  It will be called on each\n" + 
+        "function call.  See the debugger chapter in the library manual.";
+
+    public final static String sys_stderr_doc = 
+        "Character and line based layer over a BufferedIOBase object, buffer.\n" + 
+        "\n" + 
+        "encoding gives the name of the encoding that the stream will be\n" + 
+        "decoded or encoded with. It defaults to locale.getpreferredencoding(False).\n" + 
+        "\n" + 
+        "errors determines the strictness of encoding and decoding (see\n" + 
+        "help(codecs.Codec) or the documentation for codecs.register) and\n" + 
+        "defaults to \"strict\".\n" + 
+        "\n" + 
+        "newline controls how line endings are handled. It can be None, '',\n" + 
+        "'\\n', '\\r', and '\\r\\n'.  It works as follows:\n" + 
+        "\n" + 
+        "* On input, if newline is None, universal newlines mode is\n" + 
+        "  enabled. Lines in the input can end in '\\n', '\\r', or '\\r\\n', and\n" + 
+        "  these are translated into '\\n' before being returned to the\n" + 
+        "  caller. If it is '', universal newline mode is enabled, but line\n" + 
+        "  endings are returned to the caller untranslated. If it has any of\n" + 
+        "  the other legal values, input lines are only terminated by the given\n" + 
+        "  string, and the line ending is returned to the caller untranslated.\n" + 
+        "\n" + 
+        "* On output, if newline is None, any '\\n' characters written are\n" + 
+        "  translated to the system default line separator, os.linesep. If\n" + 
+        "  newline is '' or '\\n', no translation takes place. If newline is any\n" + 
+        "  of the other legal values, any '\\n' characters written are translated\n" + 
+        "  to the given string.\n" + 
+        "\n" + 
+        "If line_buffering is True, a call to flush is implied when a call to\n" + 
+        "write contains a newline character.";
+
+    public final static String sys_stdin_doc = 
+        "Character and line based layer over a BufferedIOBase object, buffer.\n" + 
+        "\n" + 
+        "encoding gives the name of the encoding that the stream will be\n" + 
+        "decoded or encoded with. It defaults to locale.getpreferredencoding(False).\n" + 
+        "\n" + 
+        "errors determines the strictness of encoding and decoding (see\n" + 
+        "help(codecs.Codec) or the documentation for codecs.register) and\n" + 
+        "defaults to \"strict\".\n" + 
+        "\n" + 
+        "newline controls how line endings are handled. It can be None, '',\n" + 
+        "'\\n', '\\r', and '\\r\\n'.  It works as follows:\n" + 
+        "\n" + 
+        "* On input, if newline is None, universal newlines mode is\n" + 
+        "  enabled. Lines in the input can end in '\\n', '\\r', or '\\r\\n', and\n" + 
+        "  these are translated into '\\n' before being returned to the\n" + 
+        "  caller. If it is '', universal newline mode is enabled, but line\n" + 
+        "  endings are returned to the caller untranslated. If it has any of\n" + 
+        "  the other legal values, input lines are only terminated by the given\n" + 
+        "  string, and the line ending is returned to the caller untranslated.\n" + 
+        "\n" + 
+        "* On output, if newline is None, any '\\n' characters written are\n" + 
+        "  translated to the system default line separator, os.linesep. If\n" + 
+        "  newline is '' or '\\n', no translation takes place. If newline is any\n" + 
+        "  of the other legal values, any '\\n' characters written are translated\n" + 
+        "  to the given string.\n" + 
+        "\n" + 
+        "If line_buffering is True, a call to flush is implied when a call to\n" + 
+        "write contains a newline character.";
+
+    public final static String sys_stdout_doc = 
+        "Character and line based layer over a BufferedIOBase object, buffer.\n" + 
+        "\n" + 
+        "encoding gives the name of the encoding that the stream will be\n" + 
+        "decoded or encoded with. It defaults to locale.getpreferredencoding(False).\n" + 
+        "\n" + 
+        "errors determines the strictness of encoding and decoding (see\n" + 
+        "help(codecs.Codec) or the documentation for codecs.register) and\n" + 
+        "defaults to \"strict\".\n" + 
+        "\n" + 
+        "newline controls how line endings are handled. It can be None, '',\n" + 
+        "'\\n', '\\r', and '\\r\\n'.  It works as follows:\n" + 
+        "\n" + 
+        "* On input, if newline is None, universal newlines mode is\n" + 
+        "  enabled. Lines in the input can end in '\\n', '\\r', or '\\r\\n', and\n" + 
+        "  these are translated into '\\n' before being returned to the\n" + 
+        "  caller. If it is '', universal newline mode is enabled, but line\n" + 
+        "  endings are returned to the caller untranslated. If it has any of\n" + 
+        "  the other legal values, input lines are only terminated by the given\n" + 
+        "  string, and the line ending is returned to the caller untranslated.\n" + 
+        "\n" + 
+        "* On output, if newline is None, any '\\n' characters written are\n" + 
+        "  translated to the system default line separator, os.linesep. If\n" + 
+        "  newline is '' or '\\n', no translation takes place. If newline is any\n" + 
+        "  of the other legal values, any '\\n' characters written are translated\n" + 
+        "  to the given string.\n" + 
+        "\n" + 
+        "If line_buffering is True, a call to flush is implied when a call to\n" + 
+        "write contains a newline character.";
+
+    public final static String sys_thread_info_doc = 
+        "sys.thread_info\n" + 
+        "\n" + 
+        "A struct sequence holding information about the thread implementation.";
+
+    public final static String sys_version_doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String sys_version_info_doc = 
+        "sys.version_info\n" + 
+        "\n" + 
+        "Version information as a named tuple.";
+
+    public final static String sys_warnoptions_doc = 
+        "list() -> new empty list\n" + 
+        "list(iterable) -> new list initialized from iterable's items";
 
 }

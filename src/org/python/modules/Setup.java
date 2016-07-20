@@ -77,6 +77,7 @@ public class Setup {
             "faulthandler:org.python.modules.FaultHandler",
             "_sre",
             "_string",
+            "sys:org.python.modules.SysModule",
             "_types",
             "_thread:org.python.modules.thread.thread",
             "_weakref:org.python.modules._weakref.WeakrefModule",

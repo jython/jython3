@@ -137,6 +137,7 @@ pprint.py
 profile.py
 pstats.py
 pty.py
+py_compile.py
 pyclbr.py
 pydoc.py
 pydoc_topics.py

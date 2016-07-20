@@ -500,11 +500,9 @@ public class imp {
         return importer;
     }
 
+    // FIXME: This is deprecated, the use way is use the importlib machinery, which include a BuiltinImporter
+    // Once all builtin modules are properly annotated and exposed, we can remove this
     public static PyObject loadBuiltin(String name) {
-        if (name == "sys") {
-            Py.writeComment(IMPORT_LOG, "'" + name + "' as sys in builtin modules");
-            return Py.java2py(Py.getSystemState());
-        }
         if (name == "__builtin__" || name == "builtins") {
             Py.writeComment(IMPORT_LOG, "'" + name + "' as __builtin__ in builtin modules");
             return new PyModule("__builtin__", Py.getSystemState().builtins);

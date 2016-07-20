@@ -1,5 +1,6 @@
 package org.python.core;
 
+import org.python.expose.ExposedGet;
 import org.python.expose.ExposedType;
 
 /**
@@ -7,4 +8,13 @@ import org.python.expose.ExposedType;
  */
 @ExposedType(name = "moduledef")
 public class PyModuleDef extends PyObject {
+    public static final PyType TYPE = PyType.fromClass(PyModuleDef.class);
+
+    @ExposedGet
+    public String name;
+
+    public PyModuleDef(String name) {
+        super(TYPE);
+        this.name = name;
+    }
 }

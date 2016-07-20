@@ -4,6 +4,7 @@ import re
 import itertools
 import builtins
 import _multiprocessing
+import sys
 
 def print_doc(out, obj, meth):
     if meth == '__doc__':
@@ -76,7 +77,9 @@ type(None),
 type(NotImplemented),
 type(Ellipsis),
 _multiprocessing.SemLock,
-io.TextIOBase
+io.TextIOBase,
+# modules
+sys
 ]
 
 outfile = open("BuiltinDocs.java", "w")

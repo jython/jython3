@@ -5,12 +5,19 @@ import jnr.posix.util.Platform;
 import org.python.Version;
 import org.python.core.adapter.ClassicPyObjectAdapter;
 import org.python.core.adapter.ExtensiblePyObjectAdapter;
+import org.python.core.io.IOBase;
+import org.python.core.io.RawIOBase;
+import org.python.core.io.StreamIO;
 import org.python.core.packagecache.PackageManager;
 import org.python.core.packagecache.SysPackageManager;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedType;
 import org.python.modules.PyNamespace;
 import org.python.modules.Setup;
+import org.python.modules.SysModule;
+import org.python.modules._imp;
+import org.python.modules._io.OpenMode;
+import org.python.modules._io.PyFileIO;
 import org.python.util.Generic;
 
 import java.io.BufferedReader;
@@ -47,11 +54,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-/**
- * The "sys" module.
- */
-// xxx Many have lamented, this should really be a module!
-// but it will require some refactoring to see this wish come true.
 public class PySystemState extends PyObject implements AutoCloseable,
         ClassDictInit, Closeable, Traverseproc {
 
@@ -92,8 +94,6 @@ public class PySystemState extends PyObject implements AutoCloseable,
 
     public final static PyUnicode float_repr_style = Py.newUnicode("short");
 
-    public static boolean py3kwarning = false;
-
     public final static Class flags = Options.class;
 
     public final static PyTuple _mercurial = new PyTuple(
@@ -129,7 +129,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
     public static PyObject exec_prefix = Py.EmptyString;
     public static PyObject base_exec_prefix = exec_prefix;
 
-    public static final PyString byteorder = new PyString("big");
+    public static final PyUnicode byteorder = new PyUnicode("big");
     public static final int maxint = Integer.MAX_VALUE;
     public static final int minint = Integer.MIN_VALUE;
 
@@ -139,6 +139,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
     public PyList argv = new PyList();
 
     public PyObject modules;
+    public PyObject sysdict;
     public Map<String, PyModule> modules_reloading;
     private ReentrantLock importLock;
     private ClassLoader syspathJavaLoader;
@@ -232,14 +233,9 @@ public class PySystemState extends PyObject implements AutoCloseable,
         currentWorkingDir = new File("").getAbsolutePath();
 
         dont_write_bytecode = Options.dont_write_bytecode;
-        py3kwarning = Options.py3k_warning;
         // Set up the initial standard ins and outs
-        String mode = Options.unbuffered ? "b" : "";
-        int buffering = Options.unbuffered ? 0 : 1;
-        stdin = __stdin__ = new PyFile(System.in, "<stdin>", "r" + mode, buffering, false);
-        stdout = __stdout__ = new PyFile(System.out, "<stdout>", "w" + mode, buffering, false);
-        stderr = __stderr__ = new PyFile(System.err, "<stderr>", "w" + mode, 0, false);
-        initEncoding();
+//        initstdio();
+//        initEncoding();
 
         __displayhook__ = new PySystemStateFunctions("displayhook", 10, 1, 1);
         __excepthook__ = new PySystemStateFunctions("excepthook", 30, 3, 3);
@@ -1094,6 +1090,33 @@ public class PySystemState extends PyObject implements AutoCloseable,
             Py.defaultSystemState.setClassLoader(classLoader);
         }
         Py.initClassExceptions(getDefaultBuiltins());
+        PyModuleDef spec = new PyModuleDef("sys");
+        PyObject sysmod = _imp.create_builtin(spec);
+        _imp.exec_builtin(sysmod);
+        Py.defaultSystemState.modules.__setitem__("sys", sysmod);
+        Py.defaultSystemState.sysdict = ((PyModule) sysmod).__dict__;
+        Py.defaultSystemState.sysdict.__setitem__("modules", Py.defaultSystemState.modules);
+
+        // init sys
+        SysModule.setObject("builtin_module_names", PySystemState.builtin_module_names);
+        SysModule.setObject("byteorder", Py.defaultSystemState.byteorder);
+        SysModule.setObject("copyright", Py.defaultSystemState.copyright);
+        SysModule.setObject("executable", Py.defaultSystemState.executable);
+        SysModule.setObject("exec_prefix", Py.defaultSystemState.exec_prefix);
+        SysModule.setObject("exec_prefix", Py.defaultSystemState.exec_prefix);
+        SysModule.setObject("flags", Py.java2py(Py.defaultSystemState.flags));
+        SysModule.setObject("implementation", Py.defaultSystemState.implementation);
+        SysModule.setObject("maxsize", new PyLong(Py.defaultSystemState.maxsize));
+        SysModule.setObject("meta_path", Py.defaultSystemState.meta_path);
+        SysModule.setObject("path", Py.defaultSystemState.path);
+        SysModule.setObject("path_hooks", Py.defaultSystemState.path_hooks);
+        SysModule.setObject("path_importer_cache", Py.defaultSystemState.path_importer_cache);
+        SysModule.setObject("platform", Py.defaultSystemState.platform);
+        SysModule.setObject("prefix", Py.defaultSystemState.prefix);
+        SysModule.setObject("version", Py.defaultSystemState.version);
+        SysModule.setObject("version_info", Py.defaultSystemState.version_info);
+        SysModule.setObject("warnoptions", Py.defaultSystemState.warnoptions);
+        // end init sys
 
         // Make sure that Exception classes have been loaded
         new PySyntaxError("", 1, 1, "", "");
@@ -1107,11 +1130,13 @@ public class PySystemState extends PyObject implements AutoCloseable,
             PyObject _frozen_importlib = imp.loadFromCompiled("_frozen_importlib", _frozen_importlib_input, "_bootstrap.py", "_frozen_importlib.class");
             imp.loadFromCompiled("_frozen_importlib_external", _frozen_importlib_external_input, "_bootstrap_external.py", "_frozen_importlib_external.class");
             Py.defaultSystemState.importlib = _frozen_importlib;
-            _frozen_importlib.invoke("_install", Py.java2py(Py.defaultSystemState), imp.loadBuiltin("_imp"));
+            _frozen_importlib.invoke("_install", sysmod, imp.loadBuiltin("_imp"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
+        Py.defaultSystemState.initstdio();
+        Py.defaultSystemState.initEncoding();
         return Py.defaultSystemState;
     }
 
@@ -1590,6 +1615,52 @@ public class PySystemState extends PyObject implements AutoCloseable,
     }
 
     public void close() { cleanup(); }
+
+    private void initstdio() {
+        String mode = Options.unbuffered ? "b" : "";
+        int buffering = Options.unbuffered ? 0 : 1;
+        stdin = __stdin__ = new PyFile(System.in, "<stdin>", "r" + mode, buffering, false);
+        stdout = __stdout__ = new PyFile(System.out, "<stdout>", "w" + mode, buffering, false);
+        stderr = __stderr__ = new PyFile(System.err, "<stderr>", "w" + mode, 0, false);
+
+//        String mode = Options.unbuffered ? "b" : "";
+//        int buffering = Options.unbuffered ? 0 : 1;
+//        imp.load("encodings.utf_8");
+//        imp.load("encodings.latin_1");
+//        PyObject iomod = imp.load("io");
+//        PyObject bimod = imp.load("builtins");
+//        PyObject wrapper = iomod.__getattr__("OpenWrapper");
+//        /** set builtins.open */
+//        bimod.__setattr__("open", wrapper);
+//        String encoding = registry.getProperty(PYTHON_IO_ENCODING);
+//        if (encoding == null) {
+//            encoding = "utf-8";
+//        }
+//        String errors = registry.getProperty(PYTHON_IO_ERRORS);
+//        if (errors == null) {
+//            errors = "strict";
+//        }
+//        __stdin__ = new PyFileIO(new org.python.core.io.BufferedReader(new StreamIO(System.in, false),
+//                        IOBase.DEFAULT_BUFFER_SIZE), OpenMode.R_ONLY);
+//        stdin = __stdin__ = create_stdtio(iomod, __stdin__, false, "<stdin>", encoding, errors);
+//        __stdout__ = new PyFileIO(new org.python.core.io.BufferedWriter(new StreamIO(System.out, false),
+//                IOBase.DEFAULT_BUFFER_SIZE), OpenMode.W_ONLY);
+//        stdout = __stdout__ = create_stdtio(iomod, __stdout__, true, "<stdout>", encoding, errors);
+//        __stderr__ = new PyFileIO(new org.python.core.io.BufferedWriter(new StreamIO(System.err, false),
+//                IOBase.DEFAULT_BUFFER_SIZE), OpenMode.W_ONLY);
+//        stderr = __stderr__ = create_stdtio(iomod, __stderr__, true, "<stderr>", encoding, errors);
+    }
+//
+//    private static PyObject create_stdtio(PyObject io, PyObject fd, boolean writeMode, String name, String encoding, String errors) {
+//        String mode = writeMode ? "wb" : "rb";
+//        PyObject buffering = Options.unbuffered ? Py.Zero : Py.One;
+//        PyObject buf = io.invoke("open", new PyObject[] {fd, new PyUnicode(mode), buffering, Py.None, Py.None, Py.None, Py.False});
+//        buf.__setattr__("__name__", new PyUnicode(name));
+//        PyObject stream = io.invoke("TextIOWrapper", new PyObject[] {buf, new PyUnicode(encoding), new PyUnicode(errors), Py.None, Py.False});
+//        mode = writeMode ? "w" : "r";
+//        stream.__setattr__("mode", new PyUnicode(mode));
+//        return stream;
+//    }
 
     public static class PySystemStateCloser {
 
@@ -2079,7 +2150,6 @@ class LongInfo extends PyTuple {
     static public LongInfo getInfo() {
         return new LongInfo(Py.newLong(30), Py.newLong(4));
     }
-
 
     /* Traverseproc implementation */
     @Override
