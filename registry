@@ -2,13 +2,6 @@
 # This default registry sets many common options to their default values
 # All of these settings could be erased with no change in behavior
 
-# This is how Jim sets his path on his Windows development machine
-#python.path=.;c:\\Jython\\Lib;d:\\Python-1.5.2\\Lib
-# This is how Barry sets his path on his Unix development machine
-#python.path = /home/bwarsaw/projects/python/Lib
-# This is how Finn  sets his path on his windows development machine
-#python.path = d:\\python20\\lib
-
 # Set the directory to use for caches (currently just package information)
 # This directory should be writable by the user
 # If this is an absolute path it is used as given
