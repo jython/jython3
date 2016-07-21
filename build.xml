@@ -1,5 +1,9 @@
 <!-- Copyright 2000 Dj Walker-Morgan -->
-<project name="jython" default="developer-build" basedir=".">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="jython" default="developer-build" basedir=".">
+  <target name="resolve">
+    <ivy:retrieve />
+  </target>
+
   <target name="usage" description="print usage hints (-emacs removes [echo] prefix)">
     <echo>
       Use case 1: developer build (in your local Jython copy)
