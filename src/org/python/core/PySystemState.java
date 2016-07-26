@@ -357,13 +357,13 @@ public class PySystemState extends PyObject implements AutoCloseable,
     public synchronized codecs.CodecState getCodecState() {
         if (codecState == null) {
             codecState = new codecs.CodecState();
-            try {
-                imp.load("encodings");
-            } catch (PyException exc) {
-                if (exc.type != Py.ImportError) {
-                    throw exc;
-                }
-            }
+//            try {
+//                imp.load("encodings");
+//            } catch (PyException exc) {
+//                if (exc.type != Py.ImportError) {
+//                    throw exc;
+//                }
+//            }
         }
         return codecState;
     }
@@ -505,10 +505,6 @@ public class PySystemState extends PyObject implements AutoCloseable,
 
     public PyUnicode getdefaultencoding() {
         return new PyUnicode(codecs.getDefaultEncoding());
-    }
-
-    public void setdefaultencoding(String encoding) {
-        codecs.setDefaultEncoding(encoding);
     }
 
     public PyObject getfilesystemencoding() {

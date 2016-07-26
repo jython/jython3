@@ -35,11 +35,7 @@ public class codecs {
     private static char Py_UNICODE_REPLACEMENT_CHARACTER = 0xFFFD;
 
     public static String getDefaultEncoding() {
-        return Py.getSystemState().getCodecState().getDefaultEncoding();
-    }
-
-    public static void setDefaultEncoding(String encoding) {
-        Py.getSystemState().getCodecState().setDefaultEncoding(encoding);
+        return "utf-8";
     }
 
     public static PyObject lookup_error(String handlerName) {
@@ -1659,7 +1655,7 @@ public class codecs {
                 BACKSLASHREPLACE
         };
 
-        public CodecState() {
+        private void init() {
             searchPath = new PyList();
             searchCache = new PyStringMap();
             errorHandlers = new PyStringMap();
@@ -1667,6 +1663,13 @@ public class codecs {
             for (String builtinErrorHandler : BUILTIN_ERROR_HANDLERS) {
                 register_error(builtinErrorHandler, Py.newJavaFunc(codecs.class,
                         builtinErrorHandler + "_errors"));
+            }
+            try {
+                imp.load("encodings");
+            } catch (PyException exc) {
+                if (exc.type != Py.ImportError) {
+                    throw exc;
+                }
             }
         }
 
@@ -1687,6 +1690,9 @@ public class codecs {
         }
 
         public void register(PyObject search_function) {
+            if (searchPath == null) {
+                init();
+            }
             if (!search_function.isCallable()) {
                 throw Py.TypeError("argument must be callable");
             }
@@ -1694,6 +1700,9 @@ public class codecs {
         }
 
         public PyTuple lookup(String encoding) {
+            if (searchPath == null) {
+                init();
+            }
             String normalizedEncoding = normalizestring(encoding);
             PyObject cached = searchCache.__finditem__(normalizedEncoding);
             if (cached != null) {
