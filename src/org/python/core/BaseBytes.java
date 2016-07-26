@@ -276,21 +276,14 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      */
     protected static String encode(PyString arg, String encoding, String errors) throws PyException {
         // Jython encode emits a String (not byte[])
-        String encoded;
-
         if (arg instanceof PyUnicode) {
             if (encoding == null) {
                 encoding = Py.getSystemState().getCodecState().getDefaultEncoding();
             }
-            encoded = codecs.encode(arg, encoding, errors);
+            return codecs.encode((PyUnicode) arg, encoding, errors);
         } else {
-            if (encoding != null) {
-                encoded = codecs.encode(arg, encoding, errors);
-            } else {
-                encoded = arg.getString();
-            }
+            return arg.getString();
         }
-        return encoded;
     }
 
     /**

@@ -307,7 +307,6 @@ import org.python.modules.gc;
  *   Py:<br>
  *     JavaCode                      - Traverseproc<br>
  *     JavaFunc                      - no refs, untraversable<br>
- *   Py2kBuffer                      - no refs, untraversable<br>
  *   PyArray                         - Traverseproc, traverses via reflection<br>
  *   PyBaseCode                      - no refs, abstract class<br>
  *   PyBaseException                 - Traverseproc<br>

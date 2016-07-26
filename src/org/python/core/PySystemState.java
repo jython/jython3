@@ -192,7 +192,16 @@ public class PySystemState extends PyObject implements AutoCloseable,
     public boolean dont_write_bytecode = false;
 
     // Automatically close resources associated with a PySystemState when they get GCed
-    private final PySystemStateCloser closer;
+    public final PySystemStateCloser closer;
+
+    public void registerCloser(Callable<Void> resourceCloser) {
+        closer.registerCloser(resourceCloser);
+    }
+
+    public boolean unregisterCloser(Callable<Void> resourceCloser) {
+        return closer.unregisterCloser(resourceCloser);
+    }
+
     private static final ReferenceQueue<PySystemState> systemStateQueue =
             new ReferenceQueue<PySystemState>();
     private static final ConcurrentMap<WeakReference<PySystemState>, PySystemStateCloser> sysClosers =
@@ -1117,6 +1126,9 @@ public class PySystemState extends PyObject implements AutoCloseable,
         SysModule.setObject("base_exec_prefix", Py.defaultSystemState.base_exec_prefix);
         SysModule.setObject("exec_prefix", Py.defaultSystemState.exec_prefix);
         SysModule.setObject("prefix", Py.defaultSystemState.prefix);
+
+        SysModule.setObject("ps1", Py.defaultSystemState.ps1);
+        SysModule.setObject("ps2", Py.defaultSystemState.ps2);
         // end init sys
 
         // Make sure that Exception classes have been loaded
@@ -1586,31 +1598,6 @@ public class PySystemState extends PyObject implements AutoCloseable,
         Py.getThreadState().exceptions.clear();
     }
 
-    public static PyFrame _getframe() {
-        return _getframe(-1);
-    }
-
-    public static PyFrame _getframe(int depth) {
-        PyFrame f = Py.getFrame();
-
-        while (depth > 0 && f != null) {
-            f = f.f_back;
-            --depth;
-        }
-        if (f == null) {
-            throw Py.ValueError("call stack is not deep enough");
-        }
-        return f;
-    }
-
-    public void registerCloser(Callable<Void> resourceCloser) {
-        closer.registerCloser(resourceCloser);
-    }
-
-    public boolean unregisterCloser(Callable<Void> resourceCloser) {
-        return closer.unregisterCloser(resourceCloser);
-    }
-
     public void cleanup() {
         closer.cleanup();
     }
@@ -1624,6 +1611,12 @@ public class PySystemState extends PyObject implements AutoCloseable,
         stdout = __stdout__ = new PyFile(System.out, "<stdout>", "w" + mode, buffering, false);
         stderr = __stderr__ = new PyFile(System.err, "<stderr>", "w" + mode, 0, false);
 
+        SysModule.setObject("stdin", stdin);
+        SysModule.setObject("__stdin__", stdin);
+        SysModule.setObject("stdout", stdout);
+        SysModule.setObject("__stdout__", stdout);
+        SysModule.setObject("stderr", stderr);
+        SysModule.setObject("__stderr__", stderr);
 //        String mode = Options.unbuffered ? "b" : "";
 //        int buffering = Options.unbuffered ? 0 : 1;
 //        imp.load("encodings.utf_8");

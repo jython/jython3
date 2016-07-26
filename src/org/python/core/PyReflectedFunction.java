@@ -1,6 +1,7 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.core;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Set;
@@ -184,6 +185,8 @@ public class PyReflectedFunction extends PyObject implements Traverseproc {
         Object o;
         try {
             o = m.invoke(cself, callData.getArgsArray());
+        } catch (InvocationTargetException e) {
+            throw Py.JavaError(e.getTargetException());
         } catch (Throwable t) {
             throw Py.JavaError(t);
         }

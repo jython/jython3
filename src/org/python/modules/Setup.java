@@ -28,7 +28,7 @@ public class Setup {
     public static String[] builtinModules = {
             "_ast:org.python.antlr.ast.AstModule",
             "_bytecodetools",
-            "_codecs",
+//            "_codecs",
             "_collections:org.python.modules._collections.Collections",
             "_csv:org.python.modules._csv._csv",
             "_functools:org.python.modules._functools._functools",
@@ -74,6 +74,7 @@ public class Setup {
     };
 
     public static String[] newbuiltinModules = {
+            "_codecs",
             "faulthandler:org.python.modules.FaultHandler",
             "_sre",
             "_string",

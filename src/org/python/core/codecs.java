@@ -140,7 +140,7 @@ public class codecs {
      * @return bytes object encoding <code>v</code>
      */
     // XXX v should probably be declared PyUnicode (or thing delivering unicode code points)
-    public static String encode(PyString v, String encoding, String errors) {
+    public static String encode(PyUnicode v, String encoding, String errors) {
         if (encoding == null) {
             encoding = getDefaultEncoding();
         } else {

@@ -3924,18 +3924,6 @@ public class PyString extends PySequence implements BufferProtocol {
         return false;
     }
 
-    public String encode() {
-        return encode(null, null);
-    }
-
-    public String encode(String encoding) {
-        return encode(encoding, null);
-    }
-
-    public String encode(String encoding, String errors) {
-        return codecs.encode(this, encoding, errors);
-    }
-
     public PyObject decode() {
         return decode(null, null);
     }
