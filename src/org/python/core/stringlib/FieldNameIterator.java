@@ -14,6 +14,8 @@ import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedType;
 import org.python.modules.gc;
 
+import java.util.regex.Pattern;
+
 /**
  * This class is an implementation of the iterator object returned by
  * <code>str._formatter_field_name_split()</code> and
@@ -26,6 +28,7 @@ import org.python.modules.gc;
 
 @ExposedType(name = "fieldnameiterator", base = PyObject.class, isBaseType = false)
 public class FieldNameIterator extends PyObject implements Traverseproc {
+    private static final Pattern NUMBER = Pattern.compile("\\d+");
 
     public static final PyType TYPE = PyType.fromClass(FieldNameIterator.class);
 
@@ -60,9 +63,13 @@ public class FieldNameIterator extends PyObject implements Traverseproc {
         this.bytes = bytes;
         this.index = nextDotOrBracket(fieldName);
         String headStr = fieldName.substring(0, index);
-        try {
-            this.head = Integer.parseInt(headStr);
-        } catch (NumberFormatException e) {
+        if (NUMBER.matcher(headStr).matches()) {
+            try {
+                this.head = Integer.parseInt(headStr);
+            } catch (NumberFormatException e) {
+                this.head = headStr;
+            }
+        } else {
             this.head = headStr;
         }
     }

@@ -1,6 +1,20 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.core;
 
+import com.google.common.base.CharMatcher;
+import jline.console.UserInterruptException;
+import jnr.constants.Constant;
+import jnr.constants.platform.Errno;
+import jnr.posix.POSIX;
+import jnr.posix.POSIXFactory;
+import jnr.posix.util.Platform;
+import org.python.antlr.base.mod;
+import org.python.core.adapter.ClassicPyObjectAdapter;
+import org.python.core.adapter.ExtensiblePyObjectAdapter;
+import org.python.modules.SysModule;
+import org.python.modules.posix.PosixModule;
+import org.python.util.Generic;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
@@ -22,20 +36,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
-
-import com.google.common.base.CharMatcher;
-import jline.console.UserInterruptException;
-import jnr.constants.Constant;
-import jnr.constants.platform.Errno;
-import jnr.posix.POSIX;
-import jnr.posix.POSIXFactory;
-
-import jnr.posix.util.Platform;
-import org.python.antlr.base.mod;
-import org.python.core.adapter.ClassicPyObjectAdapter;
-import org.python.core.adapter.ExtensiblePyObjectAdapter;
-import org.python.modules.posix.PosixModule;
-import org.python.util.Generic;
 
 /** Builtin types that are used to setup PyObject.
  *
@@ -1724,7 +1724,7 @@ public final class Py {
 
         // Cause sys (if it exists) to export the console handler that was installed
         if (Py.defaultSystemState != null) {
-            Py.defaultSystemState.__setattr__("_jy_console", Py.java2py(console));
+            SysModule.setObject("_jy_console", Py.java2py(console));
         }
     }
 

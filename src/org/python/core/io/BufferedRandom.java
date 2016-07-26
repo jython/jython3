@@ -2,6 +2,7 @@
 package org.python.core.io;
 
 import java.nio.ByteBuffer;
+import java.nio.channels.Channel;
 
 /**
  * A buffered reader and writer together for a random access file.
@@ -79,6 +80,11 @@ public class BufferedRandom extends BufferedIOMixin {
             reader.clear();
         }
         return writer.write(bytes);
+    }
+
+    @Override
+    public Channel getChannel() {
+        return reader.getChannel();
     }
 
     @Override

@@ -1096,6 +1096,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
         Py.defaultSystemState.modules.__setitem__("sys", sysmod);
         Py.defaultSystemState.sysdict = ((PyModule) sysmod).__dict__;
         Py.defaultSystemState.sysdict.__setitem__("modules", Py.defaultSystemState.modules);
+        Py.setSystemState(Py.defaultSystemState);
 
         // init sys
         SysModule.setObject("builtin_module_names", PySystemState.builtin_module_names);
@@ -1116,13 +1117,17 @@ public class PySystemState extends PyObject implements AutoCloseable,
         SysModule.setObject("version", Py.defaultSystemState.version);
         SysModule.setObject("version_info", Py.defaultSystemState.version_info);
         SysModule.setObject("warnoptions", Py.defaultSystemState.warnoptions);
+        SysModule.setObject("base_prefix", Py.defaultSystemState.base_prefix);
+        SysModule.setObject("base_exec_prefix", Py.defaultSystemState.base_exec_prefix);
+        SysModule.setObject("exec_prefix", Py.defaultSystemState.exec_prefix);
+        SysModule.setObject("prefix", Py.defaultSystemState.prefix);
         // end init sys
 
         // Make sure that Exception classes have been loaded
         new PySyntaxError("", 1, 1, "", "");
 
         // Cause sys to export the console handler that was installed
-        Py.defaultSystemState.__setattr__("_jy_console", Py.java2py(Py.getConsole()));
+        SysModule.setObject("_jy_console", Py.java2py(Py.getConsole()));
 
         try {
             InputStream _frozen_importlib_input =  new FileInputStream(new File("src/resources/frozen_importlib/_frozen_importlib.class"));
