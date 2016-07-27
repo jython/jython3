@@ -1568,24 +1568,6 @@ public class PySystemState extends PyObject implements AutoCloseable,
         Py.displayException(type, val, tb, null);
     }
 
-    /**
-     * Exit a Python program with the given status.
-     *
-     * @param status the value to exit with
-     * @exception Py.SystemExit always throws this exception. When caught at top level the program
-     *                will exit.
-     */
-    public static void exit(PyObject status) {
-        throw new PyException(Py.SystemExit, status);
-    }
-
-    /**
-     * Exit a Python program with the status 0.
-     */
-    public static void exit() {
-        exit(Py.None);
-    }
-
     public static PyTuple exc_info() {
         PyException exc = Py.getThreadState().exceptions.peek();
         if (exc == null) {

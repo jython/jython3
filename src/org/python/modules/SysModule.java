@@ -63,6 +63,18 @@ public class SysModule {
         return Py.newBoolean(Py.getSystemState().unregisterCloser(resourceCloser));
     }
 
+    /**
+     * Exit a Python program with the given status.
+     *
+     * @param status the value to exit with
+     * @exception Py.SystemExit always throws this exception. When caught at top level the program
+     *                will exit.
+     */
+    @ExposedFunction(defaults = {"null"})
+    public static void exit(PyObject status) {
+        throw new PyException(Py.SystemExit, status);
+    }
+
     // Java API
     public static void setObject(String name, PyObject value) {
         PyObject sysdict = Py.getSystemState().sysdict;
