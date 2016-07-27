@@ -265,6 +265,11 @@ public class ExposedTypeProcessor implements Opcodes, PyTypes {
                     }
 
                     @Override
+                    public void handleInitializer(String init) {
+                        throwInvalid("@ModuleInit is not allowed for type");
+                    }
+
+                    @Override
                     public void exposeAsGetDescriptor(String descName, String doc) {
                         getDescriptorExposer(descName).addMethodGetter(name, desc, doc);
                     }

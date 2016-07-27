@@ -29,6 +29,7 @@ import org.python.expose.ExposedModule;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedSet;
 import org.python.expose.ExposedType;
+import org.python.expose.ModuleInit;
 import org.python.expose.TypeBuilder;
 
 /**
@@ -92,6 +93,8 @@ public interface PyTypes {
 
     public static final Type EXPOSED_FUNCTION = Type.getType(ExposedFunction.class);
 
+    public static final Type MODULE_INIT = Type.getType(ModuleInit.class);
+
     public static final Type EXPOSED_CLASS_METHOD = Type.getType(ExposedClassMethod.class);
 
     public static final Type EXPOSED_NEW = Type.getType(ExposedNew.class);
@@ -129,4 +132,7 @@ public interface PyTypes {
     public static final Type VOID = Type.VOID_TYPE;
 
     public static final Type BOOLEAN = Type.BOOLEAN_TYPE;
+
+    // module init method descriptor
+    String INIT_DESCRIPTOR = Type.getMethodDescriptor(VOID, PYOBJ);
 }

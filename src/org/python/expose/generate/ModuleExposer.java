@@ -19,6 +19,8 @@ public class ModuleExposer extends Exposer {
 
     private String name;
 
+    private String init; // initializer method name for the module, annotated by @ModuleInit
+
     private Collection<MethodExposer> methods;
 
     private Map<String, FieldNode> constants;
@@ -28,12 +30,14 @@ public class ModuleExposer extends Exposer {
     public ModuleExposer(Type onType,
                          String doc,
                          String name,
+                         String init,
                          Collection<MethodExposer> methods,
                          Map<String, FieldNode> constants) {
         super(BaseModuleBuilder.class, makeGeneratedName(onType));
         this.doc = doc;
         this.onType = onType;
         this.name = name;
+        this.init = init;
         this.methods = methods;
         Set<String> names = new HashSet<>();
 
@@ -78,6 +82,11 @@ public class ModuleExposer extends Exposer {
             mv.visitLdcInsn(constants.get(key).value);
             toPy(Type.getType(constants.get(key).desc));
             call(PYOBJ, "__setitem__", VOID, STRING, PYOBJ);
+        }
+        // customer initializer
+        if (init != null) {
+            mv.visitInsn(DUP);
+            callStatic(onType, init, VOID, PYOBJ);
         }
         endMethod(ARETURN);
     }

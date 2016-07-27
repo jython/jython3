@@ -4,10 +4,6 @@ import org.objectweb.asm.Type;
 import org.python.core.PyBuiltinClassMethodNarrow;
 import org.python.core.PyBuiltinMethod;
 
-/**
- * Created by isaiah on 7/11/16.
- */
-
 public class FunctionExposer extends MethodExposer {
         public FunctionExposer(Type onType,
                                  int access,

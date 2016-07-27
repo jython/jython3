@@ -23,6 +23,7 @@ public abstract class ExposedMethodFinder extends MethodVisitor implements PyTyp
     private Type onType;
 
     private String methodDesc, typeName, methodName;
+    private boolean initializer;
 
     private String[] exceptions;
 
@@ -42,6 +43,7 @@ public abstract class ExposedMethodFinder extends MethodVisitor implements PyTyp
         this.methodName = name;
         this.methodDesc = desc;
         this.exceptions = exceptions;
+        this.initializer = false;
     }
 
     /**
@@ -67,6 +69,12 @@ public abstract class ExposedMethodFinder extends MethodVisitor implements PyTyp
      *            the newExposer built as a result of visiting ExposeNew
      */
     public abstract void handleNewExposer(Exposer exposer);
+
+    /**
+     * initializer method for builtin module
+     * @param init the name of the method
+     */
+    public abstract void handleInitializer(String init);
 
     public abstract void exposeAsGetDescriptor(String descName, String doc);
 
@@ -94,12 +102,18 @@ public abstract class ExposedMethodFinder extends MethodVisitor implements PyTyp
         } else if(desc.equals(EXPOSED_CLASS_METHOD.getDescriptor())){
             classMethVisitor = new ExposedMethodVisitor();
             return classMethVisitor;
-        } else if(desc.equals(EXPOSED_FUNCTION.getDescriptor())){
+        } else if(desc.equals(EXPOSED_FUNCTION.getDescriptor())) {
             functionVisitor = new ExposedMethodVisitor();
             return functionVisitor;
+        } else if (desc.equals(MODULE_INIT.getDescriptor())) {
+            if ((access & ACC_STATIC) == 0) {
+                throwInvalid("@ModuleInit can't be applied to non-static methods");
+            } else if (!methodDesc.equals(INIT_DESCRIPTOR)) {
+                throwInvalid("@ModuleInit method can only accept one PyObject argument and return void");
+            }
+            initializer = true;
         } else if(desc.equals(EXPOSED_GET.getDescriptor())) {
             return new DescriptorVisitor(methodName) {
-
                 @Override
                 public void handleResult(String name, String doc) {
                     exposeAsGetDescriptor(name, doc);
@@ -107,7 +121,6 @@ public abstract class ExposedMethodFinder extends MethodVisitor implements PyTyp
             };
         } else if(desc.equals(EXPOSED_SET.getDescriptor())) {
             return new DescriptorVisitor(methodName) {
-
                 @Override
                 public void handleResult(String name, String doc) {
                     exposeAsSetDescriptor(name);
@@ -234,6 +247,16 @@ public abstract class ExposedMethodFinder extends MethodVisitor implements PyTyp
                                                 functionVisitor.defaults,
                                                 functionVisitor.doc));
         }
+
+        if (initializer) {
+            handleInitializer(methodName);
+        }
         super.visitEnd();
     }
+
+    protected void throwInvalid(String msg) {
+        throw new InvalidExposingException(msg + "[method=" + onType.getClassName() + "."
+                + methodName + "]");
+    }
+
 }

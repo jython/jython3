@@ -75,12 +75,13 @@ public class Setup {
 
     public static String[] newbuiltinModules = {
             "_codecs",
-            "faulthandler:org.python.modules.FaultHandler",
             "_sre",
             "_string",
-            "sys:org.python.modules.SysModule",
             "_types",
             "_thread:org.python.modules.thread.thread",
             "_weakref:org.python.modules._weakref.WeakrefModule",
+            "faulthandler:org.python.modules.FaultHandler",
+            "sys:org.python.modules.SysModule",
+            "unicodedata:org.python.modules.unicodedata.unicodedata",
     };
 }

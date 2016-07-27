@@ -28,11 +28,12 @@ public class ExposedModuleProcessor implements Opcodes, PyTypes {
 
     private String typeName;
 
+    private String initializer;
+
     private Type onType;
 
-    private boolean generatedStaticBlock;
-
     public ExposedModuleProcessor(InputStream in) {
+        initializer = null;
         ClassReader cr = null;
         try {
             cr = new ClassReader(in);
@@ -105,43 +106,19 @@ public class ExposedModuleProcessor implements Opcodes, PyTypes {
             // typeName is set by the ExposedTypeVisitor in visitAnnotation, if
             // the ExposedType annotation is found.
             if(typeName == null) {
-                throwInvalid("A class to be exposed must have the ExposedType annotation");
+                throwInvalid("A class to be exposed must have the ExposedModule annotation");
             }
             moduleExposer = new ModuleExposer(onType,
                     doc,
                     getName(),
+                    initializer,
                     methodExposers,
                     exposedConsts);
             for (MethodExposer exposer : methodExposers) {
                 addInnerClass(exposer.getGeneratedType());
             }
             addInnerClass(moduleExposer.getGeneratedType());
-            // Create the builder and add it to PyType's map in a static block
-            // if we haven't already added it to a preexisting static block
-            if(!generatedStaticBlock) {
-                MethodVisitor mv = visitMethod(ACC_STATIC, "<clinit>", "()V", null, null);
-                mv.visitCode();
-                mv.visitInsn(RETURN);
-                mv.visitMaxs(0, 0);
-                mv.visitEnd();
-            }
             super.visitEnd();
-        }
-
-        private void generateAddBuilder(MethodVisitor mv) {
-            mv.visitLdcInsn(onType);
-            Type typeExposerType = Type.getObjectType(TypeExposer.makeGeneratedName(onType)
-                    .replace('.', '/'));
-            mv.visitTypeInsn(NEW, typeExposerType.getInternalName());
-            mv.visitInsn(DUP);
-            mv.visitMethodInsn(
-                    INVOKESPECIAL, typeExposerType.getInternalName(), "<init>", "()V", false);
-            mv.visitMethodInsn(
-                    INVOKESTATIC,
-                    PYTYPE.getInternalName(),
-                    "addBuilder",
-                    Type.getMethodDescriptor(VOID, new Type[]{CLASS, TYPEBUILDER}),
-                    false);
         }
 
         /** Adds an inner class reference to inner from the class being visited. */
@@ -189,6 +166,11 @@ public class ExposedModuleProcessor implements Opcodes, PyTypes {
                 @Override
                 public void handleResult(FunctionExposer exposer) {
                     methodExposers.add(exposer);
+                }
+
+                @Override
+                public void handleInitializer(String init) {
+                    initializer = init;
                 }
 
                 @Override

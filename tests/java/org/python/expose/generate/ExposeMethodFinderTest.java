@@ -29,6 +29,10 @@ public class ExposeMethodFinderTest extends TestCase implements Opcodes, PyTypes
             }
 
             @Override
+            public void handleInitializer(String init) {
+            }
+
+            @Override
             public void exposeAsDeleteDescriptor(String descName) {
                 deleteName = descName;
             }
