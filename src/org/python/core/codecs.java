@@ -140,7 +140,7 @@ public class codecs {
      * @return bytes object encoding <code>v</code>
      */
     // XXX v should probably be declared PyUnicode (or thing delivering unicode code points)
-    public static String encode(PyUnicode v, String encoding, String errors) {
+    public static String encode(PyObject v, String encoding, String errors) {
         if (encoding == null) {
             encoding = getDefaultEncoding();
         } else {
@@ -1307,7 +1307,9 @@ public class codecs {
                 i = codecs.insertReplacementAndGetResume(v, errors, "rawunicodeescape", str, //
                         bs, i, "truncated \\uXXXX");
             } else {
-                v.appendCodePoint(codePoint);
+                if (Character.isValidCodePoint(codePoint)) {
+                    v.appendCodePoint(codePoint);
+                }
             }
         }
 

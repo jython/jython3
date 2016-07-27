@@ -53,7 +53,7 @@ public class _codecs {
     }
 
     @ExposedFunction
-    public static PyTuple lookup(PyObject encoding) {
+    public static PyObject lookup(PyObject encoding) {
         return codecs.lookup(_castString(encoding));
     }
 
@@ -103,7 +103,7 @@ public class _codecs {
      */
     @ExposedFunction(defaults = {"null", "null"})
     public static PyObject encode(PyObject unicode, PyObject encoding, PyObject errors) {
-        return new PyString(codecs.encode((PyUnicode) unicode, _castString(encoding), _castString(errors)));
+        return new PyString(codecs.encode(unicode, _castString(encoding), _castString(errors)));
     }
 
     /* --- Some codec support methods -------------------------------------------- */
