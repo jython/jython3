@@ -167,10 +167,19 @@ public class PyException extends RuntimeException implements Traverseproc
             }
         }
         if (cause != null) {
-            ((PyBaseException) value).setCause(cause);
+            if (value instanceof PyBaseException) {
+                ((PyBaseException) value).setCause(cause);
+            } else {
+                value.__setattr__("__cause__", cause);
+                value.__setattr__("__suppress_context__", Py.True);
+            }
         }
         if (context != null) {
-            ((PyBaseException) value).__context__ = context;
+            if (value instanceof PyBaseException) {
+                ((PyBaseException) value).__context__ = context;
+            } else {
+                value.__setattr__("__context__", context);
+            }
         }
         normalized = true;
     }
