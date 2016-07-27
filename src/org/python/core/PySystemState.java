@@ -1129,6 +1129,8 @@ public class PySystemState extends PyObject implements AutoCloseable,
 
         SysModule.setObject("ps1", Py.defaultSystemState.ps1);
         SysModule.setObject("ps2", Py.defaultSystemState.ps2);
+
+        SysModule.setObject("argv", Py.defaultSystemState.argv);
         // end init sys
 
         // Make sure that Exception classes have been loaded
