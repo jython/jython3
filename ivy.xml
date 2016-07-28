@@ -10,7 +10,7 @@
     <dependency org="org.ow2.asm" name="asm-commons" rev="5.1" conf="default"/>
     <dependency org="org.ow2.asm" name="asm-tree" rev="5.1" conf="default"/>
     <dependency org="org.ow2.asm" name="asm-util" rev="5.1" conf="default"/>
-    <dependency org="com.ibm.icu" name="icu4j" rev="54.1.1" conf="default"/>
+    <dependency org="com.ibm.icu" name="icu4j" rev="57.1" conf="default"/>
     <dependency org="com.google.guava" name="guava" rev="19.0"/>
     <dependency org="jline" name="jline" rev="2.12.1" conf="default"/>
     <dependency org="io.netty" name="netty-buffer" rev="4.0.25.Final"/>
