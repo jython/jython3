@@ -15,6 +15,9 @@ import java.util.concurrent.Callable;
 
 @ExposedModule(name = "sys")
 public class SysModule {
+    @ExposedConst(name = "maxunicode")
+    public static final int MAXUNICODE = PySystemState.maxunicode;
+
     @ExposedFunction(names = "exc_info", doc = BuiltinDocs.sys_exc_info_doc)
     public static PyObject sys_exc_info() {
         PyException exc = Py.getThreadState().exceptions.peek();
