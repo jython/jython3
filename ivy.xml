@@ -13,10 +13,6 @@
     <dependency org="com.ibm.icu" name="icu4j" rev="57.1" conf="default"/>
     <dependency org="com.google.guava" name="guava" rev="19.0"/>
     <dependency org="jline" name="jline" rev="2.12.1" conf="default"/>
-    <dependency org="io.netty" name="netty-buffer" rev="4.0.25.Final"/>
-    <dependency org="io.netty" name="netty-codec" rev="4.0.25.Final"/>
-    <dependency org="io.netty" name="netty-handler" rev="4.0.25.Final"/>
-    <dependency org="io.netty" name="netty-transport" rev="4.0.25.Final"/>
     <dependency org="com.github.jnr" name="jnr-posix" rev="3.0.29" conf="default"/>
     <dependency org="com.github.jnr" name="jnr-netdb" rev="1.1.5" conf="default"/>
     <dependency org="com.github.jnr" name="jnr-enxio" rev="0.12" conf="default"/>
