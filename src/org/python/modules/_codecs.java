@@ -53,6 +53,12 @@ public class _codecs {
     }
 
     @ExposedFunction
+    public static PyObject _forget_codec(PyObject encoding) {
+        codecs.forget_codec(encoding);
+        return Py.None;
+    }
+
+    @ExposedFunction
     public static PyObject lookup(PyObject encoding) {
         return codecs.lookup(_castString(encoding));
     }

@@ -54,6 +54,10 @@ public class codecs {
         return Py.getSystemState().getCodecState().lookup(encoding);
     }
 
+    public static void forget_codec(PyObject encoding) {
+        Py.getSystemState().getCodecState().searchCache.__delitem__(encoding);
+    }
+
     private static String normalizestring(String string) {
         return string.toLowerCase().replace(' ', '-');
     }
