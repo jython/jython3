@@ -1596,7 +1596,7 @@ def _get_jsockaddr2(address_object, family, sock_type, proto, flags):
         else:
             hostname = "localhost"
     if isinstance(hostname, str):
-        hostname = encodings.idna.ToASCII(hostname)
+        hostname = encodings.idna.ToUnicode(hostname)
     addresses = getaddrinfo(hostname, port, family, sock_type, proto, flags)
     if len(addresses) == 0:
         raise gaierror(errno.EGETADDRINFOFAILED, 'getaddrinfo failed')
@@ -1634,7 +1634,7 @@ def _use_ipv4_addresses_only(value):
 
 
 def _getaddrinfo_get_host(host, family, flags):
-    if not isinstance(host, str) and host is not None:
+    if host is not None and not isinstance(host, str):
         raise TypeError("getaddrinfo() argument 1 must be string or None")
     if flags & AI_NUMERICHOST:
         if not is_ip_address(host):
@@ -1644,7 +1644,7 @@ def _getaddrinfo_get_host(host, family, flags):
         if family == AF_INET6 and not is_ipv6_address(host):
             raise gaierror(EAI_ADDRFAMILY, "Address family for hostname not supported")
     if isinstance(host, str):
-        host = encodings.idna.ToASCII(host)
+        host = encodings.idna.ToUnicode(host)
     return host
 
 
@@ -1856,7 +1856,7 @@ def _getnameinfo_get_host(address, flags):
     if not isinstance(address, str):
         raise TypeError("getnameinfo() address 1 must be string, not None")
     if isinstance(address, str):
-        address = encodings.idna.ToASCII(address)
+        address = encodings.idna.ToUnicode(address)
     jia = InetAddress.getByName(address)
     result = jia.getCanonicalHostName()
     if flags & NI_NAMEREQD:
@@ -1866,7 +1866,7 @@ def _getnameinfo_get_host(address, flags):
         result = jia.getHostAddress()
     # Ignoring NI_NOFQDN for now
     if flags & NI_IDN:
-        result = encodings.idna.ToASCII(result)
+        result = encodings.idna.ToUnicode(result)
     return result
 
 def _getnameinfo_get_port(port, flags):
