@@ -26,7 +26,6 @@ public class Setup {
     // python.modules.builtin for details.
 
     public static String[] builtinModules = {
-            "_ast:org.python.antlr.ast.AstModule",
             "_bytecodetools",
 //            "_codecs",
             "_collections:org.python.modules._collections.Collections",
@@ -74,6 +73,7 @@ public class Setup {
     };
 
     public static String[] newbuiltinModules = {
+            "_ast:org.python.antlr.ast.AstModule",
             "_codecs",
             "_sre",
             "_string",

@@ -3,24 +3,24 @@ package org.python.antlr.ast;
 import org.python.antlr.base.*;
 import org.python.antlr.op.*;
 import org.python.core.AstList;
-import org.python.core.ClassDictInit;
 import org.python.core.CompilerFlags;
-import org.python.core.Py;
-import org.python.core.PyInteger;
+import org.python.core.PyLong;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 
 import org.python.antlr.AST;
+import org.python.core.PyUnicode;
+import org.python.expose.ExposedModule;
+import org.python.expose.ModuleInit;
 
-public class AstModule implements ClassDictInit {
+@ExposedModule(name = "_ast")
+public class AstModule {
 
     private AstModule() {}
 
+    @ModuleInit
     public static void classDictInit(PyObject dict) {
-        dict.__setitem__("__doc__", Py.None);
-        dict.__setitem__("__name__", new PyString("_ast"));
-        dict.__setitem__("__version__", new PyString("62047"));
-        dict.__setitem__("PyCF_ONLY_AST", new PyInteger(CompilerFlags.PyCF_ONLY_AST));
+        dict.__setitem__("__version__", new PyUnicode("62047"));
+        dict.__setitem__("PyCF_ONLY_AST", new PyLong(CompilerFlags.PyCF_ONLY_AST));
 
         dict.__setitem__("astlist", AstList.TYPE);
 
@@ -29,10 +29,14 @@ public class AstModule implements ClassDictInit {
         dict.__setitem__("Assert", Assert.TYPE);
         dict.__setitem__("Assign", Assign.TYPE);
         dict.__setitem__("Attribute", Attribute.TYPE);
+        dict.__setitem__("AsyncFor", AsyncFor.TYPE);
+        dict.__setitem__("AsyncFunctionDef", AsyncFunctionDef.TYPE);
+        dict.__setitem__("AsyncWith", AsyncWith.TYPE);
         dict.__setitem__("AugAssign", AugAssign.TYPE);
         dict.__setitem__("BinOp", BinOp.TYPE);
         dict.__setitem__("BoolOp", BoolOp.TYPE);
         dict.__setitem__("Break", Break.TYPE);
+        dict.__setitem__("Bytes", Bytes.TYPE);
         dict.__setitem__("Call", Call.TYPE);
         dict.__setitem__("ClassDef", ClassDef.TYPE);
         dict.__setitem__("Compare", Compare.TYPE);
@@ -42,6 +46,7 @@ public class AstModule implements ClassDictInit {
         dict.__setitem__("Ellipsis", Ellipsis.TYPE);
 
         dict.__setitem__("ExceptHandler", ExceptHandler.TYPE);
+        dict.__setitem__("Expr", Expr.TYPE);
         dict.__setitem__("Expression", Expression.TYPE);
         dict.__setitem__("ExtSlice", ExtSlice.TYPE);
         dict.__setitem__("For", For.TYPE);
@@ -63,7 +68,8 @@ public class AstModule implements ClassDictInit {
         dict.__setitem__("Pass", Pass.TYPE);
         dict.__setitem__("Raise", Raise.TYPE);
         dict.__setitem__("Return", Return.TYPE);
-        dict.__setitem__("SetComp", SetComp.TYPE);
+//        dict.__setitem__("Set", Set.TYPE);
+//        dict.__setitem__("SetComp", SetComp.TYPE);
         dict.__setitem__("Slice", Slice.TYPE);
         dict.__setitem__("Str", Str.TYPE);
         dict.__setitem__("Subscript", Subscript.TYPE);
@@ -129,7 +135,5 @@ public class AstModule implements ClassDictInit {
         dict.__setitem__("Not", Not.TYPE);
         dict.__setitem__("UAdd", UAdd.TYPE);
         dict.__setitem__("USub", USub.TYPE);
-
-        dict.__setitem__("classDictInit", null);
     }
 }
