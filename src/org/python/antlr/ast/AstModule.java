@@ -68,8 +68,8 @@ public class AstModule {
         dict.__setitem__("Pass", Pass.TYPE);
         dict.__setitem__("Raise", Raise.TYPE);
         dict.__setitem__("Return", Return.TYPE);
-//        dict.__setitem__("Set", Set.TYPE);
-//        dict.__setitem__("SetComp", SetComp.TYPE);
+        dict.__setitem__("Set", Set.TYPE);
+        dict.__setitem__("SetComp", SetComp.TYPE);
         dict.__setitem__("Slice", Slice.TYPE);
         dict.__setitem__("Str", Str.TYPE);
         dict.__setitem__("Subscript", Subscript.TYPE);

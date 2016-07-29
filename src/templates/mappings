@@ -105,6 +105,8 @@ ast_Num.derived:org.python.antlr.ast.NumDerived
 ast_Pass.derived:org.python.antlr.ast.PassDerived
 ast_Raise.derived:org.python.antlr.ast.RaiseDerived
 ast_Return.derived:org.python.antlr.ast.ReturnDerived
+ast_Set.derived:org.python.antlr.ast.SetDerived
+ast_SetComp.derived:org.python.antlr.ast.SetCompDerived
 ast_Slice.derived:org.python.antlr.ast.SliceDerived
 ast_Str.derived:org.python.antlr.ast.StrDerived
 ast_Subscript.derived:org.python.antlr.ast.SubscriptDerived
