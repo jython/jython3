@@ -88,6 +88,12 @@ public class PyJavaType extends PyType {
         return obj;
     }
 
+    public static PyObject wrapJavaException(Throwable t) {
+        PyObject obj = new PyBaseException(PyType.fromClass(t.getClass(), false));
+        JyAttribute.setAttr(obj, JyAttribute.JAVA_PROXY_ATTR, t);
+        return obj;
+    }
+
     public PyJavaType() {
         super(TYPE == null ? fromClass(PyType.class) : TYPE);
     }

@@ -656,7 +656,7 @@ public final class Py {
         } else if (t instanceof UserInterruptException) {
             return Py.KeyboardInterrupt("");
         }
-        PyObject exc = PyJavaType.wrapJavaObject(t);
+        PyObject exc = PyJavaType.wrapJavaException(t);
         PyException pyex = new PyException(exc.getType(), exc);
         // Set the cause to the original throwable to preserve
         // the exception chain.
