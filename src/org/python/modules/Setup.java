@@ -50,7 +50,7 @@ public class Setup {
             "array:org.python.modules.ArrayModule",
             "binascii",
             "bz2:org.python.modules.bz2.bz2",
-            "cPickle",
+            "_pickle:org.python.modules.cPickle",
             "cmath",
             "errno",
             "fcntl",
