@@ -4,7 +4,6 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
-import com.sun.org.apache.xml.internal.serialize.EncodingInfo;
 import org.python.core.buffer.BaseBuffer;
 import org.python.core.stringlib.Encoding;
 import org.python.core.stringlib.FieldNameIterator;
@@ -2172,11 +2171,11 @@ public class PyUnicode extends PySequence implements Iterable {
         return new PyString(encodeDecimal()).__complex__();
     }
 
-    public int atoi(int base) {
+    public PyObject atoi(int base) {
         return new PyString(encodeDecimal()).atoi(base);
     }
 
-    public PyLong atol(int base) {
+    public PyObject atol(int base) {
         return new PyString(encodeDecimal()).atol(base);
     }
 
@@ -2502,5 +2501,10 @@ public class PyUnicode extends PySequence implements Iterable {
     @Override
     public String asString() {
         return getString();
+    }
+
+    @Override
+    public PyObject __int__() {
+        return Encoding.atol(getString(), 10);
     }
 }

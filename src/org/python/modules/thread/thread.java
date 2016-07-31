@@ -11,18 +11,18 @@ import org.python.core.PyStringMap;
 import org.python.core.PyTuple;
 import org.python.expose.ExposedFunction;
 import org.python.expose.ExposedModule;
+import org.python.expose.ModuleInit;
 
 @ExposedModule(name = "_thread")
-public class thread implements ClassDictInit {
+public class thread {
     private static volatile long stack_size = 0; // XXX - can we figure out the current stack size?
     private static ThreadGroup group = new ThreadGroup("jython-threads");
 
-    public static PyObject classDictInit() {
-        PyStringMap dict = new PyStringMap();
+    @ModuleInit
+    public static void classDictInit(PyObject dict) {
         dict.__setitem__("LockType", PyLock.TYPE);
         dict.__setitem__("_local", PyLocal.TYPE);
         dict.__setitem__("error", Py.RuntimeError);
-        return dict;
     }
 
 

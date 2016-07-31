@@ -23,7 +23,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.Weigher;
 import org.python.core.Options;
 import org.python.core.Py;
-import org.python.core.PyString;
+import org.python.core.PyUnicode;
 
 public class SRE_STATE {
 
@@ -1257,12 +1257,12 @@ for line in sys.stdin:
 
     private enum CACHE {
         INSTANCE(Options.sreCacheSpec);
-        private LoadingCache<PyString, int[]> cache;
+        private LoadingCache<PyUnicode, int[]> cache;
 
         private CACHE(String spec) {
-            CacheLoader<PyString, int[]> loader = new CacheLoader<PyString, int[]>() {
+            CacheLoader<PyUnicode, int[]> loader = new CacheLoader<PyUnicode, int[]>() {
                 @Override
-                public int[] load(PyString key) {
+                public int[] load(PyUnicode key) {
                     return key.toCodePoints();
                 }
             };
@@ -1280,9 +1280,9 @@ for line in sys.stdin:
             }
 
             if (spec.contains("maximumWeight")) {
-                cache = builder.weigher(new Weigher<PyString, int[]>() {
+                cache = builder.weigher(new Weigher<PyUnicode, int[]>() {
                     @Override
-                    public int weigh(PyString k, int[] v) {
+                    public int weigh(PyUnicode k, int[] v) {
                         return v.length;
                     }
                 }).build(loader);
@@ -1291,12 +1291,12 @@ for line in sys.stdin:
             }
         }
 
-        private int[] get(PyString str) {
+        private int[] get(PyUnicode str) {
             return cache.getUnchecked(str);
         }
     }
 
-    public SRE_STATE(PyString str, int start, int end, int flags) {
+    public SRE_STATE(PyUnicode str, int start, int end, int flags) {
         this.str = CACHE.INSTANCE.get(str);
         int size = str.__len__();
 

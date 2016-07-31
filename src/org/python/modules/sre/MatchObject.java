@@ -22,8 +22,8 @@ import org.python.core.PyDictionary;
 import org.python.core.PyInteger;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
+import org.python.core.PyUnicode;
 import org.python.core.Traverseproc;
 import org.python.core.Visitproc;
 import org.python.core.imp;
@@ -32,7 +32,7 @@ import org.python.expose.ExposedType;
 
 @ExposedType(name = "_sre.SRE_Match", doc = BuiltinDocs.SRE_Match_doc)
 public class MatchObject extends PyObject implements Traverseproc {
-    public PyString string; /* link to the target string */
+    public PyUnicode string; /* link to the target string */
     public PyObject regs; /* cached list of matching spans */
     PatternObject pattern; /* link to the regex (pattern) object */
     int pos, endpos; /* current target slice */

@@ -19,7 +19,7 @@ import org.python.core.*;
 
 public class ScannerObject extends PyObject implements Traverseproc {
     public PatternObject pattern;
-    PyString string;
+    PyUnicode string;
     SRE_STATE state;
 
     public MatchObject match() {

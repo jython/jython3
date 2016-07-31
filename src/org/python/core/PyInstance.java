@@ -82,13 +82,13 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
             throws java.io.IOException {
         out.defaultWriteObject();
         PyObject name = instclass.__findattr__("__module__");
-        if (!(name instanceof PyString) || name == Py.None) {
+        if (!(name instanceof PyUnicode) || name == Py.None) {
             throw Py.ValueError("Can't find module for class: " +
                     instclass.__name__);
         }
         out.writeUTF(name.toString());
         name = instclass.__findattr__("__name__");
-        if (!(name instanceof PyString) || name == Py.None) {
+        if (!(name instanceof PyUnicode) || name == Py.None) {
             throw Py.ValueError("Can't find module for class with no name");
         }
 

@@ -50,7 +50,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     public MatchObject match(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("match", args, kws,
                                      "pattern", "pos", "endpos");
-        PyString string = extractPyString(ap, 0);
+        PyUnicode string = extractPyString(ap, 0);
         int start = ap.getInt(1, 0);
         int end = ap.getInt(2, string.__len__());
         SRE_STATE state = new SRE_STATE(string, start, end, flags);
@@ -65,7 +65,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     public MatchObject fullmatch(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("match", args, kws,
                 "pattern", "pos", "endpos");
-        PyString string = extractPyString(ap, 0);
+        PyUnicode string = extractPyString(ap, 0);
                 int start = ap.getInt(1, 0);
         int end = ap.getInt(2, string.__len__());
         SRE_STATE state = new SRE_STATE(string, start, end, flags);
@@ -84,7 +84,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     public MatchObject search(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("search", args, kws,
                                      "pattern", "pos", "endpos");
-        PyString string = extractPyString(ap, 0);
+        PyUnicode string = extractPyString(ap, 0);
         int start = ap.getInt(1, 0);
         int end = ap.getInt(2, string.__len__());
 
@@ -117,10 +117,10 @@ public class PatternObject extends PyObject implements Traverseproc {
     }
 
 
-    private PyObject subx(PyObject template, PyString instring, int count,
+    private PyObject subx(PyObject template, PyUnicode instring, int count,
                           boolean subn)
     {
-        final PyString string = instring; 
+        final PyUnicode string = instring;
         PyObject filter = null;
         boolean filter_is_callable = false;
         if (template.isCallable()) {
@@ -128,7 +128,7 @@ public class PatternObject extends PyObject implements Traverseproc {
             filter_is_callable = true;
         } else {
             boolean literal = false;
-            if (template instanceof PyString) {
+            if (template instanceof PyUnicode) {
                 literal = template.toString().indexOf('\\') < 0;
             }
             if (literal) {
@@ -198,7 +198,7 @@ public class PatternObject extends PyObject implements Traverseproc {
         return outstring;
     }
 
-    private PyObject join_list(PyList list, PyString string) {
+    private PyObject join_list(PyList list, PyUnicode string) {
         PyObject joiner = string.__getslice__(Py.Zero, Py.Zero);
         if (list.size() == 0) {
             return joiner;
@@ -209,7 +209,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     public PyObject split(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("split", args, kws,
                                      "source", "maxsplit");
-        PyString string = extractPyString(ap, 0);
+        PyUnicode string = extractPyString(ap, 0);
         int maxsplit = ap.getInt(1, 0);
 
         SRE_STATE state = new SRE_STATE(string, 0, Integer.MAX_VALUE, flags);
@@ -265,7 +265,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     public PyObject findall(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("findall", args, kws,
                                      "source", "pos", "endpos");
-        PyString string = extractPyString(ap, 0);
+        PyUnicode string = extractPyString(ap, 0);
         int start = ap.getInt(1, 0);
         int end = ap.getInt(2, Integer.MAX_VALUE);
 
@@ -322,7 +322,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     public ScannerObject scanner(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("scanner", args, kws,
                                      "pattern", "pos", "endpos");
-        PyString string = extractPyString(ap, 0);
+        PyUnicode string = extractPyString(ap, 0);
 
         ScannerObject self = new ScannerObject();
         self.state = new SRE_STATE(string,
@@ -344,7 +344,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     }
 
 
-    MatchObject _pattern_new_match(SRE_STATE state, PyString string,
+    MatchObject _pattern_new_match(SRE_STATE state, PyUnicode string,
                                    int status)
     {
         /* create match object (from state object) */
@@ -388,18 +388,18 @@ public class PatternObject extends PyObject implements Traverseproc {
         return null;
     }
 
-    private static PyString extractPyString(ArgParser ap, int pos) {
+    private static PyUnicode extractPyString(ArgParser ap, int pos) {
         PyObject obj = ap.getPyObject(pos);
 
-        if (obj instanceof PyString) {
+        if (obj instanceof PyUnicode) {
             // Easy case
-            return (PyString)obj;
+            return (PyUnicode)obj;
 
         } else if (obj instanceof BufferProtocol) {
             // Try to get a byte-oriented buffer
             try (PyBuffer buf = ((BufferProtocol)obj).getBuffer(PyBUF.FULL_RO)){
                 // ... and treat those bytes as a PyString
-                return new PyString(buf.toString());
+                return new PyUnicode(buf.toString());
             }
         }
 

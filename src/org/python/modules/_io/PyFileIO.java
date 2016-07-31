@@ -145,12 +145,12 @@ public class PyFileIO extends PyRawIOBase {
      */
     private void setDelegate(PyObject file, OpenMode mode) {
 
-        if (file instanceof PyString) {
+        if (file instanceof PyUnicode) {
             // Open a file by name
             if (!closefd) {
                 throw Py.ValueError("Cannot use closefd=False with file name");
             }
-            ioDelegate = new FileIO((PyString)file, mode.forFileIO());
+            ioDelegate = new FileIO((PyUnicode)file, mode.forFileIO());
 
         } else {
             /*

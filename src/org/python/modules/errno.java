@@ -89,7 +89,7 @@ public class errno implements ClassDictInit {
     }
 
     private static void addCode(PyObject dict, String name, int code, String message) {
-        PyObject nameObj = Py.newString(name);
+        PyObject nameObj = Py.newUnicode(name);
         PyObject codeObj = Py.newInteger(code);
         dict.__setitem__(nameObj, codeObj);
         errorcode.__setitem__(codeObj, nameObj);

@@ -262,7 +262,7 @@ public class PyObject implements Serializable {
         }
 
         PyObject module = getType().getModule();
-        if (module instanceof PyString && !module.toString().equals("__builtin__")) {
+        if (module instanceof PyUnicode && !module.toString().equals("__builtin__")) {
             return String.format("<%s.%s object at %s>", module.toString(), name, Py.idstr(this));
         }
         return String.format("<%s object at %s>", name, Py.idstr(this));
@@ -1793,7 +1793,7 @@ public class PyObject implements Serializable {
 
     @ExposedMethod(doc = BuiltinDocs.object___format___doc)
     final PyObject object___format__(PyObject formatSpec) {
-        if (formatSpec != null && formatSpec instanceof PyString && !((PyString)formatSpec).getString().isEmpty()) {
+        if (formatSpec != null && formatSpec instanceof PyUnicode && !((PyUnicode)formatSpec).getString().isEmpty()) {
             Py.warning(Py.PendingDeprecationWarning, "object.__format__ with a non-empty format string is deprecated");
         }
         return __str__().__format__(formatSpec);

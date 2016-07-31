@@ -1,6 +1,25 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.util;
 
+import org.python.Version;
+import org.python.core.CodeFlag;
+import org.python.core.CompileMode;
+import org.python.core.Options;
+import org.python.core.Py;
+import org.python.core.PyCode;
+import org.python.core.PyException;
+import org.python.core.PyFile;
+import org.python.core.PyList;
+import org.python.core.PyObject;
+import org.python.core.PyStringMap;
+import org.python.core.PySystemState;
+import org.python.core.PyUnicode;
+import org.python.core.imp;
+import org.python.core.util.RelativeFile;
+import org.python.modules._systemrestart;
+import org.python.modules.posix.PosixModule;
+import org.python.modules.thread.thread;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,27 +31,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import org.python.Version;
-import org.python.core.CodeFlag;
-import org.python.core.CompileMode;
-import org.python.core.Options;
-import org.python.core.Py;
-import org.python.core.PyCode;
-import org.python.core.PyException;
-import org.python.core.PyFile;
-import org.python.core.PyList;
-import org.python.core.PyNullImporter;
-import org.python.core.PyObject;
-import org.python.core.PyUnicode;
-import org.python.core.PyStringMap;
-import org.python.core.PySystemState;
-import org.python.core.PyUnicode;
-import org.python.core.imp;
-import org.python.core.util.RelativeFile;
-import org.python.modules._systemrestart;
-import org.python.modules.posix.PosixModule;
-import org.python.modules.thread.thread;
 
 public class jython {
 
@@ -272,7 +270,7 @@ public class jython {
         // Now create an interpreter
         if (!opts.interactive) {
             // Not (really) interactive, so do not use console prompts
-            systemState.ps1 = systemState.ps2 = Py.EmptyString;
+            systemState.ps1 = systemState.ps2 = Py.EmptyUnicode;
         }
         InteractiveConsole interp = new InteractiveConsole();
 

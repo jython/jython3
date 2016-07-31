@@ -191,7 +191,7 @@ public class codecs {
             throw Py.TypeError("encoder must return a tuple (object,integer)");
         }
         PyObject encoded = result.__getitem__(0);
-        if (encoded instanceof PyString) {
+        if (encoded instanceof PyString || encoded instanceof PyUnicode) {
             return encoded.toString();
         } else {
             throw Py.TypeError("encoder did not return a string/unicode object (type="

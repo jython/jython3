@@ -3,12 +3,6 @@
 
 package org.python.core;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 import org.python.core.stringlib.FloatFormatter;
 import org.python.core.stringlib.IntegerFormatter;
 import org.python.core.stringlib.InternalFormat;
@@ -20,6 +14,11 @@ import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
 import org.python.expose.MethodType;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.nio.ByteOrder;
 
 /**
  * A builtin python long. This is implemented as a java.math.BigInteger.
@@ -92,10 +91,10 @@ public class PyLong extends PyObject {
         if (base == -909) {
             return asPyLong(x);
         }
-        if (!(x instanceof PyString)) {
+        if (!(x instanceof PyUnicode) || !(x instanceof PyUnicode)) {
             throw Py.TypeError("long: can't convert non-string with explicit base");
         }
-        return ((PyString)x).atol(base);
+        return ((PyUnicode)x).atol(base);
     }
 
     /**

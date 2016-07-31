@@ -191,13 +191,13 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
              */
             setStorage(emptyStorage);
 
-        } else if (arg instanceof PyString) {
+        } else if (arg instanceof PyUnicode) {
             /*
              * bytearray(string) Construct from a text string by default encoding and error policy.
              * Cases where encoding and error policy are specified explicitly are dealt with
              * elsewhere.
              */
-            init((PyString)arg, (String)null, (String)null); // Casts select right init()
+            init((PyUnicode)arg, (String)null, (String)null); // Casts select right init()
 
         } else if (arg.isIndex()) {
             /*
@@ -237,7 +237,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      * @param encoding name of optional encoding (must be a string type)
      * @param errors name of optional errors policy (must be a string type)
      */
-    protected void init(PyString arg, PyObject encoding, PyObject errors) {
+    protected void init(PyUnicode arg, PyObject encoding, PyObject errors) {
         String enc = encoding == null ? null : encoding.asString();
         String err = errors == null ? null : errors.asString();
         init(arg, enc, err);
@@ -253,7 +253,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      * @param encoding name of optional encoding
      * @param errors name of optional errors policy
      */
-    protected void init(PyString arg, String encoding, String errors) {
+    protected void init(PyUnicode arg, String encoding, String errors) {
         // Jython encode emits a String (not byte[])
         String encoded = encode(arg, encoding, errors);
         newStorage(encoded.length());

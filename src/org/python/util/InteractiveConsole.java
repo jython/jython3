@@ -5,8 +5,8 @@ import org.python.core.Py;
 import org.python.core.PyBuiltinFunctionSet;
 import org.python.core.PyException;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PySystemState;
+import org.python.core.PyUnicode;
 import org.python.core.__builtin__;
 
 /**
@@ -114,8 +114,8 @@ public class InteractiveConsole extends InteractiveInterpreter {
     public void interact(String banner, PyObject file) {
         PyObject old_ps1 = systemState.ps1;
         PyObject old_ps2 = systemState.ps2;
-        systemState.ps1 = new PyString(">>> ");
-        systemState.ps2 = new PyString("... ");
+        systemState.ps1 = new PyUnicode(">>> ");
+        systemState.ps2 = new PyUnicode("... ");
         try {
             _interact(banner, file);
         } finally {

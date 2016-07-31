@@ -1,15 +1,14 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.core;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.python.core.buffer.BaseBuffer;
 import org.python.core.buffer.SimpleStringBuffer;
+import org.python.core.stringlib.Encoding;
 import org.python.core.stringlib.FieldNameIterator;
 import org.python.core.stringlib.FloatFormatter;
 import org.python.core.stringlib.IntegerFormatter;
-import org.python.core.stringlib.InternalFormat;
 import org.python.core.stringlib.InternalFormat.Formatter;
 import org.python.core.stringlib.InternalFormat.Spec;
 import org.python.core.stringlib.MarkupIterator;
@@ -23,16 +22,14 @@ import org.python.expose.MethodType;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.python.core.stringlib.Encoding;
 
 import static org.python.core.stringlib.Encoding.asUTF16StringOrError;
 
@@ -165,13 +162,18 @@ public class PyString extends PySequence implements BufferProtocol {
                 String encoding = ap.getString(1, "utf-8");
                 String errors = ap.getString(2, "strict");
                 // Encoding will raise UnicodeEncodeError if not 7-bit clean.
-                str = codecs.encode((PyUnicode) S, encoding, errors);
+                str = codecs.encode(S, encoding, errors);
             } else if (S instanceof PyByteArray) {
                 PyBuffer buffer = ((PyByteArray) S).getBuffer(PyBUF.FULL_RO);
                 byte[] buf = new byte[buffer.getLen()];
                 buffer.copyTo(buf, 0);
                 buffer.close();
-                return new PyString(new String(buf));
+                str = new String(buf);
+            } else if (S instanceof PyLong) {
+                int n = ((PyLong) S).getValue().intValue();
+                byte[] bytes = new byte[n];
+                Arrays.fill( bytes, (byte) 0 );
+                str = new String(bytes);
             } else {
                 // Must be str/bytes, and should be 8-bit clean already.
                 str = S.toString();
@@ -256,10 +258,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes___str___doc)
     final PyUnicode bytes___str__() {
-        if (getClass() == PyString.class) {
-            return __unicode__();
-        }
-        return new PyUnicode(getString(), true);
+        return new PyUnicode("b" + Encoding.encode_UnicodeEscape(getString(), true));
     }
 
     public PyUnicode __unicode__() {
@@ -482,30 +481,6 @@ public class PyString extends PySequence implements BufferProtocol {
         return new PyString(s);
     }
 
-    /**
-     * Create an instance of the same type as this object, from the Java String given as argument.
-     * This is to be overridden in a subclass to return its own type.
-     *
-     * @param str to wrap
-     * @return
-     */
-    public PyString createInstance(String str) {
-        return new PyString(str);
-    }
-
-    /**
-     * Create an instance of the same type as this object, from the Java String given as argument.
-     * This is to be overridden in a subclass to return its own type.
-     *
-     * @param str UTF-16 string encoding the characters (as Java).
-     * @param isBasic is ignored in <code>PyString</code> (effectively true).
-     * @return
-     */
-    protected PyString createInstance(String str, boolean isBasic) {
-        // ignore isBasic, doesn't apply to PyString, just PyUnicode
-        return new PyString(str);
-    }
-
     @Override
     public boolean __contains__(PyObject o) {
         return bytes___contains__(o);
@@ -534,7 +509,7 @@ public class PyString extends PySequence implements BufferProtocol {
         for (int i = 0; i < count; i++) {
             getString().getChars(0, s, new_chars, i * s);
         }
-        return createInstance(new String(new_chars));
+        return new PyString(new String(new_chars));
     }
 
     @Override
@@ -609,9 +584,17 @@ public class PyString extends PySequence implements BufferProtocol {
         return fmt.format(other);
     }
 
+    public PyObject atol(int base) {
+        return Encoding.atol(getString(), base);
+    }
+
+    public PyObject atoi(int base) {
+        return new PyLong(Encoding.atoi(getString(), base));
+    }
+
     @Override
     public PyObject __int__() {
-        return atol(10);
+        return Encoding.atol(getString(), 10);
     }
 
     @Override
@@ -714,8 +697,6 @@ public class PyString extends PySequence implements BufferProtocol {
     final PyObject bytes_strip(PyObject chars) {
         if (chars instanceof PyUnicode) {
             throw Py.TypeError(BYTES_REQUIRED_ERROR);
-            // Promote the problem to a Unicode one
-//            return ((PyUnicode)decode()).str_strip(chars);
         } else {
             // It ought to be None, null, some kind of bytes with the buffer API.
             String stripChars = Encoding.asStringNullOrError(chars, "strip");
@@ -761,8 +742,7 @@ public class PyString extends PySequence implements BufferProtocol {
     @ExposedMethod(defaults = "null", doc = BuiltinDocs.bytes_lstrip_doc)
     final PyObject bytes_lstrip(PyObject chars) {
         if (chars instanceof PyUnicode) {
-            // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).str_lstrip(chars);
+            throw Py.TypeError(BYTES_REQUIRED_ERROR);
         } else {
             // It ought to be None, null, some kind of bytes with the buffer API.
             String stripChars = Encoding.asStringNullOrError(chars, "lstrip");
@@ -808,9 +788,7 @@ public class PyString extends PySequence implements BufferProtocol {
     @ExposedMethod(defaults = "null", doc = BuiltinDocs.bytes_rstrip_doc)
     final PyObject bytes_rstrip(PyObject chars) {
         if (chars instanceof PyUnicode) {
-            // Promote the problem to a Unicode one
             throw Py.TypeError(BYTES_REQUIRED_ERROR);
-//            return ((PyUnicode)decode()).str_rstrip(chars);
         } else {
             // It ought to be None, null, some kind of bytes with the buffer API.
             String stripChars = Encoding.asStringNullOrError(chars, "rstrip");
@@ -1283,8 +1261,7 @@ public class PyString extends PySequence implements BufferProtocol {
     @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.bytes_count_doc)
     final int bytes_count(PyObject subObj, PyObject start, PyObject end) {
         if (subObj instanceof PyUnicode) {
-            // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).str_count(subObj, start, end);
+            throw Py.TypeError(BYTES_REQUIRED_ERROR);
         } else {
             // It ought to be some kind of bytes with the buffer API.
             String sub = Encoding.asStringOrError(subObj);
@@ -1349,8 +1326,7 @@ public class PyString extends PySequence implements BufferProtocol {
     @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.bytes_find_doc)
     final int bytes_find(PyObject subObj, PyObject start, PyObject end) {
         if (subObj instanceof PyUnicode) {
-            // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).str_find(subObj, start, end);
+            throw Py.TypeError(BYTES_REQUIRED_ERROR);
         } else {
             // It ought to be some kind of bytes with the buffer API.
             String sub = Encoding.asStringOrError(subObj);
@@ -1416,7 +1392,6 @@ public class PyString extends PySequence implements BufferProtocol {
     @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.bytes_rfind_doc)
     final int bytes_rfind(PyObject subObj, PyObject start, PyObject end) {
         if (subObj instanceof PyUnicode) {
-            // Promote the problem to a Unicode one
             throw Py.TypeError(BYTES_REQUIRED_ERROR);
         } else {
             // It ought to be some kind of bytes with the buffer API.
@@ -1625,130 +1600,6 @@ public class PyString extends PySequence implements BufferProtocol {
         }
     }
 
-    private BigInteger asciiToBigInteger(int base, boolean isLong) {
-        String str = getString();
-
-        int b = 0;
-        int e = str.length();
-
-        while (b < e && Character.isWhitespace(str.charAt(b))) {
-            b++;
-        }
-
-        while (e > b && Character.isWhitespace(str.charAt(e - 1))) {
-            e--;
-        }
-
-        char sign = 0;
-        if (b < e) {
-            sign = str.charAt(b);
-            if (sign == '-' || sign == '+') {
-                b++;
-                while (b < e && Character.isWhitespace(str.charAt(b))) {
-                    b++;
-                }
-            }
-
-            if (base == 16) {
-                if (str.charAt(b) == '0') {
-                    if (b < e - 1 && Character.toUpperCase(str.charAt(b + 1)) == 'X') {
-                        b += 2;
-                    }
-                }
-            } else if (base == 0) {
-                if (str.charAt(b) == '0') {
-                    if (b < e - 1 && Character.toUpperCase(str.charAt(b + 1)) == 'X') {
-                        base = 16;
-                        b += 2;
-                    } else if (b < e - 1 && Character.toUpperCase(str.charAt(b + 1)) == 'O') {
-                        base = 8;
-                        b += 2;
-                    } else if (b < e - 1 && Character.toUpperCase(str.charAt(b + 1)) == 'B') {
-                        base = 2;
-                        b += 2;
-                    } else {
-                        base = 8;
-                    }
-                }
-            } else if (base == 8) {
-                if (b < e - 1 && Character.toUpperCase(str.charAt(b + 1)) == 'O') {
-                    b += 2;
-                }
-            } else if (base == 2) {
-                if (b < e - 1 && Character.toUpperCase(str.charAt(b + 1)) == 'B') {
-                    b += 2;
-                }
-            }
-        }
-
-        if (base == 0) {
-            base = 10;
-        }
-
-        // if the base >= 22, then an 'l' or 'L' is a digit!
-        if (isLong && base < 22 && e > b && (str.charAt(e - 1) == 'L' || str.charAt(e - 1) == 'l')) {
-            e--;
-        }
-
-        String s = str;
-        if (b > 0 || e < str.length()) {
-            s = str.substring(b, e);
-        }
-
-        BigInteger bi;
-        if (sign == '-') {
-            bi = new BigInteger("-" + s, base);
-        } else {
-            bi = new BigInteger(s, base);
-        }
-        return bi;
-    }
-
-    public int atoi() {
-        return atoi(10);
-    }
-
-    public int atoi(int base) {
-        if ((base != 0 && base < 2) || (base > 36)) {
-            throw Py.ValueError("invalid base for atoi()");
-        }
-
-        try {
-            BigInteger bi = asciiToBigInteger(base, false);
-            if (bi.compareTo(PyInteger.MAX_INT) > 0 || bi.compareTo(PyInteger.MIN_INT) < 0) {
-                throw Py.OverflowError("long int too large to convert to int");
-            }
-            return bi.intValue();
-        } catch (NumberFormatException exc) {
-            throw Py.ValueError("invalid literal for int() with base " + base + ": '" + getString()
-                    + "'");
-        } catch (StringIndexOutOfBoundsException exc) {
-            throw Py.ValueError("invalid literal for int() with base " + base + ": '" + getString()
-                    + "'");
-        }
-    }
-
-    public PyLong atol() {
-        return atol(10);
-    }
-
-    public PyLong atol(int base) {
-        if ((base != 0 && base < 2) || (base > 36)) {
-            throw Py.ValueError("invalid base for long literal:" + base);
-        }
-
-        try {
-            BigInteger bi = asciiToBigInteger(base, true);
-            return new PyLong(bi);
-        } catch (NumberFormatException exc) {
-            throw Py.ValueError("invalid literal for long() with base " + base + ": '"
-                    + getString() + "'");
-        } catch (StringIndexOutOfBoundsException exc) {
-            throw Py.ValueError("invalid literal for long() with base " + base + ": '"
-                    + getString() + "'");
-        }
-    }
-
     private static String padding(int n, char pad) {
         char[] chars = new char[n];
         for (int i = 0; i < n; i++) {
@@ -1767,86 +1618,86 @@ public class PyString extends PySequence implements BufferProtocol {
         return fillchar.charAt(0);
     }
 
-    public String ljust(int width) {
+    public PyString ljust(int width) {
         return bytes_ljust(width, null);
     }
 
-    public String ljust(int width, String padding) {
+    public PyString ljust(int width, String padding) {
         return bytes_ljust(width, padding);
     }
 
     @ExposedMethod(defaults = "null", doc = BuiltinDocs.bytes_ljust_doc)
-    final String bytes_ljust(int width, String fillchar) {
+    final PyString bytes_ljust(int width, String fillchar) {
         char pad = parse_fillchar("ljust", fillchar);
         int n = width - getString().length();
         if (n <= 0) {
-            return getString();
+            return this;
         }
-        return getString() + padding(n, pad);
+        return new PyString(getString() + padding(n, pad));
     }
 
-    public String rjust(int width) {
+    public PyString rjust(int width) {
         return bytes_rjust(width, null);
     }
 
     @ExposedMethod(defaults = "null", doc = BuiltinDocs.bytes_rjust_doc)
-    final String bytes_rjust(int width, String fillchar) {
+    final PyString bytes_rjust(int width, String fillchar) {
         char pad = parse_fillchar("rjust", fillchar);
         int n = width - getString().length();
         if (n <= 0) {
-            return getString();
+            return this;
         }
-        return padding(n, pad) + getString();
+        return new PyString(padding(n, pad) + getString());
     }
 
-    public String center(int width) {
+    public PyString center(int width) {
         return bytes_center(width, null);
     }
 
     @ExposedMethod(defaults = "null", doc = BuiltinDocs.bytes_center_doc)
-    final String bytes_center(int width, String fillchar) {
+    final PyString bytes_center(int width, String fillchar) {
         char pad = parse_fillchar("center", fillchar);
         int n = width - getString().length();
         if (n <= 0) {
-            return getString();
+            return this;
         }
         int half = n / 2;
         if (n % 2 > 0 && width % 2 > 0) {
             half += 1;
         }
 
-        return padding(half, pad) + getString() + padding(n - half, pad);
+        return new PyString(padding(half, pad) + getString() + padding(n - half, pad));
     }
 
-    public String zfill(int width) {
+    public PyString zfill(int width) {
         return bytes_zfill(width);
     }
 
     @ExposedMethod(doc = BuiltinDocs.bytes_zfill_doc)
-    final String bytes_zfill(int width) {
-        return Encoding.zfill(getString(), width).toString();
+    final PyString bytes_zfill(int width) {
+        return new PyString(Encoding.zfill(getString(), width).toString());
     }
 
-    public String expandtabs() {
+    public PyString expandtabs() {
         return bytes_expandtabs(8);
     }
 
-    public String expandtabs(int tabsize) {
+    public PyString expandtabs(int tabsize) {
         return bytes_expandtabs(tabsize);
     }
 
     @ExposedMethod(defaults = "8", doc = BuiltinDocs.bytes_expandtabs_doc)
-    final String bytes_expandtabs(int tabsize) {
-        return Encoding.expandtabs(getString(), tabsize);
+    final PyString bytes_expandtabs(int tabsize) {
+        return new PyString(Encoding.expandtabs(getString(), tabsize));
     }
 
-    public String capitalize() {
+    public PyString capitalize() {
         return bytes_capitalize();
     }
 
     @ExposedMethod(doc = BuiltinDocs.bytes_capitalize_doc)
-    final String bytes_capitalize() {
-        return Encoding.capitalize(getString());
+    final PyString bytes_capitalize() {
+        return new PyString(Encoding.capitalize(getString()));
     }
 
     /**
@@ -1880,7 +1731,7 @@ public class PyString extends PySequence implements BufferProtocol {
     @ExposedMethod(defaults = "-1", doc = BuiltinDocs.bytes_replace_doc)
     final PyString bytes_replace(PyObject oldPieceObj, PyObject newPieceObj, int count) {
         if (oldPieceObj instanceof PyUnicode || newPieceObj instanceof PyUnicode) {
-            throw Py.TypeError("a bytes-like object is required, not 'str'");
+            throw Py.TypeError(BYTES_REQUIRED_ERROR);
         } else {
             // Neither is a PyUnicode: both ought to be some kind of bytes with the buffer API.
             String oldPiece = Encoding.asStringOrError(oldPieceObj, false);
@@ -2271,21 +2122,6 @@ public class PyString extends PySequence implements BufferProtocol {
 
     public boolean isspace() {
         return bytes_isspace();
-    }
-
-    private boolean isspace(char c) {
-        switch(c) {
-            case 0x09:
-            case 0x0A:
-            case 0x0B:
-            case 0x0C:
-            case 0x0D:
-            case 0x20:
-                break;
-            default:
-                return false;
-        }
-        return true;
     }
 
     @ExposedMethod(doc = BuiltinDocs.bytes_isspace_doc)

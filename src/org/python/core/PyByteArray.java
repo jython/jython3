@@ -116,7 +116,7 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
      * @param encoding name of optional encoding (must be a string type)
      * @param errors name of optional errors policy (must be a string type)
      */
-    public PyByteArray(PyString arg, PyObject encoding, PyObject errors) {
+    public PyByteArray(PyUnicode arg, PyObject encoding, PyObject errors) {
         super(TYPE);
         init(arg, encoding, errors);
     }
@@ -130,7 +130,7 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
      *            this installation)
      * @param errors name of optional errors policy
      */
-    public PyByteArray(PyString arg, String encoding, String errors) {
+    public PyByteArray(PyUnicode arg, String encoding, String errors) {
         super(TYPE);
         init(arg, encoding, errors);
     }
@@ -141,7 +141,7 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
      *
      * @param arg primary argument from which value is taken
      */
-    public PyByteArray(PyString arg) {
+    public PyByteArray(PyUnicode arg) {
         super(TYPE);
         init(arg, (String)null, (String)null);
     }
@@ -796,7 +796,7 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
             if (arg == null || !isUnicode) {
                 throw Py.TypeError("encoding or errors without string argument");
             }
-            init((PyString)arg, encoding, errors);
+            init((PyUnicode)arg, encoding, errors);
         } else {
             // Now construct from arbitrary object (or null)
             init(arg);

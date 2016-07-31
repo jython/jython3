@@ -8,6 +8,7 @@ import org.python.core.Py;
 import org.python.core.PyBUF;
 import org.python.core.PyBuffer;
 import org.python.core.PyException;
+import org.python.core.PyInteger;
 import org.python.core.PyList;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
@@ -17,6 +18,7 @@ import org.python.core.PyTuple;
 import org.python.core.PyUnicode;
 import org.python.core.codecs;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -334,13 +336,9 @@ public class Encoding {
                 count = (oldLen == 0) ? len + 1 : len;
             }
             StringBuilder ret = new StringBuilder();
-            int i = 0;
-            for (String part : s.split(oldPiece)) {
+            for (String part : s.split(oldPiece, count + 1)) {
                 ret.append(part);
-                if (i < count) {
-                    ret.append(newPiece);
-                    i++;
-                }
+                ret.append(newPiece);
             }
             return ret.toString();
         }
@@ -576,7 +574,7 @@ public class Encoding {
         if (ret != null) {
             return ret;
         } else {
-            throw Py.TypeError(String.format("a bytes-like object is required, not '%s'", obj.getType().fastGetName()));
+            throw Py.TypeError(String.format("must be bytes or a tuple of bytes, not '%s'", obj.getType().fastGetName()));
         }
     }
 
@@ -627,20 +625,19 @@ public class Encoding {
         return asStringOrError(obj, true);
     }
 
-    public  static String asStringOrError(PyObject obj, boolean allowInt) throws PyException {
+    public static String asStringOrError(PyObject obj, boolean allowInt) throws PyException {
         if (allowInt && obj instanceof PyLong) {
             int val = ((PyLong) obj).getValue().intValue();
             if (val < 0 || val > 255) {
                 throw Py.ValueError("byte must be in range(0, 256)");
             }
-            return String.valueOf(val);
+            return String.valueOf((char) val);
         }
         String ret = (obj instanceof PyUnicode) ? null : asUTF16StringOrNull(obj);
         if (ret != null) {
             return ret;
-        } else {
-            throw Py.TypeError("expected str, bytearray or other buffer compatible object");
         }
+        throw Py.TypeError("expected str, bytearray or other buffer compatible object");
     }
 
     /**
@@ -727,7 +724,7 @@ public class Encoding {
 
             // Find the next occurrence of non-whitespace (working leftwards)
             while (end >= 0) {
-                if (!Character.isWhitespace(s.charAt(end))) {
+                if (!isWhitespace(s.charAt(end))) {
                     // Break leaving end pointing at non-whitespace
                     break;
                 }
@@ -745,7 +742,7 @@ public class Encoding {
             } else {
                 // The next segment runs back to the next next whitespace or beginning
                 for (index = end; index >= 0; --index) {
-                    if (Character.isWhitespace(s.charAt(index))) {
+                    if (isWhitespace(s.charAt(index))) {
                         // Break leaving index pointing at whitespace
                         break;
                     }
@@ -957,7 +954,7 @@ public class Encoding {
      */
     private static final int _stripRight(CharSequence s) {
         for (int right = s.length(); --right >= 0;) {
-            if (!Character.isWhitespace(s.charAt(right))) {
+            if (!isWhitespace(s.charAt(right))) {
                 return right;
             }
         }
@@ -1044,7 +1041,7 @@ public class Encoding {
      */
     private static final int _stripLeft(CharSequence s, int right) {
         for (int left = 0; left < right; left++) {
-            if (!Character.isWhitespace(s.charAt(left))) {
+            if (!isWhitespace(s.charAt(left))) {
                 return left;
             }
         }
@@ -1166,7 +1163,7 @@ public class Encoding {
 
             // Find the next occurrence of non-whitespace
             while (start < length) {
-                if (!Character.isWhitespace(s.charAt(start))) {
+                if (!isWhitespace(s.charAt(start))) {
                     // Break leaving start pointing at non-whitespace
                     break;
                 }
@@ -1184,7 +1181,7 @@ public class Encoding {
             } else {
                 // The next segment runs up to the next next whitespace or end
                 for (index = start; index < length; index++) {
-                    if (Character.isWhitespace(s.charAt(index))) {
+                    if (isWhitespace(s.charAt(index))) {
                         // Break leaving index pointing at whitespace
                         break;
                     }
@@ -1511,6 +1508,136 @@ public class Encoding {
             // None matched
             return false;
         }
+    }
+
+    public static PyLong atol(CharSequence s, int base) {
+        if ((base != 0 && base < 2) || (base > 36)) {
+            throw Py.ValueError("invalid base for long literal:" + base);
+        }
+
+        try {
+            BigInteger bi = Encoding.asciiToBigInteger(s, base, true);
+            return new PyLong(bi);
+        } catch (NumberFormatException exc) {
+            throw Py.ValueError("invalid literal for long() with base " + base + ": '"
+                    + s + "'");
+        } catch (StringIndexOutOfBoundsException exc) {
+            throw Py.ValueError("invalid literal for long() with base " + base + ": '"
+                    + s + "'");
+        }
+    }
+
+    private static BigInteger asciiToBigInteger(CharSequence str, int base, boolean isLong) {
+
+        int b = 0;
+        int e = str.length();
+
+        while (b < e && isWhitespace(str.charAt(b))) {
+            b++;
+        }
+
+        while (e > b && isWhitespace(str.charAt(e - 1))) {
+            e--;
+        }
+
+        char sign = 0;
+        if (b < e) {
+            sign = str.charAt(b);
+            if (sign == '-' || sign == '+') {
+                b++;
+                while (b < e && isWhitespace(str.charAt(b))) {
+                    b++;
+                }
+            }
+
+            if (base == 16) {
+                if (str.charAt(b) == '0') {
+                    if (b < e - 1 && Character.toUpperCase(str.charAt(b + 1)) == 'X') {
+                        b += 2;
+                    }
+                }
+            } else if (base == 0) {
+                if (str.charAt(b) == '0') {
+                    if (b < e - 1 && Character.toUpperCase(str.charAt(b + 1)) == 'X') {
+                        base = 16;
+                        b += 2;
+                    } else if (b < e - 1 && Character.toUpperCase(str.charAt(b + 1)) == 'O') {
+                        base = 8;
+                        b += 2;
+                    } else if (b < e - 1 && Character.toUpperCase(str.charAt(b + 1)) == 'B') {
+                        base = 2;
+                        b += 2;
+                    } else {
+                        base = 8;
+                    }
+                }
+            } else if (base == 8) {
+                if (b < e - 1 && Character.toUpperCase(str.charAt(b + 1)) == 'O') {
+                    b += 2;
+                }
+            } else if (base == 2) {
+                if (b < e - 1 && Character.toUpperCase(str.charAt(b + 1)) == 'B') {
+                    b += 2;
+                }
+            }
+        }
+
+        if (base == 0) {
+            base = 10;
+        }
+
+        // if the base >= 22, then an 'l' or 'L' is a digit!
+        if (isLong && base < 22 && e > b && (str.charAt(e - 1) == 'L' || str.charAt(e - 1) == 'l')) {
+            e--;
+        }
+
+        CharSequence s = str;
+        if (b > 0 || e < str.length()) {
+            s = str.subSequence(b, e);
+        }
+
+        BigInteger bi;
+        if (sign == '-') {
+            bi = new BigInteger("-" + s, base);
+        } else {
+            bi = new BigInteger(s.toString(), base);
+        }
+        return bi;
+    }
+
+    public static final int atoi(CharSequence s, int base) {
+        if ((base != 0 && base < 2) || (base > 36)) {
+            throw Py.ValueError("invalid base for atoi()");
+        }
+
+        try {
+            BigInteger bi = asciiToBigInteger(s, base, false);
+            if (bi.compareTo(PyInteger.MAX_INT) > 0 || bi.compareTo(PyInteger.MIN_INT) < 0) {
+                throw Py.OverflowError("long int too large to convert to int");
+            }
+            return bi.intValue();
+        } catch (NumberFormatException exc) {
+            throw Py.ValueError("invalid literal for int() with base " + base + ": '" + s
+                    + "'");
+        } catch (StringIndexOutOfBoundsException exc) {
+            throw Py.ValueError("invalid literal for int() with base " + base + ": '" + s
+                    + "'");
+        }
+    }
+
+    private static boolean isWhitespace(char c) {
+        switch(c) {
+            case 0x09:
+            case 0x0A:
+            case 0x0B:
+            case 0x0C:
+            case 0x0D:
+            case 0x20:
+                break;
+            default:
+                return false;
+        }
+        return true;
     }
 }
 
