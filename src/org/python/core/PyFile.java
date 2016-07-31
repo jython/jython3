@@ -24,6 +24,7 @@ import org.python.core.io.StreamIO;
 import org.python.core.io.TextIOBase;
 import org.python.core.io.TextIOWrapper;
 import org.python.core.io.UniversalIOWrapper;
+import org.python.core.stringlib.Encoding;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
@@ -165,18 +166,18 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         ArgParser ap = new ArgParser("file", args, kwds, new String[] {"name", "mode", "buffering"},
                                      1);
         PyObject name = ap.getPyObject(0);
-        if (!(name instanceof PyString)) {
+        if (!(name instanceof PyUnicode)) {
             throw Py.TypeError("coercing to Unicode: need string, '" + name.getType().fastGetName()
                                + "' type found");
         }
         String mode = ap.getString(1, "r");
         int bufsize = ap.getInt(2, -1);
-        file___init__(new FileIO((PyString) name, parseMode(mode)), name, mode, bufsize);
+        file___init__(new FileIO((PyUnicode) name, parseMode(mode)), name, mode, bufsize);
         closer = new Closer(file, Py.getSystemState());
     }
 
     private void file___init__(RawIOBase raw, String name, String mode, int bufsize) {
-        file___init__(raw, new PyString(name), mode, bufsize);
+        file___init__(raw, new PyUnicode(name), mode, bufsize);
     }
 
     private void file___init__(RawIOBase raw, PyObject name, String mode, int bufsize) {
@@ -650,7 +651,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         String escapedName;
         if (name instanceof PyUnicode) {
             // unicode: always uses the format u'%s', and the escaped value thus:
-            escapedName = "u'"+PyString.encode_UnicodeEscape(name.toString(), false)+"'";
+            escapedName = Encoding.encode_UnicodeEscape(name.toString(), false);
         } else {
             // anything else: uses repr(), which for str (common case) is smartly quoted
             escapedName = name.__repr__().getString();

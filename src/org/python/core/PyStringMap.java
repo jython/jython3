@@ -119,8 +119,8 @@ public class PyStringMap extends PyObject implements Traverseproc {
 
     @Override
     public PyObject __finditem__(PyObject key) {
-        if (key instanceof PyString) {
-            return __finditem__(((PyString)key).internedString());
+        if (key instanceof PyUnicode) {
+            return __finditem__(((PyUnicode)key).internedString());
         }
         return table.get(key);
     }
@@ -141,8 +141,8 @@ public class PyStringMap extends PyObject implements Traverseproc {
 
     @ExposedMethod(doc = BuiltinDocs.dict___getitem___doc)
     final PyObject stringmap___getitem__(PyObject key) {
-        if (key instanceof PyString) {
-            return __getitem__(((PyString)key).internedString());
+        if (key instanceof PyUnicode) {
+            return __getitem__(((PyUnicode)key).internedString());
         } else {
             PyObject o = __finditem__(key);
             if (null == o) {
@@ -181,8 +181,8 @@ public class PyStringMap extends PyObject implements Traverseproc {
     final void stringmap___setitem__(PyObject key, PyObject value) {
         if (value == null) {
             table.remove(pyToKey(key));
-        } else if (key instanceof PyString) {
-            __setitem__(((PyString)key).internedString(), value);
+        } else if (key instanceof PyUnicode) {
+            __setitem__(((PyUnicode)key).internedString(), value);
         } else {
             table.put(key, value);
         }
@@ -203,8 +203,8 @@ public class PyStringMap extends PyObject implements Traverseproc {
 
     @ExposedMethod(doc = BuiltinDocs.dict___delitem___doc)
     final void stringmap___delitem__(PyObject key) {
-        if (key instanceof PyString) {
-            __delitem__(((PyString)key).internedString());
+        if (key instanceof PyUnicode) {
+            __delitem__(((PyUnicode)key).internedString());
         } else {
             Object ret = table.remove(key);
             if (ret == null) {
@@ -477,7 +477,7 @@ public class PyStringMap extends PyObject implements Traverseproc {
 
     @ExposedMethod(defaults = "Py.None", doc = BuiltinDocs.dict_setdefault_doc)
     final PyObject stringmap_setdefault(PyObject key, PyObject failobj) {
-        Object internedKey = (key instanceof PyString) ? ((PyString)key).internedString() : key;
+        Object internedKey = (key instanceof PyUnicode) ? ((PyUnicode)key).internedString() : key;
         PyObject oldValue = table.putIfAbsent(internedKey, failobj);
         return oldValue == null ? failobj : oldValue;
     }
@@ -638,8 +638,8 @@ public class PyStringMap extends PyObject implements Traverseproc {
     }
 
     private static Object pyToKey(PyObject pyKey) {
-        if (pyKey instanceof PyString) {
-            return ((PyString)pyKey).internedString();
+        if (pyKey instanceof PyUnicode) {
+            return ((PyUnicode)pyKey).internedString();
         } else {
             return pyKey;
         }

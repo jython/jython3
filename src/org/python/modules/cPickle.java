@@ -43,6 +43,7 @@ import org.python.core.PyUnicode;
 import org.python.core.__builtin__;
 import org.python.core.codecs;
 import org.python.core.imp;
+import org.python.core.stringlib.Encoding;
 import org.python.util.Generic;
 
 /**
@@ -519,12 +520,12 @@ public class cPickle implements ClassDictInit {
         return dict;
     }
 
-    public static PyString _PickleError__str__(PyObject self, PyObject[] args, String[] kwargs) {
+    public static PyUnicode _PickleError__str__(PyObject self, PyObject[] args, String[] kwargs) {
         PyObject selfArgs = self.__getattr__("args");
         if (selfArgs.__len__() > 0 && selfArgs.__getitem__(0).__len__()  > 0) {
             return selfArgs.__getitem__(0).__str__();
         } else {
-            return new PyString("(what)");
+            return new PyUnicode("(what)");
         }
     }
 
@@ -534,11 +535,11 @@ public class cPickle implements ClassDictInit {
         return dict;
     }
 
-    public static PyString _UnpickleableError__str__(PyObject self, PyObject[] args,
+    public static PyObject _UnpickleableError__str__(PyObject self, PyObject[] args,
                                                      String[] kwargs) {
         PyObject selfArgs = self.__getattr__("args");
         PyObject a = selfArgs.__len__() > 0 ? selfArgs.__getitem__(0) : new PyString("(what)");
-        return new PyString("Cannot pickle %s objects").__mod__(a).__str__();
+        return new PyUnicode("Cannot pickle %s objects").__mod__(a);
     }
 
     /**
@@ -1861,7 +1862,7 @@ public class cPickle implements ClassDictInit {
                 if (line.charAt(i) > ' ')
                     throw Py.ValueError("insecure string pickle " + i);
             }
-            value = PyString.decode_UnicodeEscape(line, 1, n-1,
+            value = Encoding.decode_UnicodeEscape(line, 1, n-1,
                                                   "strict", false);
 
             push(new PyString(value));

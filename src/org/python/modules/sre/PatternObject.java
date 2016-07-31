@@ -25,7 +25,7 @@ import org.python.expose.ExposedType;
 @ExposedType(name = "_sre.SRE_Pattern", doc = BuiltinDocs.SRE_Pattern_doc)
 public class PatternObject extends PyObject implements Traverseproc {
     int[] code; /* link to the code string object */
-    public PyString pattern; /* link to the pattern source (or None) */
+    public PyObject pattern; /* link to the pattern source (or None) */
     public int groups;
     public org.python.core.PyObject groupindex;
     public int flags;
@@ -33,7 +33,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     public int codesize;
 
 
-    public PatternObject(PyString pattern, int flags, int[] code,
+    public PatternObject(PyObject pattern, int flags, int[] code,
             int groups, PyObject groupindex, PyObject indexgroup) {
 
         if (pattern != null)

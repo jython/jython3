@@ -63,7 +63,7 @@ public class Encoder extends PyObject implements Traverseproc {
         return rval;
     }
 
-    private PyString encode_float(PyObject obj) {
+    private PyUnicode encode_float(PyObject obj) {
         /* Return the JSON representation of a PyFloat */
         double i = obj.asDouble();
         if (Double.isInfinite(i) || Double.isNaN(i)) {
@@ -71,11 +71,11 @@ public class Encoder extends PyObject implements Traverseproc {
                 throw Py.ValueError("Out of range float values are not JSON compliant");
             }
             if (i == Double.POSITIVE_INFINITY) {
-                return new PyString("Infinity");
+                return new PyUnicode("Infinity");
             } else if (i == Double.NEGATIVE_INFINITY) {
-                return new PyString("-Infinity");
+                return new PyUnicode("-Infinity");
             } else {
-                return new PyString("NaN");
+                return new PyUnicode("NaN");
             }
         }
         /* Use a better float format here? */
@@ -145,20 +145,22 @@ public class Encoder extends PyObject implements Traverseproc {
 
         int idx = 0;
         for (PyObject key : dct.asIterable()) {
-            PyString kstr;
+            PyUnicode kstr;
 
-            if (key instanceof PyString || key instanceof PyUnicode) {
-                kstr = (PyString) key;
+            if (key instanceof PyString) {
+                kstr = (PyUnicode) ((PyString) key).decode();
+            } else if (key instanceof PyUnicode) {
+                kstr = (PyUnicode) key;
             } else if (key instanceof PyFloat) {
                 kstr = encode_float(key);
             } else if (key instanceof PyInteger || key instanceof PyLong) {
                 kstr = key.__str__();
             } else if (key == Py.True) {
-                kstr = new PyString("true");
+                kstr = new PyUnicode("true");
             } else if (key == Py.False) {
-                kstr = new PyString("false");
+                kstr = new PyUnicode("false");
             } else if (key == Py.None) {
-                kstr = new PyString("null");
+                kstr = new PyUnicode("null");
             } else if (skipkeys) {
                 continue;
             } else {

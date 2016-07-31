@@ -244,7 +244,11 @@ public class PyException extends RuntimeException implements Traverseproc
             pye = new PyException(type, null, cause);
             PyException context = state.exceptions.peekFirst();
             if (context != null) {
-                pye.context = (PyBaseException) context.value;
+                if (context.value instanceof PyBaseException) {
+                    pye.context = (PyBaseException) context.value;
+                } else {
+                    System.out.println(context.value);
+                }
             }
             pye.normalize();
             if (!isExceptionInstance(pye.value)) {

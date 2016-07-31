@@ -58,31 +58,20 @@ public class FieldNameIterator extends PyObject implements Traverseproc {
      * @param fieldName the field name as UTF-16
      * @param bytes true if elements returned should be PyString, else PyUnicode
      */
-    public FieldNameIterator(String fieldName, boolean bytes) {
-        this.markup = fieldName;
+    public FieldNameIterator(CharSequence fieldName, boolean bytes) {
+        this.markup = fieldName.toString();
         this.bytes = bytes;
-        this.index = nextDotOrBracket(fieldName);
-        String headStr = fieldName.substring(0, index);
+        this.index = nextDotOrBracket(markup);
+        CharSequence headStr = fieldName.subSequence(0, index);
         if (NUMBER.matcher(headStr).matches()) {
             try {
-                this.head = Integer.parseInt(headStr);
+                this.head = Integer.parseInt(headStr.toString());
             } catch (NumberFormatException e) {
                 this.head = headStr;
             }
         } else {
             this.head = headStr;
         }
-    }
-
-    /**
-     * Create an iterator for the parts of this field name (and extract the head name field, which
-     * may be an empty string).
-     *
-     * @param fieldNameObject
-     */
-    public FieldNameIterator(PyString fieldNameObject) {
-        // Extract UTF-16 string but remember whether PyString or PyUnicode shouyld result.
-        this(fieldNameObject.getString(), !(fieldNameObject instanceof PyUnicode));
     }
 
     @Override

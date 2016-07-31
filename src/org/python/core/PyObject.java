@@ -590,10 +590,10 @@ public class PyObject implements Serializable {
             Iterator<PyObject> keysIter = keys.asIterable().iterator();
             for (PyObject key; keysIter.hasNext();) {
                 key = keysIter.next();
-                if (!(key instanceof PyString))
+                if (!(key instanceof PyUnicode))
                     throw Py.TypeError(name + "keywords must be strings");
                 newkeywords[keywords.length + i++] =
-                    ((PyString) key).internedString();
+                    ((PyUnicode) key).internedString();
                 newargs[argidx++] = kwargs.__finditem__(key);
             }
             keywords = newkeywords;
@@ -931,11 +931,11 @@ public class PyObject implements Serializable {
      *
      * @return the value corresponding to name or null if name is not found
      */
-    public final PyObject __findattr__(PyString name) {
+    public final PyObject __findattr__(PyUnicode name) {
         if (name == null) {
             return null;
         }
-        return __findattr__(name.internedString());
+        return __findattr__(name.getString().intern());
     }
 
     /**
@@ -990,7 +990,7 @@ public class PyObject implements Serializable {
      *
      * @see #__findattr_ex__(String)
      **/
-    public final PyObject __getattr__(PyString name) {
+    public final PyObject __getattr__(PyUnicode name) {
         return __getattr__(name.internedString());
     }
 
@@ -1036,7 +1036,7 @@ public class PyObject implements Serializable {
      *
      * @see #__setattr__(java.lang.String, PyObject)
      **/
-    public final void __setattr__(PyString name, PyObject value) {
+    public final void __setattr__(PyUnicode name, PyObject value) {
         __setattr__(name.internedString(), value);
     }
 
@@ -1063,7 +1063,7 @@ public class PyObject implements Serializable {
      *
      * @see #__delattr__(java.lang.String)
      **/
-    public final void __delattr__(PyString name) {
+    public final void __delattr__(PyUnicode name) {
         __delattr__(name.internedString());
     }
 
@@ -1834,7 +1834,7 @@ public class PyObject implements Serializable {
      *
      * @return a string representing this object as a hexadecimal number.
      **/
-    public PyString __hex__() {
+    public PyUnicode __hex__() {
         return formatImpl(IntegerFormatter.HEX);
     }
 
@@ -1845,7 +1845,7 @@ public class PyObject implements Serializable {
      *
      * @return a string representing this object as an octal number.
      **/
-    public PyString __oct__() {
+    public PyUnicode __oct__() {
         return formatImpl(IntegerFormatter.OCT);
     }
 

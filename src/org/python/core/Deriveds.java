@@ -33,7 +33,7 @@ public class Deriveds {
     public static PyObject __findattr_ex__(PyObject self, String name) {
         PyType type = self.getType();
         PyException firstAttributeError = null;
-        PyString pyName = null;
+        PyUnicode pyName = null;
 
         try {
             if (type.getUsesObjectGetattribute()) {
@@ -55,7 +55,7 @@ public class Deriveds {
                 if (getattribute == objectGetattribute) {
                     type.setUsesObjectGetattribute(true);
                 }
-                pyName = PyString.fromInterned(name);
+                pyName = PyUnicode.fromInterned(name);
                 return getattribute.__get__(self, type).__call__(pyName);
             }
         } catch (PyException pye) {
@@ -71,7 +71,7 @@ public class Deriveds {
         PyObject getattr = type.lookup("__getattr__");
         if (getattr != null) {
             return getattr.__get__(self, type).__call__(pyName != null
-                                                        ? pyName : PyString.fromInterned(name));
+                                                        ? pyName : PyUnicode.fromInterned(name));
         }
         if (firstAttributeError != null) {
             throw firstAttributeError;

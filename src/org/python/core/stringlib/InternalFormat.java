@@ -32,9 +32,11 @@ public class InternalFormat {
      */
     public static Spec fromText(PyObject text, String method) {
         if (text instanceof PyString) {
-            return fromText(((PyString)text).getString());
+            return fromText(((PyString) text).getString());
+        } else if (text instanceof PyUnicode) {
+            return fromText(((PyUnicode)text).getString());
         } else {
-            throw Py.TypeError(method + " requires str or unicode");
+            throw Py.TypeError(method + " requires bytes or str");
         }
     }
 
@@ -135,7 +137,7 @@ public class InternalFormat {
          *
          * @return formatted result
          */
-        public PyString getPyResult() {
+        public PyObject getPyResult() {
             String r = getResult();
             if (bytes) {
                 return new PyString(r);

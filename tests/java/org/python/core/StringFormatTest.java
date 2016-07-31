@@ -4,6 +4,7 @@ import java.math.BigInteger;
 
 import junit.framework.TestCase;
 
+import org.python.core.stringlib.Encoding;
 import org.python.core.stringlib.FieldNameIterator;
 import org.python.core.stringlib.IntegerFormatter;
 import org.python.core.stringlib.InternalFormat;
@@ -232,14 +233,14 @@ public class StringFormatTest extends TestCase {
     public void testFormatString() {
         String v = "abc";
         TextFormatter f;
-        f = PyString.prepareFormatter(InternalFormat.fromText(""));
+        f = Encoding.prepareFormatter(InternalFormat.fromText(""));
         assertEquals("abc", f.format(v).pad().getResult());
 
         String v2 = "abcdef";
-        f = PyString.prepareFormatter(InternalFormat.fromText(".3"));
+        f = Encoding.prepareFormatter(InternalFormat.fromText(".3"));
         assertEquals("abc", f.format(v2).pad().getResult());
 
-        f = PyString.prepareFormatter(InternalFormat.fromText("6"));
+        f = Encoding.prepareFormatter(InternalFormat.fromText("6"));
         assertEquals("abc   ", f.format(v).pad().getResult());
     }
 
@@ -292,8 +293,7 @@ public class StringFormatTest extends TestCase {
     }
 
     private MarkupIterator newMarkupIterator(String markup) {
-        PyString markupObject = useBytes ? Py.newString(markup) : Py.newUnicode(markup);
-        return new MarkupIterator(markupObject);
+        return new MarkupIterator(markup);
     }
 
     private void assertMarkupError(String markup, String expected) {
@@ -342,7 +342,6 @@ public class StringFormatTest extends TestCase {
     }
 
     private FieldNameIterator newFieldNameIterator(String field) {
-        PyString fieldObject = useBytes ? Py.newString(field) : Py.newUnicode(field);
-        return new FieldNameIterator(fieldObject);
+        return new FieldNameIterator(field, useBytes);
     }
 }

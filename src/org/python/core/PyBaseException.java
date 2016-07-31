@@ -104,7 +104,7 @@ public class PyBaseException extends PyObject implements Traverseproc {
                 throw Py.TypeError("state is not a dictionary");
             }
             for (PyObject key : state.asIterable()) {
-                __setattr__((PyString)key, state.__finditem__(key));
+                __setattr__((PyUnicode)key, state.__finditem__(key));
             }
         }
         return Py.None;

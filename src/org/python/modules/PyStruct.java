@@ -5,9 +5,9 @@ import org.python.core.Py;
 import org.python.core.PyArray;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
+import org.python.core.PyUnicode;
 import org.python.core.Untraversable;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
@@ -33,11 +33,11 @@ public class PyStruct extends PyObject {
         return TYPE;
     }
 
-    public PyStruct(PyString format) {
+    public PyStruct(PyUnicode format) {
         this(TYPE, format);
     }
 
-    public PyStruct(PyType type, PyString format) {
+    public PyStruct(PyType type, PyUnicode format) {
         super(type);
         this.format = format.toString();
         this.format_def = struct.whichtable(this.format);
@@ -50,12 +50,12 @@ public class PyStruct extends PyObject {
         ArgParser ap = new ArgParser("Struct", args, keywords, new String[] {"format"}, 1);
 
         PyObject format = ap.getPyObject(0);
-        if (!(format instanceof PyString)) {
+        if (!(format instanceof PyUnicode)) {
             throw Py.TypeError("coercing to Unicode: need string, '"
                     + format.getType().fastGetName() + "' type found");
         }
 
-        return new PyStruct(TYPE, (PyString) format);
+        return new PyStruct(TYPE, (PyUnicode) format);
     }
 
     @ExposedMethod
@@ -71,7 +71,7 @@ public class PyStruct extends PyObject {
     @ExposedMethod
     public PyTuple unpack(PyObject source) {
         String s;
-        if (source instanceof PyString)
+        if (source instanceof PyUnicode)
             s = source.toString();
         else if (source instanceof PyArray) 
             s = ((PyArray)source).tostring();

@@ -155,11 +155,11 @@ public class _json implements ClassDictInit {
 
             /* Pick up this chunk if it's not zero length */
             if (next != end) {
-                PyString strchunk = (PyString) pystr.__getslice__(Py.newInteger(end), Py.newInteger(next));
+                PyObject strchunk = pystr.__getslice__(Py.newInteger(end), Py.newInteger(next));
                 if (strchunk instanceof PyUnicode) {
                     chunks.append(strchunk);
                 } else {
-                    chunks.append(codecs.decode(strchunk, encoding, null));
+                    chunks.append(codecs.decode((PyString) strchunk, encoding, null));
                 }
             }
             next++;

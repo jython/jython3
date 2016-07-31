@@ -54,7 +54,7 @@ public class PyBZ2Decompressor extends PyObject implements Traverseproc {
 
         PyString data = (PyString) ap.getPyObject(0);
 
-        PyString returnData = Py.EmptyString;
+        PyString returnData;
 
         if (eofReached) {
             throw Py.EOFError("Data stream EOF reached");
@@ -98,7 +98,7 @@ public class PyBZ2Decompressor extends PyObject implements Traverseproc {
             while ((currentByte = decompressStream.read()) != -1) {
                 databuf.append((byte)currentByte);
             }
-            returnData = databuf.__str__();
+            returnData = new PyString(databuf.__str__().encode());
             if (compressedData.available() > 0) {
                 byte[] unusedbuf = new byte[compressedData.available()];
                 compressedData.read(unusedbuf);

@@ -23,6 +23,7 @@ import org.python.core.Untraversable;
 import org.python.core.io.FileIO;
 import org.python.core.io.RawIOBase;
 import org.python.core.io.StreamIO;
+import org.python.core.stringlib.Encoding;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
@@ -483,7 +484,7 @@ public class PyFileIO extends PyRawIOBase {
             if (name != null && (name instanceof PyString)) {
                 String xname = name.asString();
                 if (name instanceof PyUnicode) {
-                    xname = PyString.encode_UnicodeEscape(xname, false);
+                    xname = Encoding.encode_UnicodeEscape(xname, false);
                 }
                 return String.format("<_io.FileIO name='%s' mode='%s'>", xname, mode);
             } else {

@@ -435,7 +435,7 @@ public class marshal implements ClassDictInit {
                     int size = read_int();
                     String s = read_string(size);
                     if (type == TYPE_INTERNED) {
-                        PyString pys = PyString.fromInterned(s.intern());
+                        PyUnicode pys = PyUnicode.fromInterned(s.intern());
                         strings.append(pys);
                         return pys;
                     } else {

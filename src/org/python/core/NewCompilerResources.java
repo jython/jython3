@@ -49,7 +49,7 @@ public class NewCompilerResources {
             PyObject locals, boolean filter) {
         PyObject iter = names.__iter__();
         for (PyObject name; (name = iter.__next__()) != null;) {
-            String sname = ((PyString) name).internedString();
+            String sname = ((PyUnicode) name).internedString();
             if (filter && sname.startsWith("_")) {
                 continue;
             } else {

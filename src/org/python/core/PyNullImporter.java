@@ -46,7 +46,7 @@ public class PyNullImporter extends PyObject {
     // FIXME Also can take in account working in zip file systems
 
     private static String asPath(PyObject pathObj) {
-        if (!(pathObj instanceof PyString)) {
+        if (!(pathObj instanceof PyUnicode)) {
             throw Py.TypeError(String.format("coercing to Unicode: need string, %s type found",
                     pathObj.getType().fastGetName()));
         }

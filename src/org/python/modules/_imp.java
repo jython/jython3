@@ -49,27 +49,10 @@ public class _imp {
 
     public static PyObject create_builtin(PyObject spec) {
         PyObject name = spec.__getattr__("name");
-        String modName = name.toString().intern();
+        String modName = PyObject.asName(name);
         for (String newmodule : Setup.newbuiltinModules) {
             if (modName.equals(newmodule.split(":")[0])) {
-                String classname = className(newmodule);
-                Class c = Py.findClassEx(classname, "builtin module");
-                PyObject dict = null;
-                if (ClassDictInit.class.isAssignableFrom(c)) {
-                    try {
-                        Method classDictInit = c.getMethod("classDictInit");
-                        dict = (PyObject) classDictInit.invoke(null);
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    dict = new PyStringMap();
-                }
-                return new PyModule(modName, dict);
+                return new PyModule(modName, new PyStringMap());
             }
         }
         if (modName.equals("sys")) {

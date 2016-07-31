@@ -103,12 +103,12 @@ public class StdoutWrapper extends OutputStream {
 
     private String printToFile(PyFile file, PyObject o) {
         String s;
-        if (o instanceof PyUnicode) {
+//        if (o instanceof PyUnicode) {
             // Use the encoding and policy defined for the stream. (Each may be null.)
-            s = ((PyUnicode)o).encode(file.encoding, file.errors);
-        } else {
+//            s = ((PyUnicode)o).encode(file.encoding, file.errors);
+//        } else {
             s = o.__str__().toString();
-        }
+//        }
         file.write(s);
         return s;
     }

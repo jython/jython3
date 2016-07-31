@@ -853,7 +853,6 @@ public class PyComplex extends PyObject {
         Spec spec = InternalFormat.fromText(formatSpec, "__format__");
 
         // fromText will have thrown if formatSpecStr is not a PyString (including PyUnicode)
-        PyString formatSpecStr = (PyString)formatSpec;
         String result;
 
         // Validate the specification and detect the special case for none-format
@@ -871,7 +870,7 @@ public class PyComplex extends PyObject {
                 spec = spec.withDefaults(Spec.NUMERIC);
                 int size = 2 * FloatFormatter.size(spec) + 1; // 2 floats + "j"
                 FloatFormatter f = new FloatFormatter(new StringBuilder(size), spec);
-                f.setBytes(!(formatSpecStr instanceof PyUnicode));
+                f.setBytes(!(formatSpec instanceof PyUnicode));
                 // Convert both parts as per specification
                 f.format(real).format(imag, "+").append('j');
                 result = f.pad().getResult();
@@ -882,7 +881,10 @@ public class PyComplex extends PyObject {
         }
 
         // Wrap the result in the same type as the format string
-        return formatSpecStr.createInstance(result);
+        if (formatSpec instanceof PyUnicode) {
+            return new PyUnicode(result);
+        }
+        return new PyString(result);
     }
 
     /**

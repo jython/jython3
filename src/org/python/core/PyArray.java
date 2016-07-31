@@ -15,6 +15,7 @@ import java.nio.ByteBuffer;
 import org.python.core.buffer.BaseBuffer;
 import org.python.core.buffer.SimpleStringBuffer;
 import org.python.core.buffer.SimpleWritableBuffer;
+import org.python.core.stringlib.Encoding;
 import org.python.core.util.ByteSwapper;
 import org.python.core.util.StringUtil;
 import org.python.expose.ExposedGet;
@@ -426,7 +427,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
         }
         String value;
         if ("c".equals(typecode)) {
-            value = PyString.encode_UnicodeEscape(tostring(), true);
+            value = Encoding.encode_UnicodeEscape(tostring(), true);
         } else if ("u".equals(typecode)) {
             value = (new PyUnicode(tounicode())).__repr__().toString();
         } else {

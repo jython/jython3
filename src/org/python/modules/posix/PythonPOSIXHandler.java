@@ -20,11 +20,11 @@ import org.python.core.PyObject;
 public class PythonPOSIXHandler implements POSIXHandler {
 
     public void error(Errno error, String extraData) {
-        throw Py.OSError(error, Py.newStringOrUnicode(extraData));
+        throw Py.OSError(error, Py.newUnicode(extraData));
     }
 
     public void error(Errno error, String methodName, String extraData) {
-        throw Py.OSError(error, Py.newStringOrUnicode(extraData));
+        throw Py.OSError(error, Py.newUnicode(extraData));
     }
 
     public void unimplementedError(String methodName) {

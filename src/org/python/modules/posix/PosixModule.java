@@ -186,7 +186,7 @@ public class PosixModule implements ClassDictInit {
 
         List<PyObject> haveFuncs = new ArrayList<PyObject>();
         for (String haveFunc : haveFunctions) {
-            haveFuncs.add(PyString.fromInterned(haveFunc));
+            haveFuncs.add(PyUnicode.fromInterned(haveFunc));
         }
         dict.__setitem__("_have_functions", PyList.fromList(haveFuncs));
 
@@ -854,7 +854,7 @@ public class PosixModule implements ClassDictInit {
 
         if (truncating && !writing) {
             // Explicitly truncate, writing will truncate anyway
-            new FileIO((PyString) path, "w").close();
+            new FileIO((PyUnicode) path, "w").close();
         }
 
         if (exclusive && creating) {
@@ -876,7 +876,7 @@ public class PosixModule implements ClassDictInit {
                 throw Py.OSError(file.isDirectory() ? Errno.EISDIR : Errno.ENOENT, path);
             }
         }
-        return new FileIO((PyString) path, fileIOMode);
+        return new FileIO((PyUnicode) path, fileIOMode);
     }
 
     public static PyString __doc__popen = new PyString(
@@ -962,13 +962,13 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__readlink = new PyString(
+    public static PyUnicode __doc__readlink = new PyUnicode(
         "readlink(path) -> path\n\n" +
         "Return a string representing the path to which the symbolic link points.");
     @Hide(OS.NT)
-    public static PyString readlink(PyObject path) {
+    public static PyUnicode readlink(PyObject path) {
         try {
-            return Py.newStringOrUnicode(path, Files.readSymbolicLink(absolutePath(path)).toString());
+            return Py.newUnicode(Files.readSymbolicLink(absolutePath(path)).toString());
         } catch (NotLinkException ex) {
             throw Py.OSError(Errno.EINVAL, path);
         } catch (NoSuchFileException ex) {
@@ -1300,8 +1300,8 @@ public class PosixModule implements ClassDictInit {
         }
         for (Map.Entry<String, String> entry : env.entrySet()) {
             environ.__setitem__(
-                    Py.newStringOrUnicode(entry.getKey()),
-                    Py.newStringOrUnicode(entry.getValue()));
+                    Py.newUnicode(entry.getKey()),
+                    Py.newUnicode(entry.getValue()));
         }
         return environ;
     }
@@ -1313,7 +1313,7 @@ public class PosixModule implements ClassDictInit {
      * @return a String path
      */
     private static String asPath(PyObject path) {
-        if (path instanceof PyString) {
+        if (path instanceof PyUnicode) {
             return path.toString();
         }
         throw Py.TypeError(String.format("coercing to Unicode: need string, %s type found",

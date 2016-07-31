@@ -110,7 +110,7 @@ public class PyFloat extends PyObject {
         String message = "invalid hexadecimal floating-point string";
         boolean negative = false;
 
-        PyString s = o.__str__();
+        PyUnicode s = o.__str__();
         String value = s.getString().trim().toLowerCase();
 
         if (value.length() == 0) {

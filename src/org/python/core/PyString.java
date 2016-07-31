@@ -1,6 +1,9 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.core;
 
+import com.google.common.base.Charsets;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import org.python.core.buffer.BaseBuffer;
 import org.python.core.buffer.SimpleStringBuffer;
 import org.python.core.stringlib.FieldNameIterator;
@@ -29,12 +32,18 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.python.core.stringlib.Encoding;
+
+import static org.python.core.stringlib.Encoding.asUTF16StringOrError;
+
 /**
  * A builtin python string.
  */
 @Untraversable
 @ExposedType(name = "bytes", base = PyObject.class, doc = BuiltinDocs.bytes_doc)
 public class PyString extends PySequence implements BufferProtocol {
+
+    private static final String BYTES_REQUIRED_ERROR = "a bytes-like object is required, not 'str'";
 
     public static final PyType TYPE = PyType.fromClass(PyString.class);
     protected String string; // cannot make final because of Python intern support
@@ -58,17 +67,17 @@ public class PyString extends PySequence implements BufferProtocol {
      * @param subType the actual type being constructed
      * @param string a Java String to be wrapped
      */
-    public PyString(PyType subType, String string) {
+    public PyString(PyType subType, CharSequence string) {
         super(subType);
         if (string == null) {
             throw new IllegalArgumentException("Cannot create PyString from null");
-//        } else if (!isBytes(string)) {
-//            throw new IllegalArgumentException("Cannot create PyString with non-byte value");
+        } else if (!isBytes(string)) {
+            throw new IllegalArgumentException("Cannot create PyString with non-byte value");
         }
-        this.string = string;
+        this.string = string.toString();
     }
 
-    public PyString(String string) {
+    public PyString(CharSequence string) {
         this(TYPE, string);
     }
 
@@ -88,10 +97,10 @@ public class PyString extends PySequence implements BufferProtocol {
      * @param string a Java String to be wrapped (not null)
      * @param isBytes true if the client guarantees we are dealing with bytes
      */
-    private PyString(String string, boolean isBytes) {
+    private PyString(CharSequence string, boolean isBytes) {
         super(TYPE);
         if (isBytes || isBytes(string)) {
-            this.string = string;
+            this.string = string.toString();
         } else {
             throw new IllegalArgumentException("Cannot create PyString with non-byte value");
         }
@@ -104,7 +113,7 @@ public class PyString extends PySequence implements BufferProtocol {
      *
      * @return true if and only if every character has a code less than 256
      */
-    private static boolean isBytes(String s) {
+    private static boolean isBytes(CharSequence s) {
         int k = s.length();
         if (k == 0) {
             return true;
@@ -134,22 +143,12 @@ public class PyString extends PySequence implements BufferProtocol {
     /**
      * Creates a PyString from an already interned String. Just means it won't be reinterned if used
      * in a place that requires interned Strings.
+     * TODO remove once bootstrapped
      */
     public static PyString fromInterned(String interned) {
         PyString str = new PyString(TYPE, interned);
         str.interned = true;
         return str;
-    }
-
-    /**
-     * Determine whether the string consists entirely of basic-plane characters. For a
-     * {@link PyString}, of course, it is always <code>true</code>, but this is useful in cases
-     * where either a <code>PyString</code> or a {@link PyUnicode} is acceptable.
-     *
-     * @return true
-     */
-    public boolean isBasicPlane() {
-        return true;
     }
 
     @ExposedNew
@@ -282,16 +281,6 @@ public class PyString extends PySequence implements BufferProtocol {
         return getString();
     }
 
-    public String internedString() {
-        if (interned) {
-            return getString();
-        } else {
-            string = getString().intern();
-            interned = true;
-            return getString();
-        }
-    }
-
     @Override
     public PyUnicode __repr__() {
         return bytes___repr__();
@@ -299,277 +288,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes___repr___doc)
     final PyUnicode bytes___repr__() {
-        return new PyUnicode("b" + encode_UnicodeEscape(getString(), true));
-    }
-
-    private static char[] hexdigit = "0123456789abcdef".toCharArray();
-
-    public static String encode_UnicodeEscape(String str, boolean use_quotes) {
-        int size = str.length();
-        StringBuilder v = new StringBuilder(str.length());
-
-        char quote = 0;
-
-        if (use_quotes) {
-            quote = str.indexOf('\'') >= 0 && str.indexOf('"') == -1 ? '"' : '\'';
-            v.append(quote);
-        }
-
-        for (int i = 0; size-- > 0;) {
-            int ch = str.charAt(i++);
-            /* Escape quotes */
-            if ((use_quotes && ch == quote) || ch == '\\') {
-                v.append('\\');
-                v.append((char)ch);
-                continue;
-            }
-            /* Map UTF-16 surrogate pairs to Unicode \UXXXXXXXX escapes */
-            else if (size > 0 && ch >= 0xD800 && ch < 0xDC00) {
-                char ch2 = str.charAt(i++);
-                size--;
-                if (ch2 >= 0xDC00 && ch2 <= 0xDFFF) {
-                    int ucs = (((ch & 0x03FF) << 10) | (ch2 & 0x03FF)) + 0x00010000;
-                    v.append('\\');
-                    v.append('U');
-                    v.append(hexdigit[(ucs >> 28) & 0xf]);
-                    v.append(hexdigit[(ucs >> 24) & 0xf]);
-                    v.append(hexdigit[(ucs >> 20) & 0xf]);
-                    v.append(hexdigit[(ucs >> 16) & 0xf]);
-                    v.append(hexdigit[(ucs >> 12) & 0xf]);
-                    v.append(hexdigit[(ucs >> 8) & 0xf]);
-                    v.append(hexdigit[(ucs >> 4) & 0xf]);
-                    v.append(hexdigit[ucs & 0xf]);
-                    continue;
-                }
-                /* Fall through: isolated surrogates are copied as-is */
-                i--;
-                size++;
-            }
-            /* Map 16-bit characters to '\\uxxxx' */
-            if (ch >= 256) {
-                v.append('\\');
-                v.append('u');
-                v.append(hexdigit[(ch >> 12) & 0xf]);
-                v.append(hexdigit[(ch >> 8) & 0xf]);
-                v.append(hexdigit[(ch >> 4) & 0xf]);
-                v.append(hexdigit[ch & 15]);
-            }
-            /* Map special whitespace to '\t', \n', '\r' */
-            else if (ch == '\t') {
-                v.append("\\t");
-            } else if (ch == '\n') {
-                v.append("\\n");
-            } else if (ch == '\r') {
-                v.append("\\r");
-            } else if (ch < ' ' || ch >= 127) {
-                /* Map non-printable US ASCII to '\xNN' */
-                v.append('\\');
-                v.append('x');
-                v.append(hexdigit[(ch >> 4) & 0xf]);
-                v.append(hexdigit[ch & 0xf]);
-            } else {/* Copy everything else as-is */
-                v.append((char)ch);
-            }
-        }
-        if (use_quotes) {
-            v.append(quote);
-        }
-        return v.toString();
-    }
-
-    private static ucnhashAPI pucnHash = null;
-
-    public static String decode_UnicodeEscape(String str, int start, int end, String errors,
-            boolean unicode) {
-        StringBuilder v = new StringBuilder(end - start);
-        for (int s = start; s < end;) {
-            char ch = str.charAt(s);
-            /* Non-escape characters are interpreted as Unicode ordinals */
-            if (ch != '\\') {
-                v.append(ch);
-                s++;
-                continue;
-            }
-            int loopStart = s;
-            /* \ - Escapes */
-            s++;
-            if (s == end) {
-                s = codecs.insertReplacementAndGetResume(v, errors, "unicodeescape", //
-                        str, loopStart, s + 1, "\\ at end of string");
-                continue;
-            }
-            ch = str.charAt(s++);
-            switch (ch) {
-            /* \x escapes */
-                case '\n':
-                    break;
-                case '\\':
-                    v.append('\\');
-                    break;
-                case '\'':
-                    v.append('\'');
-                    break;
-                case '\"':
-                    v.append('\"');
-                    break;
-                case 'b':
-                    v.append('\b');
-                    break;
-                case 'f':
-                    v.append('\014');
-                    break; /* FF */
-                case 't':
-                    v.append('\t');
-                    break;
-                case 'n':
-                    v.append('\n');
-                    break;
-                case 'r':
-                    v.append('\r');
-                    break;
-                case 'v':
-                    v.append('\013');
-                    break; /* VT */
-                case 'a':
-                    v.append('\007');
-                    break; /* BEL, not classic C */
-                /* \OOO (octal) escapes */
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                    int x = Character.digit(ch, 8);
-                    for (int j = 0; j < 2 && s < end; j++, s++) {
-                        ch = str.charAt(s);
-                        if (ch < '0' || ch > '7') {
-                            break;
-                        }
-                        x = (x << 3) + Character.digit(ch, 8);
-                    }
-                    v.append((char)x);
-                    break;
-                case 'x':
-                    s = hexescape(v, errors, 2, s, str, end, "truncated \\xXX");
-                    break;
-                case 'u':
-                    if (!unicode) {
-                        v.append('\\');
-                        v.append('u');
-                        break;
-                    }
-                    s = hexescape(v, errors, 4, s, str, end, "truncated \\uXXXX");
-                    break;
-                case 'U':
-                    if (!unicode) {
-                        v.append('\\');
-                        v.append('U');
-                        break;
-                    }
-                    s = hexescape(v, errors, 8, s, str, end, "truncated \\UXXXXXXXX");
-                    break;
-                case 'N':
-                    if (!unicode) {
-                        v.append('\\');
-                        v.append('N');
-                        break;
-                    }
-                    /*
-                     * Ok, we need to deal with Unicode Character Names now, make sure we've
-                     * imported the hash table data...
-                     */
-                    if (pucnHash == null) {
-                        PyObject mod = imp.importName("ucnhash", true);
-                        mod = mod.__call__();
-                        pucnHash = (ucnhashAPI)mod.__tojava__(Object.class);
-                        if (pucnHash.getCchMax() < 0) {
-                            throw Py.UnicodeError("Unicode names not loaded");
-                        }
-                    }
-                    if (str.charAt(s) == '{') {
-                        int startName = s + 1;
-                        int endBrace = startName;
-                        /*
-                         * look for either the closing brace, or we exceed the maximum length of the
-                         * unicode character names
-                         */
-                        int maxLen = pucnHash.getCchMax();
-                        while (endBrace < end && str.charAt(endBrace) != '}'
-                                && (endBrace - startName) <= maxLen) {
-                            endBrace++;
-                        }
-                        if (endBrace != end && str.charAt(endBrace) == '}') {
-                            int value = pucnHash.getValue(str, startName, endBrace);
-                            if (storeUnicodeCharacter(value, v)) {
-                                s = endBrace + 1;
-                            } else {
-                                s = codecs.insertReplacementAndGetResume( //
-                                        v, errors, "unicodeescape", //
-                                        str, loopStart, endBrace + 1, "illegal Unicode character");
-                            }
-                        } else {
-                            s = codecs.insertReplacementAndGetResume(v, errors, "unicodeescape", //
-                                    str, loopStart, endBrace, "malformed \\N character escape");
-                        }
-                        break;
-                    } else {
-                        s = codecs.insertReplacementAndGetResume(v, errors, "unicodeescape", //
-                                str, loopStart, s + 1, "malformed \\N character escape");
-                    }
-                    break;
-                default:
-                    v.append('\\');
-                    v.append(str.charAt(s - 1));
-                    break;
-            }
-        }
-        return v.toString();
-    }
-
-    private static int hexescape(StringBuilder partialDecode, String errors, int digits,
-            int hexDigitStart, String str, int size, String errorMessage) {
-        if (hexDigitStart + digits > size) {
-            return codecs.insertReplacementAndGetResume(partialDecode, errors, "unicodeescape",
-                    str, hexDigitStart - 2, size, errorMessage);
-        }
-        int i = 0;
-        int x = 0;
-        for (; i < digits; ++i) {
-            char c = str.charAt(hexDigitStart + i);
-            int d = Character.digit(c, 16);
-            if (d == -1) {
-                return codecs.insertReplacementAndGetResume(partialDecode, errors, "unicodeescape",
-                        str, hexDigitStart - 2, hexDigitStart + i + 1, errorMessage);
-            }
-            x = (x << 4) & ~0xF;
-            if (c >= '0' && c <= '9') {
-                x += c - '0';
-            } else if (c >= 'a' && c <= 'f') {
-                x += 10 + c - 'a';
-            } else {
-                x += 10 + c - 'A';
-            }
-        }
-        if (storeUnicodeCharacter(x, partialDecode)) {
-            return hexDigitStart + i;
-        } else {
-            return codecs.insertReplacementAndGetResume(partialDecode, errors, "unicodeescape",
-                    str, hexDigitStart - 2, hexDigitStart + i + 1, "illegal Unicode character");
-        }
-    }
-
-    /* pass in an int since this can be a UCS-4 character */
-    private static boolean storeUnicodeCharacter(int value, StringBuilder partialDecode) {
-        if (value < 0 || (value >= 0xD800 && value <= 0xDFFF)) {
-            return false;
-        } else if (value <= PySystemState.maxunicode) {
-            partialDecode.appendCodePoint(value);
-            return true;
-        }
-        return false;
+        return new PyUnicode("b" + Encoding.encode_UnicodeEscape(getString(), true));
     }
 
     @ExposedMethod(doc = BuiltinDocs.bytes___getitem___doc)
@@ -759,21 +478,8 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @Override
     protected PyObject getslice(int start, int stop, int step) {
-        if (step > 0 && stop < start) {
-            stop = start;
-        }
-        if (step == 1) {
-            return fromSubstring(start, stop);
-        } else {
-            int n = sliceLength(start, stop, step);
-            char new_chars[] = new char[n];
-            int j = 0;
-            for (int i = start; j < n; i += step) {
-                new_chars[j++] = getString().charAt(i);
-            }
-
-            return createInstance(new String(new_chars), true);
-        }
+        CharSequence s = Encoding.getslice(getString(), start, stop, step, sliceLength(start, stop, step));
+        return new PyString(s);
     }
 
     /**
@@ -798,115 +504,6 @@ public class PyString extends PySequence implements BufferProtocol {
     protected PyString createInstance(String str, boolean isBasic) {
         // ignore isBasic, doesn't apply to PyString, just PyUnicode
         return new PyString(str);
-    }
-
-    /**
-     * Return a String equivalent to the argument. This is a helper function to those methods that
-     * accept any byte array type (any object that supports a one-dimensional byte buffer), or
-     * accept a <code>unicode</code> argument which they interpret from its UTF-16 encoded form (the
-     * internal representation returned by {@link PyUnicode#getString()}).
-     *
-     * @param obj to coerce to a String
-     * @return coerced value or <code>null</code> if it can't be
-     */
-    private static String asUTF16StringOrNull(PyObject obj) {
-        if (obj instanceof PyString) {
-            return ((PyString)obj).getString();
-        } else if (obj instanceof BufferProtocol) {
-            // Other object with buffer API: briefly access the buffer
-            try (PyBuffer buf = ((BufferProtocol)obj).getBuffer(PyBUF.FULL_RO)) {
-                return buf.toString();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Return a String equivalent to the argument. This is a helper function to those methods that
-     * accept any byte array type (any object that supports a one-dimensional byte buffer), but
-     * <b>not</b> a <code>unicode</code>.
-     *
-     * @param obj to coerce to a String
-     * @return coerced value or <code>null</code> if it can't be (including <code>unicode</code>)
-     */
-    private static String asStringOrNull(PyObject obj) {
-        return (obj instanceof PyUnicode) ? null : asUTF16StringOrNull(obj);
-    }
-
-    /**
-     * Return a String equivalent to the argument. This is a helper function to those methods that
-     * accept any byte array type (any object that supports a one-dimensional byte buffer), but
-     * <b>not</b> a <code>unicode</code>.
-     * Added support for integer, as it can be interpreted as a byte
-     *
-     * @param obj to coerce to a String
-     * @return coerced value
-     * @throws PyException if the coercion fails (including <code>unicode</code>)
-     */
-    private static String asStringOrError(PyObject obj) throws PyException {
-        return asStringOrError(obj, true);
-    }
-    private static String asStringOrError(PyObject obj, boolean allowInt) throws PyException {
-        if (allowInt && obj instanceof PyLong) {
-            int val = ((PyLong) obj).getValue().intValue();
-            if (val < 0 || val > 255) {
-                throw Py.ValueError("byte must be in range(0, 256)");
-            }
-            return String.valueOf(val);
-        }
-        String ret = (obj instanceof PyUnicode) ? null : asUTF16StringOrNull(obj);
-        if (ret != null) {
-            return ret;
-        } else {
-            throw Py.TypeError("expected str, bytearray or other buffer compatible object");
-        }
-    }
-
-    /**
-     * Return a String equivalent to the argument according to the calling conventions of methods
-     * that accept as a byte string anything bearing the buffer interface, or accept
-     * <code>PyNone</code>, but <b>not</b> a <code>unicode</code>. (Or the argument may be omitted,
-     * showing up here as null.) These include the <code>strip</code> and <code>split</code> methods
-     * of <code>str</code>, where a null indicates that the criterion is whitespace, and
-     * <code>str.translate</code>.
-     *
-     * @param obj to coerce to a String or null
-     * @param name of method
-     * @return coerced value or null
-     * @throws PyException if the coercion fails (including <code>unicode</code>)
-     */
-    private static String asStringNullOrError(PyObject obj, String name) throws PyException {
-
-        if (obj == null || obj == Py.None) {
-            return null;
-        }
-        String ret = (obj instanceof PyUnicode) ? null : asUTF16StringOrNull(obj);
-        if (ret != null) {
-            return ret;
-        }
-        // A nameless method is the client
-        throw Py.TypeError(String.format("a bytes-like object is required, not '%s'",
-                obj.getType().fastGetName()));
-    }
-
-    /**
-     * Return a String equivalent to the argument according to the calling conventions of the
-     * certain methods of <code>str</code>. Those methods accept as a byte string anything bearing
-     * the buffer interface, or accept a <code>unicode</code> argument which they interpret from its
-     * UTF-16 encoded form (the internal representation returned by {@link PyUnicode#getString()}).
-     *
-     * @param obj to coerce to a String
-     * @return coerced value
-     * @throws PyException if the coercion fails
-     */
-    private static String asUTF16StringOrError(PyObject obj) {
-        // PyUnicode accepted here. Care required in the client if obj is not basic plane.
-        String ret = asUTF16StringOrNull(obj);
-        if (ret != null) {
-            return ret;
-        } else {
-            throw Py.TypeError(String.format("a bytes-like object is required, not '%s'", obj.getType().fastGetName()));
-        }
     }
 
     @Override
@@ -979,7 +576,7 @@ public class PyString extends PySequence implements BufferProtocol {
     @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___add___doc)
     final PyObject bytes___add__(PyObject other) {
         // Expect other to be some kind of byte-like object.
-        String otherStr = asStringOrNull(other);
+        String otherStr = Encoding.asStringOrNull(other);
         if (otherStr != null) {
             // Yes it is: concatenate as strings, which are guaranteed byte-like.
             return new PyString(getString().concat(otherStr), true);
@@ -1067,25 +664,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes_title_doc)
     final String bytes_title() {
-        char[] chars = getString().toCharArray();
-        int n = chars.length;
-
-        boolean previous_is_cased = false;
-        for (int i = 0; i < n; i++) {
-            char ch = chars[i];
-            if (previous_is_cased) {
-                chars[i] = Character.toLowerCase(ch);
-            } else {
-                chars[i] = Character.toTitleCase(ch);
-            }
-
-            if (Character.isLowerCase(ch) || Character.isUpperCase(ch) || Character.isTitleCase(ch)) {
-                previous_is_cased = true;
-            } else {
-                previous_is_cased = false;
-            }
-        }
-        return new String(chars);
+        return Encoding.title(getString());
     }
 
     public String swapcase() {
@@ -1094,17 +673,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes_swapcase_doc)
     final String bytes_swapcase() {
-        char[] chars = getString().toCharArray();
-        int n = chars.length;
-        for (int i = 0; i < n; i++) {
-            char c = chars[i];
-            if (Character.isUpperCase(c)) {
-                chars[i] = Character.toLowerCase(c);
-            } else if (Character.isLowerCase(c)) {
-                chars[i] = Character.toUpperCase(c);
-            }
-        }
-        return new String(chars);
+        return Encoding.swapcase(getString());
     }
 
     /**
@@ -1114,7 +683,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * @return a new String, stripped of the whitespace characters/bytes
      */
     public String strip() {
-        return _strip();
+        return Encoding._strip(getString()).toString();
     }
 
     /**
@@ -1124,7 +693,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * @return a new String, stripped of the specified characters/bytes
      */
     public String strip(String stripChars) {
-        return _strip(stripChars);
+        return Encoding._strip(getString(), stripChars).toString();
     }
 
     /**
@@ -1144,137 +713,15 @@ public class PyString extends PySequence implements BufferProtocol {
     @ExposedMethod(defaults = "null", doc = BuiltinDocs.bytes_strip_doc)
     final PyObject bytes_strip(PyObject chars) {
         if (chars instanceof PyUnicode) {
+            throw Py.TypeError(BYTES_REQUIRED_ERROR);
             // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).str_strip(chars);
+//            return ((PyUnicode)decode()).str_strip(chars);
         } else {
             // It ought to be None, null, some kind of bytes with the buffer API.
-            String stripChars = asStringNullOrError(chars, "strip");
+            String stripChars = Encoding.asStringNullOrError(chars, "strip");
             // Strip specified characters or whitespace if stripChars == null
-            return new PyString(_strip(stripChars), true);
+            return new PyString(Encoding._strip(getString(), stripChars), true);
         }
-    }
-
-    /**
-     * Implementation of Python <code>str.strip()</code> common to exposed and Java API, when
-     * stripping whitespace. Any whitespace byte/character will be discarded from either end of this
-     * <code>str</code>.
-     * <p>
-     * Implementation note: although a <code>str</code> contains only bytes, this method is also
-     * called by {@link PyUnicode#str_strip(PyObject)} when this is a basic-plane string.
-     *
-     * @return a new String, stripped of the whitespace characters/bytes
-     */
-    protected final String _strip() {
-        String s = getString();
-        // Rightmost non-whitespace
-        int right = _stripRight(s);
-        if (right < 0) {
-            // They're all whitespace
-            return "";
-        } else {
-            // Leftmost non-whitespace character: right known not to be a whitespace
-            int left = _stripLeft(s, right);
-            return s.substring(left, right + 1);
-        }
-    }
-
-    /**
-     * Implementation of Python <code>str.strip()</code> common to exposed and Java API. Any
-     * byte/character matching one of those in <code>stripChars</code> will be discarded from either
-     * end of this <code>str</code>. If <code>stripChars == null</code>, whitespace will be
-     * stripped.
-     * <p>
-     * Implementation note: although a <code>str</code> contains only bytes, this method is also
-     * called by {@link PyUnicode#str_strip(PyObject)} when both arguments are basic-plane
-     * strings.
-     *
-     * @param stripChars characters to strip or null
-     * @return a new String, stripped of the specified characters/bytes
-     */
-    protected final String _strip(String stripChars) {
-        if (stripChars == null) {
-            // Divert to the whitespace version
-            return _strip();
-        } else {
-            String s = getString();
-            // Rightmost non-matching character
-            int right = _stripRight(s, stripChars);
-            if (right < 0) {
-                // They all match
-                return "";
-            } else {
-                // Leftmost non-matching character: right is known not to match
-                int left = _stripLeft(s, stripChars, right);
-                return s.substring(left, right + 1);
-            }
-        }
-    }
-
-    /**
-     * Helper for <code>strip</code>, <code>lstrip</code> implementation, when stripping whitespace.
-     *
-     * @param s string to search (only <code>s[0:right]</code> is searched).
-     * @param right rightmost extent of string search
-     * @return index of lefttmost non-whitespace character or <code>right</code> if they all are.
-     */
-    private static final int _stripLeft(String s, int right) {
-        for (int left = 0; left < right; left++) {
-            if (!Character.isWhitespace(s.charAt(left))) {
-                return left;
-            }
-        }
-        return right;
-    }
-
-    /**
-     * Helper for <code>strip</code>, <code>lstrip</code> implementation, when stripping specified
-     * characters.
-     *
-     * @param s string to search (only <code>s[0:right]</code> is searched).
-     * @param stripChars specifies set of characters to strip
-     * @param right rightmost extent of string search
-     * @return index of leftmost character not in <code>stripChars</code> or <code>right</code> if
-     *         they all are.
-     */
-    private static final int _stripLeft(String s, String stripChars, int right) {
-        for (int left = 0; left < right; left++) {
-            if (stripChars.indexOf(s.charAt(left)) < 0) {
-                return left;
-            }
-        }
-        return right;
-    }
-
-    /**
-     * Helper for <code>strip</code>, <code>rstrip</code> implementation, when stripping whitespace.
-     *
-     * @param s string to search.
-     * @return index of rightmost non-whitespace character or -1 if they all are.
-     */
-    private static final int _stripRight(String s) {
-        for (int right = s.length(); --right >= 0;) {
-            if (!Character.isWhitespace(s.charAt(right))) {
-                return right;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Helper for <code>strip</code>, <code>rstrip</code> implementation, when stripping specified
-     * characters.
-     *
-     * @param s string to search.
-     * @param stripChars specifies set of characters to strip
-     * @return index of rightmost character not in <code>stripChars</code> or -1 if they all are.
-     */
-    private static final int _stripRight(String s, String stripChars) {
-        for (int right = s.length(); --right >= 0;) {
-            if (stripChars.indexOf(s.charAt(right)) < 0) {
-                return right;
-            }
-        }
-        return -1;
     }
 
     /**
@@ -1284,7 +731,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * @return a new String, stripped of the whitespace characters/bytes
      */
     public String lstrip() {
-        return _lstrip();
+        return Encoding._lstrip(getString()).toString();
     }
 
     /**
@@ -1294,7 +741,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * @return a new String, stripped of the specified characters/bytes
      */
     public String lstrip(String stripChars) {
-        return _lstrip(stripChars);
+        return Encoding._lstrip(getString(), stripChars).toString();
     }
 
     /**
@@ -1318,51 +765,9 @@ public class PyString extends PySequence implements BufferProtocol {
             return ((PyUnicode)decode()).str_lstrip(chars);
         } else {
             // It ought to be None, null, some kind of bytes with the buffer API.
-            String stripChars = asStringNullOrError(chars, "lstrip");
+            String stripChars = Encoding.asStringNullOrError(chars, "lstrip");
             // Strip specified characters or whitespace if stripChars == null
-            return new PyString(_lstrip(stripChars), true);
-        }
-    }
-
-    /**
-     * Implementation of Python <code>str.lstrip()</code> common to exposed and Java API, when
-     * stripping whitespace. Any whitespace byte/character will be discarded from the left end of
-     * this <code>str</code>.
-     * <p>
-     * Implementation note: although a str contains only bytes, this method is also called by
-     * {@link PyUnicode#str_lstrip(PyObject)} when this is a basic-plane string.
-     *
-     * @return a new String, stripped of the whitespace characters/bytes
-     */
-    protected final String _lstrip() {
-        String s = getString();
-        // Leftmost non-whitespace character: cannot exceed length
-        int left = _stripLeft(s, s.length());
-        return s.substring(left);
-    }
-
-    /**
-     * Implementation of Python <code>str.lstrip()</code> common to exposed and Java API. Any
-     * byte/character matching one of those in <code>stripChars</code> will be discarded from the
-     * left end of this <code>str</code>. If <code>stripChars == null</code>, whitespace will be
-     * stripped.
-     * <p>
-     * Implementation note: although a <code>str</code> contains only bytes, this method is also
-     * called by {@link PyUnicode#str_lstrip(PyObject)} when both arguments are basic-plane
-     * strings.
-     *
-     * @param stripChars characters to strip or null
-     * @return a new String, stripped of the specified characters/bytes
-     */
-    protected final String _lstrip(String stripChars) {
-        if (stripChars == null) {
-            // Divert to the whitespace version
-            return _lstrip();
-        } else {
-            String s = getString();
-            // Leftmost matching character: cannot exceed length
-            int left = _stripLeft(s, stripChars, s.length());
-            return s.substring(left);
+            return new PyString(Encoding._lstrip(getString(), stripChars), true);
         }
     }
 
@@ -1373,7 +778,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * @return a new String, stripped of the whitespace characters/bytes
      */
     public String rstrip() {
-        return _rstrip();
+        return Encoding._rstrip(getString());
     }
 
     /**
@@ -1383,7 +788,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * @return a new String, stripped of the specified characters/bytes
      */
     public String rstrip(String stripChars) {
-        return _rstrip(stripChars);
+        return Encoding._rstrip(getString(), stripChars);
     }
 
     /**
@@ -1404,61 +809,13 @@ public class PyString extends PySequence implements BufferProtocol {
     final PyObject bytes_rstrip(PyObject chars) {
         if (chars instanceof PyUnicode) {
             // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).str_rstrip(chars);
+            throw Py.TypeError(BYTES_REQUIRED_ERROR);
+//            return ((PyUnicode)decode()).str_rstrip(chars);
         } else {
             // It ought to be None, null, some kind of bytes with the buffer API.
-            String stripChars = asStringNullOrError(chars, "rstrip");
+            String stripChars = Encoding.asStringNullOrError(chars, "rstrip");
             // Strip specified characters or whitespace if stripChars == null
-            return new PyString(_rstrip(stripChars), true);
-        }
-    }
-
-    /**
-     * Implementation of Python <code>str.rstrip()</code> common to exposed and Java API, when
-     * stripping whitespace. Any whitespace byte/character will be discarded from the right end of
-     * this <code>str</code>.
-     * <p>
-     * Implementation note: although a <code>str</code> contains only bytes, this method is also
-     * called by {@link PyUnicode#str_rstrip(PyObject)} when this is a basic-plane string.
-     *
-     * @return a new String, stripped of the whitespace characters/bytes
-     */
-    protected final String _rstrip() {
-        String s = getString();
-        // Rightmost non-whitespace
-        int right = _stripRight(s);
-        if (right < 0) {
-            // They're all whitespace
-            return "";
-        } else {
-            // Substring up to and including this rightmost non-whitespace
-            return s.substring(0, right + 1);
-        }
-    }
-
-    /**
-     * Implementation of Python <code>str.rstrip()</code> common to exposed and Java API. Any
-     * byte/character matching one of those in <code>stripChars</code> will be discarded from the
-     * right end of this <code>str</code>. If <code>stripChars == null</code>, whitespace will be
-     * stripped.
-     * <p>
-     * Implementation note: although a <code>str</code> contains only bytes, this method is also
-     * called by {@link PyUnicode#str_strip(PyObject)} when both arguments are basic-plane
-     * strings.
-     *
-     * @param stripChars characters to strip or null
-     * @return a new String, stripped of the specified characters/bytes
-     */
-    protected final String _rstrip(String stripChars) {
-        if (stripChars == null) {
-            // Divert to the whitespace version
-            return _rstrip();
-        } else {
-            String s = getString();
-            // Rightmost non-matching character
-            int right = _stripRight(s, stripChars);
-            // Substring up to and including this rightmost non-matching character (or "")
-            return s.substring(0, right + 1);
+            return new PyString(Encoding._rstrip(getString(), stripChars), true);
         }
     }
 
@@ -1468,7 +825,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * @return list(str) result
      */
     public PyList split() {
-        return _split(null, -1);
+        return toPyList(Encoding._split(getString(), null, -1));
     }
 
     /**
@@ -1478,7 +835,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * @return list(str) result
      */
     public PyList split(String sep) {
-        return _split(sep, -1);
+        return toPyList(Encoding._split(getString(), sep, -1));
     }
 
     /**
@@ -1490,7 +847,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * @return list(str) result
      */
     public PyList split(String sep, int maxsplit) {
-        return _split(sep, maxsplit);
+        return toPyList(Encoding._split(getString(), sep, maxsplit));
     }
 
     /**
@@ -1527,186 +884,7 @@ public class PyString extends PySequence implements BufferProtocol {
         PyObject sep = ap.getPyObject(0, Py.None);
         int maxsplit = ap.getInt(1, -1);
         // Split on specified string or whitespace if sep == null
-        return _split(asStringNullOrError(sep, "sep"), maxsplit);
-    }
-
-    /**
-     * Implementation of Python str.split() common to exposed and Java API returning a
-     * {@link PyList} of <code>PyString</code>s. The <code>str</code> will be split at each
-     * occurrence of <code>sep</code>. If <code>sep == null</code>, whitespace will be used as the
-     * criterion. If <code>sep</code> has zero length, a Python <code>ValueError</code> is raised.
-     * If <code>maxsplit</code> &gt;=0 and there are more feasible splits than <code>maxsplit</code>
-     * the last element of the list contains the what is left over after the last split.
-     * <p>
-     * Implementation note: although a str contains only bytes, this method is also called by
-     * {@link PyUnicode#str_split(PyObject, int)}.
-     *
-     * @param sep string to use as separator (or <code>null</code> if to split on whitespace)
-     * @param maxsplit maximum number of splits to make (there may be <code>maxsplit+1</code>
-     *            parts).
-     * @return list(str) result
-     */
-    protected final PyList _split(String sep, int maxsplit) {
-        if (sep == null) {
-            // Split on runs of whitespace
-            return splitfields(maxsplit);
-        } else if (sep.length() == 0) {
-            throw Py.ValueError("empty separator");
-        } else {
-            // Split on specified (non-empty) string
-            return splitfields(sep, maxsplit);
-        }
-    }
-
-    /**
-     * Helper function for <code>.split</code>, in <code>str</code> and <code>unicode</code>,
-     * splitting on white space and returning a list of the separated parts. If there are more than
-     * <code>maxsplit</code> feasible the last element of the list is the remainder of the original
-     * (this) string. The split sections will be {@link PyUnicode} if this object is a
-     * <code>PyUnicode</code>.
-     *
-     * @param maxsplit limit on the number of splits (if &gt;=0)
-     * @return <code>PyList</code> of split sections
-     */
-    private PyList splitfields(int maxsplit) {
-        /*
-         * Result built here is a list of split parts, exactly as required for s.split(None,
-         * maxsplit). If there are to be n splits, there will be n+1 elements in L.
-         */
-        PyList list = new PyList();
-
-        String s = getString();
-        int length = s.length(), start = 0, splits = 0, index;
-
-        if (maxsplit < 0) {
-            // Make all possible splits: there can't be more than:
-            maxsplit = length;
-        }
-
-        // start is always the first character not consumed into a piece on the list
-        while (start < length) {
-
-            // Find the next occurrence of non-whitespace
-            while (start < length) {
-                if (!Character.isWhitespace(s.charAt(start))) {
-                    // Break leaving start pointing at non-whitespace
-                    break;
-                }
-                start++;
-            }
-
-            if (start >= length) {
-                // Only found whitespace so there is no next segment
-                break;
-
-            } else if (splits >= maxsplit) {
-                // The next segment is the last and contains all characters up to the end
-                index = length;
-
-            } else {
-                // The next segment runs up to the next next whitespace or end
-                for (index = start; index < length; index++) {
-                    if (Character.isWhitespace(s.charAt(index))) {
-                        // Break leaving index pointing at whitespace
-                        break;
-                    }
-                }
-            }
-
-            // Make a piece from start up to index
-            list.append(fromSubstring(start, index));
-            splits++;
-
-            // Start next segment search at that point
-            start = index;
-        }
-
-        return list;
-    }
-
-    /**
-     * Helper function for <code>.split</code> and <code>.replace</code>, in <code>str</code> and
-     * <code>unicode</code>, returning a list of the separated parts. If there are more than
-     * <code>maxsplit</code> occurrences of <code>sep</code> the last element of the list is the
-     * remainder of the original (this) string. If <code>sep</code> is the zero-length string, the
-     * split is between each character (as needed by <code>.replace</code>). The split sections will
-     * be {@link PyUnicode} if this object is a <code>PyUnicode</code>.
-     *
-     * @param sep at occurrences of which this string should be split
-     * @param maxsplit limit on the number of splits (if &gt;=0)
-     * @return <code>PyList</code> of split sections
-     */
-    private PyList splitfields(String sep, int maxsplit) {
-        /*
-         * Result built here is a list of split parts, exactly as required for s.split(sep), or to
-         * produce the result of s.replace(sep, r) by a subsequent call r.join(L). If there are to
-         * be n splits, there will be n+1 elements in L.
-         */
-        PyList list = new PyList();
-
-        String s = getString();
-        int length = s.length();
-        int sepLength = sep.length();
-
-        if (maxsplit < 0) {
-            // Make all possible splits: there can't be more than:
-            maxsplit = length + 1;
-        }
-
-        if (maxsplit == 0) {
-            // Degenerate case
-            list.append(this);
-
-        } else if (sepLength == 0) {
-            /*
-             * The separator is "". This cannot happen with s.split(""), as that's an error, but it
-             * is used by s.replace("", A) and means that the result should be A interleaved between
-             * the characters of s, before the first, and after the last, the number always limited
-             * by maxsplit.
-             */
-
-            // There will be m+1 parts, where m = maxsplit or length+1 whichever is smaller.
-            int m = (maxsplit > length) ? length + 1 : maxsplit;
-
-            // Put an empty string first to make one split before the first character
-            list.append(createInstance("")); // PyString or PyUnicode as this class
-            int index;
-
-            // Add m-1 pieces one character long
-            for (index = 0; index < m - 1; index++) {
-                list.append(fromSubstring(index, index + 1));
-            }
-
-            // And add the last piece, so there are m+1 splits (m+1 pieces)
-            list.append(fromSubstring(index, length));
-
-        } else {
-            // Index of first character not yet in a piece on the list
-            int start = 0;
-
-            // Add at most maxsplit pieces
-            for (int splits = 0; splits < maxsplit; splits++) {
-
-                // Find the next occurrence of sep
-                int index = s.indexOf(sep, start);
-
-                if (index < 0) {
-                    // No more occurrences of sep: we're done
-                    break;
-
-                } else {
-                    // Make a piece from start up to where we found sep
-                    list.append(fromSubstring(start, index));
-                    // New start (of next piece) is just after sep
-                    start = index + sepLength;
-                }
-            }
-
-            // Last piece is the rest of the string (even if start==length)
-            list.append(fromSubstring(start, length));
-        }
-
-        return list;
+        return toPyList(Encoding._split(getString(), Encoding.asStringNullOrError(sep, "sep"), maxsplit));
     }
 
     /**
@@ -1715,7 +893,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * @return list(str) result
      */
     public PyList rsplit() {
-        return _rsplit(null, -1);
+        return toPyList(Encoding._rsplit(getString(), null, -1));
     }
 
     /**
@@ -1725,7 +903,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * @return list(str) result
      */
     public PyList rsplit(String sep) {
-        return _rsplit(sep, -1);
+        return toPyList(Encoding._rsplit(getString(), sep, -1));
     }
 
     /**
@@ -1737,7 +915,16 @@ public class PyString extends PySequence implements BufferProtocol {
      * @return list(str) result
      */
     public PyList rsplit(String sep, int maxsplit) {
-        return _rsplit(sep, maxsplit);
+        return toPyList(Encoding._rsplit(getString(), sep, maxsplit));
+    }
+
+    private static PyList toPyList(List<CharSequence> list) {
+        return new PyList(Lists.transform(list, new Function<CharSequence, PyString>() {
+            @Override
+            public PyString apply(CharSequence charSequence) {
+                return new PyString(charSequence);
+            }
+        }));
     }
 
     /**
@@ -1774,168 +961,13 @@ public class PyString extends PySequence implements BufferProtocol {
         PyObject sep = ap.getPyObject(0, Py.None);
         int maxsplit = ap.getInt(1, -1);
         // Split on specified string or whitespace if sep == null
-        return _rsplit(asStringNullOrError(sep, "sep"), maxsplit);
-    }
-
-    /**
-     * Implementation of Python <code>str.rsplit()</code> common to exposed and Java API returning a
-     * {@link PyList} of <code>PyString</code>s. The <code>str</code> will be split at each
-     * occurrence of <code>sep</code>, working from the right. If <code>sep == null</code>,
-     * whitespace will be used as the criterion. If <code>sep</code> has zero length, a Python
-     * <code>ValueError</code> is raised. If <code>maxsplit</code> &gt;=0 and there are more
-     * feasible splits than <code>maxsplit</code> the first element of the list contains the what is
-     * left over after the last split.
-     * <p>
-     * Implementation note: although a str contains only bytes, this method is also called by
-     * {@link PyUnicode#unicode_rsplit(PyObject, int)} .
-     *
-     * @param sep string to use as separator (or <code>null</code> if to split on whitespace)
-     * @param maxsplit maximum number of splits to make (there may be <code>maxsplit+1</code>
-     *            parts).
-     * @return list(str) result
-     */
-    protected final PyList _rsplit(String sep, int maxsplit) {
-        if (sep == null) {
-            // Split on runs of whitespace
-            return rsplitfields(maxsplit);
-        } else if (sep.length() == 0) {
-            throw Py.ValueError("empty separator");
-        } else {
-            // Split on specified (non-empty) string
-            return rsplitfields(sep, maxsplit);
-        }
-    }
-
-    /**
-     * Helper function for <code>.rsplit</code>, in <code>str</code> and <code>unicode</code>,
-     * splitting on white space and returning a list of the separated parts. If there are more than
-     * <code>maxsplit</code> feasible the first element of the list is the remainder of the original
-     * (this) string. The split sections will be {@link PyUnicode} if this object is a
-     * <code>PyUnicode</code>.
-     *
-     * @param maxsplit limit on the number of splits (if &gt;=0)
-     * @return <code>PyList</code> of split sections
-     */
-    private PyList rsplitfields(int maxsplit) {
-        /*
-         * Result built here (in reverse) is a list of split parts, exactly as required for
-         * s.rsplit(None, maxsplit). If there are to be n splits, there will be n+1 elements.
-         */
-        PyList list = new PyList();
-
-        String s = getString();
-        int length = s.length(), end = length - 1, splits = 0, index;
-
-        if (maxsplit < 0) {
-            // Make all possible splits: there can't be more than:
-            maxsplit = length;
-        }
-
-        // end is always the rightmost character not consumed into a piece on the list
-        while (end >= 0) {
-
-            // Find the next occurrence of non-whitespace (working leftwards)
-            while (end >= 0) {
-                if (!isspace(s.charAt(end))) {
-                    // Break leaving end pointing at non-whitespace
-                    break;
-                }
-                --end;
+        List<CharSequence> list = Encoding._rsplit(getString(), Encoding.asStringNullOrError(sep, "sep"), maxsplit);
+        return new PyList(Lists.transform(list, new Function<CharSequence, PyString>() {
+            @Override
+            public PyString apply(CharSequence charSequence) {
+                return new PyString(charSequence);
             }
-
-            if (end < 0) {
-                // Only found whitespace so there is no next segment
-                break;
-
-            } else if (splits >= maxsplit) {
-                // The next segment is the last and contains all characters back to the beginning
-                index = -1;
-
-            } else {
-                // The next segment runs back to the next next whitespace or beginning
-                for (index = end; index >= 0; --index) {
-                    if (isspace(s.charAt(index))) {
-                        // Break leaving index pointing at whitespace
-                        break;
-                    }
-                }
-            }
-
-            // Make a piece from index+1 start up to end+1
-            list.append(fromSubstring(index + 1, end + 1));
-            splits++;
-
-            // Start next segment search at that point
-            end = index;
-        }
-
-        list.reverse();
-        return list;
-    }
-
-    /**
-     * Helper function for <code>.rsplit</code>, in <code>str</code> and <code>unicode</code>,
-     * returning a list of the separated parts, <em>in the reverse order</em> of their occurrence in
-     * this string. If there are more than <code>maxsplit</code> occurrences of <code>sep</code> the
-     * first element of the list is the left end of the original (this) string. The split sections
-     * will be {@link PyUnicode} if this object is a <code>PyUnicode</code>.
-     *
-     * @param sep at occurrences of which this string should be split
-     * @param maxsplit limit on the number of splits (if &gt;=0)
-     * @return <code>PyList</code> of split sections
-     */
-    private PyList rsplitfields(String sep, int maxsplit) {
-        /*
-         * Result built here (in reverse) is a list of split parts, exactly as required for
-         * s.rsplit(sep, maxsplit). If there are to be n splits, there will be n+1 elements.
-         */
-        PyList list = new PyList();
-
-        String s = getString();
-        int length = s.length();
-        int sepLength = sep.length();
-
-        if (maxsplit < 0) {
-            // Make all possible splits: there can't be more than:
-            maxsplit = length + 1;
-        }
-
-        if (maxsplit == 0) {
-            // Degenerate case
-            list.append(this);
-
-        } else if (sepLength == 0) {
-            // Empty separator is not allowed
-            throw Py.ValueError("empty separator");
-
-        } else {
-            // Index of first character of the last piece already on the list
-            int end = length;
-
-            // Add at most maxsplit pieces
-            for (int splits = 0; splits < maxsplit; splits++) {
-
-                // Find the next occurrence of sep (working leftwards)
-                int index = s.lastIndexOf(sep, end - sepLength);
-
-                if (index < 0) {
-                    // No more occurrences of sep: we're done
-                    break;
-
-                } else {
-                    // Make a piece from where we found sep up to end
-                    list.append(fromSubstring(index + sepLength, end));
-                    // New end (of next piece) is where we found sep
-                    end = index;
-                }
-            }
-
-            // Last piece is the rest of the string (even if end==0)
-            list.append(fromSubstring(0, end));
-        }
-
-        list.reverse();
-        return list;
+        }));
     }
 
     /**
@@ -1955,11 +987,11 @@ public class PyString extends PySequence implements BufferProtocol {
 
         if (sepObj instanceof PyUnicode) {
             // Deal with Unicode separately
-            return unicodePartition(sepObj);
+            throw Py.TypeError(BYTES_REQUIRED_ERROR);
 
         } else {
             // It ought to be some kind of bytes with the buffer API.
-            String sep = asStringOrError(sepObj);
+            String sep = Encoding.asStringOrError(sepObj);
 
             if (sep.length() == 0) {
                 throw Py.ValueError("empty separator");
@@ -1972,28 +1004,6 @@ public class PyString extends PySequence implements BufferProtocol {
             } else {
                 return new PyTuple(this, Py.EmptyString, Py.EmptyString);
             }
-        }
-    }
-
-    final PyTuple unicodePartition(PyObject sepObj) {
-        PyUnicode strObj = __unicode__();
-        String str = strObj.getString();
-
-        // Will throw a TypeError if not a basestring
-        String sep = sepObj.asString();
-        sepObj = sepObj.__str__();
-
-        if (sep.length() == 0) {
-            throw Py.ValueError("empty separator");
-        }
-
-        int index = str.indexOf(sep);
-        if (index != -1) {
-            return new PyTuple(strObj.fromSubstring(0, index), sepObj, strObj.fromSubstring(index
-                    + sep.length(), str.length()));
-        } else {
-            PyUnicode emptyUnicode = Py.newUnicode("");
-            return new PyTuple(this, emptyUnicode, emptyUnicode);
         }
     }
 
@@ -2013,12 +1023,10 @@ public class PyString extends PySequence implements BufferProtocol {
     final PyTuple bytes_rpartition(PyObject sepObj) {
 
         if (sepObj instanceof PyUnicode) {
-            // Deal with Unicode separately
-            return unicodeRpartition(sepObj);
-
+            throw Py.TypeError(BYTES_REQUIRED_ERROR);
         } else {
             // It ought to be some kind of bytes with the buffer API.
-            String sep = asStringOrError(sepObj);
+            String sep = Encoding.asStringOrError(sepObj);
 
             if (sep.length() == 0) {
                 throw Py.ValueError("empty separator");
@@ -2034,28 +1042,6 @@ public class PyString extends PySequence implements BufferProtocol {
         }
     }
 
-    final PyTuple unicodeRpartition(PyObject sepObj) {
-        PyUnicode strObj = __unicode__();
-        String str = strObj.getString();
-
-        // Will throw a TypeError if not a basestring
-        String sep = sepObj.asString();
-        sepObj = sepObj.__str__();
-
-        if (sep.length() == 0) {
-            throw Py.ValueError("empty separator");
-        }
-
-        int index = str.lastIndexOf(sep);
-        if (index != -1) {
-            return new PyTuple(strObj.fromSubstring(0, index), sepObj, strObj.fromSubstring(index
-                    + sep.length(), str.length()));
-        } else {
-            PyUnicode emptyUnicode = Py.newUnicode("");
-            return new PyTuple(emptyUnicode, emptyUnicode, this);
-        }
-    }
-
     public PyList splitlines() {
         return splitlines(false);
     }
@@ -2068,38 +1054,13 @@ public class PyString extends PySequence implements BufferProtocol {
     final PyList bytes_splitlines(PyObject[] args, String[] keywords) {
         ArgParser arg = new ArgParser("splitlines", args, keywords, "keepends");
         boolean keepends = arg.getPyObject(0, Py.False).__bool__();
-        PyList list = new PyList();
 
-        char[] chars = getString().toCharArray();
-        int n = chars.length;
-
-        int j = 0;
-        for (int i = 0; i < n;) {
-            /* Find a line and append it */
-            while (i < n && chars[i] != '\n' && chars[i] != '\r'
-                    && Character.getType(chars[i]) != Character.LINE_SEPARATOR) {
-                i++;
+        return new PyList(Lists.transform(Encoding.splitlines(getString(), keepends), new Function<CharSequence, PyString>() {
+            @Override
+            public PyString apply(CharSequence charSequence) {
+                return new PyString(charSequence);
             }
-
-            /* Skip the line break reading CRLF as one line break */
-            int eol = i;
-            if (i < n) {
-                if (chars[i] == '\r' && i + 1 < n && chars[i + 1] == '\n') {
-                    i += 2;
-                } else {
-                    i++;
-                }
-                if (keepends) {
-                    eol = i;
-                }
-            }
-            list.append(fromSubstring(j, eol));
-            j = i;
-        }
-        if (j < n) {
-            list.append(fromSubstring(j, n));
-        }
-        return list;
+        }));
     }
 
     /**
@@ -2174,7 +1135,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * .
      */
     public int index(String sub, PyObject start, PyObject end) {
-        return checkIndex(_find(sub, start, end));
+        return checkIndex(Encoding._find(getString(), sub, start, end, __len__()));
     }
 
     @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.bytes_index_doc)
@@ -2240,7 +1201,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * <code>String</code>.
      */
     public int rindex(String sub, PyObject start, PyObject end) {
-        return checkIndex(_rfind(sub, start, end));
+        return checkIndex(Encoding._rfind(getString(), sub, start, end, __len__()));
     }
 
     @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.bytes_rindex_doc)
@@ -2316,7 +1277,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * .
      */
     public int count(String sub, PyObject start, PyObject end) {
-        return _count(sub, start, end);
+        return Encoding._count(getString(), sub, start, end, __len__());
     }
 
     @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.bytes_count_doc)
@@ -2326,57 +1287,8 @@ public class PyString extends PySequence implements BufferProtocol {
             return ((PyUnicode)decode()).str_count(subObj, start, end);
         } else {
             // It ought to be some kind of bytes with the buffer API.
-            String sub = asStringOrError(subObj);
-            return _count(sub, start, end);
-        }
-    }
-
-    /**
-     * Helper common to the Python and Java API returning the number of occurrences of a substring.
-     * It accepts slice-like arguments, which may be <code>None</code> or end-relative (negative).
-     * This method also supports {@link PyUnicode#str_count(PyObject, PyObject, PyObject)}.
-     *
-     * @param sub substring to find.
-     * @param startObj start of slice.
-     * @param endObj end of slice.
-     * @return count of occurrences
-     */
-    protected final int _count(String sub, PyObject startObj, PyObject endObj) {
-
-        // Interpret the slice indices as concrete values
-        int[] indices = translateIndices(startObj, endObj);
-        int subLen = sub.length();
-
-        if (subLen == 0) {
-            // Special case counting the occurrences of an empty string.
-            int start = indices[2], end = indices[3], n = __len__();
-            if (end < 0 || end < start || start > n) {
-                // Slice is reversed or does not overlap the string.
-                return 0;
-            } else {
-                // Count of '' is one more than number of characters in overlap.
-                return Math.min(end, n) - Math.max(start, 0) + 1;
-            }
-
-        } else {
-
-            // Skip down this string finding occurrences of sub
-            int start = indices[0], end = indices[1];
-            int limit = end - subLen, count = 0;
-
-            while (start <= limit) {
-                int index = getString().indexOf(sub, start);
-                if (index >= 0 && index <= limit) {
-                    // Found at index.
-                    count += 1;
-                    // Next search begins after this instance, at:
-                    start = index + subLen;
-                } else {
-                    // not found, or found too far right (index>limit)
-                    break;
-                }
-            }
-            return count;
+            String sub = Encoding.asStringOrError(subObj);
+            return Encoding._count(getString(), sub, start, end, __len__());
         }
     }
 
@@ -2431,7 +1343,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * Equivalent to {@link #find(PyObject, PyObject, PyObject)} specialized to <code>String</code>.
      */
     public int find(String sub, PyObject start, PyObject end) {
-        return _find(sub, start, end);
+        return Encoding._find(getString(), sub, start, end, __len__());
     }
 
     @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.bytes_find_doc)
@@ -2441,49 +1353,11 @@ public class PyString extends PySequence implements BufferProtocol {
             return ((PyUnicode)decode()).str_find(subObj, start, end);
         } else {
             // It ought to be some kind of bytes with the buffer API.
-            String sub = asStringOrError(subObj);
-            return _find(sub, start, end);
+            String sub = Encoding.asStringOrError(subObj);
+            return Encoding._find(getString(), sub, start, end, __len__());
         }
     }
 
-    /**
-     * Helper common to the Python and Java API returning the index of the substring or -1 for not
-     * found. It accepts slice-like arguments, which may be <code>None</code> or end-relative
-     * (negative). This method also supports
-     * {@link PyUnicode#str_find(PyObject, PyObject, PyObject)}.
-     *
-     * @param sub substring to find.
-     * @param startObj start of slice.
-     * @param endObj end of slice.
-     * @return index of <code>sub</code> in this object or -1 if not found.
-     */
-    protected final int _find(String sub, PyObject startObj, PyObject endObj) {
-        // Interpret the slice indices as concrete values
-        int[] indices = translateIndices(startObj, endObj);
-        int subLen = sub.length();
-
-        if (subLen == 0) {
-            // Special case: an empty string may be found anywhere, ...
-            int start = indices[2], end = indices[3];
-            if (end < 0 || end < start || start > __len__()) {
-                // ... except ln a reverse slice or beyond the end of the string,
-                return -1;
-            } else {
-                // ... and will be reported at the start of the overlap.
-                return indices[0];
-            }
-
-        } else {
-            // General case: search for first match then check against slice.
-            int start = indices[0], end = indices[1];
-            int found = getString().indexOf(sub, start);
-            if (found >= 0 && found + subLen <= end) {
-                return found;
-            } else {
-                return -1;
-            }
-        }
-    }
 
     /**
      * Return the highest index in the string where substring <code>sub</code> is found.
@@ -2536,57 +1410,18 @@ public class PyString extends PySequence implements BufferProtocol {
      * Equivalent to {@link #find(PyObject, PyObject, PyObject)} specialized to <code>String</code>.
      */
     public int rfind(String sub, PyObject start, PyObject end) {
-        return _rfind(sub, start, end);
+        return Encoding._rfind(getString(), sub, start, end, __len__());
     }
 
     @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.bytes_rfind_doc)
     final int bytes_rfind(PyObject subObj, PyObject start, PyObject end) {
         if (subObj instanceof PyUnicode) {
             // Promote the problem to a Unicode one
-            return ((PyUnicode)decode()).str_rfind(subObj, start, end);
+            throw Py.TypeError(BYTES_REQUIRED_ERROR);
         } else {
             // It ought to be some kind of bytes with the buffer API.
-            String sub = asStringOrError(subObj);
-            return _rfind(sub, start, end);
-        }
-    }
-
-    /**
-     * Helper common to the Python and Java API returning the last index of the substring or -1 for
-     * not found. It accepts slice-like arguments, which may be <code>None</code> or end-relative
-     * (negative). This method also supports
-     * {@link PyUnicode#str_frind(PyObject, PyObject, PyObject)}.
-     *
-     * @param sub substring to find.
-     * @param startObj start of slice.
-     * @param endObj end of slice.
-     * @return index of <code>sub</code> in this object or -1 if not found.
-     */
-    protected final int _rfind(String sub, PyObject startObj, PyObject endObj) {
-        // Interpret the slice indices as concrete values
-        int[] indices = translateIndices(startObj, endObj);
-        int subLen = sub.length();
-
-        if (subLen == 0) {
-            // Special case: an empty string may be found anywhere, ...
-            int start = indices[2], end = indices[3];
-            if (end < 0 || end < start || start > __len__()) {
-                // ... except ln a reverse slice or beyond the end of the string,
-                return -1;
-            } else {
-                // ... and will be reported at the end of the overlap.
-                return indices[1];
-            }
-
-        } else {
-            // General case: search for first match then check against slice.
-            int start = indices[0], end = indices[1];
-            int found = getString().lastIndexOf(sub, end - subLen);
-            if (found >= start) {
-                return found;
-            } else {
-                return -1;
-            }
+            String sub = Encoding.asStringOrError(subObj);
+            return Encoding._rfind(getString(), sub, start, end, __len__());
         }
     }
 
@@ -2906,17 +1741,8 @@ public class PyString extends PySequence implements BufferProtocol {
             BigInteger bi = asciiToBigInteger(base, true);
             return new PyLong(bi);
         } catch (NumberFormatException exc) {
-            if (this instanceof PyUnicode) {
-                // TODO: here's a basic issue: do we use the BigInteger constructor
-                // above, or add an equivalent to CPython's PyUnicode_EncodeDecimal;
-                // we should note that the current error string does not quite match
-                // CPython regardless of the codec, that's going to require some more work
-                throw Py.UnicodeEncodeError("decimal", "codec can't encode character", 0, 0,
-                        "invalid decimal Unicode string");
-            } else {
-                throw Py.ValueError("invalid literal for long() with base " + base + ": '"
-                        + getString() + "'");
-            }
+            throw Py.ValueError("invalid literal for long() with base " + base + ": '"
+                    + getString() + "'");
         } catch (StringIndexOutOfBoundsException exc) {
             throw Py.ValueError("invalid literal for long() with base " + base + ": '"
                     + getString() + "'");
@@ -2998,29 +1824,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes_zfill_doc)
     final String bytes_zfill(int width) {
-        String s = getString();
-        int n = s.length();
-        if (n >= width) {
-            return s;
-        }
-        char[] chars = new char[width];
-        int nzeros = width - n;
-        int i = 0;
-        int sStart = 0;
-        if (n > 0) {
-            char start = s.charAt(0);
-            if (start == '+' || start == '-') {
-                chars[0] = start;
-                i += 1;
-                nzeros++;
-                sStart = 1;
-            }
-        }
-        for (; i < nzeros; i++) {
-            chars[i] = '0';
-        }
-        s.getChars(sStart, s.length(), chars, i);
-        return new String(chars);
+        return Encoding.zfill(getString(), width).toString();
     }
 
     public String expandtabs() {
@@ -3033,29 +1837,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(defaults = "8", doc = BuiltinDocs.bytes_expandtabs_doc)
     final String bytes_expandtabs(int tabsize) {
-        String s = getString();
-        StringBuilder buf = new StringBuilder((int)(s.length() * 1.5));
-        char[] chars = s.toCharArray();
-        int n = chars.length;
-        int position = 0;
-
-        for (int i = 0; i < n; i++) {
-            char c = chars[i];
-            if (c == '\t') {
-                int spaces = tabsize - position % tabsize;
-                position += spaces;
-                while (spaces-- > 0) {
-                    buf.append(' ');
-                }
-                continue;
-            }
-            if (c == '\n' || c == '\r') {
-                position = -1;
-            }
-            buf.append(c);
-            position++;
-        }
-        return buf.toString();
+        return Encoding.expandtabs(getString(), tabsize);
     }
 
     public String capitalize() {
@@ -3064,11 +1846,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes_capitalize_doc)
     final String bytes_capitalize() {
-        if (getString().length() == 0) {
-            return getString();
-        }
-        String first = getString().substring(0, 1).toUpperCase();
-        return first.concat(getString().substring(1).toLowerCase());
+        return Encoding.capitalize(getString());
     }
 
     /**
@@ -3105,56 +1883,9 @@ public class PyString extends PySequence implements BufferProtocol {
             throw Py.TypeError("a bytes-like object is required, not 'str'");
         } else {
             // Neither is a PyUnicode: both ought to be some kind of bytes with the buffer API.
-            String oldPiece = asStringOrError(oldPieceObj, false);
-            String newPiece = asStringOrError(newPieceObj, false);
-            return _replace(oldPiece, newPiece, count);
-        }
-    }
-
-    /**
-     * Helper common to the Python and Java API for <code>str.replace</code>, returning a new string
-     * equal to this string with ocurrences of <code>oldPiece</code> replaced by
-     * <code>newPiece</code>, up to a maximum of <code>count</code> occurrences, or all of them.
-     * This method also supports {@link PyUnicode#str_replace(PyObject, PyObject, int)}, in
-     * which context it returns a <code>PyUnicode</code>
-     *
-     * @param oldPiece to replace where found.
-     * @param newPiece replacement text.
-     * @param count maximum number of replacements to make, or -1 meaning all of them.
-     * @return PyString (or PyUnicode if this string is one), this string after replacements.
-     */
-    protected final PyString _replace(String oldPiece, String newPiece, int count) {
-
-        String s = getString();
-        int len = s.length();
-        int oldLen = oldPiece.length();
-        int newLen = newPiece.length();
-
-        if (len == 0) {
-            if (count < 0 && oldLen == 0) {
-                return createInstance(newPiece, true);
-            }
-            return createInstance(s, true);
-
-        } else if (oldLen == 0 && newLen != 0 && count != 0) {
-            /*
-             * old="" and new != "", interleave new piece with each char in original, taking into
-             * account count
-             */
-            StringBuilder buffer = new StringBuilder();
-            int i = 0;
-            buffer.append(newPiece);
-            for (; i < len && (count < 0 || i < count - 1); i++) {
-                buffer.append(s.charAt(i)).append(newPiece);
-            }
-            buffer.append(s.substring(i));
-            return createInstance(buffer.toString(), true);
-
-        } else {
-            if (count < 0) {
-                count = (oldLen == 0) ? len + 1 : len;
-            }
-            return createInstance(newPiece).join(splitfields(oldPiece, count));
+            String oldPiece = Encoding.asStringOrError(oldPieceObj, false);
+            String newPiece = Encoding.asStringOrError(newPieceObj, false);
+            return new PyString(Encoding._replace(getString(), oldPiece, newPiece, count));
         }
     }
 
@@ -3218,71 +1949,6 @@ public class PyString extends PySequence implements BufferProtocol {
         return new PyString(buf.toString(), true); // Guaranteed to be byte-like
     }
 
-    final PyUnicode unicodeJoin(PyObject obj) {
-        PySequence seq = fastSequence(obj, "");
-        // A codec may be invoked to convert str objects to Unicode, and so it's possible
-        // to call back into Python code during PyUnicode_FromObject(), and so it's
-        // possible for a sick codec to change the size of fseq (if seq is a list).
-        // Therefore we have to keep refetching the size -- can't assume seqlen is
-        // invariant.
-        int seqLen = seq.__len__();
-        // If empty sequence, return u""
-        if (seqLen == 0) {
-            return new PyUnicode();
-        }
-
-        // If singleton sequence with an exact Unicode, return that
-        PyObject item;
-        if (seqLen == 1) {
-            item = seq.pyget(0);
-            if (item.getType() == PyUnicode.TYPE) {
-                return (PyUnicode)item;
-            }
-        }
-
-        String sep = null;
-        if (seqLen > 1) {
-            if (this instanceof PyUnicode) {
-                sep = getString();
-            } else {
-                sep = ((PyUnicode)decode()).getString();
-                // In case decode()'s codec mutated seq
-                seqLen = seq.__len__();
-            }
-        }
-
-        // At least two items to join, or one that isn't exact Unicode
-        long size = 0;
-        int sepLen = getString().length();
-        StringBuilder buf = new StringBuilder();
-        String itemString;
-        for (int i = 0; i < seqLen; i++) {
-            item = seq.pyget(i);
-            // Convert item to Unicode
-            if (!(item instanceof PyString)) {
-                throw Py.TypeError(String.format("sequence item %d: expected string or Unicode,"
-                        + " %.80s found", i, item.getType().fastGetName()));
-            }
-            if (!(item instanceof PyUnicode)) {
-                item = ((PyString)item).decode();
-                // In case decode()'s codec mutated seq
-                seqLen = seq.__len__();
-            }
-            itemString = ((PyUnicode)item).getString();
-
-            if (i != 0) {
-                size += sepLen;
-                buf.append(sep);
-            }
-            size += itemString.length();
-            if (size > Integer.MAX_VALUE) {
-                throw Py.OverflowError("join() result is too long for a Python string");
-            }
-            buf.append(itemString);
-        }
-        return new PyUnicode(buf.toString());
-    }
-
     /**
      * Equivalent to the Python <code>str.startswith</code> method testing whether a string starts
      * with a specified prefix. <code>prefix</code> can also be a tuple of prefixes to look for.
@@ -3329,31 +1995,10 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.str_startswith_doc)
     final boolean bytes_startswith(PyObject prefix, PyObject startObj, PyObject endObj) {
-        int[] indices = translateIndices(startObj, endObj);
-        int start = indices[0];
-        int sliceLen = indices[1] - start;
-
-        if (!(prefix instanceof PyTuple)) {
-            if (!(this instanceof PyUnicode) && prefix instanceof PyUnicode) {
-                throw Py.TypeError("startswith first arg must be bytes or a tuple of bytes, not str");
-            }
-            String s = asUTF16StringOrError(prefix);
-            // If s is non-BMP, and this is a PyString (bytes), result will correctly be false.
-            return sliceLen >= s.length() && getString().startsWith(s, start);
-
-        } else {
-            // Loop will return true if this slice starts with any prefix in the tuple
-            for (PyObject prefixObj : ((PyTuple)prefix).getArray()) {
-                // It ought to be PyUnicode or some kind of bytes with the buffer API.
-                String s = asUTF16StringOrError(prefixObj);
-                // If s is non-BMP, and this is a PyString (bytes), result will correctly be false.
-                if (sliceLen >= s.length() && getString().startsWith(s, start)) {
-                    return true;
-                }
-            }
-            // None matched
-            return false;
+        if (prefix instanceof PyUnicode) {
+            throw Py.TypeError("startswith first arg must be bytes or a tuple of bytes, not str");
         }
+        return Encoding.startswith(getString(), prefix, startObj, endObj, __len__());
     }
 
     /**
@@ -3402,29 +2047,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.str_endswith_doc)
     final boolean bytes_endswith(PyObject suffix, PyObject startObj, PyObject endObj) {
-
-        int[] indices = translateIndices(startObj, endObj);
-        String substr = getString().substring(indices[0], indices[1]);
-
-        if (!(suffix instanceof PyTuple)) {
-            // It ought to be PyUnicode or some kind of bytes with the buffer API.
-            String s = asUTF16StringOrError(suffix);
-            // If s is non-BMP, and this is a PyString (bytes), result will correctly be false.
-            return substr.endsWith(s);
-
-        } else {
-            // Loop will return true if this slice ends with any suffix in the tuple
-            for (PyObject suffixObj : ((PyTuple)suffix).getArray()) {
-                // It ought to be PyUnicode or some kind of bytes with the buffer API.
-                String s = asUTF16StringOrError(suffixObj);
-                // If s is non-BMP, and this is a PyString (bytes), result will correctly be false.
-                if (substr.endsWith(s)) {
-                    return true;
-                }
-            }
-            // None matched
-            return false;
-        }
+        return Encoding.endswith(getString(), suffix, startObj, endObj, __len__());
     }
 
     /**
@@ -3446,62 +2069,7 @@ public class PyString extends PySequence implements BufferProtocol {
      * @return a 4 element array of two range-safe indices, and two original indices.
      */
     protected int[] translateIndices(PyObject startObj, PyObject endObj) {
-        int start, end;
-        int n = __len__();
-        int[] result = new int[4];
-
-        // Decode the start using slice semantics
-        if (startObj == null || startObj == Py.None) {
-            start = 0;
-            // result[2] = 0 already
-        } else {
-            // Convert to int but limit to Integer.MIN_VALUE <= start <= Integer.MAX_VALUE
-            start = startObj.asIndex(null);
-            if (start < 0) {
-                // Negative value means "from the end"
-                start = n + start;
-            }
-            result[2] = start;
-        }
-
-        // Decode the end using slice semantics
-        if (endObj == null || endObj == Py.None) {
-            result[1] = result[3] = end = n;
-        } else {
-            // Convert to int but limit to Integer.MIN_VALUE <= end <= Integer.MAX_VALUE
-            end = endObj.asIndex(null);
-            if (end < 0) {
-                // Negative value means "from the end"
-                result[3] = end = end + n;
-                // Ensure end is safe for String.substring(start,end).
-                if (end < 0) {
-                    end = 0;
-                    // result[1] = 0 already
-                } else {
-                    result[1] = end;
-                }
-            } else {
-                result[3] = end;
-                // Ensure end is safe for String.substring(start,end).
-                if (end > n) {
-                    result[1] = end = n;
-                } else {
-                    result[1] = end;
-                }
-            }
-        }
-
-        // Ensure start is safe for String.substring(start,end).
-        if (start < 0) {
-            start = 0;
-            // result[0] = 0 already
-        } else if (start > end) {
-            result[0] = start = end;
-        } else {
-            result[0] = start;
-        }
-
-        return result;
+        return Encoding.translateIndices(getString(), startObj, endObj, __len__());
     }
 
     /**
@@ -3547,10 +2115,10 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(defaults = {"null"}, doc = BuiltinDocs.bytes_translate_doc)
     final String bytes_translate(PyObject tableObj, PyObject deletecharsObj) {
-        String table = asStringOrNull(tableObj);
+        String table = Encoding.asStringOrNull(tableObj);
         String deletechars = null;
         if (deletecharsObj != null) {
-            deletechars = asStringOrError(deletecharsObj);
+            deletechars = Encoding.asStringOrError(deletecharsObj);
         }
         // Accept anythiong with the buffer API or null
         return _translate(table, deletechars);
@@ -3627,24 +2195,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes_islower_doc)
     final boolean bytes_islower() {
-        int n = getString().length();
-
-        /* Shortcut for single character strings */
-        if (n == 1) {
-            return Character.isLowerCase(getString().charAt(0));
-        }
-
-        boolean cased = false;
-        for (int i = 0; i < n; i++) {
-            char ch = getString().charAt(i);
-
-            if (Character.isUpperCase(ch) || Character.isTitleCase(ch)) {
-                return false;
-            } else if (!cased && Character.isLowerCase(ch)) {
-                cased = true;
-            }
-        }
-        return cased;
+        return Encoding.isLowercase(getString());
     }
 
     public boolean isupper() {
@@ -3653,24 +2204,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes_isupper_doc)
     final boolean bytes_isupper() {
-        int n = getString().length();
-
-        /* Shortcut for single character strings */
-        if (n == 1) {
-            return Character.isUpperCase(getString().charAt(0));
-        }
-
-        boolean cased = false;
-        for (int i = 0; i < n; i++) {
-            char ch = getString().charAt(i);
-
-            if (Character.isLowerCase(ch) || Character.isTitleCase(ch)) {
-                return false;
-            } else if (!cased && Character.isUpperCase(ch)) {
-                cased = true;
-            }
-        }
-        return cased;
+        return Encoding.isUppercase(getString());
     }
 
     public boolean isalpha() {
@@ -3679,25 +2213,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes_isalpha_doc)
     final boolean bytes_isalpha() {
-        int n = getString().length();
-
-        /* Shortcut for single character strings */
-        if (n == 1) {
-            return Character.isLetter(getString().charAt(0));
-        }
-
-        if (n == 0) {
-            return false;
-        }
-
-        for (int i = 0; i < n; i++) {
-            char ch = getString().charAt(i);
-
-            if (!Character.isLetter(ch)) {
-                return false;
-            }
-        }
-        return true;
+        return Encoding.isAlpha(getString());
     }
 
     public boolean isalnum() {
@@ -3706,25 +2222,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes_isalnum_doc)
     final boolean bytes_isalnum() {
-        int n = getString().length();
-
-        /* Shortcut for single character strings */
-        if (n == 1) {
-            return _isalnum(getString().charAt(0));
-        }
-
-        if (n == 0) {
-            return false;
-        }
-
-        for (int i = 0; i < n; i++) {
-            char ch = getString().charAt(i);
-
-            if (!_isalnum(ch)) {
-                return false;
-            }
-        }
-        return true;
+        return Encoding.isAlnum(getString());
     }
 
     private boolean _isalnum(char ch) {
@@ -3741,31 +2239,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.str_isdecimal_doc)
     final boolean bytes_isdecimal() {
-        int n = getString().length();
-
-        /* Shortcut for single character strings */
-        if (n == 1) {
-            char ch = getString().charAt(0);
-            return _isdecimal(ch);
-        }
-
-        if (n == 0) {
-            return false;
-        }
-
-        for (int i = 0; i < n; i++) {
-            char ch = getString().charAt(i);
-
-            if (!_isdecimal(ch)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean _isdecimal(char ch) {
-        // See the comment in _isalnum. Here it is even worse.
-        return Character.getType(ch) == Character.DECIMAL_DIGIT_NUMBER;
+        return Encoding.isDecimal(getString());
     }
 
     public boolean isdigit() {
@@ -3774,25 +2248,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes_isdigit_doc)
     final boolean bytes_isdigit() {
-        int n = getString().length();
-
-        /* Shortcut for single character strings */
-        if (n == 1) {
-            return Character.isDigit(getString().charAt(0));
-        }
-
-        if (n == 0) {
-            return false;
-        }
-
-        for (int i = 0; i < n; i++) {
-            char ch = getString().charAt(i);
-
-            if (!Character.isDigit(ch)) {
-                return false;
-            }
-        }
-        return true;
+        return Encoding.isDigit(getString());
     }
 
     public boolean isnumeric() {
@@ -3801,30 +2257,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.str_isnumeric_doc)
     final boolean bytes_isnumeric() {
-        int n = getString().length();
-
-        /* Shortcut for single character strings */
-        if (n == 1) {
-            return _isnumeric(getString().charAt(0));
-        }
-
-        if (n == 0) {
-            return false;
-        }
-
-        for (int i = 0; i < n; i++) {
-            char ch = getString().charAt(i);
-            if (!_isnumeric(ch)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean _isnumeric(char ch) {
-        int type = Character.getType(ch);
-        return type == Character.DECIMAL_DIGIT_NUMBER || type == Character.LETTER_NUMBER
-                || type == Character.OTHER_NUMBER;
+        return Encoding.isNumeric(getString());
     }
 
     public boolean istitle() {
@@ -3833,36 +2266,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes_istitle_doc)
     final boolean bytes_istitle() {
-        int n = getString().length();
-
-        /* Shortcut for single character strings */
-        if (n == 1) {
-            return Character.isTitleCase(getString().charAt(0))
-                    || Character.isUpperCase(getString().charAt(0));
-        }
-
-        boolean cased = false;
-        boolean previous_is_cased = false;
-        for (int i = 0; i < n; i++) {
-            char ch = getString().charAt(i);
-
-            if (Character.isUpperCase(ch) || Character.isTitleCase(ch)) {
-                if (previous_is_cased) {
-                    return false;
-                }
-                previous_is_cased = true;
-                cased = true;
-            } else if (Character.isLowerCase(ch)) {
-                if (!previous_is_cased) {
-                    return false;
-                }
-                previous_is_cased = true;
-                cased = true;
-            } else {
-                previous_is_cased = false;
-            }
-        }
-        return cased;
+        return Encoding.isTitle(getString());
     }
 
     public boolean isspace() {
@@ -3886,42 +2290,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes_isspace_doc)
     final boolean bytes_isspace() {
-        int n = getString().length();
-
-        /* Shortcut for single character strings */
-        if (n == 1) {
-            return isspace(getString().charAt(0));
-        }
-
-        if (n == 0) {
-            return false;
-        }
-
-        for (int i = 0; i < n; i++) {
-            char ch = getString().charAt(i);
-
-            if (!isspace(ch)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean isunicode() {
-        return bytes_isunicode();
-    }
-
-    @ExposedMethod(doc = "isunicode is deprecated.")
-    final boolean bytes_isunicode() {
-        Py.warning(Py.DeprecationWarning, "isunicode is deprecated.");
-        int n = getString().length();
-        for (int i = 0; i < n; i++) {
-            char ch = getString().charAt(i);
-            if (ch > 255) {
-                return true;
-            }
-        }
-        return false;
+        return Encoding.isSpace(getString());
     }
 
     public PyObject decode() {
@@ -3946,176 +2315,13 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = ""/*BuiltinDocs.str__formatter_parser_doc*/)
     final PyObject bytes__formatter_parser() {
-        return new MarkupIterator(this);
+        return new MarkupIterator(getString());
     }
 
     @ExposedMethod(doc = ""/*BuiltinDocs.str__formatter_field_name_split_doc*/)
     final PyObject bytes__formatter_field_name_split() {
-        FieldNameIterator iterator = new FieldNameIterator(this);
+        FieldNameIterator iterator = new FieldNameIterator(getString(), true);
         return new PyTuple(iterator.pyHead(), iterator);
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.bytes___format___doc)
-    final PyObject bytes_format(PyObject[] args, String[] keywords) {
-        try {
-            return new PyString(buildFormattedString(args, keywords, null, null));
-        } catch (IllegalArgumentException e) {
-            throw Py.ValueError(e.getMessage());
-        }
-    }
-
-    /**
-     * Implements PEP-3101 {}-formatting methods <code>str.format()</code> and
-     * <code>unicode.format()</code>. When called with <code>enclosingIterator == null</code>, this
-     * method takes this object as its formatting string. The method is also called (calls itself)
-     * to deal with nested formatting sepecifications. In that case, <code>enclosingIterator</code>
-     * is a {@link MarkupIterator} on this object and <code>value</code> is a substring of this
-     * object needing recursive transaltion.
-     *
-     * @param args to be interpolated into the string
-     * @param keywords for the trailing args
-     * @param enclosingIterator when used nested, null if subject is this <code>PyString</code>
-     * @param value the format string when <code>enclosingIterator</code> is not null
-     * @return the formatted string based on the arguments
-     */
-    protected String buildFormattedString(PyObject[] args, String[] keywords,
-            MarkupIterator enclosingIterator, String value) {
-
-        MarkupIterator it;
-        if (enclosingIterator == null) {
-            // Top-level call acts on this object.
-            it = new MarkupIterator(this);
-        } else {
-            // Nested call acts on the substring and some state from existing iterator.
-            it = new MarkupIterator(enclosingIterator, value);
-        }
-
-        // Result will be formed here
-        StringBuilder result = new StringBuilder();
-
-        while (true) {
-            MarkupIterator.Chunk chunk = it.nextChunk();
-            if (chunk == null) {
-                break;
-            }
-            // A Chunk encapsulates a literal part ...
-            result.append(chunk.literalText);
-            // ... and the parsed form of the replacement field that followed it (if any)
-            if (chunk.fieldName != null) {
-                // The grammar of the replacement field is:
-                // "{" [field_name] ["!" conversion] [":" format_spec] "}"
-
-                // Get the object referred to by the field name (which may be omitted).
-                PyObject fieldObj = getFieldObject(chunk.fieldName, it.isBytes(), args, keywords);
-                if (fieldObj == null) {
-                    continue;
-                }
-
-                // The conversion specifier is s = __str__ or r = __repr__.
-                if ("r".equals(chunk.conversion)) {
-                    fieldObj = fieldObj.__repr__();
-                } else if ("s".equals(chunk.conversion)) {
-                    fieldObj = fieldObj.__str__();
-                } else if (chunk.conversion != null) {
-                    throw Py.ValueError("Unknown conversion specifier " + chunk.conversion);
-                }
-
-                // Check for "{}".format(u"abc")
-                if (fieldObj instanceof PyUnicode && !(this instanceof PyUnicode)) {
-                    // Down-convert to PyString, at the risk of raising UnicodeEncodingError
-                    fieldObj = ((PyUnicode)fieldObj).__str__();
-                }
-
-                // The format_spec may be simple, or contained nested replacement fields.
-                String formatSpec = chunk.formatSpec;
-                if (chunk.formatSpecNeedsExpanding) {
-                    if (enclosingIterator != null) {
-                        // PEP 3101 says only 2 levels
-                        throw Py.ValueError("Max string recursion exceeded");
-                    }
-                    // Recursively interpolate further args into chunk.formatSpec
-                    formatSpec = buildFormattedString(args, keywords, it, formatSpec);
-                }
-                renderField(fieldObj, formatSpec, result);
-            }
-        }
-        return result.toString();
-    }
-
-    /**
-     * Return the object referenced by a given field name, interpreted in the context of the given
-     * argument list, containing positional and keyword arguments.
-     *
-     * @param fieldName to interpret.
-     * @param bytes true if the field name is from a PyString, false for PyUnicode.
-     * @param args argument list (positional then keyword arguments).
-     * @param keywords naming the keyword arguments.
-     * @return the object designated or <code>null</code>.
-     */
-    private PyObject getFieldObject(String fieldName, boolean bytes, PyObject[] args,
-            String[] keywords) {
-        FieldNameIterator iterator = new FieldNameIterator(fieldName, bytes);
-        PyObject head = iterator.pyHead();
-        PyObject obj = null;
-        int positionalCount = args.length - keywords.length;
-
-        if (head.isIndex()) {
-            // The field name begins with an integer argument index (not a [n]-type index).
-            int index = head.asIndex();
-            if (index >= positionalCount) {
-                throw Py.IndexError("tuple index out of range");
-            }
-            obj = args[index];
-
-        } else {
-            // The field name begins with keyword.
-            for (int i = 0; i < keywords.length; i++) {
-                if (keywords[i].equals(head.asString())) {
-                    obj = args[positionalCount + i];
-                    break;
-                }
-            }
-            // And if we don't find it, that's an error
-            if (obj == null) {
-                throw Py.KeyError(head);
-            }
-        }
-
-        // Now deal with the iterated sub-fields
-        while (obj != null) {
-            FieldNameIterator.Chunk chunk = iterator.nextChunk();
-            if (chunk == null) {
-                // End of iterator
-                break;
-            }
-            Object key = chunk.value;
-            if (chunk.is_attr) {
-                // key must be a String
-                obj = obj.__getattr__((String)key);
-            } else {
-                if (key instanceof Integer) {
-                    // Can this happen?
-                    obj = obj.__getitem__(((Integer)key).intValue());
-                } else {
-                    obj = obj.__getitem__(new PyString(key.toString()));
-                }
-            }
-        }
-
-        return obj;
-    }
-
-    /**
-     * Append to a formatting result, the presentation of one object, according to a given format
-     * specification and the object's <code>__format__</code> method.
-     *
-     * @param fieldObj to format.
-     * @param formatSpec specification to apply.
-     * @param result to which the result will be appended.
-     */
-    private void renderField(PyObject fieldObj, String formatSpec, StringBuilder result) {
-        PyString formatSpecStr = formatSpec == null ? Py.EmptyString : new PyString(formatSpec);
-        result.append(fieldObj.__format__(formatSpecStr).asString());
     }
 
     @Override
@@ -4125,67 +2331,7 @@ public class PyString extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes___format___doc)
     final PyObject bytes___format__(PyObject formatSpec) {
-
-        // Parse the specification
-        Spec spec = InternalFormat.fromText(formatSpec, "__format__");
-
-        // Get a formatter for the specification
-        TextFormatter f = prepareFormatter(spec);
-        if (f == null) {
-            // The type code was not recognised
-            throw Formatter.unknownFormat(spec.type, "string");
-        }
-
-        // Bytes mode if neither this nor formatSpec argument is Unicode.
-        boolean unicode = this instanceof PyUnicode || formatSpec instanceof PyUnicode;
-        f.setBytes(!unicode);
-
-        // Convert as per specification.
-        f.format(getString());
-
-        // Return a result that has the same type (str or unicode) as the formatSpec argument.
-        return f.pad().getPyResult();
-    }
-
-    /**
-     * Common code for {@link PyString} and {@link PyUnicode} to prepare a {@link TextFormatter}
-     * from a parsed specification. The object returned has format method
-     * {@link TextFormatter#format(String)} that treats its argument as UTF-16 encoded unicode (not
-     * just <code>char</code>s). That method will format its argument ( <code>str</code> or
-     * <code>unicode</code>) according to the PEP 3101 formatting specification supplied here. This
-     * would be used during <code>text.__format__(".5s")</code> or
-     * <code>"{:.5s}".format(text)</code> where <code>text</code> is this Python string.
-     *
-     * @param spec a parsed PEP-3101 format specification.
-     * @return a formatter ready to use, or null if the type is not a string format type.
-     * @throws PyException(ValueError) if the specification is faulty.
-     */
-    @SuppressWarnings("fallthrough")
-    static TextFormatter prepareFormatter(Spec spec) throws PyException {
-        // Slight differences between format types
-        switch (spec.type) {
-
-            case Spec.NONE:
-            case 's':
-                // Check for disallowed parts of the specification
-                if (spec.grouping) {
-                    throw Formatter.notAllowed("Grouping", "string", spec.type);
-                } else if (Spec.specified(spec.sign)) {
-                    throw Formatter.signNotAllowed("string", '\0');
-                } else if (spec.alternate) {
-                    throw Formatter.alternateFormNotAllowed("string");
-                } else if (spec.align == '=') {
-                    throw Formatter.alignmentNotAllowed('=', "string");
-                }
-                // spec may be incomplete. The defaults are those commonly used for string formats.
-                spec = spec.withDefaults(Spec.STRING);
-                // Get a formatter for the specification
-                return new TextFormatter(spec);
-
-            default:
-                // The type code was not recognised
-                return null;
-        }
+        return Encoding.format(getString(), formatSpec, true);
     }
 
     @Override
@@ -4223,11 +2369,6 @@ public class PyString extends PySequence implements BufferProtocol {
         if (type == PyString.TYPE || type == PyUnicode.TYPE || type.lookup(methodName) == null) {
             throw Py.TypeError(description + " is required");
         }
-    }
-
-    @Override
-    public String asName(int index) throws PyObject.ConversionException {
-        return internedString();
     }
 
     @Override
@@ -4435,46 +2576,6 @@ final class StringFormatter {
     }
 
     /**
-     * Return the argument as either a {@link PyString} or a {@link PyUnicode}, and set the
-     * {@link #needUnicode} member accordingly. If we already know we are building a Unicode string
-     * (<code>needUnicode==true</code>), then any argument that is not already a
-     * <code>PyUnicode</code> will be converted by calling its <code>__unicode__</code> method.
-     * Conversely, if we are not yet building a Unicode string (<code>needUnicode==false</code> ),
-     * then a PyString will pass unchanged, a <code>PyUnicode</code> will switch us to Unicode mode
-     * (<code>needUnicode=true</code>), and any other type will be converted by calling its
-     * <code>__str__</code> method, which will return a <code>PyString</code>, or possibly a
-     * <code>PyUnicode</code>, which will switch us to Unicode mode.
-     *
-     * @param arg to convert
-     * @return PyString or PyUnicode equivalent
-     */
-    private PyString asText(PyObject arg) {
-
-        if (arg instanceof PyUnicode) {
-            // arg is already acceptable.
-            needUnicode = true;
-            return (PyUnicode)arg;
-
-        } else if (needUnicode) {
-            // The string being built is unicode, so we need that version of the arg.
-            return arg.__str__();
-
-        } else if (arg instanceof PyString) {
-            // The string being built is not unicode, so arg is already acceptable.
-            return ((PyString)arg).__unicode__();
-
-        } else {
-            // The string being built is not unicode, so use __str__ to get a PyString.
-            PyString s = arg.__str__();
-            // But __str__ might return PyUnicode, and we have to notice that.
-            if (s instanceof PyUnicode) {
-                needUnicode = true;
-            }
-            return s;
-        }
-    }
-
-    /**
      * Main service of this class: format one or more arguments with the format string supplied at
      * construction.
      *
@@ -4482,7 +2583,7 @@ final class StringFormatter {
      * @return result of formatting
      */
     @SuppressWarnings("fallthrough")
-    public PyString format(PyObject args) {
+    public PyObject format(PyObject args) {
         PyObject dict = null;
         this.args = args;
 
@@ -4674,11 +2775,11 @@ final class StringFormatter {
                     arg = getarg();
 
                     // Get hold of the actual object to display (may set needUnicode)
-                    PyString argAsString = asText(spec.type == 's' ? arg : arg.__repr__());
+                    String argAsString = spec.type == 's' ? arg.toString() : arg.__repr__().toString();
                     // Format the str/unicode form of the argument using this Spec.
                     f = ft = new TextFormatter(buffer, spec);
                     ft.setBytes(!needUnicode);
-                    ft.format(argAsString.getString());
+                    ft.format(argAsString);
                     break;
 
                 case 'd': // All integer formats (+case for X).

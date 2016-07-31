@@ -115,7 +115,7 @@ public class RLock extends PyObject implements ContextManager, ConditionSupporti
         String owner = _lock.getOwnerName();
         return Py.newString("<_threading.RLock owner=%r count=%d>").
                 __mod__(new PyTuple(
-                        owner != null ? Py.newStringOrUnicode(owner) : Py.None,
+                        owner != null ? Py.newUnicode(owner) : Py.None,
                         Py.newInteger(_lock.getHoldCount()))).toString();
     }
 }

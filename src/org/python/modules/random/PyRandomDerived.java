@@ -60,7 +60,7 @@ public class PyRandomDerived extends PyRandom implements Slotted,FinalizablePyOb
     public void setDict(PyObject newDict) {
         if (newDict instanceof PyStringMap||newDict instanceof PyDictionary) {
             dict=newDict;
-            if (dict.__finditem__(PyString.fromInterned("__del__"))!=null&&!JyAttribute.hasAttr(this,JyAttribute.FINALIZE_TRIGGER_ATTR)) {
+            if (dict.__finditem__(PyUnicode.fromInterned("__del__"))!=null&&!JyAttribute.hasAttr(this,JyAttribute.FINALIZE_TRIGGER_ATTR)) {
                 FinalizeTrigger.ensureFinalizer(this);
             }
         } else {
@@ -110,26 +110,26 @@ public class PyRandomDerived extends PyRandom implements Slotted,FinalizablePyOb
         return super.__repr__();
     }
 
-    public PyString __hex__() {
+    public PyUnicode __hex__() {
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__hex__");
         if (impl!=null) {
             PyObject res=impl.__get__(this,self_type).__call__();
-            if (res instanceof PyString)
-                return(PyString)res;
-            throw Py.TypeError("__hex__"+" returned non-"+"string"+" (type "+res.getType().fastGetName()+")");
+            if (res instanceof PyUnicode)
+                return(PyUnicode)res;
+            throw Py.TypeError("__hex__"+" returned non-"+"unicode"+" (type "+res.getType().fastGetName()+")");
         }
         return super.__hex__();
     }
 
-    public PyString __oct__() {
+    public PyUnicode __oct__() {
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__oct__");
         if (impl!=null) {
             PyObject res=impl.__get__(this,self_type).__call__();
-            if (res instanceof PyString)
-                return(PyString)res;
-            throw Py.TypeError("__oct__"+" returned non-"+"string"+" (type "+res.getType().fastGetName()+")");
+            if (res instanceof PyUnicode)
+                return(PyUnicode)res;
+            throw Py.TypeError("__oct__"+" returned non-"+"unicode"+" (type "+res.getType().fastGetName()+")");
         }
         return super.__oct__();
     }
@@ -1004,7 +1004,7 @@ public class PyRandomDerived extends PyRandom implements Slotted,FinalizablePyOb
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__setattr__");
         if (impl!=null) {
-            impl.__get__(this,self_type).__call__(PyString.fromInterned(name),value);
+            impl.__get__(this,self_type).__call__(PyUnicode.fromInterned(name),value);
             //CPython does not support instance-acquired finalizers.
             //So we don't check for __del__ here.
             return;
@@ -1016,7 +1016,7 @@ public class PyRandomDerived extends PyRandom implements Slotted,FinalizablePyOb
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__delattr__");
         if (impl!=null) {
-            impl.__get__(this,self_type).__call__(PyString.fromInterned(name));
+            impl.__get__(this,self_type).__call__(PyUnicode.fromInterned(name));
             return;
         }
         super.__delattr__(name);

@@ -22,25 +22,21 @@ public class MarkupIterator extends PyObject {
     public static final PyType TYPE = PyType.fromClass(MarkupIterator.class);
 
     /** The UTF-16 string from which elements are being returned. */
-    private final String markup;
-    /** True if originally given a PyString (so must return PyString not PyUnicode). */
-    private final boolean bytes;
+    private final CharSequence markup;
     /** How far along that string we are. */
     private int index;
     /** A counter used to auto-number fields when not explicitly numbered in the format. */
     private final FieldNumbering numbering;
 
     /** Constructor used at top-level to enumerate a format. */
-    public MarkupIterator(PyString markupObject) {
-        markup = markupObject.getString();
-        bytes = !(markupObject instanceof PyUnicode);
+    public MarkupIterator(CharSequence s) {
+        markup = s;
         numbering = new FieldNumbering();
     }
 
     /** Variant constructor used when formats are nested. */
-    public MarkupIterator(MarkupIterator enclosingIterator, String subMarkup) {
+    public MarkupIterator(MarkupIterator enclosingIterator, CharSequence subMarkup) {
         markup = subMarkup;
-        bytes = enclosingIterator.bytes;
         numbering = enclosingIterator.numbering;
     }
 
@@ -124,7 +120,7 @@ public class MarkupIterator extends PyObject {
      * @param defaultValue to return or <code>null</code> if default return is <code>None</code>.
      * @return object for tuple
      */
-    private PyObject wrap(String value, String defaultValue) {
+    private PyObject wrap(CharSequence value, String defaultValue) {
         if (value == null) {
             value = defaultValue;
         }
@@ -133,9 +129,9 @@ public class MarkupIterator extends PyObject {
             return Py.None;
         } else if (value.length() == 0) {
             // This is frequent so avoid the constructor
-            return bytes ? Py.EmptyString : Py.EmptyUnicode;
+            return Py.EmptyUnicode;
         } else {
-            return bytes ? Py.newString(value) : Py.newUnicode(value);
+            return new PyUnicode(value);
         }
     }
 
@@ -175,12 +171,12 @@ public class MarkupIterator extends PyObject {
         // markup[index:pos] is the literal part of this chunk.
         if (pos < 0) {
             // ... except pos<0, and there is no further format specifier, only literal text.
-            result.literalText = unescapeBraces(markup.substring(index));
+            result.literalText = unescapeBraces(markup.subSequence(index, markup.length()));
             index = markup.length();
 
         } else {
             // Grab the literal text, dealing with escaped braces.
-            result.literalText = unescapeBraces(markup.substring(index, pos));
+            result.literalText = unescapeBraces(markup.subSequence(index, pos));
             // Scan through the contents of the format spec, between the braces. Skip one '{'.
             pos++;
             int fieldStart = pos;
@@ -195,7 +191,7 @@ public class MarkupIterator extends PyObject {
                     count--;
                     if (count == 0) {
                         // ... matching the one we began with: parse the replacement field.
-                        parseField(result, markup.substring(fieldStart, pos));
+                        parseField(result, markup.subSequence(fieldStart, pos));
                         pos++;
                         break;
                     }
@@ -211,18 +207,8 @@ public class MarkupIterator extends PyObject {
         return result;
     }
 
-    /**
-     * If originally given a PyString, string elements in the returned tuples must be PyString not
-     * PyUnicode.
-     *
-     * @return true if originally given a PyString
-     */
-    public final boolean isBytes() {
-        return bytes;
-    }
-
-    private String unescapeBraces(String substring) {
-        return substring.replace("{{", "{").replace("}}", "}");
+    private String unescapeBraces(CharSequence substring) {
+        return substring.toString().replace("{{", "{").replace("}}", "}");
     }
 
     /**
@@ -243,18 +229,18 @@ public class MarkupIterator extends PyObject {
      * @param result destination chunk
      * @param fieldMarkup specifying a replacement field, possibly with nesting
      */
-    private void parseField(Chunk result, String fieldMarkup) {
+    private void parseField(Chunk result, CharSequence fieldMarkup) {
         int pos = indexOfFirst(fieldMarkup, 0, '!', ':');
         if (pos >= 0) {
             // There's a '!' or a ':', so what precedes the first of them is a field name.
-            result.fieldName = fieldMarkup.substring(0, pos);
+            result.fieldName = fieldMarkup.subSequence(0, pos);
             if (fieldMarkup.charAt(pos) == '!') {
                 // There's a conversion specifier
                 if (pos == fieldMarkup.length() - 1) {
                     throw new IllegalArgumentException("end of format while "
                             + "looking for conversion specifier");
                 }
-                result.conversion = fieldMarkup.substring(pos + 1, pos + 2);
+                result.conversion = fieldMarkup.subSequence(pos + 1, pos + 2);
                 pos += 2;
                 // And if that's not the end, there ought to be a ':' now.
                 if (pos < fieldMarkup.length()) {
@@ -263,18 +249,18 @@ public class MarkupIterator extends PyObject {
                                 + "after conversion specifier");
                     }
                     // So the format specifier is from the ':' to the end.
-                    result.formatSpec = fieldMarkup.substring(pos + 1);
+                    result.formatSpec = fieldMarkup.subSequence(pos + 1, fieldMarkup.length());
                 }
             } else {
                 // No '!', so the format specifier is from the ':' to the end. Or empty.
-                result.formatSpec = fieldMarkup.substring(pos + 1);
+                result.formatSpec = fieldMarkup.subSequence(pos + 1, fieldMarkup.length());
             }
         } else {
             // Neither a '!' nor a ':', the whole thing is a name.
             result.fieldName = fieldMarkup;
         }
 
-        if (result.fieldName.isEmpty()) {
+        if (result.fieldName.length() == 0) {
             // The field was empty, so generate a number automatically.
             result.fieldName = numbering.nextAutomaticFieldNumber();
             return;
@@ -294,16 +280,12 @@ public class MarkupIterator extends PyObject {
     }
 
     /** Find the first of two characters, or return -1. */
-    private int indexOfFirst(String s, int start, char c1, char c2) {
-        int i1 = s.indexOf(c1, start);
-        int i2 = s.indexOf(c2, start);
-        if (i1 == -1) {
-            return i2;
+    private int indexOfFirst(CharSequence s, int start, char c1, char c2) {
+        for (int i = start; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (ch == c1 || ch == c2) return i;
         }
-        if (i2 == -1) {
-            return i1;
-        }
-        return Math.min(i1, i2);
+        return -1;
     }
 
     /**
@@ -348,13 +330,13 @@ public class MarkupIterator extends PyObject {
     public static final class Chunk {
 
         /** The text leading up to the next format field. */
-        public String literalText;
+        public CharSequence literalText;
         /** The field name or number (as a string) for accessing the value. */
-        public String fieldName;
+        public CharSequence fieldName;
         /** The format specifier such as <code>"#12x"</code>. */
-        public String formatSpec;
+        public CharSequence formatSpec;
         /** Conversion to be applied, e.g. <code>'r'</code> for <code>repr()</code>. */
-        public String conversion;
+        public CharSequence conversion;
         /** Signals the <code>formatSpec</code> needs expanding recursively. */
         public boolean formatSpecNeedsExpanding;
     }

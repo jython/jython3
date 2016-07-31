@@ -1048,7 +1048,7 @@ public class imp {
      */
     private static void loadNames(PyObject names, PyObject module, PyObject locals, boolean filter) {
         for (PyObject name : names.asIterable()) {
-            String sname = ((PyString)name).internedString();
+            String sname = ((PyUnicode)name).internedString();
             if (filter && sname.startsWith("_")) {
                 continue;
             } else {

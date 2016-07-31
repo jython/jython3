@@ -115,7 +115,7 @@ public class Lock extends PyObject implements ContextManager, ConditionSupportin
         String owner = _lock.getOwnerName();
         return Py.newString("<_threading.Lock owner=%r locked=%s>").
                 __mod__(new PyTuple(
-                        owner != null ? Py.newStringOrUnicode(owner) : Py.None,
+                        owner != null ? Py.newUnicode(owner) : Py.None,
                         Py.newBoolean(_lock.isLocked()))).toString();
     }
 

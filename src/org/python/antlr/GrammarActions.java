@@ -50,9 +50,9 @@ import org.python.core.PyComplex;
 import org.python.core.PyFloat;
 import org.python.core.PyInteger;
 import org.python.core.PyLong;
-import org.python.core.PyString;
 import org.python.core.PyUnicode;
 import org.python.core.codecs;
+import org.python.core.stringlib.Encoding;
 import org.python.core.util.StringUtil;
 
 import java.math.BigInteger;
@@ -564,7 +564,7 @@ public class GrammarActions {
             string = StringUtil.fromBytes(decoded);
             if (!raw) {
                 // Handle escapes in non-raw strs
-                string = PyString.decode_UnicodeEscape(string, 0, string.length(), "strict",
+                string = Encoding.decode_UnicodeEscape(string, 0, string.length(), "strict",
                                                        ustring);
             }
         } else if (raw) {
@@ -576,7 +576,7 @@ public class GrammarActions {
             }
         } else {
             // Plain unicode: already decoded, just handle escapes
-            string = PyString.decode_UnicodeEscape(string, start, end, "strict", ustring);
+            string = Encoding.decode_UnicodeEscape(string, start, end, "strict", ustring);
         }
         return new StringPair(string, ustring);
     }

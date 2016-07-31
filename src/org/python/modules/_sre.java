@@ -15,11 +15,8 @@
 package org.python.modules;
 
 import org.python.core.ArgParser;
-import org.python.core.Py;
 import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PyType;
-import org.python.expose.ExposedClassMethod;
+import org.python.core.PyUnicode;
 import org.python.expose.ExposedConst;
 import org.python.expose.ExposedFunction;
 import org.python.expose.ExposedModule;
@@ -58,7 +55,7 @@ public class _sre {
         for (PyObject item : code.asIterable()) {
             ccode[i++] = (int)item.asLong();
         }
-        return new PatternObject((PyString) pattern, flags, ccode, groups, groupindex, indexgroup);
+        return new PatternObject(pattern, flags, ccode, groups, groupindex, indexgroup);
     }
 
     @ExposedFunction

@@ -152,11 +152,11 @@ public final class Py {
     /** A zero-length Python Unicode string **/
     public final static PyUnicode EmptyUnicode = new PyUnicode("");
     /** A Python string containing '\n' **/
-    public final static PyString Newline = new PyUnicode("\n");
+    public final static PyUnicode Newline = new PyUnicode("\n");
     /** A Python unicode string containing '\n' **/
     public final static PyUnicode UnicodeNewline = new PyUnicode("\n");
     /** A Python string containing ' ' **/
-    public final static PyString Space = new PyUnicode(" ");
+    public final static PyUnicode Space = new PyUnicode(" ");
     /** A Python unicode string containing ' ' **/
     public final static PyUnicode UnicodeSpace = new PyUnicode(" ");
     /** Set if the type object is dynamically allocated */
@@ -650,6 +650,7 @@ public final class Py {
         } else if (t instanceof InvocationTargetException) {
             return JavaError(((InvocationTargetException) t).getTargetException());
         } else if (t instanceof StackOverflowError) {
+            t.printStackTrace();
             return Py.RecursionError("maximum recursion depth exceeded (Java StackOverflowError)");
         } else if (t instanceof OutOfMemoryError) {
             memory_error((OutOfMemoryError) t);
@@ -755,25 +756,6 @@ public final class Py {
         return new PyString(s);
     }
 
-    // Use if s may contain Unicode characters,
-    // but we prefer to return a PyString
-    public static PyString newStringOrUnicode(String s) {
-        return newStringOrUnicode(Py.EmptyString, s);
-    }
-
-    // Use when returning a PyString or PyUnicode is based on what "kind" is,
-    // but always fallback to PyUnicode if s contains Unicode characters.
-    public static PyString newStringOrUnicode(PyObject kind, String s) {
-        if (kind instanceof PyUnicode) {
-            return Py.newUnicode(s);
-        }
-        if (CharMatcher.ASCII.matchesAllOf(s)) {
-            return Py.newString(s);
-        } else {
-            return Py.newUnicode(s);
-        }
-    }
-
     public static PyString newStringUTF8(String s) {
         if (CharMatcher.ASCII.matchesAllOf(s)) {
             // ascii of course is a subset of UTF-8
@@ -792,11 +774,11 @@ public final class Py {
     }
 
     public static PyUnicode newUnicode(char c) {
-        return (PyUnicode) makeCharacter(c, true);
+        return new PyUnicode(c);
     }
 
     static PyObject newUnicode(int codepoint) {
-        return makeCharacter(codepoint, true);
+        return new PyUnicode(codepoint);
     }
 
     public static PyUnicode newUnicode(String s) {
@@ -1387,12 +1369,12 @@ public final class Py {
         if (file != null) {
             stderr = new FixedFileWrapper(file);
         }
-        flushLine();
+        stderr.flushLine();
 
         if (tb instanceof PyTraceback) {
             stderr.print(((PyTraceback) tb).dumpStack());
         }
-        if (__builtin__.isinstance(value, Py.SyntaxError)) {
+        if (Py.SyntaxError != null && __builtin__.isinstance(value, Py.SyntaxError)) {
             PyObject filename = value.__findattr__("filename");
             PyObject text = value.__findattr__("text");
             PyObject lineno = value.__findattr__("lineno");
@@ -1506,7 +1488,7 @@ public final class Py {
         if (value != null && value != Py.None) {
             // only print colon if the str() of the object is not the empty string
             PyObject s = useRepr ? value.__repr__() : value.__str__();
-            if (!(s instanceof PyString) || s.__len__() != 0) {
+            if (!(s instanceof PyUnicode) || s.__len__() != 0) {
                 buf.append(": ");
             }
             buf.append(s);
@@ -1615,9 +1597,9 @@ public final class Py {
         } else {
             String contents = null;
             if (o instanceof PyString) {
-                if (o instanceof PyUnicode) {
-                    flags |= CompilerFlags.PyCF_SOURCE_IS_UTF8;
-                }
+                contents = ((PyString) o).getString();
+            } else if (o instanceof PyUnicode) {
+                flags |= CompilerFlags.PyCF_SOURCE_IS_UTF8;
                 contents = o.toString();
             } else if (o instanceof PyFile) {
                 PyFile fp = (PyFile) o;
@@ -1976,10 +1958,8 @@ public final class Py {
         }
     }
 
-    static final PyString makeCharacter(int codepoint, boolean toUnicode) {
-        if (toUnicode) {
-            return new PyUnicode(codepoint);
-        } else if (codepoint < 0 || codepoint > 255) {
+    static final PyString makeCharacter(int codepoint) {
+        if (codepoint < 0 || codepoint > 255) {
             // This will throw IllegalArgumentException since non-byte value
             return new PyString('\uffff');
         }
@@ -2142,7 +2122,7 @@ public final class Py {
                 throw pye;
             }
             pye.value = Py.newUnicode(String.format("Error when calling the metaclass bases\n    "
-                                                   + "%s", pye.value.__str__().toString()));
+                                                   + "%s", pye.value.__repr__().toString()));
             throw pye;
         }
     }

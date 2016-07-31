@@ -66,7 +66,7 @@ public class TextFormatter extends InternalFormat.Formatter {
      * @param value to format
      * @return this <code>TextFormatter</code> object
      */
-    public TextFormatter format(String value) {
+    public TextFormatter format(CharSequence value) {
 
         // Scratch all instance variables and start = result.length().
         setStart();

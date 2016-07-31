@@ -19,7 +19,7 @@ import jnr.posix.util.FieldAccess;
 import jnr.posix.util.Platform;
 import org.python.core.Py;
 import org.python.core.PyObject;
-import org.python.core.PyString;
+import org.python.core.PyUnicode;
 import org.python.core.util.RelativeFile;
 import org.python.modules.posix.PosixModule;
 
@@ -63,10 +63,10 @@ public class FileIO extends RawIOBase {
     private boolean emulateAppend;
 
     /**
-     * @see #FileIO(PyString name, String mode)
+     * @see #FileIO(PyUnicode name, String mode)
      */
     public FileIO(String name, String mode) {
-        this(Py.newString(name), mode);
+        this(Py.newUnicode(name), mode);
     }
 
     /**
@@ -79,7 +79,7 @@ public class FileIO extends RawIOBase {
      * @param name the name of the file
      * @param mode a raw io file mode String
      */
-    public FileIO(PyString name, String mode) {
+    public FileIO(PyUnicode name, String mode) {
         parseMode(mode);
         File absPath = new RelativeFile(name.toString());
 

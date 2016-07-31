@@ -46,7 +46,6 @@ import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.python.core.PySet;
 import org.python.core.PySlice;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyUnicode;
 import org.python.core.ThreadState;
@@ -2609,7 +2608,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             code.invokespecial(p(PyDictionary.class), "<init>",
                     sig(Void.TYPE));
 
-            node.setName(new PyString(inner));
+            node.setName(new PyUnicode(inner));
 
             // get the original parameters
             java.util.List<expr> actualArgs = node.getInternalBases();
@@ -2889,7 +2888,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
     @Override
     public Object visitStr(Str node) throws Exception {
-        PyString s = (PyString)node.getInternalS();
+        PyUnicode s = (PyUnicode)node.getInternalS();
         module.unicodeConstant(s.asString()).get(code);
         return null;
     }

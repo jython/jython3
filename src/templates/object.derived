@@ -5,8 +5,8 @@ no_toString: true
 ctr:
 unary1: __str__ unicode
 unary1: __repr__ unicode
-unary1: __hex__ string
-unary1: __oct__ string
+unary1: __hex__ unicode
+unary1: __oct__ unicode
 unary1: __float__ float
 unary1: __complex__ complex
 unary1: __pos__
@@ -271,7 +271,7 @@ rest:
     PyType self_type = getType();
     PyObject impl = self_type.lookup("__setattr__");
     if (impl != null) {
-      impl.__get__(this,self_type).__call__(PyString.fromInterned(name),value);
+      impl.__get__(this,self_type).__call__(PyUnicode.fromInterned(name),value);
       //CPython does not support instance-acquired finalizers.
       //So we don't check for __del__ here.
       return;
@@ -283,7 +283,7 @@ rest:
     PyType self_type = getType();
     PyObject impl = self_type.lookup("__delattr__");
     if (impl != null) {
-      impl.__get__(this,self_type).__call__(PyString.fromInterned(name));
+      impl.__get__(this,self_type).__call__(PyUnicode.fromInterned(name));
       return;
     }
     super.__delattr__(name);

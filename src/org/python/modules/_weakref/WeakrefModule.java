@@ -9,21 +9,19 @@ import org.python.core.PyObject;
 import org.python.core.PyStringMap;
 import org.python.expose.ExposedFunction;
 import org.python.expose.ExposedModule;
+import org.python.expose.ModuleInit;
 
 /**
  * The _weakref module.
  */
 @ExposedModule(name = "_weakref", doc = "Weak-reference support module.")
-public class WeakrefModule implements ClassDictInit {
-
-    public static PyObject classDictInit()
-    {
-        PyStringMap dict = new PyStringMap();
+public class WeakrefModule {
+    @ModuleInit
+    public static void classDictInit(PyObject dict) {
         dict.__setitem__("ref", ReferenceType.TYPE);
         dict.__setitem__("ReferenceType", ReferenceType.TYPE);
         dict.__setitem__("ProxyType", ProxyType.TYPE);
         dict.__setitem__("CallableProxyType", CallableProxyType.TYPE);
-        return dict;
     }
 
     @ExposedFunction

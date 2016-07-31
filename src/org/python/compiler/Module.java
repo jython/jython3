@@ -695,7 +695,7 @@ public class Module implements Opcodes, ClassConstants, CompilationContext {
     }
 
     public void emitStr(Str node, Code code) throws Exception {
-        PyString s = (PyString)node.getInternalS();
+        PyObject s = (PyObject) node.getInternalS();
         if (s instanceof PyUnicode) {
             unicodeConstant(s.asString()).get(code);
         } else {

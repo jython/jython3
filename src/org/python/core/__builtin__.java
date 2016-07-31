@@ -395,7 +395,7 @@ public class __builtin__ {
                 if (name.getClass() != PyUnicode.class) {
                     throw Py.TypeError(String.format("keywords must be strings"));
                 }
-                kw[i] = ((PyUnicode)name).internedString();
+                kw[i] = ((PyUnicode)name).getString().intern();
                 a[i + offset] = iv.next();
             }
             return o.__call__(a, kw);
@@ -694,7 +694,7 @@ public class __builtin__ {
         return o.__hash__();
     }
 
-    public static PyString hex(PyObject o) {
+    public static PyUnicode hex(PyObject o) {
         return o.__hex__();
     }
 
@@ -711,19 +711,19 @@ public class __builtin__ {
         return input(new PyString(""));
     }
 
-    public static PyString intern(PyObject obj) {
+    public static PyUnicode intern(PyObject obj) {
         if (!(obj instanceof PyString) || obj instanceof PyUnicode) {
             throw Py.TypeError("intern() argument 1 must be string, not "
                                + obj.getType().fastGetName());
         }
-        if (obj.getType() != PyString.TYPE) {
+        if (obj.getType() != PyUnicode.TYPE) {
             throw Py.TypeError("can't intern subclass of string");
         }
-        PyString s = (PyString)obj;
+        PyUnicode s = (PyUnicode)obj;
         String istring = s.internedString();
         PyObject ret = internedStrings.__finditem__(istring);
         if (ret != null) {
-            return (PyString)ret;
+            return (PyUnicode)ret;
         }
         internedStrings.__setitem__(istring, s);
         return s;
@@ -796,7 +796,7 @@ public class __builtin__ {
         return list;
     }
 
-    public static PyString oct(PyObject o) {
+    public static PyUnicode oct(PyObject o) {
         return o.__oct__();
     }
 
@@ -1107,7 +1107,7 @@ public class __builtin__ {
 //    }
 
     public static PyUnicode repr(PyObject o) {
-        return (PyUnicode) o.__repr__().decode();
+        return o.__repr__();
     }
 
     public static void setattr(PyObject obj, PyObject name, PyObject value) {

@@ -82,6 +82,7 @@ ast_Delete.derived:org.python.antlr.ast.DeleteDerived
 ast_Dict.derived:org.python.antlr.ast.DictDerived
 ast_Ellipsis.derived:org.python.antlr.ast.EllipsisDerived
 ast_ExceptHandler.derived:org.python.antlr.ast.ExceptHandlerDerived
+ast_Expr.derived:org.python.antlr.ast.ExprDerived
 ast_Expression.derived:org.python.antlr.ast.ExpressionDerived
 ast_ExtSlice.derived:org.python.antlr.ast.ExtSliceDerived
 ast_For.derived:org.python.antlr.ast.ForDerived

@@ -540,25 +540,20 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
      * @throws PyException (ValueError) if the value is a <code>PyUnicode</code>
      */
     private void setslice(int start, int stop, int step, PyString value) throws PyException {
-        if (value instanceof PyUnicode) {
-            // Has to be 8-bit PyString
-            throw Py.TypeError("can't set bytearray slice from unicode");
+        // Assignment is from 8-bit data
+        String v = value.asString();
+        int len = v.length();
+        if (step == 1) {
+            // Delete this[start:stop] and open a space of the right size
+            storageReplace(start, stop - start, len);
+            setBytes(start, v);
         } else {
-            // Assignment is from 8-bit data
-            String v = value.asString();
-            int len = v.length();
-            if (step == 1) {
-                // Delete this[start:stop] and open a space of the right size
-                storageReplace(start, stop - start, len);
-                setBytes(start, v);
-            } else {
-                // This is an extended slice which means we are replacing elements
-                int n = sliceLength(start, stop, step);
-                if (n != len) {
-                    throw SliceSizeError("bytes", len, n);
-                }
-                setBytes(start, step, v);
+            // This is an extended slice which means we are replacing elements
+            int n = sliceLength(start, stop, step);
+            if (n != len) {
+                throw SliceSizeError("bytes", len, n);
             }
+            setBytes(start, step, v);
         }
     }
 
@@ -2653,7 +2648,6 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
      *
      * @param a index of hole in byte array
      * @param d number to discard (will discard x[a,a+d-1])
-     * @param e size of hole to open (will be x[a, a+e-1])
      */
     private void storageDelete(int a, int d) {
         // storageReplace specialised for delete (e=0)

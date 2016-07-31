@@ -20,6 +20,7 @@ import org.python.core.PyTuple;
 import org.python.core.PyUnicode;
 import org.python.core.Untraversable;
 import org.python.core.codecs;
+import org.python.core.stringlib.Encoding;
 import org.python.expose.ExposedFunction;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedModule;
@@ -225,13 +226,13 @@ public class _codecs {
     /* --- string-escape Codec -------------------------------------------- */
     @ExposedFunction(defaults = {"null"})
     public static PyTuple escape_decode(String str, String errors) {
-        return decode_tuple_str(PyString.decode_UnicodeEscape(str, 0, str.length(), errors, true),
+        return decode_tuple_str(Encoding.decode_UnicodeEscape(str, 0, str.length(), errors, true),
                 str.length());
     }
 
     @ExposedFunction(defaults = {"null"})
     public static PyTuple escape_encode(String str, String errors) {
-        return encode_tuple(PyString.encode_UnicodeEscape(str, false), str.length());
+        return encode_tuple(Encoding.encode_UnicodeEscape(str, false), str.length());
     }
 
     /* --- Character Mapping Codec --------------------------------------- */
@@ -1218,7 +1219,7 @@ public class _codecs {
     }
 
     public static PyTuple unicode_escape_encode(String str, String errors) {
-        return encode_tuple(PyString.encode_UnicodeEscape(str, false), str.length());
+        return encode_tuple(Encoding.encode_UnicodeEscape(str, false), str.length());
     }
 
     public static PyTuple unicode_escape_decode(String str) {
@@ -1227,7 +1228,7 @@ public class _codecs {
 
     public static PyTuple unicode_escape_decode(String str, String errors) {
         int n = str.length();
-        return decode_tuple(PyString.decode_UnicodeEscape(str, 0, n, errors, true), n);
+        return decode_tuple(Encoding.decode_UnicodeEscape(str, 0, n, errors, true), n);
     }
 
     /* --- UnicodeInternal Codec ------------------------------------------ */

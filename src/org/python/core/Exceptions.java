@@ -686,10 +686,9 @@ public class Exceptions {
      */
     private static void initSlots(PyObject self) {
         for (PyObject name : self.__findattr__("__slots__").asIterable()) {
-            if (!(name instanceof PyString)) {
-                continue;
+            if (name instanceof PyUnicode) {
+                self.__setattr__((PyUnicode)name, Py.None);
             }
-            self.__setattr__((PyString)name, Py.None);
         }
     }
 
