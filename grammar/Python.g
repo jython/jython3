@@ -162,7 +162,6 @@ import org.python.antlr.base.slice;
 import org.python.antlr.base.stmt;
 import org.python.core.Py;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyUnicode;
 
 import java.math.BigInteger;
