@@ -29,8 +29,8 @@ public abstract class PyIterator extends PyObject implements Iterable<Object>, T
         return this;
     }
 
-    public static PyString __doc__next =
-        new PyString("x.next() -> the next value, or raise StopIteration");
+    public static PyBytes __doc__next =
+        new PyBytes("x.next() -> the next value, or raise StopIteration");
 
     /**
      * The exposed next method.

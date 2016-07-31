@@ -10,11 +10,11 @@ import org.python.core.BufferProtocol;
 import org.python.core.Py;
 import org.python.core.PyBUF;
 import org.python.core.PyBuffer;
+import org.python.core.PyBytes;
 import org.python.core.PyDictionary;
 import org.python.core.PyInteger;
 import org.python.core.PyNone;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
 import org.python.core.PyUnicode;
@@ -22,7 +22,6 @@ import org.python.core.Untraversable;
 import org.python.core.codecs;
 import org.python.core.stringlib.Encoding;
 import org.python.expose.ExposedFunction;
-import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedModule;
 import org.python.expose.ExposedType;
 
@@ -89,9 +88,9 @@ public class _codecs {
      */
     @ExposedFunction(defaults = {"null", "null"})
     public static PyObject decode(PyObject bytes, PyObject encoding, PyObject errors) {
-        if (!(bytes instanceof PyString))
+        if (!(bytes instanceof PyBytes))
             throw Py.TypeError("a bytes-like object is required");
-        return codecs.decode((PyString) bytes, _castString(encoding), _castString(errors));
+        return codecs.decode((PyBytes) bytes, _castString(encoding), _castString(errors));
     }
 
 
@@ -110,7 +109,7 @@ public class _codecs {
      */
     @ExposedFunction(defaults = {"null", "null"})
     public static PyObject encode(PyObject unicode, PyObject encoding, PyObject errors) {
-        return new PyString(codecs.encode(unicode, _castString(encoding), _castString(errors)));
+        return new PyBytes(codecs.encode(unicode, _castString(encoding), _castString(errors)));
     }
 
     /* --- Some codec support methods -------------------------------------------- */
@@ -193,7 +192,7 @@ public class _codecs {
     }
 
     private static PyTuple encode_tuple(String s, int len) {
-        return new PyTuple(new PyString(s), Py.newLong(len));
+        return new PyTuple(new PyBytes(s), Py.newLong(len));
     }
 
     @ExposedFunction(defaults = {"null", "false"})
@@ -295,7 +294,7 @@ public class _codecs {
                     i = codecs.insertReplacementAndGetResume(v, errors, "charmap", bytes, //
                             i, i + 1, "character maps to <undefined>") - 1;
 
-                } else if (x instanceof PyString) {
+                } else if (x instanceof PyBytes) {
                     String s = x.toString();
                     if (s.charAt(0) == 0xfffe) {
                         // Invalid indicates "undefined" see C-API PyUnicode_DecodeCharmap()
@@ -423,7 +422,7 @@ public class _codecs {
                 }
                 v.append((char)value);
 
-            } else if (x instanceof PyString && !(x instanceof PyUnicode)) {
+            } else if (x instanceof PyBytes && !(x instanceof PyUnicode)) {
                 // Look-up had str or unicode result: output as Java String
                 // XXX: (Py3k) Look-up had bytes or str result: output as ... this is a problem
                 v.append(x.toString());
@@ -718,7 +717,7 @@ public class _codecs {
      * The input String <b>must</b> be valid UTF-16, in particular, if it contains surrogate code
      * units they must be ordered and paired correctly. The last char in <code>unicode</code> is not
      * allowed to be an unpaired surrogate. These criteria will be met if the String
-     * <code>unicode</code> is the contents of a valid {@link PyUnicode} or {@link PyString}.
+     * <code>unicode</code> is the contents of a valid {@link PyUnicode} or {@link PyBytes}.
      *
      * @param unicode to be encoded
      * @param errors error policy name or null meaning "strict"
@@ -751,7 +750,7 @@ public class _codecs {
      * Helper to {@link #PyUnicode_EncodeUTF32(String, String, ByteOrder)} when big-endian encoding
      * is to be carried out.
      *
-     * @param v output buffer building String of bytes (Jython PyString convention)
+     * @param v output buffer building String of bytes (Jython PyBytes convention)
      * @param unicode character input
      * @param errors error policy name (e.g. "ignore", "replace")
      * @return number of Java characters consumed from unicode
@@ -825,7 +824,7 @@ public class _codecs {
      * Helper to {@link #PyUnicode_EncodeUTF32(String, String, ByteOrder)} when big-endian encoding
      * is to be carried out.
      *
-     * @param v output buffer building String of bytes (Jython PyString convention)
+     * @param v output buffer building String of bytes (Jython PyBytes convention)
      * @param unicode character input
      * @param errors error policy name (e.g. "ignore", "replace")
      * @return number of Java characters consumed from unicode
@@ -901,7 +900,7 @@ public class _codecs {
      * In theory, since the input Unicode data should come from a {@link PyUnicode}, there should
      * never be any errors.
      *
-     * @param v output buffer building String of bytes (Jython PyString convention)
+     * @param v output buffer building String of bytes (Jython PyBytes convention)
      * @param errors error policy name (e.g. "ignore", "replace")
      * @param order LE or BE indicator
      * @param toEncode character input
@@ -950,7 +949,7 @@ public class _codecs {
      * big-endian (Java platform default). The unicode text is presented as a Java String (the
      * UTF-16 representation used by {@link PyUnicode}).
      *
-     * @param bytes to be decoded (Jython {@link PyString} convention)
+     * @param bytes to be decoded (Jython {@link PyBytes} convention)
      * @param errors error policy name (e.g. "ignore", "replace")
      * @param isFinal if a "final" call, meaning the input must all be consumed
      * @return tuple (unicode_result, bytes_consumed)
@@ -967,7 +966,7 @@ public class _codecs {
      * space. The unicode text is presented as a Java String (the UTF-16 representation used by
      * {@link PyUnicode}).
      *
-     * @param bytes to be decoded (Jython {@link PyString} convention)
+     * @param bytes to be decoded (Jython {@link PyBytes} convention)
      * @param errors error policy name (e.g. "ignore", "replace")
      * @param isFinal if a "final" call, meaning the input must all be consumed
      * @return tuple (unicode_result, bytes_consumed)
@@ -985,7 +984,7 @@ public class _codecs {
      * The unicode text is presented as a Java String (the UTF-16 representation used by
      * {@link PyUnicode}).
      *
-     * @param bytes to be decoded (Jython {@link PyString} convention)
+     * @param bytes to be decoded (Jython {@link PyBytes} convention)
      * @param errors error policy name (e.g. "ignore", "replace")
      * @param isFinal if a "final" call, meaning the input must all be consumed
      * @return tuple (unicode_result, bytes_consumed)
@@ -1005,7 +1004,7 @@ public class _codecs {
      * unicode text is presented as a Java String (the UTF-16 representation used by
      * {@link PyUnicode}).
      *
-     * @param bytes to be decoded (Jython {@link PyString} convention)
+     * @param bytes to be decoded (Jython {@link PyBytes} convention)
      * @param errors error policy name (e.g. "ignore", "replace")
      * @param byteorder decoding "endianness" specified (in the Python -1, 0, +1 convention)
      * @param isFinal if a "final" call, meaning the input must all be consumed
@@ -1028,7 +1027,7 @@ public class _codecs {
      * the Unicode result, in line with Java conventions, where Unicode characters above the BMP are
      * represented as surrogate pairs.
      *
-     * @param bytes input represented as String (Jython PyString convention)
+     * @param bytes input represented as String (Jython PyBytes convention)
      * @param errors error policy name (e.g. "ignore", "replace")
      * @param order LE, BE or UNDEFINED (meaning bytes may begin with a byte order mark)
      * @param isFinal if a "final" call, meaning the input must all be consumed
@@ -1115,7 +1114,7 @@ public class _codecs {
      * when big-endian decoding is to be carried out.
      *
      * @param unicode character output
-     * @param bytes input represented as String (Jython PyString convention)
+     * @param bytes input represented as String (Jython PyBytes convention)
      * @param q number of elements already consumed from <code>bytes</code> array
      * @param limit (multiple of 4) first byte not to process
      * @param errors error policy name (e.g. "ignore", "replace")
@@ -1158,7 +1157,7 @@ public class _codecs {
      * when little-endian decoding is to be carried out.
      *
      * @param unicode character output
-     * @param bytes input represented as String (Jython PyString convention)
+     * @param bytes input represented as String (Jython PyBytes convention)
      * @param q number of elements already consumed from <code>bytes</code> array
      * @param limit (multiple of 4) first byte not to process
      * @param errors error policy name (e.g. "ignore", "replace")

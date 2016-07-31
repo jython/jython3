@@ -12,7 +12,7 @@ import org.python.core.PyInteger;
 import org.python.core.PyList;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
-import org.python.core.PyString;
+import org.python.core.PyBytes;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
 import org.python.core.PyUnicode;
@@ -306,7 +306,7 @@ public class Encoding {
      * @param oldPiece to replace where found.
      * @param newPiece replacement text.
      * @param count    maximum number of replacements to make, or -1 meaning all of them.
-     * @return PyString (or PyUnicode if this string is one), this string after replacements.
+     * @return PyBytes (or PyUnicode if this string is one), this string after replacements.
      */
     public static final String _replace(String s, String oldPiece, String newPiece, int count) {
 
@@ -442,7 +442,7 @@ public class Encoding {
     }
 
     /**
-     * Common code for {@link PyString} and {@link PyUnicode} to prepare a {@link TextFormatter}
+     * Common code for {@link PyBytes} and {@link PyUnicode} to prepare a {@link TextFormatter}
      * from a parsed specification. The object returned has format method
      * {@link TextFormatter#format(String)} that treats its argument as UTF-16 encoded unicode (not
      * just <code>char</code>s). That method will format its argument ( <code>str</code> or
@@ -668,7 +668,7 @@ public class Encoding {
     }
         /**
      * Implementation of Python <code>str.rsplit()</code> common to exposed and Java API returning a
-     * {@link PyList} of <code>PyString</code>s. The <code>str</code> will be split at each
+     * {@link PyList} of <code>PyBytes</code>s. The <code>str</code> will be split at each
      * occurrence of <code>sep</code>, working from the right. If <code>sep == null</code>,
      * whitespace will be used as the criterion. If <code>sep</code> has zero length, a Python
      * <code>ValueError</code> is raised. If <code>maxsplit</code> &gt;=0 and there are more
@@ -1108,7 +1108,7 @@ public class Encoding {
 
         /**
      * Implementation of Python str.split() common to exposed and Java API returning a
-     * {@link PyList} of <code>PyString</code>s. The <code>str</code> will be split at each
+     * {@link PyList} of <code>PyBytes</code>s. The <code>str</code> will be split at each
      * occurrence of <code>sep</code>. If <code>sep == null</code>, whitespace will be used as the
      * criterion. If <code>sep</code> has zero length, a Python <code>ValueError</code> is raised.
      * If <code>maxsplit</code> &gt;=0 and there are more feasible splits than <code>maxsplit</code>
@@ -1243,7 +1243,7 @@ public class Encoding {
             int m = (maxsplit > length) ? length + 1 : maxsplit;
 
             // Put an empty string first to make one split before the first character
-            list.add(""); // PyString or PyUnicode as this class
+            list.add(""); // PyBytes or PyUnicode as this class
             int index;
 
             // Add m-1 pieces one character long
@@ -1467,7 +1467,7 @@ public class Encoding {
 
         if (!(prefix instanceof PyTuple)) {
             String p = asUTF16StringOrError(prefix);
-            // If s is non-BMP, and this is a PyString (bytes), result will correctly be false.
+            // If s is non-BMP, and this is a PyBytes (bytes), result will correctly be false.
             return sliceLen >= p.length() && s.toString().startsWith(p, start);
 
         } else {
@@ -1475,7 +1475,7 @@ public class Encoding {
             for (PyObject prefixObj : ((PyTuple)prefix).getArray()) {
                 // It ought to be PyUnicode or some kind of bytes with the buffer API.
                 String p = asUTF16StringOrError(prefixObj);
-                // If s is non-BMP, and this is a PyString (bytes), result will correctly be false.
+                // If s is non-BMP, and this is a PyBytes (bytes), result will correctly be false.
                 if (sliceLen >= p.length() && s.toString().startsWith(p, start)) {
                     return true;
                 }
@@ -1492,7 +1492,7 @@ public class Encoding {
         if (!(suffix instanceof PyTuple)) {
             // It ought to be PyUnicode or some kind of bytes with the buffer API.
             String suf = asUTF16StringOrError(suffix);
-            // If s is non-BMP, and this is a PyString (bytes), result will correctly be false.
+            // If s is non-BMP, and this is a PyBytes (bytes), result will correctly be false.
             return substr.endsWith(suf);
 
         } else {
@@ -1500,7 +1500,7 @@ public class Encoding {
             for (PyObject suffixObj : ((PyTuple)suffix).getArray()) {
                 // It ought to be PyUnicode or some kind of bytes with the buffer API.
                 String suf = asUTF16StringOrError(suffixObj);
-                // If s is non-BMP, and this is a PyString (bytes), result will correctly be false.
+                // If s is non-BMP, and this is a PyBytes (bytes), result will correctly be false.
                 if (substr.endsWith(suf)) {
                     return true;
                 }

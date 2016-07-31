@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.python.core.finalization.FinalizeTrigger;
 import org.python.core.finalization.FinalizablePyObjectDerived;
 
-public class PyStringDerived extends PyString implements Slotted,FinalizablePyObjectDerived,TraverseprocDerived {
+public class PyBytesDerived extends PyBytes implements Slotted,FinalizablePyObjectDerived,TraverseprocDerived {
 
     public PyObject getSlot(int index) {
         return slots[index];
@@ -72,7 +72,7 @@ public class PyStringDerived extends PyString implements Slotted,FinalizablePyOb
         dict=new PyStringMap();
     }
 
-    public PyStringDerived(PyType subtype,String v) {
+    public PyBytesDerived(PyType subtype, String v) {
         super(subtype,v);
         slots=new PyObject[subtype.getNumSlots()];
         dict=subtype.instDict();

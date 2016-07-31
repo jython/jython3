@@ -5,10 +5,10 @@ package org.python.core.packagecache;
 
 import org.python.Version;
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyJavaPackage;
 import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyUnicode;
 import org.python.core.imp;
 import org.python.core.util.RelativeFile;
@@ -142,7 +142,7 @@ public abstract class PathPackageManager extends CachedJarsPackageManager {
                 }
 
                 jname = jname.substring(0, jlen);
-                PyString name = new PyString(jname);
+                PyBytes name = new PyBytes(jname);
 
                 if (filterByName(jname, pkgCand)) {
                     continue;
@@ -197,9 +197,9 @@ public abstract class PathPackageManager extends CachedJarsPackageManager {
     public void addDirectory(File dir) {
         try {
             if (dir.getPath().length() == 0) {
-                this.searchPath.append(Py.EmptyString);
+                this.searchPath.append(Py.EmptyByte);
             } else {
-                this.searchPath.append(new PyString(dir.getCanonicalPath()));
+                this.searchPath.append(new PyBytes(dir.getCanonicalPath()));
             }
         } catch (IOException e) {
             warning("skipping bad directory, '" + dir + "'");
@@ -221,7 +221,7 @@ public abstract class PathPackageManager extends CachedJarsPackageManager {
      * true if path refers to a jar.
      */
     public void addClassPath(String path) {
-        PyList paths = new PyString(path).split(java.io.File.pathSeparator);
+        PyList paths = new PyBytes(path).split(java.io.File.pathSeparator);
 
         for (int i = 0; i < paths.__len__(); i++) {
             String entry = paths.pyget(i).toString();

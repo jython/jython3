@@ -43,7 +43,7 @@ public class PyClass extends PyObject implements Traverseproc {
     }
 
     public static PyObject classobj___new__(PyObject name, PyObject bases, PyObject dict) {
-        if (!name.getType().isSubType(PyString.TYPE)) {
+        if (!name.getType().isSubType(PyBytes.TYPE)) {
             throw Py.TypeError("PyClass_New: name must be a string");
         }
         if (!(dict instanceof PyStringMap || dict instanceof PyDictionary)) {
@@ -218,7 +218,7 @@ public class PyClass extends PyObject implements Traverseproc {
             return new PyUnicode(__name__);
         }
         PyObject mod = __dict__.__finditem__("__module__");
-        if (mod == null || !(mod instanceof PyString)) {
+        if (mod == null || !(mod instanceof PyBytes)) {
             return new PyUnicode(__name__);
         }
         String smod = mod.toString();
@@ -228,7 +228,7 @@ public class PyClass extends PyObject implements Traverseproc {
     @Override
     public String toString() {
         PyObject mod = __dict__.__finditem__("__module__");
-        String modStr = (mod == null || !Py.isInstance(mod, PyString.TYPE)) ? "?" : mod.toString();
+        String modStr = (mod == null || !Py.isInstance(mod, PyBytes.TYPE)) ? "?" : mod.toString();
         return String.format("<class %s.%s at %s>", modStr, __name__, Py.idstr(this));
     }
 
@@ -272,7 +272,7 @@ public class PyClass extends PyObject implements Traverseproc {
     }
 
     public void setName(PyObject value) {
-        if (value == null || !Py.isInstance(value, PyString.TYPE)) {
+        if (value == null || !Py.isInstance(value, PyBytes.TYPE)) {
             throw Py.TypeError("__name__ must be a string object");
         }
         String name = value.toString();

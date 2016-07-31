@@ -72,7 +72,7 @@ public class InteractiveConsole extends InteractiveInterpreter {
 
                 @Override
                 public PyObject __call__() {
-                    return __call__(Py.EmptyString);
+                    return __call__(Py.EmptyByte);
                 }
 
                 @Override

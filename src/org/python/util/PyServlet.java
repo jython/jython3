@@ -18,8 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.python.core.Py;
 import org.python.core.PyException;
 import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 import org.python.core.PyUnicode;
 

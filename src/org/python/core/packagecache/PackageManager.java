@@ -50,7 +50,7 @@ public abstract class PackageManager extends Object {
      * Reports the specified package content names. Should be overriden. Used by
      * {@link PyJavaPackage#__dir__} and {@link PyJavaPackage#fillDir}.
      *
-     * @return resulting list of names (PyList of PyString)
+     * @return resulting list of names (PyList of PyBytes)
      * @param jpkg queried package
      * @param instantiate if true then instatiate reported names in package dict
      * @param exclpkgs exclude packages (just when instantiate is false)

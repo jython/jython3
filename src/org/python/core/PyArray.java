@@ -145,7 +145,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
         } else if (initial instanceof PyList) {
             self.fromlist(initial);
 
-        } else if (initial instanceof PyString && !(initial instanceof PyUnicode)) {
+        } else if (initial instanceof PyBytes && !(initial instanceof PyUnicode)) {
             self.fromstring(initial.toString());
 
         } else if ("u".equals(typecode)) {
@@ -188,7 +188,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
      * Create a PyArray storing <code>ctype</code> types and being initialised with
      * <code>init</code>.
      *
-     * @param init an initialiser for the array - can be PyString or PySequence (including PyArray)
+     * @param init an initialiser for the array - can be PyBytes or PySequence (including PyArray)
      *            or iterable type.
      * @param ctype <code>Class</code> type of the elements stored in the array.
      * @return a new PyArray
@@ -483,13 +483,13 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
         throw Py.TypeError("array item must be unicode character");
     }
 
-    // relax to allow mixing with PyString, integers
+    // relax to allow mixing with PyBytes, integers
     private static int getCodePointOrInt(PyObject obj) {
         if (obj instanceof PyUnicode) {
             PyUnicode u = (PyUnicode)obj;
             return u.toCodePoints()[0];
-        } else if (obj instanceof PyString) {
-            PyString s = (PyString)obj;
+        } else if (obj instanceof PyBytes) {
+            PyBytes s = (PyBytes)obj;
             return s.toString().charAt(0);
         } else if (obj.__bool__()) {
             return obj.asInt();
@@ -747,7 +747,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
      * cases of <code>iterable</code> being PyStrings or PyArrays. Default behaviour is to defer to
      * {@link #extendInternalIter(PyObject) extendInternalIter }
      *
-     * @param iterable object of type PyString, PyArray or any object that can be iterated over.
+     * @param iterable object of type PyBytes, PyArray or any object that can be iterated over.
      */
     private void extendInternal(PyObject iterable) {
 
@@ -760,9 +760,9 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
                 throw Py.TypeError("an integer is required");
             }
 
-// } else if (iterable instanceof PyString) {
+// } else if (iterable instanceof PyBytes) {
 // // XXX CPython treats a str/bytes as an iterable, not as previously here:
-// fromstring(((PyString)iterable).toString());
+// fromstring(((PyBytes)iterable).toString());
 
         } else if (iterable instanceof PyArray) {
             PyArray source = (PyArray)iterable;
@@ -1095,7 +1095,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
     }
 
     /**
-     * Appends items from the object, which is a byte string of some kind (PyString or object with
+     * Appends items from the object, which is a byte string of some kind (PyBytes or object with
      * the buffer interface providing bytes) The string of bytes is interpreted as an array of
      * machine values (as if it had been read from a file using the {@link #fromfile(PyObject, int)
      * fromfile()} method).
@@ -1689,9 +1689,9 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
             stop = start;
         }
 
-        if (type == Character.TYPE && value instanceof PyString) {
+        if (type == Character.TYPE && value instanceof PyBytes) {
             char[] chars = null;
-            // if (value instanceof PyString) {
+            // if (value instanceof PyBytes) {
             if (step != 1) {
                 throw Py.ValueError("invalid bounds for setting from string");
             }
@@ -1704,8 +1704,8 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
 
         } else {
 
-            if (value instanceof PyString && type == Byte.TYPE) {
-                byte[] chars = ((PyString)value).toBytes();
+            if (value instanceof PyBytes && type == Byte.TYPE) {
+                byte[] chars = ((PyBytes)value).toBytes();
                 if (chars.length == stop - start && step == 1) {
                     System.arraycopy(chars, 0, data, start, chars.length);
                 } else {
@@ -1949,7 +1949,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
 
     @ExposedMethod
     public final PyObject array_tostring() {
-        return new PyString(tostring());
+        return new PyBytes(tostring());
     }
 
     /**

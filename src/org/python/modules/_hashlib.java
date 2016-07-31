@@ -12,7 +12,7 @@ import org.python.core.PyArray;
 import org.python.core.PyFrozenSet;
 import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
+import org.python.core.PyBytes;
 import org.python.core.PyType;
 import org.python.core.PyUnicode;
 import org.python.core.Untraversable;
@@ -194,7 +194,7 @@ public class _hashlib implements ClassDictInit {
             String string;
             if (obj instanceof PyUnicode) {
                 string = ((PyUnicode)obj).encode();
-            } else if (obj instanceof PyString) {
+            } else if (obj instanceof PyBytes) {
                 string = obj.toString();
             } else if (obj instanceof PyArray) {
                 string = ((PyArray)obj).tostring();

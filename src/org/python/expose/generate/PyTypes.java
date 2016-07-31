@@ -14,7 +14,7 @@ import org.python.core.PyLong;
 import org.python.core.PyModule;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
-import org.python.core.PyString;
+import org.python.core.PyBytes;
 import org.python.core.PyType;
 import org.python.core.PyUnicode;
 import org.python.core.ThreadState;
@@ -52,7 +52,7 @@ public interface PyTypes {
 
     public static final Type PY = Type.getType(Py.class);
 
-    public static final Type PYBYTES = Type.getType(PyString.class);
+    public static final Type PYBYTES = Type.getType(PyBytes.class);
 
     public static final Type PYSTR = Type.getType(PyUnicode.class);
 

@@ -386,7 +386,7 @@ import org.python.modules.gc;
  *   PySlice                         - Traverseproc<br>
  *   PySlot                          - no refs, untraversable<br>
  *   PyStaticMethod                  - Traverseproc<br>
- *   PyString                        - no refs, untraversable (assuming baseBuffer is not a PyObject)<br>
+ *   PyBytes                        - no refs, untraversable (assuming baseBuffer is not a PyObject)<br>
  *   PyStringMap                     - Traverseproc<br>
  *     StringMapIter                 - no refs, extends PyIterator, abstract class<br>
  *     ItemsIter                     - no refs, extends StringMapIter<br>
@@ -453,8 +453,8 @@ import org.python.modules.gc;
  *   PyPartial                       - Traverseproc<br>
  * <br>
  * org.python.modules._io:<br>
- *   PyFileIO                        - no refs, untraversable (there is a final PyString
- *   "mode" that is guaranteed to be a PyString and no subclass; as such it needs not be
+ *   PyFileIO                        - no refs, untraversable (there is a final PyBytes
+ *   "mode" that is guaranteed to be a PyBytes and no subclass; as such it needs not be
  *   traversed since it cannot have refs itself)<br>
  *   PyIOBase                        - Traverseproc<br>
  *   PyRawIOBase                     - no refs, extends PyIOBase<br>

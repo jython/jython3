@@ -13,9 +13,9 @@ import java.util.HashSet;
 import java.util.Set;
 import org.python.core.Py;
 import org.python.core.PyBuiltinMethodSet;
+import org.python.core.PyBytes;
 import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 
 /**
  * A cursor with extensions to the DB API 2.0.
@@ -36,15 +36,15 @@ public class PyExtendedCursor extends PyCursor {
     static {
         PyObject[] m = new PyObject[9];
 
-        m[0] = new PyString("tables");
-        m[1] = new PyString("columns");
-        m[2] = new PyString("primarykeys");
-        m[3] = new PyString("foreignkeys");
-        m[4] = new PyString("procedures");
-        m[5] = new PyString("procedurecolumns");
-        m[6] = new PyString("statistics");
-        m[7] = new PyString("bestrow");
-        m[8] = new PyString("versioncolumns");
+        m[0] = new PyBytes("tables");
+        m[1] = new PyBytes("columns");
+        m[2] = new PyBytes("primarykeys");
+        m[3] = new PyBytes("foreignkeys");
+        m[4] = new PyBytes("procedures");
+        m[5] = new PyBytes("procedurecolumns");
+        m[6] = new PyBytes("statistics");
+        m[7] = new PyBytes("bestrow");
+        m[8] = new PyBytes("versioncolumns");
         __methods__ = new PyList(m);
 
         __methods__.extend(PyCursor.__methods__);

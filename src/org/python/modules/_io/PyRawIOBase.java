@@ -9,7 +9,7 @@ import org.python.core.PyList;
 import org.python.core.PyLong;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
-import org.python.core.PyString;
+import org.python.core.PyBytes;
 import org.python.core.PyType;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
@@ -50,7 +50,7 @@ public class PyRawIOBase extends PyIOBase {
      * be more efficient than read().
      *
      * @param n number of bytes to read (if possible)
-     * @return a PyString holding the bytes read or <code>Py.None</code> (when a non-blocking source
+     * @return a PyBytes holding the bytes read or <code>Py.None</code> (when a non-blocking source
      *         is not ready with further data)
      */
     public PyObject read(int n) {
@@ -76,7 +76,7 @@ public class PyRawIOBase extends PyIOBase {
     /**
      * Implementation of the read() method once the argument has been reduced to an int.
      * @param n number of bytes to read (if possible)
-     * @return a PyString holding the bytes read or <code>Py.None</code> (when a non-blocking source
+     * @return a PyBytes holding the bytes read or <code>Py.None</code> (when a non-blocking source
      *         is not ready with further data)
      */
     private PyObject _read(int n) {
@@ -105,7 +105,7 @@ public class PyRawIOBase extends PyIOBase {
                 }
 
                 // Make a str from that view
-                return new PyString(view.toString());
+                return new PyBytes(view.toString());
 
             } else {
                 // It must have returned None (signalling a vacuous read of non-blocking stream)
@@ -120,7 +120,7 @@ public class PyRawIOBase extends PyIOBase {
      * stream. If the first <code>read()</code> returns <code>None</code> (only possible in the case
      * of a non-blocking stream), this method returns <code>None</code>.
      *
-     * @return a PyString holding the bytes read or <code>Py.None</code> (when a non-blocking source
+     * @return a PyBytes holding the bytes read or <code>Py.None</code> (when a non-blocking source
      *         is not ready with further data)
      */
     public PyObject readall() {
@@ -159,7 +159,7 @@ public class PyRawIOBase extends PyIOBase {
                 } while (curr.__bool__());
 
                 // Stitch it all together
-                return Py.EmptyString.join(list);
+                return Py.EmptyByte.join(list);
             }
         }
     }

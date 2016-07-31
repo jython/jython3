@@ -62,12 +62,12 @@ public class PyComplex extends PyObject {
         // Special-case for single argument that is already complex
         if (real.getType() == TYPE && new_.for_type == subtype && imag == null) {
             return real;
-        } else if (real instanceof PyString) {
+        } else if (real instanceof PyBytes) {
             if (imag != null) {
                 throw Py.TypeError("complex() can't take second arg if first is a string");
             }
             return real.__complex__();
-        } else if (imag != null && imag instanceof PyString) {
+        } else if (imag != null && imag instanceof PyBytes) {
             throw Py.TypeError("complex() second arg can't be a string");
         }
 
@@ -852,7 +852,7 @@ public class PyComplex extends PyObject {
         // Parse the specification
         Spec spec = InternalFormat.fromText(formatSpec, "__format__");
 
-        // fromText will have thrown if formatSpecStr is not a PyString (including PyUnicode)
+        // fromText will have thrown if formatSpecStr is not a PyBytes (including PyUnicode)
         String result;
 
         // Validate the specification and detect the special case for none-format
@@ -884,7 +884,7 @@ public class PyComplex extends PyObject {
         if (formatSpec instanceof PyUnicode) {
             return new PyUnicode(result);
         }
-        return new PyString(result);
+        return new PyBytes(result);
     }
 
     /**

@@ -9,7 +9,7 @@ import org.python.core.ClassDictInit;
 import org.python.core.Py;
 import org.python.core.PyDictionary;
 import org.python.core.PyObject;
-import org.python.core.PyString;
+import org.python.core.PyBytes;
 import org.python.core.PyUnicode;
 import org.python.core.imp;
 
@@ -21,7 +21,7 @@ import org.python.core.imp;
  */
 public class errno implements ClassDictInit {
 
-    public static final PyString __doc__ = Py.newString(
+    public static final PyBytes __doc__ = Py.newString(
         "This module makes available standard errno system symbols.\n\n"
         + "The value of each symbol is the corresponding integer value,\n"
         + "e.g., on most systems, errno.ENOENT equals the integer 2.\n\n"

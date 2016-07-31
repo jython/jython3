@@ -84,9 +84,9 @@ public class PyBufferTest extends TestCase {
         genWritable(new PyByteArray(longMaterial.getBytes()), longMaterial);
         genWritable(new PyByteArray(), emptyMaterial);
 
-        // Tests with PyString
-        genReadonly(new PyString(abcMaterial.string), abcMaterial);
-        genReadonly(new PyString(), emptyMaterial);
+        // Tests with PyBytes
+        genReadonly(new PyBytes(abcMaterial.string), abcMaterial);
+        genReadonly(new PyBytes(), emptyMaterial);
 
         // Ensure case is tested where PyByteArray has an internal offset
         PyByteArray truncated = new PyByteArray(stringMaterial.getBytes());
@@ -1238,7 +1238,7 @@ public class PyBufferTest extends TestCase {
      * exported buffer between all consumers but does not need to take any action when that buffer
      * is finally released. You are most likely to use this approach with an exporting object type
      * that does not modify its behaviour while there are active exports, but where it is worth
-     * avoiding the cost of duplicate buffers. This is the case with PyString, where some buffer
+     * avoiding the cost of duplicate buffers. This is the case with PyBytes, where some buffer
      * operations cause construction of a byte array copy of the Java String, which it is desirable
      * to do only once.
      */

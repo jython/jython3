@@ -2,12 +2,8 @@ package org.python.modules;
 
 import org.python.core.BuiltinDocs;
 import org.python.core.Py;
-import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PyStringMap;
 import org.python.core.PyType;
-import org.python.core.PyUnicode;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;

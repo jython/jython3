@@ -10,8 +10,8 @@ import org.python.core.Py;
 import org.python.core.PyArray;
 import org.python.core.PyBUF;
 import org.python.core.PyBuffer;
+import org.python.core.PyBytes;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 
 /**
  * Base class for text I/O.
@@ -110,7 +110,7 @@ public abstract class TextIOBase extends IOBase {
             PyArray array = (PyArray)buf;
             String read = read(array.__len__());
             for (int i = 0; i < read.length(); i++) {
-                array.set(i, new PyString(read.charAt(i)));
+                array.set(i, new PyBytes(read.charAt(i)));
             }
             return read.length();
 

@@ -27,11 +27,11 @@ import java.util.TimeZone;
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
 import org.python.core.PyBuiltinFunctionSet;
+import org.python.core.PyBytes;
 import org.python.core.PyException;
 import org.python.core.PyFloat;
 import org.python.core.PyInteger;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyUnicode;
 import org.python.core.__builtin__;
@@ -67,7 +67,7 @@ class TimeFunctions extends PyBuiltinFunctionSet
 
 public class Time implements ClassDictInit
 {
-    public static final PyString __doc__ = new PyString(
+    public static final PyBytes __doc__ = new PyBytes(
         "This module provides various functions to manipulate time values.\n"+
         "\n"+
         "There are two standard representations of time.  One is the "+
@@ -129,8 +129,8 @@ public class Time implements ClassDictInit
         // calculate the static variables tzname, timezone, altzone, daylight
         TimeZone tz = TimeZone.getDefault();
 
-        tzname = new PyTuple(new PyString(tz.getDisplayName(false, 0)),
-                             new PyString(tz.getDisplayName(true, 0)));
+        tzname = new PyTuple(new PyBytes(tz.getDisplayName(false, 0)),
+                             new PyBytes(tz.getDisplayName(true, 0)));
 
         daylight = tz.useDaylightTime() ? 1 : 0;
         timezone = -tz.getRawOffset() / 1000;
@@ -191,7 +191,7 @@ public class Time implements ClassDictInit
     private static volatile boolean clockInitialized;
 
     private static void throwValueError(String msg) {
-        throw new PyException(Py.ValueError, new PyString(msg));
+        throw new PyException(Py.ValueError, new PyBytes(msg));
     }
 
     private static int item(PyTuple tup, int i) {
@@ -377,11 +377,11 @@ public class Time implements ClassDictInit
         return _timefields(parseTimeDoubleArg(arg), TimeZone.getTimeZone("GMT"));
     }
 
-    public static PyString ctime() {
+    public static PyBytes ctime() {
         return ctime(Py.None);
     }
 
-    public static PyString ctime(PyObject secs) {
+    public static PyBytes ctime(PyObject secs) {
         return asctime(localtime(secs));
     }
 
@@ -427,7 +427,7 @@ public class Time implements ClassDictInit
         try {
             return shortdays[dow];
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new PyException(Py.ValueError, new PyString("day of week out of range (0-6)"));
+            throw new PyException(Py.ValueError, new PyBytes("day of week out of range (0-6)"));
         }
     }
 
@@ -444,7 +444,7 @@ public class Time implements ClassDictInit
         try {
             return shortmonths[month0to11];
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new PyException(Py.ValueError, new PyString("month out of range (1-12)"));
+            throw new PyException(Py.ValueError, new PyBytes("month out of range (1-12)"));
         }
     }
 
@@ -474,11 +474,11 @@ public class Time implements ClassDictInit
         return yearstr.substring(yearstr.length()-2, yearstr.length());
     }
 
-    public static PyString asctime() {
+    public static PyBytes asctime() {
         return asctime(localtime());
     }
 
-    public static PyString asctime(PyObject obj) {
+    public static PyBytes asctime(PyObject obj) {
         PyTuple tup;
         if (obj instanceof PyTuple) {
             tup = (PyTuple)obj;
@@ -502,7 +502,7 @@ public class Time implements ClassDictInit
         buf.append(_twodigit(item(tup, 3))).append(':');
         buf.append(_twodigit(item(tup, 4))).append(':');
         buf.append(_twodigit(item(tup, 5))).append(' ');
-        return new PyString(buf.append(item(tup, 0)).toString());
+        return new PyBytes(buf.append(item(tup, 0)).toString());
     }
 
     public static String locale_asctime(PyTuple tup) {
@@ -542,11 +542,11 @@ public class Time implements ClassDictInit
     // writable but ignore its value?
     public static final int accept2dyear = 0;
 
-    public static PyString strftime(String format) {
+    public static PyBytes strftime(String format) {
         return strftime(format, localtime());
     }
 
-    public static PyString strftime(String format, PyTuple tup) {
+    public static PyBytes strftime(String format, PyTuple tup) {
         checkLocale();
 
         // Immediately validate the tuple

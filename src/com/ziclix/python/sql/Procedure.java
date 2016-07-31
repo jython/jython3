@@ -8,10 +8,10 @@
 package com.ziclix.python.sql;
 
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyInteger;
 import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 
 import java.sql.CallableStatement;
 import java.sql.DatabaseMetaData;
@@ -109,7 +109,7 @@ public class Procedure extends Object {
         this.cursor = cursor;
         this.inputSet = new BitSet();
 
-        if (name instanceof PyString) {
+        if (name instanceof PyBytes) {
             this.procedureCatalog = getDefault();
             this.procedureSchema = getDefault();
             this.procedureName = name;
@@ -368,7 +368,7 @@ public class Procedure extends Object {
      * @see java.sql.DatabaseMetaData#getProcedureColumns
      */
     protected PyObject getDefault() {
-        return Py.EmptyString;
+        return Py.EmptyByte;
     }
 
     /**

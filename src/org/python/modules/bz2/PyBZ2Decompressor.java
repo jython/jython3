@@ -9,8 +9,8 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.python.core.ArgParser;
 import org.python.core.Py;
 import org.python.core.PyByteArray;
+import org.python.core.PyBytes;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyType;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
@@ -23,7 +23,7 @@ import org.python.core.Visitproc;
 public class PyBZ2Decompressor extends PyObject implements Traverseproc {
 
     @ExposedGet
-    public PyString unused_data = Py.EmptyString;
+    public PyBytes unused_data = Py.EmptyByte;
 
     private boolean eofReached = false;
     private BZip2CompressorInputStream decompressStream = null;
@@ -48,13 +48,13 @@ public class PyBZ2Decompressor extends PyObject implements Traverseproc {
     }
 
     @ExposedMethod
-    final PyString BZ2Decompressor_decompress(PyObject[] args, String[] kwds) {
+    final PyBytes BZ2Decompressor_decompress(PyObject[] args, String[] kwds) {
         ArgParser ap = new ArgParser("compress", args, kwds,
                 new String[] { "data" }, 1);
 
-        PyString data = (PyString) ap.getPyObject(0);
+        PyBytes data = (PyBytes) ap.getPyObject(0);
 
-        PyString returnData;
+        PyBytes returnData;
 
         if (eofReached) {
             throw Py.EOFError("Data stream EOF reached");
@@ -89,7 +89,7 @@ public class PyBZ2Decompressor extends PyObject implements Traverseproc {
         try {
             decompressStream = new BZip2CompressorInputStream(compressedData);
         } catch (IOException e) {
-            return Py.EmptyString;
+            return Py.EmptyByte;
         }
 
         PyByteArray databuf = new PyByteArray();
@@ -98,15 +98,15 @@ public class PyBZ2Decompressor extends PyObject implements Traverseproc {
             while ((currentByte = decompressStream.read()) != -1) {
                 databuf.append((byte)currentByte);
             }
-            returnData = new PyString(databuf.__str__().encode());
+            returnData = new PyBytes(databuf.__str__().encode());
             if (compressedData.available() > 0) {
                 byte[] unusedbuf = new byte[compressedData.available()];
                 compressedData.read(unusedbuf);
-                unused_data = (PyString)unused_data.__add__((new PyByteArray(unusedbuf)).__str__());
+                unused_data = (PyBytes)unused_data.__add__((new PyByteArray(unusedbuf)).__str__());
             }
             eofReached = true;
         } catch (IOException e) {
-            return Py.EmptyString;
+            return Py.EmptyByte;
         }
 
         return returnData;

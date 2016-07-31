@@ -117,8 +117,8 @@ public class StdoutWrapper extends OutputStream {
         // since we are outputting directly to a character stream,
         // avoid doing an encoding
         String s;
-        if (o instanceof PyString) {
-            s = ((PyString) o).getString();
+        if (o instanceof PyBytes) {
+            s = ((PyBytes) o).getString();
         } else {
             s = o.__str__().toString();
         }
@@ -180,7 +180,7 @@ public class StdoutWrapper extends OutputStream {
 
             String s = printToFile(file, o);
 
-            if (o instanceof PyString) {
+            if (o instanceof PyBytes) {
                 int len = s.length();
                 if (len == 0 || !Character.isWhitespace(s.charAt(len - 1))
                     || s.charAt(len - 1) == ' ') {
@@ -204,7 +204,7 @@ public class StdoutWrapper extends OutputStream {
             }
             String s = printToFileWriter(file, o);
 
-            if (o instanceof PyString) {
+            if (o instanceof PyBytes) {
                 int len = s.length();
                 if (len == 0 || !Character.isWhitespace(s.charAt(len - 1))
                     || s.charAt(len - 1) == ' ') {
@@ -229,7 +229,7 @@ public class StdoutWrapper extends OutputStream {
 
             printToFileObject(out, o);
 
-            if (o instanceof PyString) {
+            if (o instanceof PyBytes) {
                 String s = o.toString();
                 int len = s.length();
                 if (len == 0 || !Character.isWhitespace(s.charAt(len - 1))

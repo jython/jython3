@@ -2,7 +2,6 @@ package org.python.tests.constructor_kwargs;
 
 import junit.framework.TestCase;
 
-import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 import org.python.util.PythonInterpreter;

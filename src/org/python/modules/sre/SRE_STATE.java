@@ -1332,7 +1332,7 @@ for line in sys.stdin:
         return ((ch) < 128 ? (char) sre_char_lower[ch] : ch);
     }
 
-    // XXX - this is not UTF-16 compliant; also depends on whether from PyString or PyUnicode
+    // XXX - this is not UTF-16 compliant; also depends on whether from PyBytes or PyUnicode
 
     String getslice(int index, String string, boolean empty) {
         int i, j;

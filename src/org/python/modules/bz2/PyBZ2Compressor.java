@@ -7,8 +7,8 @@ import java.io.OutputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.python.core.ArgParser;
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyType;
 import org.python.core.Untraversable;
 import org.python.core.util.StringUtil;
@@ -50,13 +50,13 @@ public class PyBZ2Compressor extends PyObject {
     }
 
     @ExposedMethod
-    public PyString BZ2Compressor_compress(PyObject[] args, String[] kwds) {
+    public PyBytes BZ2Compressor_compress(PyObject[] args, String[] kwds) {
         ArgParser ap = new ArgParser("compress", args, kwds,
                 new String[] { "data" }, 1);
 
-        PyString data = (PyString) ap.getPyObject(0);
+        PyBytes data = (PyBytes) ap.getPyObject(0);
 
-        PyString returnData = null;
+        PyBytes returnData = null;
         try {
             compressStream.write(data.toBytes());
 
@@ -68,19 +68,19 @@ public class PyBZ2Compressor extends PyObject {
         return returnData;
     }
 
-    private PyString readData() {
+    private PyBytes readData() {
         if (!captureStream.hasData()) {
-            return Py.EmptyString;
+            return Py.EmptyByte;
         }
         
         byte[] buf = captureStream.readData();
         captureStream.resetByteArray();
-        return new PyString(StringUtil.fromBytes(buf));
+        return new PyBytes(StringUtil.fromBytes(buf));
     }
 
     @ExposedMethod
-    public PyString BZ2Compressor_flush(PyObject[] args, String[] kwds) {
-        PyString finalData = Py.EmptyString;
+    public PyBytes BZ2Compressor_flush(PyObject[] args, String[] kwds) {
+        PyBytes finalData = Py.EmptyByte;
         try {
             compressStream.finish();
             compressStream.close();

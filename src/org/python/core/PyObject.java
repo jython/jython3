@@ -122,7 +122,7 @@ public class PyObject implements Serializable {
             // Compute ", ".join(sorted(type.__abstractmethods__)) into methods
             PyObject sorted =
                     Py.getSystemState().getBuiltins().__getitem__(Py.newString("sorted"));
-            PyString methods =
+            PyBytes methods =
                     Py.newString(", ")
                     .join(sorted.__call__(subtype.getAbstractmethods()));
             throw Py.TypeError(String.format("Can't instantiate abstract class %s with abstract "
@@ -1048,7 +1048,7 @@ public class PyObject implements Serializable {
      *              <b> must be an interned string </b>.
      * @param value the value to set this name to
      *
-     * @see #__setattr__(PyString, PyObject)
+     * @see #__setattr__(PyBytes, PyObject)
     **/
     public void __setattr__(String name, PyObject value) {
         object___setattr__(name, value);
@@ -1071,7 +1071,7 @@ public class PyObject implements Serializable {
      * A variant of the __delattr__ method which accepts a String
      * as the key.  <b>This String must be interned</b>.
      * By default, this will call
-     * <code>__delattr__(PyString name)</code>
+     * <code>__delattr__(PyBytes name)</code>
      * with the appropriate args.
      * The only reason to override this method is for performance.
      *
@@ -1079,7 +1079,7 @@ public class PyObject implements Serializable {
      *             <b> must be an interned string </b>.
      * @exception Py.AttributeError if the name doesn't exist
      *
-     * @see #__delattr__(PyString)
+     * @see #__delattr__(PyBytes)
      **/
     public void __delattr__(String name) {
         object___delattr__(name);
@@ -2037,8 +2037,8 @@ public class PyObject implements Serializable {
         // situations
         // XXX: This method isn't expensive but could (and maybe
         // should?) be optimized for worst case scenarios
-        return (op == "+") && (t1 == PyString.TYPE || t1 == PyUnicode.TYPE) &&
-                (t2.isSubType(PyString.TYPE) || t2.isSubType(PyUnicode.TYPE));
+        return (op == "+") && (t1 == PyBytes.TYPE || t1 == PyUnicode.TYPE) &&
+                (t2.isSubType(PyBytes.TYPE) || t2.isSubType(PyUnicode.TYPE));
     }
 
     private PyObject _binop_rule(PyType t1, PyObject o2, PyType t2,

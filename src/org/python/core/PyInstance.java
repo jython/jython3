@@ -300,7 +300,7 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
 
         PyObject setter = instclass.__setattr__;
         if (setter != null) {
-            setter.__call__(this, new PyString(name), value);
+            setter.__call__(this, new PyBytes(name), value);
         } else {
             __dict__.__setitem__(name, value);
         }
@@ -326,7 +326,7 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
     final void instance___delattr__(String name) {
         PyObject deller = instclass.__delattr__;
         if (deller != null) {
-            deller.__call__(this, new PyString(name));
+            deller.__call__(this, new PyBytes(name));
         } else {
             try {
                 __dict__.__delitem__(name);
@@ -404,7 +404,7 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
      */
     protected PyUnicode makeDefaultRepr() {
         PyObject mod = instclass.__dict__.__finditem__("__module__");
-        String modStr = (mod == null || !Py.isInstance(mod, PyString.TYPE)) ? "?" : mod.toString();
+        String modStr = (mod == null || !Py.isInstance(mod, PyBytes.TYPE)) ? "?" : mod.toString();
         return new PyUnicode(String.format("<%s.%s instance at %s>", modStr, instclass.__name__,
                 Py.idstr(this)));
     }

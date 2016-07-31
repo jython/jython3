@@ -1600,12 +1600,12 @@ public class PyByteArrayTest extends BaseBytesTest {
     }
 
     @Override
-    public PyByteArray getInstance(PyString arg, PyObject encoding, PyObject errors) {
+    public PyByteArray getInstance(PyUnicode arg, PyObject encoding, PyObject errors) {
         return new PyByteArray(arg, encoding, errors);
     }
 
     @Override
-    public PyByteArray getInstance(PyString arg, String encoding, String errors) {
+    public PyByteArray getInstance(PyUnicode arg, String encoding, String errors) {
         return new PyByteArray(arg, encoding, errors);
     }
 

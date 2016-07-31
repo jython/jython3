@@ -173,7 +173,7 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
             PyObject winnerNew = winner.lookup("__new__");
             if (winnerNew != null && winnerNew != new_) {
                 return invokeNew(winnerNew, winner, false,
-                                 new PyObject[] {new PyString(name), bases, dict}, Py.NoKeywords);
+                                 new PyObject[] {new PyBytes(name), bases, dict}, Py.NoKeywords);
             }
             metatype = winner;
         }
@@ -245,7 +245,7 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
             wantDict = mayAddDict;
             wantWeak = mayAddWeak;
         } else {
-            if (slots instanceof PyString) {
+            if (slots instanceof PyBytes) {
                 slots = new PyTuple(slots);
             }
 
@@ -543,7 +543,7 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
             } else {
                 // XXX: Hack: Py.None may be null during bootstrapping. Most types
                 // encountered then should have docstrings anyway
-                docObj = Py.None == null ? new PyString() : Py.None;
+                docObj = Py.None == null ? new PyBytes() : Py.None;
             }
             dict.__setitem__("__doc__", docObj);
         }
@@ -1739,7 +1739,7 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
     @ExposedSet(name = "__name__")
     public void pySetName(PyObject name) {
         // guarded by __setattr__ to prevent modification of builtins
-        if (!(name instanceof PyString)) {
+        if (!(name instanceof PyBytes)) {
             throw Py.TypeError(String.format("can only assign string to %s.__name__, not '%s'",
                                              this.name, name.getType().fastGetName()));
         }
@@ -1863,7 +1863,7 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
             kind = "type";
         }
         PyObject module = getModule();
-        if (module instanceof PyString && !module.toString().equals("__builtin__")) {
+        if (module instanceof PyBytes && !module.toString().equals("__builtin__")) {
             return String.format("<%s '%s.%s'>", kind, module.toString(), getName());
         }
         return String.format("<%s '%s'>", kind, getName());
@@ -1886,7 +1886,7 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
     //     I bet this is duplicated more or less in other places.
     private static String confirmIdentifier(PyObject obj) {
         String identifier;
-//        if (!(obj instanceof PyString)) {
+//        if (!(obj instanceof PyBytes)) {
 //            throw Py.TypeError(String.format("__slots__ items must be strings, not '%.200s'",
 //                                             obj.getType().fastGetName()));
 //        } else

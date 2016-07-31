@@ -15,10 +15,10 @@ import java.lang.reflect.Modifier;
 
 import org.python.core.JyAttribute;
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyInstance;
-import org.python.core.PyString;
 import org.python.core.Traverseproc;
 import org.python.core.TraverseprocDerived;
 import org.python.core.Visitproc;
@@ -523,24 +523,24 @@ public class gc {
 
     public static final String __name__ = "gc";
 
-    public static final PyString __doc__enable = new PyString(
+    public static final PyBytes __doc__enable = new PyBytes(
             "enable() -> None\n" +
             "\n" +
             "Enable automatic garbage collection.\n" +
             "(does nothing in Jython)\n");
 
-    public static final PyString __doc__disable = new PyString(
+    public static final PyBytes __doc__disable = new PyBytes(
             "disable() -> None\n" +
             "\n" +
             "Disable automatic garbage collection.\n" +
             "(raises NotImplementedError in Jython)\n");
 
-    public static final PyString __doc__isenabled = new PyString(
+    public static final PyBytes __doc__isenabled = new PyBytes(
             "isenabled() -> status\n" +
             "\n" +
             "Returns true if automatic garbage collection is enabled.\n");
 
-    public static final PyString __doc__collect = new PyString(
+    public static final PyBytes __doc__collect = new PyBytes(
             "collect([generation]) -> n\n" +
             "\n" +
             "With no arguments, run a full collection.  The optional argument\n" +
@@ -550,13 +550,13 @@ public class gc {
             "(Jython emulates CPython cyclic trash counting if objects are monitored.\n" +
             "If no objects are monitored, returns -2\n");
 
-    public static final PyString __doc__get_count = new PyString(
+    public static final PyBytes __doc__get_count = new PyBytes(
             "get_count() -> (count0, count1, count2)\n" +
             "\n" +
             "Return the current collection counts\n" +
             "(raises NotImplementedError in Jython)\n");
 
-    public static final PyString __doc__set_debug = new PyString(
+    public static final PyBytes __doc__set_debug = new PyBytes(
             "set_debug(flags) -> None\n" +
             "\n" +
             "Set the garbage collection debugging flags. Debugging information is\n" +
@@ -572,43 +572,43 @@ public class gc {
             "  DEBUG_SAVEALL - Save objects to gc.garbage rather than freeing them.\n" +
             "  DEBUG_LEAK - Debug leaking programs (everything but STATS).\n");
 
-    public static final PyString __doc__get_debug = new PyString(
+    public static final PyBytes __doc__get_debug = new PyBytes(
             "get_debug() -> flags\n" +
             "\n" +
             "Get the garbage collection debugging flags.\n");
 
-    public static final PyString __doc__set_thresh = new PyString(
+    public static final PyBytes __doc__set_thresh = new PyBytes(
             "set_threshold(threshold0, [threshold1, threshold2]) -> None\n" +
             "\n" +
             "Sets the collection thresholds.  Setting threshold0 to zero disables\n" +
             "collection.\n" +
             "(raises NotImplementedError in Jython)\n");
 
-    public static final PyString __doc__get_thresh = new PyString(
+    public static final PyBytes __doc__get_thresh = new PyBytes(
             "get_threshold() -> (threshold0, threshold1, threshold2)\n" +
             "\n" +
             "Return the current collection thresholds\n" +
             "(raises NotImplementedError in Jython)\n");
 
-    public static final PyString __doc__get_objects = new PyString(
+    public static final PyBytes __doc__get_objects = new PyBytes(
             "get_objects() -> [...]\n" +
             "\n" +
             "Return a list of objects tracked by the collector (excluding the list\n" +
             "returned).\n" +
             "(raises NotImplementedError in Jython)\n");
 
-    public static final PyString __doc__is_tracked = new PyString(
+    public static final PyBytes __doc__is_tracked = new PyBytes(
             "is_tracked(obj) -> bool\n" +
             "\n" +
             "Returns true if the object is tracked by the garbage collector.\n" +
             "(i.e. monitored in Jython)\n");
 
-    public static final PyString __doc__get_referrers = new PyString(
+    public static final PyBytes __doc__get_referrers = new PyBytes(
             "get_referrers(*objs) -> list\n" +
             "Return the list of objects that directly refer to any of objs.\n" +
             "(only finds monitored referrers in Jython)");
 
-    public static final PyString __doc__get_referents = new PyString(
+    public static final PyBytes __doc__get_referents = new PyBytes(
             "get_referents(*objs) -> list\n" +
             "Return the list of objects that are directly referred to by objs.");
 

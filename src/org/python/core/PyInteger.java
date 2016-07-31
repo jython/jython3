@@ -68,24 +68,17 @@ public class PyInteger extends PyObject {
                 if (x instanceof PyBoolean) {
                     return (coerce(x) == 0) ? Py.Zero : Py.One;
                 } else if (x instanceof PyByteArray) {
-                    // Make use of the string to int conversion in PyString
-                    PyString xs = new PyString(x.asString());
+                    // Make use of the string to int conversion in PyBytes
+                    PyBytes xs = new PyBytes(x.asString());
                     return asPyInteger(xs);
                 } else {
                     return asPyInteger(x);
                 }
-            } else if (!(x instanceof PyString)) {
+            } else if (!(x instanceof PyBytes)) {
                 throw Py.TypeError("int: can't convert non-string with explicit base");
             }
 
-            try {
-                return Py.newInteger(((PyString)x).atoi(base));
-            } catch (PyException pye) {
-                if (pye.match(Py.OverflowError)) {
-                    return ((PyString)x).atol(base);
-                }
-                throw pye;
-            }
+            return ((PyBytes)x).atol(base);
 
         } else { // A PyIntegerDerived(subtype, ... ) is required as the return value
 
@@ -100,11 +93,11 @@ public class PyInteger extends PyObject {
                     throw Py.OverflowError("long int too large to convert to int");
                 }
 
-            } else if (!(x instanceof PyString)) {
+            } else if (!(x instanceof PyBytes)) {
                 throw Py.TypeError("int: can't convert non-string with explicit base");
             }
 
-            return new PyIntegerDerived(subtype, ((PyString)x).atoi(base));
+            return ((PyBytes)x).atol(base);
         }
     } // xxx
 

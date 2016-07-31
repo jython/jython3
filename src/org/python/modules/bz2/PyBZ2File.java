@@ -15,6 +15,7 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.python.core.ArgParser;
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyException;
 import org.python.core.PyIterator;
 import org.python.core.PyList;
@@ -22,7 +23,6 @@ import org.python.core.PyLong;
 import org.python.core.PyNone;
 import org.python.core.PyObject;
 import org.python.core.PySequence;
-import org.python.core.PyString;
 import org.python.core.PyType;
 import org.python.core.Untraversable;
 import org.python.core.finalization.FinalizablePyObject;
@@ -86,7 +86,7 @@ public class PyBZ2File extends PyObject implements FinalizablePyObject, Finaliza
                 "filename", "mode", "buffering", "compresslevel" }, 1);
 
         PyObject filename = ap.getPyObject(0);
-        if (!(filename instanceof PyString)) {
+        if (!(filename instanceof PyBytes)) {
             throw Py.TypeError("coercing to Unicode: need string, '"
                     + filename.getType().fastGetName() + "' type found");
         }
@@ -94,11 +94,11 @@ public class PyBZ2File extends PyObject implements FinalizablePyObject, Finaliza
         String mode = ap.getString(1, "r");
         int buffering = ap.getInt(2, 0);
         int compresslevel = ap.getInt(3, 9);
-        BZ2File___init__((PyString) filename, mode, buffering, compresslevel);
+        BZ2File___init__((PyBytes) filename, mode, buffering, compresslevel);
     }
 
-    private void BZ2File___init__(PyString inFileName, String mode,
-            int buffering, int compresslevel) {
+    private void BZ2File___init__(PyBytes inFileName, String mode,
+                                  int buffering, int compresslevel) {
         try {
             fileName = inFileName.asString();
             this.buffering = buffering;
@@ -187,8 +187,8 @@ public class PyBZ2File extends PyObject implements FinalizablePyObject, Finaliza
 
         int size = ap.getInt(0, -1);
 
-        if (size == 0) { return Py.EmptyString; }
-        if (size < 0) { return new PyString(buffer.readall()); }
+        if (size == 0) { return Py.EmptyByte; }
+        if (size < 0) { return new PyBytes(buffer.readall()); }
         StringBuilder data = new StringBuilder(size);
         while (data.length() < size) {
             String chunk = buffer.read(size - data.length());
@@ -197,7 +197,7 @@ public class PyBZ2File extends PyObject implements FinalizablePyObject, Finaliza
             }
             data.append(chunk);
         }
-        return new PyString(data.toString());
+        return new PyBytes(data.toString());
     }
 
     @ExposedMethod
@@ -213,7 +213,7 @@ public class PyBZ2File extends PyObject implements FinalizablePyObject, Finaliza
     }
 
     @ExposedMethod
-    public PyString BZ2File_readline(PyObject[] args, String[] kwds) {
+    public PyBytes BZ2File_readline(PyObject[] args, String[] kwds) {
         checkInIterMode();
         checkReadBufferInit();
 
@@ -222,7 +222,7 @@ public class PyBZ2File extends PyObject implements FinalizablePyObject, Finaliza
 
         int size = ap.getInt(0, -1);
 
-        return new PyString(buffer.readline(size));
+        return new PyBytes(buffer.readline(size));
     }
 
     @ExposedMethod
@@ -236,8 +236,8 @@ public class PyBZ2File extends PyObject implements FinalizablePyObject, Finaliza
         }
         PyList lineList = new PyList();
 
-        PyString line = null;
-        while (!(line = BZ2File_readline(args, kwds)).equals(Py.EmptyString)) {
+        PyBytes line = null;
+        while (!(line = BZ2File_readline(args, kwds)).equals(Py.EmptyByte)) {
             lineList.add(line);
         }
 
@@ -387,9 +387,9 @@ public class PyBZ2File extends PyObject implements FinalizablePyObject, Finaliza
 
         @Override
         public PyObject __next__() {
-            PyString s = BZ2File_readline(new PyObject[0], new String[0]);
+            PyBytes s = BZ2File_readline(new PyObject[0], new String[0]);
 
-            if (s.equals(Py.EmptyString)) {
+            if (s.equals(Py.EmptyByte)) {
                 return null;
             } else {
                 return s;

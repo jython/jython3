@@ -50,6 +50,7 @@ import org.python.core.Py;
 import org.python.core.PyBUF;
 import org.python.core.PyBuffer;
 import org.python.core.PyBuiltinFunctionNarrow;
+import org.python.core.PyBytes;
 import org.python.core.PyDictionary;
 import org.python.core.PyException;
 import org.python.core.PyFile;
@@ -57,7 +58,6 @@ import org.python.core.PyFloat;
 import org.python.core.PyList;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
@@ -78,7 +78,7 @@ import org.python.util.PosixShim;
  */
 public class PosixModule implements ClassDictInit {
 
-    public static final PyString __doc__ = new PyString(
+    public static final PyBytes __doc__ = new PyBytes(
         "This module provides access to operating system functionality that is\n" +
         "standardized by the C Standard and the POSIX standard (a thinly\n" +
         "disguised Unix interface).  Refer to the library manual and\n" +
@@ -206,7 +206,7 @@ public class PosixModule implements ClassDictInit {
         }
         dict.__setitem__("__all__", keys);
 
-        dict.__setitem__("__name__", new PyString(os.getModuleName()));
+        dict.__setitem__("__name__", new PyBytes(os.getModuleName()));
         dict.__setitem__("__doc__", __doc__);
     }
 
@@ -296,7 +296,7 @@ public class PosixModule implements ClassDictInit {
         throw Py.TypeError("an integer or Java/Jython file descriptor is required");
     }
 
-    public static PyString __doc___exit = new PyString(
+    public static PyBytes __doc___exit = new PyBytes(
         "_exit(status)\n\n" +
         "Exit to the system with specified status, without normal exit processing.");
     public static void _exit() {
@@ -307,7 +307,7 @@ public class PosixModule implements ClassDictInit {
         System.exit(status);
     }
 
-    public static PyString __doc__access = new PyString(
+    public static PyBytes __doc__access = new PyBytes(
         "access(path, mode) -> True if granted, False otherwise\n\n" +
         "Use the real uid/gid to test for access to a path.  Note that most\n" +
         "operations will use the effective uid/gid, therefore this routine can\n" +
@@ -336,7 +336,7 @@ public class PosixModule implements ClassDictInit {
         return result;
     }
 
-    public static PyString __doc__chdir = new PyString(
+    public static PyBytes __doc__chdir = new PyBytes(
         "chdir(path)\n\n" +
         "Change the current working directory to the specified path.");
     public static void chdir(PyObject path) {
@@ -359,7 +359,7 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__chmod = new PyString(
+    public static PyBytes __doc__chmod = new PyBytes(
         "chmod(path, mode)\n\n" +
         "Change the access permissions of a file.");
 
@@ -383,7 +383,7 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__chown = new PyString(
+    public static PyBytes __doc__chown = new PyBytes(
         "chown(path, uid, gid)\n\n" +
         "Change the owner and group id of path to the numeric uid and gid.");
     @Hide(OS.NT)
@@ -393,7 +393,7 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__close = new PyString(
+    public static PyBytes __doc__close = new PyBytes(
         "close(fd)\n\n" +
         "Close a file descriptor (for low level IO).");
     public static void close(PyObject fd) {
@@ -426,7 +426,7 @@ public class PosixModule implements ClassDictInit {
 //        return Py.newLong(posix.dup2(getFD(fd1).getIntFD(), getFD(fd2).getIntFD()));
 //    }
 
-    public static PyString __doc__fdopen = new PyString(
+    public static PyBytes __doc__fdopen = new PyBytes(
         "fdopen(fd [, mode='r' [, bufsize]]) -> file_object\n\n" +
         "Return an open file object connected to a file descriptor.");
     public static PyObject fdopen(PyObject fd) {
@@ -462,7 +462,7 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__fdatasync = new PyString(
+    public static PyBytes __doc__fdatasync = new PyBytes(
         "fdatasync(fildes)\n\n" +
         "force write of file with filedescriptor to disk.\n" +
         "does not force update of metadata.");
@@ -476,7 +476,7 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__fsync = new PyString(
+    public static PyBytes __doc__fsync = new PyBytes(
         "fsync(fildes)\n\n" +
         "force write of file with filedescriptor to disk.");
     public static void fsync(PyObject fd) {
@@ -508,7 +508,7 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__ftruncate = new PyString(
+    public static PyBytes __doc__ftruncate = new PyBytes(
         "ftruncate(fd, length)\n\n" +
         "Truncate a file to a specified length.");
 
@@ -525,21 +525,21 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__getcwd = new PyString(
+    public static PyBytes __doc__getcwd = new PyBytes(
         "getcwd() -> path\n\n" +
         "Return a unicode string representing the current working directory.");
     public static PyObject getcwd() {
         return Py.newUnicode(Py.getSystemState().getCurrentWorkingDir());
     }
 
-    public static PyString __doc__getcwdb = new PyString(
+    public static PyBytes __doc__getcwdb = new PyBytes(
         "getcwd() -> path\n\n" +
         "Return a bytes string representing the current working directory.");
     public static PyObject getcwdb() {
         return Py.newString(Py.getSystemState().getCurrentWorkingDir());
     }
 
-    public static PyString __doc__getegid = new PyString(
+    public static PyBytes __doc__getegid = new PyBytes(
         "getegid() -> egid\n\n" +
         "Return the current process's effective group id.");
     @Hide(OS.NT)
@@ -547,7 +547,7 @@ public class PosixModule implements ClassDictInit {
         return posix.getegid();
     }
 
-    public static PyString __doc__geteuid = new PyString(
+    public static PyBytes __doc__geteuid = new PyBytes(
         "geteuid() -> euid\n\n" +
         "Return the current process's effective user id.");
     @Hide(OS.NT)
@@ -555,7 +555,7 @@ public class PosixModule implements ClassDictInit {
         return posix.geteuid();
     }
 
-    public static PyString __doc__getgid = new PyString(
+    public static PyBytes __doc__getgid = new PyBytes(
         "getgid() -> gid\n\n" +
         "Return the current process's group id.");
     @Hide(value=OS.NT, posixImpl = PosixImpl.JAVA)
@@ -573,15 +573,15 @@ public class PosixModule implements ClassDictInit {
         return new PyList(list);
     }
 
-    public static PyString __doc__getlogin = new PyString(
+    public static PyBytes __doc__getlogin = new PyBytes(
         "getlogin() -> string\n\n" +
         "Return the actual login name.");
     @Hide(value=OS.NT, posixImpl = PosixImpl.JAVA)
     public static PyObject getlogin() {
-        return new PyString(posix.getlogin());
+        return new PyBytes(posix.getlogin());
     }
 
-    public static PyString __doc__getppid = new PyString(
+    public static PyBytes __doc__getppid = new PyBytes(
         "getppid() -> ppid\n\n" +
         "Return the parent's process id.");
     @Hide(value=OS.NT, posixImpl = PosixImpl.JAVA)
@@ -589,7 +589,7 @@ public class PosixModule implements ClassDictInit {
         return posix.getppid();
     }
 
-    public static PyString __doc__getuid = new PyString(
+    public static PyBytes __doc__getuid = new PyBytes(
         "getuid() -> uid\n\n" +
         "Return the current process's user id.");
     @Hide(value=OS.NT, posixImpl = PosixImpl.JAVA)
@@ -597,7 +597,7 @@ public class PosixModule implements ClassDictInit {
         return posix.getuid();
     }
 
-    public static PyString __doc__getpid = new PyString(
+    public static PyBytes __doc__getpid = new PyBytes(
         "getpid() -> pid\n\n" +
         "Return the current process id");
 
@@ -606,7 +606,7 @@ public class PosixModule implements ClassDictInit {
         return posix.getpid();
     }
 
-    public static PyString __doc__getpgrp = new PyString(
+    public static PyBytes __doc__getpgrp = new PyBytes(
         "getpgrp() -> pgrp\n\n" +
         "Return the current process group id.");
     @Hide(value=OS.NT, posixImpl = PosixImpl.JAVA)
@@ -616,7 +616,7 @@ public class PosixModule implements ClassDictInit {
 
 
 
-    public static PyString __doc__isatty = new PyString(
+    public static PyBytes __doc__isatty = new PyBytes(
         "isatty(fd) -> bool\n\n" +
         "Return True if the file descriptor 'fd' is an open file descriptor\n" +
         "connected to the slave end of a terminal.");
@@ -651,7 +651,7 @@ public class PosixModule implements ClassDictInit {
                 + "available for stdin, stdout and stderr (0-2)");
     }
 
-    public static PyString __doc__kill = new PyString(
+    public static PyBytes __doc__kill = new PyBytes(
         "kill(pid, sig)\n\n" +
         "Kill a process with a signal.");
     @Hide(value=OS.NT, posixImpl = PosixImpl.JAVA)
@@ -661,7 +661,7 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__lchmod = new PyString(
+    public static PyBytes __doc__lchmod = new PyBytes(
         "lchmod(path, mode)\n\n" +
         "Change the access permissions of a file. If path is a symlink, this\n" +
         "affects the link itself rather than the target.");
@@ -672,7 +672,7 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__lchown = new PyString(
+    public static PyBytes __doc__lchown = new PyBytes(
         "lchown(path, uid, gid)\n\n" +
         "Change the owner and group id of path to the numeric uid and gid.\n" +
         "This function will not follow symbolic links.");
@@ -683,7 +683,7 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__link = new PyString(
+    public static PyBytes __doc__link = new PyBytes(
         "link(src, dst)\n\n" +
         "Create a hard link to a file.");
 
@@ -703,7 +703,7 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__listdir = new PyString(
+    public static PyBytes __doc__listdir = new PyBytes(
         "listdir(path) -> list_of_strings\n\n" +
         "Return a list containing the names of the entries in the directory.\n\n" +
         "path: path of directory to list\n\n" +
@@ -754,7 +754,7 @@ public class PosixModule implements ClassDictInit {
         return new PyScandirIterator(paths.iterator());
     }
 
-    public static PyString __doc__lseek = new PyString(
+    public static PyBytes __doc__lseek = new PyBytes(
         "lseek(fd, pos, how) -> newpos\n\n" +
         "Set the current position of a file descriptor.");
     public static long lseek(PyObject fd, long pos, int how) {
@@ -789,7 +789,7 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__mkdir = new PyString(
+    public static PyBytes __doc__mkdir = new PyBytes(
         "mkdir(path [, mode=0777])\n\n" +
         "Create a directory.");
     public static void mkdir(PyObject path) {
@@ -818,7 +818,7 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__open = new PyString(
+    public static PyBytes __doc__open = new PyBytes(
         "open(filename, flag [, mode=0777]) -> fd\n\n" +
         "Open a file (for low level IO).\n\n" +
         "Note that the mode argument is not currently supported on Jython.");
@@ -879,7 +879,7 @@ public class PosixModule implements ClassDictInit {
         return new FileIO((PyUnicode) path, fileIOMode);
     }
 
-    public static PyString __doc__popen = new PyString(
+    public static PyBytes __doc__popen = new PyBytes(
         "popen(command [, mode='r' [, bufsize]]) -> pipe\n\n" +
         "Open a pipe to/from a command returning a file object.");
     public static PyObject popen(PyObject[] args, String[] kwds) {
@@ -937,28 +937,28 @@ public class PosixModule implements ClassDictInit {
         return new PyTuple(new PyFileIO(read, OpenMode.R_ONLY), new PyFileIO(write, OpenMode.W_ONLY));
     }
 
-    public static PyString __doc__putenv = new PyString(
+    public static PyBytes __doc__putenv = new PyBytes(
         "putenv(key, value)\n\n" +
         "Change or add an environment variable.");
     public static void putenv(String key, String value) {
         posix.setenv(key, value, 1);
     }
 
-    public static PyString __doc__read = new PyString(
+    public static PyBytes __doc__read = new PyBytes(
         "read(fd, buffersize) -> string\n\n" +
         "Read a file descriptor.");
     public static PyObject read(PyObject fd, int buffersize) {
         Object javaobj = fd.__tojava__(RawIOBase.class);
         if (javaobj != Py.NoConversion) {
             try {
-                return new PyString(StringUtil.fromBytes(((RawIOBase) javaobj).read(buffersize)));
+                return new PyBytes(StringUtil.fromBytes(((RawIOBase) javaobj).read(buffersize)));
             } catch (PyException pye) {
                 throw badFD();
             }
         } else {
             ByteBuffer buffer = ByteBuffer.allocate(buffersize);
             posix.read(getFD(fd).getIntFD(), buffer, buffersize);
-            return new PyString(StringUtil.fromBytes(buffer));
+            return new PyBytes(StringUtil.fromBytes(buffer));
         }
     }
 
@@ -980,24 +980,24 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__remove = new PyString(
+    public static PyBytes __doc__remove = new PyBytes(
         "remove(path)\n\n" +
         "Remove a file (same as unlink(path)).");
     public static void remove(PyObject path) {
         unlink(path);
     }
 
-    public static PyString __doc__rename = new PyString(
+    public static PyBytes __doc__rename = new PyBytes(
         "rename(old, new)\n\n" +
         "Rename a file or directory.");
     public static void rename(PyObject oldpath, PyObject newpath) {
         if (!(absolutePath(oldpath).toFile().renameTo(absolutePath(newpath).toFile()))) {
-            PyObject args = new PyTuple(Py.Zero, new PyString("Couldn't rename file"));
+            PyObject args = new PyTuple(Py.Zero, new PyBytes("Couldn't rename file"));
             throw new PyException(Py.OSError, args);
         }
     }
 
-    public static PyString __doc__rmdir = new PyString(
+    public static PyBytes __doc__rmdir = new PyBytes(
         "rmdir(path)\n\n" +
         "Remove a directory.");
     public static void rmdir(PyObject path) {
@@ -1007,13 +1007,13 @@ public class PosixModule implements ClassDictInit {
         } else if (!file.isDirectory()) {
             throw Py.OSError(Errno.ENOTDIR, path);
         } else if (!file.delete()) {
-            PyObject args = new PyTuple(Py.Zero, new PyString("Couldn't delete directory"),
+            PyObject args = new PyTuple(Py.Zero, new PyBytes("Couldn't delete directory"),
                                         path);
             throw new PyException(Py.OSError, args);
         }
     }
 
-    public static PyString __doc__setpgrp = new PyString(
+    public static PyBytes __doc__setpgrp = new PyBytes(
         "setpgrp()\n\n" +
         "Make this process a session leader.");
     @Hide(value=OS.NT, posixImpl = PosixImpl.JAVA)
@@ -1023,7 +1023,7 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__setsid = new PyString(
+    public static PyBytes __doc__setsid = new PyBytes(
         "setsid()\n\n" +
         "Call the system call setsid().");
     @Hide(value=OS.NT, posixImpl = PosixImpl.JAVA)
@@ -1033,13 +1033,13 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__strerror = new PyString(
+    public static PyBytes __doc__strerror = new PyBytes(
         "strerror(code) -> string\n\n" +
         "Translate an error code to a message string.");
     public static PyObject strerror(int code) {
         Constant errno = Errno.valueOf(code);
         if (errno == Errno.__UNKNOWN_CONSTANT__) {
-            return new PyString("Unknown error: " + code);
+            return new PyBytes("Unknown error: " + code);
         }
         if (errno.name() == errno.toString()) {
             // Fake constant or just lacks a description, fallback to Linux's
@@ -1047,10 +1047,10 @@ public class PosixModule implements ClassDictInit {
             errno = Enum.valueOf(jnr.constants.platform.linux.Errno.class,
                                  errno.name());
         }
-        return new PyString(errno.toString());
+        return new PyBytes(errno.toString());
     }
 
-    public static PyString __doc__symlink = new PyString(
+    public static PyBytes __doc__symlink = new PyBytes(
         "symlink(src, dst)\n\n" +
         "Create a symbolic link pointing to src named dst.");
 
@@ -1088,7 +1088,7 @@ public class PosixModule implements ClassDictInit {
         return Py.newFloat(((double)num)/((double)div));
     }
 
-    public static PyString __doc__times = new PyString(
+    public static PyBytes __doc__times = new PyBytes(
         "times() -> (utime, stime, cutime, cstime, elapsed_time)\n\n" +
         "Return a tuple of floating point numbers indicating process times.");
 
@@ -1105,7 +1105,7 @@ public class PosixModule implements ClassDictInit {
         );
     }
 
-    public static PyString __doc__umask = new PyString(
+    public static PyBytes __doc__umask = new PyBytes(
         "umask(new_mask) -> old_mask\n\n" +
         "Set the current numeric umask and return the previous umask.");
     @Hide(posixImpl = PosixImpl.JAVA)
@@ -1113,7 +1113,7 @@ public class PosixModule implements ClassDictInit {
         return posix.umask(mask);
     }
 
-    public static PyString __doc__unlink = new PyString("unlink(path)\n\n"
+    public static PyBytes __doc__unlink = new PyBytes("unlink(path)\n\n"
             + "Remove a file (same as remove(path)).");
 
     public static void unlink(PyObject path) {
@@ -1137,7 +1137,7 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__utime = new PyString(
+    public static PyBytes __doc__utime = new PyBytes(
         "utime(path, (atime, mtime))\n" +
         "utime(path, None)\n\n" +
         "Set the access and modified time of the file to the given values.  If the\n" +
@@ -1183,7 +1183,7 @@ public class PosixModule implements ClassDictInit {
         return timeval;
     }
 
-    public static PyString __doc__wait = new PyString(
+    public static PyBytes __doc__wait = new PyBytes(
         "wait() -> (pid, status)\n\n" +
         "Wait for completion of a child process.");
     @Hide(value=OS.NT, posixImpl = PosixImpl.JAVA)
@@ -1196,7 +1196,7 @@ public class PosixModule implements ClassDictInit {
         return new PyTuple(Py.newLong(pid), Py.newInteger(status[0]));
     }
 
-    public static PyString __doc__waitpid = new PyString(
+    public static PyBytes __doc__waitpid = new PyBytes(
         "wait() -> (pid, status)\n\n" +
         "Wait for completion of a child process.");
     @Hide(posixImpl = PosixImpl.JAVA)
@@ -1229,7 +1229,7 @@ public class PosixModule implements ClassDictInit {
         return PosixShim.WAIT_MACROS.WEXITSTATUS(status);
     }
 
-    public static PyString __doc__write = new PyString(
+    public static PyBytes __doc__write = new PyBytes(
             "write(fd, string) -> byteswritten\n\n" +
             "Write a string to a file descriptor.");
     public static int write(PyObject fd, BufferProtocol bytes) {
@@ -1250,20 +1250,20 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__unsetenv = new PyString(
+    public static PyBytes __doc__unsetenv = new PyBytes(
         "unsetenv(key)\n\n" +
         "Delete an environment variable.");
     public static void unsetenv(String key) {
         posix.unsetenv(key);
     }
 
-    public static PyString __doc__urandom = new PyString(
+    public static PyBytes __doc__urandom = new PyBytes(
         "urandom(n) -> str\n\n" +
         "Return a string of n random bytes suitable for cryptographic use.");
     public static PyObject urandom(int n) {
         byte[] buf = new byte[n];
         UrandomSource.INSTANCE.nextBytes(buf);
-        return new PyString(StringUtil.fromBytes(buf));
+        return new PyBytes(StringUtil.fromBytes(buf));
     }
 
     /**
@@ -1279,7 +1279,7 @@ public class PosixModule implements ClassDictInit {
         for (String[] command : commands) {
             PyList args = new PyList();
             for (String arg : command) {
-                args.append(new PyString(arg));
+                args.append(new PyBytes(arg));
             }
             commandsTup[i++] = args;
         }

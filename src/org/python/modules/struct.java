@@ -9,12 +9,12 @@
 package org.python.modules;
 
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyException;
 import org.python.core.PyFloat;
 import org.python.core.PyList;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PyTuple;
 
@@ -491,7 +491,7 @@ public class struct implements ClassDictInit {
         int doPack(ByteStream buf, int count, int pos, PyObject[] args) {
             PyObject value = args[pos];
 
-            if (!(value instanceof PyString))
+            if (!(value instanceof PyBytes))
                 throw StructError("argument for 's' must be a string");
 
             String s = value.toString();
@@ -515,7 +515,7 @@ public class struct implements ClassDictInit {
         int doPack(ByteStream buf, int count, int pos, PyObject[] args) {
             PyObject value = args[pos];
 
-            if (!(value instanceof PyString))
+            if (!(value instanceof PyBytes))
                 throw StructError("argument for 'p' must be a string");
 
             buf.writeByte(Math.min(0xFF, Math.min(value.toString().length(), count-1)));
@@ -534,7 +534,7 @@ public class struct implements ClassDictInit {
 
     static class CharFormatDef extends FormatDef {
         void pack(ByteStream buf, PyObject value) {
-            if (!(value instanceof PyString) || value.__len__() != 1)
+            if (!(value instanceof PyBytes) || value.__len__() != 1)
                 throw StructError("char format require string of length 1");
             buf.writeByte(value.toString().charAt(0));
         }
@@ -992,7 +992,7 @@ public class struct implements ClassDictInit {
      * to the given format. The arguments must match the
      * values required by the format exactly.
      */
-    static public PyString pack(PyObject[] args) {
+    static public PyBytes pack(PyObject[] args) {
         if (args.length < 1)
             Py.TypeError("illegal argument type for built-in operation");
 
@@ -1001,7 +1001,7 @@ public class struct implements ClassDictInit {
         FormatDef[] f = whichtable(format);
         int size = calcsize(format, f);
         
-        return new PyString(pack(format, f, size, 1, args).toString());
+        return new PyBytes(pack(format, f, size, 1, args).toString());
     }
     
     // xxx - may need to consider doing a generic arg parser here
@@ -1145,7 +1145,7 @@ public class struct implements ClassDictInit {
 
     private static PyObject exceptionNamespace() {
         PyObject dict = new PyStringMap();
-        dict.__setitem__("__module__", new PyString("struct"));
+        dict.__setitem__("__module__", new PyBytes("struct"));
         return dict;
     }
     

@@ -4,7 +4,7 @@ public interface ClassConstants {
 
     final static String $pyObj      = "Lorg/python/core/PyObject;";
     final static String $pyObjArr   = "[Lorg/python/core/PyObject;";
-    final static String $pyStr      = "Lorg/python/core/PyString;";
+    final static String $pyStr      = "Lorg/python/core/PyBytes;";
     final static String $pyUnicode  = "Lorg/python/core/PyUnicode;";
     final static String $pyExc      = "Lorg/python/core/PyException;";
     final static String $pyFrame    = "Lorg/python/core/PyFrame;";

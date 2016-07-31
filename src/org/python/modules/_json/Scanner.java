@@ -1,13 +1,12 @@
 package org.python.modules._json;
 
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyDictionary;
 import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
-import org.python.core.codecs;
 import org.python.core.Traverseproc;
 import org.python.core.Visitproc;
 import org.python.expose.ExposedGet;
@@ -42,7 +41,7 @@ public class Scanner extends PyObject implements Traverseproc {
     }
 
     public PyObject __call__(PyObject string, PyObject idx) {
-        return _scan_once((PyString)string, idx.asInt());
+        return _scan_once((PyBytes)string, idx.asInt());
     }
 
     private static boolean IS_WHITESPACE(int c) {
@@ -53,15 +52,15 @@ public class Scanner extends PyObject implements Traverseproc {
         return new PyTuple(obj, Py.newInteger(i));
     }
 
-    public PyTuple _parse_object(PyString pystr, int idx) { // }, Py_ssize_t *next_idx_ptr) {
-        /* Read a JSON object from PyString pystr.
+    public PyTuple _parse_object(PyBytes pystr, int idx) { // }, Py_ssize_t *next_idx_ptr) {
+        /* Read a JSON object from PyBytes pystr.
         idx is the index of the first character after the opening curly brace.
 
         Returns a new PyTuple of a PyObject (usually a dict, but object_hook can change that)
         and the next_idx to the first character after
         the closing curly brace.
         */
-        PyString str = pystr;
+        PyBytes str = pystr;
         int end_idx = pystr.__len__() - 1;
         PyList pairs = new PyList();
         PyObject key;
@@ -132,14 +131,14 @@ public class Scanner extends PyObject implements Traverseproc {
         return valIndex(rval, idx + 1);
     }
 
-    public PyTuple _parse_array(PyString pystr, int idx) {
-        /* Read a JSON array from PyString pystr.
+    public PyTuple _parse_array(PyBytes pystr, int idx) {
+        /* Read a JSON array from PyBytes pystr.
 
 
         Returns a new PyTuple of a PyList and next_idx (first character after
         the closing brace.)
         */
-        PyString str = pystr;
+        PyBytes str = pystr;
         int end_idx = pystr.__len__() - 1;
         PyList rval = new PyList();
 
@@ -181,14 +180,14 @@ public class Scanner extends PyObject implements Traverseproc {
     }
 
 
-    public PyTuple _scan_once(PyString pystr, int idx) {
-        /* Read one JSON term (of any kind) from PyString pystr.
+    public PyTuple _scan_once(PyBytes pystr, int idx) {
+        /* Read one JSON term (of any kind) from PyBytes pystr.
         idx is the index of the first character of the term
 
         Returns a new PyTuple of a PyObject representation of the term along
         with the next_idx
         */
-        PyString str = pystr;
+        PyBytes str = pystr;
         int length = pystr.__len__();
         if (idx >= length) {
             throw Py.StopIteration();
@@ -248,8 +247,8 @@ public class Scanner extends PyObject implements Traverseproc {
         return valIndex(parse_constant.__call__(Py.newString(constant)), idx);
     }
 
-    public PyTuple _match_number(PyString pystr, int start) {
-        /* Read a JSON number from PyString pystr.
+    public PyTuple _match_number(PyBytes pystr, int start) {
+        /* Read a JSON number from PyBytes pystr.
         idx is the index of the first character of the number
 
         Returns a new PyObject representation of that number:
@@ -258,7 +257,7 @@ public class Scanner extends PyObject implements Traverseproc {
         along with index to the first character after
         the number.
         */
-        PyString str = pystr;
+        PyBytes str = pystr;
         int end_idx = pystr.__len__() - 1;
         int idx = start;
         boolean is_float = false;
@@ -314,7 +313,7 @@ public class Scanner extends PyObject implements Traverseproc {
         }
 
         /* copy the section we determined to be a number */
-        PyString numstr = (PyString) str.__getslice__(Py.newInteger(start), Py.newInteger(idx));
+        PyBytes numstr = (PyBytes) str.__getslice__(Py.newInteger(start), Py.newInteger(idx));
         if (is_float) {
             /* parse as a float using a fast path if available, otherwise call user defined method */
             return valIndex(parse_float.__call__(numstr), idx);

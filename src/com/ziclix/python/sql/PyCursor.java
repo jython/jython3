@@ -16,11 +16,11 @@ import java.util.List;
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
 import org.python.core.PyBuiltinMethodSet;
+import org.python.core.PyBytes;
 import org.python.core.PyDictionary;
 import org.python.core.PyException;
 import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyUnicode;
 import org.python.core.Traverseproc;
@@ -137,28 +137,28 @@ public class PyCursor extends PyObject implements ClassDictInit, WarningListener
     static {
         PyObject[] m = new PyObject[9];
 
-        m[0] = new PyString("close");
-        m[1] = new PyString("execute");
-        m[2] = new PyString("executemany");
-        m[3] = new PyString("fetchone");
-        m[4] = new PyString("fetchall");
-        m[5] = new PyString("fetchmany");
-        m[6] = new PyString("callproc");
-        m[7] = new PyString("next");
-        m[8] = new PyString("write");
+        m[0] = new PyBytes("close");
+        m[1] = new PyBytes("execute");
+        m[2] = new PyBytes("executemany");
+        m[3] = new PyBytes("fetchone");
+        m[4] = new PyBytes("fetchall");
+        m[5] = new PyBytes("fetchmany");
+        m[6] = new PyBytes("callproc");
+        m[7] = new PyBytes("next");
+        m[8] = new PyBytes("write");
         __methods__ = new PyList(m);
         m = new PyObject[11];
-        m[0] = new PyString("arraysize");
-        m[1] = new PyString("rowcount");
-        m[2] = new PyString("rownumber");
-        m[3] = new PyString("description");
-        m[4] = new PyString("datahandler");
-        m[5] = new PyString("warnings");
-        m[6] = new PyString("lastrowid");
-        m[7] = new PyString("updatecount");
-        m[8] = new PyString("softspace");
-        m[9] = new PyString("closed");
-        m[10] = new PyString("connection");
+        m[0] = new PyBytes("arraysize");
+        m[1] = new PyBytes("rowcount");
+        m[2] = new PyBytes("rownumber");
+        m[3] = new PyBytes("description");
+        m[4] = new PyBytes("datahandler");
+        m[5] = new PyBytes("warnings");
+        m[6] = new PyBytes("lastrowid");
+        m[7] = new PyBytes("updatecount");
+        m[8] = new PyBytes("softspace");
+        m[9] = new PyBytes("closed");
+        m[10] = new PyBytes("connection");
         __members__ = new PyList(m);
     }
 
@@ -830,7 +830,7 @@ public class PyCursor extends PyObject implements ClassDictInit, WarningListener
             return true;
         }
 
-        // originally checked for __getitem__ and __len__, but this is true for PyString
+        // originally checked for __getitem__ and __len__, but this is true for PyBytes
         // and we don't want to insert one character at a time
         return object instanceof PyList || object instanceof PyTuple;
     }

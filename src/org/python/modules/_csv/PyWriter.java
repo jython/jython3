@@ -5,7 +5,7 @@ import org.python.core.Py;
 import org.python.core.PyException;
 import org.python.core.PyFloat;
 import org.python.core.PyObject;
-import org.python.core.PyString;
+import org.python.core.PyBytes;
 import org.python.core.PyType;
 import org.python.core.Traverseproc;
 import org.python.core.Visitproc;
@@ -53,7 +53,7 @@ public class PyWriter extends PyObject implements Traverseproc {
         this.dialect = dialect;
     }
 
-    public static PyString __doc__writerows = Py.newString(
+    public static PyBytes __doc__writerows = Py.newString(
             "writerows(sequence of sequences)\n" +
             "\n" +
             "Construct and write a series of sequences to a csv file.  Non-string\n" +
@@ -82,7 +82,7 @@ public class PyWriter extends PyObject implements Traverseproc {
         }
     }
 
-    public static PyString __doc__writerow = Py.newString(
+    public static PyBytes __doc__writerow = Py.newString(
             "writerow(sequence)\n" +
             "\n" +
             "Construct and write a CSV record from a sequence of fields.  Non-string\n" +
@@ -134,7 +134,7 @@ public class PyWriter extends PyObject implements Traverseproc {
                     quoted = false;
             }
 
-            if (field instanceof PyString) {
+            if (field instanceof PyBytes) {
                 append_ok = join_append(field.toString(), len == 1);
             } else if (field == Py.None) {
                 append_ok = join_append("", len == 1);
@@ -164,7 +164,7 @@ public class PyWriter extends PyObject implements Traverseproc {
             return false;
         }
 
-        writeline.__call__(new PyString(rec.toString()));
+        writeline.__call__(new PyBytes(rec.toString()));
         return true;
     }
 

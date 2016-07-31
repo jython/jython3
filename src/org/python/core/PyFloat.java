@@ -4,7 +4,6 @@ package org.python.core;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import org.python.core.stringlib.FloatFormatter;
 import org.python.core.stringlib.InternalFormat;
@@ -163,7 +162,7 @@ public class PyFloat extends PyObject {
 
     // @ExposedClassMethod(doc = BuiltinDocs.float_hex_doc)
     // public static PyObject float_hex(PyType type, double value) {
-    // return new PyString(Double.toHexString(value));
+    // return new PyBytes(Double.toHexString(value));
     // }
 
     private String pyHexString(Double f) {
@@ -212,7 +211,7 @@ public class PyFloat extends PyObject {
 
     @ExposedMethod(doc = BuiltinDocs.float_hex_doc)
     public PyObject float_hex() {
-        return new PyString(pyHexString(getValue()));
+        return new PyBytes(pyHexString(getValue()));
     }
 
     /**

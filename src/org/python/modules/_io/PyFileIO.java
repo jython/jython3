@@ -11,12 +11,12 @@ import org.python.core.BuiltinDocs;
 import org.python.core.Py;
 import org.python.core.PyArray;
 import org.python.core.PyBuffer;
+import org.python.core.PyBytes;
 import org.python.core.PyException;
 import org.python.core.PyJavaType;
 import org.python.core.PyLong;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyType;
 import org.python.core.PyUnicode;
 import org.python.core.Untraversable;
@@ -64,12 +64,12 @@ public class PyFileIO extends PyRawIOBase {
     @ExposedGet(doc = "True if the file descriptor will be closed")
     public final boolean closefd;
 
-    /** The mode as a PyString based on readable and writable */
+    /** The mode as a PyBytes based on readable and writable */
     @ExposedGet(doc = "String giving the file mode: 'rb', 'rb+', or 'wb'")
-    public final PyString mode;
+    public final PyBytes mode;
 
     @ExposedSet(name = "mode")
-    public final void mode_readonly(PyString value) {
+    public final void mode_readonly(PyBytes value) {
         readonlyAttributeError("mode");
     }
 
@@ -81,7 +81,7 @@ public class PyFileIO extends PyRawIOBase {
 
         this.closefd = false;
         ioDelegate = ioBase;
-        this.mode = new PyString(mode.toString());
+        this.mode = new PyBytes(mode.toString());
     }
     /**
      * Construct an open <code>_io.FileIO</code> starting with an object that may be a file name or
@@ -123,9 +123,9 @@ public class PyFileIO extends PyRawIOBase {
 
         // The mode string of a raw file always asserts it is binary: "rb", "rb+", or "wb".
         if (readable) {
-            this.mode = new PyString(writable ? "rb+" : "rb");
+            this.mode = new PyBytes(writable ? "rb+" : "rb");
         } else {
-            this.mode = new PyString("wb");
+            this.mode = new PyBytes("wb");
         }
     }
 
@@ -481,7 +481,7 @@ public class PyFileIO extends PyRawIOBase {
             return "<_io.FileIO [closed]>";
         } else {
             PyObject name = fastGetDict().__finditem__("name");
-            if (name != null && (name instanceof PyString)) {
+            if (name != null && (name instanceof PyBytes)) {
                 String xname = name.asString();
                 if (name instanceof PyUnicode) {
                     xname = Encoding.encode_UnicodeEscape(xname, false);

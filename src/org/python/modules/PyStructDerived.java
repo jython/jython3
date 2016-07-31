@@ -73,7 +73,7 @@ public class PyStructDerived extends PyStruct implements Slotted,FinalizablePyOb
         dict=new PyStringMap();
     }
 
-    public PyStructDerived(PyType subtype,PyString format) {
+    public PyStructDerived(PyType subtype,PyUnicode format) {
         super(subtype,format);
         slots=new PyObject[subtype.getNumSlots()];
         dict=subtype.instDict();

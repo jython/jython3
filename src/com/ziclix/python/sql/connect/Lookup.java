@@ -20,8 +20,8 @@ import javax.sql.ConnectionPoolDataSource;
 import javax.sql.DataSource;
 
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.Untraversable;
 
 import com.ziclix.python.sql.PyConnection;
@@ -40,8 +40,8 @@ import com.ziclix.python.sql.util.PyArgParser;
 @Untraversable
 public class Lookup extends PyObject {
 
-    private static final PyString _doc =
-            new PyString("establish a connection through a JNDI lookup");
+    private static final PyBytes _doc =
+            new PyBytes("establish a connection through a JNDI lookup");
 
     /**
      * Method __findattr__
@@ -59,7 +59,7 @@ public class Lookup extends PyObject {
     }
 
     /**
-     * Expects a single PyString argument which is the JNDI name of the bound Connection
+     * Expects a single PyBytes argument which is the JNDI name of the bound Connection
      * or DataSource.  If any keywords are passed, an attempt is made to match the keyword
      * to a static final Field on javax.naming.Context.  If the Field is found, the value
      * of the Field is substituted as the key and the value of the keyword is the value

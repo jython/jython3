@@ -20,6 +20,7 @@ import org.python.core.Exceptions;
 import org.python.core.Py;
 import org.python.core.PyBoolean;
 import org.python.core.PyBuiltinCallable;
+import org.python.core.PyBytes;
 import org.python.core.PyClass;
 import org.python.core.PyDictionary;
 import org.python.core.PyException;
@@ -35,7 +36,6 @@ import org.python.core.PyNone;
 import org.python.core.PyObject;
 import org.python.core.PyReflectedFunction;
 import org.python.core.PySequence;
-import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
@@ -470,7 +470,7 @@ public class cPickle implements ClassDictInit {
 
     private static PyType NoneType = PyType.fromClass(PyNone.class);
 
-    private static PyType StringType = PyType.fromClass(PyString.class);
+    private static PyType StringType = PyType.fromClass(PyBytes.class);
 
     private static PyType UnicodeType = PyType.fromClass(PyUnicode.class);
 
@@ -510,7 +510,7 @@ public class cPickle implements ClassDictInit {
 
     public static PyObject exceptionNamespace() {
         PyObject dict = new PyStringMap();
-        dict.__setitem__("__module__", new PyString("cPickle"));
+        dict.__setitem__("__module__", new PyBytes("cPickle"));
         return dict;
     }
 
@@ -538,7 +538,7 @@ public class cPickle implements ClassDictInit {
     public static PyObject _UnpickleableError__str__(PyObject self, PyObject[] args,
                                                      String[] kwargs) {
         PyObject selfArgs = self.__getattr__("args");
-        PyObject a = selfArgs.__len__() > 0 ? selfArgs.__getitem__(0) : new PyString("(what)");
+        PyObject a = selfArgs.__len__() > 0 ? selfArgs.__getitem__(0) : new PyBytes("(what)");
         return new PyUnicode("Cannot pickle %s objects").__mod__(a);
     }
 
@@ -607,7 +607,7 @@ public class cPickle implements ClassDictInit {
      * @param object    a data object which should be pickled.
      * @return         a string representing the pickled object.
      */
-    public static PyString dumps(PyObject object) {
+    public static PyBytes dumps(PyObject object) {
         return dumps(object, 0);
     }
 
@@ -617,7 +617,7 @@ public class cPickle implements ClassDictInit {
      * @param protocol  pickle protocol version (0 - text, 1 - pre-2.3 binary, 2 - 2.3)
      * @return         a string representing the pickled object.
      */
-    public static PyString dumps(PyObject object, int protocol) {
+    public static PyBytes dumps(PyObject object, int protocol) {
         cStringIO.StringIO file = cStringIO.StringIO();
         dump(object, file, protocol);
         return file.getvalue();
@@ -823,7 +823,7 @@ public class cPickle implements ClassDictInit {
                 tup = reduce.__call__(object);
             }
 
-            if (tup instanceof PyString) {
+            if (tup instanceof PyBytes) {
                 save_global(object, tup);
                 return;
             }
@@ -863,7 +863,7 @@ public class cPickle implements ClassDictInit {
             }
 
             if (protocol == 0) {
-                if (!Py.isInstance(pid, PyString.TYPE)) {
+                if (!Py.isInstance(pid, PyBytes.TYPE)) {
                     throw new PyException(PicklingError, "persistent id must be string");
                 }
                 file.write(PERSID);
@@ -1384,7 +1384,7 @@ public class cPickle implements ClassDictInit {
         if (name != null)
             return name;
 
-        name = new PyString("__main__");
+        name = new PyBytes("__main__");
 
         // For use with JPython1.0.x
         //PyObject modules = sys.modules;
@@ -1580,7 +1580,7 @@ public class cPickle implements ClassDictInit {
         public PyObject persistent_load = null;
         public PyObject find_global = null;
 
-        private PyObject mark = new PyString("spam");
+        private PyObject mark = new PyBytes("spam");
 
         private int stackTop;
         private PyObject[] stack;
@@ -1691,7 +1691,7 @@ public class cPickle implements ClassDictInit {
 
 
         final private void load_persid() {
-            load_persid(new PyString(file.readlineNoNl()));
+            load_persid(new PyBytes(file.readlineNoNl()));
         }
 
 
@@ -1865,19 +1865,19 @@ public class cPickle implements ClassDictInit {
             value = Encoding.decode_UnicodeEscape(line, 1, n-1,
                                                   "strict", false);
 
-            push(new PyString(value));
+            push(new PyBytes(value));
         }
 
 
         final private void load_binstring() {
             int len = read_binint();
-            push(new PyString(file.read(len)));
+            push(new PyBytes(file.read(len)));
         }
 
 
         final private void load_short_binstring() {
             int len = file.read(1).charAt(0);
-            push(new PyString(file.read(len)));
+            push(new PyBytes(file.read(len)));
         }
 
 
@@ -1992,7 +1992,7 @@ public class cPickle implements ClassDictInit {
                if (find_global == Py.None)
                    throw new PyException(UnpicklingError,
                          "Global and instance pickles are not supported.");
-               return find_global.__call__(new PyString(module), new PyString(name));
+               return find_global.__call__(new PyBytes(module), new PyBytes(name));
             }
 
             PyObject modules = Py.getSystemState().modules;

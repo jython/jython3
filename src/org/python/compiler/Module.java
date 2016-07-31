@@ -26,6 +26,7 @@ import org.python.core.CodeFlag;
 import org.python.core.CodeLoader;
 import org.python.core.CompilerFlags;
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyCode;
 import org.python.core.PyComplex;
 import org.python.core.PyException;
@@ -37,7 +38,6 @@ import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.python.core.PyRunnable;
 import org.python.core.PyRunnableBootstrap;
-import org.python.core.PyString;
 import org.python.core.PyUnicode;
 import org.python.core.ThreadState;
 
@@ -157,7 +157,7 @@ class PyStringConstant extends Constant implements ClassConstants, Opcodes {
     @Override
     void get(Code c) throws IOException {
         c.ldc(value);
-        c.invokestatic(p(PyString.class), "fromInterned", sig(PyString.class, String.class));
+        c.invokestatic(p(PyBytes.class), "fromInterned", sig(PyBytes.class, String.class));
     }
 
     @Override

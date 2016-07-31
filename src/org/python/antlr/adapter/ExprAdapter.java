@@ -7,12 +7,12 @@ import org.python.antlr.ast.Num;
 import org.python.antlr.ast.Str;
 import org.python.antlr.base.expr;
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyComplex;
 import org.python.core.PyFloat;
 import org.python.core.PyInteger;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyUnicode;
 
 public class ExprAdapter implements AstAdapter {
@@ -24,7 +24,7 @@ public class ExprAdapter implements AstAdapter {
         if (o instanceof PyInteger || o instanceof PyLong || o instanceof PyFloat || o instanceof PyComplex) {
             return new Num(o);
         }
-        if (o instanceof PyString || o instanceof PyUnicode) {
+        if (o instanceof PyBytes || o instanceof PyUnicode) {
             return new Str(o);
         }
         return null;

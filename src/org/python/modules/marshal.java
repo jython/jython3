@@ -1,14 +1,12 @@
 package org.python.modules;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.math.BigInteger;
 import org.python.core.BaseSet;
 import org.python.core.ClassDictInit;
 import org.python.core.PyFile;
 import org.python.core.PyObject;
-import org.python.core.PyString;
+import org.python.core.PyBytes;
 import org.python.core.Py;
 import org.python.core.PyBytecode;
 import org.python.core.PyComplex;
@@ -184,7 +182,7 @@ public class marshal implements ClassDictInit {
                 String buffer = ((PyUnicode) v).encode("utf-8").toString();
                 write_int(buffer.length());
                 write_string(buffer);
-            } else if (v instanceof PyString) {
+            } else if (v instanceof PyBytes) {
                 // ignore interning
                 write_byte(TYPE_STRING);
                 write_int(v.__len__());
@@ -450,7 +448,7 @@ public class marshal implements ClassDictInit {
 
                 case TYPE_UNICODE: {
                     int n = read_int();
-                    PyString buffer = Py.newString(read_string(n));
+                    PyBytes buffer = Py.newString(read_string(n));
                     return buffer.decode("utf-8");
                 }
 
@@ -586,7 +584,7 @@ public class marshal implements ClassDictInit {
     }
 
     public static PyObject loads(PyObject bytes) {
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(((PyString) bytes).getString().getBytes());
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(((PyBytes) bytes).getString().getBytes());
         PyObject f = new PyFile(inputStream);
         return new Unmarshaller(f).load();
     }

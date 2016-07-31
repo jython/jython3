@@ -109,7 +109,7 @@ public class PyUnicode extends PySequence implements Iterable {
         this(subtype, string, false);
     }
 
-    public PyUnicode(PyString pystring) {
+    public PyUnicode(PyBytes pystring) {
         this(TYPE, pystring);
     }
 
@@ -538,7 +538,7 @@ public class PyUnicode extends PySequence implements Iterable {
 
     /**
      * Choose an {@link IndexTranslator} implementation for efficient working, according to the
-     * contents of the {@link PyString#string}.
+     * contents of the {@link PyBytes#string}.
      *
      * @return chosen <code>IndexTranslator</code>
      */
@@ -637,11 +637,11 @@ public class PyUnicode extends PySequence implements Iterable {
             if (S instanceof PyUnicode) {
                 return new PyUnicode(((PyUnicode)S).getString());
             }
-            if (S instanceof PyString) {
-                if (S.getType() != PyString.TYPE && encoding == null && errors == null) {
-                    return ((PyString) S).__unicode__();
+            if (S instanceof PyBytes) {
+                if (S.getType() != PyBytes.TYPE && encoding == null && errors == null) {
+                    return ((PyBytes) S).__unicode__();
                 }
-                PyObject decoded = codecs.decode((PyString)S, encoding, errors);
+                PyObject decoded = codecs.decode((PyBytes)S, encoding, errors);
                 if (decoded instanceof PyUnicode) {
                     return decoded;
                 } else {
@@ -652,7 +652,7 @@ public class PyUnicode extends PySequence implements Iterable {
             return S.__str__();
         } else {
             if (S == null) {
-                return new PyUnicodeDerived(subtype, Py.EmptyString);
+                return new PyUnicodeDerived(subtype, Py.EmptyByte);
             }
             if (S instanceof PyUnicode) {
                 return new PyUnicodeDerived(subtype, (PyUnicode)S);
@@ -948,7 +948,7 @@ public class PyUnicode extends PySequence implements Iterable {
     private PyUnicode coerceToUnicode(PyObject o) {
         if (o instanceof PyUnicode) {
             return (PyUnicode)o;
-        } else if (o instanceof PyString) {
+        } else if (o instanceof PyBytes) {
             throw Py.TypeError("Can't convert 'bytes' object to str implicitly");
         } else if (o instanceof BufferProtocol) {
             // PyByteArray, PyMemoryView
@@ -1029,7 +1029,7 @@ public class PyUnicode extends PySequence implements Iterable {
         PyUnicode otherUnicode;
         if (other instanceof PyUnicode) {
             otherUnicode = (PyUnicode)other;
-        } else if (other instanceof PyString) {
+        } else if (other instanceof PyBytes) {
             throw Py.TypeError("cannot convert 'bytes' object to str implicitly");
         } else {
             return null;
@@ -1160,8 +1160,8 @@ public class PyUnicode extends PySequence implements Iterable {
             return null;
         } else if (o instanceof PyUnicode) {
             return (PyUnicode)o;
-        } else if (o instanceof PyString) {
-            return new PyUnicode(((PyString)o).decode().toString());
+        } else if (o instanceof PyBytes) {
+            return new PyUnicode(((PyBytes)o).decode().toString());
         } else if (o == Py.None) {
             return null;
         } else {
@@ -1177,10 +1177,10 @@ public class PyUnicode extends PySequence implements Iterable {
         if (isBasicPlane()) {
             // this contains only basic plane characters
             if (sep == null) {
-                // And we're stripping whitespace, so use the PyString implementation
+                // And we're stripping whitespace, so use the PyBytes implementation
                 return new PyUnicode(Encoding._strip(getString()));
             } else if (sep.isBasicPlane()) {
-                // And the strip characters are basic plane too, so use the PyString implementation
+                // And the strip characters are basic plane too, so use the PyBytes implementation
                 return new PyUnicode(Encoding._strip(getString(), sep.getString()));
             }
         }
@@ -1198,10 +1198,10 @@ public class PyUnicode extends PySequence implements Iterable {
         if (isBasicPlane()) {
             // this contains only basic plane characters
             if (sep == null) {
-                // And we're stripping whitespace, so use the PyString implementation
+                // And we're stripping whitespace, so use the PyBytes implementation
                 return new PyUnicode(Encoding._lstrip(getString()));
             } else if (sep.isBasicPlane()) {
-                // And the strip characters are basic plane too, so use the PyString implementation
+                // And the strip characters are basic plane too, so use the PyBytes implementation
                 return new PyUnicode(Encoding._lstrip(getString(), sep.getString()));
             }
         }
@@ -1218,10 +1218,10 @@ public class PyUnicode extends PySequence implements Iterable {
         if (isBasicPlane()) {
             // this contains only basic plane characters
             if (sep == null) {
-                // And we're stripping whitespace, so use the PyString implementation
+                // And we're stripping whitespace, so use the PyBytes implementation
                 return new PyUnicode(Encoding._rstrip(getString()));
             } else if (sep.isBasicPlane()) {
-                // And the strip characters are basic plane too, so use the PyString implementation
+                // And the strip characters are basic plane too, so use the PyBytes implementation
                 return new PyUnicode(Encoding._rstrip(getString(), sep.getString()));
             }
         }
@@ -1589,14 +1589,14 @@ public class PyUnicode extends PySequence implements Iterable {
     @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.str_index_doc)
     final int str_index(PyObject subObj, PyObject start, PyObject end) {
         final PyUnicode sub = coerceToUnicode(subObj);
-        // Now use the mechanics of the PyString on the UTF-16 of the PyUnicode.
+        // Now use the mechanics of the PyBytes on the UTF-16 of the PyUnicode.
         return checkIndex(Encoding._find(getString(), sub.getString(), start, end, __len__()));
     }
 
     @ExposedMethod(defaults = {"null", "null"}, doc = BuiltinDocs.str_index_doc)
     final int str_rindex(PyObject subObj, PyObject start, PyObject end) {
         final PyUnicode sub = coerceToUnicode(subObj);
-        // Now use the mechanics of the PyString on the UTF-16 of the PyUnicode.
+        // Now use the mechanics of the PyBytes on the UTF-16 of the PyUnicode.
         return checkIndex(Encoding._rfind(getString(), sub.getString(), start, end, __len__()));
     }
 
@@ -1763,7 +1763,7 @@ public class PyUnicode extends PySequence implements Iterable {
         PyUnicode oldPiece = coerceToUnicode(oldPieceObj);
 
         if (isBasicPlane() && newPiece.isBasicPlane() && oldPiece.isBasicPlane()) {
-            // Use the mechanics of PyString, since all is basic plane
+            // Use the mechanics of PyBytes, since all is basic plane
             return new PyUnicode(Encoding._replace(getString(), oldPiece.getString(), newPiece.getString(), count));
 
         } else {
@@ -2107,11 +2107,11 @@ public class PyUnicode extends PySequence implements Iterable {
     }
 
     @ExposedMethod(doc = BuiltinDocs.str_encode_doc)
-    final PyString str_encode(PyObject[] args, String[] keywords) {
+    final PyBytes str_encode(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("encode", args, keywords, "encoding", "errors");
         String encoding = ap.getString(0, "UTF-8");
         String errors = ap.getString(1, null);
-        return new PyString(encode(encoding, errors));
+        return new PyBytes(encode(encoding, errors));
     }
 
     @ExposedMethod(doc = BuiltinDocs.str___getnewargs___doc)
@@ -2168,19 +2168,19 @@ public class PyUnicode extends PySequence implements Iterable {
 
     @Override
     public PyComplex __complex__() {
-        return new PyString(encodeDecimal()).__complex__();
+        return new PyBytes(encodeDecimal()).__complex__();
     }
 
     public PyObject atoi(int base) {
-        return new PyString(encodeDecimal()).atoi(base);
+        return new PyBytes(encodeDecimal()).atoi(base);
     }
 
     public PyObject atol(int base) {
-        return new PyString(encodeDecimal()).atol(base);
+        return new PyBytes(encodeDecimal()).atol(base);
     }
 
     public double atof() {
-        return new PyString(encodeDecimal()).atof();
+        return new PyBytes(encodeDecimal()).atof();
     }
 
     /**
@@ -2276,7 +2276,7 @@ public class PyUnicode extends PySequence implements Iterable {
      *
      * @param args to be interpolated into the string
      * @param keywords for the trailing args
-     * @param enclosingIterator when used nested, null if subject is this <code>PyString</code>
+     * @param enclosingIterator when used nested, null if subject is this <code>PyBytes</code>
      * @param value the format string when <code>enclosingIterator</code> is not null
      * @return the formatted string based on the arguments
      */
@@ -2324,7 +2324,7 @@ public class PyUnicode extends PySequence implements Iterable {
 
                 // Check for "{}".format(u"abc")
                 if (fieldObj instanceof PyUnicode && !(this instanceof PyUnicode)) {
-                    // Down-convert to PyString, at the risk of raising UnicodeEncodingError
+                    // Down-convert to PyBytes, at the risk of raising UnicodeEncodingError
                     fieldObj = ((PyUnicode)fieldObj).__str__();
                 }
 
@@ -2366,7 +2366,7 @@ public class PyUnicode extends PySequence implements Iterable {
      * argument list, containing positional and keyword arguments.
      *
      * @param fieldName to interpret.
-     * @param bytes true if the field name is from a PyString, false for PyUnicode.
+     * @param bytes true if the field name is from a PyBytes, false for PyUnicode.
      * @param args argument list (positional then keyword arguments).
      * @param keywords naming the keyword arguments.
      * @return the object designated or <code>null</code>.

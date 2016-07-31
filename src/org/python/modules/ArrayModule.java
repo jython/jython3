@@ -3,8 +3,8 @@ package org.python.modules;
 
 import org.python.core.ClassDictInit;
 import org.python.core.PyArray;
+import org.python.core.PyBytes;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyType;
 
 /**
@@ -12,7 +12,7 @@ import org.python.core.PyType;
  */
 public class ArrayModule implements ClassDictInit {
 
-    public static PyString __doc__ = new PyString(
+    public static PyBytes __doc__ = new PyBytes(
         "This module defines a new object type which can efficiently represent\n" +
         "an array of basic values: characters, integers, floating point\n" +
         "numbers.  Arrays are sequence types and behave very much like lists,\n" +

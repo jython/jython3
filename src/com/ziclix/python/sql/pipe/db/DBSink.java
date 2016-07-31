@@ -11,10 +11,10 @@ import com.ziclix.python.sql.PyConnection;
 import com.ziclix.python.sql.pipe.Sink;
 import com.ziclix.python.sql.zxJDBC;
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyDictionary;
 import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -79,7 +79,7 @@ public class DBSink extends BaseDB implements Sink {
 
         if (exclude != Py.None) {
             for (int i = 0; i < exclude.__len__(); i++) {
-                PyObject lowered = Py.newString(((PyString) exclude.__getitem__(i)).lower());
+                PyObject lowered = Py.newString(((PyBytes) exclude.__getitem__(i)).lower());
 
                 this.exclude.add(lowered);
             }
@@ -91,7 +91,7 @@ public class DBSink extends BaseDB implements Sink {
      */
     protected boolean excluded(PyObject key) {
 
-        PyObject lowered = Py.newString(((PyString) key).lower());
+        PyObject lowered = Py.newString(((PyBytes) key).lower());
 
         return this.exclude.contains(lowered);
     }

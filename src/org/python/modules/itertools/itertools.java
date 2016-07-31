@@ -3,11 +3,11 @@ package org.python.modules.itertools;
 
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyException;
 import org.python.core.PyIterator;
 import org.python.core.PyNone;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.Visitproc;
 
@@ -19,7 +19,7 @@ import org.python.core.Visitproc;
  */
 public class itertools implements ClassDictInit {
 
-    public static final PyString __doc__ = new PyString(
+    public static final PyBytes __doc__ = new PyBytes(
             "Functional tools for creating and using iterators.\n\nInfinite iterators:\n" +
             "count([n]) --> n, n+1, n+2, ...\n" +
             "cycle(p) --> p0, p1, ... plast, p0, p1, ...\n" +
@@ -61,7 +61,7 @@ public class itertools implements ClassDictInit {
     }
 
     public static void classDictInit(PyObject dict) {
-        dict.__setitem__("__name__", new PyString("itertools"));
+        dict.__setitem__("__name__", new PyBytes("itertools"));
         dict.__setitem__("__doc__", __doc__);
         dict.__setitem__("chain", chain.TYPE);
         dict.__setitem__("combinations", combinations.TYPE);
@@ -247,7 +247,7 @@ public class itertools implements ClassDictInit {
         }
     }
 
-    public static PyString __doc__tee = new PyString(
+    public static PyBytes __doc__tee = new PyBytes(
             "tee(iterable, n=2) --> tuple of n independent iterators.");
 
     /**

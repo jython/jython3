@@ -189,7 +189,7 @@ public class BaseBytesTest extends TestCase {
                     break;
 
                 default:
-                    PyString s = new PyString(toChar(b));
+                    PyBytes s = new PyBytes(toChar(b));
                     list.add(s);
                     choose = 0;
                     break;
@@ -276,7 +276,7 @@ public class BaseBytesTest extends TestCase {
     public void testInit_PyObject() {
         // A scary set of objects
         final PyObject[] brantub =
-                {null, new PyInteger(5), new PyString("\u00A0\u00A1\u00A2\u00A3\u00A4"),
+                {null, new PyInteger(5), new PyBytes("\u00A0\u00A1\u00A2\u00A3\u00A4"),
                         getInstance(new int[] {180, 190, 200}), new PyRange(1, 301, 50)};
         // The array contents we should obtain
         final int[][] prize =
@@ -519,12 +519,12 @@ public class BaseBytesTest extends TestCase {
         return new MyBytes(value);
     }
 
-    public BaseBytes getInstance(PyString arg, PyObject encoding, PyObject errors)
+    public BaseBytes getInstance(PyUnicode arg, PyObject encoding, PyObject errors)
             throws PyException {
         return new MyBytes(arg, encoding, errors);
     }
 
-    public BaseBytes getInstance(PyString arg, String encoding, String errors) throws PyException {
+    public BaseBytes getInstance(PyUnicode arg, String encoding, String errors) throws PyException {
         return new MyBytes(arg, encoding, errors);
     }
 
@@ -610,20 +610,20 @@ public class BaseBytesTest extends TestCase {
         }
 
         /**
-         * Create a new array by encoding a PyString argument to bytes. If the PyString is actually
+         * Create a new array by encoding a PyBytes argument to bytes. If the PyBytes is actually
          * a PyUnicode, the encoding must be explicitly specified.
          *
          * @param arg primary argument from which value is taken
          * @param encoding name of optional encoding (must be a string type)
          * @param errors name of optional errors policy (must be a string type)
          */
-        public MyBytes(PyString arg, PyObject encoding, PyObject errors) {
+        public MyBytes(PyUnicode arg, PyObject encoding, PyObject errors) {
             super(TYPE);
             init(arg, encoding, errors);
         }
 
         /**
-         * Create a new array by encoding a PyString argument to bytes. If the PyString is actually
+         * Create a new array by encoding a PyBytes argument to bytes. If the PyBytes is actually
          * a PyUnicode, the encoding must be explicitly specified.
          *
          * @param arg primary argument from which value is taken
@@ -631,7 +631,7 @@ public class BaseBytesTest extends TestCase {
          *            installation)
          * @param errors name of optional errors policy
          */
-        public MyBytes(PyString arg, String encoding, String errors) {
+        public MyBytes(PyUnicode arg, String encoding, String errors) {
             super(TYPE);
             init(arg, encoding, errors);
         }
@@ -652,7 +652,7 @@ public class BaseBytesTest extends TestCase {
          * </ul>
          * When it is necessary to specify an encoding, as in the Python signature
          * <code>bytes(string, encoding[, errors])</code>, use the constructor
-         * {@link #MyBytes(PyString, String, String)}. If the PyString is actually a PyUnicode, an
+         * {@link #MyBytes(PyBytes, String, String)}. If the PyBytes is actually a PyUnicode, an
          * encoding must be specified, and using this constructor will throw an exception about
          * that.
          *

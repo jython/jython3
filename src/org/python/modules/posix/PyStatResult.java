@@ -8,7 +8,6 @@ import org.python.core.Py;
 import org.python.core.PyList;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
 import org.python.core.PyUnicode;

@@ -5,7 +5,6 @@ import org.python.core.ArgParser;
 import org.python.core.Py;
 import org.python.core.PyIterator;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
 import org.python.core.PyUnicode;

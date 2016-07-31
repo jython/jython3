@@ -117,7 +117,7 @@ public class AstAdapters {
 
     //XXX: Unnecessary but needs to be fixed in the code generation of asdl_antlr.py
     public static Object py2string(Object o) {
-        if (o instanceof PyString) {
+        if (o instanceof PyBytes) {
             return o;
         }
         return null;
@@ -328,8 +328,8 @@ public class AstAdapters {
         return (java.util.List<withitem>)withitemAdapter.iter2ast(items);
     }
 
-    public static PyString bytes2py(String bytes) {
-        return new PyString(bytes);
+    public static PyBytes bytes2py(String bytes) {
+        return new PyBytes(bytes);
     }
 
     public static String py2bytes(PyObject obj) {

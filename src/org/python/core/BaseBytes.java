@@ -232,7 +232,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      * text string with the specified encoding in subclasses.
      *
      * @see #bytearray___init__(PyObject[], String[])
-     * @see PyByteArray#PyByteArray(PyString, String, String)
+     * @see PyByteArray#PyByteArray(PyBytes, String, String)
      * @param arg primary argument from which value is taken
      * @param encoding name of optional encoding (must be a string type)
      * @param errors name of optional errors policy (must be a string type)
@@ -248,7 +248,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      * text string with the specified encoding in subclasses.
      *
      * @see #bytearray___init__(PyObject[], String[])
-     * @see PyByteArray#PyByteArray(PyString, String, String)
+     * @see PyByteArray#PyByteArray(PyBytes, String, String)
      * @param arg primary argument from which value is taken
      * @param encoding name of optional encoding
      * @param errors name of optional errors policy
@@ -266,12 +266,12 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      * encoding in subclasses. This method thinly wraps a call to the codecs module and deals with
      * checking for PyUnicode (where the encoding argument is mandatory).
      *
-     * @see #ByteArray(PyString, String, String)
+     * @see #ByteArray(PyBytes, String, String)
      * @param arg primary argument from which value is taken
      * @param encoding name of optional encoding
      * @param errors name of optional errors policy
      * @return encoded string
-     * @throws PyException (TypeError) if the <code>PyString</code> is actually a {@link PyUnicode}
+     * @throws PyException (TypeError) if the <code>PyBytes</code> is actually a {@link PyUnicode}
      *             and encoding is <code>null</code>
      */
     protected static String encode(PyObject arg, String encoding, String errors) throws PyException {
@@ -600,7 +600,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      * <li>PyInteger in range 0 to 255 inclusive</li>
      * <li>PyLong in range 0 to 255 inclusive</li>
      * <li>Any type having an __index__() method, in range 0 to 255 inclusive</li>
-     * <li>PyString of length 1</li>
+     * <li>PyBytes of length 1</li>
      * </ul>
      *
      * @param value to convert.
@@ -631,7 +631,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
 
         } else if (b instanceof PyUnicode) {
             /*
-             * PyUnicode has the BufferProtocol interface as it extends PyString. (It would bring
+             * PyUnicode has the BufferProtocol interface as it extends PyBytes. (It would bring
              * you 0xff&charAt(i) in practice.) However, in CPython the unicode string does not have
              * the buffer API.
              */
@@ -1164,10 +1164,10 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
     public PyObject decode(String encoding, String errors) {
         /*
          * Provide a Python <code>str</code> input to the decode method of a codec, which in v2.7
-         * expects a PyString. (In Python 3k the codecs decode from the <code>bytes</code> type, so
+         * expects a PyBytes. (In Python 3k the codecs decode from the <code>bytes</code> type, so
          * we can pass this directly.)
          */
-        PyString this_ = new PyString(this.asString());
+        PyBytes this_ = new PyBytes(this.asString());
         return codecs.decode(this_, encoding, errors);
     }
 

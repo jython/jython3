@@ -21,7 +21,7 @@ class PythonTraceFunction extends TraceFunction implements Traverseproc {
                 PyObject ret = null;
                 try {
                     ts.tracing = true;
-                    ret = tracefunc.__call__(frame, new PyString(label), arg);
+                    ret = tracefunc.__call__(frame, new PyBytes(label), arg);
                 } catch(PyException exc) {
                     frame.tracefunc = null;
                     ts.tracefunc = null;

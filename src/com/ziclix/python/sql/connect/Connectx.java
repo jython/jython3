@@ -17,8 +17,8 @@ import javax.sql.ConnectionPoolDataSource;
 import javax.sql.DataSource;
 
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.Untraversable;
 
 import com.ziclix.python.sql.PyConnection;
@@ -34,8 +34,8 @@ import com.ziclix.python.sql.util.PyArgParser;
 public class Connectx extends PyObject {
 
     private static final String SET = "set";
-    private static final PyString _doc =
-            new PyString("establish a connection through a javax.sql.DataSource or "
+    private static final PyBytes _doc =
+            new PyBytes("establish a connection through a javax.sql.DataSource or "
                          + "javax.sql.ConnectionPooledDataSource");
 
     @Override

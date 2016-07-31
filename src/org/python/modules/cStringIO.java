@@ -13,10 +13,10 @@ package org.python.modules;
 
 import org.python.core.Py;
 import org.python.core.PyArray;
+import org.python.core.PyBytes;
 import org.python.core.PyIterator;
 import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyType;
 
 /**
@@ -109,7 +109,7 @@ public class cStringIO {
 
         public PyObject __next__() {
             _complain_ifclosed();
-            PyString r = readline();
+            PyBytes r = readline();
             if (r.__len__() == 0)
                 return null;
             return r;
@@ -194,7 +194,7 @@ public class cStringIO {
          * An empty string is returned when EOF is encountered immediately.
          * @return     A string containing the data.
          */
-        public PyString read() {
+        public PyBytes read() {
             return read(-1);
         }
 
@@ -208,7 +208,7 @@ public class cStringIO {
          * @return     A string containing the data read.
          */
 
-        public synchronized PyString read(long size) {
+        public synchronized PyBytes read(long size) {
             _complain_ifclosed();
             _convert_to_int(size);
             int len = buf.length();
@@ -222,7 +222,7 @@ public class cStringIO {
                 substr = buf.substring(pos, newpos);
                 pos = newpos;
             }
-            return new PyString(substr);
+            return new PyBytes(substr);
         }
 
         /**
@@ -232,7 +232,7 @@ public class cStringIO {
          * An empty string is returned when EOF is hit immediately.
          * @return data from the file up to and including the newline.
          */
-        public PyString readline() {
+        public PyBytes readline() {
             return readline(-1);
         }
 
@@ -246,12 +246,12 @@ public class cStringIO {
          * returned.
          * @return data from the file up to and including the newline.
          */
-        public synchronized PyString readline(long size) {
+        public synchronized PyBytes readline(long size) {
             _complain_ifclosed();
             _convert_to_int(size);
             int len = buf.length();
             if (pos == len) {
-                return new PyString("");
+                return new PyBytes("");
             }
             int i = buf.indexOf("\n", pos);
             int newpos = (i < 0) ? len : i + 1;
@@ -260,7 +260,7 @@ public class cStringIO {
             }
             String r = buf.substring(pos, newpos);
             pos = newpos;
-            return new PyString(r);
+            return new PyBytes(r);
         }
 
 
@@ -268,7 +268,7 @@ public class cStringIO {
          * Read and return a line without the trailing newline.
          * Usind by cPickle as an optimization.
          */
-        public synchronized PyString readlineNoNl() {
+        public synchronized PyBytes readlineNoNl() {
             _complain_ifclosed();
             int len = buf.length();
             int i = buf.indexOf("\n", pos);
@@ -277,7 +277,7 @@ public class cStringIO {
             pos = newpos;
             if (pos  < len) // Skip the newline
                 pos++;
-            return new PyString(r);
+            return new PyBytes(r);
         }
 
 
@@ -303,7 +303,7 @@ public class cStringIO {
             int sizehint_int = (int)sizehint;
             int total = 0;
             PyList lines = new PyList();
-            PyString line = readline();
+            PyBytes line = readline();
             while (line.__len__() > 0) {
                 lines.append(line);
                 total += line.__len__();
@@ -422,9 +422,9 @@ public class cStringIO {
          * before the StringIO object's close() method is called.
          * @return      the contents of the StringIO.
          */
-        public synchronized PyString getvalue() {
+        public synchronized PyBytes getvalue() {
             _complain_ifclosed();
-            return new PyString(buf.toString());
+            return new PyBytes(buf.toString());
         }
 
     }

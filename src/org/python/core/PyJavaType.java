@@ -420,13 +420,13 @@ public class PyJavaType extends PyType {
             String fldname = field.getName();
             if (Modifier.isStatic(field.getModifiers())) {
                 if (fldname.startsWith("__doc__") && fldname.length() > 7
-                        && field.getType() == PyString.class) {
+                        && field.getType() == PyBytes.class) {
                     String fname = fldname.substring(7).intern();
                     PyObject memb = dict.__finditem__(fname);
                     if (memb != null && memb instanceof PyReflectedFunction) {
-                        PyString doc = null;
+                        PyBytes doc = null;
                         try {
-                            doc = (PyString)field.get(null);
+                            doc = (PyBytes)field.get(null);
                         } catch (IllegalAccessException e) {
                             throw Py.JavaError(e);
                         }

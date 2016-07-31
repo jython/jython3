@@ -93,9 +93,9 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
 
     @Override
     public PyObject __dir__() {
-        PyString members[] = new PyString[__members__.length];
+        PyBytes members[] = new PyBytes[__members__.length];
         for (int i = 0; i < __members__.length; i++) {
-            members[i] = new PyString(__members__[i]);
+            members[i] = new PyBytes(__members__[i]);
         }
         return new PyList(members);
     }
@@ -123,9 +123,9 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
             return Py.EmptyTuple;
         }
         int sz = ar.length;
-        PyString[] pystr = new PyString[sz];
+        PyBytes[] pystr = new PyBytes[sz];
         for (int i = 0; i < sz; i++) {
-            pystr[i] = new PyString(ar[i]);
+            pystr[i] = new PyBytes(ar[i]);
         }
         return new PyTuple(pystr);
     }
@@ -142,16 +142,16 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
             return toPyStringTuple(co_freevars);
         }
         if (name == "co_filename") {
-            return new PyString(co_filename);
+            return new PyBytes(co_filename);
         }
         if (name == "co_name") {
-            return new PyString(co_name);
+            return new PyBytes(co_name);
         }
         if (name == "co_code") {
-            return new PyString(getString(co_code));
+            return new PyBytes(getString(co_code));
         }
         if (name == "co_lnotab") {
-            return new PyString(getString(co_lnotab));
+            return new PyBytes(getString(co_lnotab));
         }
         if (name == "co_consts") {
             return new PyTuple(co_consts);
@@ -755,7 +755,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                             ts.exceptions.push(((PyStackException) v).exception);
                             why = Why.RERAISE;
 
-                        } else if (v instanceof PyString) {
+                        } else if (v instanceof PyBytes) {
                             why = Why.RERAISE;
                         } else if (v != Py.None) {
                             throw Py.SystemError("'finally' pops bad exception");
@@ -957,7 +957,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                         if (__import__ == null) {
                             throw Py.ImportError("__import__ not found", "__import__");
                         }
-                        PyString name = Py.newString(co_names[oparg]);
+                        PyBytes name = Py.newString(co_names[oparg]);
                         PyObject fromlist = stack.pop();
                         PyObject level = stack.pop();
 

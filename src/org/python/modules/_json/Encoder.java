@@ -2,13 +2,13 @@ package org.python.modules._json;
 
 import org.python.core.ArgParser;
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyDictionary;
 import org.python.core.PyFloat;
 import org.python.core.PyInteger;
 import org.python.core.PyLong;
 import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
 import org.python.core.PyUnicode;
@@ -82,9 +82,9 @@ public class Encoder extends PyObject implements Traverseproc {
         return obj.__repr__();
     }
 
-    private PyString encode_string(PyObject obj) {
+    private PyBytes encode_string(PyObject obj) {
         /* Return the JSON representation of a string */
-        return (PyString) encoder.__call__(obj);
+        return (PyBytes) encoder.__call__(obj);
     }
 
     private PyObject checkCircularReference(PyObject obj) {
@@ -102,12 +102,12 @@ public class Encoder extends PyObject implements Traverseproc {
     private void encode_obj(PyList rval, PyObject obj, int indent_level) {
         /* Encode Python object obj to a JSON term, rval is a PyList */
         if (obj == Py.None) {
-            rval.append(new PyString("null"));
+            rval.append(new PyBytes("null"));
         } else if (obj == Py.True) {
-            rval.append(new PyString("true"));
+            rval.append(new PyBytes("true"));
         } else if (obj == Py.False) {
-            rval.append(new PyString("false"));
-        } else if (obj instanceof PyString) {
+            rval.append(new PyBytes("false"));
+        } else if (obj instanceof PyBytes) {
             rval.append(encode_string(obj));
         } else if (obj instanceof PyInteger || obj instanceof PyLong) {
             rval.append(obj.__str__());
@@ -134,12 +134,12 @@ public class Encoder extends PyObject implements Traverseproc {
     private void encode_dict(PyList rval, PyDictionary dct, int indent_level) {
         /* Encode Python dict dct a JSON term */
         if (dct.__len__() == 0) {
-            rval.append(new PyString("{}"));
+            rval.append(new PyBytes("{}"));
             return;
         }
 
         PyObject ident = checkCircularReference(dct);
-        rval.append(new PyString("{"));
+        rval.append(new PyBytes("{"));
 
         /* TODO: C speedup not implemented for sort_keys */
 
@@ -147,8 +147,8 @@ public class Encoder extends PyObject implements Traverseproc {
         for (PyObject key : dct.asIterable()) {
             PyUnicode kstr;
 
-            if (key instanceof PyString) {
-                kstr = (PyUnicode) ((PyString) key).decode();
+            if (key instanceof PyBytes) {
+                kstr = (PyUnicode) ((PyBytes) key).decode();
             } else if (key instanceof PyUnicode) {
                 kstr = (PyUnicode) key;
             } else if (key instanceof PyFloat) {
@@ -172,7 +172,7 @@ public class Encoder extends PyObject implements Traverseproc {
             }
 
             PyObject value = dct.__getitem__(key);
-            PyString encoded = encode_string(kstr);
+            PyBytes encoded = encode_string(kstr);
             rval.append(encoded);
             rval.append(key_separator);
             encode_obj(rval, value, indent_level);
@@ -182,13 +182,13 @@ public class Encoder extends PyObject implements Traverseproc {
         if (ident != null) {
             markers.__delitem__(ident);
         }
-        rval.append(new PyString("}"));
+        rval.append(new PyBytes("}"));
     }
 
 
     private void encode_list(PyList rval, PyObject seq, int indent_level) {
         PyObject ident = checkCircularReference(seq);
-        rval.append(new PyString("["));
+        rval.append(new PyBytes("["));
 
         int i = 0;
         for (PyObject obj : seq.asIterable()) {
@@ -202,7 +202,7 @@ public class Encoder extends PyObject implements Traverseproc {
         if (ident != null) {
             markers.__delitem__(ident);
         }
-        rval.append(new PyString("]"));
+        rval.append(new PyBytes("]"));
     }
 
 

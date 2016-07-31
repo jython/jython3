@@ -7,12 +7,12 @@ import org.python.core.PyArray;
 import org.python.core.PyBUF;
 import org.python.core.PyBuffer;
 import org.python.core.PyByteArray;
+import org.python.core.PyBytes;
 import org.python.core.PyException;
 import org.python.core.PyList;
 import org.python.core.PyLong;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PyType;
 import org.python.core.PyUnicode;
@@ -523,7 +523,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
              * at the end, but often there is only one.
              */
             PyList list = null;
-            PyObject curr = Py.EmptyString;
+            PyObject curr = Py.EmptyByte;
 
             while (remainingLimit > 0) {
 
@@ -580,7 +580,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
 
                 } else {
                     // peekResult was vacuous: we must be finished
-                    curr = Py.EmptyString;
+                    curr = Py.EmptyByte;
                     remainingLimit = 0;
                 }
             }
@@ -594,7 +594,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
                 if (curr.__bool__()) {
                     list.add(curr);
                 }
-                return Py.EmptyString.join(list);
+                return Py.EmptyByte.join(list);
             }
 
         } else {
@@ -612,9 +612,9 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
                 PyObject curr = readMethod.__call__(Py.One);
 
                 if (curr.__bool__()) {
-                    if (curr instanceof PyString) {
+                    if (curr instanceof PyBytes) {
                         // Should be one-character string holding a byte
-                        char c = ((PyString)curr).getString().charAt(0);
+                        char c = ((PyBytes)curr).getString().charAt(0);
                         if (c == '\n') {
                             remainingLimit = 0; // Engineer an exit from the outer loop
                         }
@@ -632,7 +632,7 @@ public class PyIOBase extends PyObject implements FinalizableBuiltin, Traversepr
             PyBuffer buf = res.getBuffer(PyBUF.FULL_RO);
             byte[] bytes = new byte[buf.getLen()];
             buf.copyTo(bytes, 0);
-            return new PyString(new String(bytes));
+            return new PyBytes(new String(bytes));
         }
 
     }

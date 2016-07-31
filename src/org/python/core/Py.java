@@ -148,7 +148,7 @@ public final class Py {
     /** The Python boolean True **/
     public final static PyBoolean True = new PyBoolean(true);
     /** A zero-length Python byte string **/
-    public final static PyString EmptyString = new PyString("");
+    public final static PyBytes EmptyByte = new PyBytes("");
     /** A zero-length Python Unicode string **/
     public final static PyUnicode EmptyUnicode = new PyUnicode("");
     /** A Python string containing '\n' **/
@@ -432,7 +432,7 @@ public final class Py {
 
     public static PyException ImportError(String message, String name) {
       return new PyException(Py.ImportError, new PyTuple(
-            new PyString(message), new PyString(name)));
+            new PyBytes(message), new PyBytes(name)));
     }
 
     public static PyObject ValueError;
@@ -450,10 +450,10 @@ public final class Py {
     public static PyException UnicodeTranslateError(String object,
             int start,
             int end, String reason) {
-        return new PyException(Py.UnicodeTranslateError, new PyTuple(new PyString(object),
+        return new PyException(Py.UnicodeTranslateError, new PyTuple(new PyBytes(object),
                 new PyInteger(start),
                 new PyInteger(end),
-                new PyString(reason)));
+                new PyBytes(reason)));
     }
     public static PyObject UnicodeDecodeError;
 
@@ -463,7 +463,7 @@ public final class Py {
             int end,
             String reason) {
         return new PyException(Py.UnicodeDecodeError, new PyTuple(new PyUnicode(encoding),
-                new PyString(object),
+                new PyBytes(object),
                 new PyLong(start),
                 new PyLong(end),
                 new PyUnicode(reason)));
@@ -748,15 +748,15 @@ public final class Py {
         return new PyFloat(v);
     }
 
-    public static PyString newString(char c) {
+    public static PyBytes newString(char c) {
         return makeCharacter(c);
     }
 
-    public static PyString newString(String s) {
-        return new PyString(s);
+    public static PyBytes newString(String s) {
+        return new PyBytes(s);
     }
 
-    public static PyString newStringUTF8(String s) {
+    public static PyBytes newStringUTF8(String s) {
         if (CharMatcher.ASCII.matchesAllOf(s)) {
             // ascii of course is a subset of UTF-8
             return Py.newString(s);
@@ -1596,8 +1596,8 @@ public final class Py {
             }
         } else {
             String contents = null;
-            if (o instanceof PyString) {
-                contents = ((PyString) o).getString();
+            if (o instanceof PyBytes) {
+                contents = ((PyBytes) o).getString();
             } else if (o instanceof PyUnicode) {
                 flags |= CompilerFlags.PyCF_SOURCE_IS_UTF8;
                 contents = o.toString();
@@ -1914,8 +1914,8 @@ public final class Py {
     }
 
     public static char py2char(PyObject o, String msg) {
-        if (o instanceof PyString) {
-            PyString s = (PyString) o;
+        if (o instanceof PyBytes) {
+            PyBytes s = (PyBytes) o;
             if (s.__len__() != 1) {
                 throw Py.TypeError(msg);
             }
@@ -1937,31 +1937,31 @@ public final class Py {
         }
     }
 
-    private final static PyString[] letters = new PyString[256];
+    private final static PyBytes[] letters = new PyBytes[256];
 
     static {
         for (char j = 0; j < 256; j++) {
-            letters[j] = new PyString(j);
+            letters[j] = new PyBytes(j);
         }
     }
 
-    public static final PyString makeCharacter(Character o) {
+    public static final PyBytes makeCharacter(Character o) {
         return makeCharacter(o.charValue());
     }
 
-    public static final PyString makeCharacter(char c) {
+    public static final PyBytes makeCharacter(char c) {
         if (c <= 255) {
             return letters[c];
         } else {
             // This will throw IllegalArgumentException since non-byte value
-            return new PyString(c);
+            return new PyBytes(c);
         }
     }
 
-    static final PyString makeCharacter(int codepoint) {
+    static final PyBytes makeCharacter(int codepoint) {
         if (codepoint < 0 || codepoint > 255) {
             // This will throw IllegalArgumentException since non-byte value
-            return new PyString('\uffff');
+            return new PyBytes('\uffff');
         }
         return letters[codepoint];
     }

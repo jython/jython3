@@ -12,7 +12,6 @@ import com.informix.jdbc.IfmxStatement;
 import com.ziclix.python.sql.DataHandler;
 import com.ziclix.python.sql.FilterDataHandler;
 
-import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,7 +22,7 @@ import java.sql.Types;
 import org.python.core.Py;
 import org.python.core.PyFile;
 import org.python.core.PyObject;
-import org.python.core.PyString;
+import org.python.core.PyBytes;
 
 /**
  * Informix specific data handling.
@@ -110,7 +109,7 @@ public class InformixDataHandler extends FilterDataHandler {
         throws SQLException {
         // there is a bug in the Ifx driver when using setObject() with a String for a
         // prepared statement
-        if (object instanceof PyString) {
+        if (object instanceof PyBytes) {
             super.setJDBCObject(stmt, index, object, Types.VARCHAR);
         } else {
             super.setJDBCObject(stmt, index, object);

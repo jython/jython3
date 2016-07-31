@@ -17,11 +17,11 @@ import org.python.core.ClassDictInit;
 import org.python.core.ContextManager;
 import org.python.core.Py;
 import org.python.core.PyBuiltinMethodSet;
+import org.python.core.PyBytes;
 import org.python.core.PyException;
 import org.python.core.PyInteger;
 import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyUnicode;
 import org.python.core.ThreadState;
 import org.python.core.Traverseproc;
@@ -63,23 +63,23 @@ public class PyConnection extends PyObject implements ClassDictInit, ContextMana
     static {
         PyObject[] m = new PyObject[5];
 
-        m[0] = new PyString("close");
-        m[1] = new PyString("commit");
-        m[2] = new PyString("cursor");
-        m[3] = new PyString("rollback");
-        m[4] = new PyString("nativesql");
+        m[0] = new PyBytes("close");
+        m[1] = new PyBytes("commit");
+        m[2] = new PyBytes("cursor");
+        m[3] = new PyBytes("rollback");
+        m[4] = new PyBytes("nativesql");
         __methods__ = new PyList(m);
         m = new PyObject[10];
-        m[0] = new PyString("autocommit");
-        m[1] = new PyString("dbname");
-        m[2] = new PyString("dbversion");
-        m[3] = new PyString("drivername");
-        m[4] = new PyString("driverversion");
-        m[5] = new PyString("url");
-        m[6] = new PyString("__connection__");
-        m[7] = new PyString("__cursors__");
-        m[8] = new PyString("__statements__");
-        m[9] = new PyString("closed");
+        m[0] = new PyBytes("autocommit");
+        m[1] = new PyBytes("dbname");
+        m[2] = new PyBytes("dbversion");
+        m[3] = new PyBytes("drivername");
+        m[4] = new PyBytes("driverversion");
+        m[5] = new PyBytes("url");
+        m[6] = new PyBytes("__connection__");
+        m[7] = new PyBytes("__cursors__");
+        m[8] = new PyBytes("__statements__");
+        m[9] = new PyBytes("closed");
         __members__ = new PyList(m);
     }
 

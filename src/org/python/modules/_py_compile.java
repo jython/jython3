@@ -5,12 +5,12 @@ import java.io.File;
 
 import jnr.constants.platform.Errno;
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyList;
-import org.python.core.PyString;
 import org.python.core.PySystemState;
 
 public class _py_compile {
-    public static PyList __all__ = new PyList(new PyString[] { new PyString("compile") });
+    public static PyList __all__ = new PyList(new PyBytes[] { new PyBytes("compile") });
 
     public static boolean compile(String filename, String cfile, String dfile) {
         // Resolve relative path names. dfile is only used for error messages and should not be

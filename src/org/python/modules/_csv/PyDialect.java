@@ -3,10 +3,10 @@ package org.python.modules._csv;
 
 import org.python.core.ArgParser;
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyInteger;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyType;
 import org.python.core.Untraversable;
 import org.python.expose.ExposedDelete;
@@ -81,7 +81,7 @@ public class PyDialect extends PyObject {
         PyObject skipinitialspace = ap.getPyObject(7, null);
         PyObject strict = ap.getPyObject(8, null);
 
-        if (dialect instanceof PyString) {
+        if (dialect instanceof PyBytes) {
             dialect = _csv.get_dialect_from_registry(dialect);
         }
 
@@ -153,7 +153,7 @@ public class PyDialect extends PyObject {
         if (src == null) {
             return dflt;
         }
-        boolean isStr = Py.isInstance(src, PyString.TYPE);
+        boolean isStr = Py.isInstance(src, PyBytes.TYPE);
         if (src == Py.None || isStr && src.__len__() == 0) {
             return '\0';
         } else if (!isStr || src.__len__() != 1) {
@@ -179,7 +179,7 @@ public class PyDialect extends PyObject {
         if (src == Py.None) {
             return null;
         }
-        if (!(src instanceof PyString)) {
+        if (!(src instanceof PyBytes)) {
             throw Py.TypeError(String.format("\"%s\" must be an string", name));
         }
         return src.toString();

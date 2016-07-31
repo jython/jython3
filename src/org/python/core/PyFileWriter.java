@@ -53,8 +53,8 @@ public class PyFileWriter extends PyObject {
     public void write(PyObject o) {
         if (o instanceof PyUnicode) {
             write(((PyUnicode) o).getString());
-        } else if (o instanceof PyString) {
-            write(((PyString) o).getString());
+        } else if (o instanceof PyBytes) {
+            write(((PyBytes) o).getString());
         } else {
             throw Py.TypeError("write requires a string as its argument");
         }
@@ -75,7 +75,7 @@ public class PyFileWriter extends PyObject {
 
         PyObject item = null;
         while ((item = iter.__next__()) != null) {
-            if (!(item instanceof PyString)) {
+            if (!(item instanceof PyBytes)) {
                 throw Py.TypeError("writelines() argument must be a sequence of strings");
             }
             write(item);

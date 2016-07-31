@@ -12,11 +12,11 @@ import org.python.core.Options;
 import org.python.core.Py;
 import org.python.core.PyArray;
 import org.python.core.PyBuiltinFunctionSet;
+import org.python.core.PyBytes;
 import org.python.core.PyDictionary;
 import org.python.core.PyException;
 import org.python.core.PyInteger;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.Untraversable;
 
@@ -120,9 +120,9 @@ public class zxJDBC extends PyObject implements ClassDictInit {
      * @param dict
      */
     public static void classDictInit(PyObject dict) {
-        dict.__setitem__("apilevel", new PyString("2.0"));
+        dict.__setitem__("apilevel", new PyBytes("2.0"));
         dict.__setitem__("threadsafety", new PyInteger(1));
-        dict.__setitem__("paramstyle", new PyString("qmark"));
+        dict.__setitem__("paramstyle", new PyBytes("qmark"));
         dict.__setitem__("Date", new zxJDBCFunc("Date", 1, 3, 3,
                                                 "construct a Date from year, month, day"));
         dict.__setitem__("Time", new zxJDBCFunc("Time", 2, 3, 3,
@@ -178,7 +178,7 @@ public class zxJDBC extends PyObject implements ClassDictInit {
             Field[] fields = c.getFields();
 
             for (Field f : fields) {
-                PyString name = Py.newString(f.getName());
+                PyBytes name = Py.newString(f.getName());
                 PyObject value = new DBApiType(f.getInt(c));
                 dict.__setitem__(name, value);
                 sqltype.__setitem__(value, name);
@@ -188,7 +188,7 @@ public class zxJDBC extends PyObject implements ClassDictInit {
             fields = c.getFields();
 
             for (Field f : fields) {
-                PyString name = Py.newString(f.getName());
+                PyBytes name = Py.newString(f.getName());
                 PyObject value = Py.newInteger(f.getInt(c));
                 dict.__setitem__(name, value);
             }
@@ -326,7 +326,7 @@ public class zxJDBC extends PyObject implements ClassDictInit {
      * @return PyException
      */
     public static PyException makeException(PyObject type, String msg) {
-        return PyException.doRaise(type, msg == null ? Py.EmptyString : Py.newString(msg));
+        return PyException.doRaise(type, msg == null ? Py.EmptyByte : Py.newString(msg));
     }
 
     /**
@@ -451,7 +451,7 @@ class zxJDBCFunc extends PyBuiltinFunctionSet {
                 ticks = ((Number) arg.__tojava__(Number.class)).longValue();
                 return zxJDBC.datefactory.TimestampFromTicks(ticks);
             case 7:
-                if (arg instanceof PyString) {
+                if (arg instanceof PyBytes) {
                     arg = PyArray.TYPE.__call__(Py.newString("b"), arg);
                 }
                 return arg;

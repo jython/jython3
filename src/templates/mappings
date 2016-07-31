@@ -36,7 +36,7 @@ permutations.derived:org.python.modules.itertools.permutationsDerived
 repeat.derived:org.python.modules.itertools.repeatDerived
 starmap.derived:org.python.modules.itertools.starmapDerived
 takewhile.derived:org.python.modules.itertools.takewhileDerived
-bytes.derived:org.python.core.PyStringDerived
+bytes.derived:org.python.core.PyBytesDerived
 complex.derived:org.python.core.PyComplexDerived
 defaultdict.derived:org.python.modules._collections.PyDefaultDictDerived
 deque.derived:org.python.modules._collections.PyDequeDerived

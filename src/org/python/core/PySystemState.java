@@ -126,7 +126,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
     public static Properties registry; // = init_registry();
     public static PyObject prefix;
     public static PyObject base_prefix;
-    public static PyObject exec_prefix = Py.EmptyString;
+    public static PyObject exec_prefix = Py.EmptyUnicode;
     public static PyObject base_exec_prefix = exec_prefix;
 
     public static final PyUnicode byteorder = new PyUnicode("big");

@@ -1,12 +1,9 @@
 package org.python.modules;
 
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
-import org.python.core.PyType;
 import org.python.core.stringlib.FieldNameIterator;
 import org.python.core.stringlib.MarkupIterator;
-import org.python.expose.ExposedClassMethod;
 import org.python.expose.ExposedFunction;
 import org.python.expose.ExposedModule;
 

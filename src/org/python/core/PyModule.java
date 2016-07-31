@@ -17,7 +17,7 @@ public class PyModule extends PyObject implements Traverseproc {
     public static final PyType TYPE = PyType.fromClass(PyModule.class);
     private static final PyUnicode __MAIN__ = new PyUnicode("__main__");
 
-    private final PyObject moduleDoc = new PyString(
+    private final PyObject moduleDoc = new PyBytes(
         "module(name[, doc])\n" +
         "\n" +
         "Create a module object.\n" +

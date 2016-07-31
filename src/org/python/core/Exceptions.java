@@ -199,7 +199,7 @@ public class Exceptions {
 
         PyObject name = self.__findattr__("name");
         PyObject path = self.__findattr__("path");
-        boolean haveName = name instanceof PyString;
+        boolean haveName = name instanceof PyBytes;
         boolean havePath = path instanceof PyInteger;
         if (!haveName && !havePath) {
             return str;
@@ -279,7 +279,7 @@ public class Exceptions {
 
         PyObject filename = self.__findattr__("filename");
         PyObject lineno = self.__findattr__("lineno");
-        boolean haveFilename = filename instanceof PyString;
+        boolean haveFilename = filename instanceof PyBytes;
         boolean haveLieno = lineno instanceof PyInteger;
         if (!haveFilename && !haveLieno) {
             return str;
@@ -443,7 +443,7 @@ public class Exceptions {
         PyBaseException.TYPE.invoke("__init__", self, args, kwargs);
         UnicodeError__init__(self, args, kwargs, PyObject.TYPE);
         PyObject object = self.__getattr__("object");
-        if (!Py.isInstance(object, PyString.TYPE)) {
+        if (!Py.isInstance(object, PyBytes.TYPE)) {
             if (!(object instanceof BufferProtocol)) {
                 throw Py.TypeError(String.format("argument 2 must be a buffer, not %s",
                         object.getType().fastGetName()));
@@ -453,7 +453,7 @@ public class Exceptions {
             for (int i = 0; i < chars.length; i++) {
                 chars[i] = (char) buf.intAt(i);
             }
-            self.__setattr__("object", new PyString(new String(chars)));
+            self.__setattr__("object", new PyBytes(new String(chars)));
         }
     }
 
@@ -623,17 +623,17 @@ public class Exceptions {
     }
 
     /**
-     * Ensure a PyString value for UnicodeErrors
+     * Ensure a PyBytes value for UnicodeErrors
      *
      * @param attr a PyObject
      * @param name of the attribute
-     * @return an PyString
+     * @return an PyBytes
      */
-    public static PyString getString(PyObject attr, String name) {
-        if (!Py.isInstance(attr, PyString.TYPE)) {
+    public static PyBytes getString(PyObject attr, String name) {
+        if (!Py.isInstance(attr, PyBytes.TYPE)) {
             throw Py.TypeError(String.format("%.200s attribute must be bytes", name));
         }
-        return (PyString)attr;
+        return (PyBytes)attr;
     }
 
     /**

@@ -21,7 +21,7 @@ public class PySetInJavaTest {
     public static void testPySetAsJavaSet() {
         PySet s = new PySet();
         String v = "value";
-        check(s.add(v));// Add a String as it should be wrapped in PyString
+        check(s.add(v));// Add a String as it should be wrapped in PyBytes
         check(!s.add(v));
         String[] asArray = (String[])s.toArray(new String[0]);// The array type should be the same
         // and it should be resized properly

@@ -4,7 +4,7 @@ package org.python.core.stringlib;
 import org.python.core.Py;
 import org.python.core.PyException;
 import org.python.core.PyObject;
-import org.python.core.PyString;
+import org.python.core.PyBytes;
 import org.python.core.PyUnicode;
 
 public class InternalFormat {
@@ -31,8 +31,8 @@ public class InternalFormat {
      * @return parsed equivalent to text
      */
     public static Spec fromText(PyObject text, String method) {
-        if (text instanceof PyString) {
-            return fromText(((PyString) text).getString());
+        if (text instanceof PyBytes) {
+            return fromText(((PyBytes) text).getString());
         } else if (text instanceof PyUnicode) {
             return fromText(((PyUnicode)text).getString());
         } else {
@@ -54,7 +54,7 @@ public class InternalFormat {
         protected StringBuilder result;
 
         /**
-         * Signals the client's intention to make a PyString (or other byte-like) interpretation of
+         * Signals the client's intention to make a PyBytes (or other byte-like) interpretation of
          * {@link #result}, rather than a PyUnicode one.
          */
         protected boolean bytes;
@@ -95,7 +95,7 @@ public class InternalFormat {
         }
 
         /**
-         * Signals the client's intention to make a PyString (or other byte-like) interpretation of
+         * Signals the client's intention to make a PyBytes (or other byte-like) interpretation of
          * {@link #result}, rather than a PyUnicode one. Only formatters that could produce
          * characters &gt;255 are affected by this (e.g. c-format). Idiom:
          *
@@ -132,7 +132,7 @@ public class InternalFormat {
 
         /**
          * Convenience method to return the current result of the formatting, as a
-         * <code>PyObject</code>, either {@link PyString} or {@link PyUnicode} according to
+         * <code>PyObject</code>, either {@link PyBytes} or {@link PyUnicode} according to
          * {@link #bytes}.
          *
          * @return formatted result
@@ -140,7 +140,7 @@ public class InternalFormat {
         public PyObject getPyResult() {
             String r = getResult();
             if (bytes) {
-                return new PyString(r);
+                return new PyBytes(r);
             } else {
                 return new PyUnicode(r);
             }

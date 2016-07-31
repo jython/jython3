@@ -17,7 +17,7 @@ import javax.script.SimpleScriptContext;
 import junit.framework.TestCase;
 
 import org.python.core.Options;
-import org.python.core.PyString;
+import org.python.core.PyBytes;
 
 public class ScriptEngineTest extends TestCase {
 
@@ -159,7 +159,7 @@ public class ScriptEngineTest extends TestCase {
 
         assertNull(pythonEngine.eval("def f(x): return abs(x)"));
         assertEquals(Integer.valueOf(5), invocableEngine.invokeFunction("f", Integer.valueOf(-5)));
-        assertEquals("spam", invocableEngine.invokeMethod(new PyString("  spam  "), "strip"));
+        assertEquals("spam", invocableEngine.invokeMethod(new PyBytes("  spam  "), "strip"));
         assertEquals("spam", invocableEngine.invokeMethod("  spam  ", "strip"));
     }
 

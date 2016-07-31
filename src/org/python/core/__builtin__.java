@@ -7,8 +7,6 @@ package org.python.core;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -16,7 +14,6 @@ import org.python.antlr.base.mod;
 import org.python.core.stringlib.IntegerFormatter;
 import org.python.core.util.ExtraMath;
 import org.python.core.util.RelativeFile;
-import org.python.modules._functools._functools;
 import org.python.modules._io._io;
 
 @Untraversable
@@ -295,7 +292,7 @@ public class __builtin__ {
         dict.__setitem__("Ellipsis", Py.Ellipsis);
         dict.__setitem__("True", Py.True);
         dict.__setitem__("False", Py.False);
-        dict.__setitem__("bytes", PyString.TYPE);
+        dict.__setitem__("bytes", PyBytes.TYPE);
         dict.__setitem__("bytearray", PyByteArray.TYPE);
         dict.__setitem__("memoryview", PyMemoryView.TYPE);
 
@@ -566,9 +563,9 @@ public class __builtin__ {
     }
 
     public static PyObject filter(PyObject func, PyObject seq) {
-        if (seq instanceof PyString) {
-            return filterBaseString(func, (PyString)seq,
-                                    seq instanceof PyUnicode ? PyUnicode.TYPE : PyString.TYPE);
+        if (seq instanceof PyBytes) {
+            return filterBaseString(func, (PyBytes)seq,
+                                    seq instanceof PyUnicode ? PyUnicode.TYPE : PyBytes.TYPE);
         }
         if (seq instanceof PyTuple) {
             return filterTuple(func, (PyTuple)seq);
@@ -588,7 +585,7 @@ public class __builtin__ {
         return list;
     }
 
-    public static PyObject filterBaseString(PyObject func, PyString seq, PyType stringType) {
+    public static PyObject filterBaseString(PyObject func, PyBytes seq, PyType stringType) {
         if (func == Py.None && seq.getType() == stringType) {
             // If it's a real string we can return the original, as no character is ever
             // false and __getitem__ does return this character. If it's a subclass we
@@ -614,7 +611,7 @@ public class __builtin__ {
         }
 
         String result = builder.toString();
-        return stringType == PyString.TYPE ? new PyString(result) : new PyUnicode(result);
+        return stringType == PyBytes.TYPE ? new PyBytes(result) : new PyUnicode(result);
     }
 
     public static PyObject filterTuple(PyObject func, PyTuple seq) {
@@ -704,15 +701,15 @@ public class __builtin__ {
 
     public static PyObject input(PyObject prompt) {
         String line = raw_input(prompt);
-        return eval(new PyString(line));
+        return eval(new PyBytes(line));
     }
 
     public static PyObject input() {
-        return input(new PyString(""));
+        return input(new PyBytes(""));
     }
 
     public static PyUnicode intern(PyObject obj) {
-        if (!(obj instanceof PyString) || obj instanceof PyUnicode) {
+        if (!(obj instanceof PyBytes) || obj instanceof PyUnicode) {
             throw Py.TypeError("intern() argument 1 must be string, not "
                                + obj.getType().fastGetName());
         }
@@ -818,8 +815,8 @@ public class __builtin__ {
                 return cu.codePointAt(0);
             }
 
-        } else if (c instanceof PyString) {
-            String cs = ((PyString)c).getString();
+        } else if (c instanceof PyBytes) {
+            String cs = ((PyBytes)c).getString();
             length = cs.length();
             if (length == 1) {
                 return cs.charAt(0);
@@ -1000,15 +997,15 @@ public class __builtin__ {
         throw Py.TypeError("__int__ should return int object");
     }
 
-    private static PyString readline(PyObject file) {
+    private static PyBytes readline(PyObject file) {
         if (file instanceof PyFile) {
             return ((PyFile) file).readline();
         } else {
             PyObject ret = file.invoke("readline");
-            if (!(ret instanceof PyString)) {
+            if (!(ret instanceof PyBytes)) {
                 throw Py.TypeError("object.readline() returned non-string");
             }
-            return (PyString) ret;
+            return (PyBytes) ret;
         }
     }
 
@@ -1018,7 +1015,7 @@ public class __builtin__ {
      *
      * @param prompt to issue at console before read
      * @param file a file-like object to read from
-     * @return line of text from the file (encoded as bytes values compatible with PyString)
+     * @return line of text from the file (encoded as bytes values compatible with PyBytes)
      */
     public static String raw_input(PyObject prompt, PyObject file) {
         PyObject stdout = Py.getSystemState().stdout;
@@ -1042,7 +1039,7 @@ public class __builtin__ {
      * indirectly via <code>sys.stdin</code> and <code>sys.stdin</code>.
      *
      * @param prompt to issue at console before read
-     * @return line of text from console (encoded as bytes values compatible with PyString)
+     * @return line of text from console (encoded as bytes values compatible with PyBytes)
      */
     public static String raw_input(PyObject prompt) {
         PyObject stdin = Py.getSystemState().stdin;
@@ -1055,10 +1052,10 @@ public class __builtin__ {
     /**
      * Implementation of <code>raw_input()</code> built-in function using the console directly.
      *
-     * @return line of text from console (encoded as bytes values compatible with PyString)
+     * @return line of text from console (encoded as bytes values compatible with PyBytes)
      */
     public static String raw_input() {
-        return raw_input(Py.EmptyString);
+        return raw_input(Py.EmptyByte);
     }
 
 //    public static PyObject reduce(PyObject f, PyObject l, PyObject z) {
@@ -1115,7 +1112,7 @@ public class __builtin__ {
     }
 
     public static PyObject sum(PyObject seq, PyObject result) {
-        if (result instanceof PyString) {
+        if (result instanceof PyBytes) {
             throw Py.TypeError("sum() can't sum strings [use ''.join(seq) instead]");
         }
         for (PyObject item : seq.asIterable()) {
@@ -1393,13 +1390,13 @@ class FormatFunction extends PyBuiltinFunctionNarrow {
 
     @Override
     public PyObject __call__(PyObject arg1) {
-        return __call__(arg1, Py.EmptyString);
+        return __call__(arg1, Py.EmptyByte);
     }
 
     @Override
     public PyObject __call__(PyObject arg1, PyObject arg2) {
         PyObject formatted = arg1.__format__(arg2);
-        if (!Py.isInstance(formatted, PyString.TYPE) && !Py.isInstance(formatted, PyUnicode.TYPE)  ) {
+        if (!Py.isInstance(formatted, PyBytes.TYPE) && !Py.isInstance(formatted, PyUnicode.TYPE)  ) {
             throw Py.TypeError("instance.__format__ must return string or unicode, not " + formatted.getType().fastGetName());
         }
         return formatted;
@@ -1681,7 +1678,7 @@ class CompileFunction extends PyBuiltinFunction {
 
         mod ast = py2node(source);
         if (ast == null) {
-            if (!(source instanceof PyString)) {
+            if (!(source instanceof PyBytes)) {
                 throw Py.TypeError("expected a readable buffer object");
             }
             cflags.source_is_utf8 = source instanceof PyUnicode;

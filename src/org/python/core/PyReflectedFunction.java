@@ -281,7 +281,7 @@ public class PyReflectedFunction extends PyObject implements Traverseproc {
     }
 
     private static String niceName(Class<?> arg) {
-        if (arg == String.class || arg == PyString.class) {
+        if (arg == String.class || arg == PyBytes.class) {
             return "String";
         }
         if (arg.isArray()) {

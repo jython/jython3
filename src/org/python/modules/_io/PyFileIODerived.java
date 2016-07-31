@@ -1188,7 +1188,7 @@ public class PyFileIODerived extends PyFileIO implements Slotted,FinalizablePyOb
         PyType self_type=getType();
         PyObject impl=self_type.lookup("_checkSeekable");
         if (impl!=null) {
-            PyObject pymsg=msg==null?Py.None:new PyString(msg);
+            PyObject pymsg=msg==null?Py.None:new PyBytes(msg);
             impl.__get__(this,self_type).__call__(pymsg);
         } else {
             super._checkSeekable(msg);
@@ -1209,7 +1209,7 @@ public class PyFileIODerived extends PyFileIO implements Slotted,FinalizablePyOb
         PyType self_type=getType();
         PyObject impl=self_type.lookup("_checkReadable");
         if (impl!=null) {
-            PyObject pymsg=msg==null?Py.None:new PyString(msg);
+            PyObject pymsg=msg==null?Py.None:new PyBytes(msg);
             impl.__get__(this,self_type).__call__(pymsg);
         } else {
             super._checkReadable(msg);
@@ -1230,7 +1230,7 @@ public class PyFileIODerived extends PyFileIO implements Slotted,FinalizablePyOb
         PyType self_type=getType();
         PyObject impl=self_type.lookup("_checkWritable");
         if (impl!=null) {
-            PyObject pymsg=msg==null?Py.None:new PyString(msg);
+            PyObject pymsg=msg==null?Py.None:new PyBytes(msg);
             impl.__get__(this,self_type).__call__(pymsg);
         } else {
             super._checkWritable(msg);
@@ -1243,7 +1243,7 @@ public class PyFileIODerived extends PyFileIO implements Slotted,FinalizablePyOb
         PyType self_type=getType();
         PyObject impl=self_type.lookup("_checkClosed");
         if (impl!=null) {
-            PyObject pymsg=msg==null?Py.None:new PyString(msg);
+            PyObject pymsg=msg==null?Py.None:new PyBytes(msg);
             impl.__get__(this,self_type).__call__(pymsg);
         } else {
             super._checkClosed(msg);

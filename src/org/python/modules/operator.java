@@ -5,10 +5,10 @@ import org.python.core.ArgParser;
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
 import org.python.core.PyBuiltinFunctionSet;
+import org.python.core.PyBytes;
 import org.python.core.PyIgnoreMethodTag;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
 import org.python.core.PyUnicode;
@@ -132,7 +132,7 @@ class OperatorFunctions extends PyBuiltinFunctionSet
 @Untraversable
 public class operator extends PyObject implements ClassDictInit
 {
-    public static PyString __doc__ = new PyString(
+    public static PyBytes __doc__ = new PyBytes(
         "Operator interface.\n"+
         "\n"+
         "This module exports a set of functions implemented in C "+
@@ -463,7 +463,7 @@ public class operator extends PyObject implements ClassDictInit
         public String[] keywords;
 
         @ExposedGet
-        public static PyString __doc__ = new PyString(
+        public static PyBytes __doc__ = new PyBytes(
                 "methodcaller(name, ...) --> methodcaller object\n\n"
                     + "Return a callable object that calls the given method on its operand.\n"
                     + "After, f = methodcaller('name'), the call f(r) returns r.name().\n"
@@ -541,7 +541,7 @@ public class operator extends PyObject implements ClassDictInit
         String nameStr;
         if (name instanceof PyUnicode) {
             nameStr = ((PyUnicode)name).encode();
-        } else if (name instanceof PyString) {
+        } else if (name instanceof PyBytes) {
             nameStr = name.asString();
         } else {
             throw Py.TypeError(String.format("attribute name must be string, not '%.200s'",

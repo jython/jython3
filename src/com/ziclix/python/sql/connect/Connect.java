@@ -22,7 +22,7 @@ import com.ziclix.python.sql.util.*;
 @Untraversable
 public class Connect extends PyObject {
 
-    private static final PyString _doc = new PyString("establish a connection through java.sql.DriverManager");
+    private static final PyBytes _doc = new PyBytes("establish a connection through java.sql.DriverManager");
 
     /**
      * Default empty constructor.

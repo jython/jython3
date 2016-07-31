@@ -68,7 +68,7 @@ public class PyFileReader extends PyObject
         return new char[size];
     }
 
-    public PyString read(int n)
+    public PyBytes read(int n)
     {
         if (n < 0) {
             synchronized(reader) {
@@ -95,7 +95,7 @@ public class PyFileReader extends PyObject
                     }
                 }
 
-                return new PyString(sb.toString());
+                return new PyBytes(sb.toString());
             }
         }
 
@@ -109,21 +109,21 @@ public class PyFileReader extends PyObject
                 final int x = reader.read(cbuf, 0, n);
 
                 if (x < 1)
-                    return new PyString("");
+                    return new PyBytes("");
 
-                return new PyString(new String(cbuf, 0, x));
+                return new PyBytes(new String(cbuf, 0, x));
             } catch (IOException e) {
                 throw Py.IOError(e);
             }
         }
     }
 
-    public PyString read()
+    public PyBytes read()
     {
         return read(-1);
     }
 
-    public PyString readline(int max)
+    public PyBytes readline(int max)
     {
         if (!(max < 0))
             throw Py.NotImplementedError("size argument to readline not implemented for PyFileReader");
@@ -133,9 +133,9 @@ public class PyFileReader extends PyObject
                 final String line = reader.readLine();
 
                 if (line == null) {
-                    return new PyString("");
+                    return new PyBytes("");
                 } else {
-                    return new PyString(line + "\n");
+                    return new PyBytes(line + "\n");
                 }
             } catch (IOException e) {
                 throw Py.IOError(e);
@@ -143,7 +143,7 @@ public class PyFileReader extends PyObject
         }
     }
 
-    public PyString readline()
+    public PyBytes readline()
     {
         return readline(-1);
     }
@@ -154,7 +154,7 @@ public class PyFileReader extends PyObject
             final PyList list = new PyList();
             int size = 0;
             do {
-                final PyString line = readline(-1);
+                final PyBytes line = readline(-1);
                 int len = line.getString().length();
                 if (len == 0) {
                     // EOF

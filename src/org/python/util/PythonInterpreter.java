@@ -5,6 +5,7 @@ import org.python.core.CompileMode;
 import org.python.core.CompilerFlags;
 import org.python.core.ParserFacade;
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyCode;
 import org.python.core.PyException;
 import org.python.core.PyFile;
@@ -12,7 +13,6 @@ import org.python.core.PyFileReader;
 import org.python.core.PyFileWriter;
 import org.python.core.PyModule;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PySystemState;
 import org.python.core.__builtin__;
 
@@ -136,7 +136,7 @@ public class PythonInterpreter implements AutoCloseable, Closeable {
      * Sets a {@link Reader} to use for the standard input stream, <code>sys.stdin</code>. This
      * stream is wrapped such that characters will be narrowed to bytes. A character greater than
      * <code>U+00FF</code> will raise a Java <code>IllegalArgumentException</code> from within
-     * {@link PyString}.
+     * {@link PyBytes}.
      *
      * @param inStream to use as the input stream
      */
@@ -245,7 +245,7 @@ public class PythonInterpreter implements AutoCloseable, Closeable {
      */
     public PyObject eval(String s) {
         setSystemState();
-        return __builtin__.eval(new PyString(s), getLocals());
+        return __builtin__.eval(new PyBytes(s), getLocals());
     }
 
     /**

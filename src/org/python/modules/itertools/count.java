@@ -7,7 +7,6 @@ import org.python.core.PyException;
 import org.python.core.PyInteger;
 import org.python.core.PyIterator;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
 import org.python.core.PyUnicode;

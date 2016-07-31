@@ -336,30 +336,30 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         return fileioMode.toString();
     }
 
-    public PyString read1() {
+    public PyBytes read1() {
         return file_read(-1);
     }
 
-    public PyString read1(int size) {
+    public PyBytes read1(int size) {
         return file_read1(size);
     }
 
     @ExposedMethod
-    final synchronized PyString file_read1(int size) {
+    final synchronized PyBytes file_read1(int size) {
         return file_read(size);
     }
 
     @ExposedMethod(defaults = {"-1"}, doc = BuiltinDocs.TextIOBase_read_doc)
-    final synchronized PyString file_read(int size) {
+    final synchronized PyBytes file_read(int size) {
         checkClosed();
-        return new PyString(file.read(size));
+        return new PyBytes(file.read(size));
     }
 
-    public PyString read(int size) {
+    public PyBytes read(int size) {
         return file_read(size);
     }
 
-    public PyString read() {
+    public PyBytes read() {
         return file_read(-1);
     }
 
@@ -376,16 +376,16 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
 //    }
 
     @ExposedMethod(defaults = {"-1"}, doc = BuiltinDocs.TextIOBase_readline_doc)
-    final synchronized PyString file_readline(int max) {
+    final synchronized PyBytes file_readline(int max) {
         checkClosed();
-        return new PyString(file.readline(max));
+        return new PyBytes(file.readline(max));
     }
 
-    public PyString readline(int max) {
+    public PyBytes readline(int max) {
         return file_readline(max);
     }
 
-    public PyString readline() {
+    public PyBytes readline() {
         return file_readline(-1);
     }
 
@@ -402,7 +402,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
                 break;
             }
             count += len;
-            list.append(new PyString(line));
+            list.append(new PyBytes(line));
         } while (sizehint <= 0 || count < sizehint);
         return list;
     }
@@ -427,7 +427,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         if (next.length() == 0) {
             throw Py.StopIteration();
         }
-        return new PyString(next);
+        return new PyBytes(next);
     }
 
     @ExposedMethod(names = {"__enter__", "__iter__", "xreadlines"},
@@ -512,9 +512,9 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
             // Unicode must be encoded into bytes (null arguments here invoke the default values)
             return ((PyUnicode)obj).encode(encoding, errors);
 
-        } else if (obj instanceof PyString) {
+        } else if (obj instanceof PyBytes) {
             // Take a short cut
-            return ((PyString)obj).getString();
+            return ((PyBytes)obj).getString();
 
         } else if (obj instanceof PyArray && !binary) {
             // Fall through to TypeError. (If binary, BufferProtocol takes care of PyArray.)

@@ -7,7 +7,7 @@ import org.python.core.Py;
 import org.python.core.PyInteger;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
-import org.python.core.PyString;
+import org.python.core.PyBytes;
 import org.python.core.PySystemState;
 import org.python.core.stringlib.InternalFormat.Spec;
 
@@ -598,10 +598,10 @@ public class IntegerFormatter extends InternalFormat.Formatter {
      * the appropriate error (which the base {@link PyObject#__index__()} does).
      *
      * @param number to convert
-     * @return PyString converted result
+     * @return PyBytes converted result
      */
     // Follow this pattern in Python 3, where objects no longer have __hex__, __oct__ members.
-    public static PyString bin(PyObject number) {
+    public static PyBytes bin(PyObject number) {
         return formatNumber(number, BIN);
     }
 
@@ -611,9 +611,9 @@ public class IntegerFormatter extends InternalFormat.Formatter {
      * for raising the appropriate error (which the base {@link PyObject#__index__()} does).
      *
      * @param number to convert
-     * @return PyString converted result
+     * @return PyBytes converted result
      */
-    public static PyString formatNumber(PyObject number, Spec spec) {
+    public static PyBytes formatNumber(PyObject number, Spec spec) {
         number = number.__index__();
         IntegerFormatter f = new IntegerFormatter(spec);
         if (number instanceof PyInteger) {
@@ -621,7 +621,7 @@ public class IntegerFormatter extends InternalFormat.Formatter {
         } else {
             f.format(((PyLong)number).getValue());
         }
-        return new PyString(f.getResult());
+        return new PyBytes(f.getResult());
     }
 
     /**

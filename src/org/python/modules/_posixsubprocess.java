@@ -7,9 +7,9 @@ import jnr.posix.SpawnFileAction;
 import jnr.posix.util.Platform;
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyUnicode;
 import org.python.modules.posix.PosixModule;
 import org.python.util.FilenoUtil;
@@ -65,7 +65,7 @@ public class _posixsubprocess implements ClassDictInit {
         }
 
         POSIX posix = PosixModule.getPOSIX();
-        eargp.command_name = (PyString) exec_array.__getitem__(0);
+        eargp.command_name = (PyBytes) exec_array.__getitem__(0);
         long status = posix.posix_spawnp(
                 eargp.command_name.asString(),
                 eargp.fileActions,
@@ -128,7 +128,7 @@ public class _posixsubprocess implements ClassDictInit {
 //        if (v instanceof PyLong) {
 //            fd = RubyNumeric.fix2int(v);
 //        }
-//        else if (v instanceof PyString) {
+//        else if (v instanceof PyBytes) {
 //            String id = v.toString();
 //            if (id.equals("in"))
 //                fd = 0;
@@ -242,8 +242,8 @@ public class _posixsubprocess implements ClassDictInit {
 
     public static class ExecArg {
         boolean use_shell;
-        PyString command_name;
-        PyString command_abspath; /* full path string or nil */
+        PyBytes command_name;
+        PyBytes command_abspath; /* full path string or nil */
         String[] argv;
         List<byte[]> argv_buf;
         PyObject redirect_fds;

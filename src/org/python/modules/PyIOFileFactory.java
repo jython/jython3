@@ -1,10 +1,10 @@
 package org.python.modules;
 
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyFile;
 import org.python.core.PyInteger;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyType;
 import org.python.core.__builtin__;
 import org.python.core.Traverseproc;
@@ -138,7 +138,7 @@ public class PyIOFileFactory {
         }
 
         public void flush() {
-            write.__call__(new PyString(buff.toString()));
+            write.__call__(new PyBytes(buff.toString()));
             buff.setLength(0);
         }
 

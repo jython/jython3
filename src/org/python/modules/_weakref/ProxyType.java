@@ -4,7 +4,6 @@ package org.python.modules._weakref;
 import org.python.core.PyComplex;
 import org.python.core.PyFloat;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyType;
 import org.python.core.PyUnicode;
 import org.python.expose.ExposedType;

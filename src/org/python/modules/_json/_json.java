@@ -5,14 +5,13 @@ import org.python.core.ArgParser;
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
 import org.python.core.PyBuiltinFunctionNarrow;
+import org.python.core.PyBytes;
 import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyUnicode;
 import org.python.core.codecs;
 import org.python.core.Untraversable;
-import org.python.expose.ExposedGet;
 
 import java.util.Iterator;
 
@@ -24,17 +23,17 @@ import java.util.Iterator;
  */
 public class _json implements ClassDictInit {
 
-    public static final PyString __doc__ = new PyString("Port of _json C module.");
+    public static final PyBytes __doc__ = new PyBytes("Port of _json C module.");
     public static final PyObject module = Py.newString("_json");
 
     public static void classDictInit(PyObject dict) {
-        dict.__setitem__("__name__", new PyString("_json"));
+        dict.__setitem__("__name__", new PyBytes("_json"));
         dict.__setitem__("__doc__", __doc__);
         dict.__setitem__("encode_basestring_ascii", new EncodeBasestringAsciiFunction());
         dict.__setitem__("make_encoder", Encoder.TYPE);
         dict.__setitem__("make_scanner", Scanner.TYPE);
         dict.__setitem__("scanstring", new ScanstringFunction());
-        dict.__setitem__("__module__", new PyString("_json"));
+        dict.__setitem__("__module__", new PyBytes("_json"));
 
         // ensure __module__ is set properly in these modules,
         // based on how the module name lookups are chained
@@ -93,7 +92,7 @@ public class _json implements ClassDictInit {
 
         @Override
         public PyObject __call__(PyObject s, PyObject end) {
-            return __call__(s, end, new PyString("utf-8"), Py.True);
+            return __call__(s, end, new PyBytes("utf-8"), Py.True);
         }
 
         @Override
@@ -108,7 +107,7 @@ public class _json implements ClassDictInit {
             return __call__(
                     ap.getPyObject(0),
                     ap.getPyObject(1),
-                    ap.getPyObject(2, new PyString("utf-8")),
+                    ap.getPyObject(2, new PyBytes("utf-8")),
                     ap.getPyObject(3, Py.True));
         }
 
@@ -117,8 +116,8 @@ public class _json implements ClassDictInit {
             // but rethrow in case it does work - see the test case for issue 362
             int end_idx = end.asIndex(Py.OverflowError);
             boolean is_strict = strict.__bool__();
-            if (s instanceof PyString) {
-                return scanstring((PyString) s, end_idx,
+            if (s instanceof PyBytes) {
+                return scanstring((PyBytes) s, end_idx,
                         encoding == Py.None ? null : encoding.toString(), is_strict);
             } else {
                 throw Py.TypeError(String.format(
@@ -129,7 +128,7 @@ public class _json implements ClassDictInit {
 
     }
 
-    static PyTuple scanstring(PyString pystr, int end, String encoding, boolean strict) {
+    static PyTuple scanstring(PyBytes pystr, int end, String encoding, boolean strict) {
         int len = pystr.__len__();
         int begin = end - 1;
         if (end < 0 || len <= end) {
@@ -159,7 +158,7 @@ public class _json implements ClassDictInit {
                 if (strchunk instanceof PyUnicode) {
                     chunks.append(strchunk);
                 } else {
-                    chunks.append(codecs.decode((PyString) strchunk, encoding, null));
+                    chunks.append(codecs.decode((PyBytes) strchunk, encoding, null));
                 }
             }
             next++;
@@ -324,11 +323,11 @@ public class _json implements ClassDictInit {
         }
     }
 
-    static PyString encode_basestring_ascii(PyObject pystr) {
+    static PyBytes encode_basestring_ascii(PyObject pystr) {
         if (pystr instanceof PyUnicode) {
             return ascii_escape((PyUnicode) pystr);
-        } else if (pystr instanceof PyString) {
-            return ascii_escape((PyString) pystr);
+        } else if (pystr instanceof PyBytes) {
+            return ascii_escape((PyBytes) pystr);
         } else {
             throw Py.TypeError(String.format(
                     "first argument must be a string, not %.80s",
@@ -336,17 +335,17 @@ public class _json implements ClassDictInit {
         }
     }
 
-    private static PyString ascii_escape(PyUnicode pystr) {
+    private static PyBytes ascii_escape(PyUnicode pystr) {
         StringBuilder rval = new StringBuilder(pystr.__len__());
         rval.append("\"");
         for (Iterator<Integer> iter = pystr.newSubsequenceIterator(); iter.hasNext(); ) {
             _write_char(rval, iter.next());
         }
         rval.append("\"");
-        return new PyString(rval.toString());
+        return new PyBytes(rval.toString());
     }
 
-    private static PyString ascii_escape(PyString pystr) {
+    private static PyBytes ascii_escape(PyBytes pystr) {
         int len = pystr.__len__();
         String s = pystr.getString();
         StringBuilder rval = new StringBuilder(len);
@@ -359,7 +358,7 @@ public class _json implements ClassDictInit {
             _write_char(rval, c);
         }
         rval.append("\"");
-        return new PyString(rval.toString());
+        return new PyBytes(rval.toString());
     }
 
     private static void _write_char(StringBuilder builder, int c) {

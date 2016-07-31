@@ -6,7 +6,7 @@ import org.python.core.Py;
 import org.python.core.PyDictionary;
 import org.python.core.PyException;
 import org.python.core.PyObject;
-import org.python.core.PyString;
+import org.python.core.PyBytes;
 import org.python.core.PyStringMap;
 
 /**
@@ -17,7 +17,7 @@ import org.python.core.PyStringMap;
  */
 public class zipimport implements ClassDictInit {
 
-    public static final PyString __doc__ = new PyString(
+    public static final PyBytes __doc__ = new PyBytes(
         "zipimport provides support for importing Python modules from Zip archives.\n" +
         "\n" +
         "This module exports three objects:\n" +
@@ -41,7 +41,7 @@ public class zipimport implements ClassDictInit {
     public static PyDictionary _zip_directory_cache = new PyDictionary();
 
     public static void classDictInit(PyObject dict) {
-        dict.__setitem__("__name__", new PyString("zipimport"));
+        dict.__setitem__("__name__", new PyBytes("zipimport"));
         dict.__setitem__("__doc__", __doc__);
         dict.__setitem__("zipimporter", zipimporter.TYPE);
         dict.__setitem__("_zip_directory_cache", _zip_directory_cache);

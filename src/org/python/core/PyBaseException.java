@@ -17,7 +17,7 @@ public class PyBaseException extends PyObject implements Traverseproc {
     public static final PyType TYPE = PyType.fromClass(PyBaseException.class);
 
     /** Exception message. */
-    private PyObject message = Py.EmptyString;
+    private PyObject message = Py.EmptyByte;
 
     /** Exception's arguments. */
     @ExposedGet(doc = BuiltinDocs.BaseException_args_doc)

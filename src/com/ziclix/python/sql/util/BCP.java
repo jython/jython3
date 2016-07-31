@@ -10,10 +10,9 @@ package com.ziclix.python.sql.util;
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
 import org.python.core.PyBuiltinMethodSet;
-import org.python.core.PyClass;
+import org.python.core.PyBytes;
 import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.Traverseproc;
 import org.python.core.Visitproc;
 
@@ -82,15 +81,15 @@ public class BCP extends PyObject implements ClassDictInit, Traverseproc {
     static {
         PyObject[] m = new PyObject[1];
 
-        m[0] = new PyString("bcp");
+        m[0] = new PyBytes("bcp");
         __methods__ = new PyList(m);
         m = new PyObject[6];
-        m[0] = new PyString("source");
-        m[1] = new PyString("destination");
-        m[2] = new PyString("batchsize");
-        m[3] = new PyString("queuesize");
-        m[4] = new PyString("sourceDataHandler");
-        m[5] = new PyString("destinationDataHandler");
+        m[0] = new PyBytes("source");
+        m[1] = new PyBytes("destination");
+        m[2] = new PyBytes("batchsize");
+        m[3] = new PyBytes("queuesize");
+        m[4] = new PyBytes("sourceDataHandler");
+        m[5] = new PyBytes("destinationDataHandler");
         __members__ = new PyList(m);
     }
 

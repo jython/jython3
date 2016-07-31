@@ -71,14 +71,14 @@ public class codecs {
      * The default error policy is 'strict' meaning that encoding errors raise a
      * <code>ValueError</code>.
      * This method is exposed through the _codecs module as
-     * {@link _codecs#decode(PyString, String, String)}.
+     * {@link _codecs#decode(PyBytes, String, String)}.
      *
      * @param v bytes to be decoded
      * @param encoding name of encoding (to look up in codec registry)
      * @param errors error policy name (e.g. "ignore", "replace")
      * @return Unicode string decoded from <code>bytes</code>
      */
-    public static PyObject decode(PyString v, String encoding, String errors) {
+    public static PyObject decode(PyBytes v, String encoding, String errors) {
         if (encoding == null) {
             encoding = getDefaultEncoding();
         } else {
@@ -114,7 +114,7 @@ public class codecs {
         }
         PyObject result;
         if (errors != null) {
-            result = decoder.__call__(v, new PyString(errors));
+            result = decoder.__call__(v, new PyBytes(errors));
         } else {
             result = decoder.__call__(v);
         }
@@ -182,7 +182,7 @@ public class codecs {
         }
         PyObject result;
         if (errors != null) {
-            result = encoder.__call__(v, new PyString(errors));
+            result = encoder.__call__(v, new PyBytes(errors));
         } else {
             result = encoder.__call__(v);
         }
@@ -191,7 +191,7 @@ public class codecs {
             throw Py.TypeError("encoder must return a tuple (object,integer)");
         }
         PyObject encoded = result.__getitem__(0);
-        if (encoded instanceof PyString || encoded instanceof PyUnicode) {
+        if (encoded instanceof PyBytes || encoded instanceof PyUnicode) {
             return encoded.toString();
         } else {
             throw Py.TypeError("encoder did not return a string/unicode object (type="
@@ -499,7 +499,7 @@ public class codecs {
      * the Unicode result, in line with Java conventions. Unicode characters above the BMP are
      * represented as surrogate pairs.
      *
-     * @param bytes input represented as String (Jython PyString convention)
+     * @param bytes input represented as String (Jython PyBytes convention)
      * @param errors error policy name (e.g. "ignore", "replace")
      * @param consumed returns number of bytes consumed in element 0, or is null if a "final" call
      * @return unicode result (as UTF-16 Java String)
@@ -643,7 +643,7 @@ public class codecs {
      * String is a UTF-16 representation of the Unicode result, in line with Java conventions.
      * Unicode characters above the BMP are represented as surrogate pairs.
      *
-     * @param bytes input represented as String (Jython PyString convention)
+     * @param bytes input represented as String (Jython PyBytes convention)
      * @param errors error policy name (e.g. "ignore", "replace")
      * @return unicode result (as UTF-16 Java String)
      */
@@ -834,7 +834,7 @@ public class codecs {
     /**
      * Encode a UTF-16 Java String as UTF-7 bytes represented by the low bytes of the characters in
      * a String. (String representation for byte data is chosen so that it may immediately become a
-     * PyString.)
+     * PyBytes.)
      *
      * This method differs from the CPython equivalent (in <code>Object/unicodeobject.c</code>)
      * which works with an array of code points that are, in a wide build, Unicode code points.
@@ -1619,7 +1619,7 @@ public class codecs {
      */
     private static void checkErrorHandlerReturn(String errors, PyObject replacementSpec) {
         if (!(replacementSpec instanceof PyTuple) || replacementSpec.__len__() != 2
-                || !(replacementSpec.__getitem__(0) instanceof PyString)
+                || !(replacementSpec.__getitem__(0) instanceof PyBytes)
                 || !(replacementSpec.__getitem__(1) instanceof PyInteger)) {
             throw new PyException(Py.TypeError, "error_handler " + errors
                     + " must return a tuple of (replacement, new position)");

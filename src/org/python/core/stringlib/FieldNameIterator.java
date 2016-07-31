@@ -1,13 +1,9 @@
 package org.python.core.stringlib;
 
 import org.python.core.Py;
-import org.python.core.PyBoolean;
-import org.python.core.PyInteger;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
-import org.python.core.PyUnicode;
 import org.python.core.Traverseproc;
 import org.python.core.Visitproc;
 import org.python.expose.ExposedMethod;
@@ -34,7 +30,7 @@ public class FieldNameIterator extends PyObject implements Traverseproc {
 
     /** The UTF-16 string from which elements are being returned. */
     private final String markup;
-    /** True if originally given a PyString (so must return PyString not PyUnicode). */
+    /** True if originally given a PyBytes (so must return PyBytes not PyUnicode). */
     private final boolean bytes;
     /** How far along that string we are. */
     private int index;
@@ -52,11 +48,11 @@ public class FieldNameIterator extends PyObject implements Traverseproc {
      * element_index     ::=  integer | index_string
      * </pre>
      *
-     * The object is used from PyUnicode and from PyString, and we have to signal which it is, so
+     * The object is used from PyUnicode and from PyBytes, and we have to signal which it is, so
      * that returned values may match in type.
      *
      * @param fieldName the field name as UTF-16
-     * @param bytes true if elements returned should be PyString, else PyUnicode
+     * @param bytes true if elements returned should be PyBytes, else PyUnicode
      */
     public FieldNameIterator(CharSequence fieldName, boolean bytes) {
         this.markup = fieldName.toString();
@@ -100,7 +96,7 @@ public class FieldNameIterator extends PyObject implements Traverseproc {
 
     /**
      * Convenience method to wrap a value as a PyInteger, if it is an Integer, or as
-     * <code>PyString</code> or <code>PyUnicode</code> according to the type of the original field
+     * <code>PyBytes</code> or <code>PyUnicode</code> according to the type of the original field
      * name string. These objects are being used as field specifiers in navigating arguments to a
      * format statement.
      *
@@ -115,7 +111,7 @@ public class FieldNameIterator extends PyObject implements Traverseproc {
             String s = value.toString();
             if (s.length() == 0) {
                 // This is frequent so avoid the constructor
-                return bytes ? Py.EmptyString : Py.EmptyUnicode;
+                return bytes ? Py.EmptyByte : Py.EmptyUnicode;
             } else {
                 return bytes ? Py.newString(s) : Py.newUnicode(s);
             }
@@ -140,7 +136,7 @@ public class FieldNameIterator extends PyObject implements Traverseproc {
     }
 
     /**
-     * Return the head object from the field name, as <code>PyInteger</code>, <code>PyString</code>
+     * Return the head object from the field name, as <code>PyInteger</code>, <code>PyBytes</code>
      * or <code>PyUnicode</code>.
      *
      * @return the isolated head object from the field name.
@@ -150,9 +146,9 @@ public class FieldNameIterator extends PyObject implements Traverseproc {
     }
 
     /**
-     * If originally given a PyString, the iterator must return PyString not PyUnicode.
+     * If originally given a PyBytes, the iterator must return PyBytes not PyUnicode.
      *
-     * @return true if originally given a PyString
+     * @return true if originally given a PyBytes
      */
     public final boolean isBytes() {
         return bytes;

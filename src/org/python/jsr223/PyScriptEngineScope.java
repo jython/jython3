@@ -12,7 +12,7 @@ import org.python.core.PyDictionary;
 import org.python.core.PyIterator;
 import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
+import org.python.core.PyBytes;
 import org.python.core.PyType;
 import org.python.core.Visitproc;
 import org.python.core.Untraversable;
@@ -58,7 +58,7 @@ public final class PyScriptEngineScope extends PyObject {
             if (bindings == null)
                 continue;
             for (String key : bindings.keySet())
-                members.append(new PyString(key));
+                members.append(new PyBytes(key));
         }
         members.sort();
         return members;

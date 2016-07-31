@@ -11,12 +11,12 @@ import java.util.zip.ZipFile;
 
 import org.python.core.ArgParser;
 import org.python.core.Py;
+import org.python.core.PyBytes;
 import org.python.core.PyDictionary;
 import org.python.core.PyException;
 import org.python.core.PyInteger;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
@@ -42,7 +42,7 @@ public class zipimporter extends importer<PyObject> implements Traverseproc {
     public static final PyType TYPE = PyType.fromClass(zipimporter.class);
 
     @ExposedGet
-    public static final PyString __doc__ = new PyString(
+    public static final PyBytes __doc__ = new PyBytes(
         "zipimporter(archivepath) -> zipimporter object\n" +
         "\n" +
         "Create a new zipimporter instance. 'archivepath' must be a path to\n" +
@@ -247,7 +247,7 @@ public class zipimporter extends importer<PyObject> implements Traverseproc {
     final PyObject zipimporter_get_filename(String fullname) {
         ModuleCodeData moduleCodeData = getModuleCode(fullname);
         if (moduleCodeData != null) {
-            return new PyString(moduleCodeData.path);
+            return new PyBytes(moduleCodeData.path);
         }
         return Py.None;
     }
@@ -340,7 +340,7 @@ public class zipimporter extends importer<PyObject> implements Traverseproc {
      * Given a path to a Zip archive, build a dict, mapping file names
      * (local to the archive, using SEP as a separator) to toc entries.
      *
-     * @param archive PyString path to the archive
+     * @param archive PyBytes path to the archive
      * @return a PyDictionary of tocEntrys
      * @see #readZipFile(ZipFile, PyObject)
      */
@@ -397,7 +397,7 @@ public class zipimporter extends importer<PyObject> implements Traverseproc {
             ZipEntry zipEntry = zipEntries.nextElement();
             String name = zipEntry.getName().replace('/', File.separatorChar);
 
-            PyObject __file__ = new PyString(archive + File.separator + name);
+            PyObject __file__ = new PyBytes(archive + File.separator + name);
             PyObject compress = Py.newInteger(zipEntry.getMethod());
             PyObject data_size = new PyLong(zipEntry.getCompressedSize());
             PyObject file_size = new PyLong(zipEntry.getSize());
@@ -411,7 +411,7 @@ public class zipimporter extends importer<PyObject> implements Traverseproc {
 
             PyTuple entry = new PyTuple(__file__, compress, data_size, file_size, file_offset,
                                         time, date, crc);
-            files.__setitem__(new PyString(name), entry);
+            files.__setitem__(new PyBytes(name), entry);
         }
     }
 

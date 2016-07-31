@@ -146,20 +146,20 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
      * From Python 3, this is equivalent to calling the <code>bytes</code> constructor on the
      * <code>memoryview</code>.
      */
-    public PyString tobytes() {
+    public PyBytes tobytes() {
         return memoryview_tobytes();
     }
 
     @ExposedMethod(doc = tobytes_doc)
-    final PyString memoryview_tobytes() {
+    final PyBytes memoryview_tobytes() {
         checkNotReleased();
         if (backing instanceof BaseBuffer) {
             // In practice, it always is
-            return new PyString(backing.toString());
+            return new PyBytes(backing.toString());
         } else {
             // But just in case ...
             String s = StringUtil.fromBytes(backing);
-            return new PyString(s);
+            return new PyBytes(s);
         }
     }
 
@@ -701,11 +701,11 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
      * @return one-character string formed from the byte at the index
      */
     @Override
-    protected PyString pyget(int index) {
+    protected PyBytes pyget(int index) {
         // Our chance to check the memoryview is still alive
         checkNotReleased();
         // Treat the byte at the index as a character code
-        return new PyString(String.valueOf((char)backing.intAt(index)));
+        return new PyBytes(String.valueOf((char)backing.intAt(index)));
         // Originally implemented Python 3 semantics, returning a PyInteger (for byte-oriented) !
         // return new PyInteger(backing.intAt(index));
     }

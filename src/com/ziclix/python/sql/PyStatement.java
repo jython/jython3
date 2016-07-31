@@ -7,14 +7,12 @@
  */
 package com.ziclix.python.sql;
 
+import org.python.core.PyBytes;
 import org.python.core.Visitproc;
-import org.python.core.codecs;
 import org.python.core.Py;
 import org.python.core.PyException;
 import org.python.core.PyList;
 import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PyUnicode;
 import org.python.core.Traverseproc;
 
 import java.sql.CallableStatement;
@@ -60,12 +58,12 @@ public class PyStatement extends PyObject implements Traverseproc {
     static {
         PyObject[] m = new PyObject[1];
 
-        m[0] = new PyString("close");
+        m[0] = new PyBytes("close");
         __methods__ = new PyList(m);
         m = new PyObject[3];
-        m[0] = new PyString("style");
-        m[1] = new PyString("closed");
-        m[2] = new PyString("__statement__");
+        m[0] = new PyBytes("style");
+        m[1] = new PyBytes("closed");
+        m[2] = new PyBytes("__statement__");
         __members__ = new PyList(m);
     }
 

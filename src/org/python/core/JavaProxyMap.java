@@ -112,7 +112,7 @@ class JavaProxyMap {
                 repr.delete(lastindex, lastindex + 2);
             }
             repr.append("}");
-            return new PyString(repr.toString());
+            return new PyBytes(repr.toString());
         }
     };
     private static final PyBuiltinMethodNarrow mapEqProxy = new MapMethod("__eq__", 1) {

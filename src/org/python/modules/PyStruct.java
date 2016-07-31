@@ -50,12 +50,11 @@ public class PyStruct extends PyObject {
         ArgParser ap = new ArgParser("Struct", args, keywords, new String[] {"format"}, 1);
 
         PyObject format = ap.getPyObject(0);
-        if (!(format instanceof PyUnicode)) {
-            throw Py.TypeError("coercing to Unicode: need string, '"
-                    + format.getType().fastGetName() + "' type found");
+        if ((format instanceof PyUnicode)) {
+            return new PyStruct(TYPE, (PyUnicode) format);
         }
-
-        return new PyStruct(TYPE, (PyUnicode) format);
+        throw Py.TypeError("coercing to Unicode: need string, '"
+                + format.getType().fastGetName() + "' type found");
     }
 
     @ExposedMethod

@@ -2,7 +2,6 @@ package org.python.core.stringlib;
 
 import org.python.core.Py;
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
 import org.python.core.PyUnicode;
@@ -112,7 +111,7 @@ public class MarkupIterator extends PyObject {
     }
 
     /**
-     * Convenience method for populating the return tuple, returning a <code>PyString</code> or
+     * Convenience method for populating the return tuple, returning a <code>PyBytes</code> or
      * <code>PyUnicode</code> according to the type of the original markup string, or
      * <code>Py.None</code> if both arguments are <code>null</code>.
      *

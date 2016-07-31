@@ -109,7 +109,7 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
     }
 
     /**
-     * Constructs a new array by encoding a PyString argument to bytes. If the PyString is actually
+     * Constructs a new array by encoding a PyBytes argument to bytes. If the PyBytes is actually
      * a PyUnicode, the encoding must be explicitly specified.
      *
      * @param arg primary argument from which value is taken
@@ -122,7 +122,7 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
     }
 
     /**
-     * Constructs a new array by encoding a PyString argument to bytes. If the PyString is actually
+     * Constructs a new array by encoding a PyBytes argument to bytes. If the PyBytes is actually
      * a PyUnicode, the encoding must be explicitly specified.
      *
      * @param arg primary argument from which value is taken
@@ -136,7 +136,7 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
     }
 
     /**
-     * Constructs a new array by encoding a PyString argument to bytes. If the PyString is actually
+     * Constructs a new array by encoding a PyBytes argument to bytes. If the PyBytes is actually
      * a PyUnicode, an exception is thrown saying that the encoding must be explicitly specified.
      *
      * @param arg primary argument from which value is taken
@@ -185,7 +185,7 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
      * </ul>
      * When it is necessary to specify an encoding, as in the Python signature
      * <code>bytearray(string, encoding [, errors])</code>, use the constructor
-     * {@link #PyByteArray(PyString, String, String)}. If the <code>PyString</code> is actually a
+     * {@link #PyByteArray(PyBytes, String, String)}. If the <code>PyBytes</code> is actually a
      * <code>PyUnicode</code>, an encoding must be specified, and using this constructor will throw
      * an exception about that.
      *
@@ -426,7 +426,7 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
      * <p>
      * When assigning from a sequence type or iterator, the sequence may contain arbitrary
      * {@link PyObject}s, but acceptable ones are {@link PyInteger}, {@link PyLong} or
-     * {@link PyString} of length 1. If any one of them proves unsuitable for assignment to a Python
+     * {@link PyBytes} of length 1. If any one of them proves unsuitable for assignment to a Python
      * <code>bytearray</code> element, an exception is thrown and this <code>bytearray</code> is
      * unchanged.
      *
@@ -463,11 +463,11 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
          * BaseBytes.init(PyObject), without support for value==null.
          */
 
-        if (value instanceof PyString) {
+        if (value instanceof PyBytes) {
             /*
              * Value is a string (but must be 8-bit).
              */
-            setslice(start, stop, step, (PyString)value);
+            setslice(start, stop, step, (PyBytes)value);
 
         } else if (value.isIndex()) {
             /*
@@ -529,17 +529,17 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
 
     /**
      * Sets the given range of elements according to Python slice assignment semantics from a
-     * {@link PyString} that is not a {@link PyUnicode}.
+     * {@link PyBytes} that is not a {@link PyUnicode}.
      *
      * @see #setslice(int, int, int, PyObject)
      * @param start the position of the first element.
      * @param stop one more than the position of the last element.
      * @param step the step size.
-     * @param value a PyString object consistent with the slice assignment
+     * @param value a PyBytes object consistent with the slice assignment
      * @throws PyException (SliceSizeError) if the value size is inconsistent with an extended slice
      * @throws PyException (ValueError) if the value is a <code>PyUnicode</code>
      */
-    private void setslice(int start, int stop, int step, PyString value) throws PyException {
+    private void setslice(int start, int stop, int step, PyBytes value) throws PyException {
         // Assignment is from 8-bit data
         String v = value.asString();
         int len = v.length();
@@ -773,7 +773,7 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
 
         ArgParser ap = new ArgParser("bytearray", args, kwds, "source", "encoding", "errors");
         PyObject arg = ap.getPyObject(0, null);
-        // If not null, encoding and errors must be PyString (or PyUnicode)
+        // If not null, encoding and errors must be PyBytes (or PyUnicode)
         PyObject encoding = ap.getPyObjectByType(1, PyUnicode.TYPE, null);
         PyObject errors = ap.getPyObjectByType(2, PyUnicode.TYPE, null);
 
@@ -916,13 +916,18 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
             System.arraycopy(storage, offset, sum.storage, sum.offset, size);
             System.arraycopy(ob.storage, ob.offset, sum.storage, sum.offset + size, ob.size);
 
-        } else if (o.getType() == PyString.TYPE) {
+        } else if (o instanceof PyBytes) {
             // Support bytes type, which in in Python 2.7 is an alias of str. Remove in 3.0
-            PyString os = (PyString)o;
+            PyBytes os = (PyBytes) o;
             // Allocate the right size bytearray and copy the two parts in.
             sum = new PyByteArray(size + os.__len__());
             System.arraycopy(storage, offset, sum.storage, sum.offset, size);
             sum.setslice(size, sum.size, 1, os);
+//        } else if (o instanceof PyString) {
+//            String ob = ((PyString) o).getString();
+//            sum = new PyByteArray(size + ob.length());
+//            System.arraycopy(storage, offset, sum.storage, sum.offset, size);
+//            System.arraycopy(ob.getBytes(), 0, sum.storage, sum.offset + size, ob.length());
 
         } else {
             // Unsuitable type
@@ -1014,7 +1019,7 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
 
     @ExposedClassMethod(doc = BuiltinDocs.bytearray_maketrans_doc)
     final static PyObject bytearray_maketrans(PyType type, PyObject from, PyObject to) {
-        return PyString.bytes_maketrans(type, from, to, null);
+        return PyBytes.bytes_maketrans(type, from, to, null);
     }
 
     /**
@@ -1360,9 +1365,9 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
             // Use the general method, specifying the crack at the end of the array.
             // Note this deals with the case o==this.
             setslice(size, size, 1, (BaseBytes)o);
-        } else if (oType == PyString.TYPE) {
+        } else if (oType == PyBytes.TYPE) {
             // Will fail if somehow not 8-bit clean
-            setslice(size, size, 1, (PyString)o);
+            setslice(size, size, 1, (PyBytes)o);
         } else {
             // Unsuitable type
             throw ConcatenationTypeError(oType, TYPE);
@@ -2056,7 +2061,7 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
     }
 
     /**
-     * An overriding of the {@link PyObject#__str__()} method, returning <code>PyString</code>,
+     * An overriding of the {@link PyObject#__str__()} method, returning <code>PyBytes</code>,
      * where in the characters are simply those with a point-codes given in this byte array. The
      * built-in function <code>str()</code> is expected to call this method.
      */
