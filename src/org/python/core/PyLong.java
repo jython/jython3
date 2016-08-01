@@ -3,6 +3,7 @@
 
 package org.python.core;
 
+import org.python.core.stringlib.Encoding;
 import org.python.core.stringlib.FloatFormatter;
 import org.python.core.stringlib.IntegerFormatter;
 import org.python.core.stringlib.InternalFormat;
@@ -83,18 +84,24 @@ public class PyLong extends PyObject {
         if (x != null && x.getJavaProxy() instanceof BigInteger) {
             return new PyLong((BigInteger)x.getJavaProxy());
         }
-        int base = ap.getInt(1, -909);
-
         if (x == null) {
             return new PyLong(0);
         }
-        if (base == -909) {
+        PyObject baseObj = ap.getPyObject(1, null);
+
+        if (baseObj == null) {
             return asPyLong(x);
         }
-        if (!(x instanceof PyUnicode) || !(x instanceof PyUnicode)) {
-            throw Py.TypeError("long: can't convert non-string with explicit base");
+        int base = baseObj.asInt();
+        if (x instanceof PyUnicode) {
+            return ((PyUnicode)x).atol(base);
+        } else if (x instanceof PyBytes) {
+            return ((PyBytes) x).atol(base);
+        } else if (x instanceof PyByteArray) {
+            return Encoding.atol(x.asString(), base);
         }
-        return ((PyUnicode)x).atol(base);
+
+        throw Py.TypeError("long: can't convert non-string with explicit base");
     }
 
     /**
