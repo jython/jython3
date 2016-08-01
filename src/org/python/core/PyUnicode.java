@@ -2157,16 +2157,6 @@ public class PyUnicode extends PySequence implements Iterable {
     }
 
     @Override
-    public void forEach(Consumer action) {
-
-    }
-
-    @Override
-    public Spliterator spliterator() {
-        return null;
-    }
-
-    @Override
     public PyComplex __complex__() {
         return new PyBytes(encodeDecimal()).__complex__();
     }

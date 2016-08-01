@@ -103,10 +103,11 @@ public class MatchObject extends PyObject implements Traverseproc {
 
         PyObject keys = pattern.groupindex.invoke("keys");
 
-        PyObject key;
-        for (int i = 0; (key = keys.__finditem__(i)) != null; i++) {
+        PyObject iter = keys.__iter__();
+        for (PyObject key = iter.__next__(); key != null; ) {
             PyObject item = getslice(key, def);
             result.__setitem__(key, item);
+            key = iter.__next__();
         }
         return result;
     }

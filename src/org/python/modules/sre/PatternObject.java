@@ -91,7 +91,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     }
 
     @ExposedMethod(doc = BuiltinDocs.SRE_Pattern_search_doc)
-    public MatchObject SRE_Pattern_search(PyObject[] args, String[] kws) {
+    public PyObject SRE_Pattern_search(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("search", args, kws,
                                      "pattern", "pos", "endpos");
         PyUnicode string = extractPyString(ap, 0);
@@ -102,7 +102,9 @@ public class PatternObject extends PyObject implements Traverseproc {
 
         int status = state.SRE_SEARCH(code, 0);
 
-        return _pattern_new_match(state, string, status);
+        PyObject ret = _pattern_new_match(state, string, status);
+        if (ret == null) return Py.None;
+        return ret;
     }
 
     @ExposedMethod(doc = BuiltinDocs.SRE_Pattern_sub_doc)

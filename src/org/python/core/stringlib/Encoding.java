@@ -1528,15 +1528,14 @@ public class Encoding {
     }
 
     private static BigInteger asciiToBigInteger(CharSequence str, int base, boolean isLong) {
-
         int b = 0;
         int e = str.length();
 
-        while (b < e && isWhitespace(str.charAt(b))) {
+        while (b < e && Character.isWhitespace(str.charAt(b))) {
             b++;
         }
 
-        while (e > b && isWhitespace(str.charAt(e - 1))) {
+        while (e > b && Character.isWhitespace(str.charAt(e - 1))) {
             e--;
         }
 
@@ -1545,7 +1544,7 @@ public class Encoding {
             sign = str.charAt(b);
             if (sign == '-' || sign == '+') {
                 b++;
-                while (b < e && isWhitespace(str.charAt(b))) {
+                while (b < e && Character.isWhitespace(str.charAt(b))) {
                     b++;
                 }
             }

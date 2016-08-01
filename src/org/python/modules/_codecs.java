@@ -487,19 +487,13 @@ public class _codecs {
     }
 
     /* --- ascii Codec ---------------------------------------------- */
-    public static PyTuple ascii_decode(String str) {
-        return ascii_decode(str, null);
-    }
-
+    @ExposedFunction(defaults = {"null"})
     public static PyTuple ascii_decode(String str, String errors) {
         int size = str.length();
         return decode_tuple(codecs.PyUnicode_DecodeASCII(str, size, errors), size);
     }
 
-    public static PyTuple ascii_encode(String str) {
-        return ascii_encode(str, null);
-    }
-
+    @ExposedFunction(defaults = {"null"})
     public static PyTuple ascii_encode(String str, String errors) {
         int size = str.length();
         return encode_tuple(codecs.PyUnicode_EncodeASCII(str, size, errors), size);
