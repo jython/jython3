@@ -58,8 +58,6 @@ public interface PyTypes {
 
     public static final Type PYBOOLEAN = Type.getType(PyBoolean.class);
 
-    public static final Type PYINTEGER = Type.getType(PyInteger.class);
-
     public static final Type PYLONG = Type.getType(PyLong.class);
 
     public static final Type PYFLOAT = Type.getType(PyFloat.class);

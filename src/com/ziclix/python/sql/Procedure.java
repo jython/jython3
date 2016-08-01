@@ -11,6 +11,7 @@ import org.python.core.Py;
 import org.python.core.PyBytes;
 import org.python.core.PyInteger;
 import org.python.core.PyList;
+import org.python.core.PyLong;
 import org.python.core.PyObject;
 
 import java.sql.CallableStatement;
@@ -207,7 +208,7 @@ public class Procedure extends Object {
                 case DatabaseMetaData.procedureColumnInOut:
 
                     // bindings are Python-indexed
-                    PyInteger key = Py.newInteger(binding++);
+                    PyLong key = Py.newInteger(binding++);
 
                     if (bindings.__finditem__(key) == null) {
                         int dataType = column.__getitem__(DATA_TYPE).asInt();

@@ -8,6 +8,7 @@ import org.python.core.PyBytes;
 import org.python.core.PyDictionary;
 import org.python.core.PyException;
 import org.python.core.PyInteger;
+import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.python.core.PyStringMap;
 
@@ -161,11 +162,11 @@ public class _csv implements ClassDictInit {
         return new PyWriter(writeline, dialectFromKwargs(dialect, args, keywords));
     }
 
-    public static PyInteger field_size_limit() {
+    public static PyLong field_size_limit() {
         return Py.newInteger(field_limit);
     }
 
-    public static PyInteger field_size_limit(PyObject new_limit) {
+    public static PyLong field_size_limit(PyObject new_limit) {
         if (!(new_limit instanceof PyInteger)) {
             throw Py.TypeError("limit must be an integer");
         }

@@ -698,7 +698,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
      * @param value instances of the value to be counted
      * @return number of time value was found in the array.
      */
-    public PyInteger count(PyObject value) {
+    public PyLong count(PyObject value) {
         return Py.newInteger(array_count(value));
     }
 

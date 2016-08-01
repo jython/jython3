@@ -93,7 +93,7 @@ class JavaProxyList {
         }
 
         protected int fixBoundIndex(PyObject index) {
-            PyInteger length = Py.newInteger(len());
+            PyLong length = Py.newInteger(len());
             if (index._lt(Py.Zero).__bool__()) {
                 index = index._add(length);
                 if (index._lt(Py.Zero).__bool__()) {

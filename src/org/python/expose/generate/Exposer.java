@@ -249,7 +249,7 @@ public abstract class Exposer implements Opcodes, PyTypes {
         } else if(inputType.equals(BOOLEAN)) {
             callStatic(PY, "newBoolean", PYBOOLEAN, BOOLEAN);
         } else if(inputType.equals(INT) || inputType.equals(BYTE) || inputType.equals(SHORT)) {
-            callStatic(PY, "newInteger", PYINTEGER, INT);
+            callStatic(PY, "newInteger", PYLONG, INT);
         } else if(inputType.equals(CHAR)) {
             callStatic(PY, "makeCharacter", PYBYTES, CHAR);
         } else if(inputType.equals(Type.DOUBLE_TYPE)) {

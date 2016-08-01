@@ -693,31 +693,13 @@ public final class Py {
         }
         return tojava(o, c); // prev:Class.forName
     }
-    /* Helper functions for PyProxy's */
 
-    /* Convenience methods to create new constants without using "new" */
-    private final static PyInteger[] integerCache = new PyInteger[1000];
-
-    static {
-        for (int j = -100; j < 900; j++) {
-            integerCache[j + 100] = new PyInteger(j);
-        }
-    }
-
-    public static final PyInteger newInteger(int i) {
-        if (i >= -100 && i < 900) {
-            return integerCache[i + 100];
-        } else {
-            return new PyInteger(i);
-        }
+    public static final PyLong newInteger(int i) {
+        return new PyLong(i);
     }
 
     public static PyObject newInteger(long i) {
-        if (i < Integer.MIN_VALUE || i > Integer.MAX_VALUE) {
-            return new PyLong(i);
-        } else {
-            return newInteger((int) i);
-        }
+        return new PyLong(i);
     }
 
     public static PyLong newLong(String s) {
