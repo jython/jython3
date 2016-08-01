@@ -7,6 +7,7 @@ import org.python.core.PyFrame;
 import org.python.core.PyObject;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
+import org.python.core.PyUnicode;
 import org.python.expose.ExposedConst;
 import org.python.expose.ExposedFunction;
 import org.python.expose.ExposedModule;
@@ -84,4 +85,8 @@ public class SysModule {
         sysdict.__setitem__(name, value);
     }
 
+    @ExposedFunction
+    public static PyObject intern(PyObject s) {
+        return new PyUnicode(s.toString().intern(), true);
+    }
 }

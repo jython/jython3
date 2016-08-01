@@ -2507,4 +2507,9 @@ public class PyUnicode extends PySequence implements Iterable {
     public PyObject __int__() {
         return Encoding.atol(getString(), 10);
     }
+
+    @ExposedMethod
+    public final PyObject str_decode(PyObject[] args, String[] keywords) {
+        return this;
+    }
 }
