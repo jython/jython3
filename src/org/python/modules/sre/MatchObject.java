@@ -23,34 +23,49 @@ import org.python.core.PyInteger;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.python.core.PyTuple;
+import org.python.core.PyType;
 import org.python.core.PyUnicode;
 import org.python.core.Traverseproc;
 import org.python.core.Visitproc;
 import org.python.core.imp;
+import org.python.expose.ExposedGet;
+import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedType;
-
 
 @ExposedType(name = "_sre.SRE_Match", doc = BuiltinDocs.SRE_Match_doc)
 public class MatchObject extends PyObject implements Traverseproc {
+    public static final PyType TYPE = PyType.fromClass(MatchObject.class);
+
+    @ExposedGet
     public PyUnicode string; /* link to the target string */
+    @ExposedGet
     public PyObject regs; /* cached list of matching spans */
-    PatternObject pattern; /* link to the regex (pattern) object */
-    int pos, endpos; /* current target slice */
-    int lastindex; /* last index marker seen by the engine (-1 if none) */
+    @ExposedGet
+    public PatternObject pattern; /* link to the regex (pattern) object */
+    @ExposedGet
+    public int pos;
+    @ExposedGet
+    public int endpos; /* current target slice */
+    @ExposedGet
+    public int lastindex; /* last index marker seen by the engine (-1 if none) */
     int groups; /* number of groups (start/end marks) */
     int[] mark;
 
-    
-    public PyObject expand(PyObject[] args) {
-        if(args.length == 0) {
-            throw Py.TypeError("expand() takes exactly 1 argument (0 given)");
-        }
-        PyObject mod = imp.importName("re", true);
-        PyObject func = mod.__getattr__("_expand");
-        return func.__call__(new PyObject[] {pattern, this, args[0]});
+    public MatchObject() {
+        super(TYPE);
     }
 
-    public PyObject group(PyObject[] args) {
+    @ExposedMethod(doc = BuiltinDocs.SRE_Match_expand_doc)
+    public PyObject SRE_Match_expand(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("expand", args, keywords, "template");
+        PyObject template = ap.getPyObject(0);
+        PyObject mod = imp.importName("re", true);
+        PyObject func = mod.__getattr__("_expand");
+        return func.__call__(new PyObject[] {pattern, this, template});
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.SRE_Match_group_doc)
+    public PyObject SRE_Match_group(PyObject[] args, String[] keywords) {
         switch (args.length) {
         case 0:
             return getslice(Py.Zero, Py.None);
@@ -64,7 +79,8 @@ public class MatchObject extends PyObject implements Traverseproc {
         }
     }
 
-    public PyObject groups(PyObject[] args, String[] kws) {
+    @ExposedMethod(doc = BuiltinDocs.SRE_Match_groups_doc)
+    public PyObject SRE_Match_groups(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("groups", args, kws, "default");
         PyObject def = ap.getPyObject(0, Py.None);
 
@@ -75,7 +91,8 @@ public class MatchObject extends PyObject implements Traverseproc {
         return new PyTuple(result);
     }
 
-    public PyObject groupdict(PyObject[] args, String[] kws) {
+    @ExposedMethod(doc = BuiltinDocs.SRE_Match_groupdict_doc)
+    public PyObject SRE_Match_groupdict(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("groupdict", args, kws, "default");
         PyObject def = ap.getPyObject(0, Py.None);
 
@@ -94,39 +111,24 @@ public class MatchObject extends PyObject implements Traverseproc {
         return result;
     }
 
-    public PyObject start() {
-        return start(Py.Zero);
-    }
-
-    public PyObject start(PyObject index_) {
-        int index = getindex(index_);
-
+    @ExposedMethod(defaults = {"0"}, doc = BuiltinDocs.SRE_Match_start_doc)
+    public PyObject SRE_Match_start(int index) {
         if (index < 0 || index >= groups)
             throw Py.IndexError("no such group");
 
         return Py.newInteger(mark[index*2]);
     }
 
-    public PyObject end() {
-        return end(Py.Zero);
-    }
-
-    public PyObject end(PyObject index_) {
-        int index = getindex(index_);
-
+    @ExposedMethod(defaults = {"0"}, doc = BuiltinDocs.SRE_Match_end_doc)
+    public PyObject SRE_Match_end(int index) {
         if (index < 0 || index >= groups)
             throw Py.IndexError("no such group");
 
         return Py.newInteger(mark[index*2+1]);
     }
 
-    public PyTuple span() {
-        return span(Py.Zero);
-    }
-
-    public PyTuple span(PyObject index_) {
-        int index = getindex(index_);
-
+    @ExposedMethod(defaults = {"0"}, doc = BuiltinDocs.SRE_Match_span_doc)
+    public PyTuple SRE_Match_span(int index) {
         if (index < 0 || index >= groups)
             throw Py.IndexError("no such group");
 
@@ -199,12 +201,8 @@ public class MatchObject extends PyObject implements Traverseproc {
             return pattern.groupindex;
         if (key == "re")
             return pattern;
-        if (key == "pos")
-            return Py.newInteger(pos);
-        if (key == "endpos")
-            return Py.newInteger(endpos);
         if (key == "lastindex")
-            return lastindex == -1 ? Py.None : Py.newInteger(lastindex);
+            return lastindex == -1 ? Py.None : Py.newLong(lastindex);
         if (key == "lastgroup"){
             if(pattern.indexgroup != null && lastindex >= 0)
                 return pattern.indexgroup.__getitem__(lastindex);

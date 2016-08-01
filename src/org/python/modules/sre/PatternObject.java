@@ -19,15 +19,20 @@ package org.python.modules.sre;
 import java.util.*;
 import org.python.core.*;
 import org.python.core.util.StringUtil;
+import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedType;
 
 @ExposedType(name = "_sre.SRE_Pattern", doc = BuiltinDocs.SRE_Pattern_doc)
 public class PatternObject extends PyObject implements Traverseproc {
     int[] code; /* link to the code string object */
+    @ExposedGet
     public PyObject pattern; /* link to the pattern source (or None) */
+    @ExposedGet
     public int groups;
+    @ExposedGet
     public org.python.core.PyObject groupindex;
+    @ExposedGet
     public int flags;
     org.python.core.PyObject indexgroup;
     public int codesize;
@@ -47,7 +52,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     }
 
     @ExposedMethod(doc = BuiltinDocs.SRE_Pattern_match_doc)
-    public MatchObject match(PyObject[] args, String[] kws) {
+    public PyObject SRE_Pattern_match(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("match", args, kws,
                                      "pattern", "pos", "endpos");
         PyUnicode string = extractPyString(ap, 0);
@@ -58,11 +63,13 @@ public class PatternObject extends PyObject implements Traverseproc {
         state.ptr = state.start;
         int status = state.SRE_MATCH(code, 0, 1);
 
-        return _pattern_new_match(state, string, status);
+        PyObject ret = _pattern_new_match(state, string, status);
+        if (ret == null) return Py.None;
+        return ret;
     }
 
     @ExposedMethod(doc = BuiltinDocs.SRE_Pattern_fullmatch_doc)
-    public MatchObject fullmatch(PyObject[] args, String[] kws) {
+    public PyObject SRE_Pattern_fullmatch(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("match", args, kws,
                 "pattern", "pos", "endpos");
         PyUnicode string = extractPyString(ap, 0);
@@ -74,14 +81,17 @@ public class PatternObject extends PyObject implements Traverseproc {
         int status = state.SRE_MATCH(code, 0, 1);
         if (status > 0) {
             if (state.pos - state.endpos < string.__len__()) {
-                return null;
+                return Py.None;
             }
         }
 
-        return _pattern_new_match(state, string, status);
+        PyObject ret = _pattern_new_match(state, string, status);
+        if (ret == null) return Py.None;
+        return ret;
     }
-    
-    public MatchObject search(PyObject[] args, String[] kws) {
+
+    @ExposedMethod(doc = BuiltinDocs.SRE_Pattern_search_doc)
+    public MatchObject SRE_Pattern_search(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("search", args, kws,
                                      "pattern", "pos", "endpos");
         PyUnicode string = extractPyString(ap, 0);
@@ -95,8 +105,8 @@ public class PatternObject extends PyObject implements Traverseproc {
         return _pattern_new_match(state, string, status);
     }
 
-
-    public PyObject sub(PyObject[] args, String[] kws) {
+    @ExposedMethod(doc = BuiltinDocs.SRE_Pattern_sub_doc)
+    public PyObject SRE_Pattern_sub(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("sub", args, kws,
                                      "repl", "string", "count");
         PyObject template = ap.getPyObject(0);
@@ -105,9 +115,8 @@ public class PatternObject extends PyObject implements Traverseproc {
         return subx(template, extractPyString(ap, 1), count, false);
     }
 
-
-
-    public PyObject subn(PyObject[] args, String[] kws) {
+    @ExposedMethod(doc = BuiltinDocs.SRE_Pattern_subn_doc)
+    public PyObject SRE_Pattern_subn(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("subn", args, kws,
                                      "repl", "string", "count");
         PyObject template = ap.getPyObject(0);
@@ -168,7 +177,10 @@ public class PatternObject extends PyObject implements Traverseproc {
                 PyObject item;
                 if (filter_is_callable) {
                     /* pass match object through filter */
-                    MatchObject match = _pattern_new_match(state, instring, 1);
+                    PyObject match = _pattern_new_match(state, instring, 1);
+                    if (match == null) {
+                        match = Py.None;
+                    }
                     item = filter.__call__(match);
                 } else {
                     item = filter;
@@ -188,12 +200,12 @@ public class PatternObject extends PyObject implements Traverseproc {
                 state.start = state.ptr;
         }
         if (i < state.endpos) {
-            list.append(string.__getslice__(Py.newInteger(i), Py.newInteger(state.endpos)));
+            list.append(string.__getslice__(Py.newInteger(i), Py.newLong(state.endpos)));
         }
 
         PyObject outstring = join_list(list, string);
         if (subn) {
-            return new PyTuple(outstring, Py.newInteger(n));
+            return new PyTuple(outstring, Py.newLong(n));
         }
         return outstring;
     }
@@ -206,7 +218,8 @@ public class PatternObject extends PyObject implements Traverseproc {
         return joiner.__getattr__("join").__call__(list);
     }
 
-    public PyObject split(PyObject[] args, String[] kws) {
+    @ExposedMethod(doc = BuiltinDocs.SRE_Pattern_split_doc)
+    public PyObject SRE_Pattern_split(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("split", args, kws,
                                      "source", "maxsplit");
         PyUnicode string = extractPyString(ap, 0);
@@ -250,7 +263,7 @@ public class PatternObject extends PyObject implements Traverseproc {
             last = state.start = state.ptr;
         }
 
-        list.append(string.__getslice__(Py.newInteger(last), Py.newInteger(state.endpos)));
+        list.append(string.__getslice__(Py.newLong(last), Py.newLong(state.endpos)));
 
         return list;
     }
@@ -260,9 +273,8 @@ public class PatternObject extends PyObject implements Traverseproc {
         return sre.invoke(function, args);
     }
 
-
-
-    public PyObject findall(PyObject[] args, String[] kws) {
+    @ExposedMethod(doc = BuiltinDocs.SRE_Pattern_findall_doc)
+    public PyObject SRE_Pattern_findall(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("findall", args, kws,
                                      "source", "pos", "endpos");
         PyUnicode string = extractPyString(ap, 0);
@@ -313,13 +325,15 @@ public class PatternObject extends PyObject implements Traverseproc {
         return new PyList(list);
     }
 
-    public PyObject finditer(PyObject[] args, String[] kws) {
-        ScannerObject scanner = scanner(args, kws);
+    @ExposedMethod(doc = BuiltinDocs.SRE_Pattern_finditer_doc)
+    public PyObject SRE_Pattern_finditer(PyObject[] args, String[] kws) {
+        ScannerObject scanner = SRE_Pattern_scanner(args, kws);
         PyObject search = scanner.__findattr__("search");
         return new PyCallIter(search, Py.None);
     }
-    
-    public ScannerObject scanner(PyObject[] args, String[] kws) {
+
+    @ExposedMethod(doc = BuiltinDocs.SRE_Pattern_scanner_doc)
+    public ScannerObject SRE_Pattern_scanner(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("scanner", args, kws,
                                      "pattern", "pos", "endpos");
         PyUnicode string = extractPyString(ap, 0);

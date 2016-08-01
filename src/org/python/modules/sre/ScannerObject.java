@@ -16,13 +16,19 @@
 package org.python.modules.sre;
 
 import org.python.core.*;
+import org.python.expose.ExposedGet;
+import org.python.expose.ExposedMethod;
+import org.python.expose.ExposedType;
 
+@ExposedType(name = "_sre.SRE_Scanner", doc = BuiltinDocs.SRE_Scanner_doc)
 public class ScannerObject extends PyObject implements Traverseproc {
+    @ExposedGet
     public PatternObject pattern;
     PyUnicode string;
     SRE_STATE state;
 
-    public MatchObject match() {
+    @ExposedMethod(doc = BuiltinDocs.SRE_Scanner_match_doc)
+    public MatchObject SRE_Scanner_match() {
         state.state_reset();
         state.ptr = state.start;
 
@@ -38,7 +44,8 @@ public class ScannerObject extends PyObject implements Traverseproc {
     }
 
 
-    public MatchObject search() {
+    @ExposedMethod(doc = BuiltinDocs.SRE_Scanner_search_doc)
+    public MatchObject SRE_Scanner_search() {
         state.state_reset();
         state.ptr = state.start;
 
