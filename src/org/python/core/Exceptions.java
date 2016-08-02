@@ -199,8 +199,8 @@ public class Exceptions {
 
         PyObject name = self.__findattr__("name");
         PyObject path = self.__findattr__("path");
-        boolean haveName = name instanceof PyBytes;
-        boolean havePath = path instanceof PyInteger;
+        boolean haveName = name instanceof PyUnicode;
+        boolean havePath = path instanceof PyLong;
         if (!haveName && !havePath) {
             return str;
         }
@@ -279,8 +279,8 @@ public class Exceptions {
 
         PyObject filename = self.__findattr__("filename");
         PyObject lineno = self.__findattr__("lineno");
-        boolean haveFilename = filename instanceof PyBytes;
-        boolean haveLieno = lineno instanceof PyInteger;
+        boolean haveFilename = filename instanceof PyUnicode;
+        boolean haveLieno = lineno instanceof PyLong;
         if (!haveFilename && !haveLieno) {
             return str;
         }
