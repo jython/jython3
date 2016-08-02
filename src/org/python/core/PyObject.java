@@ -746,6 +746,14 @@ public class PyObject implements Serializable {
         return ret;
     }
 
+    public PyObject __getitem__(String key) {
+        PyObject ret = __finditem__(key);
+        if (ret == null) {
+            throw Py.KeyError(key);
+        }
+        return ret;
+    }
+
     /**
      * Equivalent to the standard Python __setitem__ method.
      *
