@@ -114,7 +114,8 @@ public class _codecs {
 
     /* --- Some codec support methods -------------------------------------------- */
 
-    public static PyObject charmap_build(PyUnicode map) {
+    @ExposedFunction
+    public static PyObject charmap_build(PyObject map) {
         return EncodingMap.buildEncodingMap(map);
     }
 
@@ -245,7 +246,7 @@ public class _codecs {
      * @return decoded string and number of bytes consumed
      */
     @ExposedFunction(defaults = {"null", "null"})
-    private static PyObject charmap_decode_internal(PyObject obj, PyObject errorsObj, PyObject mapping) {
+    private static PyObject charmap_decode(PyObject obj, PyObject errorsObj, PyObject mapping) {
         if (mapping == null || mapping == Py.None) {
             // Default to Latin-1
             return latin_1_decode(obj, errorsObj);
