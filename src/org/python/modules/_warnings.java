@@ -83,17 +83,35 @@ public class _warnings {
 
     @ExposedFunction
     public static final PyObject warn_explicit(PyObject[] args, String[] keywords) {
-        ArgParser ap = new ArgParser("warn_explicit", args, keywords, "category", "message",
-                "filename", "lineno", "module", "registry", "sourceline", "source");
-        PyObject category = ap.getPyObject(0);
-        PyObject message = ap.getPyObject(1);
+        ArgParser ap = new ArgParser("warn_explicit", args, keywords, "message", "category",
+                "filename", "lineno", "module", "registry", "module_globals", "source");
+        PyObject message = ap.getPyObject(0);
+        PyObject category = ap.getPyObject(1);
         PyObject filename = ap.getPyObject(2);
         PyObject lineno = ap.getPyObject(3);
-        PyObject module = ap.getPyObject(4);
-        PyObject registry = ap.getPyObject(5);
-        PyObject sourceline = ap.getPyObject(6);
-        PyObject source = ap.getPyObject(7);
-        return warn_explicit_impl(category, message, filename, lineno, module, registry, sourceline, source);
+        PyObject module = ap.getPyObject(4, Py.None);
+        PyObject registry = ap.getPyObject(5, Py.None);
+        PyObject moduleGlobals = ap.getPyObject(6, Py.None);
+        PyObject source = ap.getPyObject(7, Py.None);
+        if (moduleGlobals == Py.None) {
+            return warn_explicit_impl(category, message, filename, lineno, module, registry, null, source);
+        }
+        PyObject loader = moduleGlobals.__getitem__("__loader__");
+        PyObject moduleName = moduleGlobals.__getitem__("__name__");
+        if (loader == null || moduleName == null) {
+            return warn_explicit_impl(category, message, filename, lineno, module, registry, null, source);
+        }
+        source = loader.invoke("get_source", moduleName);
+        if (source == null) {
+            return null;
+        } else if (source == Py.None) {
+            return warn_explicit_impl(category, message, filename, lineno, module, registry, null, source);
+        }
+        PyList sourceList = (PyList) source.invoke("splitlines");
+        if (sourceList == null) return null;
+        PyObject sourceLine = sourceList.pyget(lineno.asInt() - 1);
+        if (sourceList == null) return null;
+        return warn_explicit_impl(category, message, filename, lineno, module, registry, sourceLine, source);
     }
 
     private static final PyObject warn_explicit_impl(PyObject category, PyObject message,
@@ -120,6 +138,9 @@ public class _warnings {
         }
         PyObject item = null;
         PyObject action = getFilter(category, text, lineno, module);
+        if (action == null) {
+            return Py.None;
+        }
         if (action.toString().equals("error")) {
             throw new PyException(category, message);
         }
@@ -292,8 +313,8 @@ public class _warnings {
             version = new PyLong(_filtersVersion);
             registry.__setitem__("version", version);
         } else {
-            alreadyWarned = registry.__getitem__(key);
-            if (alreadyWarned.__bool__()) {
+            alreadyWarned = registry.__finditem__(key);
+            if (alreadyWarned != null) {
                 return true;
             }
         }
