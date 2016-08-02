@@ -575,7 +575,10 @@ public class struct implements ClassDictInit {
         }
         
         void pack(ByteStream buf, PyObject value) {
-            throw Py.NotImplementedError("Pointer packing/unpacking not implemented in Jython");
+//            throw Py.NotImplementedError("Pointer packing/unpacking not implemented in Jython");
+            int v = get_int(value);
+            buf.writeByte(v & 0xFF);
+            buf.writeByte((v >> 8) & 0xFF);
         }
 
         Object unpack(ByteStream buf) {

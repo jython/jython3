@@ -81,7 +81,7 @@ public class Setup {
             "_warnings",
             "_weakref:org.python.modules._weakref.WeakrefModule",
             "faulthandler:org.python.modules.FaultHandler",
-            "sys:org.python.modules.SysModule",
+            "sys:org.python.modules.sys.SysModule",
             "unicodedata:org.python.modules.unicodedata.unicodedata",
     };
 }

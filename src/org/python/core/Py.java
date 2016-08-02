@@ -11,7 +11,7 @@ import jnr.posix.util.Platform;
 import org.python.antlr.base.mod;
 import org.python.core.adapter.ClassicPyObjectAdapter;
 import org.python.core.adapter.ExtensiblePyObjectAdapter;
-import org.python.modules.SysModule;
+import org.python.modules.sys.SysModule;
 import org.python.modules.posix.PosixModule;
 import org.python.util.Generic;
 
@@ -617,7 +617,7 @@ public final class Py {
             System.err.println(warn_hcategory(category) + ": " + message);
             return;
         } else {
-            func.__call__(Py.newString(message), category, Py.newInteger(stacklevel));
+            func.__call__(Py.newUnicode(message), category, Py.newLong(stacklevel));
         }
     }
 
@@ -635,9 +635,9 @@ public final class Py {
             return;
         } else {
             func.__call__(new PyObject[]{
-                Py.newString(message), category,
-                Py.newString(filename), Py.newInteger(lineno),
-                (module == null) ? Py.None : Py.newString(module),
+                Py.newUnicode(message), category,
+                Py.newUnicode(filename), Py.newInteger(lineno),
+                (module == null) ? Py.None : Py.newUnicode(module),
                 registry
             }, Py.NoKeywords);
         }
@@ -829,7 +829,7 @@ public final class Py {
         }
         PyObject decimalModule = __builtin__.__import__("decimal");
         PyObject decimalClass = decimalModule.__getattr__("Decimal");
-        return decimalClass.__call__(newString(decimal));
+        return decimalClass.__call__(newUnicode(decimal));
     }
 
     public static PyCode newCode(int argcount, String varnames[],
@@ -1364,7 +1364,7 @@ public final class Py {
             stderr.print(filename == Py.None || filename == null ?
                          "<string>" : filename.toString());
             stderr.print("\", line ");
-            stderr.print(lineno == null ? Py.newString("0") : lineno);
+            stderr.print(lineno == null ? Py.newUnicode("0") : lineno);
             stderr.print("\n");
             if (text != Py.None && text != null && text.__len__() != 0) {
                 printSyntaxErrorText(stderr, value.__findattr__("offset").asInt(),

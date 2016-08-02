@@ -1678,7 +1678,7 @@ class CompileFunction extends PyBuiltinFunction {
 
         mod ast = py2node(source);
         if (ast == null) {
-            if (!(source instanceof PyBytes)) {
+            if (!(source instanceof PyBytes) && !(source instanceof PyUnicode)) {
                 throw Py.TypeError("expected a readable buffer object");
             }
             cflags.source_is_utf8 = source instanceof PyUnicode;
