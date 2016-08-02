@@ -3,10 +3,13 @@ package org.python.modules;
 import org.python.core.ArgParser;
 import org.python.core.Py;
 import org.python.core.PyDictionary;
+import org.python.core.PyException;
+import org.python.core.PyFrame;
 import org.python.core.PyList;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.python.core.PyTuple;
+import org.python.core.PyType;
 import org.python.core.PyUnicode;
 import org.python.core.imp;
 import org.python.expose.ExposedFunction;
@@ -15,6 +18,9 @@ import org.python.expose.ModuleInit;
 
 @ExposedModule(doc = "_warnings provides basic warning filtering support.")
 public class _warnings {
+    private static final String importlibString = "importlib";
+    private static final String bootstrapString = "_bootstrap";
+
     private static PyObject _onceRegistry;
     private static PyObject _filters;
     private static PyObject _defaultAction;
@@ -33,34 +39,90 @@ public class _warnings {
 
     @ExposedFunction
     public static PyObject warn(PyObject args[], String[] keywords) {
-        ArgParser ap = new ArgParser("warn", args, keywords, "message", "category", "stacklevel");
-        String message = ap.getString(0);
+        ArgParser ap = new ArgParser("warn", args, keywords, "message", "category", "stacklevel", "source");
+        PyObject message = ap.getPyObject(0);
         PyObject category = ap.getPyObject(1, Py.UserWarning);
         int stackLevel = ap.getIndex(2, 1);
-        Py.warning(category, message, stackLevel);
-        return Py.None;
+        PyObject source = ap.getPyObject(3, null);
+        PyObject filename, lineno, module, registry;
+        PyFrame f = Py.getThreadState().frame;
+        if (stackLevel <= 0 || isInternalFrame(f)) {
+            while(--stackLevel > 0 && f != null) {
+                f = f.f_back;
+            }
+        } else {
+            while (--stackLevel > 0 && f != null) {
+                f = nextExternalFrame(f);
+            }
+        }
+        PyObject globals;
+        if (f == null) {
+            globals = Py.getSystemState().sysdict;
+            lineno = Py.One;
+        } else {
+            globals = f.f_globals;
+            lineno = new PyLong(f.f_lineno);
+        }
+        registry = globals.__finditem__("__warningregistry__");
+        if (registry == null) {
+            registry = new PyDictionary();
+            globals.__setitem__("__warningregistry__", registry);
+        }
+        module = globals.__getitem__("__name__");
+        if (module == null) {
+            module = new PyUnicode("<string>");
+        }
+        if (f == null) {
+            filename = globals.__getitem__("__file__");
+        } else {
+            filename = new PyUnicode(f.f_code.co_filename);
+        }
+
+        return warn_explicit_impl(category, message, filename, lineno, module, registry, null, source);
     }
 
     @ExposedFunction
-    public static final PyObject warn_explicit(PyObject category, PyObject message,
+    public static final PyObject warn_explicit(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("warn_explicit", args, keywords, "category", "message",
+                "filename", "lineno", "module", "registry", "sourceline", "source");
+        PyObject category = ap.getPyObject(0);
+        PyObject message = ap.getPyObject(1);
+        PyObject filename = ap.getPyObject(2);
+        PyObject lineno = ap.getPyObject(3);
+        PyObject module = ap.getPyObject(4);
+        PyObject registry = ap.getPyObject(5);
+        PyObject sourceline = ap.getPyObject(6);
+        PyObject source = ap.getPyObject(7);
+        return warn_explicit_impl(category, message, filename, lineno, module, registry, sourceline, source);
+    }
+
+    private static final PyObject warn_explicit_impl(PyObject category, PyObject message,
                                                PyObject filename, PyObject lineno,
                                                PyObject module, PyObject registry, PyObject sourceline,
                                                PyObject source) {
         PyObject text;
         if (Py.isInstance(message, Py.Warning)) {
-            text = new PyUnicode(message.toString());
+            text = message.__str__();
             category = message.getType();
         } else {
+            if (!(category instanceof PyType) || !Py.isSubClass(category, Py.Warning)) {
+                throw Py.TypeError(String.format("category must be a Warning subclass, not '%s'",
+                        category.getType().getName()));
+            }
             text = message;
             message = category.__call__(message);
         }
         PyTuple key = new PyTuple(text, category, lineno);
         if (registry != null && registry != Py.None) {
-            // TODO if (already_warned(registry, key, 0)
+            if (alreadyWarned(registry, key, false)) {
+                return Py.None;
+            }
         }
         PyObject item = null;
         PyObject action = getFilter(category, text, lineno, module);
-        // TODO if (action.toString().equals("error")) throw Py.Error
+        if (action.toString().equals("error")) {
+            throw new PyException(category, message);
+        }
         if (!action.toString().equals("always")) {
             if (registry != null && registry != Py.None) {
                 registry.__setitem__(key, Py.True);
@@ -82,6 +144,11 @@ public class _warnings {
         callShowWarning(category, text, message, filename, lineno.asInt(),
                               lineno, sourceline, source);
         return Py.None;
+    }
+
+    @ExposedFunction
+    public static final void _filters_mutated() {
+        _filtersVersion++;
     }
 
     // CPython: call_show_warning
@@ -251,5 +318,22 @@ public class _warnings {
     // CPython: create_filter
     private static final PyObject createFilter(PyObject category, String action) {
         return new PyTuple(new PyUnicode(action), Py.None, category, Py.None, Py.Zero);
+    }
+
+    // CPython: is_internal_frame
+    private static final boolean isInternalFrame(PyFrame frame) {
+        if (frame == null || frame.f_code == null || frame.f_code.co_filename == null) {
+            return false;
+        }
+        String filename = frame.f_code.co_filename;
+        return filename.contains(importlibString) && filename.contains(bootstrapString);
+    }
+
+    // CPython: next_external_frame
+    private static final PyFrame nextExternalFrame(PyFrame frame) {
+        do {
+            frame = frame.f_back;
+        } while (frame != null && isInternalFrame(frame));
+        return frame;
     }
 }
