@@ -399,7 +399,7 @@ final class StringFormatter {
                     arg = getarg();
 
                     // Get hold of the actual object to display (may set needUnicode)
-                    String argAsString = spec.type == 's' ? arg.toString() : arg.__repr__().toString();
+                    String argAsString = spec.type == 's' ? arg.__str__().getString() : arg.__repr__().toString();
                     // Format the str/unicode form of the argument using this Spec.
                     f = ft = new TextFormatter(buffer, spec);
                     ft.setBytes(!needUnicode);
