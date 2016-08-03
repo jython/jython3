@@ -63,6 +63,8 @@ public class PyModule extends PyObject implements Traverseproc {
         ensureDict();
         __dict__.__setitem__("__name__", name);
         __dict__.__setitem__("__doc__", doc);
+        __dict__.__setitem__("__loader__", Py.None);
+        __dict__.__setitem__("__package__", Py.None);
         __dict__.__setitem__("__spec__", Py.None);
         if (name.equals(__MAIN__)) {
             __dict__.__setitem__("__builtins__", Py.getSystemState().modules.__finditem__("__builtin__"));
@@ -110,25 +112,12 @@ public class PyModule extends PyObject implements Traverseproc {
     }
 
     public String toString()  {
-        return module_toString();
+        return module_toString().toString();
     }
 
     @ExposedMethod(names = {"__repr__"})
-    final String module_toString()  {
-        Object name = null;
-        PyObject filename = null;
-
-        if (__dict__ != null) {
-            name = __dict__.__finditem__("__name__");
-            filename = __dict__.__finditem__("__file__");
-        }
-        if (name == null) {
-            name = "?";
-        }
-        if (filename == null) {
-            return String.format("<module '%s' (built-in)>", name);
-        }
-        return String.format("<module '%s' from '%s'>", name, filename);
+    final PyObject module_toString()  {
+        return Py.getSystemState().importlib.invoke("_module_repr", this);
     }
 
     public PyObject __dir__() {
@@ -172,7 +161,7 @@ public class PyModule extends PyObject implements Traverseproc {
 
     @Override
     public void noAttributeError(String name) {
-        throw Py.AttributeError(String.format("'%.50s' module has no attribute '%.400s'",
+        throw Py.AttributeError(String.format("module '%.50s' has no attribute '%.400s'",
                 __dict__.__finditem__("__name__") , name));
     }
 
