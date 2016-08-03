@@ -426,15 +426,6 @@ class Gen:
             prefix = parm
         index_getitem_body = self.get_aux('index_getitem').fragment
         self.dire_expose_meth('expose_index_getitem',"%s __getitem__ o" % prefix,index_getitem_body)
-        
-    def dire_expose_vanilla_cmp(self,name,parm,body):
-        if body is not None:
-            self.invalid(name,'non-empty body')
-        prefix = ""
-        if parm.endswith('>'):
-            prefix = parm
-        vanilla_cmp_body = self.get_aux('vanilla_cmp').fragment
-        self.dire_expose_meth('expose_vanilla_cmp',"%s __cmp__ o" % prefix,vanilla_cmp_body)
 
     def dire_expose_vanilla_pow(self,name,parm,body):
         if body is not None:

@@ -1,4 +1,4 @@
 base_class: PyStruct
 want_dict: true
-ctr: PyString format
+ctr: PyUnicode format
 incl: object

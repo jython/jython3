@@ -779,7 +779,7 @@ public class PyModuleDerived extends PyModule implements Slotted,FinalizablePyOb
                 }
             throw Py.TypeError("__hash__ should return a int");
         }
-        if (self_type.lookup("__eq__")!=null||self_type.lookup("__cmp__")!=null) {
+        if (self_type.lookup("__eq__")!=null) {
             throw Py.TypeError(String.format("unhashable type: '%.200s'",getType().fastGetName()));
         }
         return super.hashCode();

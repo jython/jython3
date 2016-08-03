@@ -128,13 +128,6 @@ define: index_getitem
        throw Py.IndexError("index out of range: "+`arg0);
    }
    return ret;
-define: vanilla_cmp deleg_prefix
-  int ret = ((`typ)self).`concat`(`deleg_prefix,__cmp__)(`arg0); 
-  if (ret == -2) {
-    throw Py.TypeError(`strfy`(`typname)+".__cmp__(x,y) requires y to be '"+
-                       `strfy`(`typname)+"', not a '"+(`arg0).getType().fastGetName()+"'");
-  }
-  return Py.newInteger(ret);
 define: vanilla_pow deleg_prefix
   PyObject ret =  ((`typ)self).`concat`(`deleg_prefix,__pow__)(`arg0,`arg1);  
   if (ret == null)
@@ -160,7 +153,7 @@ define: ldeleg: name deleg_prefix
 define: bdeleg: name deleg_prefix
   return Py.newBoolean(`deleg`(`name,`deleg_prefix));
 define: sdeleg: name deleg_prefix
-  return new PyString(`deleg`(`name,`deleg_prefix));
+  return new PyUnicode(`deleg`(`name,`deleg_prefix));
 define: udeleg: name deleg_prefix
   return new PyUnicode(`deleg`(`name,`deleg_prefix));
 define: void:

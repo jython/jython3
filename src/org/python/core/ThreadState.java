@@ -10,8 +10,6 @@ public class ThreadState {
 
     public PyFrame frame;
 
-    // FIXME this should be a stack, pop when exit try/except clause
-    // FIXME raise RuntimeError if try to reraise and the stack is empty
     public Deque<PyException> exceptions = new LinkedList<>();
 
     public int call_depth;

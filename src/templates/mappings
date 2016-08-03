@@ -1,9 +1,9 @@
 # mapping file; specifies how expose & derive filenames should map to classes
 # for instance, a line like:
 #
-#   str.expose:org.python.core.PyString
+#   str.expose:org.python.core.PyUnicode
 #
-# will map str.expose to org.python.core.PyString.  Many classes will have 2
+# will map str.expose to org.python.core.PyUnicode.  Many classes will have 2
 # lines; one for their expose, and one for their derived class.
 
 BaseException.derived:org.python.core.PyBaseExceptionDerived

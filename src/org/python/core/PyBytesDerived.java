@@ -72,7 +72,7 @@ public class PyBytesDerived extends PyBytes implements Slotted,FinalizablePyObje
         dict=new PyStringMap();
     }
 
-    public PyBytesDerived(PyType subtype, String v) {
+    public PyBytesDerived(PyType subtype,String v) {
         super(subtype,v);
         slots=new PyObject[subtype.getNumSlots()];
         dict=subtype.instDict();
@@ -806,7 +806,7 @@ public class PyBytesDerived extends PyBytes implements Slotted,FinalizablePyObje
                 }
             throw Py.TypeError("__hash__ should return a int");
         }
-        if (self_type.lookup("__eq__")!=null||self_type.lookup("__cmp__")!=null) {
+        if (self_type.lookup("__eq__")!=null) {
             throw Py.TypeError(String.format("unhashable type: '%.200s'",getType().fastGetName()));
         }
         return super.hashCode();
