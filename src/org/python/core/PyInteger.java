@@ -244,63 +244,25 @@ public class PyInteger extends PyObject {
         return super.__tojava__(c);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.int___gt___doc)
-    final PyObject long___gt__(PyObject other) {
-        return super._gt(other);
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.int___ge___doc)
-    final PyObject long___ge__(PyObject other) {
-        return super._ge(other);
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.int___le___doc)
-    final PyObject long___le__(PyObject other) {
-        return super._le(other);
-    }
-
     @Override
-    public PyObject __lt__(PyObject other) {
-        return int___lt__(other);
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.int___lt___doc)
-    final PyObject int___lt__(PyObject other) {
+    public PyObject richCompare(PyObject other, CompareOp op) {
         if (other instanceof PyLong) {
-            return Py.newBoolean(BigInteger.valueOf(value).compareTo(((PyLong) other).getValue()) < 0);
+            return op.bool(BigInteger.valueOf(value).compareTo(((PyLong) other).getValue()));
         } else if (other instanceof PyInteger) {
-            return Py.newBoolean(value < ((PyInteger) other).value);
+            int res;
+            int v = value;
+            int w = ((PyInteger) other).value;
+            if (v < w) {
+                res = -1;
+            } else if (v > w) {
+                res = 1;
+            } else {
+                res = 0;
+            }
+            return op.bool(res);
         }
-        throw Py.TypeError(String.format("unorderable types: %s, %s", getType(), other.getType()));
+        return Py.NotImplemented;
     }
-
-    @Override
-    public PyObject __eq__(PyObject other) {
-        return int___eq__(other);
-    }
-
-    @ExposedMethod(doc = BuiltinDocs.int___eq___doc)
-    final PyObject int___eq__(PyObject other) {
-        if (other instanceof PyLong) {
-            return Py.newBoolean(((PyLong) other).getValue().compareTo(BigInteger.valueOf(value)) == 0);
-        } else if (other instanceof PyInteger) {
-            return Py.newBoolean(value == ((PyInteger) other).value);
-        }
-        return Py.False;
-    }
-//    @Override
-//    public int __cmp__(PyObject other) {
-//        return int___cmp__(other);
-//    }
-//
-//    @ExposedMethod(type = MethodType.CMP, doc = BuiltinDocs.int___cmp___doc)
-//    final int int___cmp__(PyObject other) {
-//        if (!canCoerce(other)) {
-//            return -2;
-//        }
-//        int v = coerce(other);
-//        return getValue() < v ? -1 : getValue() > v ? 1 : 0;
-//    }
 
     @Override
     public Object __coerce_ex__(PyObject other) {

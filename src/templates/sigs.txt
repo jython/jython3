@@ -47,13 +47,6 @@ __delslice__
 ,__abs__ 
 ,__invert__
  
-,__lt__ o
-,__le__ o
-,__gt__ o
-,__ge__ o
-,__eq__ o
-,__ne__ o
-
 ,__add__ o
 ,__radd__ o
 ,__iadd__ o

@@ -1,6 +1,8 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.core;
 
+import static org.python.core.CompareOp.*;
+
 /**
  * The abstract superclass of PyObjects that implements a Sequence. Minimize the work in creating
  * such objects.
@@ -166,103 +168,55 @@ public abstract class PySequence extends PyObject {
     }
 
     @Override
-    public PyObject __eq__(PyObject o) {
-        return seq___eq__(o);
-    }
-
-    final PyObject seq___eq__(PyObject o) {
-        if (!isSubType(o) || o.getType() == PyObject.TYPE) {
-            return null;
+    public PyObject richCompare(PyObject o, CompareOp op) {
+        if (!isSubType(o)) {
+            if (op == EQ) {
+                return Py.False;
+            } else if (op == NE) {
+                return Py.True;
+            }
+            return Py.NotImplemented;
         }
         int tl = __len__();
         int ol = o.__len__();
         if (tl != ol) {
+          if (op == EQ) {
+              return Py.False;
+          } else if (op == NE) {
+              return Py.True;
+          }
+        }
+        int i = 0;
+        for (; i < tl && i < ol; i++) {
+            if (!__getitem__(i).equals(o.__getitem__(i))) {
+                break;
+            }
+        }
+        if (i >= tl || i >= ol) {
+            switch(op) {
+                case LT:
+                    return Py.newBoolean(tl < ol);
+                case LE:
+                    return Py.newBoolean(tl <= ol);
+                case EQ:
+                    return Py.newBoolean(tl == ol);
+                case NE:
+                    return Py.newBoolean(tl != ol);
+                case GT:
+                    return Py.newBoolean(tl > ol);
+                case GE:
+                    return Py.newBoolean(tl >= ol);
+                default:
+                    return null;
+            }
+        }
+        if (op == CompareOp.EQ) {
             return Py.False;
         }
-        int i = cmp(this, tl, o, ol);
-        return i < 0 ? Py.True : Py.False;
-    }
-
-    @Override
-    public PyObject __ne__(PyObject o) {
-        return seq___ne__(o);
-    }
-
-    final PyObject seq___ne__(PyObject o) {
-        if (!isSubType(o) || o.getType() == PyObject.TYPE) {
-            return null;
-        }
-        int tl = __len__();
-        int ol = o.__len__();
-        if (tl != ol) {
+        if (op == CompareOp.NE) {
             return Py.True;
         }
-        int i = cmp(this, tl, o, ol);
-        return i < 0 ? Py.False : Py.True;
-    }
-
-    @Override
-    public PyObject __lt__(PyObject o) {
-        return seq___lt__(o);
-    }
-
-    final PyObject seq___lt__(PyObject o) {
-        if (!isSubType(o) || o.getType() == PyObject.TYPE) {
-            return null;
-        }
-        int i = cmp(this, -1, o, -1);
-        if (i < 0) {
-            return i == -1 ? Py.True : Py.False;
-        }
-        return __finditem__(i)._lt(o.__finditem__(i));
-    }
-
-    @Override
-    public PyObject __le__(PyObject o) {
-        return seq___le__(o);
-    }
-
-    final PyObject seq___le__(PyObject o) {
-        if (!isSubType(o) || o.getType() == PyObject.TYPE) {
-            return null;
-        }
-        int i = cmp(this, -1, o, -1);
-        if (i < 0) {
-            return i == -1 || i == -2 ? Py.True : Py.False;
-        }
-        return __finditem__(i)._le(o.__finditem__(i));
-    }
-
-    @Override
-    public PyObject __gt__(PyObject o) {
-        return seq___gt__(o);
-    }
-
-    final PyObject seq___gt__(PyObject o) {
-        if (!isSubType(o) || o.getType() == PyObject.TYPE) {
-            return null;
-        }
-        int i = cmp(this, -1, o, -1);
-        if (i < 0) {
-            return i == -3 ? Py.True : Py.False;
-        }
-        return __finditem__(i)._gt(o.__finditem__(i));
-    }
-
-    @Override
-    public PyObject __ge__(PyObject o) {
-        return seq___ge__(o);
-    }
-
-    final PyObject seq___ge__(PyObject o) {
-        if (!isSubType(o) || o.getType() == PyObject.TYPE) {
-            return null;
-        }
-        int i = cmp(this, -1, o, -1);
-        if (i < 0) {
-            return i == -3 || i == -2 ? Py.True : Py.False;
-        }
-        return __finditem__(i)._ge(o.__finditem__(i));
+        return __getitem__(i).richCompare(o.__getitem__(i), op);
     }
 
     /**
@@ -285,15 +239,9 @@ public abstract class PySequence extends PyObject {
      *         reached the end of o2 without a difference
      */
     protected static int cmp(PyObject o1, int ol1, PyObject o2, int ol2) {
-        if (ol1 < 0) {
-            ol1 = o1.__len__();
-        }
-        if (ol2 < 0) {
-            ol2 = o2.__len__();
-        }
         for (int i = 0; i < ol1 && i < ol2; i++) {
             if (!o1.__getitem__(i).equals(o2.__getitem__(i))) {
-                return i;
+                return -2;
             }
         }
         if (ol1 == ol2) {

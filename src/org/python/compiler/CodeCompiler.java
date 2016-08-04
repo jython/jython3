@@ -26,6 +26,7 @@ import org.python.antlr.base.stmt;
 import org.python.core.AsyncContextGuard;
 import org.python.core.AsyncContextManager;
 import org.python.core.AsyncIterator;
+import org.python.core.CompareOp;
 import org.python.core.CompilerFlags;
 import org.python.core.ContextGuard;
 import org.python.core.ContextManager;
@@ -1701,40 +1702,39 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
     }
 
     public void visitCmpop(cmpopType op) throws Exception {
-        String name = null;
-        switch (op) {
-            case Eq:
-                name = "_eq";
-                break;
-            case NotEq:
-                name = "_ne";
-                break;
-            case Lt:
-                name = "_lt";
-                break;
-            case LtE:
-                name = "_le";
-                break;
-            case Gt:
-                name = "_gt";
-                break;
-            case GtE:
-                name = "_ge";
-                break;
-            case Is:
-                name = "_is";
-                break;
-            case IsNot:
-                name = "_isnot";
-                break;
-            case In:
-                name = "_in";
-                break;
-            case NotIn:
-                name = "_notin";
-                break;
+        if (op == cmpopType.In) {
+            code.invokevirtual(p(PyObject.class), "_in", sig(PyObject.class, PyObject.class));
+        } else if (op == cmpopType.Is) {
+            code.invokevirtual(p(PyObject.class), "_is", sig(PyObject.class, PyObject.class));
+        } else if (op == cmpopType.IsNot) {
+            code.invokevirtual(p(PyObject.class), "_isnot", sig(PyObject.class, PyObject.class));
+        } else if (op == cmpopType.NotIn) {
+            code.invokevirtual(p(PyObject.class), "_notin", sig(PyObject.class, PyObject.class));
+        } else {
+            String name = null;
+            switch (op) {
+                case Eq:
+                    name = "EQ";
+                    break;
+                case NotEq:
+                    name = "NE";
+                    break;
+                case Lt:
+                    name = "LT";
+                    break;
+                case LtE:
+                    name = "LE";
+                    break;
+                case Gt:
+                    name = "GT";
+                    break;
+                case GtE:
+                    name = "GE";
+                    break;
+            }
+            code.getstatic(p(CompareOp.class), name, ci(CompareOp.class));
+            code.invokevirtual(p(PyObject.class), "do_richCompare", sig(PyObject.class, PyObject.class, CompareOp.class));
         }
-        code.invokevirtual(p(PyObject.class), name, sig(PyObject.class, PyObject.class));
     }
 
     @Override

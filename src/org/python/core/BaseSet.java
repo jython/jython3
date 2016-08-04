@@ -262,68 +262,27 @@ public abstract class BaseSet extends PyObject implements Set, Traverseproc {
         }
     }
 
-    public int __cmp__(PyObject other) {
-        return baseset___cmp__(other);
-    }
-
-    final int baseset___cmp__(PyObject other) {
-        throw Py.TypeError("cannot compare sets using cmp()");
-    }
-
-    public PyObject __eq__(PyObject other) {
-        return baseset___eq__(other);
-    }
-
-    final PyObject baseset___eq__(PyObject other) {
-        if (other instanceof BaseSet) {
-            return Py.newBoolean(_set.equals(((BaseSet)other)._set));
+    @Override
+    public PyObject richCompare(PyObject other, CompareOp op) {
+        if (!(other instanceof BaseSet)) {
+            if (op == CompareOp.EQ) {
+                return Py.False;
+            }
+            if (op == CompareOp.NE) {
+                return Py.True;
+            }
+            return Py.NotImplemented;
         }
-        return Py.False;
-    }
-
-    public PyObject __ne__(PyObject other) {
-        return baseset___ne__(other);
-    }
-
-    final PyObject baseset___ne__(PyObject other) {
-        if (other instanceof BaseSet) {
-            return Py.newBoolean(!_set.equals(((BaseSet)other)._set));
+        int ret;
+        BaseSet o = asBaseSet(other);
+        if (_set.equals(o._set)) {
+            ret = 0;
+        } else if (baseset_issubset(o).__bool__()) {
+            ret = -1;
+        } else {
+            ret = 1;
         }
-        return Py.True;
-    }
-
-    public PyObject __le__(PyObject other) {
-        return baseset___le__(other);
-    }
-
-    final PyObject baseset___le__(PyObject other) {
-        return baseset_issubset(asBaseSet(other));
-    }
-
-    public PyObject __ge__(PyObject other) {
-        return baseset___ge__(other);
-    }
-
-    final PyObject baseset___ge__(PyObject other) {
-        return baseset_issuperset(asBaseSet(other));
-    }
-
-    public PyObject __lt__(PyObject other) {
-        return baseset___lt__(other);
-    }
-
-    final PyObject baseset___lt__(PyObject other) {
-        BaseSet bs = asBaseSet(other);
-        return Py.newBoolean(size() < bs.size() && baseset_issubset(other).__bool__());
-    }
-
-    public PyObject __gt__(PyObject other) {
-        return baseset___gt__(other);
-    }
-
-    final PyObject baseset___gt__(PyObject other) {
-        BaseSet bs = asBaseSet(other);
-        return Py.newBoolean(size() > bs.size() && baseset_issuperset(other).__bool__());
+        return op.bool(ret);
     }
 
     /**

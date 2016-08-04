@@ -53,6 +53,17 @@ public class PyNone extends PyObject implements Serializable {
     }
 
     @Override
+    public PyObject richCompare(PyObject other, CompareOp op) {
+        if (op == CompareOp.EQ) {
+            return Py.newBoolean(other == Py.None);
+        }
+        if (op == CompareOp.NE) {
+            return Py.newBoolean(other != Py.None);
+        }
+        return Py.NotImplemented;
+    }
+
+    @Override
     public String toString() {
         return NoneType_toString();
     }

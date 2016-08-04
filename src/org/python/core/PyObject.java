@@ -1,13 +1,6 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.core;
 
-import java.io.Serializable;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.python.core.stringlib.IntegerFormatter;
 import org.python.core.stringlib.InternalFormat;
 import org.python.expose.ExposedClassMethod;
@@ -17,8 +10,15 @@ import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedSet;
 import org.python.expose.ExposedType;
-import org.python.util.Generic;
 import org.python.modules.gc;
+import org.python.util.Generic;
+
+import java.io.Serializable;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * All objects known to the Jython runtime system are represented by an instance
@@ -319,7 +319,14 @@ public class PyObject implements Serializable {
         if(ob_other == this) {
             return true;
         }
-        return (ob_other instanceof PyObject) && _eq((PyObject)ob_other).__bool__();
+        if (!(ob_other instanceof PyObject)) {
+            return false;
+        }
+        PyObject res = richCompare((PyObject)ob_other, CompareOp.EQ);
+        if (res == Py.NotImplemented) {
+            return false;
+        }
+        return res.__bool__();
     }
 
     /**
@@ -1268,19 +1275,6 @@ public class PyObject implements Serializable {
         }
     }
 
-    /* The basic comparision operations */
-
-    /**
-     * Equivalent to the standard Python __cmp__ method.
-     *
-     * @param other the object to compare this with.
-     * @return -1 if this < o; 0 if this == o; +1 if this > o; -2 if no
-     * comparison is implemented
-     **/
-    public int __cmp__(PyObject other) {
-        return -2;
-    }
-
     /**
      * Equivalent to the standard Python __eq__ method.
      *
@@ -1293,7 +1287,7 @@ public class PyObject implements Serializable {
 
     @ExposedMethod(doc = BuiltinDocs.object___eq___doc)
     final PyObject object___eq__(PyObject other) {
-        return null;
+        return Py.NotImplemented;
     }
 
     /**
@@ -1308,11 +1302,7 @@ public class PyObject implements Serializable {
 
     @ExposedMethod(doc = BuiltinDocs.object___ne___doc)
     final PyObject object___ne__(PyObject other) {
-        PyObject res = __eq__(other);
-        if (res == null) {
-            return null;
-        }
-        return Py.newBoolean(!res.__bool__());
+        return Py.NotImplemented;
     }
 
     /**
@@ -1322,7 +1312,12 @@ public class PyObject implements Serializable {
      * @return the result of the comparison.
      **/
     public PyObject __le__(PyObject other) {
-        return null;
+        return object___le__(other);
+    }
+
+    @ExposedMethod
+    public PyObject object___le__(PyObject other) {
+        return Py.NotImplemented;
     }
 
     /**
@@ -1332,7 +1327,12 @@ public class PyObject implements Serializable {
      * @return the result of the comparison.
      **/
     public PyObject __lt__(PyObject other) {
-        return null;
+        return object___lt__(other);
+    }
+
+    @ExposedMethod
+    public PyObject object___lt__(PyObject other) {
+        return Py.NotImplemented;
     }
 
     /**
@@ -1342,9 +1342,13 @@ public class PyObject implements Serializable {
      * @return the result of the comparison.
      **/
     public PyObject __ge__(PyObject other) {
-        return null;
+        return object___ge__(other);
     }
 
+    @ExposedMethod
+    public PyObject object___ge__(PyObject other) {
+        return Py.NotImplemented;
+    }
     /**
      * Equivalent to the standard Python __gt__ method.
      *
@@ -1352,7 +1356,12 @@ public class PyObject implements Serializable {
      * @return the result of the comparison.
      **/
     public PyObject __gt__(PyObject other) {
-        return null;
+        return object___gt__(other);
+    }
+
+    @ExposedMethod
+    public PyObject object___gt__(PyObject other) {
+        return Py.NotImplemented;
     }
 
     /**
@@ -1362,48 +1371,60 @@ public class PyObject implements Serializable {
      * @return -1 if this < 0; 0 if this == o; +1 if this > o
      **/
     public final int _cmp(PyObject o) {
-        if (this == o) {
+        PyObject res = richCompare(o, CompareOp.EQ);
+        if (res != Py.NotImplemented && res.__bool__()) {
             return 0;
         }
-
-        PyObject token = null;
-        ThreadState ts = Py.getThreadState();
-        try {
-            if (++ts.compareStateNesting > 500) {
-                if ((token = check_recursion(ts, this, o)) == null)
-                    return 0;
-            }
-
-            PyObject result;
-            result = __eq__(o);
-            if (result == null) {
-                result = o.__eq__(this);
-            }
-            if (result != null && result.__bool__()) {
-                return 0;
-            }
-
-            result = __lt__(o);
-            if (result == null) {
-                result = o.__gt__(this);
-            }
-            if (result != null && result.__bool__()) {
+        res = richCompare(o, CompareOp.LT);
+        if (res != Py.NotImplemented) {
+            if (res.__bool__()) {
                 return -1;
             }
-
-            result = __gt__(o);
-            if (result == null) {
-                result = o.__lt__(this);
-            }
-            if (result != null && result.__bool__()) {
-                return 1;
-            }
-
-            return _cmp_unsafe(o);
-        } finally {
-            delete_token(ts, token);
-            ts.compareStateNesting--;
+            return 1;
         }
+        throw Py.TypeError("not orderable");
+//        if (this == o) {
+//            return 0;
+//        }
+//
+//        PyObject token = null;
+//        ThreadState ts = Py.getThreadState();
+//        try {
+//            if (++ts.compareStateNesting > 500) {
+//                if ((token = check_recursion(ts, this, o)) == null)
+//                    return 0;
+//            }
+//
+//            PyObject result;
+//            result = __eq__(o);
+//            if (result == null || result == Py.NotImplemented) {
+//                result = o.__eq__(this);
+//            }
+//            if (result != null && result != Py.NotImplemented && result.__bool__()) {
+//                return 0;
+//            }
+//
+//            result = __lt__(o);
+//            if (result == null || result == Py.NotImplemented) {
+//                result = o.__gt__(this);
+//            }
+//            if (result != null && result != Py.NotImplemented && result.__bool__()) {
+//                return -1;
+//            }
+//
+//            result = o.__lt__(this);
+//            if (result == null || result == Py.NotImplemented) {
+//                result = __gt__(o);
+//            }
+//            if (result != null && result != Py.NotImplemented && result.__bool__()) {
+//                return 1;
+//            }
+//
+//            throw Py.TypeError(String.format(UNORDERABLE_ERROR_MSG, getType().getName(), o.getType().getName()));
+//        } finally {
+//            delete_token(ts, token);
+//            ts.compareStateNesting--;
+//        }
     }
 
     private PyObject make_pair(PyObject o) {
@@ -1411,6 +1432,85 @@ public class PyObject implements Serializable {
             return new PyIdentityTuple(new PyObject[] { this, o });
         else
             return new PyIdentityTuple(new PyObject[] { o, this });
+    }
+
+    public PyObject richCompare(PyObject other, CompareOp op) {
+        PyObject res;
+        switch(op) {
+            case EQ:
+                res = (this == other) ? Py.True : Py.NotImplemented;
+                break;
+            case NE:
+                // by default, __ne__() delegates to __eq__() and inverts the result,
+                // unless the latter returns NotImplemented
+                // NOTE: this is recursive
+                res = richCompare(other, CompareOp.EQ);
+                if (res != Py.NotImplemented) {
+                    res = Py.newBoolean(!res.__bool__());
+                }
+                break;
+            default:
+                res = Py.NotImplemented;
+        }
+        if (res != Py.NotImplemented) {
+            return res;
+        }
+        try {
+            PyObject meth = __getattr__(op.meth());
+            return meth.__call__(other);
+        } catch (PyException pye) {
+            if (pye.match(Py.AttributeError)) {
+                return Py.NotImplemented;
+            }
+            throw pye;
+        }
+    }
+
+    // Rich comparison entry for bytecode
+    public final PyObject do_richCompare(PyObject other, CompareOp op) {
+        PyObject token = null;
+        ThreadState ts = Py.getThreadState();
+        try {
+            if (++ts.compareStateNesting > 500) {
+                if ((token = check_recursion(ts, this, other)) == null)
+                    return Py.True;
+            }
+
+            boolean checkedReverseOp = false;
+            PyObject res;
+            PyType vt = getType();
+            PyType wt = other.getType();
+            if (vt != wt && wt.isSubType(vt)) {
+                checkedReverseOp = true;
+                res = other.richCompare(this, op.reflectedOp());
+                if (res != Py.NotImplemented) {
+                    return res;
+                }
+            }
+            res = richCompare(other, op);
+            if (res != Py.NotImplemented) {
+                return res;
+            }
+            if (!checkedReverseOp) {
+                res = other.richCompare(this, op.reflectedOp());
+                if (res != Py.NotImplemented) {
+                    return res;
+                }
+            }
+            /** if neither object implements it, provide a sensible default
+             * for == and !=, but raise an exception for ordering. */
+            switch(op) {
+                case EQ:
+                    return Py.newBoolean(this == other);
+                case NE:
+                    return Py.newBoolean(this != other);
+                default:
+                    throw Py.TypeError(String.format("'%s' not supported between instance of '%.100s' and '%.100s'", op, vt, wt));
+            }
+        } finally {
+            delete_token(ts, token);
+            ts.compareStateNesting--;
+        }
     }
 
     private final int _default_cmp(PyObject other) {
@@ -1445,10 +1545,6 @@ public class PyObject implements Serializable {
     }
 
     private final int _cmp_unsafe(PyObject other) {
-        int result = _try__cmp__(other);
-        if (result != -2) {
-            return result;
-        }
         return this._default_cmp(other);
     }
 
@@ -1457,54 +1553,8 @@ public class PyObject implements Serializable {
      *  thus it avoids to invoke _default_cmp.
      */
     private final int _cmpeq_unsafe(PyObject other) {
-        int result = _try__cmp__(other);
-        if (result != -2) {
-            return result;
-        }
-
         return this._is(other).__bool__()?0:1;
     }
-
-    /**
-     * Tries a 3-way comparison, using __cmp__. It tries the following
-     * operations until one of them succeed:<ul>
-     *  <li>this.__cmp__(other)
-     *  <li>other.__cmp__(this)
-     *  <li>this._coerce(other) followed by coerced_this.__cmp__(coerced_other)</ul>
-     *
-     * @return -1, 0, -1 or -2, according to the {@link #__cmp__} protocol.
-     */
-    private int _try__cmp__(PyObject other) {
-        int result;
-        result = this.__cmp__(other);
-        if (result != -2)
-            return result;
-
-        if (!(this instanceof PyInstance)) {
-            result = other.__cmp__(this);
-            if (result != -2)
-                return -result;
-        }
-        // Final attempt: coerce both arguments and compare that. We are doing
-        // this the same point where CPython 2.5 does. (See
-        // <http://svn.python.org/projects/python/tags/r252/Objects/object.c> at
-        // the end of try_3way_compare).
-        //
-        // This is not exactly was is specified on
-        // <http://docs.python.org/ref/coercion-rules.html>, where coercion is
-        // supposed to happen before trying __cmp__.
-
-        PyObject[] coerced = _coerce(other);
-        if (coerced != null) {
-            result = coerced[0].__cmp__(coerced[1]);
-            if (result != -2) {
-                return result;
-            }
-        }
-        return -2;
-    }
-
-
 
     private final static PyObject check_recursion(
         ThreadState ts,
@@ -1536,32 +1586,7 @@ public class PyObject implements Serializable {
      * @return the result of the comparison
      **/
     public final PyObject _eq(PyObject o) {
-        PyObject token = null;
-        PyType t1 = this.getType();
-        PyType t2 = o.getType();
-
-        if (t1 != t2 && t2.isSubType(t1)) {
-            return o._eq(this);
-        }
-
-        ThreadState ts = Py.getThreadState();
-        try {
-            if (++ts.compareStateNesting > 10) {
-                if ((token = check_recursion(ts, this, o)) == null)
-                    return Py.True;
-            }
-            PyObject res = __eq__(o);
-            if (res != null)
-                return res;
-            res = o.__eq__(this);
-            if (res != null) {
-                return res;
-            }
-            return _cmpeq_unsafe(o) == 0 ? Py.True : Py.False;
-        } finally {
-            delete_token(ts, token);
-            ts.compareStateNesting--;
-        }
+        return richCompare(o, CompareOp.EQ);
     }
 
     /**
@@ -1571,34 +1596,7 @@ public class PyObject implements Serializable {
      * @return the result of the comparison
      **/
     public final PyObject _ne(PyObject o) {
-        PyObject token = null;
-        PyType t1 = this.getType();
-        PyType t2 = o.getType();
-
-        if (t1 != t2 && t2.isSubType(t1)) {
-            return o._ne(this);
-        }
-
-        ThreadState ts = Py.getThreadState();
-        try {
-            if (++ts.compareStateNesting > 10) {
-                if ((token = check_recursion(ts, this, o)) == null)
-                    return Py.False;
-            }
-            PyObject res = __ne__(o);
-            if (res != null)
-                return res;
-            res = o.__ne__(this);
-            if (res != null) {
-                return res;
-            }
-            return Py.True;
-//            return _cmpeq_unsafe(o) != 0 ? Py.True : Py.False;
-//            return Py.newBoolean(!_eq(o).__bool__());
-        } finally {
-            delete_token(ts, token);
-            ts.compareStateNesting--;
-        }
+        return richCompare(o, CompareOp.NE);
     }
 
     /**
@@ -1608,31 +1606,7 @@ public class PyObject implements Serializable {
      * @return the result of the comparison
      **/
     public final PyObject _le(PyObject o) {
-        PyObject token = null;
-        PyType t1 = this.getType();
-        PyType t2 = o.getType();
-
-        if (t1 != t2 && t2.isSubType(t1)) {
-            return o._ge(this);
-        }
-
-        ThreadState ts = Py.getThreadState();
-        try {
-            if (++ts.compareStateNesting > 10) {
-                if ((token = check_recursion(ts, this, o)) == null)
-                    throw Py.ValueError("can't order recursive values");
-            }
-            PyObject ltRes = __lt__(o);
-            PyObject eqRes = __eq__(o);
-            if (ltRes == null || eqRes == null) {
-                throw Py.TypeError(String.format(UNORDERABLE_ERROR_MSG,
-                        getType().fastGetName(), "<=", o.getType().fastGetName()));
-            }
-            return Py.newBoolean(ltRes.__bool__() || eqRes.__bool__());
-        } finally {
-            delete_token(ts, token);
-            ts.compareStateNesting--;
-        }
+        return richCompare(o, CompareOp.LE);
     }
 
     /**
@@ -1642,33 +1616,7 @@ public class PyObject implements Serializable {
      * @return the result of the comparison
      **/
     public final PyObject _lt(PyObject o) {
-        PyObject token = null;
-        PyType t1 = this.getType();
-        PyType t2 = o.getType();
-
-        if (t1 != t2 && t2.isSubType(t1)) {
-            return o._gt(this);
-        }
-
-        ThreadState ts = Py.getThreadState();
-        try {
-            if (++ts.compareStateNesting > 10) {
-                if ((token = check_recursion(ts, this, o)) == null)
-                    throw Py.ValueError("can't order recursive values");
-            }
-            PyObject res = __lt__(o);
-            if (res != null)
-                return res;
-            res = o.__gt__(this);
-            if (res != null)
-                return res;
-            throw Py.TypeError(String.format(UNORDERABLE_ERROR_MSG,
-                    getType().fastGetName(), "<", o.getType().fastGetName()));
-//            return _cmp_unsafe(o) < 0 ? Py.True : Py.False;
-        } finally {
-            delete_token(ts, token);
-            ts.compareStateNesting--;
-        }
+        return richCompare(o, CompareOp.LT);
     }
 
     /**
@@ -1678,25 +1626,7 @@ public class PyObject implements Serializable {
      * @return the result of the comparison
      **/
     public final PyObject _ge(PyObject o) {
-        PyObject token = null;
-        PyType t1 = this.getType();
-        PyType t2 = o.getType();
-
-        if (t1 != t2 && t2.isSubType(t1)) {
-            return o._le(this);
-        }
-
-        ThreadState ts = Py.getThreadState();
-        try {
-            if (++ts.compareStateNesting > 10) {
-                if ((token = check_recursion(ts, this, o)) == null)
-                    throw Py.ValueError("can't order recursive values");
-            }
-            return Py.newBoolean(!__lt__(o).__bool__());
-        } finally {
-            delete_token(ts, token);
-            ts.compareStateNesting--;
-        }
+        return richCompare(o, CompareOp.GE);
     }
 
     /**
@@ -1706,26 +1636,7 @@ public class PyObject implements Serializable {
      * @return the result of the comparison
      **/
     public final PyObject _gt(PyObject o) {
-        PyObject token = null;
-        PyType t1 = this.getType();
-        PyType t2 = o.getType();
-
-        if (t1 != t2 && t2.isSubType(t1)) {
-            return o._lt(this);
-        }
-
-        ThreadState ts = Py.getThreadState();
-        try {
-            if (++ts.compareStateNesting > 10) {
-                if ((token = check_recursion(ts, this, o)) == null)
-                    throw Py.ValueError("can't order recursive values");
-            }
-            return Py.newBoolean(!_le(o).__bool__());
-        } finally {
-            delete_token(ts, token);
-            ts.compareStateNesting--;
-        }
-
+        return richCompare(o, CompareOp.GT);
     }
 
     /**

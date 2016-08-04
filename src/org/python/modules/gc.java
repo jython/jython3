@@ -1299,7 +1299,9 @@ public class gc {
                 < postFinalizationTimeOut) {
             return;
         }
-        try {
+        if (preFinalizationProcess == null) {
+            preFinalizationProcessRemove = null;
+        } else {
             synchronized(preFinalizationProcess) {
                 for (Runnable r: preFinalizationProcess) {
                     try {
@@ -1309,7 +1311,7 @@ public class gc {
                                 +preProcessError);
                     }
                 }
-                try {
+                if (preFinalizationProcessRemove != null) {
                     synchronized (preFinalizationProcessRemove) {
                         preFinalizationProcess.removeAll(preFinalizationProcessRemove);
                         preFinalizationProcessRemove = null;
@@ -1317,23 +1319,20 @@ public class gc {
                     if (preFinalizationProcess.isEmpty()) {
                         preFinalizationProcess = null;
                     }
-                } catch (NullPointerException npe0) {}
-            }
-        } catch (NullPointerException npe) {
-            preFinalizationProcessRemove = null;
-        }
-
-        try {
-            synchronized(postFinalizationProcess) {
-                if (!postFinalizationProcess.isEmpty() &&
-                        postFinalizationProcessor == null) {
-                    postFinalizationPending = true;
-                    postFinalizationProcessor = new Thread(
-                            PostFinalizationProcessor.defaultInstance);
-                    postFinalizationProcessor.start();
                 }
             }
-        } catch (NullPointerException npe) {}
+        }
+
+        if (postFinalizationProcess == null) return;
+        synchronized(postFinalizationProcess) {
+            if (!postFinalizationProcess.isEmpty() &&
+                    postFinalizationProcessor == null) {
+                postFinalizationPending = true;
+                postFinalizationProcessor = new Thread(
+                        PostFinalizationProcessor.defaultInstance);
+                postFinalizationProcessor.start();
+            }
+        }
     }
 
     public static void notifyPostFinalization() {

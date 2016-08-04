@@ -199,16 +199,6 @@ public class PyClass extends PyObject implements Traverseproc {
         return true;
     }
 
-    /* PyClass's are compared based on __name__ */
-    @Override
-    public int __cmp__(PyObject other) {
-        if (!(other instanceof PyClass)) {
-            return -2;
-        }
-        int c = __name__.compareTo(((PyClass) other).__name__);
-        return c < 0 ? -1 : c > 0 ? 1 : 0;
-    }
-
     @Override
     public PyUnicode __str__() {
         // Current CPython standard is that str(class) prints as

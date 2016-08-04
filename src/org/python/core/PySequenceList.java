@@ -25,7 +25,7 @@ public abstract class PySequenceList extends PySequence implements Traverseproc 
 
     public abstract boolean containsAll(Collection c);
 
-    public abstract boolean equals(Object o);
+//    public abstract boolean equals(Object o);
 
     public abstract Object get(int index);
 

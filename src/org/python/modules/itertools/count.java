@@ -4,16 +4,16 @@ package org.python.modules.itertools;
 import org.python.core.ArgParser;
 import org.python.core.Py;
 import org.python.core.PyException;
-import org.python.core.PyInteger;
 import org.python.core.PyIterator;
+import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
 import org.python.core.PyUnicode;
-import org.python.core.__builtin__;
 import org.python.core.Visitproc;
-import org.python.expose.ExposedNew;
+import org.python.core.__builtin__;
 import org.python.expose.ExposedMethod;
+import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
 
 @ExposedType(name = "itertools.count", base = PyObject.class, doc = count.count_doc)
@@ -141,20 +141,18 @@ public class count extends PyIterator {
 
     @ExposedMethod
     public PyUnicode __repr__() {
-        if (stepper instanceof PyInteger && stepper._cmp(Py.One) == 0) {
+        if (stepper instanceof PyLong && stepper._cmp(Py.One) == 0) {
             return Py.newUnicode(String.format("count(%s)", counter));
         }
-        else {
-            return Py.newUnicode(String.format("count(%s, %s)", counter, stepper));
-        }
+        return Py.newUnicode(String.format("count(%s, %s)", counter, stepper));
     }
 
     public PyObject __next__() {
         return iter.__next__();
     }
 
-    @ExposedMethod
     @Override
+    @ExposedMethod
     public PyObject next() {
         return doNext(__next__());
     }

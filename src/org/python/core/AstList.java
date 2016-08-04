@@ -56,36 +56,6 @@ public class AstList extends PySequence implements Cloneable, List, Traverseproc
         this.adapter = adapter;
     }
 
-    @ExposedMethod(type = MethodType.BINARY)
-    final PyObject astlist___ne__(PyObject o) {
-        return seq___ne__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY)
-    final PyObject astlist___eq__(PyObject o) {
-        return seq___eq__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY)
-    final PyObject astlist___lt__(PyObject o) {
-        return seq___lt__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY)
-    final PyObject astlist___le__(PyObject o) {
-        return seq___le__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY)
-    final PyObject astlist___gt__(PyObject o) {
-        return seq___gt__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY)
-    final PyObject astlist___ge__(PyObject o) {
-        return seq___ge__(o);
-    }
-
     @ExposedMethod
     final boolean astlist___contains__(PyObject o) {
         return object___contains__(o);

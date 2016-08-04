@@ -225,24 +225,6 @@ public class PyComplex extends PyObject {
     }
 
     @Override
-    public int __cmp__(PyObject other) {
-        if (!canCoerce(other)) {
-            return -2;
-        }
-        PyComplex c = coerce(other);
-        double oreal = c.real;
-        double oimag = c.imag;
-        if (real == oreal && imag == oimag) {
-            return 0;
-        }
-        if (real != oreal) {
-            return real < oreal ? -1 : 1;
-        } else {
-            return imag < oimag ? -1 : 1;
-        }
-    }
-
-    @Override
     public PyObject __eq__(PyObject other) {
         return complex___eq__(other);
     }
@@ -284,7 +266,12 @@ public class PyComplex extends PyObject {
                 } else {
                     // Delegate the logic to PyFloat
                     PyFloat f = new PyFloat(r);
-                    equal = (f.__cmp__(other) == 0);
+                    PyObject ret = f._eq(other);
+                    if (ret != null) {
+                        equal = ret.__bool__();
+                    } else {
+                        equal = false;
+                    }
                 }
             } else {
                 // No other primitive can have an imaginary part.

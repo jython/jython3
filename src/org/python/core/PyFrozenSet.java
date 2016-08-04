@@ -51,15 +51,6 @@ public class PyFrozenSet extends BaseSet {
         return fset;
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.frozenset___ne___doc)
-    final PyObject frozenset___ne__(PyObject o) {
-        return baseset___ne__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.frozenset___eq___doc)
-    final PyObject frozenset___eq__(PyObject o) {
-        return baseset___eq__(o);
-    }
 
     @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.frozenset___or___doc)
     final PyObject frozenset___or__(PyObject o) {
@@ -79,26 +70,6 @@ public class PyFrozenSet extends BaseSet {
     @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.frozenset___and___doc)
     final PyObject frozenset___and__(PyObject o) {
         return baseset___and__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.frozenset___lt___doc)
-    final PyObject frozenset___lt__(PyObject o) {
-        return baseset___lt__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.frozenset___gt___doc)
-    final PyObject frozenset___gt__(PyObject o) {
-        return baseset___gt__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.frozenset___ge___doc)
-    final PyObject frozenset___ge__(PyObject o) {
-        return baseset___ge__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.frozenset___le___doc)
-    final PyObject frozenset___le__(PyObject o) {
-        return baseset___le__(o);
     }
 
     @ExposedMethod(doc = BuiltinDocs.frozenset___iter___doc)

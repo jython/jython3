@@ -267,36 +267,6 @@ public class PyList extends PySequenceList implements List {
         return new PyList(newList);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.list___ne___doc)
-    final synchronized PyObject list___ne__(PyObject o) {
-        return seq___ne__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.list___eq___doc)
-    final synchronized PyObject list___eq__(PyObject o) {
-        return seq___eq__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.list___lt___doc)
-    final synchronized PyObject list___lt__(PyObject o) {
-        return seq___lt__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.list___le___doc)
-    final synchronized PyObject list___le__(PyObject o) {
-        return seq___le__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.list___gt___doc)
-    final synchronized PyObject list___gt__(PyObject o) {
-        return seq___gt__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.list___ge___doc)
-    final synchronized PyObject list___ge__(PyObject o) {
-        return seq___ge__(o);
-    }
-
     @Override
     public PyObject __imul__(PyObject o) {
         return list___imul__(o);
@@ -744,23 +714,18 @@ public class PyList extends PySequenceList implements List {
      */
     @ExposedMethod(doc = BuiltinDocs.list_sort_doc)
     final synchronized void list_sort(PyObject[] args, String[] kwds) {
-        ArgParser ap = new ArgParser("list", args, kwds, new String[]{"cmp", "key", "reverse"}, 0);
-        PyObject cmp = ap.getPyObject(0, Py.None);
-        PyObject key = ap.getPyObject(1, Py.None);
-        PyObject reverse = ap.getPyObject(2, Py.False);
-        sort(cmp, key, reverse);
+        ArgParser ap = new ArgParser("list", args, kwds, new String[]{"key", "reverse"}, 0);
+        PyObject key = ap.getPyObject(0, Py.None);
+        PyObject reverse = ap.getPyObject(1, Py.False);
+        sort(key, reverse);
     }
 
-    public void sort(PyObject cmp, PyObject key, PyObject reverse) {
+    public void sort(PyObject key, PyObject reverse) {
         boolean bReverse = reverse.__bool__();
         if (key == Py.None || key == null) {
-            if (cmp == Py.None || cmp == null) {
-                sort(bReverse);
-            } else {
-                sort(cmp, bReverse);
-            }
+            sort(bReverse);
         } else {
-            sort(cmp, key, bReverse);
+            sort(key, bReverse);
         }
     }
 
@@ -809,52 +774,52 @@ public class PyList extends PySequenceList implements List {
         }
     }
 
-    public void sort(PyObject compare) {
-        sort(compare, false);
-    }
+//    public void sort(PyObject compare) {
+//        sort(compare, false);
+//    }
+//
+//    private synchronized void sort(PyObject compare, boolean reverse) {
+//        gListAllocatedStatus = -1;
+//        if (reverse) {
+//            Collections.reverse(list); // maintain stability of sort by reversing first
+//        }
+//        PyObjectComparator c = new PyObjectComparator(this, compare);
+//        Collections.sort(list, c);
+//        if (reverse) {
+//            Collections.reverse(list);
+//        }
+//        gListAllocatedStatus = list.size();
+//    }
 
-    private synchronized void sort(PyObject compare, boolean reverse) {
-        gListAllocatedStatus = -1;
-        if (reverse) {
-            Collections.reverse(list); // maintain stability of sort by reversing first
-        }
-        PyObjectComparator c = new PyObjectComparator(this, compare);
-        Collections.sort(list, c);
-        if (reverse) {
-            Collections.reverse(list);
-        }
-        gListAllocatedStatus = list.size();
-    }
-
-    private static class PyObjectComparator implements Comparator<PyObject> {
-
-        private final PyList list;
-        private final PyObject cmp;
-
-        PyObjectComparator(PyList list, PyObject cmp) {
-            this.list = list;
-            this.cmp = cmp;
-        }
-
-        public int compare(PyObject o1, PyObject o2) {
-            int result = cmp.__call__(o1, o2).asInt();
-            if (this.list.gListAllocatedStatus >= 0) {
-                throw Py.ValueError("list modified during sort");
-            }
-            return result;
-        }
-
-        public boolean equals(Object o) {
-            if (o == this) {
-                return true;
-            }
-
-            if (o instanceof PyObjectComparator) {
-                return cmp.equals(((PyObjectComparator) o).cmp);
-            }
-            return false;
-        }
-    }
+//    private static class PyObjectComparator implements Comparator<PyObject> {
+//
+//        private final PyList list;
+//        private final PyObject cmp;
+//
+//        PyObjectComparator(PyList list, PyObject cmp) {
+//            this.list = list;
+//            this.cmp = cmp;
+//        }
+//
+//        public int compare(PyObject o1, PyObject o2) {
+//            int result = cmp.__call__(o1, o2).asInt();
+//            if (this.list.gListAllocatedStatus >= 0) {
+//                throw Py.ValueError("list modified during sort");
+//            }
+//            return result;
+//        }
+//
+//        public boolean equals(Object o) {
+//            if (o == this) {
+//                return true;
+//            }
+//
+//            if (o instanceof PyObjectComparator) {
+//                return cmp.equals(((PyObjectComparator) o).cmp);
+//            }
+//            return false;
+//        }
+//    }
 
     private static class KV {
 
@@ -870,20 +835,13 @@ public class PyList extends PySequenceList implements List {
     private static class KVComparator implements Comparator<KV> {
 
         private final PyList list;
-        private final PyObject cmp;
 
-        KVComparator(PyList list, PyObject cmp) {
+        KVComparator(PyList list) {
             this.list = list;
-            this.cmp = cmp;
         }
 
         public int compare(KV o1, KV o2) {
-            int result;
-            if (cmp != null && cmp != Py.None) {
-                result = cmp.__call__(o1.key, o2.key).asInt();
-            } else {
-                result = o1.key._cmp(o2.key);
-            }
+            int result = o1.key._cmp(o2.key);
             if (this.list.gListAllocatedStatus >= 0) {
                 throw Py.ValueError("list modified during sort");
             }
@@ -896,13 +854,13 @@ public class PyList extends PySequenceList implements List {
             }
 
             if (o instanceof KVComparator) {
-                return cmp.equals(((KVComparator) o).cmp);
+                return list.equals(((KVComparator) o).list);
             }
             return false;
         }
     }
 
-    private synchronized void sort(PyObject cmp, PyObject key, boolean reverse) {
+    private synchronized void sort(PyObject key, boolean reverse) {
         gListAllocatedStatus = -1;
 
         int size = list.size();
@@ -911,7 +869,7 @@ public class PyList extends PySequenceList implements List {
             decorated.add(new KV(key.__call__(value), value));
         }
         list.clear();
-        KVComparator c = new KVComparator(this, cmp);
+        KVComparator c = new KVComparator(this);
         if (reverse) {
             Collections.reverse(decorated); // maintain stability of sort by reversing first
         }
@@ -991,24 +949,24 @@ public class PyList extends PySequenceList implements List {
         }
     }
 
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-
-        if (other instanceof PyObject) {
-            synchronized (this) {
-                return _eq((PyObject)other).__bool__();
-            }
-        }
-        if (other instanceof List) {
-            synchronized (this) {
-                return list.equals(other);
-            }
-        }
-        return false;
-    }
+//    @Override
+//    public boolean equals(Object other) {
+//        if (this == other) {
+//            return true;
+//        }
+//
+//        if (other instanceof PyObject) {
+//            synchronized (this) {
+//                return _eq((PyObject)other).__bool__();
+//            }
+//        }
+//        if (other instanceof List) {
+//            synchronized (this) {
+//                return list.equals(other);
+//            }
+//        }
+//        return false;
+//    }
 
     @Override
     public synchronized Object get(int index) {

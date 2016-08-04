@@ -57,16 +57,6 @@ public class PySet extends BaseSet {
         _update(args[0]);
     }
 
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.set___ne___doc)
-    final PyObject set___ne__(PyObject o) {
-        return baseset___ne__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.set___eq___doc)
-    final PyObject set___eq__(PyObject o) {
-        return baseset___eq__(o);
-    }
-
     @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.set___or___doc)
     final PyObject set___or__(PyObject o) {
         return baseset___or__(o);
@@ -85,26 +75,6 @@ public class PySet extends BaseSet {
     @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.set___and___doc)
     final PyObject set___and__(PyObject o) {
         return baseset___and__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.set___lt___doc)
-    final PyObject set___lt__(PyObject o) {
-        return baseset___lt__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.set___gt___doc)
-    final PyObject set___gt__(PyObject o) {
-        return baseset___gt__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.set___ge___doc)
-    final PyObject set___ge__(PyObject o) {
-        return baseset___ge__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.set___le___doc)
-    final PyObject set___le__(PyObject o) {
-        return baseset___le__(o);
     }
 
     @ExposedMethod(doc = BuiltinDocs.set___iter___doc)

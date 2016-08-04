@@ -713,57 +713,29 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
         bases = cleanedBases.toArray(new PyObject[cleanedBases.size()]);
     }
 
-    protected PyObject richCompare(PyObject other, cmpopType op) {
+    @Override
+    public PyObject richCompare(PyObject other, CompareOp op) {
         // Make sure the other object is a type
-        if (!(other instanceof PyType) && other != this) {
-            return null;
+        if (!(other instanceof PyType)) {
+            if (op == CompareOp.EQ) {
+                return Py.False;
+            }
+            if (op == CompareOp.NE) {
+                return Py.True;
+            }
+            return Py.NotImplemented;
         }
 
         // Compare hashes
         int hash1 = object___hash__();
         int hash2 = other.object___hash__();
         switch (op) {
-        case Eq: return hash1 == hash2 ? Py.True : Py.False;
-        case NotEq: return hash1 != hash2 ? Py.True : Py.False;
-        default: return Py.NotImplemented;
+            case EQ: return hash1 == hash2 ? Py.True : Py.False;
+            case NE: return hash1 != hash2 ? Py.True : Py.False;
+            default: return Py.NotImplemented;
         }
     }
 
-    @Override
-    public PyObject __eq__(PyObject other) {
-        return type___eq__(other);
-    }
-    
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.type___eq___doc)
-    final PyObject type___eq__(PyObject other) {
-        return richCompare(other, cmpopType.Eq);
-    }
-
-//    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.type___ne___doc)
-//    public PyObject type___ne__(PyObject other) {
-//        return richCompare(other, cmpopType.NotEq);
-//    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.type___le___doc)
-    public PyObject type___le__(PyObject other) {
-        return richCompare(other, cmpopType.LtE);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.type___lt___doc)
-    public PyObject type___lt__(PyObject other) {
-        return richCompare(other, cmpopType.Lt);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.type___ge___doc)
-    public PyObject type___ge__(PyObject other) {
-        return richCompare(other, cmpopType.GtE);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.type___gt___doc)
-    public PyObject type___gt__(PyObject other) {
-        return richCompare(other, cmpopType.Gt);
-    }
-    
     @ExposedGet(name = "__base__")
     public PyObject getBase() {
         if (base == null)

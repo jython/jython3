@@ -826,72 +826,6 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
         };
     }
 
-    /*
-     * ============================================================================================
-     * Python API rich comparison operations
-     * ============================================================================================
-     */
-
-    @Override
-    public PyObject __eq__(PyObject other) {
-        return basebytes___eq__(other);
-    }
-
-    @Override
-    public PyObject __ne__(PyObject other) {
-        return basebytes___ne__(other);
-    }
-
-    @Override
-    public PyObject __lt__(PyObject other) {
-        return basebytes___lt__(other);
-    }
-
-    @Override
-    public PyObject __le__(PyObject other) {
-        return basebytes___le__(other);
-    }
-
-    @Override
-    public PyObject __ge__(PyObject other) {
-        return basebytes___ge__(other);
-    }
-
-    @Override
-    public PyObject __gt__(PyObject other) {
-        return basebytes___gt__(other);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytearray___eq___doc)
-    final synchronized PyObject bytearray___eq__(PyObject other) {
-        return basebytes___eq__(other);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytearray___ne___doc)
-    final synchronized PyObject bytearray___ne__(PyObject other) {
-        return basebytes___ne__(other);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytearray___lt___doc)
-    final synchronized PyObject bytearray___lt__(PyObject other) {
-        return basebytes___lt__(other);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytearray___le___doc)
-    final synchronized PyObject bytearray___le__(PyObject other) {
-        return basebytes___le__(other);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytearray___ge___doc)
-    final synchronized PyObject bytearray___ge__(PyObject other) {
-        return basebytes___ge__(other);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytearray___gt___doc)
-    final synchronized PyObject bytearray___gt__(PyObject other) {
-        return basebytes___gt__(other);
-    }
-
 /*
  * ============================================================================================
  * Python API for bytearray
@@ -923,12 +857,6 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
             sum = new PyByteArray(size + os.__len__());
             System.arraycopy(storage, offset, sum.storage, sum.offset, size);
             sum.setslice(size, sum.size, 1, os);
-//        } else if (o instanceof PyString) {
-//            String ob = ((PyString) o).getString();
-//            sum = new PyByteArray(size + ob.length());
-//            System.arraycopy(storage, offset, sum.storage, sum.offset, size);
-//            System.arraycopy(ob.getBytes(), 0, sum.storage, sum.offset + size, ob.length());
-
         } else {
             // Unsuitable type
             // XXX note reversed order relative to __iadd__ may be wrong, matches Python 2.7

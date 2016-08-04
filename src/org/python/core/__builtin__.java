@@ -122,16 +122,16 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
         switch (this.index) {
             case 2:
                 return __builtin__.range(arg1, arg2);
-            case 6:
-                return Py.newLong(__builtin__.cmp(arg1, arg2));
+//            case 6:
+//                return Py.newLong(__builtin__.cmp(arg1, arg2));
 //            case 9:
 //                return __builtin__.apply(arg1, arg2);
             case 10:
                 return Py.newBoolean(__builtin__.isinstance(arg1, arg2));
             case 12:
                 return __builtin__.sum(arg1, arg2);
-            case 13:
-                return __builtin__.coerce(arg1, arg2);
+//            case 13:
+//                return __builtin__.coerce(arg1, arg2);
             case 15:
                 __builtin__.delattr(arg1, arg2);
                 return Py.None;
@@ -305,7 +305,7 @@ public class __builtin__ {
 //        dict.__setitem__("apply", new BuiltinFunctions("apply", 9, 1, 3));
         dict.__setitem__("ascii", new BuiltinFunctions("ascii", 9, 1));
         dict.__setitem__("callable", new BuiltinFunctions("callable", 14, 1));
-        dict.__setitem__("coerce", new BuiltinFunctions("coerce", 13, 2));
+//        dict.__setitem__("coerce", new BuiltinFunctions("coerce", 13, 2));
         dict.__setitem__("chr", new BuiltinFunctions("chr", 0, 1));
         dict.__setitem__("globals", new BuiltinFunctions("globals", 4, 0));
         dict.__setitem__("hash", new BuiltinFunctions("hash", 5, 1));
@@ -431,18 +431,6 @@ public class __builtin__ {
 
     public static String chr(int i) {
         return String.valueOf((char) i);
-    }
-
-    public static int cmp(PyObject x, PyObject y) {
-        return x._cmp(y);
-    }
-
-    public static PyTuple coerce(PyObject o1, PyObject o2) {
-        PyObject[] result = o1._coerce(o2);
-        if (result != null) {
-            return new PyTuple(result);
-        }
-        throw Py.TypeError("number coercion failed");
     }
 
     public static void delattr(PyObject obj, PyObject name) {
@@ -1307,8 +1295,8 @@ class SortedFunction extends PyBuiltinFunction {
     public PyObject __call__(PyObject args[], String kwds[]) {
         if (args.length == 0) {
             throw Py.TypeError("sorted() takes at least 1 argument (0 given)");
-        } else if (args.length > 4) {
-            throw Py.TypeError(String.format("sorted() takes at most 4 arguments (%s given)",
+        } else if (args.length > 3) {
+            throw Py.TypeError(String.format("sorted() takes at most 3 arguments (%d given)",
                                              args.length));
         } else {
             PyObject iter = args[0].__iter__();
@@ -1319,16 +1307,11 @@ class SortedFunction extends PyBuiltinFunction {
         }
 
         PyList seq = new PyList(args[0]);
-
-        PyObject newargs[] = new PyObject[args.length - 1];
-        System.arraycopy(args, 1, newargs, 0, args.length - 1);
-        ArgParser ap = new ArgParser("sorted", newargs, kwds,
-                                     new String[] {"cmp", "key", "reverse"}, 0);
-        PyObject cmp = ap.getPyObject(0, Py.None);
+        ArgParser ap = new ArgParser("sorted", args, kwds,
+                                     new String[] {"iterable", "key", "reverse"}, 0);
         PyObject key = ap.getPyObject(1, Py.None);
         PyObject reverse = ap.getPyObject(2, Py.None);
-
-        seq.sort(cmp, key, reverse);
+        seq.sort(key, reverse);
         return seq;
     }
 }
@@ -1530,7 +1513,7 @@ class MaxFunction extends PyBuiltinFunction {
             } else {
                 itemKey = key.__call__(item);
             }
-            if (maxKey == null || itemKey._gt(maxKey).__bool__()) {
+            if (maxKey == null || itemKey.richCompare(maxKey, CompareOp.GT).__bool__()) {
                 maxKey = itemKey;
                 max = item;
             }
@@ -1589,7 +1572,7 @@ class MinFunction extends PyBuiltinFunction {
             } else {
                 itemKey = key.__call__(item);
             }
-            if (minKey == null || itemKey._lt(minKey).__bool__()) {
+            if (minKey == null || itemKey.richCompare(minKey, CompareOp.LT).__bool__()) {
                 minKey = itemKey;
                 min = item;
             }

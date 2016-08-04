@@ -69,8 +69,6 @@ public class InstanceMethodExposer extends MethodExposer {
         call(onType, methodName, returnType, args);
         if (type == MethodType.BINARY) {
             checkBinaryResult();
-        } else if (type == MethodType.CMP) {
-            checkCmpResult();
         }
     }
 
@@ -82,33 +80,6 @@ public class InstanceMethodExposer extends MethodExposer {
         mv.visitJumpInsn(IFNONNULL, regularReturn);
         getStatic(PY, "NotImplemented", PYOBJ);
         mv.visitInsn(ARETURN);
-        mv.visitLabel(regularReturn);
-    }
-
-    /** Throw a type error if a cmp method returned -2. */
-    private void checkCmpResult() {
-        mv.visitInsn(DUP);
-        mv.visitIntInsn(BIPUSH, -2);
-        Label regularReturn = new Label();
-        mv.visitJumpInsn(IF_ICMPNE, regularReturn);
-        // tediously build an error message based on the type name
-        instantiate(STRING_BUILDER, new Instantiator(STRING) {
-
-            public void pushArgs() {
-                mv.visitLdcInsn(typeName + ".__cmp__(x,y) requires y to be '" + typeName
-                        + "', not a '");
-            }
-        });
-        mv.visitVarInsn(ALOAD, !needsThreadState(args) ? 1 : 2);
-        call(PYOBJ, "getType", PYTYPE);
-        call(PYTYPE, "fastGetName", STRING);
-        call(STRING_BUILDER, "append", STRING_BUILDER, STRING);
-        mv.visitLdcInsn("'");
-        call(STRING_BUILDER, "append", STRING_BUILDER, STRING);
-        call(STRING_BUILDER, "toString", STRING);
-        // throw a type error with our excellent message since this was of the wrong type.
-        callStatic(PY, "TypeError", PYEXCEPTION, STRING);
-        mv.visitInsn(ATHROW);
         mv.visitLabel(regularReturn);
     }
 

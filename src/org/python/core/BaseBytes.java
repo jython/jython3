@@ -821,8 +821,6 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      */
     private synchronized int basebytes_cmp(PyObject b) {
 
-        // This is not exposed as bytearray and bytes have no __cmp__.
-
         if (this == b) {
             // Same object: quick result
             return 0;
@@ -890,14 +888,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      * @return Python boolean result or <code>null</code> if not implemented for the other type.
      */
     final PyObject basebytes___eq__(PyObject other) {
-        int cmp = basebytes_cmpeq(other);
-        if (cmp == 0) {
-            return Py.True;
-        } else if (cmp > -2) {
-            return Py.False;
-        } else {
-            return null;
-        }
+        return richCompare(other, CompareOp.EQ);
     }
 
     /**
@@ -908,14 +899,13 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      * @return Python boolean result or <code>null</code> if not implemented for the other type.
      */
     final PyObject basebytes___ne__(PyObject other) {
-        int cmp = basebytes_cmpeq(other);
-        if (cmp == 0) {
-            return Py.False;
-        } else if (cmp > -2) {
-            return Py.True;
-        } else {
-            return null;
-        }
+        return richCompare(other, CompareOp.NE);
+    }
+
+    @Override
+    public PyObject richCompare(PyObject other, CompareOp op) {
+        int cmp = basebytes_cmp(other);
+        return op.bool(cmp);
     }
 
     /**
@@ -926,14 +916,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      * @return Python boolean result or <code>null</code> if not implemented for the other type.
      */
     final PyObject basebytes___lt__(PyObject other) {
-        int cmp = basebytes_cmp(other);
-        if (cmp >= 0) {
-            return Py.False;
-        } else if (cmp > -2) {
-            return Py.True;
-        } else {
-            return null;
-        }
+        return richCompare(other, CompareOp.LT);
     }
 
     /**

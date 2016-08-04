@@ -223,6 +223,7 @@ public class Exceptions {
         defineSlots(__dict__, "value");
         __dict__.__setitem__("__init__", bindStaticJavaMethod("__init__", "StopIteration__init__"));
         __dict__.__setitem__("__str__", bindStaticJavaMethod("__str__", "StopIteration__str__"));
+//        __dict__.__setitem__("__repr__", bindStaticJavaMethod("__repr__", "StopIteration__repr__"));
         return __dict__;
     }
 
@@ -235,6 +236,14 @@ public class Exceptions {
             self.__setattr__("value", Py.None);
         }
     }
+
+//    public static PyUnicode StopIteration__repr__(PyObject self, PyObject[] args, String[] kwargs) {
+//        PyObject value = ((PyBaseException) self).args.__finditem__(0);
+//        if (value != null && value != Py.None) {
+//            return new PyUnicode(String.format("StopIteration(%s)", value.__str__()));
+//        }
+//        return new PyUnicode("StopIteration()");
+//    }
 
     public static PyUnicode StopIteration__str__(PyObject self, PyObject[] args, String[] kwargs) {
         PyObject value = ((PyBaseException) self).args.__finditem__(0);

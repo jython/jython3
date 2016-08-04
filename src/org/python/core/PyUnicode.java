@@ -763,43 +763,18 @@ public class PyUnicode extends PySequence implements Iterable {
     }
 
     @Override
-    public PyObject __lt__(PyObject other) {
-        return str___lt__(other);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___lt___doc)
-    final PyObject str___lt__(PyObject other) {
+    public PyObject richCompare(PyObject other, CompareOp op) {
         if (!(other instanceof PyUnicode)) {
-            return null;
+            if (op == CompareOp.EQ) {
+                return Py.False;
+            } else if (op == CompareOp.NE) {
+                return Py.True;
+            }
         }
         String s = ((PyUnicode) other).getString();
-        return getString().compareTo(s) < 0 ? Py.True : Py.False;
-    }
-
-    @Override
-    public PyObject __eq__(PyObject other) {
-        return str___eq__(other);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.str___eq___doc)
-    final PyObject str___eq__(PyObject other) {
-        if (other instanceof PyUnicode) {
-            return Py.newBoolean(getString().equals(((PyUnicode) other).getString()));
-        }
-        return Py.False;
-    }
-
-    @Override
-    public PyObject __ne__(PyObject other) {
-        return str___ne__(other);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.str___eq___doc)
-    final PyObject str___ne__(PyObject other) {
-        if (other instanceof PyUnicode) {
-            return Py.newBoolean(!getString().equals(((PyUnicode) other).getString()));
-        }
-        return Py.True;
+        int ret = getString().compareTo(s);
+        if (ret < -1) ret = -1;
+        return op.bool(ret);
     }
 
     @Override

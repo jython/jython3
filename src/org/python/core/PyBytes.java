@@ -306,102 +306,18 @@ public class PyBytes extends PySequence implements BufferProtocol {
     }
 
     @Override
-    public int __cmp__(PyObject other) {
-        return bytes___cmp__(other);
-    }
-
-    @ExposedMethod(type = MethodType.CMP)
-    final int bytes___cmp__(PyObject other) {
-        if (!(other instanceof PyBytes)) {
-            return -2;
-        }
-
-        int c = getString().compareTo(((PyBytes)other).getString());
-        return c < 0 ? -1 : c > 0 ? 1 : 0;
-    }
-
-    @Override
-    public PyObject __eq__(PyObject other) {
-        return bytes___eq__(other);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___eq___doc)
-    final PyObject bytes___eq__(PyObject other) {
+    public PyObject richCompare(PyObject other, CompareOp op) {
         String s = coerce(other);
         if (s == null) {
-            return null;
+            if (op == CompareOp.EQ) {
+                return Py.False;
+            }
+            if (op == CompareOp.NE) {
+                return Py.True;
+            }
+            return Py.NotImplemented;
         }
-        return getString().equals(s) ? Py.True : Py.False;
-    }
-
-    @Override
-    public PyObject __ne__(PyObject other) {
-        return bytes___ne__(other);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___ne___doc)
-    final PyObject bytes___ne__(PyObject other) {
-        String s = coerce(other);
-        if (s == null) {
-            return null;
-        }
-        return getString().equals(s) ? Py.False : Py.True;
-    }
-
-    @Override
-    public PyObject __lt__(PyObject other) {
-        return bytes___lt__(other);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___lt___doc)
-    final PyObject bytes___lt__(PyObject other) {
-        String s = coerce(other);
-        if (s == null) {
-            return null;
-        }
-        return getString().compareTo(s) < 0 ? Py.True : Py.False;
-    }
-
-    @Override
-    public PyObject __le__(PyObject other) {
-        return bytes___le__(other);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___le___doc)
-    final PyObject bytes___le__(PyObject other) {
-        String s = coerce(other);
-        if (s == null) {
-            return null;
-        }
-        return getString().compareTo(s) <= 0 ? Py.True : Py.False;
-    }
-
-    @Override
-    public PyObject __gt__(PyObject other) {
-        return bytes___gt__(other);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___gt___doc)
-    final PyObject bytes___gt__(PyObject other) {
-        String s = coerce(other);
-        if (s == null) {
-            return null;
-        }
-        return getString().compareTo(s) > 0 ? Py.True : Py.False;
-    }
-
-    @Override
-    public PyObject __ge__(PyObject other) {
-        return bytes___ge__(other);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY, doc = BuiltinDocs.bytes___ge___doc)
-    final PyObject bytes___ge__(PyObject other) {
-        String s = coerce(other);
-        if (s == null) {
-            return null;
-        }
-        return getString().compareTo(s) >= 0 ? Py.True : Py.False;
+        return op.bool(getString().compareTo(s));
     }
 
     private static String coerce(PyObject o) {

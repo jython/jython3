@@ -200,36 +200,6 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
         return array;
     }
 
-    @ExposedMethod(type = MethodType.BINARY)
-    final PyObject array___ne__(PyObject o) {
-        return seq___ne__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY)
-    final PyObject array___eq__(PyObject o) {
-        return seq___eq__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY)
-    final PyObject array___lt__(PyObject o) {
-        return seq___lt__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY)
-    final PyObject array___le__(PyObject o) {
-        return seq___le__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY)
-    final PyObject array___gt__(PyObject o) {
-        return seq___gt__(o);
-    }
-
-    @ExposedMethod(type = MethodType.BINARY)
-    final PyObject array___ge__(PyObject o) {
-        return seq___ge__(o);
-    }
-
     @ExposedMethod
     final boolean array___contains__(PyObject o) {
         return object___contains__(o);

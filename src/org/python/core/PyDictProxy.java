@@ -99,16 +99,6 @@ public class PyDictProxy extends PyObject implements Traverseproc {
         return dict.invoke("copy");
     }
 
-    @Override
-    public int __cmp__(PyObject other) {
-        return mappingproxy___cmp__(other);
-    }
-
-    @ExposedMethod(type = MethodType.CMP)
-    public int mappingproxy___cmp__(PyObject other) {
-        return dict._cmp(other);
-    }
-
     @ExposedMethod(type = MethodType.BINARY)
     public PyObject mappingproxy___lt__(PyObject other) {
         return dict.__lt__(other);

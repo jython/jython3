@@ -273,51 +273,6 @@ public class PyStringMap extends PyObject implements Traverseproc {
         return buf.toString();
     }
 
-    // TODO: handle properly the __cmp__
-    @Override
-    public int __cmp__(PyObject other) {
-        return stringmap___cmp__(other);
-    }
-
-    @ExposedMethod(type = MethodType.CMP, doc = "") // BuiltinDocs.dict___cmp___doc)
-    final int stringmap___cmp__(PyObject other) {
-        if (!(other instanceof PyStringMap || other instanceof PyDictionary)) {
-            return -2;
-        }
-        int an = __len__();
-        int bn = other.__len__();
-        if (an < bn) {
-            return -1;
-        }
-        if (an > bn) {
-            return 1;
-        }
-        PyList akeys = (PyList) keys();
-        PyList bkeys = null;
-        if (other instanceof PyStringMap) {
-            bkeys = (PyList) ((PyStringMap)other).keys();
-        } else {
-            bkeys = ((PyDictionary)other).keys_as_list();
-        }
-        akeys.sort();
-        bkeys.sort();
-        for (int i = 0; i < bn; i++) {
-            PyObject akey = akeys.pyget(i);
-            PyObject bkey = bkeys.pyget(i);
-            int c = akey._cmp(bkey);
-            if (c != 0) {
-                return c;
-            }
-            PyObject avalue = __finditem__(akey);
-            PyObject bvalue = other.__finditem__(bkey);
-            c = avalue._cmp(bvalue);
-            if (c != 0) {
-                return c;
-            }
-        }
-        return 0;
-    }
-
     @Override
     public boolean __contains__(PyObject o) {
         return stringmap___contains__(o);

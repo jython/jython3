@@ -237,6 +237,56 @@ public class PyFloat extends PyObject {
     }
 
     @Override
+    public PyObject richCompare(PyObject other, CompareOp op) {
+        double i = getValue();
+        double j;
+
+        int result;
+        if (other instanceof PyFloat) {
+            j = ((PyFloat)other).getValue();
+        } else if (!isFinite()) {
+            // we're infinity: our magnitude exceeds any finite
+            // integer, so it doesn't matter which int we compare i
+            // with. If NaN, similarly.
+            if (other instanceof PyInteger || other instanceof PyLong) {
+                j = 0.0;
+            } else {
+                return Py.NotImplemented;
+            }
+        } else if (other instanceof PyInteger) {
+            j = ((PyInteger)other).getValue();
+        } else if (other instanceof PyLong) {
+            BigDecimal v = new BigDecimal(getValue());
+            BigDecimal w = new BigDecimal(((PyLong) other).getValue());
+            return op.bool(v.compareTo(w));
+        } else {
+            return Py.NotImplemented;
+        }
+
+        if (i < j) {
+            result = -1;
+        } else if (i > j) {
+            result = 1;
+        } else if (i == j) {
+            result = 0;
+        } else {
+          // at least one side is NaN
+          result = Double.isNaN(i) ? (Double.isNaN(j) ? 1 : -1) : 1;
+        }
+        return op.bool(result);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.float___lt___doc)
+    final PyObject float___lt__(PyObject other) {
+        return richCompare(other, CompareOp.LT);
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.float___eq___doc)
+    final PyObject float___eq__(PyObject other) {
+        return richCompare(other, CompareOp.EQ);
+    }
+
+    @Override
     public PyUnicode __repr__() {
         return float___repr__();
     }
@@ -313,20 +363,6 @@ public class PyFloat extends PyObject {
         return float___eq__(other);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.float___eq___doc)
-    final PyObject float___eq__(PyObject other) {
-        // preclude _cmp_unsafe's this == other shortcut because NaN != anything, even
-        // itself
-        if (Double.isNaN(getValue())) {
-            return Py.False;
-        }
-        int cmp = __cmp__(other);
-        if (cmp < -1) {
-            return null;
-        }
-        return Py.newBoolean(cmp == 0);
-    }
-
     @Override
     public PyObject __ne__(PyObject other) {
         if (Double.isNaN(getValue())) {
@@ -358,22 +394,6 @@ public class PyFloat extends PyObject {
         return float___lt__(other);
     }
 
-    @ExposedMethod(doc = BuiltinDocs.float___lt___doc)
-    final PyObject float___lt__(PyObject other) {
-        // NaN < anything is always false.
-        if (Double.isNaN(getValue())) {
-            return Py.False;
-        }
-        if (other instanceof PyInteger) {
-           return Py.newBoolean(value < ((PyInteger) other).getValue());
-        } else if (other instanceof PyLong) {
-            return Py.newBoolean(new BigDecimal(value).compareTo(new BigDecimal(((PyLong) other).getValue())) < 0);
-        } else if (other instanceof PyFloat) {
-            return Py.newBoolean(value < ((PyFloat) other).value);
-        }
-        throw Py.TypeError(String.format("unorderable types: %s < %s", getType(), other.getType()));
-    }
-
     @Override
     public PyObject __le__(PyObject other) {
         // NaN >= anything is always false.
@@ -381,44 +401,6 @@ public class PyFloat extends PyObject {
             return Py.False;
         }
         return null;
-    }
-
-    @Override
-    public int __cmp__(PyObject other) {
-        double i = getValue();
-        double j;
-
-        if (other instanceof PyFloat) {
-            j = ((PyFloat)other).getValue();
-        } else if (!isFinite()) {
-            // we're infinity: our magnitude exceeds any finite
-            // integer, so it doesn't matter which int we compare i
-            // with. If NaN, similarly.
-            if (other instanceof PyInteger || other instanceof PyLong) {
-                j = 0.0;
-            } else {
-                return -2;
-            }
-        } else if (other instanceof PyInteger) {
-            j = ((PyInteger)other).getValue();
-        } else if (other instanceof PyLong) {
-            BigDecimal v = new BigDecimal(getValue());
-            BigDecimal w = new BigDecimal(((PyLong) other).getValue());
-            return v.compareTo(w);
-        } else {
-            return -2;
-        }
-
-        if (i < j) {
-            return -1;
-        } else if (i > j) {
-            return 1;
-        } else if (i == j) {
-            return 0;
-        } else {
-            // at least one side is NaN
-            return Double.isNaN(i) ? (Double.isNaN(j) ? 1 : -1) : 1;
-        }
     }
 
     @Override
