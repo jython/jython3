@@ -294,7 +294,11 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
 
         if (gi_frame.f_lasti == -1) {
             gi_frame = null;
-            throw Py.StopIteration(result);
+            if (result != Py.None) {
+                throw Py.StopIteration(result);
+            } else {
+                throw Py.StopIteration();
+            }
         }
         return result;
     }
