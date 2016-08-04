@@ -75,14 +75,6 @@ public class SimpleExposed extends PyObject {
         return null;
     }
 
-    @ExposedMethod(type = MethodType.CMP)
-    public int __cmp__(PyObject other) {
-        if(other == Py.False) {
-            return 1;
-        }
-        return -2;
-    }
-
     @ExposedMethod(defaults = "Py.None")
     public PyObject defaultToNone(PyObject arg) {
         return arg;

@@ -87,21 +87,6 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
         assertEquals(Py.One, bound.__call__(Py.False));
     }
 
-    public void testCmp() throws Exception {
-        InstanceMethodExposer exp = createExposer("__cmp__", INT, PYOBJ);
-        exp.type = MethodType.CMP;
-        PyBuiltinCallable bound = createBound(exp);
-        try {
-            bound.__call__(Py.None);
-            fail("Returning -2 from __cmp__ should yield a type error");
-        } catch (PyException e) {
-            if (!e.match(Py.TypeError)) {
-                fail("Returning -2 from __cmp__ should yield a type error");
-            }
-        }
-        assertEquals(Py.One, bound.__call__(Py.False));
-    }
-
     public void testNoneDefault() throws Exception {
         InstanceMethodExposer exp = createExposer("defaultToNone", PYOBJ, PYOBJ);
         exp.defaults = new String[] {"Py.None"};
