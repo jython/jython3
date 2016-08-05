@@ -72,8 +72,7 @@ public class SubprocessModule {
         } else {
             res = (PyTuple) popen.Popen_communicate(Py.EmptyObjects, Py.NoKeywords);
         }
-        return new PyCompletedProcess(args, res.pyget(0), res.pyget(1),
-                popen.Popen_wait(Py.EmptyObjects, Py.NoKeywords));
+        return new PyCompletedProcess(args, popen.process());
     }
 
     @ExposedFunction

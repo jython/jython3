@@ -182,4 +182,8 @@ public class PyPopen extends PyObject {
             throw SubprocessModule.CalledProcessError();
         }
     }
+
+    public Process process() {
+        return proc;
+    }
 }

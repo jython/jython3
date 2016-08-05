@@ -350,7 +350,7 @@ public class ArgParser {
                 }
             }
         } else { // keywordonlyarg
-            int kwonly_start = pos - params.length - 1;
+            int kwonly_start = pos - params.length;
             for (int i = 0; i < this.kws.length; i++) {
                 if (this.kws[i].equals(kwonlyargs[kwonly_start])) {
                     return this.args[kws_start + i];
