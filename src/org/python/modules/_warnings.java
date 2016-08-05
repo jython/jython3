@@ -188,7 +188,7 @@ public class _warnings {
             throw Py.RuntimeError("unsable to get warnings.WarningMessage");
         }
         PyObject msg = warnmsgCls.__call__(new PyObject[] {message, category,
-                filename, lineno_obj, Py.None, Py.None, source}, Py.NoKeywords);
+                filename, lineno_obj, Py.None, Py.None}, Py.NoKeywords);
         showFunc.__call__(msg);
         return true;
     }
@@ -202,12 +202,13 @@ public class _warnings {
             System.err.println("lost sys.stderr");
             return;
         }
-        fstderr.invoke("write", filename);
-        fstderr.invoke("write", new PyUnicode(linenoStr));
-        fstderr.invoke("write", name);
-        fstderr.invoke("write", new PyUnicode(":"));
-        fstderr.invoke("write", text);
-        fstderr.invoke("write", new PyUnicode("\n"));
+        PyObject write = fstderr.__getattr__("write");
+        write.__call__(filename);
+        write.__call__(new PyUnicode(linenoStr));
+        write.__call__(name);
+        write.__call__(new PyUnicode(":"));
+        write.__call__(text);
+        write.__call__(new PyUnicode("\n"));
         // TODO print sourceline
     }
 
