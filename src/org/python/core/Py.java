@@ -212,6 +212,15 @@ public final class Py {
 
     public static PyObject BlockingIOError;
     public static PyObject ChildProcessError;
+
+    public static PyException ChildProcessError() {
+        return new PyException(Py.ChildProcessError);
+    }
+
+    public static PyException ChildProcessError(String message) {
+        return new PyException(Py.ChildProcessError, message);
+    }
+
     public static PyObject FileExistsError;
     public static PyObject FileNotFoundError;
     public static PyObject IsADirectoryError;
