@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.kenai.jffi.Library;
 import com.sun.security.auth.module.UnixSystem;
@@ -655,9 +656,15 @@ public class PosixModule implements ClassDictInit {
         "kill(pid, sig)\n\n" +
         "Kill a process with a signal.");
     @Hide(value=OS.NT, posixImpl = PosixImpl.JAVA)
-    public static void kill(int pid, int sig) {
-        if (posix.kill(pid, sig) < 0) {
-            throw errorFromErrno();
+    public static void kill(PyObject pidObj, int sig) {
+        Object ret = pidObj.__tojava__(Process.class);
+        if (ret == Py.NoConversion) {
+            int pid = pidObj.asInt();
+            if (posix.kill(pid, sig) < 0) {
+                throw errorFromErrno();
+            }
+        } else {
+            ((Process) ret).destroy();
         }
     }
 
@@ -948,17 +955,23 @@ public class PosixModule implements ClassDictInit {
         "read(fd, buffersize) -> string\n\n" +
         "Read a file descriptor.");
     public static PyObject read(PyObject fd, int buffersize) {
-        Object javaobj = fd.__tojava__(RawIOBase.class);
-        if (javaobj != Py.NoConversion) {
-            try {
-                return new PyBytes(StringUtil.fromBytes(((RawIOBase) javaobj).read(buffersize)));
-            } catch (PyException pye) {
-                throw badFD();
-            }
+        if (fd instanceof PyFileIO) {
+            RawIOBase readable = ((PyFileIO) fd).getRawIO();
+            return new PyBytes(StringUtil.fromBytes(readable.read(buffersize)));
         } else {
-            ByteBuffer buffer = ByteBuffer.allocate(buffersize);
-            posix.read(getFD(fd).getIntFD(), buffer, buffersize);
-            return new PyBytes(StringUtil.fromBytes(buffer));
+            Object javaobj = fd.__tojava__(RawIOBase.class);
+            if (javaobj != Py.NoConversion) {
+                try {
+                    return new PyBytes(StringUtil.fromBytes(((RawIOBase) javaobj).read(buffersize)));
+                } catch (PyException pye) {
+                    throw badFD();
+                }
+            } else {
+                // FIXME: this is broken
+                ByteBuffer buffer = ByteBuffer.allocate(buffersize);
+                posix.read(getFD(fd).getIntFD(), buffer, buffersize);
+                return new PyBytes(StringUtil.fromBytes(buffer));
+            }
         }
     }
 
@@ -1193,20 +1206,31 @@ public class PosixModule implements ClassDictInit {
         if (pid < 0) {
             throw errorFromErrno();
         }
-        return new PyTuple(Py.newLong(pid), Py.newInteger(status[0]));
+        return new PyTuple(Py.newLong(pid), new PyLong(status[0]));
     }
 
     public static PyBytes __doc__waitpid = new PyBytes(
         "wait() -> (pid, status)\n\n" +
         "Wait for completion of a child process.");
     @Hide(posixImpl = PosixImpl.JAVA)
-    public static PyObject waitpid(int pid, int options) {
-        int[] status = new int[1];
-        pid = posix.waitpid(pid, status, options);
-        if (pid < 0) {
-            throw errorFromErrno();
+    public static PyObject waitpid(PyObject pidObj, int options) {
+        Object ret = pidObj.__tojava__(Process.class);
+        if (ret == Py.NoConversion) {
+            int pid = pidObj.asInt();
+            int[] status = new int[1];
+            pid = posix.waitpid(pid, status, options);
+            if (pid < 0) {
+                throw errorFromErrno();
+            }
+            return new PyTuple(new PyLong(pid), new PyLong(status[0]));
         }
-        return new PyTuple(Py.newLong(pid), Py.newInteger(status[0]));
+        try {
+            boolean status = ((Process) ret).waitFor(options, TimeUnit.SECONDS);
+            int exitVal = status ? ((Process)ret).exitValue() : 0;
+            return new PyTuple(pidObj, new PyLong(exitVal));
+        } catch (InterruptedException e) {
+            throw Py.ChildProcessError(e.getMessage());
+        }
     }
 
     @Hide(posixImpl = PosixImpl.JAVA)
