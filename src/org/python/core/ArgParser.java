@@ -78,9 +78,9 @@ public class ArgParser {
         splitParams(paramnames);
         check();
         if (!PyBuiltinCallable.DefaultInfo.check(args.length, minargs,
-                this.params.length)) {
+                paramnames.length)) {
             throw PyBuiltinCallable.DefaultInfo.unexpectedCall(args.length,
-                    false, funcname, minargs, this.params.length);
+                    false, funcname, minargs, paramnames.length);
         }
     }
 
@@ -266,13 +266,21 @@ public class ArgParser {
     }
 
     private void splitParams(String[] paramnames) {
-        List<String> paramsList = Arrays.<String>asList(paramnames);
-        int starargIndex = paramsList.indexOf("*");
+        int starargIndex = -1;
+        for (int i = 0; i < paramnames.length; i++) {
+            if (paramnames[i].equals("*")) {
+                starargIndex = i;
+                break;
+            }
+        }
         if (starargIndex == -1) {
             params = paramnames;
+            kwonlyargs = new String[0];
         } else {
-            params = paramsList.subList(0, starargIndex).toArray(new String[0]);
-            kwonlyargs = paramsList.subList(starargIndex + 1, paramsList.size()).toArray(new String[0]);
+            params = new String[starargIndex];
+            System.arraycopy(paramnames, 0, params, 0, starargIndex);
+            kwonlyargs = new String[paramnames.length - starargIndex];
+            System.arraycopy(paramnames, starargIndex, kwonlyargs, 0, kwonlyargs.length);
         }
     }
 
@@ -296,19 +304,25 @@ public class ArgParser {
                     continue l1;
                 }
             }
+            for (int k = 0; k < kwonlyargs.length; k++) {
+                if (kws[i].equals(kwonlyargs[k])) {
+                    continue l1;
+                }
+            }
             throw Py.TypeError("'" + kws[i] + "' is an invalid keyword "
                     + "argument for this function");
         }
-        if (kwonlyargs == null) return;
-        List<String> missingKwonlyArgs = new ArrayList<>();
-        l2: for (int i = 0; i < kwonlyargs.length; i++) {
-            for (int j = 0; j < kws.length; j++) {
-                if (kws[j].equals(kwonlyargs[i])) {
-                    continue l2;
-                }
-            }
-            missingKwonlyArgs.add(kwonlyargs[i]);
-        }
+        // XXX need a way to handle default keyworldonlyargs, disable for now
+//        if (kwonlyargs == null) return;
+//        List<String> missingKwonlyArgs = new ArrayList<>();
+//        l2: for (int i = 0; i < kwonlyargs.length; i++) {
+//            for (int j = 0; j < kws.length; j++) {
+//                if (kws[j].equals(kwonlyargs[i])) {
+//                    continue l2;
+//                }
+//            }
+//            missingKwonlyArgs.add(kwonlyargs[i]);
+//        }
 //        if (!missingKwonlyArgs.isEmpty()) {
 //            throw Py.TypeError(String.format("%.200s() missing %d keyword-only %s: %s", funcname, missingKwonlyArgs.size(),
 //                    missingKwonlyArgs.size() > 1 ? "arguments" : "argument", Joiner.on(',').join(missingKwonlyArgs)));
@@ -329,9 +343,18 @@ public class ArgParser {
         if (pos < kws_start) {
             return this.args[pos];
         }
-        for (int i = 0; i < this.kws.length; i++) {
-            if (this.kws[i].equals(this.params[pos])) {
-                return this.args[kws_start + i];
+        if (pos < params.length) {
+            for (int i = 0; i < this.kws.length; i++) {
+                if (this.kws[i].equals(this.params[pos])) {
+                    return this.args[kws_start + i];
+                }
+            }
+        } else { // keywordonlyarg
+            int kwonly_start = pos - params.length - 1;
+            for (int i = 0; i < this.kws.length; i++) {
+                if (this.kws[i].equals(kwonlyargs[kwonly_start])) {
+                    return this.args[kws_start + i];
+                }
             }
         }
         return null;
