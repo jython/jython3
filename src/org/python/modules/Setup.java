@@ -37,7 +37,6 @@ public class Setup {
             "_json:org.python.modules._json._json",
             "_jythonlib:org.python.modules._jythonlib._jythonlib",
             "_multiprocessing:org.python.modules._multiprocessing._multiprocessing",
-            "_posixsubprocess",
             "_py_compile",
             "_random:org.python.modules.random.RandomModule",
 //            "_sre",
@@ -74,6 +73,7 @@ public class Setup {
     public static String[] newbuiltinModules = {
             "_ast:org.python.antlr.ast.AstModule",
             "_codecs",
+            "_posixsubprocess",
             "_sre",
             "_string",
             "_types",
@@ -81,6 +81,7 @@ public class Setup {
             "_warnings",
             "_weakref:org.python.modules._weakref.WeakrefModule",
             "faulthandler:org.python.modules.FaultHandler",
+            "subprocess:org.python.modules.subprocess.SubprocessModule",
             "sys:org.python.modules.sys.SysModule",
             "unicodedata:org.python.modules.unicodedata.unicodedata",
     };
