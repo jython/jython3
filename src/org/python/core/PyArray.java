@@ -843,26 +843,16 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
          */
         resizeCheck();
 
-        /*
-         * Now get the required number of bytes from the file. Guard against non-file or closed.
-         */
-        if (f instanceof PyFile) {
-            PyFile file = (PyFile)f;
-            if (!file.getClosed()) {
-                // Load required amount or whatever is available into a bytes object
-                int readbytes = count * getStorageSize();
-                String buffer = file.read(readbytes).toString();
-                fromstring(buffer);
-                // check for underflow
-                if (buffer.length() < readbytes) {
-                    int readcount = buffer.length() / getStorageSize();
-                    throw Py.EOFError("not enough items in file. " + Integer.toString(count)
-                            + " requested, " + Integer.toString(readcount) + " actually read");
-                }
-            }
-            return;
+        // Load required amount or whatever is available into a bytes object
+        int readbytes = count * getStorageSize();
+        PyObject buffer = f.invoke("read", new PyLong(readbytes));
+        fromstring(buffer);
+        // check for underflow
+        if (buffer.__len__() < readbytes) {
+            int readcount = buffer.__len__() / getStorageSize();
+            throw Py.EOFError("not enough items in file. " + Integer.toString(count)
+                    + " requested, " + Integer.toString(readcount) + " actually read");
         }
-        throw Py.TypeError("arg1 must be open file");
     }
 
     @ExposedMethod
@@ -1094,34 +1084,29 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
      */
     @ExposedMethod
     final void array_fromstring(PyObject input) {
+        if (input instanceof PyUnicode) {
+            // Unicode is treated as specifying a byte string via the default encoding.
+            String s = ((PyUnicode)input).encode();
+            frombytesInternal(StringUtil.toBytes(s));
 
-        if (input instanceof BufferProtocol) {
-
-            if (input instanceof PyUnicode) {
-                // Unicode is treated as specifying a byte string via the default encoding.
-                String s = ((PyUnicode)input).encode();
-                frombytesInternal(StringUtil.toBytes(s));
-
-            } else {
-                // Access the bytes through the abstract API of the BufferProtocol
-                try (PyBuffer pybuf = ((BufferProtocol)input).getBuffer(PyBUF.STRIDED_RO)) {
-                    if (pybuf.getNdim() == 1) {
-                        if (pybuf.getStrides()[0] == 1) {
-                            // Data are contiguous in the buffer
-                            frombytesInternal(pybuf.getNIOByteBuffer());
-                        } else {
-                            // As frombytesInternal only knows contiguous bytes, make a copy.
-                            byte[] copy = new byte[pybuf.getLen()];
-                            pybuf.copyTo(copy, 0);
-                            frombytesInternal(ByteBuffer.wrap(copy));
-                        }
+        } else if (input instanceof BufferProtocol) {
+            // Access the bytes through the abstract API of the BufferProtocol
+            try (PyBuffer pybuf = ((BufferProtocol)input).getBuffer(PyBUF.STRIDED_RO)) {
+                if (pybuf.getNdim() == 1) {
+                    if (pybuf.getStrides()[0] == 1) {
+                        // Data are contiguous in the buffer
+                        frombytesInternal(pybuf.getNIOByteBuffer());
                     } else {
-                        // Currently don't support n-dimensional sources
-                        throw Py.ValueError("multi-dimensional buffer not supported");
+                        // As frombytesInternal only knows contiguous bytes, make a copy.
+                        byte[] copy = new byte[pybuf.getLen()];
+                        pybuf.copyTo(copy, 0);
+                        frombytesInternal(ByteBuffer.wrap(copy));
                     }
+                } else {
+                    // Currently don't support n-dimensional sources
+                    throw Py.ValueError("multi-dimensional buffer not supported");
                 }
             }
-
         } else {
             String fmt = "must be string or read-only buffer, not %s";
             throw Py.TypeError(String.format(fmt, input.getType().fastGetName()));
