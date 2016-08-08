@@ -32,7 +32,6 @@ public class Setup {
             "_csv:org.python.modules._csv._csv",
             "_functools:org.python.modules._functools._functools",
             "_hashlib",
-            "_imp:org.python.modules._imp",
             "_io:org.python.modules._io._io",
             "_json:org.python.modules._json._json",
             "_jythonlib:org.python.modules._jythonlib._jythonlib",
@@ -72,6 +71,7 @@ public class Setup {
     public static String[] newbuiltinModules = {
             "_ast:org.python.antlr.ast.AstModule",
             "_codecs",
+            "_imp:org.python.modules._imp",
             "_posixsubprocess",
             "_sre",
             "_string",

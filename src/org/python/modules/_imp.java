@@ -15,6 +15,8 @@ import org.python.core.PyUnicode;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
 import org.python.core.imp;
+import org.python.expose.ExposedFunction;
+import org.python.expose.ExposedModule;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,12 +35,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * be implemented under Jython.
  */
 
+@ExposedModule
 public class _imp {
-    public static PyUnicode __doc__ = new PyUnicode(
-        "This module provides the components needed to build your own\n"+
-        "__import__ function.  Undocumented functions are obsolete.\n"
-    );
-
     public static final int PY_SOURCE = 1;
     public static final int PY_COMPILED = 2;
     public static final int C_EXTENSION = 3;
@@ -47,6 +45,7 @@ public class _imp {
     public static final int PY_FROZEN = 7;
     public static final int IMP_HOOK = 9;
 
+    @ExposedFunction
     public static PyObject create_builtin(PyObject spec) {
         PyObject name = spec.__getattr__("name");
         String modName = PyObject.asName(name);
@@ -55,15 +54,10 @@ public class _imp {
                 return new PyModule(modName, new PyStringMap());
             }
         }
-        if (modName.equals("sys")) {
-            return Py.java2py(Py.getSystemState());
-        }
-        if (modName.equals("__builtin__") || modName.equals("builtins")) {
-            return new PyModule("builtins", Py.getSystemState().builtins);
-        }
         return imp.loadBuiltin(modName);
     }
 
+    @ExposedFunction
     public static int exec_builtin(PyObject mod) {
         String name = mod.__findattr__("__name__").toString();
         String classname = null;
@@ -109,10 +103,12 @@ public class _imp {
         return classname;
     }
 
+    @ExposedFunction
     public static PyObject get_magic() {
 	return new PyUnicode("\u0003\u00f3\r\n");
     }
     
+    @ExposedFunction
     public static PyObject get_suffixes() {
         return new PyList(new PyObject[] {new PyTuple(new PyUnicode(".py"),
                                                       new PyUnicode("r"),
@@ -122,10 +118,12 @@ public class _imp {
                                                       Py.newLong(PY_COMPILED)),});
     }
 
+    @ExposedFunction
     public static PyModule new_module(String name) {
         return new PyModule(name, null);
     }
 
+    @ExposedFunction
     public static boolean is_builtin(String name) {
         switch(name) {
             case "builtins":
@@ -136,22 +134,27 @@ public class _imp {
         }
     }
 
+    @ExposedFunction
     public static PyObject _fix_co_filename(PyCode code, PyObject path) {
         return Py.None;
     }
 
+    @ExposedFunction
     public static PyObject get_frozen_object(String name) {
         return null;
     }
 
+    @ExposedFunction
     public static int init_frozen(String name) {
         return -1;
     }
 
+    @ExposedFunction
     public static boolean is_frozen_package(String name) {
         return false;
     }
 
+    @ExposedFunction
     public static boolean is_frozen(String name) {
         return false;
     }
@@ -163,6 +166,7 @@ public class _imp {
      * thread-safety when importing modules.
      *
      */
+    @ExposedFunction
     public static void acquire_lock() {
         Py.getSystemState().getImportLock().lock();
     }
@@ -171,6 +175,7 @@ public class _imp {
      * Release the interpreter's import lock.
      *
      */
+    @ExposedFunction
     public static void release_lock() {
         try{
             ReentrantLock importLock = Py.getSystemState().getImportLock();
@@ -187,6 +192,7 @@ public class _imp {
      *
      * @return true if the import lock is currently held, else false.
      */
+    @ExposedFunction
     public static boolean lock_held() {
         return Py.getSystemState().getImportLock().isHeldByCurrentThread();
     }
@@ -194,6 +200,7 @@ public class _imp {
     /**
      * Returns the list of file suffixes used to identify extension modules.
      */
+    @ExposedFunction
     public static PyObject extension_suffixes() {
         return new PyList();
     }
