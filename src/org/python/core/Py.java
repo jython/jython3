@@ -441,7 +441,7 @@ public final class Py {
 
     public static PyException ImportError(String message, String name) {
       return new PyException(Py.ImportError, new PyTuple(
-            new PyBytes(message), new PyBytes(name)));
+            new PyUnicode(message), new PyUnicode(name)));
     }
 
     public static PyObject ValueError;
@@ -462,7 +462,7 @@ public final class Py {
         return new PyException(Py.UnicodeTranslateError, new PyTuple(new PyBytes(object),
                 new PyInteger(start),
                 new PyInteger(end),
-                new PyBytes(reason)));
+                new PyUnicode(reason)));
     }
     public static PyObject UnicodeDecodeError;
 

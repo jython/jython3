@@ -6,6 +6,7 @@ import org.python.core.ClassDictInit;
 import org.python.core.Py;
 import org.python.core.PyException;
 import org.python.core.PyInteger;
+import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.python.core.PyStringMap;
 import org.python.core.PyType;
@@ -188,7 +189,7 @@ public class _io implements ClassDictInit {
                 bufferType = io.__getattr__("BufferedReader");
             }
 
-            PyInteger pyBuffering = new PyInteger(buffering);
+            PyLong pyBuffering = new PyLong(buffering);
             PyObject buffer = bufferType.__call__(raw, pyBuffering);
 
             if (mode.binary) {

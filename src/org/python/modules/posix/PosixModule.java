@@ -3,6 +3,7 @@ package org.python.modules.posix;
 
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -427,41 +428,41 @@ public class PosixModule implements ClassDictInit {
 //        return Py.newLong(posix.dup2(getFD(fd1).getIntFD(), getFD(fd2).getIntFD()));
 //    }
 
-    public static PyBytes __doc__fdopen = new PyBytes(
-        "fdopen(fd [, mode='r' [, bufsize]]) -> file_object\n\n" +
-        "Return an open file object connected to a file descriptor.");
-    public static PyObject fdopen(PyObject fd) {
-        return fdopen(fd, "r");
-
-    }
-
-    public static PyObject fdopen(PyObject fd, String mode) {
-        return fdopen(fd, mode, -1);
-
-    }
-    public static PyObject fdopen(PyObject fd, String mode, int bufsize) {
-        if (mode.length() == 0 || !"rwa".contains("" + mode.charAt(0))) {
-            throw Py.ValueError(String.format("invalid file mode '%s'", mode));
-        }
-        Object javaobj = fd.__tojava__(RawIOBase.class);
-        if (javaobj == Py.NoConversion) {
-            getFD(fd).getIntFD();
-            throw Py.NotImplementedError("Integer file descriptors not currently supported for fdopen");
-        }
-        RawIOBase rawIO = (RawIOBase)javaobj;
-        if (rawIO.closed()) {
-            throw badFD();
-        }
-
-        try {
-            return new PyFile(rawIO, "<fdopen>", mode, bufsize);
-        } catch (PyException pye) {
-            if (!pye.match(Py.IOError)) {
-                throw pye;
-            }
-            throw Py.OSError(Errno.EINVAL);
-        }
-    }
+//    public static PyBytes __doc__fdopen = new PyBytes(
+//        "fdopen(fd [, mode='r' [, bufsize]]) -> file_object\n\n" +
+//        "Return an open file object connected to a file descriptor.");
+//    public static PyObject fdopen(PyObject fd) {
+//        return fdopen(fd, "r");
+//
+//    }
+//
+//    public static PyObject fdopen(PyObject fd, String mode) {
+//        return fdopen(fd, mode, -1);
+//
+//    }
+//    public static PyObject fdopen(PyObject fd, String mode, int bufsize) {
+//        if (mode.length() == 0 || !"rwa".contains("" + mode.charAt(0))) {
+//            throw Py.ValueError(String.format("invalid file mode '%s'", mode));
+//        }
+//        Object javaobj = fd.__tojava__(RawIOBase.class);
+//        if (javaobj == Py.NoConversion) {
+//            getFD(fd).getIntFD();
+//            throw Py.NotImplementedError("Integer file descriptors not currently supported for fdopen");
+//        }
+//        RawIOBase rawIO = (RawIOBase)javaobj;
+//        if (rawIO.closed()) {
+//            throw badFD();
+//        }
+//
+//        try {
+//            return new PyFile(rawIO, "<fdopen>", mode, bufsize);
+//        } catch (PyException pye) {
+//            if (!pye.match(Py.IOError)) {
+//                throw pye;
+//            }
+//            throw Py.OSError(Errno.EINVAL);
+//        }
+//    }
 
     public static PyBytes __doc__fdatasync = new PyBytes(
         "fdatasync(fildes)\n\n" +
@@ -829,12 +830,13 @@ public class PosixModule implements ClassDictInit {
         "open(filename, flag [, mode=0777]) -> fd\n\n" +
         "Open a file (for low level IO).\n\n" +
         "Note that the mode argument is not currently supported on Jython.");
-    public static FileIO open(PyObject path, int flag) {
+    public static FileDescriptor open(PyObject path, int flag) {
         return open(path, flag, 0777);
     }
 
-    public static FileIO open(PyObject path, int flag, int mode) {
-        File file = absolutePath(path).toFile();
+    public static FileDescriptor open(PyObject path, int flag, int mode) {
+        Path p = absolutePath(path);
+        File file = p.toFile();
         boolean reading = (flag & O_RDONLY) != 0;
         boolean writing = (flag & O_WRONLY) != 0;
         boolean updating = (flag & O_RDWR) != 0;
@@ -878,22 +880,16 @@ public class PosixModule implements ClassDictInit {
                 + (appending && (writing || updating) ? "a" : "") + (updating ? "+" : "");
         if (sync && (writing || updating)) {
             try {
-                return new FileIO(new RandomAccessFile(file, "rws").getChannel(), fileIOMode);
-            } catch (FileNotFoundException fnfe) {
-                throw Py.OSError(file.isDirectory() ? Errno.EISDIR : Errno.ENOENT, path);
+                return new RandomAccessFile(file, "rws").getFD();
+            } catch (IOException e) {
+                throw Py.IOError(e);
             }
         }
-        return new FileIO((PyUnicode) path, fileIOMode);
-    }
-
-    public static PyBytes __doc__popen = new PyBytes(
-        "popen(command [, mode='r' [, bufsize]]) -> pipe\n\n" +
-        "Open a pipe to/from a command returning a file object.");
-    public static PyObject popen(PyObject[] args, String[] kwds) {
-        // XXX: popen lives in posix in 2.x, but moves to os in 3.x. It's easier for us to
-        // keep it in os
-        // import os; return os.popen(*args, **kwargs)
-        return imp.load("os").__getattr__("popen").__call__(args, kwds);
+        try {
+            return new RandomAccessFile(file, fileIOMode).getFD();
+        } catch (IOException e) {
+            throw Py.IOError(e);
+        }
     }
 
     // XXX handle IOException

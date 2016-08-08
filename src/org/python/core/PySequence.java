@@ -232,25 +232,6 @@ public abstract class PySequence extends PyObject {
     }
 
     /**
-     * Compare the specified object/length pairs.
-     *
-     * @return value >= 0 is the index where the sequences differs. -1: reached the end of o1
-     *         without a difference -2: reached the end of both seqeunces without a difference -3:
-     *         reached the end of o2 without a difference
-     */
-    protected static int cmp(PyObject o1, int ol1, PyObject o2, int ol2) {
-        for (int i = 0; i < ol1 && i < ol2; i++) {
-            if (!o1.__getitem__(i).equals(o2.__getitem__(i))) {
-                return -2;
-            }
-        }
-        if (ol1 == ol2) {
-            return -2;
-        }
-        return ol1 < ol2 ? -1 : -3;
-    }
-
-    /**
      * Return a copy of a sequence where the __len__() method is telling the truth.
      */
     protected static PySequence fastSequence(PyObject seq, String msg) {

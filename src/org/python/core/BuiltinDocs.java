@@ -4,6 +4,227 @@ package org.python.core;
 
 public class BuiltinDocs {
 
+    // Docs for <module 'array' from '/usr/lib/python3.5/lib-dynload/array.cpython-35m-x86_64-linux-gnu.so'>
+    public final static String array_ArrayType_doc = 
+        "array(typecode [, initializer]) -> array\n" + 
+        "\n" + 
+        "Return a new array whose items are restricted by typecode, and\n" + 
+        "initialized from the optional initializer value, which must be a list,\n" + 
+        "string or iterable over elements of the appropriate type.\n" + 
+        "\n" + 
+        "Arrays represent basic values and behave very much like lists, except\n" + 
+        "the type of objects stored in them is constrained. The type is specified\n" + 
+        "at object creation time by using a type code, which is a single character.\n" + 
+        "The following type codes are defined:\n" + 
+        "\n" + 
+        "    Type code   C Type             Minimum size in bytes \n" + 
+        "    'b'         signed integer     1 \n" + 
+        "    'B'         unsigned integer   1 \n" + 
+        "    'u'         Unicode character  2 (see note) \n" + 
+        "    'h'         signed integer     2 \n" + 
+        "    'H'         unsigned integer   2 \n" + 
+        "    'i'         signed integer     2 \n" + 
+        "    'I'         unsigned integer   2 \n" + 
+        "    'l'         signed integer     4 \n" + 
+        "    'L'         unsigned integer   4 \n" + 
+        "    'q'         signed integer     8 (see note) \n" + 
+        "    'Q'         unsigned integer   8 (see note) \n" + 
+        "    'f'         floating point     4 \n" + 
+        "    'd'         floating point     8 \n" + 
+        "\n" + 
+        "NOTE: The 'u' typecode corresponds to Python's unicode character. On \n" + 
+        "narrow builds this is 2-bytes on wide builds this is 4-bytes.\n" + 
+        "\n" + 
+        "NOTE: The 'q' and 'Q' type codes are only available if the platform \n" + 
+        "C compiler used to build Python supports 'long long', or, on Windows, \n" + 
+        "'__int64'.\n" + 
+        "\n" + 
+        "Methods:\n" + 
+        "\n" + 
+        "append() -- append a new item to the end of the array\n" + 
+        "buffer_info() -- return information giving the current memory info\n" + 
+        "byteswap() -- byteswap all the items of the array\n" + 
+        "count() -- return number of occurrences of an object\n" + 
+        "extend() -- extend array by appending multiple elements from an iterable\n" + 
+        "fromfile() -- read items from a file object\n" + 
+        "fromlist() -- append items from the list\n" + 
+        "frombytes() -- append items from the string\n" + 
+        "index() -- return index of first occurrence of an object\n" + 
+        "insert() -- insert a new item into the array at a provided position\n" + 
+        "pop() -- remove and return item (default last)\n" + 
+        "remove() -- remove first occurrence of an object\n" + 
+        "reverse() -- reverse the order of the items in the array\n" + 
+        "tofile() -- write all items to a file object\n" + 
+        "tolist() -- return the array converted to an ordinary list\n" + 
+        "tobytes() -- return the array converted to a string\n" + 
+        "\n" + 
+        "Attributes:\n" + 
+        "\n" + 
+        "typecode -- the typecode character used to create the array\n" + 
+        "itemsize -- the length in bytes of one array item\n" + 
+        "";
+
+    public final static String array_doc = 
+        "This module defines an object type which can efficiently represent\n" + 
+        "an array of basic values: characters, integers, floating point\n" + 
+        "numbers.  Arrays are sequence types and behave very much like lists,\n" + 
+        "except that the type of objects stored in them is constrained.\n" + 
+        "";
+
+    public final static String array___file___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String array___loader___doc = 
+        "Loader for extension modules.\n" + 
+        "\n" + 
+        "    The constructor is designed to work with FileFinder.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String array___name___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String array___package___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String array___spec___doc = 
+        "The specification for a module, used for loading.\n" + 
+        "\n" + 
+        "    A module's spec is the source for information about the module.  For\n" + 
+        "    data associated with the module, including source, use the spec's\n" + 
+        "    loader.\n" + 
+        "\n" + 
+        "    `name` is the absolute name of the module.  `loader` is the loader\n" + 
+        "    to use when loading the module.  `parent` is the name of the\n" + 
+        "    package the module is in.  The parent is derived from the name.\n" + 
+        "\n" + 
+        "    `is_package` determines if the module is considered a package or\n" + 
+        "    not.  On modules this is reflected by the `__path__` attribute.\n" + 
+        "\n" + 
+        "    `origin` is the specific location used by the loader from which to\n" + 
+        "    load the module, if that information is available.  When filename is\n" + 
+        "    set, origin will match.\n" + 
+        "\n" + 
+        "    `has_location` indicates that a spec's \"origin\" reflects a location.\n" + 
+        "    When this is True, `__file__` attribute of the module is set.\n" + 
+        "\n" + 
+        "    `cached` is the location of the cached bytecode file, if any.  It\n" + 
+        "    corresponds to the `__cached__` attribute.\n" + 
+        "\n" + 
+        "    `submodule_search_locations` is the sequence of path entries to\n" + 
+        "    search when importing submodules.  If set, is_package should be\n" + 
+        "    True--and False otherwise.\n" + 
+        "\n" + 
+        "    Packages are simply modules that (may) have submodules.  If a spec\n" + 
+        "    has a non-None value in `submodule_search_locations`, the import\n" + 
+        "    system will consider modules loaded from the spec as packages.\n" + 
+        "\n" + 
+        "    Only finders (see importlib.abc.MetaPathFinder and\n" + 
+        "    importlib.abc.PathEntryFinder) should modify ModuleSpec instances.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String array__array_reconstructor_doc = 
+        "Internal. Used for pickling support.";
+
+    public final static String array_array_doc = 
+        "array(typecode [, initializer]) -> array\n" + 
+        "\n" + 
+        "Return a new array whose items are restricted by typecode, and\n" + 
+        "initialized from the optional initializer value, which must be a list,\n" + 
+        "string or iterable over elements of the appropriate type.\n" + 
+        "\n" + 
+        "Arrays represent basic values and behave very much like lists, except\n" + 
+        "the type of objects stored in them is constrained. The type is specified\n" + 
+        "at object creation time by using a type code, which is a single character.\n" + 
+        "The following type codes are defined:\n" + 
+        "\n" + 
+        "    Type code   C Type             Minimum size in bytes \n" + 
+        "    'b'         signed integer     1 \n" + 
+        "    'B'         unsigned integer   1 \n" + 
+        "    'u'         Unicode character  2 (see note) \n" + 
+        "    'h'         signed integer     2 \n" + 
+        "    'H'         unsigned integer   2 \n" + 
+        "    'i'         signed integer     2 \n" + 
+        "    'I'         unsigned integer   2 \n" + 
+        "    'l'         signed integer     4 \n" + 
+        "    'L'         unsigned integer   4 \n" + 
+        "    'q'         signed integer     8 (see note) \n" + 
+        "    'Q'         unsigned integer   8 (see note) \n" + 
+        "    'f'         floating point     4 \n" + 
+        "    'd'         floating point     8 \n" + 
+        "\n" + 
+        "NOTE: The 'u' typecode corresponds to Python's unicode character. On \n" + 
+        "narrow builds this is 2-bytes on wide builds this is 4-bytes.\n" + 
+        "\n" + 
+        "NOTE: The 'q' and 'Q' type codes are only available if the platform \n" + 
+        "C compiler used to build Python supports 'long long', or, on Windows, \n" + 
+        "'__int64'.\n" + 
+        "\n" + 
+        "Methods:\n" + 
+        "\n" + 
+        "append() -- append a new item to the end of the array\n" + 
+        "buffer_info() -- return information giving the current memory info\n" + 
+        "byteswap() -- byteswap all the items of the array\n" + 
+        "count() -- return number of occurrences of an object\n" + 
+        "extend() -- extend array by appending multiple elements from an iterable\n" + 
+        "fromfile() -- read items from a file object\n" + 
+        "fromlist() -- append items from the list\n" + 
+        "frombytes() -- append items from the string\n" + 
+        "index() -- return index of first occurrence of an object\n" + 
+        "insert() -- insert a new item into the array at a provided position\n" + 
+        "pop() -- remove and return item (default last)\n" + 
+        "remove() -- remove first occurrence of an object\n" + 
+        "reverse() -- reverse the order of the items in the array\n" + 
+        "tofile() -- write all items to a file object\n" + 
+        "tolist() -- return the array converted to an ordinary list\n" + 
+        "tobytes() -- return the array converted to a string\n" + 
+        "\n" + 
+        "Attributes:\n" + 
+        "\n" + 
+        "typecode -- the typecode character used to create the array\n" + 
+        "itemsize -- the length in bytes of one array item\n" + 
+        "";
+
+    public final static String array_typecodes_doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
     // Docs for <module 'builtins' (built-in)>
     public final static String builtins_ArithmeticError_doc = 
         "Base class for arithmetic errors.";
@@ -7102,6 +7323,1580 @@ public class BuiltinDocs {
     public final static String SemLock_release_doc = 
         "release the semaphore/lock";
 
+    // Docs for <class 'io.IOBase'>
+    public final static String IOBase___abstractmethods___doc = 
+        "";
+
+    public final static String IOBase___class___doc = 
+        "Metaclass for defining Abstract Base Classes (ABCs).\n" + 
+        "\n" + 
+        "    Use this metaclass to create an ABC.  An ABC can be subclassed\n" + 
+        "    directly, and then acts as a mix-in class.  You can also register\n" + 
+        "    unrelated concrete classes (even built-in classes) and unrelated\n" + 
+        "    ABCs as 'virtual subclasses' -- these and their descendants will\n" + 
+        "    be considered subclasses of the registering ABC by the built-in\n" + 
+        "    issubclass() function, but the registering ABC won't show up in\n" + 
+        "    their MRO (Method Resolution Order) nor will method\n" + 
+        "    implementations defined by the registering ABC be callable (not\n" + 
+        "    even via super()).\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String IOBase___del___doc = 
+        "";
+
+    public final static String IOBase___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String IOBase___dict___doc = 
+        "";
+
+    public final static String IOBase___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String IOBase_doc = 
+        "The abstract base class for all I/O classes, acting on streams of\n" + 
+        "bytes. There is no public constructor.\n" + 
+        "\n" + 
+        "This class provides dummy implementations for many methods that\n" + 
+        "derived classes can override selectively; the default implementations\n" + 
+        "represent a file that cannot be read, written or seeked.\n" + 
+        "\n" + 
+        "Even though IOBase does not declare read, readinto, or write because\n" + 
+        "their signatures will vary, implementations and clients should\n" + 
+        "consider those methods part of the interface. Also, implementations\n" + 
+        "may raise UnsupportedOperation when operations they do not support are\n" + 
+        "called.\n" + 
+        "\n" + 
+        "The basic type used for binary data read from or written to a file is\n" + 
+        "bytes. Other bytes-like objects are accepted as method arguments too.\n" + 
+        "In some cases (such as readinto), a writable object is required. Text\n" + 
+        "I/O classes work with str data.\n" + 
+        "\n" + 
+        "Note that calling any method (except additional calls to close(),\n" + 
+        "which are ignored) on a closed stream should raise a ValueError.\n" + 
+        "\n" + 
+        "IOBase (and its subclasses) support the iterator protocol, meaning\n" + 
+        "that an IOBase object can be iterated over yielding the lines in a\n" + 
+        "stream.\n" + 
+        "\n" + 
+        "IOBase also supports the :keyword:`with` statement. In this example,\n" + 
+        "fp is closed after the suite of the with statement is complete:\n" + 
+        "\n" + 
+        "with open('spam.txt', 'r') as fp:\n" + 
+        "    fp.write('Spam and eggs!')\n" + 
+        "";
+
+    public final static String IOBase___enter___doc = 
+        "";
+
+    public final static String IOBase___eq___doc = 
+        "Return self==value.";
+
+    public final static String IOBase___exit___doc = 
+        "";
+
+    public final static String IOBase___format___doc = 
+        "default object formatter";
+
+    public final static String IOBase___ge___doc = 
+        "Return self>=value.";
+
+    public final static String IOBase___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String IOBase___gt___doc = 
+        "Return self>value.";
+
+    public final static String IOBase___hash___doc = 
+        "Return hash(self).";
+
+    public final static String IOBase___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String IOBase___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String IOBase___le___doc = 
+        "Return self<=value.";
+
+    public final static String IOBase___lt___doc = 
+        "Return self<value.";
+
+    public final static String IOBase___module___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String IOBase___ne___doc = 
+        "Return self!=value.";
+
+    public final static String IOBase___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String IOBase___next___doc = 
+        "Implement next(self).";
+
+    public final static String IOBase___reduce___doc = 
+        "helper for pickle";
+
+    public final static String IOBase___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String IOBase___repr___doc = 
+        "Return repr(self).";
+
+    public final static String IOBase___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String IOBase___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String IOBase___str___doc = 
+        "Return str(self).";
+
+    public final static String IOBase___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String IOBase__abc_cache_doc = 
+        "";
+
+    public final static String IOBase__abc_negative_cache_doc = 
+        "";
+
+    public final static String IOBase__abc_negative_cache_version_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String IOBase__abc_registry_doc = 
+        "";
+
+    public final static String IOBase__checkClosed_doc = 
+        "";
+
+    public final static String IOBase__checkReadable_doc = 
+        "";
+
+    public final static String IOBase__checkSeekable_doc = 
+        "";
+
+    public final static String IOBase__checkWritable_doc = 
+        "";
+
+    public final static String IOBase_close_doc = 
+        "Flush and close the IO object.\n" + 
+        "\n" + 
+        "This method has no effect if the file is already closed.";
+
+    public final static String IOBase_closed_doc = 
+        "";
+
+    public final static String IOBase_fileno_doc = 
+        "Returns underlying file descriptor if one exists.\n" + 
+        "\n" + 
+        "OSError is raised if the IO object does not use a file descriptor.";
+
+    public final static String IOBase_flush_doc = 
+        "Flush write buffers, if applicable.\n" + 
+        "\n" + 
+        "This is not implemented for read-only and non-blocking streams.";
+
+    public final static String IOBase_isatty_doc = 
+        "Return whether this is an 'interactive' stream.\n" + 
+        "\n" + 
+        "Return False if it can't be determined.";
+
+    public final static String IOBase_readable_doc = 
+        "Return whether object was opened for reading.\n" + 
+        "\n" + 
+        "If False, read() will raise OSError.";
+
+    public final static String IOBase_readline_doc = 
+        "Read and return a line from the stream.\n" + 
+        "\n" + 
+        "If size is specified, at most size bytes will be read.\n" + 
+        "\n" + 
+        "The line terminator is always b'\\n' for binary files; for text\n" + 
+        "files, the newlines argument to open can be used to select the line\n" + 
+        "terminator(s) recognized.";
+
+    public final static String IOBase_readlines_doc = 
+        "Return a list of lines from the stream.\n" + 
+        "\n" + 
+        "hint can be specified to control the number of lines read: no more\n" + 
+        "lines will be read if the total size (in bytes/characters) of all\n" + 
+        "lines so far exceeds hint.";
+
+    public final static String IOBase_seek_doc = 
+        "Change stream position.\n" + 
+        "\n" + 
+        "Change the stream position to the given byte offset. The offset is\n" + 
+        "interpreted relative to the position indicated by whence.  Values\n" + 
+        "for whence are:\n" + 
+        "\n" + 
+        "* 0 -- start of stream (the default); offset should be zero or positive\n" + 
+        "* 1 -- current stream position; offset may be negative\n" + 
+        "* 2 -- end of stream; offset is usually negative\n" + 
+        "\n" + 
+        "Return the new absolute position.";
+
+    public final static String IOBase_seekable_doc = 
+        "Return whether object supports random access.\n" + 
+        "\n" + 
+        "If False, seek(), tell() and truncate() will raise OSError.\n" + 
+        "This method may need to do a test seek().";
+
+    public final static String IOBase_tell_doc = 
+        "Return current stream position.";
+
+    public final static String IOBase_truncate_doc = 
+        "Truncate file to size bytes.\n" + 
+        "\n" + 
+        "File pointer is left unchanged.  Size defaults to the current IO\n" + 
+        "position as reported by tell().  Returns the new size.";
+
+    public final static String IOBase_writable_doc = 
+        "Return whether object was opened for writing.\n" + 
+        "\n" + 
+        "If False, write() will raise OSError.";
+
+    public final static String IOBase_writelines_doc = 
+        "";
+
+    // Docs for <class 'io.RawIOBase'>
+    public final static String RawIOBase___abstractmethods___doc = 
+        "";
+
+    public final static String RawIOBase___class___doc = 
+        "Metaclass for defining Abstract Base Classes (ABCs).\n" + 
+        "\n" + 
+        "    Use this metaclass to create an ABC.  An ABC can be subclassed\n" + 
+        "    directly, and then acts as a mix-in class.  You can also register\n" + 
+        "    unrelated concrete classes (even built-in classes) and unrelated\n" + 
+        "    ABCs as 'virtual subclasses' -- these and their descendants will\n" + 
+        "    be considered subclasses of the registering ABC by the built-in\n" + 
+        "    issubclass() function, but the registering ABC won't show up in\n" + 
+        "    their MRO (Method Resolution Order) nor will method\n" + 
+        "    implementations defined by the registering ABC be callable (not\n" + 
+        "    even via super()).\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String RawIOBase___del___doc = 
+        "";
+
+    public final static String RawIOBase___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String RawIOBase___dict___doc = 
+        "";
+
+    public final static String RawIOBase___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String RawIOBase_doc = 
+        "Base class for raw binary I/O.";
+
+    public final static String RawIOBase___enter___doc = 
+        "";
+
+    public final static String RawIOBase___eq___doc = 
+        "Return self==value.";
+
+    public final static String RawIOBase___exit___doc = 
+        "";
+
+    public final static String RawIOBase___format___doc = 
+        "default object formatter";
+
+    public final static String RawIOBase___ge___doc = 
+        "Return self>=value.";
+
+    public final static String RawIOBase___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String RawIOBase___gt___doc = 
+        "Return self>value.";
+
+    public final static String RawIOBase___hash___doc = 
+        "Return hash(self).";
+
+    public final static String RawIOBase___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String RawIOBase___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String RawIOBase___le___doc = 
+        "Return self<=value.";
+
+    public final static String RawIOBase___lt___doc = 
+        "Return self<value.";
+
+    public final static String RawIOBase___module___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String RawIOBase___ne___doc = 
+        "Return self!=value.";
+
+    public final static String RawIOBase___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String RawIOBase___next___doc = 
+        "Implement next(self).";
+
+    public final static String RawIOBase___reduce___doc = 
+        "helper for pickle";
+
+    public final static String RawIOBase___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String RawIOBase___repr___doc = 
+        "Return repr(self).";
+
+    public final static String RawIOBase___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String RawIOBase___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String RawIOBase___str___doc = 
+        "Return str(self).";
+
+    public final static String RawIOBase___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String RawIOBase__abc_cache_doc = 
+        "";
+
+    public final static String RawIOBase__abc_negative_cache_doc = 
+        "";
+
+    public final static String RawIOBase__abc_negative_cache_version_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String RawIOBase__abc_registry_doc = 
+        "";
+
+    public final static String RawIOBase__checkClosed_doc = 
+        "";
+
+    public final static String RawIOBase__checkReadable_doc = 
+        "";
+
+    public final static String RawIOBase__checkSeekable_doc = 
+        "";
+
+    public final static String RawIOBase__checkWritable_doc = 
+        "";
+
+    public final static String RawIOBase_close_doc = 
+        "Flush and close the IO object.\n" + 
+        "\n" + 
+        "This method has no effect if the file is already closed.";
+
+    public final static String RawIOBase_closed_doc = 
+        "";
+
+    public final static String RawIOBase_fileno_doc = 
+        "Returns underlying file descriptor if one exists.\n" + 
+        "\n" + 
+        "OSError is raised if the IO object does not use a file descriptor.";
+
+    public final static String RawIOBase_flush_doc = 
+        "Flush write buffers, if applicable.\n" + 
+        "\n" + 
+        "This is not implemented for read-only and non-blocking streams.";
+
+    public final static String RawIOBase_isatty_doc = 
+        "Return whether this is an 'interactive' stream.\n" + 
+        "\n" + 
+        "Return False if it can't be determined.";
+
+    public final static String RawIOBase_read_doc = 
+        "";
+
+    public final static String RawIOBase_readable_doc = 
+        "Return whether object was opened for reading.\n" + 
+        "\n" + 
+        "If False, read() will raise OSError.";
+
+    public final static String RawIOBase_readall_doc = 
+        "Read until EOF, using multiple read() call.";
+
+    public final static String RawIOBase_readinto_doc = 
+        "";
+
+    public final static String RawIOBase_readline_doc = 
+        "Read and return a line from the stream.\n" + 
+        "\n" + 
+        "If size is specified, at most size bytes will be read.\n" + 
+        "\n" + 
+        "The line terminator is always b'\\n' for binary files; for text\n" + 
+        "files, the newlines argument to open can be used to select the line\n" + 
+        "terminator(s) recognized.";
+
+    public final static String RawIOBase_readlines_doc = 
+        "Return a list of lines from the stream.\n" + 
+        "\n" + 
+        "hint can be specified to control the number of lines read: no more\n" + 
+        "lines will be read if the total size (in bytes/characters) of all\n" + 
+        "lines so far exceeds hint.";
+
+    public final static String RawIOBase_seek_doc = 
+        "Change stream position.\n" + 
+        "\n" + 
+        "Change the stream position to the given byte offset. The offset is\n" + 
+        "interpreted relative to the position indicated by whence.  Values\n" + 
+        "for whence are:\n" + 
+        "\n" + 
+        "* 0 -- start of stream (the default); offset should be zero or positive\n" + 
+        "* 1 -- current stream position; offset may be negative\n" + 
+        "* 2 -- end of stream; offset is usually negative\n" + 
+        "\n" + 
+        "Return the new absolute position.";
+
+    public final static String RawIOBase_seekable_doc = 
+        "Return whether object supports random access.\n" + 
+        "\n" + 
+        "If False, seek(), tell() and truncate() will raise OSError.\n" + 
+        "This method may need to do a test seek().";
+
+    public final static String RawIOBase_tell_doc = 
+        "Return current stream position.";
+
+    public final static String RawIOBase_truncate_doc = 
+        "Truncate file to size bytes.\n" + 
+        "\n" + 
+        "File pointer is left unchanged.  Size defaults to the current IO\n" + 
+        "position as reported by tell().  Returns the new size.";
+
+    public final static String RawIOBase_writable_doc = 
+        "Return whether object was opened for writing.\n" + 
+        "\n" + 
+        "If False, write() will raise OSError.";
+
+    public final static String RawIOBase_write_doc = 
+        "";
+
+    public final static String RawIOBase_writelines_doc = 
+        "";
+
+    // Docs for <class '_io.FileIO'>
+    public final static String FileIO___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String FileIO___del___doc = 
+        "";
+
+    public final static String FileIO___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String FileIO___dict___doc = 
+        "";
+
+    public final static String FileIO___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String FileIO_doc = 
+        "Open a file.\n" + 
+        "\n" + 
+        "The mode can be 'r' (default), 'w', 'x' or 'a' for reading,\n" + 
+        "writing, exclusive creation or appending.  The file will be created if it\n" + 
+        "doesn't exist when opened for writing or appending; it will be truncated\n" + 
+        "when opened for writing.  A FileExistsError will be raised if it already\n" + 
+        "exists when opened for creating. Opening a file for creating implies\n" + 
+        "writing so this mode behaves in a similar way to 'w'.Add a '+' to the mode\n" + 
+        "to allow simultaneous reading and writing. A custom opener can be used by\n" + 
+        "passing a callable as *opener*. The underlying file descriptor for the file\n" + 
+        "object is then obtained by calling opener with (*name*, *flags*).\n" + 
+        "*opener* must return an open file descriptor (passing os.open as *opener*\n" + 
+        "results in functionality similar to passing None).";
+
+    public final static String FileIO___enter___doc = 
+        "";
+
+    public final static String FileIO___eq___doc = 
+        "Return self==value.";
+
+    public final static String FileIO___exit___doc = 
+        "";
+
+    public final static String FileIO___format___doc = 
+        "default object formatter";
+
+    public final static String FileIO___ge___doc = 
+        "Return self>=value.";
+
+    public final static String FileIO___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String FileIO___getstate___doc = 
+        "";
+
+    public final static String FileIO___gt___doc = 
+        "Return self>value.";
+
+    public final static String FileIO___hash___doc = 
+        "Return hash(self).";
+
+    public final static String FileIO___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String FileIO___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String FileIO___le___doc = 
+        "Return self<=value.";
+
+    public final static String FileIO___lt___doc = 
+        "Return self<value.";
+
+    public final static String FileIO___ne___doc = 
+        "Return self!=value.";
+
+    public final static String FileIO___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String FileIO___next___doc = 
+        "Implement next(self).";
+
+    public final static String FileIO___reduce___doc = 
+        "helper for pickle";
+
+    public final static String FileIO___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String FileIO___repr___doc = 
+        "Return repr(self).";
+
+    public final static String FileIO___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String FileIO___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String FileIO___str___doc = 
+        "Return str(self).";
+
+    public final static String FileIO___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String FileIO__blksize_doc = 
+        "";
+
+    public final static String FileIO__checkClosed_doc = 
+        "";
+
+    public final static String FileIO__checkReadable_doc = 
+        "";
+
+    public final static String FileIO__checkSeekable_doc = 
+        "";
+
+    public final static String FileIO__checkWritable_doc = 
+        "";
+
+    public final static String FileIO__dealloc_warn_doc = 
+        "";
+
+    public final static String FileIO__finalizing_doc = 
+        "";
+
+    public final static String FileIO_close_doc = 
+        "Close the file.\n" + 
+        "\n" + 
+        "A closed file cannot be used for further I/O operations.  close() may be\n" + 
+        "called more than once without error.";
+
+    public final static String FileIO_closed_doc = 
+        "True if the file is closed";
+
+    public final static String FileIO_closefd_doc = 
+        "True if the file descriptor will be closed by close().";
+
+    public final static String FileIO_fileno_doc = 
+        "Return the underlying file descriptor (an integer).";
+
+    public final static String FileIO_flush_doc = 
+        "Flush write buffers, if applicable.\n" + 
+        "\n" + 
+        "This is not implemented for read-only and non-blocking streams.";
+
+    public final static String FileIO_isatty_doc = 
+        "True if the file is connected to a TTY device.";
+
+    public final static String FileIO_mode_doc = 
+        "String giving the file mode";
+
+    public final static String FileIO_read_doc = 
+        "Read at most size bytes, returned as bytes.\n" + 
+        "\n" + 
+        "Only makes one system call, so less data may be returned than requested.\n" + 
+        "In non-blocking mode, returns None if no data is available.\n" + 
+        "Return an empty bytes object at EOF.";
+
+    public final static String FileIO_readable_doc = 
+        "True if file was opened in a read mode.";
+
+    public final static String FileIO_readall_doc = 
+        "Read all data from the file, returned as bytes.\n" + 
+        "\n" + 
+        "In non-blocking mode, returns as much as is immediately available,\n" + 
+        "or None if no data is available.  Return an empty bytes object at EOF.";
+
+    public final static String FileIO_readinto_doc = 
+        "Same as RawIOBase.readinto().";
+
+    public final static String FileIO_readline_doc = 
+        "Read and return a line from the stream.\n" + 
+        "\n" + 
+        "If size is specified, at most size bytes will be read.\n" + 
+        "\n" + 
+        "The line terminator is always b'\\n' for binary files; for text\n" + 
+        "files, the newlines argument to open can be used to select the line\n" + 
+        "terminator(s) recognized.";
+
+    public final static String FileIO_readlines_doc = 
+        "Return a list of lines from the stream.\n" + 
+        "\n" + 
+        "hint can be specified to control the number of lines read: no more\n" + 
+        "lines will be read if the total size (in bytes/characters) of all\n" + 
+        "lines so far exceeds hint.";
+
+    public final static String FileIO_seek_doc = 
+        "Move to new file position and return the file position.\n" + 
+        "\n" + 
+        "Argument offset is a byte count.  Optional argument whence defaults to\n" + 
+        "SEEK_SET or 0 (offset from start of file, offset should be >= 0); other values\n" + 
+        "are SEEK_CUR or 1 (move relative to current position, positive or negative),\n" + 
+        "and SEEK_END or 2 (move relative to end of file, usually negative, although\n" + 
+        "many platforms allow seeking beyond the end of a file).\n" + 
+        "\n" + 
+        "Note that not all file objects are seekable.";
+
+    public final static String FileIO_seekable_doc = 
+        "True if file supports random-access.";
+
+    public final static String FileIO_tell_doc = 
+        "Current file position.\n" + 
+        "\n" + 
+        "Can raise OSError for non seekable files.";
+
+    public final static String FileIO_truncate_doc = 
+        "Truncate the file to at most size bytes and return the truncated size.\n" + 
+        "\n" + 
+        "Size defaults to the current file position, as returned by tell().\n" + 
+        "The current file position is changed to the value of size.";
+
+    public final static String FileIO_writable_doc = 
+        "True if file was opened in a write mode.";
+
+    public final static String FileIO_write_doc = 
+        "Write buffer b to file, return number of bytes written.\n" + 
+        "\n" + 
+        "Only makes one system call, so not all of the data may be written.\n" + 
+        "The number of bytes actually written is returned.  In non-blocking mode,\n" + 
+        "returns None if the write would block.";
+
+    public final static String FileIO_writelines_doc = 
+        "";
+
+    // Docs for <class '_io.BufferedReader'>
+    public final static String BufferedReader___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String BufferedReader___del___doc = 
+        "";
+
+    public final static String BufferedReader___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String BufferedReader___dict___doc = 
+        "";
+
+    public final static String BufferedReader___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String BufferedReader_doc = 
+        "Create a new buffered reader using the given readable raw IO object.";
+
+    public final static String BufferedReader___enter___doc = 
+        "";
+
+    public final static String BufferedReader___eq___doc = 
+        "Return self==value.";
+
+    public final static String BufferedReader___exit___doc = 
+        "";
+
+    public final static String BufferedReader___format___doc = 
+        "default object formatter";
+
+    public final static String BufferedReader___ge___doc = 
+        "Return self>=value.";
+
+    public final static String BufferedReader___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String BufferedReader___getstate___doc = 
+        "";
+
+    public final static String BufferedReader___gt___doc = 
+        "Return self>value.";
+
+    public final static String BufferedReader___hash___doc = 
+        "Return hash(self).";
+
+    public final static String BufferedReader___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String BufferedReader___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String BufferedReader___le___doc = 
+        "Return self<=value.";
+
+    public final static String BufferedReader___lt___doc = 
+        "Return self<value.";
+
+    public final static String BufferedReader___ne___doc = 
+        "Return self!=value.";
+
+    public final static String BufferedReader___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String BufferedReader___next___doc = 
+        "Implement next(self).";
+
+    public final static String BufferedReader___reduce___doc = 
+        "helper for pickle";
+
+    public final static String BufferedReader___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String BufferedReader___repr___doc = 
+        "Return repr(self).";
+
+    public final static String BufferedReader___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String BufferedReader___sizeof___doc = 
+        "";
+
+    public final static String BufferedReader___str___doc = 
+        "Return str(self).";
+
+    public final static String BufferedReader___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String BufferedReader__checkClosed_doc = 
+        "";
+
+    public final static String BufferedReader__checkReadable_doc = 
+        "";
+
+    public final static String BufferedReader__checkSeekable_doc = 
+        "";
+
+    public final static String BufferedReader__checkWritable_doc = 
+        "";
+
+    public final static String BufferedReader__dealloc_warn_doc = 
+        "";
+
+    public final static String BufferedReader__finalizing_doc = 
+        "";
+
+    public final static String BufferedReader_close_doc = 
+        "";
+
+    public final static String BufferedReader_closed_doc = 
+        "";
+
+    public final static String BufferedReader_detach_doc = 
+        "";
+
+    public final static String BufferedReader_fileno_doc = 
+        "";
+
+    public final static String BufferedReader_flush_doc = 
+        "";
+
+    public final static String BufferedReader_isatty_doc = 
+        "";
+
+    public final static String BufferedReader_mode_doc = 
+        "";
+
+    public final static String BufferedReader_name_doc = 
+        "";
+
+    public final static String BufferedReader_peek_doc = 
+        "";
+
+    public final static String BufferedReader_raw_doc = 
+        "";
+
+    public final static String BufferedReader_read_doc = 
+        "";
+
+    public final static String BufferedReader_read1_doc = 
+        "";
+
+    public final static String BufferedReader_readable_doc = 
+        "";
+
+    public final static String BufferedReader_readinto_doc = 
+        "";
+
+    public final static String BufferedReader_readinto1_doc = 
+        "";
+
+    public final static String BufferedReader_readline_doc = 
+        "";
+
+    public final static String BufferedReader_readlines_doc = 
+        "Return a list of lines from the stream.\n" + 
+        "\n" + 
+        "hint can be specified to control the number of lines read: no more\n" + 
+        "lines will be read if the total size (in bytes/characters) of all\n" + 
+        "lines so far exceeds hint.";
+
+    public final static String BufferedReader_seek_doc = 
+        "";
+
+    public final static String BufferedReader_seekable_doc = 
+        "";
+
+    public final static String BufferedReader_tell_doc = 
+        "";
+
+    public final static String BufferedReader_truncate_doc = 
+        "";
+
+    public final static String BufferedReader_writable_doc = 
+        "Return whether object was opened for writing.\n" + 
+        "\n" + 
+        "If False, write() will raise OSError.";
+
+    public final static String BufferedReader_write_doc = 
+        "Write the given buffer to the IO stream.\n" + 
+        "\n" + 
+        "Returns the number of bytes written, which is always the length of b\n" + 
+        "in bytes.\n" + 
+        "\n" + 
+        "Raises BlockingIOError if the buffer is full and the\n" + 
+        "underlying raw stream cannot accept more data at the moment.\n" + 
+        "";
+
+    public final static String BufferedReader_writelines_doc = 
+        "";
+
+    // Docs for <class '_io.BufferedWriter'>
+    public final static String BufferedWriter___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String BufferedWriter___del___doc = 
+        "";
+
+    public final static String BufferedWriter___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String BufferedWriter___dict___doc = 
+        "";
+
+    public final static String BufferedWriter___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String BufferedWriter_doc = 
+        "A buffer for a writeable sequential RawIO object.\n" + 
+        "\n" + 
+        "The constructor creates a BufferedWriter for the given writeable raw\n" + 
+        "stream. If the buffer_size is not given, it defaults to\n" + 
+        "DEFAULT_BUFFER_SIZE.";
+
+    public final static String BufferedWriter___enter___doc = 
+        "";
+
+    public final static String BufferedWriter___eq___doc = 
+        "Return self==value.";
+
+    public final static String BufferedWriter___exit___doc = 
+        "";
+
+    public final static String BufferedWriter___format___doc = 
+        "default object formatter";
+
+    public final static String BufferedWriter___ge___doc = 
+        "Return self>=value.";
+
+    public final static String BufferedWriter___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String BufferedWriter___getstate___doc = 
+        "";
+
+    public final static String BufferedWriter___gt___doc = 
+        "Return self>value.";
+
+    public final static String BufferedWriter___hash___doc = 
+        "Return hash(self).";
+
+    public final static String BufferedWriter___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String BufferedWriter___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String BufferedWriter___le___doc = 
+        "Return self<=value.";
+
+    public final static String BufferedWriter___lt___doc = 
+        "Return self<value.";
+
+    public final static String BufferedWriter___ne___doc = 
+        "Return self!=value.";
+
+    public final static String BufferedWriter___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String BufferedWriter___next___doc = 
+        "Implement next(self).";
+
+    public final static String BufferedWriter___reduce___doc = 
+        "helper for pickle";
+
+    public final static String BufferedWriter___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String BufferedWriter___repr___doc = 
+        "Return repr(self).";
+
+    public final static String BufferedWriter___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String BufferedWriter___sizeof___doc = 
+        "";
+
+    public final static String BufferedWriter___str___doc = 
+        "Return str(self).";
+
+    public final static String BufferedWriter___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String BufferedWriter__checkClosed_doc = 
+        "";
+
+    public final static String BufferedWriter__checkReadable_doc = 
+        "";
+
+    public final static String BufferedWriter__checkSeekable_doc = 
+        "";
+
+    public final static String BufferedWriter__checkWritable_doc = 
+        "";
+
+    public final static String BufferedWriter__dealloc_warn_doc = 
+        "";
+
+    public final static String BufferedWriter__finalizing_doc = 
+        "";
+
+    public final static String BufferedWriter_close_doc = 
+        "";
+
+    public final static String BufferedWriter_closed_doc = 
+        "";
+
+    public final static String BufferedWriter_detach_doc = 
+        "";
+
+    public final static String BufferedWriter_fileno_doc = 
+        "";
+
+    public final static String BufferedWriter_flush_doc = 
+        "";
+
+    public final static String BufferedWriter_isatty_doc = 
+        "";
+
+    public final static String BufferedWriter_mode_doc = 
+        "";
+
+    public final static String BufferedWriter_name_doc = 
+        "";
+
+    public final static String BufferedWriter_raw_doc = 
+        "";
+
+    public final static String BufferedWriter_read_doc = 
+        "Read and return up to n bytes.\n" + 
+        "\n" + 
+        "If the argument is omitted, None, or negative, reads and\n" + 
+        "returns all data until EOF.\n" + 
+        "\n" + 
+        "If the argument is positive, and the underlying raw stream is\n" + 
+        "not 'interactive', multiple raw reads may be issued to satisfy\n" + 
+        "the byte count (unless EOF is reached first).  But for\n" + 
+        "interactive raw streams (as well as sockets and pipes), at most\n" + 
+        "one raw read will be issued, and a short result does not imply\n" + 
+        "that EOF is imminent.\n" + 
+        "\n" + 
+        "Returns an empty bytes object on EOF.\n" + 
+        "\n" + 
+        "Returns None if the underlying raw stream was open in non-blocking\n" + 
+        "mode and no data is available at the moment.\n" + 
+        "";
+
+    public final static String BufferedWriter_read1_doc = 
+        "Read and return up to n bytes, with at most one read() call\n" + 
+        "to the underlying raw stream. A short result does not imply\n" + 
+        "that EOF is imminent.\n" + 
+        "\n" + 
+        "Returns an empty bytes object on EOF.\n" + 
+        "";
+
+    public final static String BufferedWriter_readable_doc = 
+        "Return whether object was opened for reading.\n" + 
+        "\n" + 
+        "If False, read() will raise OSError.";
+
+    public final static String BufferedWriter_readinto_doc = 
+        "";
+
+    public final static String BufferedWriter_readinto1_doc = 
+        "";
+
+    public final static String BufferedWriter_readline_doc = 
+        "Read and return a line from the stream.\n" + 
+        "\n" + 
+        "If size is specified, at most size bytes will be read.\n" + 
+        "\n" + 
+        "The line terminator is always b'\\n' for binary files; for text\n" + 
+        "files, the newlines argument to open can be used to select the line\n" + 
+        "terminator(s) recognized.";
+
+    public final static String BufferedWriter_readlines_doc = 
+        "Return a list of lines from the stream.\n" + 
+        "\n" + 
+        "hint can be specified to control the number of lines read: no more\n" + 
+        "lines will be read if the total size (in bytes/characters) of all\n" + 
+        "lines so far exceeds hint.";
+
+    public final static String BufferedWriter_seek_doc = 
+        "";
+
+    public final static String BufferedWriter_seekable_doc = 
+        "";
+
+    public final static String BufferedWriter_tell_doc = 
+        "";
+
+    public final static String BufferedWriter_truncate_doc = 
+        "";
+
+    public final static String BufferedWriter_writable_doc = 
+        "";
+
+    public final static String BufferedWriter_write_doc = 
+        "";
+
+    public final static String BufferedWriter_writelines_doc = 
+        "";
+
+    // Docs for <class '_io.BufferedRWPair'>
+    public final static String BufferedRWPair___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String BufferedRWPair___del___doc = 
+        "";
+
+    public final static String BufferedRWPair___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String BufferedRWPair___dict___doc = 
+        "";
+
+    public final static String BufferedRWPair___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String BufferedRWPair_doc = 
+        "A buffered reader and writer object together.\n" + 
+        "\n" + 
+        "A buffered reader object and buffered writer object put together to\n" + 
+        "form a sequential IO object that can read and write. This is typically\n" + 
+        "used with a socket or two-way pipe.\n" + 
+        "\n" + 
+        "reader and writer are RawIOBase objects that are readable and\n" + 
+        "writeable respectively. If the buffer_size is omitted it defaults to\n" + 
+        "DEFAULT_BUFFER_SIZE.";
+
+    public final static String BufferedRWPair___enter___doc = 
+        "";
+
+    public final static String BufferedRWPair___eq___doc = 
+        "Return self==value.";
+
+    public final static String BufferedRWPair___exit___doc = 
+        "";
+
+    public final static String BufferedRWPair___format___doc = 
+        "default object formatter";
+
+    public final static String BufferedRWPair___ge___doc = 
+        "Return self>=value.";
+
+    public final static String BufferedRWPair___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String BufferedRWPair___getstate___doc = 
+        "";
+
+    public final static String BufferedRWPair___gt___doc = 
+        "Return self>value.";
+
+    public final static String BufferedRWPair___hash___doc = 
+        "Return hash(self).";
+
+    public final static String BufferedRWPair___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String BufferedRWPair___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String BufferedRWPair___le___doc = 
+        "Return self<=value.";
+
+    public final static String BufferedRWPair___lt___doc = 
+        "Return self<value.";
+
+    public final static String BufferedRWPair___ne___doc = 
+        "Return self!=value.";
+
+    public final static String BufferedRWPair___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String BufferedRWPair___next___doc = 
+        "Implement next(self).";
+
+    public final static String BufferedRWPair___reduce___doc = 
+        "helper for pickle";
+
+    public final static String BufferedRWPair___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String BufferedRWPair___repr___doc = 
+        "Return repr(self).";
+
+    public final static String BufferedRWPair___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String BufferedRWPair___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String BufferedRWPair___str___doc = 
+        "Return str(self).";
+
+    public final static String BufferedRWPair___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String BufferedRWPair__checkClosed_doc = 
+        "";
+
+    public final static String BufferedRWPair__checkReadable_doc = 
+        "";
+
+    public final static String BufferedRWPair__checkSeekable_doc = 
+        "";
+
+    public final static String BufferedRWPair__checkWritable_doc = 
+        "";
+
+    public final static String BufferedRWPair_close_doc = 
+        "";
+
+    public final static String BufferedRWPair_closed_doc = 
+        "";
+
+    public final static String BufferedRWPair_detach_doc = 
+        "Disconnect this buffer from its underlying raw stream and return it.\n" + 
+        "\n" + 
+        "After the raw stream has been detached, the buffer is in an unusable\n" + 
+        "state.";
+
+    public final static String BufferedRWPair_fileno_doc = 
+        "Returns underlying file descriptor if one exists.\n" + 
+        "\n" + 
+        "OSError is raised if the IO object does not use a file descriptor.";
+
+    public final static String BufferedRWPair_flush_doc = 
+        "";
+
+    public final static String BufferedRWPair_isatty_doc = 
+        "";
+
+    public final static String BufferedRWPair_peek_doc = 
+        "";
+
+    public final static String BufferedRWPair_read_doc = 
+        "";
+
+    public final static String BufferedRWPair_read1_doc = 
+        "";
+
+    public final static String BufferedRWPair_readable_doc = 
+        "";
+
+    public final static String BufferedRWPair_readinto_doc = 
+        "";
+
+    public final static String BufferedRWPair_readinto1_doc = 
+        "";
+
+    public final static String BufferedRWPair_readline_doc = 
+        "Read and return a line from the stream.\n" + 
+        "\n" + 
+        "If size is specified, at most size bytes will be read.\n" + 
+        "\n" + 
+        "The line terminator is always b'\\n' for binary files; for text\n" + 
+        "files, the newlines argument to open can be used to select the line\n" + 
+        "terminator(s) recognized.";
+
+    public final static String BufferedRWPair_readlines_doc = 
+        "Return a list of lines from the stream.\n" + 
+        "\n" + 
+        "hint can be specified to control the number of lines read: no more\n" + 
+        "lines will be read if the total size (in bytes/characters) of all\n" + 
+        "lines so far exceeds hint.";
+
+    public final static String BufferedRWPair_seek_doc = 
+        "Change stream position.\n" + 
+        "\n" + 
+        "Change the stream position to the given byte offset. The offset is\n" + 
+        "interpreted relative to the position indicated by whence.  Values\n" + 
+        "for whence are:\n" + 
+        "\n" + 
+        "* 0 -- start of stream (the default); offset should be zero or positive\n" + 
+        "* 1 -- current stream position; offset may be negative\n" + 
+        "* 2 -- end of stream; offset is usually negative\n" + 
+        "\n" + 
+        "Return the new absolute position.";
+
+    public final static String BufferedRWPair_seekable_doc = 
+        "Return whether object supports random access.\n" + 
+        "\n" + 
+        "If False, seek(), tell() and truncate() will raise OSError.\n" + 
+        "This method may need to do a test seek().";
+
+    public final static String BufferedRWPair_tell_doc = 
+        "Return current stream position.";
+
+    public final static String BufferedRWPair_truncate_doc = 
+        "Truncate file to size bytes.\n" + 
+        "\n" + 
+        "File pointer is left unchanged.  Size defaults to the current IO\n" + 
+        "position as reported by tell().  Returns the new size.";
+
+    public final static String BufferedRWPair_writable_doc = 
+        "";
+
+    public final static String BufferedRWPair_write_doc = 
+        "";
+
+    public final static String BufferedRWPair_writelines_doc = 
+        "";
+
+    // Docs for <class '_io.BufferedRandom'>
+    public final static String BufferedRandom___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String BufferedRandom___del___doc = 
+        "";
+
+    public final static String BufferedRandom___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String BufferedRandom___dict___doc = 
+        "";
+
+    public final static String BufferedRandom___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String BufferedRandom_doc = 
+        "A buffered interface to random access streams.\n" + 
+        "\n" + 
+        "The constructor creates a reader and writer for a seekable stream,\n" + 
+        "raw, given in the first argument. If the buffer_size is omitted it\n" + 
+        "defaults to DEFAULT_BUFFER_SIZE.";
+
+    public final static String BufferedRandom___enter___doc = 
+        "";
+
+    public final static String BufferedRandom___eq___doc = 
+        "Return self==value.";
+
+    public final static String BufferedRandom___exit___doc = 
+        "";
+
+    public final static String BufferedRandom___format___doc = 
+        "default object formatter";
+
+    public final static String BufferedRandom___ge___doc = 
+        "Return self>=value.";
+
+    public final static String BufferedRandom___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String BufferedRandom___getstate___doc = 
+        "";
+
+    public final static String BufferedRandom___gt___doc = 
+        "Return self>value.";
+
+    public final static String BufferedRandom___hash___doc = 
+        "Return hash(self).";
+
+    public final static String BufferedRandom___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String BufferedRandom___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String BufferedRandom___le___doc = 
+        "Return self<=value.";
+
+    public final static String BufferedRandom___lt___doc = 
+        "Return self<value.";
+
+    public final static String BufferedRandom___ne___doc = 
+        "Return self!=value.";
+
+    public final static String BufferedRandom___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String BufferedRandom___next___doc = 
+        "Implement next(self).";
+
+    public final static String BufferedRandom___reduce___doc = 
+        "helper for pickle";
+
+    public final static String BufferedRandom___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String BufferedRandom___repr___doc = 
+        "Return repr(self).";
+
+    public final static String BufferedRandom___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String BufferedRandom___sizeof___doc = 
+        "";
+
+    public final static String BufferedRandom___str___doc = 
+        "Return str(self).";
+
+    public final static String BufferedRandom___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String BufferedRandom__checkClosed_doc = 
+        "";
+
+    public final static String BufferedRandom__checkReadable_doc = 
+        "";
+
+    public final static String BufferedRandom__checkSeekable_doc = 
+        "";
+
+    public final static String BufferedRandom__checkWritable_doc = 
+        "";
+
+    public final static String BufferedRandom__dealloc_warn_doc = 
+        "";
+
+    public final static String BufferedRandom__finalizing_doc = 
+        "";
+
+    public final static String BufferedRandom_close_doc = 
+        "";
+
+    public final static String BufferedRandom_closed_doc = 
+        "";
+
+    public final static String BufferedRandom_detach_doc = 
+        "";
+
+    public final static String BufferedRandom_fileno_doc = 
+        "";
+
+    public final static String BufferedRandom_flush_doc = 
+        "";
+
+    public final static String BufferedRandom_isatty_doc = 
+        "";
+
+    public final static String BufferedRandom_mode_doc = 
+        "";
+
+    public final static String BufferedRandom_name_doc = 
+        "";
+
+    public final static String BufferedRandom_peek_doc = 
+        "";
+
+    public final static String BufferedRandom_raw_doc = 
+        "";
+
+    public final static String BufferedRandom_read_doc = 
+        "";
+
+    public final static String BufferedRandom_read1_doc = 
+        "";
+
+    public final static String BufferedRandom_readable_doc = 
+        "";
+
+    public final static String BufferedRandom_readinto_doc = 
+        "";
+
+    public final static String BufferedRandom_readinto1_doc = 
+        "";
+
+    public final static String BufferedRandom_readline_doc = 
+        "";
+
+    public final static String BufferedRandom_readlines_doc = 
+        "Return a list of lines from the stream.\n" + 
+        "\n" + 
+        "hint can be specified to control the number of lines read: no more\n" + 
+        "lines will be read if the total size (in bytes/characters) of all\n" + 
+        "lines so far exceeds hint.";
+
+    public final static String BufferedRandom_seek_doc = 
+        "";
+
+    public final static String BufferedRandom_seekable_doc = 
+        "";
+
+    public final static String BufferedRandom_tell_doc = 
+        "";
+
+    public final static String BufferedRandom_truncate_doc = 
+        "";
+
+    public final static String BufferedRandom_writable_doc = 
+        "";
+
+    public final static String BufferedRandom_write_doc = 
+        "";
+
+    public final static String BufferedRandom_writelines_doc = 
+        "";
+
     // Docs for <class 'io.TextIOBase'>
     public final static String TextIOBase___abstractmethods___doc = 
         "";
@@ -7380,6 +9175,664 @@ public class BuiltinDocs {
 
     public final static String TextIOBase_writelines_doc = 
         "";
+
+    // Docs for <class '_io.TextIOWrapper'>
+    public final static String TextIOWrapper__CHUNK_SIZE_doc = 
+        "";
+
+    public final static String TextIOWrapper___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String TextIOWrapper___del___doc = 
+        "";
+
+    public final static String TextIOWrapper___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String TextIOWrapper___dict___doc = 
+        "";
+
+    public final static String TextIOWrapper___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String TextIOWrapper_doc = 
+        "Character and line based layer over a BufferedIOBase object, buffer.\n" + 
+        "\n" + 
+        "encoding gives the name of the encoding that the stream will be\n" + 
+        "decoded or encoded with. It defaults to locale.getpreferredencoding(False).\n" + 
+        "\n" + 
+        "errors determines the strictness of encoding and decoding (see\n" + 
+        "help(codecs.Codec) or the documentation for codecs.register) and\n" + 
+        "defaults to \"strict\".\n" + 
+        "\n" + 
+        "newline controls how line endings are handled. It can be None, '',\n" + 
+        "'\\n', '\\r', and '\\r\\n'.  It works as follows:\n" + 
+        "\n" + 
+        "* On input, if newline is None, universal newlines mode is\n" + 
+        "  enabled. Lines in the input can end in '\\n', '\\r', or '\\r\\n', and\n" + 
+        "  these are translated into '\\n' before being returned to the\n" + 
+        "  caller. If it is '', universal newline mode is enabled, but line\n" + 
+        "  endings are returned to the caller untranslated. If it has any of\n" + 
+        "  the other legal values, input lines are only terminated by the given\n" + 
+        "  string, and the line ending is returned to the caller untranslated.\n" + 
+        "\n" + 
+        "* On output, if newline is None, any '\\n' characters written are\n" + 
+        "  translated to the system default line separator, os.linesep. If\n" + 
+        "  newline is '' or '\\n', no translation takes place. If newline is any\n" + 
+        "  of the other legal values, any '\\n' characters written are translated\n" + 
+        "  to the given string.\n" + 
+        "\n" + 
+        "If line_buffering is True, a call to flush is implied when a call to\n" + 
+        "write contains a newline character.";
+
+    public final static String TextIOWrapper___enter___doc = 
+        "";
+
+    public final static String TextIOWrapper___eq___doc = 
+        "Return self==value.";
+
+    public final static String TextIOWrapper___exit___doc = 
+        "";
+
+    public final static String TextIOWrapper___format___doc = 
+        "default object formatter";
+
+    public final static String TextIOWrapper___ge___doc = 
+        "Return self>=value.";
+
+    public final static String TextIOWrapper___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String TextIOWrapper___getstate___doc = 
+        "";
+
+    public final static String TextIOWrapper___gt___doc = 
+        "Return self>value.";
+
+    public final static String TextIOWrapper___hash___doc = 
+        "Return hash(self).";
+
+    public final static String TextIOWrapper___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String TextIOWrapper___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String TextIOWrapper___le___doc = 
+        "Return self<=value.";
+
+    public final static String TextIOWrapper___lt___doc = 
+        "Return self<value.";
+
+    public final static String TextIOWrapper___ne___doc = 
+        "Return self!=value.";
+
+    public final static String TextIOWrapper___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String TextIOWrapper___next___doc = 
+        "Implement next(self).";
+
+    public final static String TextIOWrapper___reduce___doc = 
+        "helper for pickle";
+
+    public final static String TextIOWrapper___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String TextIOWrapper___repr___doc = 
+        "Return repr(self).";
+
+    public final static String TextIOWrapper___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String TextIOWrapper___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String TextIOWrapper___str___doc = 
+        "Return str(self).";
+
+    public final static String TextIOWrapper___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String TextIOWrapper__checkClosed_doc = 
+        "";
+
+    public final static String TextIOWrapper__checkReadable_doc = 
+        "";
+
+    public final static String TextIOWrapper__checkSeekable_doc = 
+        "";
+
+    public final static String TextIOWrapper__checkWritable_doc = 
+        "";
+
+    public final static String TextIOWrapper__finalizing_doc = 
+        "";
+
+    public final static String TextIOWrapper_buffer_doc = 
+        "";
+
+    public final static String TextIOWrapper_close_doc = 
+        "";
+
+    public final static String TextIOWrapper_closed_doc = 
+        "";
+
+    public final static String TextIOWrapper_detach_doc = 
+        "";
+
+    public final static String TextIOWrapper_encoding_doc = 
+        "";
+
+    public final static String TextIOWrapper_errors_doc = 
+        "";
+
+    public final static String TextIOWrapper_fileno_doc = 
+        "";
+
+    public final static String TextIOWrapper_flush_doc = 
+        "";
+
+    public final static String TextIOWrapper_isatty_doc = 
+        "";
+
+    public final static String TextIOWrapper_line_buffering_doc = 
+        "";
+
+    public final static String TextIOWrapper_name_doc = 
+        "";
+
+    public final static String TextIOWrapper_newlines_doc = 
+        "";
+
+    public final static String TextIOWrapper_read_doc = 
+        "";
+
+    public final static String TextIOWrapper_readable_doc = 
+        "";
+
+    public final static String TextIOWrapper_readline_doc = 
+        "";
+
+    public final static String TextIOWrapper_readlines_doc = 
+        "Return a list of lines from the stream.\n" + 
+        "\n" + 
+        "hint can be specified to control the number of lines read: no more\n" + 
+        "lines will be read if the total size (in bytes/characters) of all\n" + 
+        "lines so far exceeds hint.";
+
+    public final static String TextIOWrapper_seek_doc = 
+        "";
+
+    public final static String TextIOWrapper_seekable_doc = 
+        "";
+
+    public final static String TextIOWrapper_tell_doc = 
+        "";
+
+    public final static String TextIOWrapper_truncate_doc = 
+        "";
+
+    public final static String TextIOWrapper_writable_doc = 
+        "";
+
+    public final static String TextIOWrapper_write_doc = 
+        "";
+
+    public final static String TextIOWrapper_writelines_doc = 
+        "";
+
+    // Docs for <class '_io.StringIO'>
+    public final static String StringIO___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String StringIO___del___doc = 
+        "";
+
+    public final static String StringIO___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String StringIO___dict___doc = 
+        "";
+
+    public final static String StringIO___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String StringIO_doc = 
+        "Text I/O implementation using an in-memory buffer.\n" + 
+        "\n" + 
+        "The initial_value argument sets the value of object.  The newline\n" + 
+        "argument is like the one of TextIOWrapper's constructor.";
+
+    public final static String StringIO___enter___doc = 
+        "";
+
+    public final static String StringIO___eq___doc = 
+        "Return self==value.";
+
+    public final static String StringIO___exit___doc = 
+        "";
+
+    public final static String StringIO___format___doc = 
+        "default object formatter";
+
+    public final static String StringIO___ge___doc = 
+        "Return self>=value.";
+
+    public final static String StringIO___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String StringIO___getstate___doc = 
+        "";
+
+    public final static String StringIO___gt___doc = 
+        "Return self>value.";
+
+    public final static String StringIO___hash___doc = 
+        "Return hash(self).";
+
+    public final static String StringIO___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String StringIO___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String StringIO___le___doc = 
+        "Return self<=value.";
+
+    public final static String StringIO___lt___doc = 
+        "Return self<value.";
+
+    public final static String StringIO___ne___doc = 
+        "Return self!=value.";
+
+    public final static String StringIO___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String StringIO___next___doc = 
+        "Implement next(self).";
+
+    public final static String StringIO___reduce___doc = 
+        "helper for pickle";
+
+    public final static String StringIO___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String StringIO___repr___doc = 
+        "Return repr(self).";
+
+    public final static String StringIO___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String StringIO___setstate___doc = 
+        "";
+
+    public final static String StringIO___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String StringIO___str___doc = 
+        "Return str(self).";
+
+    public final static String StringIO___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String StringIO__checkClosed_doc = 
+        "";
+
+    public final static String StringIO__checkReadable_doc = 
+        "";
+
+    public final static String StringIO__checkSeekable_doc = 
+        "";
+
+    public final static String StringIO__checkWritable_doc = 
+        "";
+
+    public final static String StringIO_close_doc = 
+        "Close the IO object.\n" + 
+        "\n" + 
+        "Attempting any further operation after the object is closed\n" + 
+        "will raise a ValueError.\n" + 
+        "\n" + 
+        "This method has no effect if the file is already closed.";
+
+    public final static String StringIO_closed_doc = 
+        "";
+
+    public final static String StringIO_detach_doc = 
+        "Separate the underlying buffer from the TextIOBase and return it.\n" + 
+        "\n" + 
+        "After the underlying buffer has been detached, the TextIO is in an\n" + 
+        "unusable state.\n" + 
+        "";
+
+    public final static String StringIO_encoding_doc = 
+        "Encoding of the text stream.\n" + 
+        "\n" + 
+        "Subclasses should override.\n" + 
+        "";
+
+    public final static String StringIO_errors_doc = 
+        "The error setting of the decoder or encoder.\n" + 
+        "\n" + 
+        "Subclasses should override.\n" + 
+        "";
+
+    public final static String StringIO_fileno_doc = 
+        "Returns underlying file descriptor if one exists.\n" + 
+        "\n" + 
+        "OSError is raised if the IO object does not use a file descriptor.";
+
+    public final static String StringIO_flush_doc = 
+        "Flush write buffers, if applicable.\n" + 
+        "\n" + 
+        "This is not implemented for read-only and non-blocking streams.";
+
+    public final static String StringIO_getvalue_doc = 
+        "Retrieve the entire contents of the object.";
+
+    public final static String StringIO_isatty_doc = 
+        "Return whether this is an 'interactive' stream.\n" + 
+        "\n" + 
+        "Return False if it can't be determined.";
+
+    public final static String StringIO_line_buffering_doc = 
+        "";
+
+    public final static String StringIO_newlines_doc = 
+        "";
+
+    public final static String StringIO_read_doc = 
+        "Read at most size characters, returned as a string.\n" + 
+        "\n" + 
+        "If the argument is negative or omitted, read until EOF\n" + 
+        "is reached. Return an empty string at EOF.";
+
+    public final static String StringIO_readable_doc = 
+        "Returns True if the IO object can be read.";
+
+    public final static String StringIO_readline_doc = 
+        "Read until newline or EOF.\n" + 
+        "\n" + 
+        "Returns an empty string if EOF is hit immediately.";
+
+    public final static String StringIO_readlines_doc = 
+        "Return a list of lines from the stream.\n" + 
+        "\n" + 
+        "hint can be specified to control the number of lines read: no more\n" + 
+        "lines will be read if the total size (in bytes/characters) of all\n" + 
+        "lines so far exceeds hint.";
+
+    public final static String StringIO_seek_doc = 
+        "Change stream position.\n" + 
+        "\n" + 
+        "Seek to character offset pos relative to position indicated by whence:\n" + 
+        "    0  Start of stream (the default).  pos should be >= 0;\n" + 
+        "    1  Current position - pos must be 0;\n" + 
+        "    2  End of stream - pos must be 0.\n" + 
+        "Returns the new absolute position.";
+
+    public final static String StringIO_seekable_doc = 
+        "Returns True if the IO object can be seeked.";
+
+    public final static String StringIO_tell_doc = 
+        "Tell the current file position.";
+
+    public final static String StringIO_truncate_doc = 
+        "Truncate size to pos.\n" + 
+        "\n" + 
+        "The pos argument defaults to the current file position, as\n" + 
+        "returned by tell().  The current file position is unchanged.\n" + 
+        "Returns the new absolute position.";
+
+    public final static String StringIO_writable_doc = 
+        "Returns True if the IO object can be written.";
+
+    public final static String StringIO_write_doc = 
+        "Write string to file.\n" + 
+        "\n" + 
+        "Returns the number of characters written, which is always equal to\n" + 
+        "the length of the string.";
+
+    public final static String StringIO_writelines_doc = 
+        "";
+
+    // Docs for <class '_io.BytesIO'>
+    public final static String BytesIO___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String BytesIO___del___doc = 
+        "";
+
+    public final static String BytesIO___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String BytesIO___dict___doc = 
+        "";
+
+    public final static String BytesIO___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String BytesIO_doc = 
+        "Buffered I/O implementation using an in-memory bytes buffer.";
+
+    public final static String BytesIO___enter___doc = 
+        "";
+
+    public final static String BytesIO___eq___doc = 
+        "Return self==value.";
+
+    public final static String BytesIO___exit___doc = 
+        "";
+
+    public final static String BytesIO___format___doc = 
+        "default object formatter";
+
+    public final static String BytesIO___ge___doc = 
+        "Return self>=value.";
+
+    public final static String BytesIO___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String BytesIO___getstate___doc = 
+        "";
+
+    public final static String BytesIO___gt___doc = 
+        "Return self>value.";
+
+    public final static String BytesIO___hash___doc = 
+        "Return hash(self).";
+
+    public final static String BytesIO___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String BytesIO___iter___doc = 
+        "Implement iter(self).";
+
+    public final static String BytesIO___le___doc = 
+        "Return self<=value.";
+
+    public final static String BytesIO___lt___doc = 
+        "Return self<value.";
+
+    public final static String BytesIO___ne___doc = 
+        "Return self!=value.";
+
+    public final static String BytesIO___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String BytesIO___next___doc = 
+        "Implement next(self).";
+
+    public final static String BytesIO___reduce___doc = 
+        "helper for pickle";
+
+    public final static String BytesIO___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String BytesIO___repr___doc = 
+        "Return repr(self).";
+
+    public final static String BytesIO___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String BytesIO___setstate___doc = 
+        "";
+
+    public final static String BytesIO___sizeof___doc = 
+        "";
+
+    public final static String BytesIO___str___doc = 
+        "Return str(self).";
+
+    public final static String BytesIO___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String BytesIO__checkClosed_doc = 
+        "";
+
+    public final static String BytesIO__checkReadable_doc = 
+        "";
+
+    public final static String BytesIO__checkSeekable_doc = 
+        "";
+
+    public final static String BytesIO__checkWritable_doc = 
+        "";
+
+    public final static String BytesIO_close_doc = 
+        "Disable all I/O operations.";
+
+    public final static String BytesIO_closed_doc = 
+        "True if the file is closed.";
+
+    public final static String BytesIO_detach_doc = 
+        "Disconnect this buffer from its underlying raw stream and return it.\n" + 
+        "\n" + 
+        "After the raw stream has been detached, the buffer is in an unusable\n" + 
+        "state.";
+
+    public final static String BytesIO_fileno_doc = 
+        "Returns underlying file descriptor if one exists.\n" + 
+        "\n" + 
+        "OSError is raised if the IO object does not use a file descriptor.";
+
+    public final static String BytesIO_flush_doc = 
+        "Does nothing.";
+
+    public final static String BytesIO_getbuffer_doc = 
+        "Get a read-write view over the contents of the BytesIO object.";
+
+    public final static String BytesIO_getvalue_doc = 
+        "Retrieve the entire contents of the BytesIO object.";
+
+    public final static String BytesIO_isatty_doc = 
+        "Always returns False.\n" + 
+        "\n" + 
+        "BytesIO objects are not connected to a TTY-like device.";
+
+    public final static String BytesIO_read_doc = 
+        "Read at most size bytes, returned as a bytes object.\n" + 
+        "\n" + 
+        "If the size argument is negative, read until EOF is reached.\n" + 
+        "Return an empty bytes object at EOF.";
+
+    public final static String BytesIO_read1_doc = 
+        "Read at most size bytes, returned as a bytes object.\n" + 
+        "\n" + 
+        "If the size argument is negative or omitted, read until EOF is reached.\n" + 
+        "Return an empty bytes object at EOF.";
+
+    public final static String BytesIO_readable_doc = 
+        "Returns True if the IO object can be read.";
+
+    public final static String BytesIO_readinto_doc = 
+        "Read bytes into buffer.\n" + 
+        "\n" + 
+        "Returns number of bytes read (0 for EOF), or None if the object\n" + 
+        "is set not to block and has no data to read.";
+
+    public final static String BytesIO_readinto1_doc = 
+        "";
+
+    public final static String BytesIO_readline_doc = 
+        "Next line from the file, as a bytes object.\n" + 
+        "\n" + 
+        "Retain newline.  A non-negative size argument limits the maximum\n" + 
+        "number of bytes to return (an incomplete line may be returned then).\n" + 
+        "Return an empty bytes object at EOF.";
+
+    public final static String BytesIO_readlines_doc = 
+        "List of bytes objects, each a line from the file.\n" + 
+        "\n" + 
+        "Call readline() repeatedly and return a list of the lines so read.\n" + 
+        "The optional size argument, if given, is an approximate bound on the\n" + 
+        "total number of bytes in the lines returned.";
+
+    public final static String BytesIO_seek_doc = 
+        "Change stream position.\n" + 
+        "\n" + 
+        "Seek to byte offset pos relative to position indicated by whence:\n" + 
+        "     0  Start of stream (the default).  pos should be >= 0;\n" + 
+        "     1  Current position - pos may be negative;\n" + 
+        "     2  End of stream - pos usually negative.\n" + 
+        "Returns the new absolute position.";
+
+    public final static String BytesIO_seekable_doc = 
+        "Returns True if the IO object can be seeked.";
+
+    public final static String BytesIO_tell_doc = 
+        "Current file position, an integer.";
+
+    public final static String BytesIO_truncate_doc = 
+        "Truncate the file to at most size bytes.\n" + 
+        "\n" + 
+        "Size defaults to the current file position, as returned by tell().\n" + 
+        "The current file position is unchanged.  Returns the new size.";
+
+    public final static String BytesIO_writable_doc = 
+        "Returns True if the IO object can be written.";
+
+    public final static String BytesIO_write_doc = 
+        "Write bytes to file.\n" + 
+        "\n" + 
+        "Return the number of bytes written.";
+
+    public final static String BytesIO_writelines_doc = 
+        "Write lines to the file.\n" + 
+        "\n" + 
+        "Note that newlines are not added.  lines can be any iterable object\n" + 
+        "producing bytes-like objects. This is equivalent to calling write() for\n" + 
+        "each element.";
 
     // Docs for <module 'sys' (built-in)>
     public final static String sys___displayhook___doc = 
@@ -8245,5 +10698,938 @@ public class BuiltinDocs {
     public final static String sys_warnoptions_doc = 
         "list() -> new empty list\n" + 
         "list(iterable) -> new list initialized from iterable's items";
+
+    // Docs for <module 'subprocess' from '/usr/lib/python3.5/subprocess.py'>
+    public final static String subprocess_CalledProcessError_doc = 
+        "This exception is raised when a process run by check_call() or\n" + 
+        "    check_output() returns a non-zero exit status.\n" + 
+        "    The exit status will be stored in the returncode attribute;\n" + 
+        "    check_output() will also store the output in the output attribute.\n" + 
+        "    ";
+
+    public final static String subprocess_CompletedProcess_doc = 
+        "A process that has finished running.\n" + 
+        "\n" + 
+        "    This is returned by run().\n" + 
+        "\n" + 
+        "    Attributes:\n" + 
+        "      args: The list or str args passed to run().\n" + 
+        "      returncode: The exit code of the process, negative for signals.\n" + 
+        "      stdout: The standard output (None if not captured).\n" + 
+        "      stderr: The standard error (None if not captured).\n" + 
+        "    ";
+
+    public final static String subprocess_DEVNULL_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String subprocess_PIPE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String subprocess_Popen_doc = 
+        "";
+
+    public final static String subprocess_STDOUT_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String subprocess_SubprocessError_doc = 
+        "";
+
+    public final static String subprocess_TimeoutExpired_doc = 
+        "This exception is raised when the timeout expires while waiting for a\n" + 
+        "    child process.\n" + 
+        "    ";
+
+    public final static String subprocess__PIPE_BUF_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String subprocess__PLATFORM_DEFAULT_CLOSE_FDS_doc = 
+        "The most base type";
+
+    public final static String subprocess__PopenSelector_doc = 
+        "Poll-based selector.";
+
+    public final static String subprocess___all___doc = 
+        "list() -> new empty list\n" + 
+        "list(iterable) -> new list initialized from iterable's items";
+
+    public final static String subprocess___builtins___doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String subprocess___cached___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String subprocess_doc = 
+        "subprocess - Subprocesses with accessible I/O streams\n" + 
+        "\n" + 
+        "This module allows you to spawn processes, connect to their\n" + 
+        "input/output/error pipes, and obtain their return codes.  This module\n" + 
+        "intends to replace several older modules and functions:\n" + 
+        "\n" + 
+        "os.system\n" + 
+        "os.spawn*\n" + 
+        "\n" + 
+        "Information about how the subprocess module can be used to replace these\n" + 
+        "modules and functions can be found below.\n" + 
+        "\n" + 
+        "\n" + 
+        "\n" + 
+        "Using the subprocess module\n" + 
+        "===========================\n" + 
+        "This module defines one class called Popen:\n" + 
+        "\n" + 
+        "class Popen(args, bufsize=-1, executable=None,\n" + 
+        "            stdin=None, stdout=None, stderr=None,\n" + 
+        "            preexec_fn=None, close_fds=True, shell=False,\n" + 
+        "            cwd=None, env=None, universal_newlines=False,\n" + 
+        "            startupinfo=None, creationflags=0,\n" + 
+        "            restore_signals=True, start_new_session=False, pass_fds=()):\n" + 
+        "\n" + 
+        "\n" + 
+        "Arguments are:\n" + 
+        "\n" + 
+        "args should be a string, or a sequence of program arguments.  The\n" + 
+        "program to execute is normally the first item in the args sequence or\n" + 
+        "string, but can be explicitly set by using the executable argument.\n" + 
+        "\n" + 
+        "On POSIX, with shell=False (default): In this case, the Popen class\n" + 
+        "uses os.execvp() to execute the child program.  args should normally\n" + 
+        "be a sequence.  A string will be treated as a sequence with the string\n" + 
+        "as the only item (the program to execute).\n" + 
+        "\n" + 
+        "On POSIX, with shell=True: If args is a string, it specifies the\n" + 
+        "command string to execute through the shell.  If args is a sequence,\n" + 
+        "the first item specifies the command string, and any additional items\n" + 
+        "will be treated as additional shell arguments.\n" + 
+        "\n" + 
+        "On Windows: the Popen class uses CreateProcess() to execute the child\n" + 
+        "program, which operates on strings.  If args is a sequence, it will be\n" + 
+        "converted to a string using the list2cmdline method.  Please note that\n" + 
+        "not all MS Windows applications interpret the command line the same\n" + 
+        "way: The list2cmdline is designed for applications using the same\n" + 
+        "rules as the MS C runtime.\n" + 
+        "\n" + 
+        "bufsize will be supplied as the corresponding argument to the io.open()\n" + 
+        "function when creating the stdin/stdout/stderr pipe file objects:\n" + 
+        "0 means unbuffered (read & write are one system call and can return short),\n" + 
+        "1 means line buffered, any other positive value means use a buffer of\n" + 
+        "approximately that size.  A negative bufsize, the default, means the system\n" + 
+        "default of io.DEFAULT_BUFFER_SIZE will be used.\n" + 
+        "\n" + 
+        "stdin, stdout and stderr specify the executed programs' standard\n" + 
+        "input, standard output and standard error file handles, respectively.\n" + 
+        "Valid values are PIPE, an existing file descriptor (a positive\n" + 
+        "integer), an existing file object, and None.  PIPE indicates that a\n" + 
+        "new pipe to the child should be created.  With None, no redirection\n" + 
+        "will occur; the child's file handles will be inherited from the\n" + 
+        "parent.  Additionally, stderr can be STDOUT, which indicates that the\n" + 
+        "stderr data from the applications should be captured into the same\n" + 
+        "file handle as for stdout.\n" + 
+        "\n" + 
+        "On POSIX, if preexec_fn is set to a callable object, this object will be\n" + 
+        "called in the child process just before the child is executed.  The use\n" + 
+        "of preexec_fn is not thread safe, using it in the presence of threads\n" + 
+        "could lead to a deadlock in the child process before the new executable\n" + 
+        "is executed.\n" + 
+        "\n" + 
+        "If close_fds is true, all file descriptors except 0, 1 and 2 will be\n" + 
+        "closed before the child process is executed.  The default for close_fds\n" + 
+        "varies by platform:  Always true on POSIX.  True when stdin/stdout/stderr\n" + 
+        "are None on Windows, false otherwise.\n" + 
+        "\n" + 
+        "pass_fds is an optional sequence of file descriptors to keep open between the\n" + 
+        "parent and child.  Providing any pass_fds implicitly sets close_fds to true.\n" + 
+        "\n" + 
+        "if shell is true, the specified command will be executed through the\n" + 
+        "shell.\n" + 
+        "\n" + 
+        "If cwd is not None, the current directory will be changed to cwd\n" + 
+        "before the child is executed.\n" + 
+        "\n" + 
+        "On POSIX, if restore_signals is True all signals that Python sets to\n" + 
+        "SIG_IGN are restored to SIG_DFL in the child process before the exec.\n" + 
+        "Currently this includes the SIGPIPE, SIGXFZ and SIGXFSZ signals.  This\n" + 
+        "parameter does nothing on Windows.\n" + 
+        "\n" + 
+        "On POSIX, if start_new_session is True, the setsid() system call will be made\n" + 
+        "in the child process prior to executing the command.\n" + 
+        "\n" + 
+        "If env is not None, it defines the environment variables for the new\n" + 
+        "process.\n" + 
+        "\n" + 
+        "If universal_newlines is False, the file objects stdin, stdout and stderr\n" + 
+        "are opened as binary files, and no line ending conversion is done.\n" + 
+        "\n" + 
+        "If universal_newlines is True, the file objects stdout and stderr are\n" + 
+        "opened as a text file, but lines may be terminated by any of '\\n',\n" + 
+        "the Unix end-of-line convention, '\\r', the old Macintosh convention or\n" + 
+        "'\\r\\n', the Windows convention.  All of these external representations\n" + 
+        "are seen as '\\n' by the Python program.  Also, the newlines attribute\n" + 
+        "of the file objects stdout, stdin and stderr are not updated by the\n" + 
+        "communicate() method.\n" + 
+        "\n" + 
+        "In either case, the process being communicated with should start up\n" + 
+        "expecting to receive bytes on its standard input and decode them with\n" + 
+        "the same encoding they are sent in.\n" + 
+        "\n" + 
+        "The startupinfo and creationflags, if given, will be passed to the\n" + 
+        "underlying CreateProcess() function.  They can specify things such as\n" + 
+        "appearance of the main window and priority for the new process.\n" + 
+        "(Windows only)\n" + 
+        "\n" + 
+        "\n" + 
+        "This module also defines some shortcut functions:\n" + 
+        "\n" + 
+        "call(*popenargs, **kwargs):\n" + 
+        "    Run command with arguments.  Wait for command to complete, then\n" + 
+        "    return the returncode attribute.\n" + 
+        "\n" + 
+        "    The arguments are the same as for the Popen constructor.  Example:\n" + 
+        "\n" + 
+        "    >>> retcode = subprocess.call([\"ls\", \"-l\"])\n" + 
+        "\n" + 
+        "check_call(*popenargs, **kwargs):\n" + 
+        "    Run command with arguments.  Wait for command to complete.  If the\n" + 
+        "    exit code was zero then return, otherwise raise\n" + 
+        "    CalledProcessError.  The CalledProcessError object will have the\n" + 
+        "    return code in the returncode attribute.\n" + 
+        "\n" + 
+        "    The arguments are the same as for the Popen constructor.  Example:\n" + 
+        "\n" + 
+        "    >>> subprocess.check_call([\"ls\", \"-l\"])\n" + 
+        "    0\n" + 
+        "\n" + 
+        "getstatusoutput(cmd):\n" + 
+        "    Return (status, output) of executing cmd in a shell.\n" + 
+        "\n" + 
+        "    Execute the string 'cmd' in a shell with 'check_output' and\n" + 
+        "    return a 2-tuple (status, output). Universal newlines mode is used,\n" + 
+        "    meaning that the result with be decoded to a string.\n" + 
+        "\n" + 
+        "    A trailing newline is stripped from the output.\n" + 
+        "    The exit status for the command can be interpreted\n" + 
+        "    according to the rules for the function 'wait'.  Example:\n" + 
+        "\n" + 
+        "    >>> subprocess.getstatusoutput('ls /bin/ls')\n" + 
+        "    (0, '/bin/ls')\n" + 
+        "    >>> subprocess.getstatusoutput('cat /bin/junk')\n" + 
+        "    (256, 'cat: /bin/junk: No such file or directory')\n" + 
+        "    >>> subprocess.getstatusoutput('/bin/junk')\n" + 
+        "    (256, 'sh: /bin/junk: not found')\n" + 
+        "\n" + 
+        "getoutput(cmd):\n" + 
+        "    Return output (stdout or stderr) of executing cmd in a shell.\n" + 
+        "\n" + 
+        "    Like getstatusoutput(), except the exit status is ignored and the return\n" + 
+        "    value is a string containing the command's output.  Example:\n" + 
+        "\n" + 
+        "    >>> subprocess.getoutput('ls /bin/ls')\n" + 
+        "    '/bin/ls'\n" + 
+        "\n" + 
+        "check_output(*popenargs, **kwargs):\n" + 
+        "    Run command with arguments and return its output.\n" + 
+        "\n" + 
+        "    If the exit code was non-zero it raises a CalledProcessError.  The\n" + 
+        "    CalledProcessError object will have the return code in the returncode\n" + 
+        "    attribute and output in the output attribute.\n" + 
+        "\n" + 
+        "    The arguments are the same as for the Popen constructor.  Example:\n" + 
+        "\n" + 
+        "    >>> output = subprocess.check_output([\"ls\", \"-l\", \"/dev/null\"])\n" + 
+        "\n" + 
+        "    There is an additional optional argument, \"input\", allowing you to\n" + 
+        "    pass a string to the subprocess's stdin.  If you use this argument\n" + 
+        "    you may not also use the Popen constructor's \"stdin\" argument.\n" + 
+        "\n" + 
+        "    If universal_newlines is set to True, the \"input\" argument must\n" + 
+        "    be a string rather than bytes, and the return value will be a string.\n" + 
+        "\n" + 
+        "Exceptions\n" + 
+        "----------\n" + 
+        "Exceptions raised in the child process, before the new program has\n" + 
+        "started to execute, will be re-raised in the parent.  Additionally,\n" + 
+        "the exception object will have one extra attribute called\n" + 
+        "'child_traceback', which is a string containing traceback information\n" + 
+        "from the child's point of view.\n" + 
+        "\n" + 
+        "The most common exception raised is OSError.  This occurs, for\n" + 
+        "example, when trying to execute a non-existent file.  Applications\n" + 
+        "should prepare for OSErrors.\n" + 
+        "\n" + 
+        "A ValueError will be raised if Popen is called with invalid arguments.\n" + 
+        "\n" + 
+        "Exceptions defined within this module inherit from SubprocessError.\n" + 
+        "check_call() and check_output() will raise CalledProcessError if the\n" + 
+        "called process returns a non-zero return code.  TimeoutExpired\n" + 
+        "be raised if a timeout was specified and expired.\n" + 
+        "\n" + 
+        "\n" + 
+        "Security\n" + 
+        "--------\n" + 
+        "Unlike some other popen functions, this implementation will never call\n" + 
+        "/bin/sh implicitly.  This means that all characters, including shell\n" + 
+        "metacharacters, can safely be passed to child processes.\n" + 
+        "\n" + 
+        "\n" + 
+        "Popen objects\n" + 
+        "=============\n" + 
+        "Instances of the Popen class have the following methods:\n" + 
+        "\n" + 
+        "poll()\n" + 
+        "    Check if child process has terminated.  Returns returncode\n" + 
+        "    attribute.\n" + 
+        "\n" + 
+        "wait()\n" + 
+        "    Wait for child process to terminate.  Returns returncode attribute.\n" + 
+        "\n" + 
+        "communicate(input=None)\n" + 
+        "    Interact with process: Send data to stdin.  Read data from stdout\n" + 
+        "    and stderr, until end-of-file is reached.  Wait for process to\n" + 
+        "    terminate.  The optional input argument should be data to be\n" + 
+        "    sent to the child process, or None, if no data should be sent to\n" + 
+        "    the child. If the Popen instance was constructed with universal_newlines\n" + 
+        "    set to True, the input argument should be a string and will be encoded\n" + 
+        "    using the preferred system encoding (see locale.getpreferredencoding);\n" + 
+        "    if universal_newlines is False, the input argument should be a\n" + 
+        "    byte string.\n" + 
+        "\n" + 
+        "    communicate() returns a tuple (stdout, stderr).\n" + 
+        "\n" + 
+        "    Note: The data read is buffered in memory, so do not use this\n" + 
+        "    method if the data size is large or unlimited.\n" + 
+        "\n" + 
+        "The following attributes are also available:\n" + 
+        "\n" + 
+        "stdin\n" + 
+        "    If the stdin argument is PIPE, this attribute is a file object\n" + 
+        "    that provides input to the child process.  Otherwise, it is None.\n" + 
+        "\n" + 
+        "stdout\n" + 
+        "    If the stdout argument is PIPE, this attribute is a file object\n" + 
+        "    that provides output from the child process.  Otherwise, it is\n" + 
+        "    None.\n" + 
+        "\n" + 
+        "stderr\n" + 
+        "    If the stderr argument is PIPE, this attribute is file object that\n" + 
+        "    provides error output from the child process.  Otherwise, it is\n" + 
+        "    None.\n" + 
+        "\n" + 
+        "pid\n" + 
+        "    The process ID of the child process.\n" + 
+        "\n" + 
+        "returncode\n" + 
+        "    The child return code.  A None value indicates that the process\n" + 
+        "    hasn't terminated yet.  A negative value -N indicates that the\n" + 
+        "    child was terminated by signal N (POSIX only).\n" + 
+        "\n" + 
+        "\n" + 
+        "Replacing older functions with the subprocess module\n" + 
+        "====================================================\n" + 
+        "In this section, \"a ==> b\" means that b can be used as a replacement\n" + 
+        "for a.\n" + 
+        "\n" + 
+        "Note: All functions in this section fail (more or less) silently if\n" + 
+        "the executed program cannot be found; this module raises an OSError\n" + 
+        "exception.\n" + 
+        "\n" + 
+        "In the following examples, we assume that the subprocess module is\n" + 
+        "imported with \"from subprocess import *\".\n" + 
+        "\n" + 
+        "\n" + 
+        "Replacing /bin/sh shell backquote\n" + 
+        "---------------------------------\n" + 
+        "output=`mycmd myarg`\n" + 
+        "==>\n" + 
+        "output = Popen([\"mycmd\", \"myarg\"], stdout=PIPE).communicate()[0]\n" + 
+        "\n" + 
+        "\n" + 
+        "Replacing shell pipe line\n" + 
+        "-------------------------\n" + 
+        "output=`dmesg | grep hda`\n" + 
+        "==>\n" + 
+        "p1 = Popen([\"dmesg\"], stdout=PIPE)\n" + 
+        "p2 = Popen([\"grep\", \"hda\"], stdin=p1.stdout, stdout=PIPE)\n" + 
+        "output = p2.communicate()[0]\n" + 
+        "\n" + 
+        "\n" + 
+        "Replacing os.system()\n" + 
+        "---------------------\n" + 
+        "sts = os.system(\"mycmd\" + \" myarg\")\n" + 
+        "==>\n" + 
+        "p = Popen(\"mycmd\" + \" myarg\", shell=True)\n" + 
+        "pid, sts = os.waitpid(p.pid, 0)\n" + 
+        "\n" + 
+        "Note:\n" + 
+        "\n" + 
+        "* Calling the program through the shell is usually not required.\n" + 
+        "\n" + 
+        "* It's easier to look at the returncode attribute than the\n" + 
+        "  exitstatus.\n" + 
+        "\n" + 
+        "A more real-world example would look like this:\n" + 
+        "\n" + 
+        "try:\n" + 
+        "    retcode = call(\"mycmd\" + \" myarg\", shell=True)\n" + 
+        "    if retcode < 0:\n" + 
+        "        print(\"Child was terminated by signal\", -retcode, file=sys.stderr)\n" + 
+        "    else:\n" + 
+        "        print(\"Child returned\", retcode, file=sys.stderr)\n" + 
+        "except OSError as e:\n" + 
+        "    print(\"Execution failed:\", e, file=sys.stderr)\n" + 
+        "\n" + 
+        "\n" + 
+        "Replacing os.spawn*\n" + 
+        "-------------------\n" + 
+        "P_NOWAIT example:\n" + 
+        "\n" + 
+        "pid = os.spawnlp(os.P_NOWAIT, \"/bin/mycmd\", \"mycmd\", \"myarg\")\n" + 
+        "==>\n" + 
+        "pid = Popen([\"/bin/mycmd\", \"myarg\"]).pid\n" + 
+        "\n" + 
+        "\n" + 
+        "P_WAIT example:\n" + 
+        "\n" + 
+        "retcode = os.spawnlp(os.P_WAIT, \"/bin/mycmd\", \"mycmd\", \"myarg\")\n" + 
+        "==>\n" + 
+        "retcode = call([\"/bin/mycmd\", \"myarg\"])\n" + 
+        "\n" + 
+        "\n" + 
+        "Vector example:\n" + 
+        "\n" + 
+        "os.spawnvp(os.P_NOWAIT, path, args)\n" + 
+        "==>\n" + 
+        "Popen([path] + args[1:])\n" + 
+        "\n" + 
+        "\n" + 
+        "Environment example:\n" + 
+        "\n" + 
+        "os.spawnlpe(os.P_NOWAIT, \"/bin/mycmd\", \"mycmd\", \"myarg\", env)\n" + 
+        "==>\n" + 
+        "Popen([\"/bin/mycmd\", \"myarg\"], env={\"PATH\": \"/usr/bin\"})\n" + 
+        "";
+
+    public final static String subprocess___file___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String subprocess___loader___doc = 
+        "Concrete implementation of SourceLoader using the file system.";
+
+    public final static String subprocess___name___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String subprocess___package___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String subprocess___spec___doc = 
+        "The specification for a module, used for loading.\n" + 
+        "\n" + 
+        "    A module's spec is the source for information about the module.  For\n" + 
+        "    data associated with the module, including source, use the spec's\n" + 
+        "    loader.\n" + 
+        "\n" + 
+        "    `name` is the absolute name of the module.  `loader` is the loader\n" + 
+        "    to use when loading the module.  `parent` is the name of the\n" + 
+        "    package the module is in.  The parent is derived from the name.\n" + 
+        "\n" + 
+        "    `is_package` determines if the module is considered a package or\n" + 
+        "    not.  On modules this is reflected by the `__path__` attribute.\n" + 
+        "\n" + 
+        "    `origin` is the specific location used by the loader from which to\n" + 
+        "    load the module, if that information is available.  When filename is\n" + 
+        "    set, origin will match.\n" + 
+        "\n" + 
+        "    `has_location` indicates that a spec's \"origin\" reflects a location.\n" + 
+        "    When this is True, `__file__` attribute of the module is set.\n" + 
+        "\n" + 
+        "    `cached` is the location of the cached bytecode file, if any.  It\n" + 
+        "    corresponds to the `__cached__` attribute.\n" + 
+        "\n" + 
+        "    `submodule_search_locations` is the sequence of path entries to\n" + 
+        "    search when importing submodules.  If set, is_package should be\n" + 
+        "    True--and False otherwise.\n" + 
+        "\n" + 
+        "    Packages are simply modules that (may) have submodules.  If a spec\n" + 
+        "    has a non-None value in `submodule_search_locations`, the import\n" + 
+        "    system will consider modules loaded from the spec as packages.\n" + 
+        "\n" + 
+        "    Only finders (see importlib.abc.MetaPathFinder and\n" + 
+        "    importlib.abc.PathEntryFinder) should modify ModuleSpec instances.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String subprocess__active_doc = 
+        "list() -> new empty list\n" + 
+        "list(iterable) -> new list initialized from iterable's items";
+
+    public final static String subprocess__args_from_interpreter_flags_doc = 
+        "Return a list of command-line arguments reproducing the current\n" + 
+        "    settings in sys.flags and sys.warnoptions.";
+
+    public final static String subprocess__cleanup_doc = 
+        "";
+
+    public final static String subprocess__mswindows_doc = 
+        "bool(x) -> bool\n" + 
+        "\n" + 
+        "Returns True when the argument x is true, False otherwise.\n" + 
+        "The builtins True and False are the only two instances of the class bool.\n" + 
+        "The class bool is a subclass of the class int, and cannot be subclassed.";
+
+    public final static String subprocess__posixsubprocess_doc = 
+        "A POSIX helper for the subprocess module.";
+
+    public final static String subprocess__time_doc = 
+        "monotonic() -> float\n" + 
+        "\n" + 
+        "Monotonic clock, cannot go backward.";
+
+    public final static String subprocess_builtins_doc = 
+        "Built-in functions, exceptions, and other objects.\n" + 
+        "\n" + 
+        "Noteworthy: None is the `nil' object; Ellipsis represents `...' in slices.";
+
+    public final static String subprocess_call_doc = 
+        "Run command with arguments.  Wait for command to complete or\n" + 
+        "    timeout, then return the returncode attribute.\n" + 
+        "\n" + 
+        "    The arguments are the same as for the Popen constructor.  Example:\n" + 
+        "\n" + 
+        "    retcode = call([\"ls\", \"-l\"])\n" + 
+        "    ";
+
+    public final static String subprocess_check_call_doc = 
+        "Run command with arguments.  Wait for command to complete.  If\n" + 
+        "    the exit code was zero then return, otherwise raise\n" + 
+        "    CalledProcessError.  The CalledProcessError object will have the\n" + 
+        "    return code in the returncode attribute.\n" + 
+        "\n" + 
+        "    The arguments are the same as for the call function.  Example:\n" + 
+        "\n" + 
+        "    check_call([\"ls\", \"-l\"])\n" + 
+        "    ";
+
+    public final static String subprocess_check_output_doc = 
+        "Run command with arguments and return its output.\n" + 
+        "\n" + 
+        "    If the exit code was non-zero it raises a CalledProcessError.  The\n" + 
+        "    CalledProcessError object will have the return code in the returncode\n" + 
+        "    attribute and output in the output attribute.\n" + 
+        "\n" + 
+        "    The arguments are the same as for the Popen constructor.  Example:\n" + 
+        "\n" + 
+        "    >>> check_output([\"ls\", \"-l\", \"/dev/null\"])\n" + 
+        "    b'crw-rw-rw- 1 root root 1, 3 Oct 18  2007 /dev/null\\n'\n" + 
+        "\n" + 
+        "    The stdout argument is not allowed as it is used internally.\n" + 
+        "    To capture standard error in the result, use stderr=STDOUT.\n" + 
+        "\n" + 
+        "    >>> check_output([\"/bin/sh\", \"-c\",\n" + 
+        "    ...               \"ls -l non_existent_file ; exit 0\"],\n" + 
+        "    ...              stderr=STDOUT)\n" + 
+        "    b'ls: non_existent_file: No such file or directory\\n'\n" + 
+        "\n" + 
+        "    There is an additional optional argument, \"input\", allowing you to\n" + 
+        "    pass a string to the subprocess's stdin.  If you use this argument\n" + 
+        "    you may not also use the Popen constructor's \"stdin\" argument, as\n" + 
+        "    it too will be used internally.  Example:\n" + 
+        "\n" + 
+        "    >>> check_output([\"sed\", \"-e\", \"s/foo/bar/\"],\n" + 
+        "    ...              input=b\"when in the course of fooman events\\n\")\n" + 
+        "    b'when in the course of barman events\\n'\n" + 
+        "\n" + 
+        "    If universal_newlines=True is passed, the \"input\" argument must be a\n" + 
+        "    string and the return value will be a string rather than bytes.\n" + 
+        "    ";
+
+    public final static String subprocess_errno_doc = 
+        "This module makes available standard errno system symbols.\n" + 
+        "\n" + 
+        "The value of each symbol is the corresponding integer value,\n" + 
+        "e.g., on most systems, errno.ENOENT equals the integer 2.\n" + 
+        "\n" + 
+        "The dictionary errno.errorcode maps numeric codes to symbol names,\n" + 
+        "e.g., errno.errorcode[2] could be the string 'ENOENT'.\n" + 
+        "\n" + 
+        "Symbols that are not relevant to the underlying system are not defined.\n" + 
+        "\n" + 
+        "To map error codes to error messages, use the function os.strerror(),\n" + 
+        "e.g. os.strerror(2) could return 'No such file or directory'.";
+
+    public final static String subprocess_getoutput_doc = 
+        "Return output (stdout or stderr) of executing cmd in a shell.\n" + 
+        "\n" + 
+        "    Like getstatusoutput(), except the exit status is ignored and the return\n" + 
+        "    value is a string containing the command's output.  Example:\n" + 
+        "\n" + 
+        "    >>> import subprocess\n" + 
+        "    >>> subprocess.getoutput('ls /bin/ls')\n" + 
+        "    '/bin/ls'\n" + 
+        "    ";
+
+    public final static String subprocess_getstatusoutput_doc = 
+        "    Return (status, output) of executing cmd in a shell.\n" + 
+        "\n" + 
+        "    Execute the string 'cmd' in a shell with 'check_output' and\n" + 
+        "    return a 2-tuple (status, output). Universal newlines mode is used,\n" + 
+        "    meaning that the result with be decoded to a string.\n" + 
+        "\n" + 
+        "    A trailing newline is stripped from the output.\n" + 
+        "    The exit status for the command can be interpreted\n" + 
+        "    according to the rules for the function 'wait'. Example:\n" + 
+        "\n" + 
+        "    >>> import subprocess\n" + 
+        "    >>> subprocess.getstatusoutput('ls /bin/ls')\n" + 
+        "    (0, '/bin/ls')\n" + 
+        "    >>> subprocess.getstatusoutput('cat /bin/junk')\n" + 
+        "    (256, 'cat: /bin/junk: No such file or directory')\n" + 
+        "    >>> subprocess.getstatusoutput('/bin/junk')\n" + 
+        "    (256, 'sh: /bin/junk: not found')\n" + 
+        "    ";
+
+    public final static String subprocess_io_doc = 
+        "The io module provides the Python interfaces to stream handling. The\n" + 
+        "builtin open function is defined in this module.\n" + 
+        "\n" + 
+        "At the top of the I/O hierarchy is the abstract base class IOBase. It\n" + 
+        "defines the basic interface to a stream. Note, however, that there is no\n" + 
+        "separation between reading and writing to streams; implementations are\n" + 
+        "allowed to raise an OSError if they do not support a given operation.\n" + 
+        "\n" + 
+        "Extending IOBase is RawIOBase which deals simply with the reading and\n" + 
+        "writing of raw bytes to a stream. FileIO subclasses RawIOBase to provide\n" + 
+        "an interface to OS files.\n" + 
+        "\n" + 
+        "BufferedIOBase deals with buffering on a raw byte stream (RawIOBase). Its\n" + 
+        "subclasses, BufferedWriter, BufferedReader, and BufferedRWPair buffer\n" + 
+        "streams that are readable, writable, and both respectively.\n" + 
+        "BufferedRandom provides a buffered interface to random access\n" + 
+        "streams. BytesIO is a simple stream of in-memory bytes.\n" + 
+        "\n" + 
+        "Another IOBase subclass, TextIOBase, deals with the encoding and decoding\n" + 
+        "of streams into text. TextIOWrapper, which extends it, is a buffered text\n" + 
+        "interface to a buffered raw stream (`BufferedIOBase`). Finally, StringIO\n" + 
+        "is an in-memory stream for text.\n" + 
+        "\n" + 
+        "Argument names are not part of the specification, and only the arguments\n" + 
+        "of open() are intended to be used as keyword arguments.\n" + 
+        "\n" + 
+        "data:\n" + 
+        "\n" + 
+        "DEFAULT_BUFFER_SIZE\n" + 
+        "\n" + 
+        "   An int containing the default buffer size used by the module's buffered\n" + 
+        "   I/O classes. open() uses the file's blksize (as obtained by os.stat) if\n" + 
+        "   possible.\n" + 
+        "";
+
+    public final static String subprocess_list2cmdline_doc = 
+        "\n" + 
+        "    Translate a sequence of arguments into a command line\n" + 
+        "    string, using the same rules as the MS C runtime:\n" + 
+        "\n" + 
+        "    1) Arguments are delimited by white space, which is either a\n" + 
+        "       space or a tab.\n" + 
+        "\n" + 
+        "    2) A string surrounded by double quotation marks is\n" + 
+        "       interpreted as a single argument, regardless of white space\n" + 
+        "       contained within.  A quoted string can be embedded in an\n" + 
+        "       argument.\n" + 
+        "\n" + 
+        "    3) A double quotation mark preceded by a backslash is\n" + 
+        "       interpreted as a literal double quotation mark.\n" + 
+        "\n" + 
+        "    4) Backslashes are interpreted literally, unless they\n" + 
+        "       immediately precede a double quotation mark.\n" + 
+        "\n" + 
+        "    5) If backslashes immediately precede a double quotation mark,\n" + 
+        "       every pair of backslashes is interpreted as a literal\n" + 
+        "       backslash.  If the number of backslashes is odd, the last\n" + 
+        "       backslash escapes the next double quotation mark as\n" + 
+        "       described in rule 3.\n" + 
+        "    ";
+
+    public final static String subprocess_os_doc = 
+        "OS routines for NT or Posix depending on what system we're on.\n" + 
+        "\n" + 
+        "This exports:\n" + 
+        "  - all functions from posix, nt or ce, e.g. unlink, stat, etc.\n" + 
+        "  - os.path is either posixpath or ntpath\n" + 
+        "  - os.name is either 'posix', 'nt' or 'ce'.\n" + 
+        "  - os.curdir is a string representing the current directory ('.' or ':')\n" + 
+        "  - os.pardir is a string representing the parent directory ('..' or '::')\n" + 
+        "  - os.sep is the (or a most common) pathname separator ('/' or ':' or '\\\\')\n" + 
+        "  - os.extsep is the extension separator (always '.')\n" + 
+        "  - os.altsep is the alternate pathname separator (None or '/')\n" + 
+        "  - os.pathsep is the component separator used in $PATH etc\n" + 
+        "  - os.linesep is the line separator in text files ('\\r' or '\\n' or '\\r\\n')\n" + 
+        "  - os.defpath is the default search path for executables\n" + 
+        "  - os.devnull is the file path of the null device ('/dev/null', etc.)\n" + 
+        "\n" + 
+        "Programs that import and use 'os' stand a better chance of being\n" + 
+        "portable between different platforms.  Of course, they must then\n" + 
+        "only use functions that are defined by all platforms (e.g., unlink\n" + 
+        "and opendir), and leave all pathname manipulation to os.path\n" + 
+        "(e.g., split and join).\n" + 
+        "";
+
+    public final static String subprocess_run_doc = 
+        "Run command with arguments and return a CompletedProcess instance.\n" + 
+        "\n" + 
+        "    The returned instance will have attributes args, returncode, stdout and\n" + 
+        "    stderr. By default, stdout and stderr are not captured, and those attributes\n" + 
+        "    will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them.\n" + 
+        "\n" + 
+        "    If check is True and the exit code was non-zero, it raises a\n" + 
+        "    CalledProcessError. The CalledProcessError object will have the return code\n" + 
+        "    in the returncode attribute, and output & stderr attributes if those streams\n" + 
+        "    were captured.\n" + 
+        "\n" + 
+        "    If timeout is given, and the process takes too long, a TimeoutExpired\n" + 
+        "    exception will be raised.\n" + 
+        "\n" + 
+        "    There is an optional argument \"input\", allowing you to\n" + 
+        "    pass a string to the subprocess's stdin.  If you use this argument\n" + 
+        "    you may not also use the Popen constructor's \"stdin\" argument, as\n" + 
+        "    it will be used internally.\n" + 
+        "\n" + 
+        "    The other arguments are the same as for the Popen constructor.\n" + 
+        "\n" + 
+        "    If universal_newlines=True is passed, the \"input\" argument must be a\n" + 
+        "    string and stdout/stderr in the returned object will be strings rather than\n" + 
+        "    bytes.\n" + 
+        "    ";
+
+    public final static String subprocess_select_doc = 
+        "This module supports asynchronous I/O on multiple file descriptors.\n" + 
+        "\n" + 
+        "*** IMPORTANT NOTICE ***\n" + 
+        "On Windows, only sockets are supported; on Unix, all file descriptors.";
+
+    public final static String subprocess_selectors_doc = 
+        "Selectors module.\n" + 
+        "\n" + 
+        "This module allows high-level and efficient I/O multiplexing, built upon the\n" + 
+        "`select` module primitives.\n" + 
+        "";
+
+    public final static String subprocess_signal_doc = 
+        "";
+
+    public final static String subprocess_sys_doc = 
+        "This module provides access to some objects used or maintained by the\n" + 
+        "interpreter and to functions that interact strongly with the interpreter.\n" + 
+        "\n" + 
+        "Dynamic objects:\n" + 
+        "\n" + 
+        "argv -- command line arguments; argv[0] is the script pathname if known\n" + 
+        "path -- module search path; path[0] is the script directory, else ''\n" + 
+        "modules -- dictionary of loaded modules\n" + 
+        "\n" + 
+        "displayhook -- called to show results in an interactive session\n" + 
+        "excepthook -- called to handle any uncaught exception other than SystemExit\n" + 
+        "  To customize printing in an interactive session or to install a custom\n" + 
+        "  top-level exception handler, assign other functions to replace these.\n" + 
+        "\n" + 
+        "stdin -- standard input file object; used by input()\n" + 
+        "stdout -- standard output file object; used by print()\n" + 
+        "stderr -- standard error object; used for error messages\n" + 
+        "  By assigning other file objects (or objects that behave like files)\n" + 
+        "  to these, it is possible to redirect all of the interpreter's I/O.\n" + 
+        "\n" + 
+        "last_type -- type of last uncaught exception\n" + 
+        "last_value -- value of last uncaught exception\n" + 
+        "last_traceback -- traceback of last uncaught exception\n" + 
+        "  These three are only available in an interactive session after a\n" + 
+        "  traceback has been printed.\n" + 
+        "\n" + 
+        "Static objects:\n" + 
+        "\n" + 
+        "builtin_module_names -- tuple of module names built into this interpreter\n" + 
+        "copyright -- copyright notice pertaining to this interpreter\n" + 
+        "exec_prefix -- prefix used to find the machine-specific Python library\n" + 
+        "executable -- absolute path of the executable binary of the Python interpreter\n" + 
+        "float_info -- a struct sequence with information about the float implementation.\n" + 
+        "float_repr_style -- string indicating the style of repr() output for floats\n" + 
+        "hash_info -- a struct sequence with information about the hash algorithm.\n" + 
+        "hexversion -- version information encoded as a single integer\n" + 
+        "implementation -- Python implementation information.\n" + 
+        "int_info -- a struct sequence with information about the int implementation.\n" + 
+        "maxsize -- the largest supported length of containers.\n" + 
+        "maxunicode -- the value of the largest Unicode code point\n" + 
+        "platform -- platform identifier\n" + 
+        "prefix -- prefix used to find the Python library\n" + 
+        "thread_info -- a struct sequence with information about the thread implementation.\n" + 
+        "version -- the version of this interpreter as a string\n" + 
+        "version_info -- version information as a named tuple\n" + 
+        "__stdin__ -- the original stdin; don't touch!\n" + 
+        "__stdout__ -- the original stdout; don't touch!\n" + 
+        "__stderr__ -- the original stderr; don't touch!\n" + 
+        "__displayhook__ -- the original displayhook; don't touch!\n" + 
+        "__excepthook__ -- the original excepthook; don't touch!\n" + 
+        "\n" + 
+        "Functions:\n" + 
+        "\n" + 
+        "displayhook() -- print an object to the screen, and save it in builtins._\n" + 
+        "excepthook() -- print an exception and its traceback to sys.stderr\n" + 
+        "exc_info() -- return thread-safe information about the current exception\n" + 
+        "exit() -- exit the interpreter by raising SystemExit\n" + 
+        "getdlopenflags() -- returns flags to be used for dlopen() calls\n" + 
+        "getprofile() -- get the global profiling function\n" + 
+        "getrefcount() -- return the reference count for an object (plus one :-)\n" + 
+        "getrecursionlimit() -- return the max recursion depth for the interpreter\n" + 
+        "getsizeof() -- return the size of an object in bytes\n" + 
+        "gettrace() -- get the global debug tracing function\n" + 
+        "setcheckinterval() -- control how often the interpreter checks for events\n" + 
+        "setdlopenflags() -- set the flags to be used for dlopen() calls\n" + 
+        "setprofile() -- set the global profiling function\n" + 
+        "setrecursionlimit() -- set the max recursion depth for the interpreter\n" + 
+        "settrace() -- set the global debug tracing function\n" + 
+        "";
+
+    public final static String subprocess_threading_doc = 
+        "Thread module emulating a subset of Java's threading model.";
+
+    public final static String subprocess_time_doc = 
+        "This module provides various functions to manipulate time values.\n" + 
+        "\n" + 
+        "There are two standard representations of time.  One is the number\n" + 
+        "of seconds since the Epoch, in UTC (a.k.a. GMT).  It may be an integer\n" + 
+        "or a floating point number (to represent fractions of seconds).\n" + 
+        "The Epoch is system-defined; on Unix, it is generally January 1st, 1970.\n" + 
+        "The actual value can be retrieved by calling gmtime(0).\n" + 
+        "\n" + 
+        "The other representation is a tuple of 9 integers giving local time.\n" + 
+        "The tuple items are:\n" + 
+        "  year (including century, e.g. 1998)\n" + 
+        "  month (1-12)\n" + 
+        "  day (1-31)\n" + 
+        "  hours (0-23)\n" + 
+        "  minutes (0-59)\n" + 
+        "  seconds (0-59)\n" + 
+        "  weekday (0-6, Monday is 0)\n" + 
+        "  Julian day (day in the year, 1-366)\n" + 
+        "  DST (Daylight Savings Time) flag (-1, 0 or 1)\n" + 
+        "If the DST flag is 0, the time is given in the regular time zone;\n" + 
+        "if it is 1, the time is given in the DST time zone;\n" + 
+        "if it is -1, mktime() should guess based on the date and time.\n" + 
+        "\n" + 
+        "Variables:\n" + 
+        "\n" + 
+        "timezone -- difference in seconds between UTC and local standard time\n" + 
+        "altzone -- difference in  seconds between UTC and local DST time\n" + 
+        "daylight -- whether local time should reflect DST\n" + 
+        "tzname -- tuple of (standard time zone name, DST time zone name)\n" + 
+        "\n" + 
+        "Functions:\n" + 
+        "\n" + 
+        "time() -- return current time in seconds since the Epoch as a float\n" + 
+        "clock() -- return CPU time since process start as a float\n" + 
+        "sleep() -- delay for a number of seconds given as a float\n" + 
+        "gmtime() -- convert seconds since Epoch to UTC tuple\n" + 
+        "localtime() -- convert seconds since Epoch to local time tuple\n" + 
+        "asctime() -- convert time tuple to string\n" + 
+        "ctime() -- convert time in seconds to string\n" + 
+        "mktime() -- convert local time tuple to seconds since Epoch\n" + 
+        "strftime() -- convert time tuple to string according to format specification\n" + 
+        "strptime() -- parse string to time tuple according to format specification\n" + 
+        "tzset() -- change the local timezone";
+
+    public final static String subprocess_warnings_doc = 
+        "Python part of the warnings subsystem.";
 
 }

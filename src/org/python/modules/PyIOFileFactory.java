@@ -21,14 +21,12 @@ public class PyIOFileFactory {
         Object f = file.__tojava__(cStringIO.StringIO.class);
         if (f != Py.NoConversion) {
             return new cStringIOFile(file);
-        } else if (__builtin__.isinstance(file, FileType)) {
+        } else if (__builtin__.isinstance(file, PyFile.TYPE)) {
             return new FileIOFile(file);
         } else {
             return new ObjectIOFile(file);
         }
     }
-
-    private static PyType FileType = PyType.fromClass(PyFile.class);
 
     // Use a cStringIO as a file.
     static class cStringIOFile implements PyIOFile {

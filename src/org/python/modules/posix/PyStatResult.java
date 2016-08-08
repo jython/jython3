@@ -4,6 +4,7 @@ package org.python.modules.posix;
 import jnr.posix.FileStat;
 
 import org.python.core.ArgParser;
+import org.python.core.CompareOp;
 import org.python.core.Py;
 import org.python.core.PyList;
 import org.python.core.PyNewWrapper;
@@ -188,16 +189,7 @@ public class PyStatResult extends PyTuple {
 
     @ExposedMethod(type = MethodType.BINARY)
     final synchronized PyObject stat_result___eq__(PyObject o) {
-        if (getType() != o.getType() && !getType().isSubType(o.getType())) {
-            return null;
-        }
-        int tl = __len__();
-        int ol = o.__len__();
-        if (tl != ol) {
-            return Py.False;
-        }
-        int i = cmp(this, tl, o, ol);
-        return (i < 0) ? Py.True : Py.False;
+        return richCompare(o, CompareOp.EQ);
     }
 
     @Override
@@ -207,11 +199,7 @@ public class PyStatResult extends PyTuple {
 
     @ExposedMethod(type = MethodType.BINARY)
     final synchronized PyObject stat_result___ne__(PyObject o) {
-        PyObject eq = stat_result___eq__(o);
-        if (eq == null) {
-            return null;
-        }
-        return eq.__not__();
+        return richCompare(o, CompareOp.NE);
     }
 
     /**
