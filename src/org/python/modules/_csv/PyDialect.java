@@ -3,8 +3,8 @@ package org.python.modules._csv;
 
 import org.python.core.ArgParser;
 import org.python.core.Py;
-import org.python.core.PyBytes;
-import org.python.core.PyInteger;
+import org.python.core.PyLong;
+import org.python.core.PyUnicode;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
 import org.python.core.PyType;
@@ -81,7 +81,7 @@ public class PyDialect extends PyObject {
         PyObject skipinitialspace = ap.getPyObject(7, null);
         PyObject strict = ap.getPyObject(8, null);
 
-        if (dialect instanceof PyBytes) {
+        if (dialect instanceof PyUnicode) {
             dialect = _csv.get_dialect_from_registry(dialect);
         }
 
@@ -153,7 +153,7 @@ public class PyDialect extends PyObject {
         if (src == null) {
             return dflt;
         }
-        boolean isStr = Py.isInstance(src, PyBytes.TYPE);
+        boolean isStr = Py.isInstance(src, PyUnicode.TYPE);
         if (src == Py.None || isStr && src.__len__() == 0) {
             return '\0';
         } else if (!isStr || src.__len__() != 1) {
@@ -166,7 +166,7 @@ public class PyDialect extends PyObject {
         if (src == null) {
             return dflt;
         }
-        if (!(src instanceof PyInteger)) {
+        if (!(src instanceof PyLong)) {
             throw Py.TypeError(String.format("\"%s\" must be an integer", name));
         }
         return src.asInt();
@@ -179,7 +179,7 @@ public class PyDialect extends PyObject {
         if (src == Py.None) {
             return null;
         }
-        if (!(src instanceof PyBytes)) {
+        if (!(src instanceof PyUnicode)) {
             throw Py.TypeError(String.format("\"%s\" must be an string", name));
         }
         return src.toString();

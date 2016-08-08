@@ -4,7 +4,7 @@ package org.python.modules._csv;
 import org.python.core.ArgParser;
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
-import org.python.core.PyBytes;
+import org.python.core.PyUnicode;
 import org.python.core.PyDictionary;
 import org.python.core.PyException;
 import org.python.core.PyInteger;
@@ -20,7 +20,7 @@ import org.python.core.PyStringMap;
  */
 public class _csv implements ClassDictInit {
 
-    public static PyBytes __doc__ = Py.newString(
+    public static PyUnicode __doc__ = Py.newUnicode(
         "CSV parsing and writing.\n" +
         "\n" +
         "This module provides classes that assist in the reading and writing\n" +
@@ -94,7 +94,7 @@ public class _csv implements ClassDictInit {
     }
 
     /** Module version. */
-    public static PyBytes __version__ = new PyBytes("1.0");
+    public static PyUnicode __version__ = new PyUnicode("1.0");
 
     public static void classDictInit(PyObject dict) {
         dict.__setitem__("__name__", Py.newString("_csv"));
@@ -120,8 +120,8 @@ public class _csv implements ClassDictInit {
         PyObject name = ap.getPyObject(0);
         PyObject dialect = ap.getPyObject(1, null);
 
-        if (!(name instanceof PyBytes)) {
-            throw Py.TypeError("dialect name must be a string or unicode");
+        if (!(name instanceof PyUnicode)) {
+            throw Py.TypeError("dialect name must be a string");
         }
 
         _dialects.__setitem__(name, dialectFromKwargs(dialect, args, keywords));
@@ -228,7 +228,7 @@ public class _csv implements ClassDictInit {
 
     private static PyObject exceptionNamespace() {
         PyObject dict = new PyStringMap();
-        dict.__setitem__("__module__", new PyBytes("_csv"));
+        dict.__setitem__("__module__", new PyUnicode("_csv"));
         return dict;
     }
 }
