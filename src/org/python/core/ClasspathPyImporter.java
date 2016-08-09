@@ -17,9 +17,12 @@ import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
 import org.python.util.Generic;
 
+// TODO: This could be replaced by the frozen module machinery, implement _imp.is_frozen / exec_frozen properly
+// NOTE: this class should be kept as a fallback to bootstrap the import machinery, before we find a way to freeze
+// the importlib/_bootstrap(_external).py without a working import mechanism
 @Untraversable
 @ExposedType(name="ClasspathPyImporter")
-public class ClasspathPyImporter extends importer<String> {
+public class ClasspathPyImporter extends importer {
 
     public static final String PYCLASSPATH_PREFIX = "__pyclasspath__/";
     public static final PyType TYPE = PyType.fromClass(ClasspathPyImporter.class);
@@ -37,9 +40,6 @@ public class ClasspathPyImporter extends importer<String> {
     final void ClasspathPyImporter___init__(PyObject[] args, String[] kwds) {
         ArgParser ap = new ArgParser("__init__", args, kwds, new String[] {"path"});
         String path = ap.getString(0);
-//        if (path == null || !path.startsWith(PYCLASSPATH_PREFIX)) {
-//            throw Py.ImportError("path isn't for classpath importer");
-//        }
         if (!path.endsWith(File.separator)) {
             path += File.separator;
         }
@@ -258,11 +258,6 @@ public class ClasspathPyImporter extends importer<String> {
     @Override
     protected String makePackagePath(String fullname) {
         return path;
-    }
-
-    @Override
-    protected String getSeparator() {
-        return File.separator;
     }
 
     private Map<String, InputStream> entries = new HashMap<>();

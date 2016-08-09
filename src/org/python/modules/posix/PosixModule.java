@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.management.ManagementFactory;
@@ -830,11 +831,11 @@ public class PosixModule implements ClassDictInit {
         "open(filename, flag [, mode=0777]) -> fd\n\n" +
         "Open a file (for low level IO).\n\n" +
         "Note that the mode argument is not currently supported on Jython.");
-    public static FileDescriptor open(PyObject path, int flag) {
+    public static FileIO open(PyObject path, int flag) {
         return open(path, flag, 0777);
     }
 
-    public static FileDescriptor open(PyObject path, int flag, int mode) {
+    public static FileIO open(PyObject path, int flag, int mode) {
         Path p = absolutePath(path);
         File file = p.toFile();
         boolean reading = (flag & O_RDONLY) != 0;
@@ -880,16 +881,12 @@ public class PosixModule implements ClassDictInit {
                 + (appending && (writing || updating) ? "a" : "") + (updating ? "+" : "");
         if (sync && (writing || updating)) {
             try {
-                return new RandomAccessFile(file, "rws").getFD();
+                return new FileIO(new RandomAccessFile(file, "rws").getChannel(), fileIOMode);
             } catch (IOException e) {
                 throw Py.IOError(e);
             }
         }
-        try {
-            return new RandomAccessFile(file, fileIOMode).getFD();
-        } catch (IOException e) {
-            throw Py.IOError(e);
-        }
+        return new FileIO((PyUnicode) path, fileIOMode);
     }
 
     // XXX handle IOException

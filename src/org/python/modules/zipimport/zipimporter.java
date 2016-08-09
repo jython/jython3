@@ -1,24 +1,12 @@
 /* Copyright (c) 2007 Jython Developers */
 package org.python.modules.zipimport;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
 import org.python.core.ArgParser;
 import org.python.core.Py;
-import org.python.core.PyBytes;
 import org.python.core.PyDictionary;
 import org.python.core.PyException;
-import org.python.core.PyInteger;
-import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.python.core.PySystemState;
-import org.python.core.PyTuple;
 import org.python.core.PyType;
 import org.python.core.PyUnicode;
 import org.python.core.Traverseproc;
@@ -31,18 +19,26 @@ import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 /**
  * Import Python modules and packages from ZIP-format archives.
  *
  * @author Philip Jenvey
  */
 @ExposedType(name = "zipimport.zipimporter", base = PyObject.class)
-public class zipimporter extends importer<PyObject> implements Traverseproc {
+public class zipimporter extends importer implements Traverseproc {
 
     public static final PyType TYPE = PyType.fromClass(zipimporter.class);
 
     @ExposedGet
-    public static final PyBytes __doc__ = new PyBytes(
+    public static final PyUnicode __doc__ = new PyUnicode(
         "zipimporter(archivepath) -> zipimporter object\n" +
         "\n" +
         "Create a new zipimporter instance. 'archivepath' must be a path to\n" +
@@ -188,7 +184,7 @@ public class zipimporter extends importer<PyObject> implements Traverseproc {
             throw Py.IOError(path);
         }
 
-        Bundle zipBundle = makeBundle(new PyUnicode(path));
+        Bundle zipBundle = makeBundle(path);
         byte[] data;
         try {
             data = FileUtil.readBytes(zipBundle.inputStream);
@@ -247,7 +243,7 @@ public class zipimporter extends importer<PyObject> implements Traverseproc {
     final PyObject zipimporter_get_filename(String fullname) {
         ModuleCodeData moduleCodeData = getModuleCode(fullname);
         if (moduleCodeData != null) {
-            return new PyBytes(moduleCodeData.path);
+            return new PyUnicode(moduleCodeData.path);
         }
         return Py.None;
     }
@@ -287,13 +283,12 @@ public class zipimporter extends importer<PyObject> implements Traverseproc {
      * Given a path to a compressed file in the archive, return the
      * file's (uncompressed) data stream in a ZipBundle.
      *
-     * @param entry file's filename inside of the archive
+     * @param datapath file's filename inside of the archive
      * @return a ZipBundle with an InputStream to the file's
      * uncompressed data
      */
     @Override
-    public ZipBundle makeBundle(PyObject entry) {
-        String datapath = entry.asString();
+    public ZipBundle makeBundle(String datapath) {
         datapath = datapath.replace(File.separatorChar, '/');
         ZipFile zipArchive;
         try {
@@ -340,7 +335,7 @@ public class zipimporter extends importer<PyObject> implements Traverseproc {
      * Given a path to a Zip archive, build a dict, mapping file names
      * (local to the archive, using SEP as a separator) to toc entries.
      *
-     * @param archive PyBytes path to the archive
+     * @param archive PyUnicode path to the archive
      * @return a PyDictionary of tocEntrys
      * @see #readZipFile(ZipFile, PyObject)
      */
@@ -397,27 +392,22 @@ public class zipimporter extends importer<PyObject> implements Traverseproc {
             ZipEntry zipEntry = zipEntries.nextElement();
             String name = zipEntry.getName().replace('/', File.separatorChar);
 
-            PyObject __file__ = new PyBytes(archive + File.separator + name);
-            PyObject compress = Py.newInteger(zipEntry.getMethod());
-            PyObject data_size = new PyLong(zipEntry.getCompressedSize());
-            PyObject file_size = new PyLong(zipEntry.getSize());
-            // file_offset is a CPython optimization; it's used to seek directly to the
-            // file when reading it later. Jython doesn't do this nor is the offset
-            // available
-            PyObject file_offset = Py.newInteger(-1);
-            PyObject time = new PyInteger(epochToDosTime(zipEntry.getTime()));
-            PyObject date = new PyInteger(epochToDosDate(zipEntry.getTime()));
-            PyObject crc = new PyLong(zipEntry.getCrc());
+//            PyObject __file__ = new PyUnicode(archive + File.separator + name);
+//            PyObject compress = Py.newInteger(zipEntry.getMethod());
+//            PyObject data_size = new PyLong(zipEntry.getCompressedSize());
+//            PyObject file_size = new PyLong(zipEntry.getSize());
+//            // file_offset is a CPython optimization; it's used to seek directly to the
+//            // file when reading it later. Jython doesn't do this nor is the offset
+//            // available
+//            PyObject file_offset = Py.newInteger(-1);
+//            PyObject time = new PyInteger(epochToDosTime(zipEntry.getTime()));
+//            PyObject date = new PyInteger(epochToDosDate(zipEntry.getTime()));
+//            PyObject crc = new PyLong(zipEntry.getCrc());
 
-            PyTuple entry = new PyTuple(__file__, compress, data_size, file_size, file_offset,
-                                        time, date, crc);
-            files.__setitem__(new PyBytes(name), entry);
+//            PyTuple entry = new PyTuple(__file__, compress, data_size, file_size, file_offset,
+//                                        time, date, crc);
+//            files.__setitem__(name, archive + File.separator + name);
         }
-    }
-
-    @Override
-    protected String getSeparator() {
-        return File.separator;
     }
 
     @Override
@@ -436,8 +426,8 @@ public class zipimporter extends importer<PyObject> implements Traverseproc {
     }
 
     @Override
-    protected PyObject makeEntry(String fullFilename) {
-        return files.__finditem__(fullFilename);
+    protected String makeEntry(String fullFilename) {
+        return archive + File.separator + fullFilename;
     }
 
     /**

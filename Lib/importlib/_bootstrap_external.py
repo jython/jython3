@@ -424,53 +424,56 @@ def _validate_bytecode_header(data, source_stats=None, name=None, path=None):
     truncated.
 
     """
-    exc_details = {}
-    if name is not None:
-        exc_details['name'] = name
-    else:
-        # To prevent having to make all messages have a conditional name.
-        name = '<bytecode>'
-    if path is not None:
-        exc_details['path'] = path
-    magic = data[:4]
-    raw_timestamp = data[4:8]
-    raw_size = data[8:12]
-    if magic != MAGIC_NUMBER:
-        message = 'bad magic number in {!r}: {!r}'.format(name, magic)
-        _verbose_message('{}', message)
-        raise ImportError(message, **exc_details)
-    elif len(raw_timestamp) != 4:
-        message = 'reached EOF while reading timestamp in {!r}'.format(name)
-        _verbose_message('{}', message)
-        raise EOFError(message)
-    elif len(raw_size) != 4:
-        message = 'reached EOF while reading size of source in {!r}'.format(name)
-        _verbose_message('{}', message)
-        raise EOFError(message)
-    if source_stats is not None:
-        try:
-            source_mtime = int(source_stats['mtime'])
-        except KeyError:
-            pass
-        else:
-            if _r_long(raw_timestamp) != source_mtime:
-                message = 'bytecode is stale for {!r}'.format(name)
-                _verbose_message('{}', message)
-                raise ImportError(message, **exc_details)
-        try:
-            source_size = source_stats['size'] & 0xFFFFFFFF
-        except KeyError:
-            pass
-        else:
-            if _r_long(raw_size) != source_size:
-                raise ImportError('bytecode is stale for {!r}'.format(name),
-                                  **exc_details)
-    return data[12:]
+    # maybe we can pack the java classfile with the .pyc headers, but not for now
+    return data
+    #exc_details = {}
+    #if name is not None:
+    #    exc_details['name'] = name
+    #else:
+    #    # To prevent having to make all messages have a conditional name.
+    #    name = '<bytecode>'
+    #if path is not None:
+    #    exc_details['path'] = path
+    #magic = data[:4]
+    #raw_timestamp = data[4:8]
+    #raw_size = data[8:12]
+    #if magic != MAGIC_NUMBER:
+    #    message = 'bad magic number in {!r}: {!r}'.format(name, magic)
+    #    _verbose_message('{}', message)
+    #    raise ImportError(message, **exc_details)
+    #elif len(raw_timestamp) != 4:
+    #    message = 'reached EOF while reading timestamp in {!r}'.format(name)
+    #    _verbose_message('{}', message)
+    #    raise EOFError(message)
+    #elif len(raw_size) != 4:
+    #    message = 'reached EOF while reading size of source in {!r}'.format(name)
+    #    _verbose_message('{}', message)
+    #    raise EOFError(message)
+    #if source_stats is not None:
+    #    try:
+    #        source_mtime = int(source_stats['mtime'])
+    #    except KeyError:
+    #        pass
+    #    else:
+    #        if _r_long(raw_timestamp) != source_mtime:
+    #            message = 'bytecode is stale for {!r}'.format(name)
+    #            _verbose_message('{}', message)
+    #            raise ImportError(message, **exc_details)
+    #    try:
+    #        source_size = source_stats['size'] & 0xFFFFFFFF
+    #    except KeyError:
+    #        pass
+    #    else:
+    #        if _r_long(raw_size) != source_size:
+    #            raise ImportError('bytecode is stale for {!r}'.format(name),
+    #                              **exc_details)
+    #return data[12:]
 
 
 def _compile_bytecode(data, name=None, bytecode_path=None, source_path=None):
     """Compile bytecode as returned by _validate_bytecode_header()."""
-    code = marshal.loads(data)
+    code = _imp._compile_bytecode(name, data, bytecode_path)
+    #code = marshal.loads(data)
     if isinstance(code, _code_type):
         _verbose_message('code object from {!r}', bytecode_path)
         if source_path is not None:
@@ -715,6 +718,9 @@ class SourceLoader(_LoaderBasics):
                               name=fullname) from exc
         return decode_source(source_bytes)
 
+    def source_to_bytecode(self, fullname, data, path, *, _optimize=-1):
+        return _imp._compile_source(fullname, data, path)
+
     def source_to_code(self, data, path, *, _optimize=-1):
         """Return the code object compiled from source.
 
@@ -761,12 +767,16 @@ class SourceLoader(_LoaderBasics):
                                                  bytecode_path=bytecode_path,
                                                  source_path=source_path)
         source_bytes = self.get_data(source_path)
-        code_object = self.source_to_code(source_bytes, source_path)
+        data = self.source_to_bytecode(fullname, source_bytes, source_path)
+        code_object = _compile_bytecode(data, name=fullname,
+                                        bytecode_path=bytecode_path,
+                                        source_path=source_path)
+        #code_object = self.source_to_code(source_bytes, source_path)
         _verbose_message('code object from {}', source_path)
         if (not sys.dont_write_bytecode and bytecode_path is not None and
                 source_mtime is not None):
-            data = _code_to_bytecode(code_object, source_mtime,
-                    len(source_bytes))
+            #data = _code_to_bytecode(code_object, source_mtime,
+            #        len(source_bytes))
             try:
                 self._cache_bytecode(source_path, bytecode_path, data)
                 _verbose_message('wrote {!r}', bytecode_path)
@@ -1414,8 +1424,8 @@ def _setup(_bootstrap_module):
 def _install(_bootstrap_module):
     """Install the path-based import components."""
     _setup(_bootstrap_module)
-    #supported_loaders = _get_supported_file_loaders()
-    #sys.path_hooks.extend([FileFinder.path_hook(*supported_loaders)])
+    supported_loaders = _get_supported_file_loaders()
+    sys.path_hooks.extend([FileFinder.path_hook(*supported_loaders)])
     if _os.__name__ == 'nt':
         sys.meta_path.append(WindowsRegistryFinder)
     sys.meta_path.append(PathFinder)

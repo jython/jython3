@@ -2,9 +2,15 @@
 package org.python.modules;
 
 import org.python.Version;
+import org.python.core.BufferProtocol;
+import org.python.core.BytecodeLoader;
 import org.python.core.ClassDictInit;
+import org.python.core.PyBUF;
+import org.python.core.PyByteArray;
+import org.python.core.PyBytes;
 import org.python.core.PyCode;
 import org.python.core.PyStringMap;
+import org.python.core.PyTableCode;
 import org.python.core.__builtin__;
 import org.python.core.Py;
 import org.python.core.PyFile;
@@ -18,6 +24,7 @@ import org.python.core.imp;
 import org.python.expose.ExposedFunction;
 import org.python.expose.ExposedModule;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -108,7 +115,6 @@ public class _imp {
 	return new PyUnicode("\u0003\u00f3\r\n");
     }
     
-    @ExposedFunction
     public static PyObject get_suffixes() {
         return new PyList(new PyObject[] {new PyTuple(new PyUnicode(".py"),
                                                       new PyUnicode("r"),
@@ -135,7 +141,10 @@ public class _imp {
     }
 
     @ExposedFunction
-    public static PyObject _fix_co_filename(PyCode code, PyObject path) {
+    public static PyObject _fix_co_filename(PyObject code, PyObject path) {
+        if (code instanceof PyTableCode) {
+            ((PyTableCode) code).co_filename = path.toString();
+        }
         return Py.None;
     }
 
@@ -201,7 +210,40 @@ public class _imp {
      * Returns the list of file suffixes used to identify extension modules.
      */
     @ExposedFunction
-    public static PyObject extension_suffixes() {
-        return new PyList();
+    public static final PyObject extension_suffixes() {
+        return new PyList(); // there is no extension type for jython yet.
+    }
+
+    /**
+     * Compile python source code to java bytecode
+     * @param data python source
+     * @param path source file path
+     * @return bytes object
+     */
+    @ExposedFunction
+    public static final PyObject _compile_source(PyObject name, PyObject data, PyObject path) {
+        if (data instanceof PyBytes) {
+            byte[] source = ((PyBytes) data).toBytes();
+            byte[] bytes = imp.compileSource(name.toString(), new ByteArrayInputStream(source), path.toString());
+            PyByteArray buf = new PyByteArray(bytes);
+            return new PyBytes(buf.getBuffer(PyBUF.FULL_RO).toString());
+        }
+        throw Py.TypeError("bytes object expected for data");
+    }
+
+    /**
+     * Compile java bytecode to PyCode object
+     * @param name module name
+     * @param data java bytecode
+     * @param filename original file name
+     * @return Python code object
+     */
+    @ExposedFunction
+    public static final PyObject _compile_bytecode(PyObject name, PyObject data, PyObject filename) {
+        if (data instanceof PyBytes) {
+            byte[] bytes = ((PyBytes) data).toBytes();
+            return BytecodeLoader.makeCode(name.toString() + Version.PY_CACHE_TAG, bytes, filename.toString());
+        }
+        throw Py.TypeError(String.format("bytes expected, found %s", data.getType().getName()));
     }
 }

@@ -21,7 +21,7 @@ import org.python.core.imp;
  * A base class for PEP-302 path hooks. Handles looking through source, compiled, package and module
  * items in the right order, and creating and filling in modules.
  */
-public abstract class importer<T> extends PyObject {
+public abstract class importer extends PyObject {
 
     enum EntryType {
         IS_SOURCE, IS_BYTECODE, IS_PACKAGE
@@ -44,11 +44,6 @@ public abstract class importer<T> extends PyObject {
     public abstract String get_data(String path);
 
     /**
-     * Returns the separator between directories and files used by this type of importer.
-     */
-    protected abstract String getSeparator();
-
-    /**
      * Returns the value to fill in __path__ on a module with the given full module name created by
      * this importer.
      */
@@ -69,13 +64,13 @@ public abstract class importer<T> extends PyObject {
      * Returns an entry for a filename from makeFilename with a potential suffix such that this
      * importer can make a bundle with it, or null if fullFilename doesn't exist in this importer.
      */
-    protected abstract T makeEntry(String filenameAndSuffix);
+    protected abstract String makeEntry(String filenameAndSuffix);
 
     /**
      * Returns a Bundle for fullFilename and entry, the result from a makeEntry call for
      * fullFilename.
      */
-    protected abstract Bundle makeBundle(T entry);
+    protected abstract Bundle makeBundle(String entry);
 
     private SearchOrderEntry[] makeSearchOrder(){
         return new SearchOrderEntry[] {
@@ -184,7 +179,7 @@ public abstract class importer<T> extends PyObject {
 
         for (SearchOrderEntry entry : searchOrder) {
             String entryPath = filePath + entry.searchPath(path);
-            T importEntry = makeEntry(entryPath);
+            String importEntry = makeEntry(entryPath);
             if (importEntry == null) {
                 continue;
             }
@@ -212,7 +207,7 @@ public abstract class importer<T> extends PyObject {
             mtime = getSourceMtime(searchPath);
         }
 
-        Bundle bundle = makeBundle((T) searchPath);
+        Bundle bundle = makeBundle(searchPath);
         byte[] codeBytes;
         try {
             if (moduleInfo.isBytecode()) {

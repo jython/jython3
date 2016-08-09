@@ -1720,13 +1720,14 @@ public final class Py {
             return false;
         }
         // Decide if System.in is interactive
-        try {
-            POSIX posix = POSIXFactory.getPOSIX();
-            FileDescriptor in = FileDescriptor.in;
-            return posix.isatty(in);
-        } catch (SecurityException ex) {
-            return false;
-        }
+        return System.console() != null;
+//        try {
+//            POSIX posix = POSIXFactory.getPOSIX();
+//            FileDescriptor in = FileDescriptor.in;
+//            return posix.isatty(in);
+//        } catch (SecurityException ex) {
+//            return false;
+//        }
     }
 
     public static boolean importSiteIfSelected() {
@@ -2295,7 +2296,7 @@ public final class Py {
     }
     public static final int ERROR = -1;
     public static final int WARNING = 0;
-    public static final int MESSAGE = 1;
+    public static final int MESSAGE = 2;
     public static final int COMMENT = 2;
     public static final int DEBUG = 3;
 

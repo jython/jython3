@@ -51,7 +51,7 @@ public class Options {
      * Py.DEBUG for varying levels of informative messages from Jython. Normally
      * this option is set from the command line.
      */
-    public static int verbose = Py.MESSAGE;
+    public static int verbose = Py.WARNING;
 
     /**
      * A directory where the dynamically generated classes are written. Nothing is

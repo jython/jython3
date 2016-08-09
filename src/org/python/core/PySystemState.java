@@ -228,8 +228,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
         meta_path = new PyList();
         path_hooks = new PyList();
         path_hooks.append(org.python.modules.zipimport.zipimporter.TYPE);
-        path_hooks.append(ClasspathPyImporter.TYPE);
-        path_hooks.append(JavaImporter.TYPE);
+//        path_hooks.append(ClasspathPyImporter.TYPE);
 
         path_importer_cache = new PyDictionary();
         path_importer_cache.__setitem__(Py.newUnicode(JavaImporter.JAVA_IMPORT_PATH_ENTRY), new JavaImporter());
@@ -1102,6 +1101,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
         SysModule.setObject("builtin_module_names", PySystemState.builtin_module_names);
         SysModule.setObject("byteorder", Py.defaultSystemState.byteorder);
         SysModule.setObject("copyright", Py.defaultSystemState.copyright);
+        SysModule.setObject("dont_write_bytecode", Py.newBoolean(Py.defaultSystemState.dont_write_bytecode));
         SysModule.setObject("executable", Py.defaultSystemState.executable);
         SysModule.setObject("exec_prefix", Py.defaultSystemState.exec_prefix);
         SysModule.setObject("exec_prefix", Py.defaultSystemState.exec_prefix);
