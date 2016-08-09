@@ -1,18 +1,19 @@
 package org.python.core.stringlib;
 
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import org.python.core.BufferProtocol;
 import org.python.core.Py;
 import org.python.core.PyBUF;
 import org.python.core.PyBuffer;
+import org.python.core.PyBytes;
 import org.python.core.PyException;
 import org.python.core.PyInteger;
 import org.python.core.PyList;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
-import org.python.core.PyBytes;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
 import org.python.core.PyUnicode;
@@ -335,12 +336,7 @@ public class Encoding {
             if (count < 0) {
                 count = (oldLen == 0) ? len + 1 : len;
             }
-            StringBuilder ret = new StringBuilder();
-            for (String part : s.split(oldPiece, count + 1)) {
-                ret.append(part);
-                ret.append(newPiece);
-            }
-            return ret.toString();
+            return Joiner.on(newPiece).join(s.split(oldPiece, count + 1));
         }
     }
 

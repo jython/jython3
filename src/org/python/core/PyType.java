@@ -245,7 +245,7 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
             wantDict = mayAddDict;
             wantWeak = mayAddWeak;
         } else {
-            if (slots instanceof PyBytes) {
+            if (slots instanceof PyUnicode) {
                 slots = new PyTuple(slots);
             }
 
