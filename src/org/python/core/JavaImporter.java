@@ -53,7 +53,7 @@ public class JavaImporter extends PyObject {
 
     @ExposedMethod
     public PyObject JavaImporter_find_spec(String name, PyObject path) {
-        PyObject ret = PySystemState.packageManager.lookupName(name.intern());
+        PyObject ret = lookupName(name);
         if (ret != null) {
             Py.writeComment("import", "'" + name + "' as java package");
             PyObject moduleSpec = Py.getSystemState().importlib.__findattr__("ModuleSpec");
@@ -66,7 +66,7 @@ public class JavaImporter extends PyObject {
 
     @ExposedMethod
     public PyObject JavaImporter_create_module(PyObject spec) {
-        return PySystemState.packageManager.lookupName(spec.__findattr__("name").asString().intern());
+        return lookupName(spec.__findattr__("name").asString());
     }
 
     @ExposedMethod
@@ -76,7 +76,15 @@ public class JavaImporter extends PyObject {
 
     @ExposedMethod
     public PyObject JavaImporter_load_module(String name) {
-        return PySystemState.packageManager.lookupName(name.intern());
+        return lookupName(name);
+    }
+
+    public static final PyObject lookupName(String name) {
+        PyObject ret = PySystemState.packageManager.lookupName(name.intern());
+        if (ret == null && name.startsWith("java.")) {
+            ret = PySystemState.packageManager.lookupName(name.replace("java.", "").intern());
+        }
+        return ret;
     }
 
     /**

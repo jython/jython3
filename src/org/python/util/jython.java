@@ -187,7 +187,7 @@ public class jython {
     }
 
     private static boolean runModule(InteractiveConsole interp, String moduleName) {
-        return runModule(interp, moduleName, false);
+        return runModule(interp, moduleName, true);
     }
 
     private static boolean runModule(InteractiveConsole interp, String moduleName, boolean set_argv0) {

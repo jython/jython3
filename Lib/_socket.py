@@ -43,12 +43,12 @@ try:
     from org.python.netty.channel.socket.nio import NioDatagramChannel, NioSocketChannel, NioServerSocketChannel
 except ImportError:
     # dev version from extlibs
-    from io.netty.bootstrap import Bootstrap, ChannelFactory, ServerBootstrap
-    from io.netty.buffer import PooledByteBufAllocator, Unpooled
-    from io.netty.channel import ChannelException as NettyChannelException, ChannelInboundHandlerAdapter, ChannelInitializer, ChannelOption
-    from io.netty.channel.nio import NioEventLoopGroup
-    from io.netty.channel.socket import DatagramPacket
-    from io.netty.channel.socket.nio import NioDatagramChannel, NioSocketChannel, NioServerSocketChannel
+    from java.io.netty.bootstrap import Bootstrap, ChannelFactory, ServerBootstrap
+    from java.io.netty.buffer import PooledByteBufAllocator, Unpooled
+    from java.io.netty.channel import ChannelException as NettyChannelException, ChannelInboundHandlerAdapter, ChannelInitializer, ChannelOption
+    from java.io.netty.channel.nio import NioEventLoopGroup
+    from java.io.netty.channel.socket import DatagramPacket
+    from java.io.netty.channel.socket.nio import NioDatagramChannel, NioSocketChannel, NioServerSocketChannel
 
 
 log = logging.getLogger("_socket")
