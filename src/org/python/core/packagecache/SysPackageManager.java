@@ -150,18 +150,7 @@ public class SysPackageManager extends PathPackageManager {
     }
 
     public boolean packageExists(String pkg, String name) {
-        if (packageExists(this.searchPath, pkg, name)) {
-            return true;
-        }
-
-        PySystemState system = Py.getSystemState();
-
-        if (system.getClassLoader() == null
-                && packageExists(Py.getSystemState().path, pkg, name)) {
-            return true;
-        }
-
-        return false;
+        return packageExists(this.searchPath, pkg, name);
     }
 
 }
