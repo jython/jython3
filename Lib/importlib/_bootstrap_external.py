@@ -472,7 +472,7 @@ def _validate_bytecode_header(data, source_stats=None, name=None, path=None):
 
 def _compile_bytecode(data, name=None, bytecode_path=None, source_path=None):
     """Compile bytecode as returned by _validate_bytecode_header()."""
-    code = _imp._compile_bytecode(name, data, bytecode_path)
+    code = _imp._compile_bytecode(name, data, source_path)
     #code = marshal.loads(data)
     if isinstance(code, _code_type):
         _verbose_message('code object from {!r}', bytecode_path)
