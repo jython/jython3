@@ -728,8 +728,7 @@ public class imp {
         if (ret != null) {
             return ret;
         }
-        ret = sys.importlib.invoke("_find_and_load", new PyUnicode(fullName), sys.builtins.__finditem__("__import__"));
-        return ret;
+        return sys.importlib.invoke("_find_and_load", new PyUnicode(fullName), sys.builtins.__finditem__("__import__"));
     }
 
     // never returns null or None
@@ -843,7 +842,7 @@ public class imp {
             if (level == 0 || modDict == null) {
                 throw Py.ValueError("Empty module name");
             } else {
-                PyObject moduleName = modDict.__findattr__("__name__");
+                PyObject moduleName = modDict.__findattr__("__package__");
                 if (moduleName != null && moduleName.toString().equals("__name__")) {
                     throw Py.ValueError("Attempted relative import in non-package");
                 }
@@ -896,7 +895,7 @@ public class imp {
         }
 
         if (fromlist != null && fromlist != Py.None) {
-            ensureFromList(mod, fromlist, name);
+            ensureFromList(mod, fromlist, parentNameBuffer.toString());
         }
         return mod;
     }
@@ -930,9 +929,7 @@ public class imp {
                 if ((all = mod.__findattr__("__all__")) != null) {
                     ensureFromList(mod, all, name, true);
                 }
-            }
-
-            if (mod.__findattr__((PyUnicode)item) == null) {
+            } else if (mod.__findattr__((PyUnicode)item) == null) {
                 String fullName = modNameBuffer.append(".").append(item.toString()).toString();
                 import_next(mod, new StringBuilder(name), item.toString(), fullName, null);
             }

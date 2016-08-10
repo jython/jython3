@@ -35,13 +35,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.locks.ReentrantLock;
 
-/*
- * A bogus implementation of the CPython builtin module "imp".
- * Only the functions required by IDLE and PMW are implemented.
- * Luckily these function are also the only function that IMO can
- * be implemented under Jython.
- */
-
 @ExposedModule
 public class _imp {
     public static final int PY_SOURCE = 1;
