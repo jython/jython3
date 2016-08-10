@@ -1100,11 +1100,6 @@ public class PyObject implements Serializable {
         object___delattr__(name);
     }
 
-    // Used by import logic.
-    protected PyObject impAttr(String name) {
-        return __findattr__(name);
-    }
-
     protected void mergeListAttr(PyDictionary accum, String attr) {
         PyObject obj = __findattr__(attr);
         if (obj == null) {

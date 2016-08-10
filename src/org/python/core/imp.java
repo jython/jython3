@@ -28,6 +28,9 @@ import org.python.modules.Setup;
  * import.c.
  */
 public class imp {
+    private static final String importlib_filename = "_bootstrap.py";
+    private static final String external_filename = "_bootstrap_external.py";
+    private static final String remove_frames = "_call_with_frames_removed";
     public static final String CACHEDIR = "__pycache__";
 
     private static final String IMPORT_LOG = "import";
@@ -728,7 +731,38 @@ public class imp {
         if (ret != null) {
             return ret;
         }
-        return sys.importlib.invoke("_find_and_load", new PyUnicode(fullName), sys.builtins.__finditem__("__import__"));
+        try {
+            return sys.importlib.invoke("_find_and_load", new PyUnicode(fullName), sys.builtins.__finditem__("__import__"));
+        } catch (PyException pye) {
+            /**
+             * remove trackback that from '_bootstrap.py' or '_bootstrap_external.py' in case of ImportError
+             * or marked with _call_with_frames_removed otherwise
+             * FIXME: this works almost as good as CPython, but I (isaiah) am yet to find a way to remove the first frame,
+             * as there is not pointer to pointer trick in java.
+             */
+            PyTraceback outer_link = null;
+            PyTraceback base_tb = pye.traceback;
+            PyTraceback tb = base_tb;
+            PyTraceback prev_link = base_tb;
+            boolean in_importlib = false;
+            boolean always_trim = pye.match(Py.ImportError);
+            while (tb != null) {
+                PyTraceback next = (PyTraceback) tb.tb_next;
+                PyBaseCode code = tb.tb_frame.f_code;
+                boolean now_in_importlib = code.co_filename.equals(importlib_filename)
+                        || code.co_filename.equals(external_filename);
+                if (now_in_importlib && !in_importlib) {
+                    outer_link = prev_link;
+                }
+                in_importlib = now_in_importlib;
+                if (in_importlib && (always_trim || code.co_name.equals(remove_frames))) {
+                    outer_link.tb_next = next;
+                }
+                prev_link = tb;
+                tb = next;
+            }
+            throw pye;
+        }
     }
 
     // never returns null or None

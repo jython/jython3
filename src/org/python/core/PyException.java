@@ -246,8 +246,6 @@ public class PyException extends RuntimeException implements Traverseproc
             if (context != null) {
                 if (context.value instanceof PyBaseException) {
                     pye.context = (PyBaseException) context.value;
-                } else {
-                    System.out.println(context.value);
                 }
             }
             pye.normalize();
