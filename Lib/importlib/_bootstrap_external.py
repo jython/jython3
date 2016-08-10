@@ -413,7 +413,7 @@ def _find_module_shim(self, fullname):
     return loader
 
 
-def _validate_bytecode_header(data, source_stats=None, name=None, path=None):
+def _validate_bytecode_header(data, source_stats=None, name=None, path=None, bytecode_stats=None):
     """Validate the header of the passed-in bytecode against source_stats (if
     given) and returning the bytecode that can be compiled by compile().
 
@@ -425,15 +425,28 @@ def _validate_bytecode_header(data, source_stats=None, name=None, path=None):
 
     """
     # maybe we can pack the java classfile with the .pyc headers, but not for now
+    exc_details = {}
+    if name is not None:
+        exc_details['name'] = name
+    else:
+        # To prevent having to make all messages have a conditional name.
+        name = '<bytecode>'
+    if path is not None:
+        exc_details['path'] = path
+
+    if source_stats is not None and bytecode_stats is not None:
+        try:
+            source_mtime = int(source_stats['mtime'])
+            bytecode_mtime = int(bytecode_stats['mtime'])
+        except KeyError:
+            pass
+        else:
+            if bytecode_mtime < source_mtime:
+                message = 'bytecode is stale for {!r}'.format(name)
+                _verbose_message('{}', message)
+                raise ImportError(message, **exc_details)
+
     return data
-    #exc_details = {}
-    #if name is not None:
-    #    exc_details['name'] = name
-    #else:
-    #    # To prevent having to make all messages have a conditional name.
-    #    name = '<bytecode>'
-    #if path is not None:
-    #    exc_details['path'] = path
     #magic = data[:4]
     #raw_timestamp = data[4:8]
     #raw_size = data[8:12]
@@ -751,13 +764,14 @@ class SourceLoader(_LoaderBasics):
                 source_mtime = int(st['mtime'])
                 try:
                     data = self.get_data(bytecode_path)
+                    bytecode_st = self.path_stats(bytecode_path)
                 except OSError:
                     pass
                 else:
                     try:
                         bytes_data = _validate_bytecode_header(data,
                                 source_stats=st, name=fullname,
-                                path=bytecode_path)
+                                path=bytecode_path, bytecode_stats=bytecode_st)
                     except (ImportError, EOFError):
                         pass
                     else:
