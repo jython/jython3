@@ -28,10 +28,12 @@ import org.python.modules._codecs;
  */
 public class codecs {
 
+    public static final String STRICT = "strict";
     public static final String BACKSLASHREPLACE = "backslashreplace";
     public static final String IGNORE = "ignore";
     public static final String REPLACE = "replace";
     public static final String XMLCHARREFREPLACE = "xmlcharrefreplace";
+    public static final String SURROGATEESCAPE = "surrogateescape";
     private static char Py_UNICODE_REPLACEMENT_CHARACTER = 0xFFFD;
 
     public static String getDefaultEncoding() {
@@ -359,6 +361,31 @@ public class codecs {
             replacement.append(hexdigits[c & 0xf]);
         }
     }
+
+    public static PyObject surrogateescape_errors(PyObject[] args, String[] kws) {
+        ArgParser ap = new ArgParser("surrogateescape_errors", args, kws, "exc");
+        PyObject exc = ap.getPyObject(0);
+        if (!Py.isInstance(exc, Py.UnicodeDecodeError)) {
+            throw wrong_exception_type(exc);
+        }
+        int start = exc.__getattr__("start").asInt();
+        int end = exc.__getattr__("end").asInt();
+        String object = exc.__getattr__("object").toString();
+        StringBuilder replacement = new StringBuilder();
+        surrogateescape_internal(start, end, object, replacement);
+        return new PyTuple(new PyUnicode(replacement), exc.__getattr__("end"));
+    }
+
+    private static void surrogateescape_internal(int start, int end, String object, StringBuilder replacement) {
+        for (int i = start; i < end; i++) {
+            char ch = object.charAt(i);
+            if (ch < 128) {
+                break;
+            }
+            replacement.appendCodePoint(ch + '\udc00');
+        }
+    }
+
 
     /* --- UTF-7 Codec -------------------------------------------------------- */
 
@@ -1561,16 +1588,14 @@ public class codecs {
 
         // Handle the two special cases "ignore" and "replace" locally
         if (errors != null) {
-            partialDecode.appendCodePoint(Py_UNICODE_REPLACEMENT_CHARACTER);
-            return end;
-//            if (errors.equals(IGNORE)) {
-//                // Just skip to the first non-problem byte
-//                return end;
-//            } else if (errors.equals(REPLACE)) {
-//                // Insert *one* Unicode replacement character and skip
-//                partialDecode.appendCodePoint(Py_UNICODE_REPLACEMENT_CHARACTER);
-//                return end;
-//            }
+            if (errors.equals(IGNORE)) {
+                // Just skip to the first non-problem byte
+                return end;
+            } else if (errors.equals(REPLACE)) {
+                // Insert *one* Unicode replacement character and skip
+                partialDecode.appendCodePoint(Py_UNICODE_REPLACEMENT_CHARACTER);
+                return end;
+            }
         }
 
         // If errors not one of those, invoke the generic mechanism
@@ -1619,8 +1644,7 @@ public class codecs {
      */
     private static void checkErrorHandlerReturn(String errors, PyObject replacementSpec) {
         if (!(replacementSpec instanceof PyTuple) || replacementSpec.__len__() != 2
-                || !(replacementSpec.__getitem__(0) instanceof PyBytes)
-                || !(replacementSpec.__getitem__(1) instanceof PyInteger)) {
+                || !(replacementSpec.__getitem__(1) instanceof PyLong)) {
             throw new PyException(Py.TypeError, "error_handler " + errors
                     + " must return a tuple of (replacement, new position)");
         }
@@ -1638,7 +1662,7 @@ public class codecs {
      * @return absolute resume position.
      */
     public static int calcNewPosition(int size, PyObject errorTuple) {
-        int newPosition = ((PyInteger)errorTuple.__getitem__(1)).getValue();
+        int newPosition = errorTuple.__getitem__(1).asInt();
         if (newPosition < 0) {
             newPosition = size + newPosition;
         }
@@ -1654,11 +1678,13 @@ public class codecs {
         private PyStringMap errorHandlers;
         private String default_encoding = "utf-8";
 
-        public static final String[] BUILTIN_ERROR_HANDLERS = new String[]{"strict",
+        public static final String[] BUILTIN_ERROR_HANDLERS = new String[]{
+                STRICT,
                 IGNORE,
                 REPLACE,
                 XMLCHARREFREPLACE,
-                BACKSLASHREPLACE
+                BACKSLASHREPLACE,
+                SURROGATEESCAPE
         };
 
         private void init() {

@@ -543,12 +543,13 @@ public class PyUnicode extends PySequence implements Iterable {
      * @return chosen <code>IndexTranslator</code>
      */
     private IndexTranslator chooseIndexTranslator() {
-        int[] count = getSupplementaryCounts(string);
-        if (DEBUG_NON_BMP_METHODS) {
-            return new Supplementary(count);
-        } else {
-            return count == null ? BASIC : new Supplementary(count);
-        }
+        return BASIC;
+//        int[] count = getSupplementaryCounts(string);
+//        if (DEBUG_NON_BMP_METHODS) {
+//            return new Supplementary(count);
+//        } else {
+//            return count == null ? BASIC : new Supplementary(count);
+//        }
     }
 
     /**

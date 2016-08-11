@@ -41,18 +41,18 @@ public class Encoding {
         }
 
         for (int i = 0; size-- > 0; ) {
-            int ch = str.charAt(i++);
+            char ch = str.charAt(i++);
             /* Escape quotes */
             if ((use_quotes && ch == quote) || ch == '\\') {
                 v.append('\\');
-                v.append((char) ch);
+                v.append(ch);
                 continue;
             }
             /* Map UTF-16 surrogate pairs to Unicode \UXXXXXXXX escapes */
-            else if (size > 0 && ch >= 0xD800 && ch < 0xDC00) {
+            else if (size > 0 && Character.isHighSurrogate(ch)) {
                 char ch2 = str.charAt(i++);
                 size--;
-                if (ch2 >= 0xDC00 && ch2 <= 0xDFFF) {
+                if (Character.isLowSurrogate(ch2)) {
                     int ucs = (((ch & 0x03FF) << 10) | (ch2 & 0x03FF)) + 0x00010000;
                     v.append('\\');
                     v.append('U');
@@ -93,7 +93,7 @@ public class Encoding {
                 v.append(hexdigit[(ch >> 4) & 0xf]);
                 v.append(hexdigit[ch & 0xf]);
             } else {/* Copy everything else as-is */
-                v.append((char) ch);
+                v.append(ch);
             }
         }
         if (use_quotes) {
@@ -288,9 +288,7 @@ public class Encoding {
 
     /* pass in an int since this can be a UCS-4 character */
     private static boolean storeUnicodeCharacter(int value, StringBuilder partialDecode) {
-        if (value < 0 || (value >= 0xD800 && value <= 0xDFFF)) {
-            return false;
-        } else if (value <= PySystemState.maxunicode) {
+        if (value <= PySystemState.maxunicode) {
             partialDecode.appendCodePoint(value);
             return true;
         }
