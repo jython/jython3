@@ -390,7 +390,7 @@ public class codecs {
         }
     }
 
-        public static PyObject surrogatepass_errors(PyObject[] args, String[] kws) {
+    public static PyObject surrogatepass_errors(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("surrogatepass_errors", args, kws, "exc");
         PyObject exc = ap.getPyObject(0);
         int start = exc.__getattr__("start").asInt();
@@ -423,21 +423,21 @@ public class codecs {
                 replacement.append((char) (0x80 | ((ch >> 6) & 0x3f)));
                 replacement.append((char) (0x80 | (ch & 0x3f)));
             } else if (charset.equals(StandardCharsets.UTF_16LE)) {
-                replacement.append((char) ch);
-                replacement.append((char) (ch >> 8));
+                replacement.appendCodePoint(ch & 0xFF);
+                replacement.appendCodePoint((ch >> 8) & 0xFF);
             } else if (charset.equals(StandardCharsets.UTF_16BE)) {
-                replacement.append((char) (ch >> 8));
-                replacement.append((char) ch);
+                replacement.appendCodePoint(0xFF & (ch >> 8));
+                replacement.appendCodePoint(0xFF & ch);
             } else if (charset.equals(UTF_32LE)) {
-                replacement.append((char) ch);
-                replacement.append((char) (ch >> 8));
-                replacement.append((char) (ch >> 16));
-                replacement.append((char) (ch >> 24));
+                replacement.appendCodePoint(0xFF & ch);
+                replacement.appendCodePoint(0xFF & (ch >> 8));
+                replacement.appendCodePoint(0xFF & (ch >> 16));
+                replacement.appendCodePoint(0xFF & (ch >> 24));
             } else if (charset.equals(UTF_32BE)) {
-                replacement.append((char) (ch >> 24));
-                replacement.append((char) (ch >> 16));
-                replacement.append((char) (ch >> 8));
-                replacement.append((char) ch);
+                replacement.appendCodePoint(0xFF & (ch >> 24));
+                replacement.appendCodePoint(0xFF & (ch >> 16));
+                replacement.appendCodePoint(0xFF & (ch >> 8));
+                replacement.appendCodePoint(0xFF & ch);
             }
         }
         return replacement.toString();
@@ -470,7 +470,7 @@ public class codecs {
             p[3] = object.charAt(i++);
             ch = (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
         }
-        return String.valueOf(ch);
+        return String.valueOf(Character.toChars(ch));
     }
 
 

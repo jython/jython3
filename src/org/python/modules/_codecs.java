@@ -12,7 +12,7 @@ import org.python.core.PyBUF;
 import org.python.core.PyBuffer;
 import org.python.core.PyBytes;
 import org.python.core.PyDictionary;
-import org.python.core.PyInteger;
+import org.python.core.PyLong;
 import org.python.core.PyNone;
 import org.python.core.PyObject;
 import org.python.core.PySystemState;
@@ -282,9 +282,9 @@ public class _codecs {
                     i = codecs.insertReplacementAndGetResume(v, errors, "charmap", bytes, //
                             i, i + 1, "no mapping found") - 1;
 
-                } else if (x instanceof PyInteger) {
+                } else if (x instanceof PyLong) {
                     // Mapping was to an int: treat as character code
-                    int value = ((PyInteger) x).getValue();
+                    int value = x.asInt();
                     if (value < 0 || value > PySystemState.maxunicode) {
                         throw Py.TypeError("character mapping must return "
                                 + "integer greater than 0 and less than sys.maxunicode");
@@ -331,7 +331,7 @@ public class _codecs {
                 // pass to an error handler. Though we don't seem to even use this
                 // functionality anywhere either
                 ;
-            } else if (result instanceof PyInteger) {
+            } else if (result instanceof PyLong) {
                 int value = result.asInt();
                 if (value < 0 || value > PySystemState.maxunicode) {
                     throw Py.TypeError(String.format("character mapping must be in range(0x%x)",
@@ -415,9 +415,9 @@ public class _codecs {
                             "character maps to <undefined>");
                 }
 
-            } else if (x instanceof PyInteger) {
+            } else if (x instanceof PyLong) {
                 // Look-up had integer result: output as byte value
-                int value = ((PyInteger)x).getValue();
+                int value = x.asInt();
                 if (value < 0 || value > 255) {
                     throw Py.TypeError("character mapping must be in range(256)");
                 }
@@ -673,7 +673,7 @@ public class _codecs {
      * @return tuple (encoded_bytes, unicode_consumed)
      */
     @ExposedFunction(defaults = {"null", "0"})
-    public static PyObject utf_32_encode(String unicode, String errors, int byteorder) {
+    public static PyObject utf_32_encode(PyObject unicode, String errors, int byteorder) {
         ByteOrder order = ByteOrder.fromInt(byteorder);
         return PyUnicode_EncodeUTF32(unicode, errors, order);
     }
@@ -687,7 +687,7 @@ public class _codecs {
      * @return tuple (encoded_bytes, unicode_consumed)
      */
     @ExposedFunction(defaults = {"null"})
-    public static PyObject utf_32_le_encode(String unicode, String errors) {
+    public static PyObject utf_32_le_encode(PyObject unicode, String errors) {
         return PyUnicode_EncodeUTF32(unicode, errors, ByteOrder.LE);
     }
 
@@ -700,7 +700,7 @@ public class _codecs {
      * @return tuple (encoded_bytes, unicode_consumed)
      */
     @ExposedFunction(defaults = {"null"})
-    public static PyTuple utf_32_be_encode(String unicode, String errors) {
+    public static PyTuple utf_32_be_encode(PyObject unicode, String errors) {
         return PyUnicode_EncodeUTF32(unicode, errors, ByteOrder.BE);
     }
 
@@ -719,10 +719,10 @@ public class _codecs {
      * @param order byte order to use BE, LE or UNDEFINED (a BOM will be written)
      * @return tuple (encoded_bytes, unicode_consumed)
      */
-    private static PyTuple PyUnicode_EncodeUTF32(String unicode, String errors, ByteOrder order) {
-
+    private static PyTuple PyUnicode_EncodeUTF32(PyObject unicode, String errors, ByteOrder order) {
+        int len = unicode.__len__();
         // We use a StringBuilder but we are really storing encoded bytes
-        StringBuilder v = new StringBuilder(4 * (unicode.length() + 1));
+        StringBuilder v = new StringBuilder(4 * (len + 1));
         int uptr = 0;
 
         // Write a BOM (if required to)
@@ -731,210 +731,37 @@ public class _codecs {
             order = ByteOrder.BE;
         }
 
-        if (order != ByteOrder.LE) {
-            uptr = PyUnicode_EncodeUTF32BELoop(v, unicode, errors);
-        } else {
-            uptr = PyUnicode_EncodeUTF32LELoop(v, unicode, errors);
+        if (!(unicode instanceof PyUnicode)) {
+            throw Py.TypeError(String.format("str expected, find '%s'", unicode.getType().getName()));
         }
 
-        // XXX Issue #2002: should probably report length consumed in Unicode characters
+        Iterator<Integer> iter = ((PyUnicode) unicode).newSubsequenceIterator();
+        int i = 0;
+        while(iter.hasNext()) {
+            int ch = iter.next();
+            if (Character.isSurrogate((char) ch)) {
+                String encoding = order == ByteOrder.BE ? "UTF-32BE" : "UTF-32LE";
+                PyObject replacementSpec = codecs.encoding_error(errors, encoding, unicode.toString(), i, i+1, "unpaired surrogate");
+                v.append(replacementSpec.__getitem__(0).toString());
+                i++;
+                continue;
+            }
+            if (order == ByteOrder.BE) {
+                v.appendCodePoint(ch >> 24);
+                v.appendCodePoint((ch >> 16) & 0xFF);
+                v.appendCodePoint((ch >> 8) & 0xFF);
+                v.appendCodePoint(ch & 0xFF);
+            } else {
+                v.appendCodePoint(ch & 0xFF);
+                v.appendCodePoint((ch >> 8) & 0xFF);
+                v.appendCodePoint((ch >> 16) & 0xFF);
+                v.appendCodePoint(ch >> 24);
+            }
+            i++;
+        }
+        uptr = unicode.__len__();
+
         return encode_tuple(v.toString(), uptr);
-    }
-
-    /**
-     * Helper to {@link #PyUnicode_EncodeUTF32(String, String, ByteOrder)} when big-endian encoding
-     * is to be carried out.
-     *
-     * @param v output buffer building String of bytes (Jython PyBytes convention)
-     * @param unicode character input
-     * @param errors error policy name (e.g. "ignore", "replace")
-     * @return number of Java characters consumed from unicode
-     */
-    private static int PyUnicode_EncodeUTF32BELoop(StringBuilder v, String unicode, String errors) {
-
-        int len = unicode.length();
-        int uptr = 0;
-        char[] buf = new char[6];   // first 3 elements always zero
-
-        /*
-         * Main codec loop outputs arrays of 4 bytes at a time.
-         */
-        while (uptr < len) {
-
-            int ch = unicode.charAt(uptr++);
-
-            if ((ch & 0xF800) == 0xD800) {
-                /*
-                 * This is a surrogate. In Jython, unicode should always be the internal value of a
-                 * PyUnicode, and since this should never contain invalid data, it should be a lead
-                 * surrogate, uptr < len, and the next char must be the trail surrogate. We ought
-                 * not to have to chech that, however ...
-                 */
-                if ((ch & 0x0400) == 0) {
-                    // Yes, it's a lead surrogate
-                    if (uptr < len) {
-                        // And there is something to follow
-                        int ch2 = unicode.charAt(uptr++);
-                        if ((ch2 & 0xFC00) == 0xDC00) {
-                            // And it is a trail surrogate, so we can get on with the encoding
-                            ch = ((ch & 0x3ff) << 10) + (ch2 & 0x3ff) + 0x10000;
-                            buf[3] = (char)((ch >> 16) & 0xff);
-                            buf[4] = (char)((ch >> 8) & 0xff);
-                            buf[5] = (char)(ch & 0xff);
-                            v.append(buf, 2, 4);
-                        } else {
-                            // The trail surrogate was missing: accuse ch at uptr-2
-                            uptr = PyUnicode_EncodeUTF32Error(v, errors, ByteOrder.BE, //
-                                    unicode, uptr - 2, uptr - 1, "second surrogate missing");
-                        }
-                    } else {
-                        // End of input instread of trail surrogate: accuse ch at uptr-1
-                        uptr = PyUnicode_EncodeUTF32Error(v, errors, ByteOrder.BE, //
-                                unicode, uptr - 1, len, "truncated data");
-                    }
-                } else {
-                    // The trail encountered in lead position: accuse ch at uptr-2
-                    uptr = PyUnicode_EncodeUTF32Error(v, errors, ByteOrder.BE, //
-                            unicode, uptr - 2, uptr - 1, "unexpected second surrogate");
-                }
-
-            } else if (ch > 255) {
-                // This is a BMP character: only two bytes non-zero
-                buf[3] = (char)((ch >> 8) & 0xff);
-                buf[4] = (char)(ch & 0xff);
-                v.append(buf, 1, 4);
-
-            } else {
-                // This is one-byte BMP character: only one byte non-zero
-                buf[3] = (char)(ch & 0xff);
-                v.append(buf, 0, 4);
-            }
-        }
-
-        // XXX Issue #2002: should probably report length consumed in Unicode characters
-        return uptr;
-    }
-
-    /**
-     * Helper to {@link #PyUnicode_EncodeUTF32(String, String, ByteOrder)} when big-endian encoding
-     * is to be carried out.
-     *
-     * @param v output buffer building String of bytes (Jython PyBytes convention)
-     * @param unicode character input
-     * @param errors error policy name (e.g. "ignore", "replace")
-     * @return number of Java characters consumed from unicode
-     */
-    private static int PyUnicode_EncodeUTF32LELoop(StringBuilder v, String unicode, String errors) {
-
-        int len = unicode.length();
-        int uptr = 0;
-        char[] buf = new char[6];   // last 3 elements always zero
-
-        /*
-         * Main codec loop outputs arrays of 4 bytes at a time.
-         */
-        while (uptr < len) {
-
-            int ch = unicode.charAt(uptr++);
-
-            if ((ch & 0xF800) == 0xD800) {
-                /*
-                 * This is a surrogate. In Jython, unicode should always be the internal value of a
-                 * PyUnicode, and since this should never contain invalid data, it should be a lead
-                 * surrogate, uptr < len, and the next char must be the trail surrogate. We ought
-                 * not to have to chech that, however ...
-                 */
-                if ((ch & 0x0400) == 0) {
-                    // Yes, it's a lead surrogate
-                    if (uptr < len) {
-                        // And there is something to follow
-                        int ch2 = unicode.charAt(uptr++);
-                        if ((ch2 & 0xFC00) == 0xDC00) {
-                            // And it is a trail surrogate, so we can get on with the encoding
-                            ch = ((ch & 0x3ff) << 10) + (ch2 & 0x3ff) + 0x10000;
-                            buf[0] = (char)(ch & 0xff);
-                            buf[1] = (char)((ch >> 8) & 0xff);
-                            buf[2] = (char)((ch >> 16) & 0xff);
-                            v.append(buf, 0, 4);
-                        } else {
-                            // The trail surrogate was missing: accuse ch at uptr-2
-                            uptr = PyUnicode_EncodeUTF32Error(v, errors, ByteOrder.LE, //
-                                    unicode, uptr - 2, uptr - 1, "second surrogate missing");
-                        }
-                    } else {
-                        // End of input instread of trail surrogate: accuse ch at uptr-1
-                        uptr = PyUnicode_EncodeUTF32Error(v, errors, ByteOrder.LE, //
-                                unicode, uptr - 1, len, "truncated data");
-                    }
-                } else {
-                    // The trail encountered in lead position: accuse ch at uptr-2
-                    uptr = PyUnicode_EncodeUTF32Error(v, errors, ByteOrder.LE, //
-                            unicode, uptr - 2, uptr - 1, "unexpected second surrogate");
-                }
-
-            } else if (ch > 255) {
-                // This is a BMP character: only two bytes non-zero
-                buf[1] = (char)(ch & 0xff);
-                buf[2] = (char)((ch >> 8) & 0xff);
-                v.append(buf, 1, 4);
-
-            } else {
-                // This is one-byte BMP character: only one byte non-zero
-                buf[2] = (char)(ch & 0xff);
-                v.append(buf, 2, 4);
-            }
-        }
-
-        // XXX Issue #2002: should probably report length consumed in Unicode characters
-        return uptr;
-    }
-
-    /**
-     * Specific UTF-32 encoder error handler. This is a helper called in the inner loop of
-     * {@link #PyUnicode_EncodeUTF32(String, String, ByteOrder)} when the Unicode input is in valid.
-     * In theory, since the input Unicode data should come from a {@link PyUnicode}, there should
-     * never be any errors.
-     *
-     * @param v output buffer building String of bytes (Jython PyBytes convention)
-     * @param errors error policy name (e.g. "ignore", "replace")
-     * @param order LE or BE indicator
-     * @param toEncode character input
-     * @param start index of first problematic character
-     * @param end index of character after the last problematic character
-     * @param reason text contribution to the exception raised (if any)
-     * @return position within input at which to restart
-     */
-    private static int PyUnicode_EncodeUTF32Error(StringBuilder v, String errors, ByteOrder order,
-            String toEncode, int start, int end, String reason) {
-
-        // Handle special cases locally
-        if (errors != null) {
-            if (errors.equals(codecs.IGNORE)) {
-                // Just skip to the first non-problem byte
-                return end;
-            } else if (errors.equals(codecs.REPLACE)) {
-                // Insert a replacement UTF-32 character(s) and skip
-                for (int i = start; i < end; i++) {
-                    if (order != ByteOrder.LE) {
-                        v.append("\000\000\000?");
-                    } else {
-                        v.append("?\000\000\000");
-                    }
-                }
-                return end;
-            }
-        }
-
-        // If errors not one of those, invoke the generic mechanism
-        PyObject replacementSpec =
-                codecs.encoding_error(errors, "utf-32", toEncode, start, end, reason);
-
-        // Note the replacement is unicode text that still needs to be encoded
-        String u = replacementSpec.__getitem__(0).toString();
-        PyUnicode_EncodeUTF32BELoop(v, u, errors);
-
-        // Return the index in toEncode at which we should resume
-        return codecs.calcNewPosition(toEncode.length(), replacementSpec);
     }
 
     /**
