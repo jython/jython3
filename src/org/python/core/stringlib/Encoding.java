@@ -1280,21 +1280,20 @@ public class Encoding {
     public static final List<CharSequence> splitlines(CharSequence s, boolean keepends) {
         List<CharSequence> list = new ArrayList<>();
 
-        char[] chars = new char[s.length()];
-        int n = chars.length;
+        int n = s.length();
 
         int j = 0;
         for (int i = 0; i < n; ) {
             /* Find a line and append it */
-            while (i < n && chars[i] != '\n' && chars[i] != '\r'
-                    && Character.getType(chars[i]) != Character.LINE_SEPARATOR) {
+            while (i < n && s.charAt(i) != '\n' && s.charAt(i) != '\r'
+                    && Character.getType(s.charAt(i)) != Character.LINE_SEPARATOR) {
                 i++;
             }
 
             /* Skip the line break reading CRLF as one line break */
             int eol = i;
             if (i < n) {
-                if (chars[i] == '\r' && i + 1 < n && chars[i + 1] == '\n') {
+                if (s.charAt(i) == '\r' && i + 1 < n && s.charAt(i+1) == '\n') {
                     i += 2;
                 } else {
                     i++;
