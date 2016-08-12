@@ -516,7 +516,7 @@ public class GrammarActions {
             sb.append(sp.getString());
         }
         if (ustring) {
-            return new PyUnicode(sb.toString(), true);
+            return new PyUnicode(sb.toString(), false);
         }
         return sb.toString();
     }
@@ -564,16 +564,15 @@ public class GrammarActions {
             string = StringUtil.fromBytes(decoded);
             if (!raw) {
                 // Handle escapes in non-raw strs
-                string = Encoding.decode_UnicodeEscape(string, 0, string.length(), "strict",
-                                                       ustring);
+                string = Encoding.decode_UnicodeEscape(string, 0, string.length(), "strict", ustring);
             }
         } else if (raw) {
-            // Raw str without an encoding or raw unicode
+            // Raw bytes
             string = string.substring(start, end);
-            if (ustring) {
-                // Raw unicode: handle unicode escapes
-                string = codecs.PyUnicode_DecodeRawUnicodeEscape(string, "strict");
-            }
+//            if (ustring) {
+//                // Raw unicode: handle unicode escapes
+//                string = codecs.PyUnicode_DecodeRawUnicodeEscape(string, "strict");
+//            }
         } else {
             // Plain unicode: already decoded, just handle escapes
             string = Encoding.decode_UnicodeEscape(string, start, end, "strict", ustring);
