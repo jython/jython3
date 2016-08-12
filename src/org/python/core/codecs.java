@@ -601,6 +601,10 @@ public class codecs {
         }
     }
 
+    private static final int joinSurrogates(char high, char low) {
+        return ((high & 0x03FF) << 10) | (low & 0X03FF) + 0x10000;
+    }
+
     /**
      * Decode (perhaps partially) a sequence of bytes representing the UTF-7 encoded form of a
      * Unicode string and return the (Jython internal representation of) the unicode object, and
@@ -623,11 +627,11 @@ public class codecs {
         long base64buffer = 0;      // Stored bits buffer during Base64 decoding
         int base64bits = 0;         // Number of valid bits buffered during Base64 decoding
         int startInBytes = 0;       // Place in input bytes where most recent Base64 segment begins
-        int syncInBytes = 0;        // Place in input bytes where stored bits buffer last empty
         int startInUnicode = 0;     // Place in output unicode where most recent Base64 segment begins
 
         int size = bytes.length();
         StringBuilder unicode = new StringBuilder(size);
+        char surrogate = 0;
 
         for (s = 0; s < size; s++) { // In error cases s may skip forwards in bytes
 
@@ -641,34 +645,34 @@ public class codecs {
 
             } else if (inBase64) {
                 // We are currently processing a Base64 section
-
-                if (base64bits == 0) {
-                    // Mark this point as latest easy error recovery point (bits buffer empty)
-                    syncInBytes = s;
-                }
-
                 int sixBits = FROM_BASE64(b);   // returns -ve if not Base64
                 if (sixBits >= 0) {
                     // And we continue processing a Base64 section
                     base64buffer = (base64buffer << 6) | sixBits;
                     base64bits += 6;
 
-                    if (base64bits >= 32) {
-                        // We have enough bits for a code point
-                        base64bits = emitCodePoints(unicode, base64buffer, base64bits);
-
-                        if (base64bits >= 32) {
-                            // We stopped prematurely. Why?
-                            UTF7Error error = emitCodePointsDiagnosis(base64buffer, base64bits);
-                            // Difficult to know exactly what input characters to blame
-                            s = insertReplacementAndGetResume(unicode, errors, "utf-7", //
-                                    bytes, syncInBytes, s + 1, error.msg) - 1;
-                            // Discard one UTF-16 output and hope for the best
-                            base64bits -= 16;
+                    if (base64bits >= 16) {
+                        char outCh = (char) (base64buffer >> (base64bits - 16));
+                        base64bits -= 16;
+                        base64buffer &= (1 << base64bits) - 1; /* clear high bits */
+                        if (surrogate > 0) {
+                            /* expecting a second surrogate */
+                            if (Character.isLowSurrogate(outCh)) {
+                                int ch2 = joinSurrogates(surrogate, outCh);
+                                unicode.appendCodePoint(ch2);
+                                surrogate = 0;
+                                continue;
+                            } else { // lone surrogate
+                                unicode.appendCodePoint(surrogate);
+                                surrogate = 0;
+                            }
                         }
-
+                        if (Character.isHighSurrogate(outCh)) {
+                            surrogate = outCh;
+                        } else {
+                            unicode.append(outCh);
+                        }
                     }
-
                 } else {
                     // We are now leaving a Base64 section
                     inBase64 = false;
@@ -683,11 +687,16 @@ public class codecs {
                             // Difficult to know exactly what input characters to blame
                             s = insertReplacementAndGetResume(unicode, errors, "utf-7", //
                                     bytes, s, s + 1, error.msg) - 1;
+                            // cannot encode, discard surrogate
+                            surrogate = 0;
                         }
                         // We are, in any case, discarding whatever is in the buffer
                         base64bits = 0;
                     }
 
+                    if (surrogate > 0 && b < 127 && b != '+') { // lone surrogate and current byte can be encoded directly
+                        unicode.appendCodePoint(surrogate);
+                    }
                     if (b == '-') {
                         /*
                          * '-' signals the end of Base64. The byte is is simply absorbed, but in the
@@ -703,8 +712,8 @@ public class codecs {
                          */
                         unicode.appendCodePoint(b);
                     }
+                    surrogate = 0;
                 }
-
             } else if (b == '+') {
                 /*
                  * We are not currently processing a Base64 section, but this starts one. Remember
@@ -872,7 +881,7 @@ public class codecs {
      * Note that CPython (see Issue13333) allows this codec to decode lone surrogates into the
      * internal data of unicode objects. It is difficult to reconcile this with the idea that the
      * v3.3 statement "Strings contain Unicode characters", but that reconciliation is probably to
-     * be found in PEP383, not implemented in Jython.
+     * be found in PEP383, not implemented in Jython. (implemented as of August 12, 2016)
      *
      * @param buffer holding the bits
      * @param n the number of bits held (<=64)
