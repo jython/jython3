@@ -7,6 +7,7 @@
 package org.python.core;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -255,8 +256,8 @@ public class codecs {
         if (!Py.isInstance(exc, Py.UnicodeEncodeError)) {
             throw wrong_exception_type(exc);
         }
-        int start = ((PyInteger)exc.__getattr__("start")).getValue();
-        int end = ((PyInteger)exc.__getattr__("end")).getValue();
+        int start = exc.__getattr__("start").asInt();
+        int end = exc.__getattr__("end").asInt();
         String object = exc.__getattr__("object").toString();
         StringBuilder replacement = new StringBuilder();
         xmlcharrefreplace_internal(start, end, object, replacement);
@@ -325,8 +326,8 @@ public class codecs {
         if (!Py.isInstance(exc, Py.UnicodeEncodeError)) {
             throw wrong_exception_type(exc);
         }
-        int start = ((PyInteger)exc.__getattr__("start")).getValue();
-        int end = ((PyInteger)exc.__getattr__("end")).getValue();
+        int start = exc.__getattr__("start").asInt();
+        int end = exc.__getattr__("end").asInt();
         String object = exc.__getattr__("object").toString();
         StringBuilder replacement = new StringBuilder();
         backslashreplace_internal(start, end, object, replacement);
@@ -601,10 +602,6 @@ public class codecs {
         }
     }
 
-    private static final int joinSurrogates(char high, char low) {
-        return ((high & 0x03FF) << 10) | (low & 0X03FF) + 0x10000;
-    }
-
     /**
      * Decode (perhaps partially) a sequence of bytes representing the UTF-7 encoded form of a
      * Unicode string and return the (Jython internal representation of) the unicode object, and
@@ -658,7 +655,7 @@ public class codecs {
                         if (surrogate > 0) {
                             /* expecting a second surrogate */
                             if (Character.isLowSurrogate(outCh)) {
-                                int ch2 = joinSurrogates(surrogate, outCh);
+                                int ch2 = Character.toCodePoint(surrogate, outCh);
                                 unicode.appendCodePoint(ch2);
                                 surrogate = 0;
                                 continue;
@@ -1266,38 +1263,38 @@ public class codecs {
         int size = str.length();
         StringBuilder res = new StringBuilder();
         for (int i = 0; i < size; i++) {
-            char ch = str.charAt(i);
-            if (Character.isHighSurrogate(ch) && (i == size - 1 || !Character.isLowSurrogate(str.charAt(i+1)))) {
-                PyObject replacement = encoding_error(errors, "utf-8", str, i, i+1, "unpaired surrogate");
-                String replStr = replacement.__getitem__(0).toString();
-                res.append(replStr);
-                i = calcNewPosition(size, replacement) - 1;
-                continue;
-            }
-            if (Character.isLowSurrogate(ch) && (i == size - 1 || !Character.isHighSurrogate(str.charAt(i + 1)))) {
-                PyObject replacement = encoding_error(errors, "utf-8", str, i, i+1, "unpaired surrogate");
-                String replStr = replacement.__getitem__(0).toString();
-                res.append(replStr);
-                i = calcNewPosition(size, replacement);
-                continue;
+            int ch = str.charAt(i);
+            if (Character.isHighSurrogate((char) ch)) {
+                if (i == size - 1 || !Character.isLowSurrogate(str.charAt(i+1))){
+                    PyObject replacement = encoding_error(errors, "utf-8", str, i, i + 1, "unpaired surrogate");
+                    String replStr = replacement.__getitem__(0).toString();
+                    res.append(replStr);
+                    i = calcNewPosition(size, replacement) - 1;
+                    continue;
+                }
+                ch = Character.toCodePoint((char) ch, str.charAt(++i));
             }
             if (ch < 0x80) {
-                res.append(ch);
+                res.appendCodePoint(ch);
                 continue;
             }
             if (ch > 0x10FFFF) {
-                res.append(0xEF);
-                res.append(0xBF);
-                res.append(0xBD);
+                res.appendCodePoint(0xEF);
+                res.appendCodePoint(0xBF);
+                res.appendCodePoint(0xBD);
                 continue;
             }
-            if (ch >= 0x80 && ch <= 0xFFFF) {
-                res.append(0x80 | ((ch >> 6) & 0x3F));
-            } else if (ch > 0xFFFF) {
-                res.append(0xe0 | (ch >> 12));
-                res.append(0x80 | ((ch >> 6) & 0x3F));
+            if (ch <= 0x7FF) {
+                res.appendCodePoint(0xc0 | (ch >> 6));
+            } else if (ch <= 0xFFFF) {
+                res.appendCodePoint(0xe0 | (ch >> 12));
+                res.appendCodePoint(0x80 | ((ch >> 6) & 0x3F));
+            } else if (ch <= 0x10FFFF) {
+                res.appendCodePoint(0xF0 | ((ch >> 18) & 0x7));
+                res.appendCodePoint(0x80 | ((ch >> 12) & 0x3F));
+                res.appendCodePoint(0x80 | ((ch >> 6) & 0x3F));
             }
-            res.append(0x80 | (ch & 0x3F));
+            res.appendCodePoint(0x80 | (ch & 0x3F));
         }
         return res.toString();
     }

@@ -27,8 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 
 import static org.python.core.stringlib.Encoding.encode_UnicodeEscape;
 
@@ -58,7 +56,7 @@ public class PyUnicode extends PySequence implements Iterable {
     /**
      * A singleton provides the translation service (which is a pass-through) for all BMP strings.
      */
-    static final IndexTranslator BASIC = new IndexTranslator() {
+    final IndexTranslator BASIC = new IndexTranslator() {
 
         @Override
         public int suppCount() {
@@ -67,12 +65,14 @@ public class PyUnicode extends PySequence implements Iterable {
 
         @Override
         public int codePointIndex(int u) {
-            return u;
+            return string.offsetByCodePoints(0, u);
+//            return u;
         }
 
         @Override
         public int utf16Index(int i) {
-            return i;
+            return string.codePointCount(0, i);
+//            return i;
         }
     };
 
@@ -123,7 +123,7 @@ public class PyUnicode extends PySequence implements Iterable {
     }
 
     public PyUnicode(int codepoint) {
-        this(TYPE, new String(new int[] {codepoint}, 0, 1));
+        this(TYPE, new String(Character.toChars(codepoint)));
     }
 
     public PyUnicode(int[] codepoints) {
@@ -561,8 +561,8 @@ public class PyUnicode extends PySequence implements Iterable {
      */
     protected int[] translateIndices(PyObject start, PyObject end) {
         int[] indices = Encoding.translateIndices(getString(), start, end, __len__());
-        indices[0] = translator.utf16Index(indices[0]);
-        indices[1] = translator.utf16Index(indices[1]);
+        indices[0] = translator.codePointIndex(indices[0]);
+        indices[1] = translator.codePointIndex(indices[1]);
         // indices[2] and [3] remain Unicode indices (and may be out of bounds) relative to len()
         return indices;
     }
@@ -581,7 +581,7 @@ public class PyUnicode extends PySequence implements Iterable {
      * </pre>
      */
     public String substring(int start, int end) {
-        return getString().substring(translator.utf16Index(start), translator.utf16Index(end));
+        return getString().substring(translator.codePointIndex(start), translator.codePointIndex(end));
     }
 
     /**
@@ -604,7 +604,7 @@ public class PyUnicode extends PySequence implements Iterable {
     }
 
     public int getCodePointCount() {
-        return string.length() - translator.suppCount();
+        return string.codePointCount(0, string.length());
     }
 
     public static String checkEncoding(String s) {
@@ -718,11 +718,13 @@ public class PyUnicode extends PySequence implements Iterable {
 
     @ExposedMethod(doc = BuiltinDocs.str___getitem___doc)
     final PyObject str___getitem__(PyObject index) {
-        PyObject ret = seq___finditem__(index);
-        if (ret == null) {
-            throw Py.IndexError("string index out of range");
-        }
-        return ret;
+//        PyObject ret = seq___finditem__(index);
+//        if (ret == null) {
+//            throw Py.IndexError("string index out of range");
+//        }
+//        return ret;
+        int codepoint = string.codePointAt(string.offsetByCodePoints(0, index.asIndex()));
+        return new PyUnicode(new String(Character.toChars(codepoint)));
     }
 
     @Override
@@ -790,21 +792,20 @@ public class PyUnicode extends PySequence implements Iterable {
 
     @Override
     protected PyObject pyget(int i) {
-        int codepoint = getString().codePointAt(translator.utf16Index(i));
+        int codepoint = getString().codePointAt(translator.codePointIndex(i));
         return new PyUnicode(codepoint);
     }
 
     public int getInt(int i) {
-        return getString().codePointAt(translator.utf16Index(i));
+        return getString().codePointAt(string.offsetByCodePoints(0, i));
     }
 
     private class SubsequenceIteratorImpl implements Iterator {
 
-        private int current, k, stop, step;
+        private int current, stop, step;
 
         SubsequenceIteratorImpl(int start, int stop, int step) {
             current = start;
-            k = translator.utf16Index(current);
             this.stop = stop;
             this.step = step;
         }
@@ -821,26 +822,15 @@ public class PyUnicode extends PySequence implements Iterable {
         @Override
         public Object next() {
             int codePoint = nextCodePoint();
-            current += 1;
             for (int j = 1; j < step && hasNext(); j++) {
                 nextCodePoint();
-                current += 1;
             }
             return codePoint;
         }
 
         private int nextCodePoint() {
-            int U;
-            int W1 = getString().charAt(k);
-            if (W1 >= 0xD800 && W1 < 0xDC00) {
-                int W2 = getString().charAt(k + 1);
-                U = (((W1 & 0x3FF) << 10) | (W2 & 0x3FF)) + 0x10000;
-                k += 2;
-            } else {
-                U = W1;
-                k += 1;
-            }
-            return U;
+            int k = translator.codePointIndex(current++);
+            return string.codePointAt(k);
         }
 
         @Override
