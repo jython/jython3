@@ -146,6 +146,10 @@ public class _codecs {
                     return UNDEFINED;
             }
         }
+
+        boolean be() {
+            return this == BE;
+        }
     }
 
     /**
@@ -517,40 +521,48 @@ public class _codecs {
 
     /* --- UTF-16 Codec ------------------------------------------- */
     @ExposedFunction(defaults = {"null", "0"})
-    public static PyObject utf_16_encode(String str, String errors, int byteorder) {
-        return encode_tuple(encode_UTF16(str, errors, byteorder), str.length());
+    public static PyObject utf_16_encode(PyObject str, String errors, int byteorder) {
+        return encode_tuple(encode_UTF16(str, errors, ByteOrder.fromInt(byteorder)), str.__len__());
     }
 
     @ExposedFunction(defaults = {"null"})
-    public static PyObject utf_16_le_encode(String str, String errors) {
-        return encode_tuple(encode_UTF16(str, errors, -1), str.length());
+    public static PyObject utf_16_le_encode(PyObject str, String errors) {
+        return encode_tuple(encode_UTF16(str, errors, ByteOrder.LE), str.__len__());
     }
 
     @ExposedFunction(defaults = {"null"})
-    public static PyObject utf_16_be_encode(String str, String errors) {
-        return encode_tuple(encode_UTF16(str, errors, 1), str.length());
+    public static PyObject utf_16_be_encode(PyObject str, String errors) {
+        return encode_tuple(encode_UTF16(str, errors, ByteOrder.BE), str.__len__());
     }
 
-    public static String encode_UTF16(String str, String errors, int byteorder) {
-        final Charset utf16;
-        if (byteorder == 0) {
-            utf16 = Charset.forName("UTF-16");
-        } else if (byteorder == -1) {
-            utf16 = Charset.forName("UTF-16LE");
-        } else {
-            utf16 = Charset.forName("UTF-16BE");
+    public static String encode_UTF16(PyObject str, String errors, ByteOrder order) {
+        StringBuilder v = new StringBuilder();
+        if (order == ByteOrder.UNDEFINED) {
+            v.append("\u00FE\u00FF"); // BOM
+            order = ByteOrder.BE;
         }
-
-        // XXX errors argument ignored: Java's codecs implement "replace"
-
-        final ByteBuffer bbuf = utf16.encode(str);
-        final StringBuilder v = new StringBuilder(bbuf.limit());
-        while (bbuf.remaining() > 0) {
-            int val = bbuf.get();
-            if (val < 0) {
-                val = 256 + val;
+        if (!(str instanceof PyUnicode)) {
+            throw Py.TypeError(String.format("str expected, found '%s'", str.getType().getName()));
+        }
+        Iterator<Integer> iter = ((PyUnicode) str).newSubsequenceIterator();
+        int i = 0;
+        while (iter.hasNext()) {
+            int ch = iter.next();
+            if (Character.isSurrogate((char) ch)) {
+                String encoding = order == ByteOrder.BE ? "UTF-16BE" : "UTF-16LE";
+                PyObject replacementspec = codecs.encoding_error(errors, encoding, str.toString(), i, i+1, "unpaired surrogate");
+                v.append(replacementspec.__getitem__(0).toString());
+                i++;
+                continue;
             }
-            v.appendCodePoint(val);
+            if (order.be()) {
+                v.appendCodePoint(0xFF & (ch >> 8));
+                v.appendCodePoint(0xFF & ch);
+            } else {
+                v.appendCodePoint(0xFF & ch);
+                v.appendCodePoint(0xFF & (ch >> 8));
+            }
+            i++;
         }
         return v.toString();
     }
