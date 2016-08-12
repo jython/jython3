@@ -6,7 +6,9 @@
  */
 package org.python.core;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -34,6 +36,7 @@ public class codecs {
     public static final String REPLACE = "replace";
     public static final String XMLCHARREFREPLACE = "xmlcharrefreplace";
     public static final String SURROGATEESCAPE = "surrogateescape";
+    public static final String SURROGATEPASS = "surrogatepass";
     private static char Py_UNICODE_REPLACEMENT_CHARACTER = 0xFFFD;
 
     public static String getDefaultEncoding() {
@@ -384,6 +387,89 @@ public class codecs {
             }
             replacement.appendCodePoint(ch + '\udc00');
         }
+    }
+
+        public static PyObject surrogatepass_errors(PyObject[] args, String[] kws) {
+        ArgParser ap = new ArgParser("surrogatepass_errors", args, kws, "exc");
+        PyObject exc = ap.getPyObject(0);
+        int start = exc.__getattr__("start").asInt();
+        int end = exc.__getattr__("end").asInt();
+        String object = exc.__getattr__("object").toString();
+        String encoding = exc.__getattr__("encoding").toString();
+        // TODO handle UnsupportedCharsetException
+        Charset charset = Charset.forName(encoding);
+        String buf;
+        if (Py.isInstance(exc, Py.UnicodeEncodeError)) {
+            buf = surrogatepass_encode_internal(start, end, charset, object);
+        } else if (Py.isInstance(exc, Py.UnicodeDecodeError)) {
+            buf = surrogatepass_decode_internal(start, end, charset, object);
+        } else {
+            throw wrong_exception_type(exc);
+        }
+        return new PyTuple(new PyBytes(buf), exc.__getattr__("end"));
+    }
+
+    private final static Charset UTF_32LE = Charset.forName("utf-32le");
+    private final static Charset UTF_32BE = Charset.forName("utf-32be");
+
+    public static String surrogatepass_encode_internal(int start, int end, Charset charset, String object) {
+        int n = (end - start) * 4; // this is the most it's going to take
+        StringBuilder replacement = new StringBuilder(n);
+        for (int i = start; i < end; i++) {
+            char ch = object.charAt(i);
+            if (charset.equals(StandardCharsets.UTF_8)) {
+                replacement.append((char) (0xe0 | (ch >> 12)));
+                replacement.append((char) (0x80 | ((ch >> 6) & 0x3f)));
+                replacement.append((char) (0x80 | (ch & 0x3f)));
+            } else if (charset.equals(StandardCharsets.UTF_16LE)) {
+                replacement.append((char) ch);
+                replacement.append((char) (ch >> 8));
+            } else if (charset.equals(StandardCharsets.UTF_16BE)) {
+                replacement.append((char) (ch >> 8));
+                replacement.append((char) ch);
+            } else if (charset.equals(UTF_32LE)) {
+                replacement.append((char) ch);
+                replacement.append((char) (ch >> 8));
+                replacement.append((char) (ch >> 16));
+                replacement.append((char) (ch >> 24));
+            } else if (charset.equals(UTF_32BE)) {
+                replacement.append((char) (ch >> 24));
+                replacement.append((char) (ch >> 16));
+                replacement.append((char) (ch >> 8));
+                replacement.append((char) ch);
+            }
+        }
+        return replacement.toString();
+    }
+
+    public static String surrogatepass_decode_internal(int start, int end, Charset charset, String object) {
+        int ch = 0;
+        int i = start; // cursor
+        char[] p = new char[4];
+        p[0] = object.charAt(i);
+        p[1] = object.charAt(i++);
+        if (charset.equals(StandardCharsets.UTF_8)) {
+            p[2] = object.charAt(i++);
+            if ((p[0] & 0xf0) == 0xe0 &&
+                    (p[1] & 0xc0) == 0x80 &&
+                    (p[2] & 0xc0) == 0x80) {
+                /* it's a three-byte code */
+                ch = ((p[0] & 0x0f) << 12) + ((p[1] & 0x3f) << 6) + (p[2] & 0x3f);
+            }
+        } else if (charset.equals(StandardCharsets.UTF_16LE)) {
+            ch = p[1] << 8 | p[0];
+        } else if (charset.equals(StandardCharsets.UTF_16BE)) {
+            ch = p[0] << 8 | p[1];
+        } else if (charset.equals(UTF_32LE)) {
+            p[2] = object.charAt(i++);
+            p[3] = object.charAt(i++);
+            ch = (p[3] << 24) | (p[2] << 16) | (p[1] << 8) | p[0];
+        } else if (charset.equals(UTF_32BE)) {
+            p[2] = object.charAt(i++);
+            p[3] = object.charAt(i++);
+            ch = (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
+        }
+        return String.valueOf(ch);
     }
 
 
@@ -1164,7 +1250,47 @@ public class codecs {
     }
 
     public static String PyUnicode_EncodeUTF8(String str, String errors) {
-        return StringUtil.fromBytes(Charset.forName("UTF-8").encode(str));
+        return PyUnicode_AsUTF8String(str, errors);
+    }
+
+    public static String PyUnicode_AsUTF8String(String str, String errors) {
+        int size = str.length();
+        StringBuilder res = new StringBuilder();
+        for (int i = 0; i < size; i++) {
+            char ch = str.charAt(i);
+            if (Character.isHighSurrogate(ch) && (i == size - 1 || !Character.isLowSurrogate(str.charAt(i+1)))) {
+                PyObject replacement = encoding_error(errors, "utf-8", str, i, i+1, "unpaired surrogate");
+                String replStr = replacement.__getitem__(0).toString();
+                res.append(replStr);
+                i = calcNewPosition(size, replacement) - 1;
+                continue;
+            }
+            if (Character.isLowSurrogate(ch) && (i == size - 1 || !Character.isHighSurrogate(str.charAt(i + 1)))) {
+                PyObject replacement = encoding_error(errors, "utf-8", str, i, i+1, "unpaired surrogate");
+                String replStr = replacement.__getitem__(0).toString();
+                res.append(replStr);
+                i = calcNewPosition(size, replacement);
+                continue;
+            }
+            if (ch < 0x80) {
+                res.append(ch);
+                continue;
+            }
+            if (ch > 0x10FFFF) {
+                res.append(0xEF);
+                res.append(0xBF);
+                res.append(0xBD);
+                continue;
+            }
+            if (ch >= 0x80 && ch <= 0xFFFF) {
+                res.append(0x80 | ((ch >> 6) & 0x3F));
+            } else if (ch > 0xFFFF) {
+                res.append(0xe0 | (ch >> 12));
+                res.append(0x80 | ((ch >> 6) & 0x3F));
+            }
+            res.append(0x80 | (ch & 0x3F));
+        }
+        return res.toString();
     }
 
     /* --- ASCII and Latin-1 Codecs --------------------------------------- */
@@ -1586,17 +1712,17 @@ public class codecs {
     public static int insertReplacementAndGetResume(StringBuilder partialDecode, String errors,
             String encoding, String toDecode, int start, int end, String reason) {
 
-        // Handle the two special cases "ignore" and "replace" locally
-        if (errors != null) {
-            if (errors.equals(IGNORE)) {
-                // Just skip to the first non-problem byte
-                return end;
-            } else if (errors.equals(REPLACE)) {
-                // Insert *one* Unicode replacement character and skip
-                partialDecode.appendCodePoint(Py_UNICODE_REPLACEMENT_CHARACTER);
-                return end;
-            }
-        }
+//        // Handle the two special cases "ignore" and "replace" locally
+//        if (errors != null) {
+//            if (errors.equals(IGNORE)) {
+//                // Just skip to the first non-problem byte
+//                return end;
+//            } else if (errors.equals(REPLACE)) {
+//                // Insert *one* Unicode replacement character and skip
+//                partialDecode.appendCodePoint(Py_UNICODE_REPLACEMENT_CHARACTER);
+//                return end;
+//            }
+//        }
 
         // If errors not one of those, invoke the generic mechanism
         PyObject replacementSpec = decoding_error(errors, encoding, toDecode, start, end, reason);
@@ -1684,7 +1810,8 @@ public class codecs {
                 REPLACE,
                 XMLCHARREFREPLACE,
                 BACKSLASHREPLACE,
-                SURROGATEESCAPE
+                SURROGATEESCAPE,
+                SURROGATEPASS,
         };
 
         private void init() {
