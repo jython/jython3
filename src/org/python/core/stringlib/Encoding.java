@@ -256,18 +256,19 @@ public class Encoding {
 
     private static int hexescape(StringBuilder partialDecode, String errors, int digits,
                                  int hexDigitStart, String str, int size, String errorMessage) {
-        if (hexDigitStart + digits > size) {
-            return codecs.insertReplacementAndGetResume(partialDecode, errors, "unicodeescape",
-                    str, hexDigitStart - 2, size, errorMessage);
-        }
         int i = 0;
         int x = 0;
         for (; i < digits; ++i) {
-            char c = str.charAt(hexDigitStart + i);
+            int index = hexDigitStart + i;
+            if (index >= size) {
+                return codecs.insertReplacementAndGetResume(partialDecode, errors, "unicodeescape",
+                        str, hexDigitStart - 2, size, errorMessage);
+            }
+            char c = str.charAt(index);
             int d = Character.digit(c, 16);
             if (d == -1) {
                 return codecs.insertReplacementAndGetResume(partialDecode, errors, "unicodeescape",
-                        str, hexDigitStart - 2, hexDigitStart + i + 1, errorMessage);
+                        str, hexDigitStart - 2, index + 1, errorMessage) - 1;
             }
             x = (x << 4) & ~0xF;
             if (c >= '0' && c <= '9') {

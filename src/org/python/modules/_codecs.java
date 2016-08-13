@@ -193,7 +193,7 @@ public class _codecs {
     }
 
     private static PyTuple decode_tuple_str(String s, int len) {
-        return new PyTuple(new PyUnicode(s), Py.newLong(len));
+        return new PyTuple(new PyBytes(s), Py.newLong(len));
     }
 
     private static PyTuple encode_tuple(String s, int len) {
@@ -1032,7 +1032,7 @@ public class _codecs {
     @ExposedFunction(defaults = {"null"})
     public static PyTuple raw_unicode_escape_encode(String str, String errors) {
         return encode_tuple(codecs.PyUnicode_EncodeRawUnicodeEscape(str, errors, false),
-                str.length());
+                str.codePointCount(0, str.length()));
     }
 
     @ExposedFunction(defaults = {"null"})
@@ -1043,7 +1043,7 @@ public class _codecs {
     /* --- unicode-escape Codec ------------------------------------------- */
     @ExposedFunction(defaults = {"null"})
     public static PyTuple unicode_escape_encode(String str, String errors) {
-        return encode_tuple(Encoding.encode_UnicodeEscape(str, false), str.length());
+        return encode_tuple(Encoding.encode_UnicodeEscape(str, false), str.codePointCount(0, str.length()));
     }
 
     @ExposedFunction(defaults = {"null"})
