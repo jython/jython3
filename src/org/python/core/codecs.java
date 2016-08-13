@@ -399,15 +399,15 @@ public class codecs {
         String encoding = exc.__getattr__("encoding").toString();
         // TODO handle UnsupportedCharsetException
         Charset charset = Charset.forName(encoding);
-        String buf;
+        PyObject buf;
         if (Py.isInstance(exc, Py.UnicodeEncodeError)) {
-            buf = surrogatepass_encode_internal(start, end, charset, object);
+            buf = new PyBytes(surrogatepass_encode_internal(start, end, charset, object));
         } else if (Py.isInstance(exc, Py.UnicodeDecodeError)) {
-            buf = surrogatepass_decode_internal(start, end, charset, object);
+            buf = new PyUnicode(surrogatepass_decode_internal(start, end, charset, object));
         } else {
             throw wrong_exception_type(exc);
         }
-        return new PyTuple(new PyBytes(buf), exc.__getattr__("end"));
+        return new PyTuple(buf, exc.__getattr__("end"));
     }
 
     private final static Charset UTF_32LE = Charset.forName("utf-32le");
@@ -447,25 +447,32 @@ public class codecs {
         int ch = 0;
         int i = start; // cursor
         char[] p = new char[4];
-        p[0] = object.charAt(i);
+        if (end - start < 2) {
+            throw Py.UnicodeDecodeError(charset.toString(), object, start, end, "invalid continuation byte");
+        }
+        p[0] = object.charAt(i++);
         p[1] = object.charAt(i++);
         if (charset.equals(StandardCharsets.UTF_8)) {
-            p[2] = object.charAt(i++);
-            if ((p[0] & 0xf0) == 0xe0 &&
-                    (p[1] & 0xc0) == 0x80 &&
-                    (p[2] & 0xc0) == 0x80) {
-                /* it's a three-byte code */
-                ch = ((p[0] & 0x0f) << 12) + ((p[1] & 0x3f) << 6) + (p[2] & 0x3f);
+            if (end - start < 3) {
+                throw Py.UnicodeDecodeError("utf-8", object, start, end, "invalid continuation byte");
             }
+            p[2] = object.charAt(i++);
+            ch = ((p[0] & 0x0f) << 12) + ((p[1] & 0x3f) << 6) + (p[2] & 0x3f);
         } else if (charset.equals(StandardCharsets.UTF_16LE)) {
             ch = p[1] << 8 | p[0];
         } else if (charset.equals(StandardCharsets.UTF_16BE)) {
             ch = p[0] << 8 | p[1];
         } else if (charset.equals(UTF_32LE)) {
+            if (end - start < 4) {
+                throw Py.UnicodeDecodeError(charset.toString(), object, start, end, "invalid continuation byte");
+            }
             p[2] = object.charAt(i++);
             p[3] = object.charAt(i++);
             ch = (p[3] << 24) | (p[2] << 16) | (p[1] << 8) | p[0];
         } else if (charset.equals(UTF_32BE)) {
+            if (end - start < 4) {
+                throw Py.UnicodeDecodeError(charset.toString(), object, start, end, "invalid continuation byte");
+            }
             p[2] = object.charAt(i++);
             p[3] = object.charAt(i++);
             ch = (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
@@ -639,7 +646,8 @@ public class codecs {
                 // The input was supposed to be 7-bit clean
                 s = insertReplacementAndGetResume(unicode, errors, "utf-7", //
                         bytes, s, s + 1, "unexpected special character") - 1;
-
+                inBase64 = false;
+                continue;
             } else if (inBase64) {
                 // We are currently processing a Base64 section
                 int sixBits = FROM_BASE64(b);   // returns -ve if not Base64
@@ -689,10 +697,11 @@ public class codecs {
                         }
                         // We are, in any case, discarding whatever is in the buffer
                         base64bits = 0;
-                    }
 
-                    if (surrogate > 0 && b < 127 && b != '+') { // lone surrogate and current byte can be encoded directly
-                        unicode.appendCodePoint(surrogate);
+                        if (surrogate > 0 && b < 127 && b != '+') { // lone surrogate and current byte can be encoded directly
+                            unicode.appendCodePoint(surrogate);
+                        }
+                        continue;
                     }
                     if (b == '-') {
                         /*
@@ -741,7 +750,7 @@ public class codecs {
         if (inBase64) {
             // Restore state to beginning of last Base64 sequence
             s = startInBytes;
-            unicode.setLength(startInUnicode);
+//            unicode.setLength(startInUnicode);
         }
 
         if (consumed != null) {
@@ -1135,8 +1144,6 @@ public class codecs {
         4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 0, 0
     }; //@formatter:on
 
-    // TODO: need to modify to use a codepoint approach (which is almost the case now,
-    // ch is an
     public static String PyUnicode_DecodeUTF8(String str, String errors) {
         return PyUnicode_DecodeUTF8Stateful(str, errors, null);
     }
@@ -1188,7 +1195,7 @@ public class codecs {
                                 i, i + 2, "invalid data");
                         continue;
                     }
-                    ch = ((ch & 0x1f) << 6) + (ch1 & 0x3f);
+                    ch = ((ch & 0x1f) << 6) | (ch1 & 0x3f);
                     if (ch < 0x80) {
                         i = insertReplacementAndGetResume(unicode, errors, "utf-8", str, //
                                 i, i + 2, "illegal encoding");

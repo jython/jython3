@@ -1029,36 +1029,24 @@ public class _codecs {
     }
 
     /* --- RawUnicodeEscape Codec ----------------------------------------- */
-    public static PyTuple raw_unicode_escape_encode(String str) {
-        return raw_unicode_escape_encode(str, null);
-    }
-
+    @ExposedFunction(defaults = {"null"})
     public static PyTuple raw_unicode_escape_encode(String str, String errors) {
         return encode_tuple(codecs.PyUnicode_EncodeRawUnicodeEscape(str, errors, false),
                 str.length());
     }
 
-    public static PyTuple raw_unicode_escape_decode(String str) {
-        return raw_unicode_escape_decode(str, null);
-    }
-
+    @ExposedFunction(defaults = {"null"})
     public static PyTuple raw_unicode_escape_decode(String str, String errors) {
         return decode_tuple(codecs.PyUnicode_DecodeRawUnicodeEscape(str, errors), str.length());
     }
 
     /* --- unicode-escape Codec ------------------------------------------- */
-    public static PyTuple unicode_escape_encode(String str) {
-        return unicode_escape_encode(str, null);
-    }
-
+    @ExposedFunction(defaults = {"null"})
     public static PyTuple unicode_escape_encode(String str, String errors) {
         return encode_tuple(Encoding.encode_UnicodeEscape(str, false), str.length());
     }
 
-    public static PyTuple unicode_escape_decode(String str) {
-        return unicode_escape_decode(str, null);
-    }
-
+    @ExposedFunction(defaults = {"null"})
     public static PyTuple unicode_escape_decode(String str, String errors) {
         int n = str.length();
         return decode_tuple(Encoding.decode_UnicodeEscape(str, 0, n, errors, true), n);
