@@ -67,9 +67,9 @@ public class PyBytes extends PySequence implements BufferProtocol {
     public PyBytes(PyType subType, CharSequence string) {
         super(subType);
         if (string == null) {
-            throw Py.TypeError("Cannot create PyBytes from null");
+            throw Py.ValueError("Cannot create PyBytes from null");
         } else if (!isBytes(string)) {
-            throw Py.TypeError("Cannot create PyBytes with non-byte value");
+            throw Py.ValueError("Cannot create PyBytes with non-byte value");
         }
         this.string = string.toString();
     }
@@ -163,10 +163,8 @@ public class PyBytes extends PySequence implements BufferProtocol {
                 String errors = ap.getString(2, "strict");
                 // Encoding will raise UnicodeEncodeError if not 7-bit clean.
                 str = codecs.encode(S, encoding, errors);
-            } else if (S instanceof PyByteArray) {
-                // FIXME: This is to twisted, there is a bytearray in PyByteArray, just have to make it immutable
-                // maybe with something like ((PyByteArray) S).asBytes()
-                PyBuffer buffer = ((PyByteArray) S).getBuffer(PyBUF.FULL_RO);
+            } else if (S instanceof BufferProtocol) {
+                PyBuffer buffer = ((BufferProtocol) S).getBuffer(PyBUF.FULL_RO);
                 byte[] buf = new byte[buffer.getLen()];
                 buffer.copyTo(buf, 0);
                 buffer.close();
@@ -180,9 +178,16 @@ public class PyBytes extends PySequence implements BufferProtocol {
                 byte[] bytes = new byte[n];
                 Arrays.fill( bytes, (byte) 0 );
                 str = new String(bytes);
-            } else {
-                // Must be str/bytes, and should be 8-bit clean already.
-                str = S.toString();
+            } else { // an iterable yielding integers in range(256)
+                StringBuilder v = new StringBuilder();
+                for (PyObject x : S.asIterable()) {
+                    int i = x.asInt();
+                    if (i < 0 || i > 255) {
+                        throw Py.ValueError("bytes must be in range(0, 255)");
+                    }
+                    v.appendCodePoint(i);
+                }
+                str = v.toString();
             }
         }
         if (new_.for_type == subtype) {
