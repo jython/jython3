@@ -67,9 +67,9 @@ public class PyBytes extends PySequence implements BufferProtocol {
     public PyBytes(PyType subType, CharSequence string) {
         super(subType);
         if (string == null) {
-            throw new IllegalArgumentException("Cannot create PyBytes from null");
+            throw Py.TypeError("Cannot create PyBytes from null");
         } else if (!isBytes(string)) {
-            throw new IllegalArgumentException("Cannot create PyBytes with non-byte value");
+            throw Py.TypeError("Cannot create PyBytes with non-byte value");
         }
         this.string = string.toString();
     }
@@ -164,11 +164,17 @@ public class PyBytes extends PySequence implements BufferProtocol {
                 // Encoding will raise UnicodeEncodeError if not 7-bit clean.
                 str = codecs.encode(S, encoding, errors);
             } else if (S instanceof PyByteArray) {
+                // FIXME: This is to twisted, there is a bytearray in PyByteArray, just have to make it immutable
+                // maybe with something like ((PyByteArray) S).asBytes()
                 PyBuffer buffer = ((PyByteArray) S).getBuffer(PyBUF.FULL_RO);
                 byte[] buf = new byte[buffer.getLen()];
                 buffer.copyTo(buf, 0);
                 buffer.close();
-                str = new String(buf);
+                StringBuilder v = new StringBuilder(buf.length);
+                for (byte b: buf) {
+                    v.appendCodePoint(b & 0xFF);
+                }
+                str = v.toString();
             } else if (S instanceof PyLong) {
                 int n = ((PyLong) S).getValue().intValue();
                 byte[] bytes = new byte[n];
