@@ -126,6 +126,15 @@ public class ArgParser {
 
     /**
      * Return a required argument as an int.
+     *
+     * @param pos The position of the argument. First argument is numbered 0.
+     */
+    public long getLong(int pos) {
+        return getRequiredArg(pos).asLong();
+    }
+
+    /**
+     * Return a required argument as an int.
      * 
      * @param pos The position of the argument. First argument is numbered 0.
      */

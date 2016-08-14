@@ -25,15 +25,15 @@ public class PyRange extends PySequence {
     private final long stop;
     private final long len;
 
-    public PyRange(int ihigh) {
+    public PyRange(long ihigh) {
         this(0, ihigh, 1);
     }
 
-    public PyRange(int ilow, int ihigh) {
+    public PyRange(long ilow, long ihigh) {
         this(ilow, ihigh, 1);
     }
 
-    public PyRange(int ilow, int ihigh, int istep) {
+    public PyRange(long ilow, long ihigh, int istep) {
         super(TYPE);
 
         if (istep == 0) {
@@ -63,15 +63,18 @@ public class PyRange extends PySequence {
                                      new String[] {"ilow", "ihigh", "istep"}, 1);
         ap.noKeywords();
 
-        int ilow = 0;
-        int ihigh;
+        long ilow = 0;
+        long ihigh;
         int istep = 1;
         if (args.length == 1) {
-            ihigh = ap.getInt(0);
+            ihigh = ap.getLong(0);
         } else {
-            ilow = ap.getInt(0);
-            ihigh = ap.getInt(1);
+            ilow = ap.getLong(0);
+            ihigh = ap.getLong(1);
             istep = ap.getInt(2, 1);
+            if (istep == 0) {
+                throw Py.ValueError("range() arg 3 must not be zero");
+            }
         }
         return new PyRange(ilow, ihigh, istep);
     }

@@ -2124,19 +2124,16 @@ public class PyUnicode extends PySequence implements Iterable {
 
     @Override
     public PyComplex __complex__() {
-        return new PyBytes(encodeDecimal()).__complex__();
-    }
-
-    public PyObject atoi(int base) {
-        return new PyBytes(encodeDecimal()).atoi(base);
+        return Encoding.atocx(encodeDecimal());
     }
 
     public PyObject atol(int base) {
-        return new PyBytes(encodeDecimal()).atol(base);
+        return Encoding.atol(encodeDecimal(), base);
     }
 
-    public double atof() {
-        return new PyBytes(encodeDecimal()).atof();
+    @Override
+    public PyFloat __float__() {
+        return new PyFloat(Encoding.atof(encodeDecimal()));
     }
 
     /**

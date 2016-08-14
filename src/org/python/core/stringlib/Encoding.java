@@ -9,6 +9,7 @@ import org.python.core.Py;
 import org.python.core.PyBUF;
 import org.python.core.PyBuffer;
 import org.python.core.PyBytes;
+import org.python.core.PyComplex;
 import org.python.core.PyException;
 import org.python.core.PyInteger;
 import org.python.core.PyList;
@@ -22,6 +23,8 @@ import org.python.core.codecs;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Helper methods for unicode encoding shared between bytes-like object and str
@@ -1618,6 +1621,58 @@ public class Encoding {
         }
     }
 
+    /**
+     * Convert this PyBytes to a floating-point value according to Python rules.
+     *
+     * @return the value
+     */
+    public static double atof(CharSequence s) {
+        double x = 0.0;
+        Matcher m = getFloatPattern().matcher(s);
+        boolean valid = m.matches();
+
+        if (valid) {
+            // Might be a valid float: trimmed of white space in group 1.
+            String number = m.group(1);
+            try {
+                char lastChar = number.charAt(number.length() - 1);
+                if (Character.isLetter(lastChar)) {
+                    // It's something like "nan", "-Inf" or "+nifty"
+                    x = atofSpecials(m.group(1));
+                } else {
+                    // A numeric part was present, try to convert the whole
+                    x = Double.parseDouble(m.group(1));
+                }
+            } catch (NumberFormatException e) {
+                valid = false;
+            }
+        }
+
+        // At this point, valid will have been cleared if there was a problem.
+        if (valid) {
+            return x;
+        } else {
+            String fmt = "could not convert string to float: '%s'";
+            throw Py.ValueError(String.format(fmt, s));
+        }
+
+    }
+
+    /**
+     * Return the (lazily) compiled regular expression that matches all valid a Python float()
+     * arguments, in which Group 1 captures the number, stripped of white space. Various invalid
+     * non-numerics are provisionally accepted (e.g. "+inanity" or "-faint").
+     */
+    private static synchronized Pattern getFloatPattern() {
+        if (floatPattern == null) {
+            floatPattern = Pattern.compile("\\s*([+-]?" + UF_RE + ")\\s*");
+        }
+        return floatPattern;
+    }
+
+    /** Access only through {@link #getFloatPattern()}. */
+    private static Pattern floatPattern = null;
+
     private static boolean isWhitespace(char c) {
         switch(c) {
             case 0x09:
@@ -1632,5 +1687,154 @@ public class Encoding {
         }
         return true;
     }
+
+    /**
+     * Regular expression for an unsigned Python float, accepting also any sequence of the letters
+     * that belong to "NaN" or "Infinity" in whatever case. This is used within the regular
+     * expression patterns that define a priori acceptable strings in the float and complex
+     * constructors. The expression contributes no capture groups.
+     */
+    private static final String UF_RE =
+            "(?:(?:(?:\\d+\\.?|\\.\\d)\\d*(?:[eE][+-]?\\d+)?)|[infatyINFATY]+)";
+
+    /**
+     * Return the (lazily) compiled regular expression for a Python complex number. This is used
+     * within the regular expression patterns that define a priori acceptable strings in the complex
+     * constructors. The expression contributes five named capture groups a, b, x, y and j. x and y
+     * are the two floats encountered, and if j is present, one of them is the imaginary part.
+     * a and b are the optional parentheses. They must either both be present or both omitted.
+     */
+    private static synchronized Pattern getComplexPattern() {
+        if (complexPattern == null) {
+            complexPattern = Pattern.compile("\\s*(?<a>\\(\\s*)?" // Parenthesis <a>
+                    + "(?<x>[+-]?" + UF_RE + "?)" // <x>
+                    + "(?<y>[+-]" + UF_RE + "?)?(?<j>[jJ])?" // + <y> <j>
+                    + "\\s*(?<b>\\)\\s*)?"); // Parenthesis <b>
+        }
+        return complexPattern;
+    }
+
+    /** Access only through {@link #getComplexPattern()} */
+    private static Pattern complexPattern = null;
+
+    /**
+     * Conversion for non-numeric floats, accepting signed or unsigned "inf" and "nan", in any case.
+     *
+     * @param s to convert
+     * @return non-numeric result (if valid)
+     * @throws NumberFormatException if not a valid non-numeric indicator
+     */
+    private static double atofSpecials(String s) throws NumberFormatException {
+        switch (s.toLowerCase()) {
+            case "nan":
+            case "+nan":
+            case "-nan":
+                return Double.NaN;
+            case "inf":
+            case "+inf":
+            case "infinity":
+            case "+infinity":
+                return Double.POSITIVE_INFINITY;
+            case "-inf":
+            case "-infinity":
+                return Double.NEGATIVE_INFINITY;
+            default:
+                throw new NumberFormatException();
+        }
+    }
+
+    /**
+     * Convert this PyBytes to a complex value according to Python rules.
+     *
+     * @return the value
+     */
+    public static PyComplex atocx(CharSequence s) {
+        double x = 0.0, y = 0.0;
+        Matcher m = getComplexPattern().matcher(s);
+        boolean valid = m.matches();
+
+        if (valid) {
+            // Passes a priori, but we have some checks to make. Brackets: both or neither.
+            if ((m.group("a") != null) != (m.group("b") != null)) {
+                valid = false;
+
+            } else {
+                try {
+                    // Pick up the two numbers [+-]? <x> [+-] <y> j?
+                    String xs = m.group("x"), ys = m.group("y");
+
+                    if (m.group("j") != null) {
+                        // There is a 'j', so there is an imaginary part.
+                        if (ys != null) {
+                            // There were two numbers, so the second is the imaginary part.
+                            y = toComplexPart(ys);
+                            // And the first is the real part
+                            x = toComplexPart(xs);
+                        } else if (xs != null) {
+                            // There was only one number (and a 'j')so it is the imaginary part.
+                            y = toComplexPart(xs);
+                            // x = 0.0;
+                        } else {
+                            // There were no numbers, just the 'j'. (Impossible return?)
+                            y = 1.0;
+                            // x = 0.0;
+                        }
+
+                    } else {
+                        // There is no 'j' so can only be one number, the real part.
+                        x = Double.parseDouble(xs);
+                        if (ys != null) {
+                            // Something like "123 +" or "123 + 456" but no 'j'.
+                            throw new NumberFormatException();
+                        }
+                    }
+
+                } catch (NumberFormatException e) {
+                    valid = false;
+                }
+            }
+        }
+
+        // At this point, valid will have been cleared if there was a problem.
+        if (valid) {
+            return new PyComplex(x, y);
+        } else {
+            String fmt = "complex() arg is a malformed string: %s";
+            throw Py.ValueError(String.format(fmt, s));
+        }
+
+    }
+
+    /**
+     * Helper for interpreting each part (real and imaginary) of a complex number expressed as a
+     * string in {@link #atocx(String)}. It deals with numbers, inf, nan and their variants, and
+     * with the "implied one" in +j or 10-j.
+     *
+     * @param s to interpret
+     * @return value of s
+     * @throws NumberFormatException if the number is invalid
+     */
+    private static double toComplexPart(String s) throws NumberFormatException {
+        if (s.length() == 0) {
+            // Empty string (occurs only as 'j')
+            return 1.0;
+        } else {
+            char lastChar = s.charAt(s.length() - 1);
+            if (Character.isLetter(lastChar)) {
+                // Possibly a sign, then letters that ought to be "nan" or "inf[inity]"
+                return atofSpecials(s);
+            } else if (lastChar == '+') {
+                // Occurs only as "+j"
+                return 1.0;
+            } else if (lastChar == '-') {
+                // Occurs only as "-j"
+                return -1.0;
+            } else {
+                // Possibly a sign then an unsigned float
+                return Double.parseDouble(s);
+            }
+        }
+    }
+
 }
 
