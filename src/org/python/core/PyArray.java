@@ -1903,6 +1903,11 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
     }
 
     @ExposedMethod
+    public final PyObject array_tobytes() {
+        return new PyBytes(tostring());
+    }
+
+    @ExposedMethod
     public final PyObject array_tostring() {
         return new PyBytes(tostring());
     }

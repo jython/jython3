@@ -1143,6 +1143,10 @@ public class PosixModule implements ClassDictInit {
         }
     }
 
+    public static void set_inheritable(PyObject fd, PyObject inheritable) {
+        // noop
+    }
+
     public static PyBytes __doc__utime = new PyBytes(
         "utime(path, (atime, mtime))\n" +
         "utime(path, None)\n\n" +
