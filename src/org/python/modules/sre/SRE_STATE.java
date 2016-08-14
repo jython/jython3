@@ -23,6 +23,9 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.Weigher;
 import org.python.core.Options;
 import org.python.core.Py;
+import org.python.core.PyBytes;
+import org.python.core.PyLong;
+import org.python.core.PyObject;
 import org.python.core.PyUnicode;
 
 public class SRE_STATE {
@@ -1227,6 +1230,7 @@ for line in sys.stdin:
     int start; /* start of current slice */
     int end; /* end of original string */
 
+    boolean isBytes;
     /* attributes for the match object */
     int[] str;
     int pos;
@@ -1257,13 +1261,18 @@ for line in sys.stdin:
 
     private enum CACHE {
         INSTANCE(Options.sreCacheSpec);
-        private LoadingCache<PyUnicode, int[]> cache;
+        private LoadingCache<PyObject, int[]> cache;
 
         private CACHE(String spec) {
-            CacheLoader<PyUnicode, int[]> loader = new CacheLoader<PyUnicode, int[]>() {
+            CacheLoader<PyObject, int[]> loader = new CacheLoader<PyObject, int[]>() {
                 @Override
-                public int[] load(PyUnicode key) {
-                    return key.toCodePoints();
+                public int[] load(PyObject key) {
+                    if (key instanceof PyBytes) {
+                        return ((PyBytes) key).toCodePoints();
+                    } else if (key instanceof PyUnicode) {
+                        return ((PyUnicode) key).toCodePoints();
+                    }
+                    return new int[0];
                 }
             };
 
@@ -1280,9 +1289,9 @@ for line in sys.stdin:
             }
 
             if (spec.contains("maximumWeight")) {
-                cache = builder.weigher(new Weigher<PyUnicode, int[]>() {
+                cache = builder.weigher(new Weigher<PyObject, int[]>() {
                     @Override
-                    public int weigh(PyUnicode k, int[] v) {
+                    public int weigh(PyObject k, int[] v) {
                         return v.length;
                     }
                 }).build(loader);
@@ -1291,13 +1300,14 @@ for line in sys.stdin:
             }
         }
 
-        private int[] get(PyUnicode str) {
+        private int[] get(PyObject str) {
             return cache.getUnchecked(str);
         }
     }
 
-    public SRE_STATE(PyUnicode str, int start, int end, int flags) {
+    public SRE_STATE(PyObject str, int start, int end, int flags) {
         this.str = CACHE.INSTANCE.get(str);
+        this.isBytes = str instanceof PyBytes;
         int size = str.__len__();
 
         this.charsize = 1;
@@ -1333,8 +1343,7 @@ for line in sys.stdin:
     }
 
     // XXX - this is not UTF-16 compliant; also depends on whether from PyBytes or PyUnicode
-
-    String getslice(int index, String string, boolean empty) {
+    PyObject getslice(int index, PyObject string, boolean empty) {
         int i, j;
 
         index = (index - 1) * 2;
@@ -1350,8 +1359,7 @@ for line in sys.stdin:
             i = mark[index];
             j = mark[index + 1];
         }
-
-        return string.substring(i, j);
+        return string.__getslice__(new PyLong(i), new PyLong(j));
     }
 
     void state_reset() {

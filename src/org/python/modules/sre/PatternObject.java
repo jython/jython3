@@ -55,7 +55,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     public PyObject SRE_Pattern_match(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("match", args, kws,
                                      "pattern", "pos", "endpos");
-        PyUnicode string = extractPyString(ap, 0);
+        PyObject string = ap.getPyObject(0);
         int start = ap.getInt(1, 0);
         int end = ap.getInt(2, string.__len__());
         SRE_STATE state = new SRE_STATE(string, start, end, flags);
@@ -72,15 +72,15 @@ public class PatternObject extends PyObject implements Traverseproc {
     public PyObject SRE_Pattern_fullmatch(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("match", args, kws,
                 "pattern", "pos", "endpos");
-        PyUnicode string = extractPyString(ap, 0);
-                int start = ap.getInt(1, 0);
+        PyObject string = ap.getPyObject(0);
+        int start = ap.getInt(1, 0);
         int end = ap.getInt(2, string.__len__());
         SRE_STATE state = new SRE_STATE(string, start, end, flags);
 
         state.ptr = state.start;
         int status = state.SRE_MATCH(code, 0, 1);
         if (status > 0) {
-            if (state.pos - state.endpos < string.__len__()) {
+            if (state.endpos - state.pos < string.__len__()) {
                 return Py.None;
             }
         }
@@ -94,7 +94,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     public PyObject SRE_Pattern_search(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("search", args, kws,
                                      "pattern", "pos", "endpos");
-        PyUnicode string = extractPyString(ap, 0);
+        PyObject string = ap.getPyObject(0);
         int start = ap.getInt(1, 0);
         int end = ap.getInt(2, string.__len__());
 
@@ -224,7 +224,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     public PyObject SRE_Pattern_split(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("split", args, kws,
                                      "source", "maxsplit");
-        PyUnicode string = extractPyString(ap, 0);
+        PyObject string = ap.getPyObject(0);
         int maxsplit = ap.getInt(1, 0);
 
         SRE_STATE state = new SRE_STATE(string, 0, Integer.MAX_VALUE, flags);
@@ -255,11 +255,8 @@ public class PatternObject extends PyObject implements Traverseproc {
             list.append(item);
 
             for (int i = 0; i < groups; i++) {
-                String s = state.getslice(i+1, string.toString(), false);
-                if (s != null)
-                    list.append(string.createInstance(s));
-                else
-                    list.append(Py.None);
+                PyObject s = state.getslice(i+1, string, false);
+                list.append(s);
             }
             n += 1;
             last = state.start = state.ptr;
@@ -279,7 +276,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     public PyObject SRE_Pattern_findall(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("findall", args, kws,
                                      "source", "pos", "endpos");
-        PyUnicode string = extractPyString(ap, 0);
+        PyObject string = ap.getPyObject(0);
         int start = ap.getInt(1, 0);
         int end = ap.getInt(2, Integer.MAX_VALUE);
 
@@ -300,12 +297,12 @@ public class PatternObject extends PyObject implements Traverseproc {
                     item = string.__getslice__(Py.newInteger(state.start), Py.newInteger(state.ptr));
                     break;
                 case 1:
-                    item = string.createInstance(state.getslice(1, string.toString(), true));
+                    item = state.getslice(1, string, true);
                     break;
                 default:
                     PyObject[] t = new PyObject[groups];
                     for (int i = 0; i < groups; i++)
-                        t[i] = string.createInstance(state.getslice(i+1, string.toString(), true));
+                        t[i] = state.getslice(i+1, string, true);
                     item = new PyTuple(t);
                     break;
                 }
@@ -338,7 +335,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     public ScannerObject SRE_Pattern_scanner(PyObject[] args, String[] kws) {
         ArgParser ap = new ArgParser("scanner", args, kws,
                                      "pattern", "pos", "endpos");
-        PyUnicode string = extractPyString(ap, 0);
+        PyObject string = ap.getPyObject(0);
 
         ScannerObject self = new ScannerObject();
         self.state = new SRE_STATE(string,
@@ -360,7 +357,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     }
 
 
-    MatchObject _pattern_new_match(SRE_STATE state, PyUnicode string,
+    MatchObject _pattern_new_match(SRE_STATE state, PyObject string,
                                    int status)
     {
         /* create match object (from state object) */

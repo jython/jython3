@@ -37,8 +37,7 @@ public class MatchObject extends PyObject implements Traverseproc {
     public static final PyType TYPE = PyType.fromClass(MatchObject.class);
 
     @ExposedGet
-    public PyUnicode string; /* link to the target string */
-    @ExposedGet
+    public PyObject string; /* link to the target string */
     public PyObject regs; /* cached list of matching spans */
     @ExposedGet
     public PatternObject pattern; /* link to the regex (pattern) object */
@@ -139,6 +138,7 @@ public class MatchObject extends PyObject implements Traverseproc {
         return _pair(start, end);
     }
 
+    @ExposedGet(name = "regs")
     public PyObject regs() {
 
         PyObject[] regs = new PyObject[groups];
@@ -208,9 +208,6 @@ public class MatchObject extends PyObject implements Traverseproc {
             if(pattern.indexgroup != null && lastindex >= 0)
                 return pattern.indexgroup.__getitem__(lastindex);
             return Py.None;
-        }
-        if ( key == "regs" ){
-            return regs();
         }
         return super.__findattr_ex__(key);
     }

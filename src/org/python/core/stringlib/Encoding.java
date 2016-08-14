@@ -86,12 +86,12 @@ public class Encoding {
                 v.append("\\n");
             } else if (ch == '\r') {
                 v.append("\\r");
-            } else if (ch < ' ' || ch >= 127) {
-                /* Map non-printable US ASCII to '\xNN' */
-                v.append('\\');
-                v.append('x');
-                v.append(hexdigit[(ch >> 4) & 0xf]);
-                v.append(hexdigit[ch & 0xf]);
+//            } else if (ch < ' ' || ch >= 127) {
+//                /* Map non-printable US ASCII to '\xNN' */
+//                v.append('\\');
+//                v.append('x');
+//                v.append(hexdigit[(ch >> 4) & 0xf]);
+//                v.append(hexdigit[ch & 0xf]);
             } else {/* Copy everything else as-is */
                 v.append(ch);
             }

@@ -24,7 +24,7 @@ import org.python.expose.ExposedType;
 public class ScannerObject extends PyObject implements Traverseproc {
     @ExposedGet
     public PatternObject pattern;
-    PyUnicode string;
+    PyObject string;
     SRE_STATE state;
 
     @ExposedMethod(doc = BuiltinDocs.SRE_Scanner_match_doc)
