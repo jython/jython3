@@ -6,6 +6,7 @@ import org.python.core.PyIterator;
 import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyType;
+import org.python.core.PyUnicode;
 import org.python.core.Visitproc;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedType;
@@ -246,7 +247,7 @@ public class PyReader extends PyIterator {
     private void parse_save_field() {
         PyObject field;
 
-        field = new PyBytes(this.field.toString());
+        field = new PyUnicode(this.field);
         if (numeric_field) {
             numeric_field = false;
             field = field.__float__();

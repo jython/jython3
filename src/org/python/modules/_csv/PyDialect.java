@@ -32,7 +32,6 @@ public class PyDialect extends PyObject {
     public boolean doublequote;
 
     /** Field separator. */
-    @ExposedGet
     public char delimiter;
 
     /** Quote character. */
@@ -157,7 +156,7 @@ public class PyDialect extends PyObject {
         if (src == Py.None || isStr && src.__len__() == 0) {
             return '\0';
         } else if (!isStr || src.__len__() != 1) {
-            throw Py.TypeError(String.format("\"%s\" must be an 1-character string", name));
+            throw Py.TypeError(String.format("\"%s\" must be a 1-character string", name));
         }
         return src.toString().charAt(0);
     }
@@ -187,12 +186,12 @@ public class PyDialect extends PyObject {
 
     @ExposedGet(name = "escapechar")
     public PyObject getEscapechar() {
-        return escapechar == '\0' ? Py.None : Py.newString(escapechar);
+        return escapechar == '\0' ? Py.None : Py.newUnicode(escapechar);
     }
 
     @ExposedGet(name = "quotechar")
     public PyObject getQuotechar() {
-        return quotechar == '\0' ? Py.None : Py.newString(quotechar);
+        return quotechar == '\0' ? Py.None : Py.newUnicode(quotechar);
     }
 
     @ExposedGet(name = "quoting")
@@ -212,5 +211,10 @@ public class PyDialect extends PyObject {
     public void delQuoting() {
         throw Py.AttributeError(String.format("attribute '%s' of '%s' objects is not writable",
                                               "quoting", getType().fastGetName()));
+    }
+
+    @ExposedGet(name = "delimiter")
+    public String getDelimiter() {
+        return String.valueOf(delimiter);
     }
 }

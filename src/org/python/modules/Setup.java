@@ -29,7 +29,6 @@ public class Setup {
             "_bytecodetools",
 //            "_codecs",
             "_collections:org.python.modules._collections.Collections",
-            "_csv:org.python.modules._csv._csv",
             "_functools:org.python.modules._functools._functools",
             "_hashlib",
             "_io:org.python.modules._io._io",
@@ -71,6 +70,7 @@ public class Setup {
     public static String[] newbuiltinModules = {
             "_ast:org.python.antlr.ast.AstModule",
             "_codecs",
+            "_csv:org.python.modules._csv._csv",
             "_imp:org.python.modules._imp",
             "_posixsubprocess",
             "_sre",

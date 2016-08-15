@@ -225,6 +225,450 @@ public class BuiltinDocs {
         "encoding defaults to sys.getdefaultencoding().\n" + 
         "errors defaults to 'strict'.";
 
+    // Docs for <module 'csv' from '/usr/lib/python3.5/csv.py'>
+    public final static String csv_Dialect_doc = 
+        "Describe a CSV dialect.\n" + 
+        "\n" + 
+        "    This must be subclassed (see csv.excel).  Valid attributes are:\n" + 
+        "    delimiter, quotechar, escapechar, doublequote, skipinitialspace,\n" + 
+        "    lineterminator, quoting.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String csv_DictReader_doc = 
+        "";
+
+    public final static String csv_DictWriter_doc = 
+        "";
+
+    public final static String csv_Error_doc = 
+        "";
+
+    public final static String csv_QUOTE_ALL_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String csv_QUOTE_MINIMAL_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String csv_QUOTE_NONE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String csv_QUOTE_NONNUMERIC_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String csv_Sniffer_doc = 
+        "\n" + 
+        "    \"Sniffs\" the format of a CSV file (i.e. delimiter, quotechar)\n" + 
+        "    Returns a Dialect object.\n" + 
+        "    ";
+
+    public final static String csv_StringIO_doc = 
+        "Text I/O implementation using an in-memory buffer.\n" + 
+        "\n" + 
+        "The initial_value argument sets the value of object.  The newline\n" + 
+        "argument is like the one of TextIOWrapper's constructor.";
+
+    public final static String csv__Dialect_doc = 
+        "CSV dialect\n" + 
+        "\n" + 
+        "The Dialect type records CSV parsing and generation options.\n" + 
+        "";
+
+    public final static String csv___all___doc = 
+        "list() -> new empty list\n" + 
+        "list(iterable) -> new list initialized from iterable's items";
+
+    public final static String csv___builtins___doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String csv___cached___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String csv_doc = 
+        "CSV parsing and writing.\n" + 
+        "\n" + 
+        "This module provides classes that assist in the reading and writing\n" + 
+        "of Comma Separated Value (CSV) files, and implements the interface\n" + 
+        "described by PEP 305.  Although many CSV files are simple to parse,\n" + 
+        "the format is not formally defined by a stable specification and\n" + 
+        "is subtle enough that parsing lines of a CSV file with something\n" + 
+        "like line.split(\",\") is bound to fail.  The module supports three\n" + 
+        "basic APIs: reading, writing, and registration of dialects.\n" + 
+        "\n" + 
+        "\n" + 
+        "DIALECT REGISTRATION:\n" + 
+        "\n" + 
+        "Readers and writers support a dialect argument, which is a convenient\n" + 
+        "handle on a group of settings.  When the dialect argument is a string,\n" + 
+        "it identifies one of the dialects previously registered with the module.\n" + 
+        "If it is a class or instance, the attributes of the argument are used as\n" + 
+        "the settings for the reader or writer:\n" + 
+        "\n" + 
+        "    class excel:\n" + 
+        "        delimiter = ','\n" + 
+        "        quotechar = '\"'\n" + 
+        "        escapechar = None\n" + 
+        "        doublequote = True\n" + 
+        "        skipinitialspace = False\n" + 
+        "        lineterminator = '\\r\\n'\n" + 
+        "        quoting = QUOTE_MINIMAL\n" + 
+        "\n" + 
+        "SETTINGS:\n" + 
+        "\n" + 
+        "    * quotechar - specifies a one-character string to use as the \n" + 
+        "        quoting character.  It defaults to '\"'.\n" + 
+        "    * delimiter - specifies a one-character string to use as the \n" + 
+        "        field separator.  It defaults to ','.\n" + 
+        "    * skipinitialspace - specifies how to interpret whitespace which\n" + 
+        "        immediately follows a delimiter.  It defaults to False, which\n" + 
+        "        means that whitespace immediately following a delimiter is part\n" + 
+        "        of the following field.\n" + 
+        "    * lineterminator -  specifies the character sequence which should \n" + 
+        "        terminate rows.\n" + 
+        "    * quoting - controls when quotes should be generated by the writer.\n" + 
+        "        It can take on any of the following module constants:\n" + 
+        "\n" + 
+        "        csv.QUOTE_MINIMAL means only when required, for example, when a\n" + 
+        "            field contains either the quotechar or the delimiter\n" + 
+        "        csv.QUOTE_ALL means that quotes are always placed around fields.\n" + 
+        "        csv.QUOTE_NONNUMERIC means that quotes are always placed around\n" + 
+        "            fields which do not parse as integers or floating point\n" + 
+        "            numbers.\n" + 
+        "        csv.QUOTE_NONE means that quotes are never placed around fields.\n" + 
+        "    * escapechar - specifies a one-character string used to escape \n" + 
+        "        the delimiter when quoting is set to QUOTE_NONE.\n" + 
+        "    * doublequote - controls the handling of quotes inside fields.  When\n" + 
+        "        True, two consecutive quotes are interpreted as one during read,\n" + 
+        "        and when writing, each quote character embedded in the data is\n" + 
+        "        written as two quotes\n" + 
+        "";
+
+    public final static String csv___file___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String csv___loader___doc = 
+        "Concrete implementation of SourceLoader using the file system.";
+
+    public final static String csv___name___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String csv___package___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String csv___spec___doc = 
+        "The specification for a module, used for loading.\n" + 
+        "\n" + 
+        "    A module's spec is the source for information about the module.  For\n" + 
+        "    data associated with the module, including source, use the spec's\n" + 
+        "    loader.\n" + 
+        "\n" + 
+        "    `name` is the absolute name of the module.  `loader` is the loader\n" + 
+        "    to use when loading the module.  `parent` is the name of the\n" + 
+        "    package the module is in.  The parent is derived from the name.\n" + 
+        "\n" + 
+        "    `is_package` determines if the module is considered a package or\n" + 
+        "    not.  On modules this is reflected by the `__path__` attribute.\n" + 
+        "\n" + 
+        "    `origin` is the specific location used by the loader from which to\n" + 
+        "    load the module, if that information is available.  When filename is\n" + 
+        "    set, origin will match.\n" + 
+        "\n" + 
+        "    `has_location` indicates that a spec's \"origin\" reflects a location.\n" + 
+        "    When this is True, `__file__` attribute of the module is set.\n" + 
+        "\n" + 
+        "    `cached` is the location of the cached bytecode file, if any.  It\n" + 
+        "    corresponds to the `__cached__` attribute.\n" + 
+        "\n" + 
+        "    `submodule_search_locations` is the sequence of path entries to\n" + 
+        "    search when importing submodules.  If set, is_package should be\n" + 
+        "    True--and False otherwise.\n" + 
+        "\n" + 
+        "    Packages are simply modules that (may) have submodules.  If a spec\n" + 
+        "    has a non-None value in `submodule_search_locations`, the import\n" + 
+        "    system will consider modules loaded from the spec as packages.\n" + 
+        "\n" + 
+        "    Only finders (see importlib.abc.MetaPathFinder and\n" + 
+        "    importlib.abc.PathEntryFinder) should modify ModuleSpec instances.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String csv___version___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String csv_excel_doc = 
+        "Describe the usual properties of Excel-generated CSV files.";
+
+    public final static String csv_excel_tab_doc = 
+        "Describe the usual properties of Excel-generated TAB-delimited files.";
+
+    public final static String csv_field_size_limit_doc = 
+        "Sets an upper limit on parsed fields.\n" + 
+        "    csv.field_size_limit([limit])\n" + 
+        "\n" + 
+        "Returns old limit. If limit is not given, no new limit is set and\n" + 
+        "the old limit is returned";
+
+    public final static String csv_get_dialect_doc = 
+        "Return the dialect instance associated with name.\n" + 
+        "    dialect = csv.get_dialect(name)";
+
+    public final static String csv_list_dialects_doc = 
+        "Return a list of all know dialect names.\n" + 
+        "    names = csv.list_dialects()";
+
+    public final static String csv_re_doc = 
+        "Support for regular expressions (RE).\n" + 
+        "\n" + 
+        "This module provides regular expression matching operations similar to\n" + 
+        "those found in Perl.  It supports both 8-bit and Unicode strings; both\n" + 
+        "the pattern and the strings being processed can contain null bytes and\n" + 
+        "characters outside the US ASCII range.\n" + 
+        "\n" + 
+        "Regular expressions can contain both special and ordinary characters.\n" + 
+        "Most ordinary characters, like \"A\", \"a\", or \"0\", are the simplest\n" + 
+        "regular expressions; they simply match themselves.  You can\n" + 
+        "concatenate ordinary characters, so last matches the string 'last'.\n" + 
+        "\n" + 
+        "The special characters are:\n" + 
+        "    \".\"      Matches any character except a newline.\n" + 
+        "    \"^\"      Matches the start of the string.\n" + 
+        "    \"$\"      Matches the end of the string or just before the newline at\n" + 
+        "             the end of the string.\n" + 
+        "    \"*\"      Matches 0 or more (greedy) repetitions of the preceding RE.\n" + 
+        "             Greedy means that it will match as many repetitions as possible.\n" + 
+        "    \"+\"      Matches 1 or more (greedy) repetitions of the preceding RE.\n" + 
+        "    \"?\"      Matches 0 or 1 (greedy) of the preceding RE.\n" + 
+        "    *?,+?,?? Non-greedy versions of the previous three special characters.\n" + 
+        "    {m,n}    Matches from m to n repetitions of the preceding RE.\n" + 
+        "    {m,n}?   Non-greedy version of the above.\n" + 
+        "    \"\\\\\"     Either escapes special characters or signals a special sequence.\n" + 
+        "    []       Indicates a set of characters.\n" + 
+        "             A \"^\" as the first character indicates a complementing set.\n" + 
+        "    \"|\"      A|B, creates an RE that will match either A or B.\n" + 
+        "    (...)    Matches the RE inside the parentheses.\n" + 
+        "             The contents can be retrieved or matched later in the string.\n" + 
+        "    (?aiLmsux) Set the A, I, L, M, S, U, or X flag for the RE (see below).\n" + 
+        "    (?:...)  Non-grouping version of regular parentheses.\n" + 
+        "    (?P<name>...) The substring matched by the group is accessible by name.\n" + 
+        "    (?P=name)     Matches the text matched earlier by the group named name.\n" + 
+        "    (?#...)  A comment; ignored.\n" + 
+        "    (?=...)  Matches if ... matches next, but doesn't consume the string.\n" + 
+        "    (?!...)  Matches if ... doesn't match next.\n" + 
+        "    (?<=...) Matches if preceded by ... (must be fixed length).\n" + 
+        "    (?<!...) Matches if not preceded by ... (must be fixed length).\n" + 
+        "    (?(id/name)yes|no) Matches yes pattern if the group with id/name matched,\n" + 
+        "                       the (optional) no pattern otherwise.\n" + 
+        "\n" + 
+        "The special sequences consist of \"\\\\\" and a character from the list\n" + 
+        "below.  If the ordinary character is not on the list, then the\n" + 
+        "resulting RE will match the second character.\n" + 
+        "    \\number  Matches the contents of the group of the same number.\n" + 
+        "    \\A       Matches only at the start of the string.\n" + 
+        "    \\Z       Matches only at the end of the string.\n" + 
+        "    \\b       Matches the empty string, but only at the start or end of a word.\n" + 
+        "    \\B       Matches the empty string, but not at the start or end of a word.\n" + 
+        "    \\d       Matches any decimal digit; equivalent to the set [0-9] in\n" + 
+        "             bytes patterns or string patterns with the ASCII flag.\n" + 
+        "             In string patterns without the ASCII flag, it will match the whole\n" + 
+        "             range of Unicode digits.\n" + 
+        "    \\D       Matches any non-digit character; equivalent to [^\\d].\n" + 
+        "    \\s       Matches any whitespace character; equivalent to [ \\t\\n\\r\\f\\v] in\n" + 
+        "             bytes patterns or string patterns with the ASCII flag.\n" + 
+        "             In string patterns without the ASCII flag, it will match the whole\n" + 
+        "             range of Unicode whitespace characters.\n" + 
+        "    \\S       Matches any non-whitespace character; equivalent to [^\\s].\n" + 
+        "    \\w       Matches any alphanumeric character; equivalent to [a-zA-Z0-9_]\n" + 
+        "             in bytes patterns or string patterns with the ASCII flag.\n" + 
+        "             In string patterns without the ASCII flag, it will match the\n" + 
+        "             range of Unicode alphanumeric characters (letters plus digits\n" + 
+        "             plus underscore).\n" + 
+        "             With LOCALE, it will match the set [0-9_] plus characters defined\n" + 
+        "             as letters for the current locale.\n" + 
+        "    \\W       Matches the complement of \\w.\n" + 
+        "    \\\\       Matches a literal backslash.\n" + 
+        "\n" + 
+        "This module exports the following functions:\n" + 
+        "    match     Match a regular expression pattern to the beginning of a string.\n" + 
+        "    fullmatch Match a regular expression pattern to all of a string.\n" + 
+        "    search    Search a string for the presence of a pattern.\n" + 
+        "    sub       Substitute occurrences of a pattern found in a string.\n" + 
+        "    subn      Same as sub, but also return the number of substitutions made.\n" + 
+        "    split     Split a string by the occurrences of a pattern.\n" + 
+        "    findall   Find all occurrences of a pattern in a string.\n" + 
+        "    finditer  Return an iterator yielding a match object for each match.\n" + 
+        "    compile   Compile a pattern into a RegexObject.\n" + 
+        "    purge     Clear the regular expression cache.\n" + 
+        "    escape    Backslash all non-alphanumerics in a string.\n" + 
+        "\n" + 
+        "Some of the functions in this module takes flags as optional parameters:\n" + 
+        "    A  ASCII       For string patterns, make \\w, \\W, \\b, \\B, \\d, \\D\n" + 
+        "                   match the corresponding ASCII character categories\n" + 
+        "                   (rather than the whole Unicode categories, which is the\n" + 
+        "                   default).\n" + 
+        "                   For bytes patterns, this flag is the only available\n" + 
+        "                   behaviour and needn't be specified.\n" + 
+        "    I  IGNORECASE  Perform case-insensitive matching.\n" + 
+        "    L  LOCALE      Make \\w, \\W, \\b, \\B, dependent on the current locale.\n" + 
+        "    M  MULTILINE   \"^\" matches the beginning of lines (after a newline)\n" + 
+        "                   as well as the string.\n" + 
+        "                   \"$\" matches the end of lines (before a newline) as well\n" + 
+        "                   as the end of the string.\n" + 
+        "    S  DOTALL      \".\" matches any character at all, including the newline.\n" + 
+        "    X  VERBOSE     Ignore whitespace and comments for nicer looking RE's.\n" + 
+        "    U  UNICODE     For compatibility only. Ignored for string patterns (it\n" + 
+        "                   is the default), and forbidden for bytes patterns.\n" + 
+        "\n" + 
+        "This module also defines an exception 'error'.\n" + 
+        "\n" + 
+        "";
+
+    public final static String csv_reader_doc = 
+        "    csv_reader = reader(iterable [, dialect='excel']\n" + 
+        "                        [optional keyword args])\n" + 
+        "    for row in csv_reader:\n" + 
+        "        process(row)\n" + 
+        "\n" + 
+        "The \"iterable\" argument can be any object that returns a line\n" + 
+        "of input for each iteration, such as a file object or a list.  The\n" + 
+        "optional \"dialect\" parameter is discussed below.  The function\n" + 
+        "also accepts optional keyword arguments which override settings\n" + 
+        "provided by the dialect.\n" + 
+        "\n" + 
+        "The returned object is an iterator.  Each iteration returns a row\n" + 
+        "of the CSV file (which can span multiple input lines).\n" + 
+        "";
+
+    public final static String csv_register_dialect_doc = 
+        "Create a mapping from a string name to a dialect class.\n" + 
+        "    dialect = csv.register_dialect(name[, dialect[, **fmtparams]])";
+
+    public final static String csv_unix_dialect_doc = 
+        "Describe the usual properties of Unix-generated CSV files.";
+
+    public final static String csv_unregister_dialect_doc = 
+        "Delete the name/dialect mapping associated with a string name.\n" + 
+        "    csv.unregister_dialect(name)";
+
+    public final static String csv_writer_doc = 
+        "    csv_writer = csv.writer(fileobj [, dialect='excel']\n" + 
+        "                            [optional keyword args])\n" + 
+        "    for row in sequence:\n" + 
+        "        csv_writer.writerow(row)\n" + 
+        "\n" + 
+        "    [or]\n" + 
+        "\n" + 
+        "    csv_writer = csv.writer(fileobj [, dialect='excel']\n" + 
+        "                            [optional keyword args])\n" + 
+        "    csv_writer.writerows(rows)\n" + 
+        "\n" + 
+        "The \"fileobj\" argument can be any object that supports the file API.\n" + 
+        "";
+
     // Docs for <module 'builtins' (built-in)>
     public final static String builtins_ArithmeticError_doc = 
         "Base class for arithmetic errors.";
