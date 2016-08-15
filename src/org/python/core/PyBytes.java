@@ -17,6 +17,7 @@ import org.python.expose.MethodType;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,6 +66,15 @@ public class PyBytes extends PySequence implements BufferProtocol {
             throw Py.ValueError("Cannot create PyBytes with non-byte value");
         }
         this.string = string.toString();
+    }
+
+    public PyBytes(ByteBuffer buf) {
+        super(TYPE);
+        StringBuilder v = new StringBuilder(buf.limit());
+        for(int i = 0; i < buf.limit(); i++) {
+            v.appendCodePoint(buf.get(i) & 0xFF);
+        }
+        string = v.toString();
     }
 
     public PyBytes(CharSequence string) {
@@ -291,7 +301,7 @@ public class PyBytes extends PySequence implements BufferProtocol {
 
     @ExposedMethod(doc = BuiltinDocs.bytes___repr___doc)
     final PyUnicode bytes___repr__() {
-        return new PyUnicode("b" + Encoding.encode_UnicodeEscape(getString(), true));
+        return new PyUnicode("b" + Encoding.encode_UnicodeEscapeAsASCII(getString()));
     }
 
     @ExposedMethod(doc = BuiltinDocs.bytes___getitem___doc)

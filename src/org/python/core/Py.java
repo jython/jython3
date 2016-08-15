@@ -513,7 +513,12 @@ public final class Py {
     }
 
     public static PyObject ArithmeticError;
+
     public static PyObject LookupError;
+    public static PyException LookupError(String message) {
+        return new PyException(Py.LookupError, message);
+    }
+
     public static PyObject StandardError;
     public static PyObject Exception;
     public static PyObject BaseException;
