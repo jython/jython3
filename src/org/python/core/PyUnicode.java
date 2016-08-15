@@ -4,6 +4,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+import com.ibm.icu.lang.UCharacter;
 import org.python.core.buffer.BaseBuffer;
 import org.python.core.stringlib.Encoding;
 import org.python.core.stringlib.FieldNameIterator;
@@ -718,13 +719,17 @@ public class PyUnicode extends PySequence implements Iterable {
 
     @ExposedMethod(doc = BuiltinDocs.str___getitem___doc)
     final PyObject str___getitem__(PyObject index) {
-//        PyObject ret = seq___finditem__(index);
-//        if (ret == null) {
-//            throw Py.IndexError("string index out of range");
-//        }
-//        return ret;
+        if (index instanceof PySlice) {
+            int[] indices = ((PySlice) index).indicesEx(__len__());
+            return getslice(indices[0], indices[1], indices[2]);
+        }
         int codepoint = string.codePointAt(string.offsetByCodePoints(0, index.asIndex()));
         return new PyUnicode(new String(Character.toChars(codepoint)));
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.str___iter___doc)
+    public final PyObject str___iter__() {
+        return seq___iter__();
     }
 
     @Override
@@ -1897,12 +1902,10 @@ public class PyUnicode extends PySequence implements Iterable {
         return new PyDictionary(tbl);
     }
 
-    // these tests need to be UTF-16 aware because they are character-by-character tests,
-    // so we can only use equivalent str_XXX tests if we are in basic plane
     @ExposedMethod(doc = BuiltinDocs.str_islower_doc)
     final boolean str_islower() {
         if (isBasicPlane()) {
-            return Encoding.isLowercase(getString());
+            return Encoding.isLowercase(getString().trim());
         }
         return _none(new Predicate<Integer>() {
             @Override
@@ -1915,7 +1918,7 @@ public class PyUnicode extends PySequence implements Iterable {
     @ExposedMethod(doc = BuiltinDocs.str_isupper_doc)
     final boolean str_isupper() {
         if (isBasicPlane()) {
-            return Encoding.isUppercase(getString());
+            return Encoding.isUppercase(getString().trim());
         }
         return _none(new Predicate<Integer>() {
             @Override
@@ -1960,9 +1963,6 @@ public class PyUnicode extends PySequence implements Iterable {
     final boolean str_isalnum() {
         if (isBasicPlane()) {
             return Encoding.isAlnum(getString());
-        }
-        if (getCodePointCount() == 0) {
-            return false;
         }
         return _all(new Predicate<Integer>() {
             @Override
@@ -2049,15 +2049,33 @@ public class PyUnicode extends PySequence implements Iterable {
         if (isBasicPlane()) {
             return Encoding.isSpace(getString());
         }
-        if (getCodePointCount() == 0) {
-            return false;
-        }
         return _all(new Predicate<Integer>() {
             @Override
             public boolean apply(Integer codepoint) {
                 return Character.isWhitespace(codepoint);
             }
         });
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.str_isprintable_doc)
+    public final boolean str_isprintable() {
+        if (getCodePointCount() == 0) return true;
+        return _all(new Predicate<Integer>() {
+            @Override
+            public boolean apply(Integer codepoint) {
+                return UCharacter.isPrintable(codepoint);
+            }
+        });
+    }
+
+    @ExposedMethod(doc = BuiltinDocs.str_casefold_doc)
+    public final PyUnicode str_casefold() {
+        return new PyUnicode(_map(new Function<Integer, Integer>() {
+            @Override
+            public Integer apply(Integer input) {
+                return Character.toLowerCase(input);
+            }
+        }));
     }
 
     public String encode() {
@@ -2204,6 +2222,9 @@ public class PyUnicode extends PySequence implements Iterable {
     }
 
     private boolean _all(Predicate<Integer> predicate) {
+        if (getCodePointCount() == 0) {
+            return false;
+        }
         for (Iterator<Integer> iter = newSubsequenceIterator(); iter.hasNext();) {
             int codepoint = iter.next();
             if (! predicate.apply(codepoint)) return false;
@@ -2212,11 +2233,23 @@ public class PyUnicode extends PySequence implements Iterable {
     }
 
     private boolean _none(Predicate<Integer> predicate) {
+        if (getCodePointCount() == 0) {
+            return false;
+        }
         for (Iterator<Integer> iter = newSubsequenceIterator(); iter.hasNext();) {
             int codepoint = iter.next();
             if (predicate.apply(codepoint)) return false;
         }
         return true;
+    }
+
+    private String _map(Function<Integer, Integer> func) {
+        StringBuilder res = new StringBuilder(__len__());
+        for (Iterator<Integer> iter = newSubsequenceIterator(); iter.hasNext();) {
+            int codepoint = iter.next();
+            res.appendCodePoint(func.apply(codepoint));
+        }
+        return res.toString();
     }
 
         /**
@@ -2459,10 +2492,5 @@ public class PyUnicode extends PySequence implements Iterable {
     @Override
     public PyObject __int__() {
         return Encoding.atol(getString(), 10);
-    }
-
-    @ExposedMethod
-    public final PyObject str_decode(PyObject[] args, String[] keywords) {
-        return this;
     }
 }

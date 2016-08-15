@@ -4,6 +4,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+import com.ibm.icu.impl.CharacterIteration;
 import com.ibm.icu.lang.UCharacter;
 import org.python.core.BufferProtocol;
 import org.python.core.Py;
@@ -57,17 +58,21 @@ public class Encoding {
                 char ch2 = str.charAt(i++);
                 size--;
                 if (Character.isLowSurrogate(ch2)) {
-                    int ucs = (((ch & 0x03FF) << 10) | (ch2 & 0x03FF)) + 0x00010000;
-                    v.append('\\');
-                    v.append('U');
-                    v.append(hexdigit[(ucs >> 28) & 0xf]);
-                    v.append(hexdigit[(ucs >> 24) & 0xf]);
-                    v.append(hexdigit[(ucs >> 20) & 0xf]);
-                    v.append(hexdigit[(ucs >> 16) & 0xf]);
-                    v.append(hexdigit[(ucs >> 12) & 0xf]);
-                    v.append(hexdigit[(ucs >> 8) & 0xf]);
-                    v.append(hexdigit[(ucs >> 4) & 0xf]);
-                    v.append(hexdigit[ucs & 0xf]);
+                    int ucs = Character.toCodePoint(ch, ch2);//((ch & 0x03FF) << 10) | (ch2 & 0x03FF)) + 0x00010000;
+                    if (UCharacter.isPrintable(ucs)) {
+                        v.appendCodePoint(ucs);
+                    } else {
+                        v.append('\\');
+                        v.append('U');
+                        v.append(hexdigit[(ucs >> 28) & 0xf]);
+                        v.append(hexdigit[(ucs >> 24) & 0xf]);
+                        v.append(hexdigit[(ucs >> 20) & 0xf]);
+                        v.append(hexdigit[(ucs >> 16) & 0xf]);
+                        v.append(hexdigit[(ucs >> 12) & 0xf]);
+                        v.append(hexdigit[(ucs >> 8) & 0xf]);
+                        v.append(hexdigit[(ucs >> 4) & 0xf]);
+                        v.append(hexdigit[ucs & 0xf]);
+                    }
                     continue;
                 }
                 /* Fall through: isolated surrogates are copied as-is */
@@ -75,7 +80,7 @@ public class Encoding {
                 size++;
             }
             /* Map 16-bit characters to '\\uxxxx' */
-            if (ch >= 256) {
+            if (ch >= 256 && !UCharacter.isPrintable(ch)) {
                 v.append('\\');
                 v.append('u');
                 v.append(hexdigit[(ch >> 12) & 0xf]);
@@ -279,7 +284,7 @@ public class Encoding {
 
     /* pass in an int since this can be a UCS-4 character */
     private static boolean storeUnicodeCharacter(int value, StringBuilder partialDecode) {
-        if (value <= PySystemState.maxunicode) {
+        if (value >= 0 && value <= PySystemState.maxunicode) {
             partialDecode.appendCodePoint(value);
             return true;
         }
@@ -330,23 +335,23 @@ public class Encoding {
     }
 
     public static final boolean isLowercase(CharSequence s) {
-        return CharMatcher.JAVA_LOWER_CASE.matchesAllOf(s);
+        return s.length() != 0 && CharMatcher.JAVA_LOWER_CASE.matchesAllOf(s);
     }
 
     public static final boolean isUppercase(CharSequence s) {
-        return CharMatcher.JAVA_UPPER_CASE.matchesAllOf(s);
+        return s.length() != 0 && CharMatcher.JAVA_UPPER_CASE.matchesAllOf(s);
     }
 
     public static final boolean isAlpha(CharSequence s) {
-        return CharMatcher.JAVA_LETTER.matchesAllOf(s);
+        return s.length() != 0 && CharMatcher.JAVA_LETTER.matchesAllOf(s);
     }
 
     public static final boolean isAlnum(CharSequence s) {
-        return CharMatcher.JAVA_LETTER_OR_DIGIT.matchesAllOf(s);
+        return s.length() != 0 && CharMatcher.JAVA_LETTER_OR_DIGIT.matchesAllOf(s);
     }
 
     public static final boolean isDecimal(CharSequence s) {
-        return CharMatcher.forPredicate(new Predicate<Character>() {
+        return s.length() != 0 && CharMatcher.forPredicate(new Predicate<Character>() {
             @Override
             public boolean apply(Character ch) {
                 return Character.getType(ch) == Character.DECIMAL_DIGIT_NUMBER;
@@ -355,11 +360,11 @@ public class Encoding {
     }
 
     public static final boolean isDigit(CharSequence s) {
-        return CharMatcher.DIGIT.matchesAllOf(s);
+        return s.length() != 0 && CharMatcher.DIGIT.matchesAllOf(s);
     }
 
     public static final boolean isNumeric(CharSequence s) {
-        return CharMatcher.forPredicate(new Predicate<Character>() {
+        return s.length() != 0 && CharMatcher.forPredicate(new Predicate<Character>() {
             @Override
             public boolean apply(Character ch) {
                 int type = Character.getType(ch);
@@ -403,7 +408,7 @@ public class Encoding {
     }
 
     public static final boolean isSpace(CharSequence s) {
-        return CharMatcher.WHITESPACE.matchesAllOf(s);
+        return s.length() != 0 && CharMatcher.WHITESPACE.matchesAllOf(s);
     }
 
     public static PyObject format(CharSequence s, PyObject formatSpec, boolean bytes) {

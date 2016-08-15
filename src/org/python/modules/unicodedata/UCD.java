@@ -330,9 +330,12 @@ public class UCD extends PyObject {
     final PyObject UCD_lookup(PyObject name) {
         int codepoint = UCharacter.getCharFromName(name.toString());
         if (codepoint == -1) {
+            codepoint = UCharacter.getCharFromNameAlias(name.toString());
+        }
+        if (codepoint == -1) {
             throw Py.KeyError(String.format("undefined character name '%s'", name));
         }
-        return new PyUnicode(String.valueOf(codepoint));
+        return new PyUnicode(String.valueOf(Character.toChars(codepoint)));
     }
 
     @ExposedMethod
