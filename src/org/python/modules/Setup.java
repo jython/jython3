@@ -61,7 +61,6 @@ public class Setup {
             "synchronize",
 //            "_thread:org.python.modules.thread.thread",
             "time:org.python.modules.time.Time",
-            "ucnhash",
             "zipimport:org.python.modules.zipimport.zipimport",
 //            PosixModule.getOSName() + ":org.python.modules.posix.PosixModule"
             "posix:org.python.modules.posix.PosixModule"

@@ -4,6 +4,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+import com.ibm.icu.lang.UCharacter;
 import org.python.core.BufferProtocol;
 import org.python.core.Py;
 import org.python.core.PyBUF;
@@ -89,12 +90,12 @@ public class Encoding {
                 v.append("\\n");
             } else if (ch == '\r') {
                 v.append("\\r");
-//            } else if (ch < ' ' || ch >= 127) {
-//                /* Map non-printable US ASCII to '\xNN' */
-//                v.append('\\');
-//                v.append('x');
-//                v.append(hexdigit[(ch >> 4) & 0xf]);
-//                v.append(hexdigit[ch & 0xf]);
+            } else if (ch < ' ' || ch == 127) {
+                /* Map non-printable US ASCII to '\xNN' */
+                v.append('\\');
+                v.append('x');
+                v.append(hexdigit[(ch >> 4) & 0xf]);
+                v.append(hexdigit[ch & 0xf]);
             } else {/* Copy everything else as-is */
                 v.append(ch);
             }
@@ -104,8 +105,6 @@ public class Encoding {
         }
         return v.toString();
     }
-
-//    private static ucnhashAPI pucnHash = null;
 
     public static String decode_UnicodeEscape(String str, int start, int end, String errors,
                                               boolean unicode) {
@@ -199,55 +198,43 @@ public class Encoding {
                     }
                     s = hexescape(v, errors, 8, s, str, end, "truncated \\UXXXXXXXX");
                     break;
-//                case 'N':
-//                    if (!unicode) {
-//                        v.append('\\');
-//                        v.append('N');
-//                        break;
-//                    }
-//                    /*
-//                     * Ok, we need to deal with Unicode Character Names now, make sure we've
-//                     * imported the hash table data...
-//                     */
-//                    if (pucnHash == null) {
-//                        PyObject mod = imp.importName("ucnhash", true);
-//                        mod = mod.__call__();
-//                        pucnHash = (ucnhashAPI) mod.__tojava__(Object.class);
-//                        if (pucnHash.getCchMax() < 0) {
-//                            throw Py.UnicodeError("Unicode names not loaded");
-//                        }
-//                    }
-//                    if (str.charAt(s) == '{') {
-//                        int startName = s + 1;
-//                        int endBrace = startName;
-//                        /*
-//                         * look for either the closing brace, or we exceed the maximum length of the
-//                         * unicode character names
-//                         */
-//                        int maxLen = pucnHash.getCchMax();
-//                        while (endBrace < end && str.charAt(endBrace) != '}'
-//                                && (endBrace - startName) <= maxLen) {
-//                            endBrace++;
-//                        }
-//                        if (endBrace != end && str.charAt(endBrace) == '}') {
-//                            int value = pucnHash.getValue(str, startName, endBrace);
-//                            if (storeUnicodeCharacter(value, v)) {
-//                                s = endBrace + 1;
-//                            } else {
-//                                s = codecs.insertReplacementAndGetResume( //
-//                                        v, errors, "unicodeescape", //
-//                                        str, loopStart, endBrace + 1, "illegal Unicode character");
-//                            }
-//                        } else {
-//                            s = codecs.insertReplacementAndGetResume(v, errors, "unicodeescape", //
-//                                    str, loopStart, endBrace, "malformed \\N character escape");
-//                        }
-//                        break;
-//                    } else {
-//                        s = codecs.insertReplacementAndGetResume(v, errors, "unicodeescape", //
-//                                str, loopStart, s + 1, "malformed \\N character escape");
-//                    }
-//                    break;
+                case 'N':
+                    if (!unicode) {
+                        v.append('\\');
+                        v.append('N');
+                        break;
+                    }
+                    /*
+                     * Ok, we need to deal with Unicode Character Names now, make sure we've
+                     * imported the hash table data...
+                     */
+                    if (str.charAt(s) == '{') {
+                        int startName = s + 1;
+                        int endBrace = startName;
+                        /*
+                         * look for either the closing brace, or we exceed the maximum length of the
+                         * unicode character names
+                         */
+                        endBrace = str.indexOf('}');
+                        if (endBrace != -1) {
+                            int value = UCharacter.getCharFromName(str.substring(startName, endBrace));
+                            if (storeUnicodeCharacter(value, v)) {
+                                s = endBrace + 1;
+                            } else {
+                                s = codecs.insertReplacementAndGetResume( //
+                                        v, errors, "unicodeescape", //
+                                        str, loopStart, endBrace + 1, "illegal Unicode character");
+                            }
+                        } else {
+                            s = codecs.insertReplacementAndGetResume(v, errors, "unicodeescape", //
+                                    str, loopStart, endBrace, "malformed \\N character escape");
+                        }
+                        break;
+                    } else {
+                        s = codecs.insertReplacementAndGetResume(v, errors, "unicodeescape", //
+                                str, loopStart, s + 1, "malformed \\N character escape");
+                    }
+                    break;
                 default:
                     v.append('\\');
                     v.append(str.charAt(s - 1));
@@ -338,7 +325,7 @@ public class Encoding {
             if (count < 0) {
                 count = (oldLen == 0) ? len + 1 : len;
             }
-            return Joiner.on(newPiece).join(s.split(oldPiece, count + 1));
+            return Joiner.on(newPiece).join(Pattern.compile(oldPiece, Pattern.LITERAL).split(s, count + 1));
         }
     }
 
