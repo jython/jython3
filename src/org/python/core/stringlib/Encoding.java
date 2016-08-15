@@ -4,7 +4,6 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
-import com.ibm.icu.impl.CharacterIteration;
 import com.ibm.icu.lang.UCharacter;
 import org.python.core.BufferProtocol;
 import org.python.core.Py;
@@ -1828,5 +1827,73 @@ public class Encoding {
         }
     }
 
+    public static String encode_UnicodeEscapeAsASCII(String str) {
+        int size = str.length();
+        StringBuilder v = new StringBuilder(str.length());
+
+        char quote = 0;
+
+        quote = str.indexOf('\'') >= 0 && str.indexOf('"') == -1 ? '"' : '\'';
+        v.append(quote);
+
+        for (int i = 0; size-- > 0; ) {
+            char ch = str.charAt(i++);
+            /* Escape quotes */
+            if (ch == quote || ch == '\\') {
+                v.append('\\');
+                v.append(ch);
+                continue;
+            }
+            /* Map UTF-16 surrogate pairs to Unicode \UXXXXXXXX escapes */
+            else if (size > 0 && Character.isHighSurrogate(ch)) {
+                char ch2 = str.charAt(i++);
+                size--;
+                if (Character.isLowSurrogate(ch2)) {
+                    int ucs = Character.toCodePoint(ch, ch2);
+                    v.append('\\');
+                    v.append('U');
+                    v.append(hexdigit[(ucs >> 28) & 0xf]);
+                    v.append(hexdigit[(ucs >> 24) & 0xf]);
+                    v.append(hexdigit[(ucs >> 20) & 0xf]);
+                    v.append(hexdigit[(ucs >> 16) & 0xf]);
+                    v.append(hexdigit[(ucs >> 12) & 0xf]);
+                    v.append(hexdigit[(ucs >> 8) & 0xf]);
+                    v.append(hexdigit[(ucs >> 4) & 0xf]);
+                    v.append(hexdigit[ucs & 0xf]);
+                    continue;
+                }
+                /* Fall through: isolated surrogates are copied as-is */
+                i--;
+                size++;
+            }
+            /* Map 16-bit characters to '\\uxxxx' */
+            if (ch >= 256) {
+                v.append('\\');
+                v.append('u');
+                v.append(hexdigit[(ch >> 12) & 0xf]);
+                v.append(hexdigit[(ch >> 8) & 0xf]);
+                v.append(hexdigit[(ch >> 4) & 0xf]);
+                v.append(hexdigit[ch & 15]);
+            }
+            /* Map special whitespace to '\t', \n', '\r' */
+            else if (ch == '\t') {
+                v.append("\\t");
+            } else if (ch == '\n') {
+                v.append("\\n");
+            } else if (ch == '\r') {
+                v.append("\\r");
+            } else if (ch < ' ' || ch >= 127) {
+                /* Map non-printable US ASCII to '\xNN' */
+                v.append('\\');
+                v.append('x');
+                v.append(hexdigit[(ch >> 4) & 0xf]);
+                v.append(hexdigit[ch & 0xf]);
+            } else {/* Copy everything else as-is */
+                v.append(ch);
+            }
+        }
+        v.append(quote);
+        return v.toString();
+    }
 }
 

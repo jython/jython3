@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.python.antlr.base.mod;
+import org.python.core.stringlib.Encoding;
 import org.python.core.stringlib.IntegerFormatter;
 import org.python.core.stringlib.InternalFormat;
 import org.python.core.util.ExtraMath;
@@ -403,7 +404,7 @@ public class __builtin__ {
     }
 
     public static PyObject ascii(PyObject obj) {
-        return obj.__repr__();
+        return new PyUnicode(Encoding.encode_UnicodeEscapeAsASCII(obj.toString()));
     }
 
     public static boolean callable(PyObject obj) {
