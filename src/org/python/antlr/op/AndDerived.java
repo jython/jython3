@@ -110,30 +110,6 @@ public class AndDerived extends And implements Slotted,FinalizablePyObjectDerive
         return super.__repr__();
     }
 
-    public PyUnicode __hex__() {
-        PyType self_type=getType();
-        PyObject impl=self_type.lookup("__hex__");
-        if (impl!=null) {
-            PyObject res=impl.__get__(this,self_type).__call__();
-            if (res instanceof PyUnicode)
-                return(PyUnicode)res;
-            throw Py.TypeError("__hex__"+" returned non-"+"unicode"+" (type "+res.getType().fastGetName()+")");
-        }
-        return super.__hex__();
-    }
-
-    public PyUnicode __oct__() {
-        PyType self_type=getType();
-        PyObject impl=self_type.lookup("__oct__");
-        if (impl!=null) {
-            PyObject res=impl.__get__(this,self_type).__call__();
-            if (res instanceof PyUnicode)
-                return(PyUnicode)res;
-            throw Py.TypeError("__oct__"+" returned non-"+"unicode"+" (type "+res.getType().fastGetName()+")");
-        }
-        return super.__oct__();
-    }
-
     public PyFloat __float__() {
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__float__");

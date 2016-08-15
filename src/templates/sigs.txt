@@ -36,8 +36,6 @@ __delslice__
 ,__setattr__ so
 ,__delattr__ s
 
-,__hex__ 
-,__oct__ 
 ,__int__ 
 ,__float__ 
 ,__long__ 

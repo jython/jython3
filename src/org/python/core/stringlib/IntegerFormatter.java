@@ -9,6 +9,7 @@ import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.python.core.PyBytes;
 import org.python.core.PySystemState;
+import org.python.core.PyUnicode;
 import org.python.core.stringlib.InternalFormat.Spec;
 
 /**
@@ -600,11 +601,16 @@ public class IntegerFormatter extends InternalFormat.Formatter {
      * @param number to convert
      * @return PyBytes converted result
      */
-    // Follow this pattern in Python 3, where objects no longer have __hex__, __oct__ members.
-    public static PyBytes bin(PyObject number) {
+    public static PyUnicode bin(PyObject number) {
         return formatNumber(number, BIN);
     }
 
+    public static PyUnicode oct(PyObject number) {
+        return formatNumber(number, OCT);
+    }
+    public static PyUnicode hex(PyObject number){
+        return formatNumber(number, HEX);
+    }
     /**
      * Convert the object according to the conventions of Python built-in <code>hex()</code>, or
      * <code>oct()</code>. The object's <code>__index__</code> method is called, and is responsible
@@ -613,7 +619,7 @@ public class IntegerFormatter extends InternalFormat.Formatter {
      * @param number to convert
      * @return PyBytes converted result
      */
-    public static PyBytes formatNumber(PyObject number, Spec spec) {
+    public static PyUnicode formatNumber(PyObject number, Spec spec) {
         number = number.__index__();
         IntegerFormatter f = new IntegerFormatter(spec);
         if (number instanceof PyInteger) {
@@ -621,7 +627,7 @@ public class IntegerFormatter extends InternalFormat.Formatter {
         } else {
             f.format(((PyLong)number).getValue());
         }
-        return new PyBytes(f.getResult());
+        return new PyUnicode(f.getResult());
     }
 
     /**

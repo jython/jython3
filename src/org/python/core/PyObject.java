@@ -1724,46 +1724,6 @@ public class PyObject implements Serializable {
 
     /* The basic numeric operations */
     /**
-     * Common code used by the number-base conversion method __oct__ and __hex__.
-     *
-     * @param spec prepared format-specifier.
-     * @return converted value of this object
-     */
-    private PyUnicode formatImpl(InternalFormat.Spec spec) {
-        // Traditional formatter (%-format) because #o means "-0123" not "-0o123".
-        IntegerFormatter f = new IntegerFormatter(spec);
-        PyObject index = __index__();
-        if (index instanceof PyInteger) {
-            f.format(((PyInteger) index).getValue());
-        } else if (index instanceof PyLong) {
-            f.format(((PyLong) index).getValue());
-        }
-        return new PyUnicode(f.getResult());
-    }
-
-    /**
-     * Equivalent to the standard Python __hex__ method
-     * Should only be overridden by numeric objects that can be
-     * reasonably represented as a hexadecimal string.
-     *
-     * @return a string representing this object as a hexadecimal number.
-     **/
-    public PyUnicode __hex__() {
-        return formatImpl(IntegerFormatter.HEX);
-    }
-
-    /**
-     * Equivalent to the standard Python __oct__ method.
-     * Should only be overridden by numeric objects that can be
-     * reasonably represented as an octal string.
-     *
-     * @return a string representing this object as an octal number.
-     **/
-    public PyUnicode __oct__() {
-        return formatImpl(IntegerFormatter.OCT);
-    }
-
-    /**
      * Equivalent to the standard Python __int__ method.
      * Should only be overridden by numeric objects that can be
      * reasonably coerced into a python long.

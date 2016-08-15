@@ -5,8 +5,6 @@ no_toString: true
 ctr:
 unary1: __str__ unicode
 unary1: __repr__ unicode
-unary1: __hex__ unicode
-unary1: __oct__ unicode
 unary1: __float__ float
 unary1: __complex__ complex
 unary1: __pos__

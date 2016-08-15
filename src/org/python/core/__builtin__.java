@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.python.antlr.base.mod;
 import org.python.core.stringlib.IntegerFormatter;
+import org.python.core.stringlib.InternalFormat;
 import org.python.core.util.ExtraMath;
 import org.python.core.util.RelativeFile;
 import org.python.modules._io._io;
@@ -680,7 +681,11 @@ public class __builtin__ {
     }
 
     public static PyUnicode hex(PyObject o) {
-        return o.__hex__();
+        return IntegerFormatter.hex(o);
+    }
+
+    public static PyUnicode oct(PyObject o) {
+        return IntegerFormatter.oct(o);
     }
 
     public static long id(PyObject o) {
@@ -779,10 +784,6 @@ public class __builtin__ {
             }
         }
         return list;
-    }
-
-    public static PyUnicode oct(PyObject o) {
-        return o.__oct__();
     }
 
     /**

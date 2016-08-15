@@ -47,8 +47,6 @@ public class ProxyType extends AbstractReference {
 
     public PyObject __iter__() { return py().__iter__(); }
     public PyUnicode __str__() { return py().__str__(); }
-    public PyUnicode __hex__() { return py().__hex__(); }
-    public PyUnicode __oct__() { return py().__oct__(); }
     public PyFloat __float__() { return py().__float__(); }
     public PyObject __int__() { return py().__int__(); }
     public PyComplex __complex__() { return py().__complex__(); }
