@@ -36,6 +36,7 @@ import org.python.core.PyNone;
 import org.python.core.PyObject;
 import org.python.core.PyReflectedFunction;
 import org.python.core.PySequence;
+import org.python.core.PySlice;
 import org.python.core.PyStringMap;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
@@ -889,7 +890,7 @@ public class cPickle implements ClassDictInit {
                                           "args[0] from __newobj__ args has no __new__");
                 // TODO: check class
                 save(cls);
-                save(arg_tup.__getslice__(Py.One, Py.None));
+                save(arg_tup.__getitem__(new PySlice(Py.One, Py.None, Py.None)));
                 file.write(NEWOBJ);
             } else {
                 save(callable);

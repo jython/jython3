@@ -313,7 +313,7 @@ public class Scanner extends PyObject implements Traverseproc {
         }
 
         /* copy the section we determined to be a number */
-        PyBytes numstr = (PyBytes) str.__getslice__(Py.newInteger(start), Py.newInteger(idx));
+        PyBytes numstr = (PyBytes) str.getslice(start, idx);
         if (is_float) {
             /* parse as a float using a fast path if available, otherwise call user defined method */
             return valIndex(parse_float.__call__(numstr), idx);

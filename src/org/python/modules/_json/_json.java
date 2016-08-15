@@ -154,7 +154,7 @@ public class _json implements ClassDictInit {
 
             /* Pick up this chunk if it's not zero length */
             if (next != end) {
-                PyObject strchunk = pystr.__getslice__(Py.newInteger(end), Py.newInteger(next));
+                PyObject strchunk = pystr.getslice(end, next);
                 if (strchunk instanceof PyUnicode) {
                     chunks.append(strchunk);
                 } else {

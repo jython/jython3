@@ -20,7 +20,7 @@ import java.util.ListIterator;
  * <p>
  * Subclasses must define (from {@link PySequence}):
  * <ul>
- * <li>{@link #getslice(int, int, int)}</li>
+ * <li>{@link PySequence#getslice(int, int, int)}</li>
  * <li>{@link #repeat(int)}</li>
  * </ul>
  * each returning an appropriate concrete type. Mutable subclasses should override:
@@ -46,7 +46,7 @@ import java.util.ListIterator;
  * defined in <code>BaseBytes</code> to return a BaseBytes, actually returns a {@link PyByteArray}
  * when applied to a <code>bytearray</code>. Or it may be that the method returns a
  * <code>PyList</code> of instances of the target type, for example {@link #rpartition(PyObject)}.
- * This is achieved by the sub-class defining {@link #getslice(int, int, int)} and
+ * This is achieved by the sub-class defining {@link PySequence#getslice(int, int, int)} and
  * {@link #getBuilder(int)} to return instances of its own type. See the documentation of particular
  * methods for more information.
  */
@@ -688,7 +688,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      * and save some casting and type anxiety.
      */
     @Override
-    protected abstract BaseBytes getslice(int start, int stop, int step);
+    public abstract BaseBytes getslice(int start, int stop, int step);
 
     @Override
     protected abstract BaseBytes repeat(int count);
@@ -715,7 +715,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
     }
 
     /**
-     * Specialisation of {@link #getslice(int, int, int)} to contiguous slices (of step size 1) for
+     * Specialisation of {@link PySequence#getslice(int, int, int)} to contiguous slices (of step size 1) for
      * brevity and efficiency. The default implementation is <code>getslice(start, stop, 1)</code>
      * but it is worth overriding.
      *
@@ -723,7 +723,8 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
      * @param stop one more than the position of the last element.
      * @return a subclass instance of BaseBytes corresponding the the given range of elements.
      */
-    protected BaseBytes getslice(int start, int stop) {
+    @Override
+    public BaseBytes getslice(int start, int stop) {
         return getslice(start, stop, 1);
     }
 

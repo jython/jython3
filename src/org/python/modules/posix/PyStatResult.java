@@ -170,7 +170,7 @@ public class PyStatResult extends PyTuple {
     }
 
     @Override
-    protected PyObject getslice(int start, int stop, int step) {
+    public PyObject getslice(int start, int stop, int step) {
         if (step > 0 && stop < start) {
             stop = start;
         }

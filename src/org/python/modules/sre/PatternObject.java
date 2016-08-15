@@ -18,7 +18,6 @@ package org.python.modules.sre;
 
 import java.util.*;
 import org.python.core.*;
-import org.python.core.util.StringUtil;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedType;
@@ -173,7 +172,7 @@ public class PatternObject extends PyObject implements Traverseproc {
 
             if (i < b) {
                 /* get segment before this match */
-                list.append(string.__getslice__(Py.newInteger(i), Py.newInteger(b)));
+                list.append(((PySequence) string).getslice(i, b));
             }
             if (! (i == b && i == e && n > 0)) {
                 PyObject item;
@@ -202,7 +201,7 @@ public class PatternObject extends PyObject implements Traverseproc {
                 state.start = state.ptr;
         }
         if (i < state.endpos) {
-            list.append(string.__getslice__(Py.newInteger(i), Py.newLong(state.endpos)));
+            list.append(string.getslice(i, state.endpos, 1));
         }
 
         PyObject outstring = join_list(list, string);
@@ -213,11 +212,10 @@ public class PatternObject extends PyObject implements Traverseproc {
     }
 
     private PyObject join_list(PyList list, PyUnicode string) {
-        PyObject joiner = string.__getslice__(Py.Zero, Py.Zero);
         if (list.size() == 0) {
-            return joiner;
+            return string;
         }
-        return joiner.__getattr__("join").__call__(list);
+        return string.__getattr__("join").__call__(list);
     }
 
     @ExposedMethod(doc = BuiltinDocs.SRE_Pattern_split_doc)
@@ -251,7 +249,7 @@ public class PatternObject extends PyObject implements Traverseproc {
             }
 
             /* get segment before this match */
-            PyObject item = string.__getslice__(Py.newInteger(last), Py.newInteger(state.start));
+            PyObject item = ((PySequence) string).getslice(last, state.start);
             list.append(item);
 
             for (int i = 0; i < groups; i++) {
@@ -262,7 +260,7 @@ public class PatternObject extends PyObject implements Traverseproc {
             last = state.start = state.ptr;
         }
 
-        list.append(string.__getslice__(Py.newLong(last), Py.newLong(state.endpos)));
+        list.append(((PySequence) string).getslice(last, state.endpos));
 
         return list;
     }
@@ -294,7 +292,7 @@ public class PatternObject extends PyObject implements Traverseproc {
                 /* don't bother to build a match object */
                 switch (groups) {
                 case 0:
-                    item = string.__getslice__(Py.newInteger(state.start), Py.newInteger(state.ptr));
+                    item = ((PySequence) string).getslice(state.start, state.ptr);
                     break;
                 case 1:
                     item = state.getslice(1, string, true);

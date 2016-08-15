@@ -167,7 +167,7 @@ public class PyRange extends PySequence {
     }
 
     @Override
-    protected PyObject getslice(int start, int stop, int step) {
+    public PyObject getslice(int start, int stop, int step) {
         throw Py.TypeError("range index must be integer, not 'slice'");
     }
 

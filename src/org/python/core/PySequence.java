@@ -67,8 +67,11 @@ public abstract class PySequence extends PyObject {
      * @param step the step size.
      * @return a sequence corresponding the the given range of elements.
      */
-    protected abstract PyObject getslice(int start, int stop, int step);
+    public abstract PyObject getslice(int start, int stop, int step);
 
+    public PyObject getslice(int start, int stop) {
+        return getslice(start, stop, 1);
+    }
     /**
      * Returns a (concrete subclass of) PySequence that repeats the given sequence, as in the
      * implementation of <code>__mul__</code> for strings.
@@ -314,37 +317,6 @@ public abstract class PySequence extends PyObject {
     @Override
     public boolean isNumberType() throws PyIgnoreMethodTag {
         return false;
-    }
-
-    @Override
-    public PyObject __getslice__(PyObject start, PyObject stop, PyObject step) {
-        return seq___getslice__(start, stop, step);
-    }
-
-    final PyObject seq___getslice__(PyObject start, PyObject stop, PyObject step) {
-        return delegator.getSlice(new PySlice(start, stop, step));
-    }
-
-    @Override
-    public void __setslice__(PyObject start, PyObject stop, PyObject step, PyObject value) {
-        seq___setslice__(start, stop, step, value);
-    }
-
-    final void seq___setslice__(PyObject start, PyObject stop, PyObject step, PyObject value) {
-        if (value == null) {
-            value = step;
-            step = null;
-        }
-        delegator.checkIdxAndSetSlice(new PySlice(start, stop, step), value);
-    }
-
-    @Override
-    public void __delslice__(PyObject start, PyObject stop, PyObject step) {
-        seq___delslice__(start, stop, step);
-    }
-
-    final void seq___delslice__(PyObject start, PyObject stop, PyObject step) {
-        delegator.checkIdxAndDelItem(new PySlice(start, stop, step));
     }
 
     @Override

@@ -7,9 +7,6 @@ __delete__ o
 
 [
 __del__
-__setslice__
-__getslice__
-__delslice__
 ]
 
 ,__str__ 

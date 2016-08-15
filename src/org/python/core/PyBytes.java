@@ -7,12 +7,7 @@ import org.python.core.buffer.BaseBuffer;
 import org.python.core.buffer.SimpleStringBuffer;
 import org.python.core.stringlib.Encoding;
 import org.python.core.stringlib.FieldNameIterator;
-import org.python.core.stringlib.FloatFormatter;
-import org.python.core.stringlib.IntegerFormatter;
-import org.python.core.stringlib.InternalFormat.Formatter;
-import org.python.core.stringlib.InternalFormat.Spec;
 import org.python.core.stringlib.MarkupIterator;
-import org.python.core.stringlib.TextFormatter;
 import org.python.core.util.StringUtil;
 import org.python.expose.ExposedClassMethod;
 import org.python.expose.ExposedMethod;
@@ -28,8 +23,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.python.core.stringlib.Encoding.asUTF16StringOrError;
 
@@ -310,12 +303,6 @@ public class PyBytes extends PySequence implements BufferProtocol {
         return ret;
     }
 
-    // XXX: need doc
-    @ExposedMethod(defaults = "null")
-    final PyObject bytes___getslice__(PyObject start, PyObject stop, PyObject step) {
-        return seq___getslice__(start, stop, step);
-    }
-
     @Override
     public PyObject richCompare(PyObject other, CompareOp op) {
         String s = coerce(other);
@@ -403,7 +390,7 @@ public class PyBytes extends PySequence implements BufferProtocol {
     }
 
     @Override
-    protected PyObject getslice(int start, int stop, int step) {
+    public PyObject getslice(int start, int stop, int step) {
         CharSequence s = Encoding.getslice(getString(), start, stop, step, sliceLength(start, stop, step));
         return new PyBytes(s);
     }

@@ -836,43 +836,6 @@ public class PyObject implements Serializable {
         __delitem__(new PyUnicode(key));
     }
 
-    public PyObject __getslice__(
-        PyObject s_start,
-        PyObject s_stop,
-        PyObject s_step) {
-        PySlice s = new PySlice(s_start, s_stop, s_step);
-        return __getitem__(s);
-    }
-
-    public void __setslice__(
-        PyObject s_start,
-        PyObject s_stop,
-        PyObject s_step,
-        PyObject value) {
-        PySlice s = new PySlice(s_start, s_stop, s_step);
-        __setitem__(s, value);
-    }
-
-    public void __delslice__(
-        PyObject s_start,
-        PyObject s_stop,
-        PyObject s_step) {
-        PySlice s = new PySlice(s_start, s_stop, s_step);
-        __delitem__(s);
-    }
-
-    public PyObject __getslice__(PyObject start, PyObject stop) {
-        return __getslice__(start, stop, null);
-    }
-
-    public void __setslice__(PyObject start, PyObject stop, PyObject value) {
-        __setslice__(start, stop, null, value);
-    }
-
-    public void __delslice__(PyObject start, PyObject stop) {
-        __delslice__(start, stop, null);
-    }
-
     /*The basic functions to implement an iterator */
 
     /**

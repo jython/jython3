@@ -12,6 +12,7 @@ import org.python.core.PyException;
 import org.python.core.PyInteger;
 import org.python.core.PyList;
 import org.python.core.PyObject;
+import org.python.core.PySlice;
 import org.python.core.PyTuple;
 import org.python.core.Traverseproc;
 import org.python.core.Visitproc;
@@ -665,8 +666,8 @@ class StaticFetch extends Fetch {
         }
 
         if (this.rownumber < this.rowcount) {
-            res = current.__getslice__(Py.newInteger(this.rownumber),
-                                       Py.newInteger(this.rownumber + size), Py.One);
+            res = current.__getitem__(new PySlice(Py.newInteger(this.rownumber),
+                                       Py.newInteger(this.rownumber + size), Py.One));
             this.rownumber += size;
         }
 

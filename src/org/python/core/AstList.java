@@ -90,25 +90,6 @@ public class AstList extends PySequence implements Cloneable, List, Traverseproc
         return seq___iter__();
     }
 
-    @ExposedMethod(defaults = "null")
-    final PyObject astlist___getslice__(PyObject start, PyObject stop, PyObject step) {
-        return seq___getslice__(start, stop, step);
-    }
-
-    @ExposedMethod(defaults = "null")
-    final void astlist___setslice__(PyObject start, PyObject stop, PyObject step, PyObject value) {
-        if(value == null) {
-            value = step;
-            step = null;
-        }
-        seq___setslice__(start, stop, step, value);
-    }
-
-    @ExposedMethod(defaults = "null")
-    final void astlist___delslice__(PyObject start, PyObject stop, PyObject step) {
-        seq___delslice__(start, stop, step);
-    }
-
     public PyObject __imul__(PyObject o) {
         return astlist___imul__(o);
     }
@@ -338,7 +319,7 @@ public class AstList extends PySequence implements Cloneable, List, Traverseproc
         astlist_extend(iterable);
     }
 
-    protected PyObject getslice(int start, int stop, int step) {
+    public PyObject getslice(int start, int stop, int step) {
         if(step > 0 && stop < start) {
             stop = start;
         }

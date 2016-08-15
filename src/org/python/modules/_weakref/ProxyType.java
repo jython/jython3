@@ -31,16 +31,6 @@ public class ProxyType extends AbstractReference {
     public void __setitem__(PyObject key, PyObject value) { py().__setitem__(key, value); }
     public void __delitem__(PyObject key) { py().__delitem__(key); }
 
-    public PyObject __getslice__(PyObject start, PyObject stop, PyObject step) {
-        return py().__getslice__(start, stop, step);
-    }
-    public void __setslice__(PyObject start, PyObject stop, PyObject step, PyObject value) {
-        py().__setslice__(start, stop, step, value);
-    }
-    public void __delslice__(PyObject start, PyObject stop, PyObject step) {
-        py().__delslice__(start, stop, step);
-    }
-
     public PyObject __findattr_ex__(String name) { return py().__findattr_ex__(name); }
     public void __setattr__(String name, PyObject value) { py().__setattr__(name, value); }
     public void __delattr__(String name) { py().__delattr__(name); }

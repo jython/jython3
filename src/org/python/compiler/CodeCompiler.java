@@ -2140,11 +2140,11 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             case Del:
                 code.invokevirtual(p(PyObject.class), "__delslice__",
                         sig(Void.TYPE, PyObject.class, PyObject.class, PyObject.class));
-                return null;
+                break;
             case Load:
                 code.invokevirtual(p(PyObject.class), "__getslice__",
                         sig(PyObject.class, PyObject.class, PyObject.class, PyObject.class));
-                return null;
+                break;
             case Param:
             case Store:
                 code.aload(temporary);
@@ -2153,7 +2153,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
                         "__setslice__",
                         sig(Void.TYPE, PyObject.class, PyObject.class, PyObject.class,
                                 PyObject.class));
-                return null;
+                break;
         }
         return null;
 
@@ -2161,10 +2161,6 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
     @Override
     public Object visitSubscript(Subscript node) throws Exception {
-        if (node.getInternalSlice() instanceof Slice) {
-            return Slice(node, (Slice)node.getInternalSlice());
-        }
-
         int value = temporary;
         expr_contextType ctx = node.getInternalCtx();
         if (node.getInternalCtx() == expr_contextType.AugStore && augmode == expr_contextType.Store) {

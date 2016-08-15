@@ -9,6 +9,7 @@ import org.python.core.PyBytes;
 import org.python.core.PyIgnoreMethodTag;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
+import org.python.core.PySlice;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
 import org.python.core.PyUnicode;
@@ -108,8 +109,8 @@ class OperatorFunctions extends PyBuiltinFunctionSet
 
     public PyObject __call__(PyObject arg1, PyObject arg2, PyObject arg3) {
         switch (index) {
-        case 22: arg1.__delslice__(arg2.__index__(), arg3.__index__()); return Py.None;
-        case 24: return arg1.__getslice__(arg2.__index__(), arg3.__index__());
+        case 22: arg1.__delitem__(new PySlice(arg2.__index__(), arg3.__index__(), Py.None)); return Py.None;
+        case 24: return arg1.__getitem__(new PySlice(arg2.__index__(), arg3.__index__(), Py.None));
         case 25: arg1.__setitem__(arg2, arg3); return Py.None;
         default:
             throw info.unexpectedCall(3, false);
@@ -121,7 +122,7 @@ class OperatorFunctions extends PyBuiltinFunctionSet
     {
         switch (index) {
         case 26:
-            arg1.__setslice__(arg2.__index__(), arg3.__index__(), arg4);
+            arg1.__setitem__(new PySlice(arg2.__index__(), arg3.__index__(), Py.None), arg4);
             return Py.None;
         default:
             throw info.unexpectedCall(4, false);

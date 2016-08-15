@@ -22,6 +22,7 @@ import org.python.core.PyDictionary;
 import org.python.core.PyInteger;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
+import org.python.core.PySequence;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
 import org.python.core.PyUnicode;
@@ -190,7 +191,7 @@ public class MatchObject extends PyObject implements Traverseproc {
 
         if (string == null || start < 0)
             return def;
-        return string.__getslice__(Py.newInteger(start), Py.newInteger(end));
+        return ((PySequence) string).getslice(start, end);
 
     }
 

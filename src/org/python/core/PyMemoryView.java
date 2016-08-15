@@ -851,7 +851,7 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
      * @return a PyMemoryView corresponding the the given range of elements.
      */
     @Override
-    protected synchronized PyMemoryView getslice(int start, int stop, int step) {
+    public synchronized PyMemoryView getslice(int start, int stop, int step) {
         // Our chance to check the memoryview is still alive
         checkNotReleased();
 

@@ -26,6 +26,7 @@ import org.python.core.Py;
 import org.python.core.PyBytes;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
+import org.python.core.PySequence;
 import org.python.core.PyUnicode;
 
 public class SRE_STATE {
@@ -1359,7 +1360,7 @@ for line in sys.stdin:
             i = mark[index];
             j = mark[index + 1];
         }
-        return string.__getslice__(new PyLong(i), new PyLong(j));
+        return ((PySequence) string).getslice(i, j);
     }
 
     void state_reset() {

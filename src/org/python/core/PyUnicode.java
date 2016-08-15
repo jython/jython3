@@ -733,7 +733,7 @@ public class PyUnicode extends PySequence implements Iterable {
     }
 
     @Override
-    protected PyObject getslice(int start, int stop, int step) {
+    public PyObject getslice(int start, int stop, int step) {
         if (isBasicPlane()) {
             CharSequence s = Encoding.getslice(getString(), start, stop, step, sliceLength(start, stop, step));
             return new PyUnicode(s);

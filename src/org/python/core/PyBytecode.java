@@ -628,7 +628,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                         PyObject stop = (((opcode - Opcode.SLICE) & 2) != 0) ? stack.pop() : null;
                         PyObject start = (((opcode - Opcode.SLICE) & 1) != 0) ? stack.pop() : null;
                         PyObject obj = stack.pop();
-                        stack.push(obj.__getslice__(start, stop));
+                        stack.push(obj.__getitem__(new PySlice(start, stop, Py.None)));
                         break;
                     }
 
@@ -640,7 +640,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                         PyObject start = (((opcode - Opcode.STORE_SLICE) & 1) != 0) ? stack.pop() : null;
                         PyObject obj = stack.pop();
                         PyObject value = stack.pop();
-                        obj.__setslice__(start, stop, value);
+                        obj.__setitem__(new PySlice(start, stop, Py.None), value);
                         break;
                     }
 
@@ -651,7 +651,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                         PyObject stop = (((opcode - Opcode.DELETE_SLICE) & 2) != 0) ? stack.pop() : null;
                         PyObject start = (((opcode - Opcode.DELETE_SLICE) & 1) != 0) ? stack.pop() : null;
                         PyObject obj = stack.pop();
-                        obj.__delslice__(start, stop);
+                        obj.__delitem__(new PySlice(start, stop, Py.None));
                         break;
                     }
 

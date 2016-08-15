@@ -811,49 +811,6 @@ public class PyDialectDerived extends PyDialect implements Slotted,FinalizablePy
         super.__setitem__(key,value);
     }
 
-    public PyObject __getslice__(PyObject start,PyObject stop,PyObject step) { // ???
-        if (step!=null) {
-            return __getitem__(new PySlice(start,stop,step));
-        }
-        PyType self_type=getType();
-        PyObject impl=self_type.lookup("__getslice__");
-        if (impl!=null) {
-            PyObject[]indices=PySlice.indices2(this,start,stop);
-            return impl.__get__(this,self_type).__call__(indices[0],indices[1]);
-        }
-        return super.__getslice__(start,stop,step);
-    }
-
-    public void __setslice__(PyObject start,PyObject stop,PyObject step,PyObject value) {
-        if (step!=null) {
-            __setitem__(new PySlice(start,stop,step),value);
-            return;
-        }
-        PyType self_type=getType();
-        PyObject impl=self_type.lookup("__setslice__");
-        if (impl!=null) {
-            PyObject[]indices=PySlice.indices2(this,start,stop);
-            impl.__get__(this,self_type).__call__(indices[0],indices[1],value);
-            return;
-        }
-        super.__setslice__(start,stop,step,value);
-    }
-
-    public void __delslice__(PyObject start,PyObject stop,PyObject step) {
-        if (step!=null) {
-            __delitem__(new PySlice(start,stop,step));
-            return;
-        }
-        PyType self_type=getType();
-        PyObject impl=self_type.lookup("__delslice__");
-        if (impl!=null) {
-            PyObject[]indices=PySlice.indices2(this,start,stop);
-            impl.__get__(this,self_type).__call__(indices[0],indices[1]);
-            return;
-        }
-        super.__delslice__(start,stop,step);
-    }
-
     public void __delitem__(PyObject key) { // ???
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__delitem__");

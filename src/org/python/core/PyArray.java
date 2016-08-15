@@ -234,22 +234,6 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
         return seq___iter__();
     }
 
-    @ExposedMethod(defaults = "null")
-    final PyObject array___getslice__(PyObject start, PyObject stop, PyObject step) {
-        return seq___getslice__(start, stop, step);
-    }
-
-    @ExposedMethod(defaults = "null")
-    final void array___setslice__(PyObject start, PyObject stop, PyObject step, PyObject value) {
-
-        seq___setslice__(start, stop, step, value);
-    }
-
-    @ExposedMethod(defaults = "null")
-    final void array___delslice__(PyObject start, PyObject stop, PyObject step) {
-        seq___delslice__(start, stop, step);
-    }
-
     @Override
     public PyObject __imul__(PyObject o) {
         return array___imul__(o);
@@ -1322,7 +1306,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
      * @return A new PyArray object containing the described slice
      */
     @Override
-    protected PyObject getslice(int start, int stop, int step) {
+    public PyObject getslice(int start, int stop, int step) {
         if (step > 0 && stop < start) {
             stop = start;
         }

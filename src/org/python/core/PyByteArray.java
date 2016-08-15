@@ -298,7 +298,7 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
      * @return a <code>PyByteArray</code> corresponding the the given range of elements.
      */
     @Override
-    protected synchronized PyByteArray getslice(int start, int stop, int step) {
+    public synchronized PyByteArray getslice(int start, int stop, int step) {
         if (step == 1) {
             // Efficiently copy contiguous slice
             return this.getslice(start, stop);
@@ -315,11 +315,11 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
     }
 
     /**
-     * Specialisation of {@link #getslice(int, int, int)} to contiguous slices (of step size 1) for
+     * Specialisation of {@link PySequence#getslice(int, int, int)} to contiguous slices (of step size 1) for
      * brevity and efficiency.
      */
     @Override
-    protected synchronized PyByteArray getslice(int start, int stop) {
+    public synchronized PyByteArray getslice(int start, int stop) {
         // If this were immutable, start==0 and end==size we would return (this).
         // Efficiently copy contiguous slice
         int n = stop - start;

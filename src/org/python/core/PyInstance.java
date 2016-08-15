@@ -619,51 +619,6 @@ public class PyInstance extends PyObject implements FinalizablePyObject, Travers
     }
 
     @Override
-    public PyObject __getslice__(PyObject start, PyObject stop, PyObject step) {
-        return instance___getslice__(start, stop, step);
-    }
-
-    @ExposedMethod
-    final PyObject instance___getslice__(PyObject start, PyObject stop, PyObject step) {
-        if (step != null) {
-            return __getitem__(new PySlice(start, stop, step));
-        }
-        PyObject ret = trySlice("__getslice__", start, stop);
-        if (ret != null) {
-            return ret;
-        }
-        return super.__getslice__(start, stop, step);
-    }
-
-    @Override
-    public void __setslice__(PyObject start, PyObject stop, PyObject step, PyObject value) {
-        instance___setslice__(start, stop, step, value);
-    }
-
-    @ExposedMethod
-    final void instance___setslice__(PyObject start, PyObject stop, PyObject step, PyObject value) {
-        if (step != null) {
-            __setitem__(new PySlice(start, stop, step), value);
-        } else if (trySlice("__setslice__", start, stop, value) == null) {
-            super.__setslice__(start, stop, step, value);
-        }
-    }
-
-    @Override
-    public void __delslice__(PyObject start, PyObject stop, PyObject step) {
-        instance___delslice__(start, stop, step);
-    }
-
-    @ExposedMethod
-    final void instance___delslice__(PyObject start, PyObject stop, PyObject step) {
-        if (step != null) {
-            __delitem__(new PySlice(start, stop, step));
-        } else if (trySlice("__delslice__", start, stop) == null) {
-            super.__delslice__(start, stop, step);
-        }
-    }
-
-    @Override
     public PyObject __iter__() {
         return instance___iter__();
     }

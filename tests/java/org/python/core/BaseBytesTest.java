@@ -18,7 +18,7 @@ import org.python.util.PythonInterpreter;
  * Tests here are aimed at:
  * <ul>
  * <li>construction of a correct internal buffer through the init methods</li>.
- * <li>access methods for immutable types (such as {@link BaseBytes#getslice(int, int, int)}</li>.
+ * <li>access methods for immutable types (such as {@link PySequence#getslice(int, int, int)}</li>.
  * <li>access methods for mutable types throw Exceptions</li>.
  * <li>the java.util.List<PyInteger> interface</li>.
  * </ul>
@@ -355,7 +355,7 @@ public class BaseBytesTest extends TestCase {
     }
 
     /**
-     * Test method for {@link BaseBytes#getslice(int, int, int)}.
+     * Test method for {@link PySequence#getslice(int, int, int)}.
      *
      * @see PySequence#__getslice__(PyObject, PyObject)
      */
@@ -703,7 +703,7 @@ public class BaseBytesTest extends TestCase {
          * @see org.python.core.PySequence#getslice(int, int, int)
          */
         @Override
-        protected MyBytes getslice(int start, int stop, int step) {
+        public MyBytes getslice(int start, int stop, int step) {
             MyBytes r;
             if (step == 1) {
                 // This is a contiguous slice [start:stop] so we can share storage
