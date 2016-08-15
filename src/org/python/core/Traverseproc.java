@@ -330,7 +330,6 @@ import org.python.modules.gc;
  *     PyTryBlock                    - no refs, untraversable<br>
  *   PyCallIter                      - Traverseproc (with call to super)<br>
  *   PyCell                          - Traverseproc<br>
- *   PyClass                         - Traverseproc<br>
  *   PyClassMethod                   - Traverseproc<br>
  *   PyClassMethodDescr              - no refs, untraversable<br>
  *   PyCode                          - no refs, abstract class<br>
@@ -355,7 +354,6 @@ import org.python.modules.gc;
  *   PyFunction                      - Traverseproc<br>
  *   PyGenerator                     - Traverseproc (with call to super)<br>
  *   PyIndentationError              - no PyObject<br>
- *   PyInstance                      - Traverseproc<br>
  *   PyInteger                       - no refs, untraversable<br>
  *   PyIterator                      - Traverseproc<br>
  *   PyJavaPackage                   - Traverseproc<br>

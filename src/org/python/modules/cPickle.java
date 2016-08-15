@@ -12,22 +12,17 @@
 
 package org.python.modules;
 
-import java.math.BigInteger;
-import java.util.Map;
-
 import org.python.core.ClassDictInit;
 import org.python.core.Exceptions;
 import org.python.core.Py;
 import org.python.core.PyBoolean;
 import org.python.core.PyBuiltinCallable;
 import org.python.core.PyBytes;
-import org.python.core.PyClass;
 import org.python.core.PyDictionary;
 import org.python.core.PyException;
 import org.python.core.PyFile;
 import org.python.core.PyFloat;
 import org.python.core.PyFunction;
-import org.python.core.PyInstance;
 import org.python.core.PyInteger;
 import org.python.core.PyList;
 import org.python.core.PyLong;
@@ -35,7 +30,6 @@ import org.python.core.PyModule;
 import org.python.core.PyNone;
 import org.python.core.PyObject;
 import org.python.core.PyReflectedFunction;
-import org.python.core.PySequence;
 import org.python.core.PySlice;
 import org.python.core.PyStringMap;
 import org.python.core.PyTuple;
@@ -46,6 +40,9 @@ import org.python.core.codecs;
 import org.python.core.imp;
 import org.python.core.stringlib.Encoding;
 import org.python.util.Generic;
+
+import java.math.BigInteger;
+import java.util.Map;
 
 /**
  *
@@ -449,8 +446,6 @@ public class cPickle implements ClassDictInit {
 
     private static PyType ReflectedFunctionType = PyType.fromClass(PyReflectedFunction.class);
 
-    private static PyType ClassType = PyType.fromClass(PyClass.class);
-
     private static PyType TypeType = PyType.fromClass(PyType.class);
 
     private static PyType DictionaryType = PyType.fromClass(PyDictionary.class);
@@ -460,8 +455,6 @@ public class cPickle implements ClassDictInit {
     private static PyType FloatType = PyType.fromClass(PyFloat.class);
 
     private static PyType FunctionType = PyType.fromClass(PyFunction.class);
-
-    private static PyType InstanceType = PyType.fromClass(PyInstance.class);
 
     private static PyType IntType = PyType.fromClass(PyInteger.class);
 
@@ -935,10 +928,6 @@ public class cPickle implements ClassDictInit {
                 save_list(object);
             else if (type == DictionaryType || type == StringMapType)
                 save_dict(object);
-            else if (type == InstanceType)
-                save_inst((PyInstance)object);
-            else if (type == ClassType)
-                save_global(object);
             else if (type == TypeType)
                 save_global(object);
             else if (type == FunctionType)
@@ -1252,54 +1241,6 @@ public class cPickle implements ClassDictInit {
                 } while (n == BATCHSIZE);
             }
         }
-
-
-        final private void save_inst(PyInstance object) {
-            PyClass cls = object.instclass;
-
-            PySequence args = null;
-            PyObject getinitargs = object.__findattr__("__getinitargs__");
-            if (getinitargs != null) {
-                args = (PySequence)getinitargs.__call__();
-                // XXX Assert it's a sequence
-                keep_alive(args);
-            }
-
-            file.write(MARK);
-            if (protocol > 0)
-                save(cls);
-
-            if (args != null) {
-                int len = args.__len__();
-                for (int i = 0; i < len; i++)
-                    save(args.__finditem__(i));
-            }
-
-            int mid = putMemo(get_id(object), object);
-            if (protocol > 0) {
-                file.write(OBJ);
-                put(mid);
-            } else {
-                file.write(INST);
-                file.write(cls.__findattr__("__module__").toString());
-                file.write("\n");
-                file.write(cls.__name__);
-                file.write("\n");
-                put(mid);
-            }
-
-            PyObject stuff = null;
-            PyObject getstate = object.__findattr__("__getstate__");
-            if (getstate == null) {
-                stuff = object.__dict__;
-            } else {
-                stuff = getstate.__call__();
-                keep_alive(stuff);
-            }
-            save(stuff);
-            file.write(BUILD);
-        }
-
 
         final private void save_global(PyObject object) {
             save_global(object, null);
@@ -1954,12 +1895,7 @@ public class cPickle implements ClassDictInit {
             PyObject klass = find_class(module, name);
 
             PyObject value = null;
-            if (args.length == 0 && klass instanceof PyClass &&
-                        klass.__findattr__("__getinitargs__") == null) {
-                value = new PyInstance((PyClass)klass);
-            } else {
-                value = klass.__call__(args);
-            }
+            value = klass.__call__(args);
             push(value);
         }
 
@@ -1971,12 +1907,7 @@ public class cPickle implements ClassDictInit {
             pop();
 
             PyObject value = null;
-            if (args.length == 0 && klass instanceof PyClass &&
-                        klass.__findattr__("__getinitargs__") == null) {
-                value = new PyInstance((PyClass)klass);
-            } else {
-                value = klass.__call__(args);
-            }
+            value = klass.__call__(args);
             push(value);
         }
 

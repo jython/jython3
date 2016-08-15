@@ -2379,10 +2379,6 @@ public final class Py {
     }
 
     static boolean recursiveIsInstance(PyObject inst, PyObject cls) {
-        if (cls instanceof PyClass && inst instanceof PyInstance) {
-            PyClass inClass = ((PyInstance) inst).fastGetClass();
-            return inClass.isSubClass((PyClass) cls);
-        }
         if (cls instanceof PyType) {
             PyType type = (PyType)cls;
 
@@ -2451,10 +2447,6 @@ public final class Py {
 
             return subtype.isSubType(type);
         }
-        if (derived instanceof PyClass && cls instanceof PyClass) {
-            return ((PyClass) derived).isSubClass((PyClass) cls);
-        }
-
         checkClass(derived, "issubclass() arg 1 must be a class");
         checkClass(cls, "issubclass() arg 2 must be a class or tuple of classes");
         return abstractIsSubClass(derived, cls);
@@ -2502,11 +2494,6 @@ public final class Py {
      */
     private static PyObject dispatchToChecker(PyObject checkerArg, PyObject cls,
                                               String checkerName) {
-        //Ignore old style classes.
-        if (cls instanceof PyClass) {
-            return null;
-        }
-
         PyObject checker = cls.__findattr__(checkerName);
         if (checker == null) {
             return null;

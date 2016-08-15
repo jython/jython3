@@ -6,13 +6,6 @@ package org.python.core;
  *
  * Proxy classes are created whenever a python class inherits from a java class. Instances of such a
  * python class consists of two objects:
- * <ul>
- * <li>An instance of the proxy class. The _getPyInstance() will return a reference to the
- * PyInstance.
- * <li>An instance of PyInstance. The PyInstance's java proxy attribute contains a reference to the
- * proxy class instance.
- * </ul>
- *
  * All proxy classes implement this interface.
  */
 // This interface should be applicable to ANY class

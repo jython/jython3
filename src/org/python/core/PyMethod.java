@@ -302,13 +302,7 @@ public class PyMethod extends PyObject implements InvocationHandler, Traversepro
     }
 
     private String getClassName(PyObject cls) {
-        if (cls instanceof PyClass) {
-            return ((PyClass)cls).__name__;
-        }
-        if (cls instanceof PyType) {
-            return ((PyType)cls).fastGetName();
-        }
-        return "?";
+        return ((PyType)cls).fastGetName();
     }
 
     private String getInstClassName(PyObject inst) {

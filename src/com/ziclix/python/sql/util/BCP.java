@@ -157,7 +157,6 @@ public class BCP extends PyObject implements ClassDictInit, Traverseproc {
         // hide from python
         dict.__setitem__("classDictInit", null);
         dict.__setitem__("toString", null);
-        dict.__setitem__("PyClass", null);
         dict.__setitem__("getPyClass", null);
         dict.__setitem__("sourceDH", null);
         dict.__setitem__("destDH", null);

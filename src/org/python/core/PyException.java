@@ -282,7 +282,7 @@ public class PyException extends RuntimeException implements Traverseproc
 
         if (exc instanceof PyUnicode) {
             Py.DeprecationWarning("catching of string Exceptions is deprecated");
-        } else if (Options.py3k_warning && !isPy3kExceptionClass(exc)) {
+        } else if (Options.py3k_warning && !isExceptionClass(exc)) {
             Py.DeprecationWarning("catching classes that don't inherit from BaseException is not "
                                   + "allowed in 3.x");
         }
@@ -326,19 +326,6 @@ public class PyException extends RuntimeException implements Traverseproc
      * @return true if an exception
      */
     public static boolean isExceptionClass(PyObject obj) {
-        if (obj instanceof PyClass) {
-            return true;
-        }
-        return isPy3kExceptionClass(obj);
-    }
-
-    /**
-     * Determine whether obj is a Python 3 exception class
-     *
-     * @param obj a PyObject
-     * @return true if an exception
-     */
-    private static boolean isPy3kExceptionClass(PyObject obj) {
         if (!(obj instanceof PyType)) {
             return false;
         }
@@ -367,7 +354,7 @@ public class PyException extends RuntimeException implements Traverseproc
      * @return String exception name
      */
     public static String exceptionClassName(PyObject obj) {
-        return obj instanceof PyClass ? ((PyClass)obj).__name__ : ((PyType)obj).fastGetName();
+        return ((PyType)obj).fastGetName();
     }
     
     

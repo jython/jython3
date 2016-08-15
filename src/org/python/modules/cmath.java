@@ -4,7 +4,6 @@ import org.python.core.Py;
 import org.python.core.PyComplex;
 import org.python.core.PyException;
 import org.python.core.PyFloat;
-import org.python.core.PyInstance;
 import org.python.core.PyObject;
 import org.python.core.PyTuple;
 
@@ -37,17 +36,9 @@ public class cmath {
 
         // If not, use op's __complex__ method, if it exists
         PyObject newObj = null;
-        if (obj instanceof PyInstance) {
-            // this can go away in python 3000
-            if (obj.__findattr__("__complex__") != null) {
-                newObj = obj.invoke("__complex__");
-            }
-            // else try __float__
-        } else {
-            PyObject complexFunc = obj.getType().lookup("__complex__");
-            if (complexFunc != null) {
-                newObj = complexFunc.__call__(obj);
-            }
+        PyObject complexFunc = obj.getType().lookup("__complex__");
+        if (complexFunc != null) {
+            newObj = complexFunc.__call__(obj);
         }
 
         if (newObj != null) {

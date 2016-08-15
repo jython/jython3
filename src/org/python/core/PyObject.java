@@ -1164,8 +1164,7 @@ public class PyObject implements Serializable {
      */
     PyObject[] _coerce(PyObject other) {
         Object result;
-        if (this.getType() == other.getType() &&
-            !(this instanceof PyInstance)) {
+        if (this.getType() == other.getType()) {
             return new PyObject[] {this, other};
         }
         result = this.__coerce_ex__(other);

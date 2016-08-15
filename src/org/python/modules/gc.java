@@ -1,30 +1,29 @@
 package org.python.modules;
 
-import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.IdentityHashMap;
-import java.util.HashSet;
-import java.util.concurrent.atomic.AtomicBoolean;
+import org.python.core.JyAttribute;
+import org.python.core.Py;
+import org.python.core.PyBytes;
+import org.python.core.PyList;
+import org.python.core.PyObject;
+import org.python.core.Traverseproc;
+import org.python.core.TraverseprocDerived;
+import org.python.core.Untraversable;
+import org.python.core.Visitproc;
+import org.python.core.finalization.FinalizeTrigger;
+import org.python.modules._weakref.GlobalRef;
+
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-
-import org.python.core.JyAttribute;
-import org.python.core.Py;
-import org.python.core.PyBytes;
-import org.python.core.PyList;
-import org.python.core.PyObject;
-import org.python.core.PyInstance;
-import org.python.core.Traverseproc;
-import org.python.core.TraverseprocDerived;
-import org.python.core.Visitproc;
-import org.python.core.Untraversable;
-import org.python.core.finalization.FinalizeTrigger;
-import org.python.modules._weakref.GlobalRef;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 //These imports belong to the out-commented section on MXBean-based
 //gc-sync far below. That section is kept to document this failed
@@ -644,13 +643,11 @@ public class gc {
         int hashCode = 0;
         public String str = null, inst_str = null;
         public String cls;
-        boolean isInstance;
         boolean hasFinalizer = false;
         CycleMarkAttr cycleMark;
 
         WeakReferenceGC(PyObject referent) {
             super(referent);
-            isInstance = referent instanceof PyInstance;
             cycleMark = (CycleMarkAttr)
                     JyAttribute.getAttr(referent, JyAttribute.GC_CYCLE_MARK_ATTR);
             hashCode = System.identityHashCode(referent);
@@ -660,7 +657,6 @@ public class gc {
 
         WeakReferenceGC(PyObject referent, ReferenceQueue<Object> q) {
             super(referent, q);
-            isInstance = referent instanceof PyInstance;
             cycleMark = (CycleMarkAttr)
                     JyAttribute.getAttr(referent, JyAttribute.GC_CYCLE_MARK_ATTR);
             hashCode = System.identityHashCode(referent);
@@ -680,14 +676,6 @@ public class gc {
                 ref = get();
             }
             try {
-                if (ref instanceof PyInstance) {
-                    String name = ((PyInstance) ref).fastGetClass().__name__;
-                    if (name == null) {
-                        name = "?";
-                    }
-                    inst_str = String.format("<%.100s instance at %s>",
-                            name, Py.idstr(ref));
-                }
                 str = String.format("<%.100s %s>",
                         ref.getType().getName(), Py.idstr(ref));
             } catch (Exception e) {
@@ -2061,11 +2049,7 @@ public class gc {
 
                 for (WeakReferenceGC wrg: collectBuffer) {
                     if (!wrg.cycleMark.isUncollectable()) {
-                        if (wrg.isInstance) {
-                            writeDebug("gc", "collectable "+
-                                    ((debugFlags & gc.DEBUG_INSTANCES) != 0 ?
-                                    wrg.inst_str : wrg.str));
-                        } else if ((debugFlags & gc.DEBUG_OBJECTS) != 0) {
+                        if ((debugFlags & gc.DEBUG_OBJECTS) != 0) {
                             writeDebug("gc", "collectable "+wrg.str);
                         }
                     } else {
@@ -2084,11 +2068,7 @@ public class gc {
                         (debugFlags & gc.DEBUG_INSTANCES) != 0)) {
                 for (WeakReferenceGC wrg: collectBuffer) {
                     if (wrg.cycleMark.isUncollectable()) {
-                        if (wrg.isInstance) {
-                            writeDebug("gc", "uncollectable "+
-                                    ((debugFlags & gc.DEBUG_INSTANCES) != 0 ?
-                                    wrg.inst_str : wrg.str));
-                        } else if ((debugFlags & gc.DEBUG_OBJECTS) != 0) {
+                        if ((debugFlags & gc.DEBUG_OBJECTS) != 0) {
                             writeDebug("gc", "uncollectable "+wrg.str);
                         }
                     }

@@ -292,17 +292,6 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
                         continue;
                     }
 
-                    if (base instanceof PyClass) {
-                        // Classic base class provides both
-                        if (mayAddDict && !wantDict) {
-                            wantDict = true;
-                        }
-                        if (mayAddWeak && !wantWeak) {
-                            wantWeak = true;
-                        }
-                        break;
-                    }
-
                     PyType baseType = (PyType)base;
                     if (mayAddDict && !wantDict && baseType.needs_userdict) {
                         wantDict = true;
@@ -764,15 +753,8 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
                                + newBasesTuple);
         }
         for (int i = 0; i < newBases.length; i++) {
-            if (!(newBases[i] instanceof PyType)) {
-                if (!(newBases[i] instanceof PyClass)) {
-                    throw Py.TypeError(name + ".__bases__ must be a tuple of old- or new-style "
-                                       + "classes, not " + newBases[i]);
-                }
-            } else {
-                if (((PyType)newBases[i]).isSubType(this)) {
-                    throw Py.TypeError("a __bases__ item causes an inheritance cycle");
-                }
+            if (((PyType)newBases[i]).isSubType(this)) {
+                throw Py.TypeError("a __bases__ item causes an inheritance cycle");
             }
         }
         PyType newBase = best_base(newBases);
@@ -831,9 +813,6 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
 
             PyType solid = solid_base(this);
             for (PyObject cls : result) {
-                if (cls instanceof PyClass) {
-                    continue;
-                }
                 if (!(cls instanceof PyType)) {
                     throw Py.TypeError(String.format("mro() returned a non-class ('%.500s')",
                                                      cls.getType().fastGetName()));
@@ -942,22 +921,6 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
         }
     }
 
-    private static void fill_classic_mro(List<PyObject> acc, PyClass classic_cl) {
-        if (!acc.contains(classic_cl)) {
-            acc.add(classic_cl);
-        }
-        PyObject[] bases = classic_cl.__bases__.getArray();
-        for (PyObject base : bases) {
-            fill_classic_mro(acc,(PyClass)base);
-        }
-    }
-
-    private static PyObject[] classic_mro(PyClass classic_cl) {
-        List<PyObject> acc = Generic.list();
-        fill_classic_mro(acc, classic_cl);
-        return acc.toArray(new PyObject[acc.size()]);
-    }
-
     @ExposedMethod(defaults = "null", doc = BuiltinDocs.type_mro_doc)
     final PyList type_mro(PyObject o) {
         if (o == null) {
@@ -981,11 +944,7 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
         MROMergeState[] toMerge = new MROMergeState[bases.length + 1];
         for (int i = 0; i < bases.length; i++) {
             toMerge[i] = new MROMergeState();
-            if (bases[i] instanceof PyType) {
-                toMerge[i].mro = ((PyType)bases[i]).mro;
-            } else if (bases[i] instanceof PyClass) {
-                toMerge[i].mro = classic_mro((PyClass)bases[i]);
-            }
+            toMerge[i].mro = ((PyType)bases[i]).mro;
         }
         toMerge[bases.length] = new MROMergeState();
         toMerge[bases.length].mro = bases;
@@ -1095,9 +1054,6 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
         PyType candidate = null;
         PyType best = null;
         for (PyObject base : bases) {
-            if (base instanceof PyClass) {
-                continue;
-            }
             if (!(base instanceof PyType)) {
                 throw Py.TypeError("bases must be types");
             }
@@ -1130,8 +1086,7 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
      *
      * @raises Py.TypeError if the all the metaclasses don't descend
      * from the same base
-     * @raises Py.TypeError if one of the bases is a PyJavaClass or a
-     * PyClass with no proxyClass
+     * @raises Py.TypeError if one of the bases is a PyJavaClass
      */
     private static PyType findMostDerivedMetatype(PyObject[] bases_list, PyType initialMetatype) {
         PyType winner = initialMetatype;
@@ -1140,9 +1095,6 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
         }
 
         for (PyObject base : bases_list) {
-            if (base instanceof PyClass) {
-                continue;
-            }
             PyType curtype = base.getType();
             if (isJavaRootClass(curtype)) {
                 curtype = PyType.TYPE;
