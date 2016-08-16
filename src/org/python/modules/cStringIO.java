@@ -266,7 +266,7 @@ public class cStringIO {
 
         /**
          * Read and return a line without the trailing newline.
-         * Usind by cPickle as an optimization.
+         * Usind by _pickle as an optimization.
          */
         public synchronized PyBytes readlineNoNl() {
             _complain_ifclosed();
@@ -388,7 +388,7 @@ public class cStringIO {
         }
 
         /**
-         * Write a char to the file. Used by cPickle as an optimization.
+         * Write a char to the file. Used by _pickle as an optimization.
          * @param ch    The data to write.
          */
         public synchronized void writeChar(char ch) {

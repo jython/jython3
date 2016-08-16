@@ -1393,7 +1393,7 @@ public class codecs {
     /* --- RawUnicodeEscape Codec ---------------------------------------- */
     private static char[] hexdigit = "0123456789ABCDEF".toCharArray();
 
-    // The modified flag is used by cPickle.
+    // The modified flag is used by _pickle.
     public static String
             PyUnicode_EncodeRawUnicodeEscape(String str, String errors, boolean modifed) {
         StringBuilder v = new StringBuilder(str.length());

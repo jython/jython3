@@ -4,7 +4,7 @@ package org.python.modules;
 
 /**
 PyIOFiles encapsulates and optimise access to the different file
-representation. Used by cPickle and marshall.
+representation. Used by _pickle and marshall.
  */
 
 public interface PyIOFile {

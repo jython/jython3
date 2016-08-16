@@ -48,15 +48,15 @@ import java.util.Map;
  *
  * From the python documentation:
  * <p>
- * The <tt>cPickle.java</tt> module implements a basic but powerful algorithm
+ * The <tt>_pickle.java</tt> module implements a basic but powerful algorithm
  * for ``pickling'' (a.k.a. serializing, marshalling or flattening) nearly
  * arbitrary Python objects.  This is the act of converting objects to a
  * stream of bytes (and back: ``unpickling'').
  * This is a more primitive notion than
- * persistency -- although <tt>cPickle.java</tt> reads and writes file
+ * persistency -- although <tt>_pickle.java</tt> reads and writes file
  * objects, it does not handle the issue of naming persistent objects, nor
  * the (even more complicated) area of concurrent access to persistent
- * objects.  The <tt>cPickle.java</tt> module can transform a complex object
+ * objects.  The <tt>_pickle.java</tt> module can transform a complex object
  * into a byte stream and it can transform the byte stream into an object
  * with the same internal structure.  The most obvious thing to do with these
  * byte streams is to write them onto a file, but it is also conceivable
@@ -64,14 +64,14 @@ import java.util.Map;
  * <tt>shelve</tt> provides a simple interface to pickle and unpickle
  * objects on ``dbm''-style database files.
  * <P>
- * <b>Note:</b> The <tt>cPickle.java</tt> have the same interface as the
+ * <b>Note:</b> The <tt>_pickle.java</tt> have the same interface as the
  * standard module <tt>pickle</tt>except that <tt>Pickler</tt> and
  * <tt>Unpickler</tt> are factory functions, not classes (so they cannot be
  * used as base classes for inheritance).
- * This limitation is similar for the original cPickle.c version.
+ * This limitation is similar for the original _pickle.c version.
  *
  * <P>
- * Unlike the built-in module <tt>marshal</tt>, <tt>cPickle.java</tt> handles
+ * Unlike the built-in module <tt>marshal</tt>, <tt>_pickle.java</tt> handles
  * the following correctly:
  * <P>
  *
@@ -90,17 +90,17 @@ import java.util.Map;
  * </UL>
  *
  * <P>
- * The data format used by <tt>cPickle.java</tt> is Python-specific.  This has
+ * The data format used by <tt>_pickle.java</tt> is Python-specific.  This has
  * the advantage that there are no restrictions imposed by external
  * standards such as XDR (which can't represent pointer sharing); however
  * it means that non-Python programs may not be able to reconstruct
  * pickled Python objects.
  *
  * <P>
- * By default, the <tt>cPickle.java</tt> data format uses a printable ASCII
+ * By default, the <tt>_pickle.java</tt> data format uses a printable ASCII
  * representation.  This is slightly more voluminous than a binary
  * representation.  The big advantage of using printable ASCII (and of
- * some other characteristics of <tt>cPickle.java</tt>'s representation) is
+ * some other characteristics of <tt>_pickle.java</tt>'s representation) is
  * that for debugging or recovery purposes it is possible for a human to read
  * the pickled file with a standard text editor.
  *
@@ -113,13 +113,13 @@ import java.util.Map;
  * the default may change to binary.
  *
  * <P>
- * The <tt>cPickle.java</tt> module doesn't handle code objects.
+ * The <tt>_pickle.java</tt> module doesn't handle code objects.
  * <P>
- * For the benefit of persistency modules written using <tt>cPickle.java</tt>,
+ * For the benefit of persistency modules written using <tt>_pickle.java</tt>,
  * it supports the notion of a reference to an object outside the pickled
  * data stream.  Such objects are referenced by a name, which is an
  * arbitrary string of printable ASCII characters.  The resolution of
- * such names is not defined by the <tt>cPickle.java</tt> module -- the
+ * such names is not defined by the <tt>_pickle.java</tt> module -- the
  * persistent object module will have to implement a method
  * <tt>persistent_load()</tt>.  To write references to persistent objects,
  * the persistent module must define a method <tt>persistent_id()</tt> which
@@ -338,13 +338,13 @@ import java.util.Map;
  * "Python Library Reference"
  * <p><hr><p>
  *
- * The module is based on both original pickle.py and the cPickle.c
+ * The module is based on both original pickle.py and the _pickle.c
  * version, except that all mistakes and errors are my own.
  * <p>
  * @author Finn Bock, bckfnn@pipmail.dknet.dk
- * @version cPickle.java,v 1.30 1999/05/15 17:40:12 fb Exp
+ * @version _pickle.java,v 1.30 1999/05/15 17:40:12 fb Exp
  */
-public class cPickle implements ClassDictInit {
+public class _pickle implements ClassDictInit {
     /**
      * The doc string
      */
@@ -483,7 +483,7 @@ public class cPickle implements ClassDictInit {
      * Initialization when module is imported.
      */
     public static void classDictInit(PyObject dict) {
-        cPickle.dict = dict;
+        _pickle.dict = dict;
 
         // XXX: Hack for JPython 1.0.1. By default __builtin__ is not in
         // sys.modules.
@@ -504,7 +504,7 @@ public class cPickle implements ClassDictInit {
 
     public static PyObject exceptionNamespace() {
         PyObject dict = new PyStringMap();
-        dict.__setitem__("__module__", new PyBytes("cPickle"));
+        dict.__setitem__("__module__", new PyBytes("_pickle"));
         return dict;
     }
 
@@ -657,15 +657,15 @@ public class cPickle implements ClassDictInit {
 
     /**
      * The Pickler object
-     * @see cPickle#Pickler(PyObject)
-     * @see cPickle#Pickler(PyObject,int)
+     * @see _pickle#Pickler(PyObject)
+     * @see _pickle#Pickler(PyObject,int)
      */
     static public class Pickler {
         private PyIOFile file;
         private int protocol;
 
         /**
-         * The undocumented attribute fast of the C version of cPickle disables
+         * The undocumented attribute fast of the C version of _pickle disables
          * memoization. Since having memoization on won't break anything, having
          * this dummy setter for fast here won't break any code expecting it to
          * do something. However without it code that sets fast fails(ie
@@ -1501,7 +1501,7 @@ public class cPickle implements ClassDictInit {
     /**
      * The Unpickler object. Unpickler instances are create by the factory
      * methods Unpickler.
-     * @see cPickle#Unpickler(PyObject)
+     * @see _pickle#Unpickler(PyObject)
      */
     static public class Unpickler {
 
@@ -2186,6 +2186,6 @@ public class cPickle implements ClassDictInit {
     }
 
     private static PyObject getJavaFunc(String name, String methodName) {
-        return Exceptions.bindStaticJavaMethod(name, cPickle.class, methodName);
+        return Exceptions.bindStaticJavaMethod(name, _pickle.class, methodName);
     }
 }
