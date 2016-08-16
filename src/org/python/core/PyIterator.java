@@ -1,6 +1,9 @@
 // Copyright 2000 Finn Bock
 package org.python.core;
 
+import org.python.expose.ExposedMethod;
+import org.python.expose.ExposedType;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -14,6 +17,7 @@ import java.util.List;
  * If the implementation raises a StopIteration exception, it should be stored in stopException so
  * the correct exception can be thrown to preserve the line numbers in the traceback.
  */
+@ExposedType(name = "iterator")
 public abstract class PyIterator extends PyObject implements Iterable<Object>, Traverseproc {
 
     protected PyException stopException;
@@ -25,12 +29,10 @@ public abstract class PyIterator extends PyObject implements Iterable<Object>, T
     }
 
     @Override
+    @ExposedMethod(names = "__iter__")
     public PyObject __iter__() {
         return this;
     }
-
-    public static PyBytes __doc__next =
-        new PyBytes("x.next() -> the next value, or raise StopIteration");
 
     /**
      * The exposed next method.
@@ -40,6 +42,7 @@ public abstract class PyIterator extends PyObject implements Iterable<Object>, T
      *
      * @return a PyObject result
      */
+    @ExposedMethod(names = "__next__")
     public PyObject next() {
         return doNext(__next__());
     }
@@ -56,6 +59,7 @@ public abstract class PyIterator extends PyObject implements Iterable<Object>, T
         return ret;
     }
 
+    @Override
     public Iterator<Object> iterator() {
         return new WrappedIterIterator<Object>(this) {
             @Override

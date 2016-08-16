@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.ibm.icu.util.ValueIterator;
 import org.python.expose.ExposedClassMethod;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
@@ -642,7 +643,9 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
         return false;
     }
 
+    @ExposedType(name = "dict_valueiterator")
     class ValuesIter extends PyIterator {
+        public final PyType TYPE = PyType.fromClass(ValuesIter.class);
 
         private final Iterator<PyObject> iterator;
 
@@ -667,6 +670,7 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
         }
     }
 
+    @ExposedType(name = "dict_itemiterator")
     class ItemsIter extends PyIterator {
 
         private final Iterator<Entry<PyObject, PyObject>> iterator;

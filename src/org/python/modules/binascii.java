@@ -1102,7 +1102,7 @@ static long[] crc_32_tab = new long[] {
 
     private static final PyBuffer coerceParam(PyObject obj) {
         if (!(obj instanceof BufferProtocol)) {
-            throw Py.TypeError(String.format("a bytes-like object is expectd, not '%s'", obj.getType().getName()));
+            throw Py.TypeError(String.format("a bytes-like object is expected, not '%s'", obj.getType().getName()));
         }
         return ((BufferProtocol) obj).getBuffer(PyBUF.SIMPLE);
     }

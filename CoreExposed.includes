@@ -21,6 +21,8 @@ org/python/core/PyDictionary.class
 org/python/core/PyDictionary$PyDictionaryViewValues.class
 org/python/core/PyDictionary$PyDictionaryViewKeys.class
 org/python/core/PyDictionary$PyDictionaryViewItems.class
+org/python/core/PyDictionary$ValuesIter.class
+org/python/core/PyDictionary$ItemsIter.class
 org/python/core/PyDictProxy.class
 org/python/core/PyEnumerate.class
 org/python/core/PyEllipsis.class
@@ -33,6 +35,7 @@ org/python/core/PyFunction.class
 org/python/core/PyGenerator.class
 org/python/core/PyInstance.class
 org/python/core/PyInteger.class
+org/python/core/PyIterator.class
 org/python/core/PyList.class
 org/python/core/PyLong.class
 org/python/core/PyMemoryView.class
@@ -60,6 +63,11 @@ org/python/core/stringlib/FieldNameIterator.class
 org/python/modules/PyStruct.class
 org/python/modules/PyNamespace.class
 org/python/jsr223/PyScriptEngineScope.class
+org/python/modules/cjkcodecs/PyMultibyteCodec.class
+org/python/modules/cjkcodecs/PyMultibyteIncrementalDecoder.class
+org/python/modules/cjkcodecs/PyMultibyteIncrementalEncoder.class
+org/python/modules/cjkcodecs/PyMultibyteStreamReader.class
+org/python/modules/cjkcodecs/PyMultibyteStreamWriter.class
 org/python/modules/_codecs$EncodingMap.class
 org/python/modules/_collections/PyDefaultDict.class
 org/python/modules/_collections/PyDeque.class
@@ -126,6 +134,8 @@ org/python/modules/random/PyRandom.class
 org/python/modules/sre/MatchObject.class
 org/python/modules/sre/PatternObject.class
 org/python/modules/sre/ScannerObject.class
+org/python/modules/subprocess/PyCompletedProcess.class
+org/python/modules/subprocess/PyPopen.class
 org/python/modules/thread/PyLocal.class
 org/python/modules/time/PyTimeTuple.class
 org/python/modules/unicodedata/UCD.class
