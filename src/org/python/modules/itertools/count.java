@@ -12,6 +12,8 @@ import org.python.core.PyType;
 import org.python.core.PyUnicode;
 import org.python.core.Visitproc;
 import org.python.core.__builtin__;
+import org.python.core.imp;
+import org.python.expose.ExposedFunction;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
@@ -27,7 +29,7 @@ public class count extends PyIterator {
     private static PyObject NumberClass;
     private static synchronized PyObject getNumberClass() {
         if (NumberClass == null) {
-            NumberClass = __builtin__.__import__("numbers").__getattr__("Number");
+            NumberClass = imp.importName("numbers", true).__getattr__("Number");
         }
         return NumberClass;
     }
@@ -151,9 +153,8 @@ public class count extends PyIterator {
         return iter.__next__();
     }
 
-    @Override
     @ExposedMethod
-    public PyObject next() {
+    public final PyObject count___next__() {
         return doNext(__next__());
     }
 

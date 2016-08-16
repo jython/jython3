@@ -10,6 +10,9 @@ import org.python.core.PyNone;
 import org.python.core.PyObject;
 import org.python.core.PyTuple;
 import org.python.core.Visitproc;
+import org.python.expose.ExposedFunction;
+import org.python.expose.ExposedModule;
+import org.python.expose.ModuleInit;
 
 /**
  * Functional tools for creating and using iterators. Java implementation of the CPython module
@@ -17,9 +20,10 @@ import org.python.core.Visitproc;
  * 
  * @since 2.5
  */
-public class itertools implements ClassDictInit {
+@ExposedModule(doc = itertools.__doc__)
+public class itertools {
 
-    public static final PyBytes __doc__ = new PyBytes(
+    public static final String __doc__ =
             "Functional tools for creating and using iterators.\n\nInfinite iterators:\n" +
             "count([n]) --> n, n+1, n+2, ...\n" +
             "cycle(p) --> p0, p1, ... plast, p0, p1, ...\n" +
@@ -44,7 +48,7 @@ public class itertools implements ClassDictInit {
             "product(p, q, ... [repeat=1]) --> cartesian product\n" +
             "permutations(p[, r])\n" +
             "combinations(p, r)\n" +
-            "combinations_with_replacement(p, r)");
+            "combinations_with_replacement(p, r)";
 
     /**
      * Iterator base class used by most methods.
@@ -60,9 +64,8 @@ public class itertools implements ClassDictInit {
         }
     }
 
-    public static void classDictInit(PyObject dict) {
-        dict.__setitem__("__name__", new PyBytes("itertools"));
-        dict.__setitem__("__doc__", __doc__);
+    @ModuleInit
+    public static void init(PyObject dict) {
         dict.__setitem__("chain", chain.TYPE);
         dict.__setitem__("combinations", combinations.TYPE);
         dict.__setitem__("combinations_with_replacement", combinationsWithReplacement.TYPE);
@@ -81,10 +84,6 @@ public class itertools implements ClassDictInit {
         dict.__setitem__("repeat", repeat.TYPE);
         dict.__setitem__("starmap", starmap.TYPE);
         dict.__setitem__("takewhile", takewhile.TYPE);
-
-        // Hide from Python
-        dict.__setitem__("classDictInit", null);
-        dict.__setitem__("initClassExceptions", null);
     }
 
     static int py2int(PyObject obj, int defaultValue, String msg) {
@@ -247,21 +246,14 @@ public class itertools implements ClassDictInit {
         }
     }
 
-    public static PyBytes __doc__tee = new PyBytes(
-            "tee(iterable, n=2) --> tuple of n independent iterators.");
+    public static final String __doc__tee = "tee(iterable, n=2) --> tuple of n independent iterators.";
 
     /**
      * Create a tuple of iterators, each of which is effectively a copy of iterable.
      */
+    @ExposedFunction(defaults = {"2"}, doc = __doc__tee)
     public static PyTuple tee(PyObject iterable, final int n) {
         return new PyTuple(PyTeeIterator.makeTees(iterable, n));
-    }
-
-    /**
-     * Create a pair of iterators, each of which is effectively a copy of iterable.
-     */
-    public static PyTuple tee(PyObject iterable) {
-        return tee(iterable, 2);
     }
 
     static PyTuple makeIndexedTuple(PyTuple pool, int indices[]) {
