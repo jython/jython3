@@ -3177,14 +3177,14 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             inlineFinally(normalExit);
             code.goto_(label_end);
         }
-        code.freeLocal(value_tmp);
+//        code.freeLocal(value_tmp);
 
         // BLOCK + FINALLY if non-local-goto
-        normalExit.bodyDone = true;
-        exceptionHandlers.pop();
-        exceptionHandlers.pop();
-        code.label(label_body_end);
-        handler.exceptionEnds.addElement(label_body_end);
+//        normalExit.bodyDone = true;
+//        exceptionHandlers.pop();
+//        exceptionHandlers.pop();
+//        code.label(label_body_end);
+//        handler.exceptionEnds.addElement(label_body_end);
 
         // CATCH
         code.label(label_catch);
