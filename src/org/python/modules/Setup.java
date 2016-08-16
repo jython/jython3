@@ -35,7 +35,6 @@ public class Setup {
             "_json:org.python.modules._json._json",
             "_jythonlib:org.python.modules._jythonlib._jythonlib",
             "_multiprocessing:org.python.modules._multiprocessing._multiprocessing",
-            "_py_compile",
             "_random:org.python.modules.random.RandomModule",
 //            "_sre",
 //            "_string",

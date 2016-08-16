@@ -5,7 +5,6 @@ import org.python.Version;
 import org.python.core.PyException;
 import org.python.core.PySystemState;
 import org.python.core.imp;
-import org.python.modules._py_compile;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -68,7 +67,7 @@ public class JycompileAntTask extends GlobMatchingTask {
         PySystemState.initialize(System.getProperties(), props);
         for (File src : toCompile) {
             try {
-                String name = _py_compile.getModuleName(src);
+                String name = getModuleName(src);
                 String compiledFilePath = name.replace('.', File.separatorChar);
                 Path classPath = Paths.get(compiledFilePath);
                 if (src.getName().endsWith("__init__.py")) {
@@ -110,5 +109,30 @@ public class JycompileAntTask extends GlobMatchingTask {
             throw new BuildException("Unable to make directory for compiled file: " + compiled);
         }
         imp.cacheCompiledSource(src.getAbsolutePath(), compiled.getAbsolutePath(), bytes);
+    }
+
+    protected static final String getModuleName(File f) {
+        String name = f.getName();
+        int dot = name.lastIndexOf('.');
+        if (dot != -1) {
+            name = name.substring(0, dot);
+        }
+
+        // name the __init__ module after its package
+        File dir = f.getParentFile();
+        if (name.equals("__init__")) {
+            name = dir.getName();
+            dir = dir.getParentFile();
+        }
+
+        // Make the compiled classfile's name fully qualified with a package by walking up the
+        // directory tree looking for __init__.py files. Don't check for __init__.${cache_tag}.class since
+        // we're compiling source here and the existence of a class file without corresponding
+        // source probably doesn't indicate a package.
+        while (dir != null && (new File(dir, "__init__.py").exists())) {
+            name = dir.getName() + "." + name;
+            dir = dir.getParentFile();
+        }
+        return name;
     }
 }
