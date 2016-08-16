@@ -1104,8 +1104,6 @@ public class PyObject implements Serializable {
 
     protected void __rawdir__(PyDictionary accum) {
         mergeDictAttr(accum, "__dict__");
-        mergeListAttr(accum, "__methods__");
-        mergeListAttr(accum, "__members__");
         // Class dict is a slower, more manual merge to match CPython
         PyObject itsClass = __findattr__("__class__");
         if (itsClass != null) {
