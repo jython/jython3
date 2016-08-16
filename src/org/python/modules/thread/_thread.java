@@ -5,16 +5,24 @@ import org.python.core.FunctionThread;
 import org.python.core.Py;
 import org.python.core.PyException;
 import org.python.core.PyInteger;
+import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.python.core.PyTuple;
+import org.python.expose.ExposedConst;
 import org.python.expose.ExposedFunction;
 import org.python.expose.ExposedModule;
 import org.python.expose.ModuleInit;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @ExposedModule(name = "_thread")
-public class thread {
+public class _thread {
     private static volatile long stack_size = 0; // XXX - can we figure out the current stack size?
     private static ThreadGroup group = new ThreadGroup("jython-threads");
+    private static final AtomicInteger _count = new AtomicInteger(0);
+
+    @ExposedConst
+    public static final double TIMEOUT_MAX = 9223372036.0;
 
     @ModuleInit
     public static void classDictInit(PyObject dict) {
@@ -23,6 +31,10 @@ public class thread {
         dict.__setitem__("error", Py.RuntimeError);
     }
 
+    @ExposedFunction
+    public static PyLong _count() {
+        return new PyLong(_count.get());
+    }
 
     @ExposedFunction
     public static void start_new_thread(PyObject func, PyObject args) {
@@ -90,6 +102,11 @@ public class thread {
     @ExposedFunction
     public static void exit_thread() {
         throw new PyException(Py.SystemExit, new PyInteger(0));
+    }
+
+    @ExposedFunction
+    public static PyObject _set_sentinel() {
+        return new PyLock();
     }
 
     @ExposedFunction
