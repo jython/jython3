@@ -18,6 +18,7 @@ import org.python.expose.MethodType;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +50,24 @@ public class PyBytes extends PySequence implements BufferProtocol {
     // for PyJavaClass.init()
     public PyBytes() {
         this("", true);
+    }
+
+    public PyBytes(byte[] buf) {
+        super(TYPE);
+        StringBuilder v = new StringBuilder(buf.length);
+        for (byte i: buf) {
+            v.appendCodePoint(i);
+        }
+        string = v.toString();
+    }
+
+    public PyBytes(int[] buf) {
+        super(TYPE);
+        StringBuilder v = new StringBuilder(buf.length);
+        for (int i: buf) {
+            v.appendCodePoint(i);
+        }
+        string = v.toString();
     }
 
     /**
@@ -201,10 +220,11 @@ public class PyBytes extends PySequence implements BufferProtocol {
     }
 
     public int[] toCodePoints() {
-        int n = getString().length();
+        String s = getString();
+        int n = s.length();
         int[] codePoints = new int[n];
         for (int i = 0; i < n; i++) {
-            codePoints[i] = getString().charAt(i);
+            codePoints[i] = s.charAt(i);
         }
         return codePoints;
     }

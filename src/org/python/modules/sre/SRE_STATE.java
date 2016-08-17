@@ -21,13 +21,17 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.Weigher;
+import org.python.core.BufferProtocol;
 import org.python.core.Options;
 import org.python.core.Py;
+import org.python.core.PyBUF;
+import org.python.core.PyBuffer;
 import org.python.core.PyBytes;
-import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.python.core.PySequence;
 import org.python.core.PyUnicode;
+
+import java.nio.ByteBuffer;
 
 public class SRE_STATE {
 
@@ -432,27 +436,24 @@ for line in sys.stdin:
                 /* <BIGCHARSET> <blockcount> <256 blockindices> <blocks> */
 //                TRACE(setidx, ch, "CHARSET BIGCHARSET ");
 
-//                count = *(set++);
-//                if (!(ch & ~65535))
-//                    block = ((unsigned char*)set)[ch >> 8];
-//                else
-//                    block = -1;
-//                set += 64;
-//                if (block >=0 &&
-//                    (set[block*8 + ((ch & 255)>>5)] & (1 << (ch & 31))))
-//                    return ok;
-//                set += count*8;
-
                     int count = set[setidx++];
                     int block;
-                    if (ch < 65536)
+                    if (isBytes) {
                         block = set[setidx + ch >> 8];
-                    else
-                        block = -1;
-                    setidx += 64;
-                    if (block >= 0 && (set[setidx + block * 8 + ((ch & 255) >> 5)] & (1 << (ch & 31))) != 0)
-                        return ok;
-                    setidx += count * 8;
+                        setidx += 128;
+                        if ((set[setidx + block*16 + ((ch & 255)>>4)] & (1 << (ch & 15))) != 0)
+                            return ok;
+                        setidx += count*16;
+                    } else {
+                        if (ch < 65536)
+                            block = set[setidx + ch >> 8];
+                        else
+                            block = -1;
+                        setidx += 64;
+                        if (block >= 0 && (set[setidx + block * 8 + ((ch & 255) >> 5)] & (1 << (ch & 31))) != 0)
+                            return ok;
+                        setidx += count * 8;
+                    }
                     break;
 
                 default:
@@ -584,6 +585,12 @@ for line in sys.stdin:
                         this.lastindex = i / 2 + 1;
                     if (i > this.lastmark)
                         this.lastmark = i;
+                    // auto scale
+                    if (i >= mark.length) {
+                        int[] tmp = mark;
+                        mark = new int[mark.length * 2];
+                        System.arraycopy(tmp, 0, mark, 0, tmp.length);
+                    }
                     mark[i] = ptr;
                     pidx++;
                     break;
@@ -1272,8 +1279,17 @@ for line in sys.stdin:
                         return ((PyBytes) key).toCodePoints();
                     } else if (key instanceof PyUnicode) {
                         return ((PyUnicode) key).toCodePoints();
+                    } else if (key instanceof BufferProtocol){
+                        try (PyBuffer pyBuffer = ((BufferProtocol) key).getBuffer(PyBUF.SIMPLE)) {
+                            ByteBuffer buf = pyBuffer.getNIOByteBuffer();
+                            int[] codepoints = new int[buf.limit() - buf.position()];
+                            for (int i = buf.position(), j = 0; i < buf.limit(); i++) {
+                                codepoints[j++] = buf.get(i) & 0xFF;
+                            }
+                            return codepoints;
+                        }
                     }
-                    return new int[0];
+                    throw Py.TypeError("expected string or bytes-like object");
                 }
             };
 
@@ -1308,7 +1324,7 @@ for line in sys.stdin:
 
     public SRE_STATE(PyObject str, int start, int end, int flags) {
         this.str = CACHE.INSTANCE.get(str);
-        this.isBytes = str instanceof PyBytes;
+        this.isBytes = !(str instanceof PyUnicode);
         int size = str.__len__();
 
         this.charsize = 1;
@@ -1343,7 +1359,6 @@ for line in sys.stdin:
         return ((ch) < 128 ? (char) sre_char_lower[ch] : ch);
     }
 
-    // XXX - this is not UTF-16 compliant; also depends on whether from PyBytes or PyUnicode
     PyObject getslice(int index, PyObject string, boolean empty) {
         int i, j;
 
@@ -1354,13 +1369,19 @@ for line in sys.stdin:
                 /* want empty string */
                 i = j = 0;
             } else {
-                return null;
+                return Py.None;
             }
         } else {
             i = mark[index];
             j = mark[index + 1];
         }
-        return ((PySequence) string).getslice(i, j);
+        if (string instanceof PyUnicode || string instanceof PyBytes) {
+            return ((PySequence) string).getslice(i, j);
+        } else {
+            int[] buf = new int[j - i];
+            System.arraycopy(str, i, buf, 0, buf.length);
+            return new PyBytes(buf);
+        }
     }
 
     void state_reset() {

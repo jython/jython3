@@ -22,6 +22,8 @@ import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedType;
 
+import static org.python.modules.sre.SRE_STATE.SRE_OP_INFO;
+
 @ExposedType(name = "_sre.SRE_Pattern", doc = BuiltinDocs.SRE_Pattern_doc)
 public class PatternObject extends PyObject implements Traverseproc {
     int[] code; /* link to the code string object */
@@ -111,9 +113,9 @@ public class PatternObject extends PyObject implements Traverseproc {
         ArgParser ap = new ArgParser("sub", args, kws,
                                      "repl", "string", "count");
         PyObject template = ap.getPyObject(0);
-        int count = ap.getInt(2, 0);
+        int count = ap.getInt(2, 1);
 
-        return subx(template, extractPyString(ap, 1), count, false);
+        return subx(template, ap.getPyObject(1), count, false);
     }
 
     @ExposedMethod(doc = BuiltinDocs.SRE_Pattern_subn_doc)
@@ -123,14 +125,11 @@ public class PatternObject extends PyObject implements Traverseproc {
         PyObject template = ap.getPyObject(0);
         int count = ap.getInt(2, 0);
 
-        return subx(template, extractPyString(ap, 1), count, true);
+        return subx(template, ap.getPyObject(1), count, true);
     }
 
 
-    private PyObject subx(PyObject template, PyUnicode instring, int count,
-                          boolean subn)
-    {
-        final PyUnicode string = instring;
+    private PyObject subx(PyObject template, PyObject string, int count, boolean subn) {
         PyObject filter = null;
         boolean filter_is_callable = false;
         if (template.isCallable()) {
@@ -172,13 +171,13 @@ public class PatternObject extends PyObject implements Traverseproc {
 
             if (i < b) {
                 /* get segment before this match */
-                list.append(((PySequence) string).getslice(i, b));
+                list.append(getslice(string, i, b));
             }
             if (! (i == b && i == e && n > 0)) {
                 PyObject item;
                 if (filter_is_callable) {
                     /* pass match object through filter */
-                    PyObject match = _pattern_new_match(state, instring, 1);
+                    PyObject match = _pattern_new_match(state, string, 1);
                     if (match == null) {
                         match = Py.None;
                     }
@@ -186,7 +185,7 @@ public class PatternObject extends PyObject implements Traverseproc {
                 } else {
                     item = filter;
                 }
-    
+
                 if (item != Py.None) {
                     list.append(item);
                 }
@@ -201,17 +200,23 @@ public class PatternObject extends PyObject implements Traverseproc {
                 state.start = state.ptr;
         }
         if (i < state.endpos) {
-            list.append(string.getslice(i, state.endpos, 1));
+            list.append(getslice(string, i, state.endpos));
         }
 
-        PyObject outstring = join_list(list, string);
+        PyObject joiner;
+        if (string instanceof PyUnicode) {
+            joiner = Py.EmptyUnicode;
+        } else {
+            joiner = Py.EmptyByte;
+        }
+        PyObject outstring = join_list(list, joiner);
         if (subn) {
             return new PyTuple(outstring, Py.newLong(n));
         }
         return outstring;
     }
 
-    private PyObject join_list(PyList list, PyUnicode string) {
+    private PyObject join_list(PyList list, PyObject string) {
         if (list.size() == 0) {
             return string;
         }
@@ -225,6 +230,13 @@ public class PatternObject extends PyObject implements Traverseproc {
         PyObject string = ap.getPyObject(0);
         int maxsplit = ap.getInt(1, 0);
 
+        if (code[0] != SRE_OP_INFO || code[3] == 0) {
+            if (code[0] == SRE_OP_INFO && code[4] == 0) {
+                throw Py.ValueError("split() requires a non-empty pattern match.");
+            }
+            Py.FutureWarning("split() requires a non-empty pattern match.");
+            return Py.None;
+        }
         SRE_STATE state = new SRE_STATE(string, 0, Integer.MAX_VALUE, flags);
 
         PyList list = new PyList();
@@ -249,7 +261,7 @@ public class PatternObject extends PyObject implements Traverseproc {
             }
 
             /* get segment before this match */
-            PyObject item = ((PySequence) string).getslice(last, state.start);
+            PyObject item = getslice(string, last, state.start);
             list.append(item);
 
             for (int i = 0; i < groups; i++) {
@@ -260,9 +272,20 @@ public class PatternObject extends PyObject implements Traverseproc {
             last = state.start = state.ptr;
         }
 
-        list.append(((PySequence) string).getslice(last, state.endpos));
-
+        list.append(getslice(string, last, state.endpos));
         return list;
+    }
+
+    protected static final PyObject getslice(PyObject string, int start, int end) {
+        if (string instanceof PyUnicode || string instanceof PyBytes) {
+            return ((PySequence) string).getslice(start, end);
+        } else {
+            try(PyBuffer buf = ((BufferProtocol) string).getBuffer(PyBUF.SIMPLE)) {
+                byte[] bytes = new byte[end - start];
+                buf.copyTo(start, bytes, 0, bytes.length);
+                return new PyBytes(bytes);
+            }
+        }
     }
 
     private PyObject call(String module, String function, PyObject[] args) {
@@ -292,7 +315,7 @@ public class PatternObject extends PyObject implements Traverseproc {
                 /* don't bother to build a match object */
                 switch (groups) {
                 case 0:
-                    item = ((PySequence) string).getslice(state.start, state.ptr);
+                    item = getslice(string, state.start, state.ptr);
                     break;
                 case 1:
                     item = state.getslice(1, string, true);
@@ -398,26 +421,6 @@ public class PatternObject extends PyObject implements Traverseproc {
         _error(status);
         return null;
     }
-
-    private static PyUnicode extractPyString(ArgParser ap, int pos) {
-        PyObject obj = ap.getPyObject(pos);
-
-        if (obj instanceof PyUnicode) {
-            // Easy case
-            return (PyUnicode)obj;
-
-        } else if (obj instanceof BufferProtocol) {
-            // Try to get a byte-oriented buffer
-            try (PyBuffer buf = ((BufferProtocol)obj).getBuffer(PyBUF.FULL_RO)){
-                // ... and treat those bytes as a PyBytes
-                return new PyUnicode(buf.toString());
-            }
-        }
-
-        // Neither of those things worked
-        throw Py.TypeError("expected string or buffer, but got " + obj.getType());
-    }
-
 
     /* Traverseproc implementation */
     @Override

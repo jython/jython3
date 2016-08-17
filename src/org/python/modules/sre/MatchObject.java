@@ -191,8 +191,7 @@ public class MatchObject extends PyObject implements Traverseproc {
 
         if (string == null || start < 0)
             return def;
-        return ((PySequence) string).getslice(start, end);
-
+        return PatternObject.getslice(string, start, end);
     }
 
     public PyObject __findattr_ex__(String key) {

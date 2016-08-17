@@ -601,7 +601,7 @@ public class PyUnicode extends PySequence implements Iterable {
      * @return true if the string consists only of BMP characters
      */
     public boolean isBasicPlane() {
-        return translator == BASIC;
+        return string.length() == getCodePointCount();
     }
 
     public int getCodePointCount() {
