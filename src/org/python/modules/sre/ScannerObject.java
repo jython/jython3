@@ -28,11 +28,14 @@ public class ScannerObject extends PyObject implements Traverseproc {
     SRE_STATE state;
 
     @ExposedMethod(doc = BuiltinDocs.SRE_Scanner_match_doc)
-    public MatchObject SRE_Scanner_match() {
+    public PyObject SRE_Scanner_match() {
         state.state_reset();
         state.ptr = state.start;
 
         int status = state.SRE_MATCH(pattern.code, 0, 1);
+        if (status <= 0) {
+            return Py.None;
+        }
         MatchObject match = pattern._pattern_new_match(state, string, status);
 
         if (status == 0 || state.ptr == state.start)

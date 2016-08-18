@@ -46,7 +46,6 @@ public class MatchObject extends PyObject implements Traverseproc {
     public int pos;
     @ExposedGet
     public int endpos; /* current target slice */
-    @ExposedGet
     public int lastindex; /* last index marker seen by the engine (-1 if none) */
     int groups; /* number of groups (start/end marks) */
     int[] mark;
@@ -194,6 +193,11 @@ public class MatchObject extends PyObject implements Traverseproc {
         return PatternObject.getslice(string, start, end);
     }
 
+    @ExposedGet(name = "lastindex")
+    public PyObject getLastIndex() {
+        return lastindex == -1 ? Py.None : Py.newLong(lastindex);
+    }
+
     public PyObject __findattr_ex__(String key) {
         //System.out.println("__findattr__:" + key);
         if (key == "flags")
@@ -202,14 +206,18 @@ public class MatchObject extends PyObject implements Traverseproc {
             return pattern.groupindex;
         if (key == "re")
             return pattern;
-        if (key == "lastindex")
-            return lastindex == -1 ? Py.None : Py.newLong(lastindex);
         if (key == "lastgroup"){
             if(pattern.indexgroup != null && lastindex >= 0)
                 return pattern.indexgroup.__getitem__(lastindex);
             return Py.None;
         }
         return super.__findattr_ex__(key);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("<%s object; span=%s, match='%s'>", getType().getName(), SRE_Match_span(0),
+                SRE_Match_group(Py.EmptyObjects, Py.NoKeywords));
     }
 
 

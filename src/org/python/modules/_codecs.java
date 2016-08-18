@@ -24,6 +24,7 @@ import org.python.core.stringlib.Encoding;
 import org.python.expose.ExposedFunction;
 import org.python.expose.ExposedModule;
 import org.python.expose.ExposedType;
+import org.python.modules.sys.SysModule;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -289,7 +290,7 @@ public class _codecs {
                 } else if (x instanceof PyLong) {
                     // Mapping was to an int: treat as character code
                     int value = x.asInt();
-                    if (value < 0 || value > PySystemState.maxunicode) {
+                    if (value < 0 || value > SysModule.MAXUNICODE) {
                         throw Py.TypeError("character mapping must return "
                                 + "integer greater than 0 and less than sys.maxunicode");
                     }
@@ -337,9 +338,9 @@ public class _codecs {
                 ;
             } else if (result instanceof PyLong) {
                 int value = result.asInt();
-                if (value < 0 || value > PySystemState.maxunicode) {
+                if (value < 0 || value > SysModule.MAXUNICODE) {
                     throw Py.TypeError(String.format("character mapping must be in range(0x%x)",
-                            PySystemState.maxunicode + 1));
+                            SysModule.MAXUNICODE + 1));
                 }
                 buf.appendCodePoint(value);
             } else if (result instanceof PyUnicode) {

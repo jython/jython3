@@ -11,6 +11,7 @@ import org.python.core.PyBytes;
 import org.python.core.PySystemState;
 import org.python.core.PyUnicode;
 import org.python.core.stringlib.InternalFormat.Spec;
+import org.python.modules.sys.SysModule;
 
 /**
  * A class that provides the implementation of integer formatting. In a limited way, it acts like a
@@ -241,7 +242,7 @@ public class IntegerFormatter extends InternalFormat.Formatter {
 
     // Limits used in format_c(BigInteger)
     private static final BigInteger LIMIT_UNICODE = BigInteger
-            .valueOf(PySystemState.maxunicode + 1);
+            .valueOf(SysModule.MAXUNICODE + 1);
     private static final BigInteger LIMIT_BYTE = BigInteger.valueOf(256);
 
     /**
@@ -415,7 +416,7 @@ public class IntegerFormatter extends InternalFormat.Formatter {
      */
     void format_c(int value) {
         // Limit is 256 if we're formatting for byte output, unicode range otherwise.
-        int limit = bytes ? 256 : PySystemState.maxunicode + 1;
+        int limit = bytes ? 256 : SysModule.MAXUNICODE + 1;
         if (value < 0 || value >= limit) {
             throw Py.OverflowError("%c arg not in range(0x" + Integer.toHexString(limit) + ")");
         } else {
@@ -736,7 +737,7 @@ public class IntegerFormatter extends InternalFormat.Formatter {
                 throw Py.OverflowError("unsigned byte integer is less than minimum");
             } else {
                 // Limit is 256 if we're formatting for byte output, unicode range otherwise.
-                int limit = bytes ? 256 : PySystemState.maxunicode + 1;
+                int limit = bytes ? 256 : SysModule.MAXUNICODE + 1;
                 if (value >= limit) {
                     throw Py.OverflowError("unsigned byte integer is greater than maximum");
                 } else {

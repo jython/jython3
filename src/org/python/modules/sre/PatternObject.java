@@ -32,7 +32,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     @ExposedGet
     public int groups;
     @ExposedGet
-    public org.python.core.PyObject groupindex;
+    public PyObject groupindex;
     @ExposedGet
     public int flags;
     org.python.core.PyObject indexgroup;
@@ -48,7 +48,7 @@ public class PatternObject extends PyObject implements Traverseproc {
         this.code    = code;
         this.codesize = code.length;
         this.groups  = groups;
-        this.groupindex = groupindex;
+        this.groupindex = new PyDictProxy(groupindex);
         this.indexgroup = indexgroup;
     }
 
@@ -79,12 +79,12 @@ public class PatternObject extends PyObject implements Traverseproc {
         SRE_STATE state = new SRE_STATE(string, start, end, flags);
 
         state.ptr = state.start;
-        int status = state.SRE_MATCH(code, 0, 1);
-        if (status > 0) {
-            if (state.endpos - state.pos < string.__len__()) {
-                return Py.None;
-            }
-        }
+        int status = state.SRE_MATCH(code, 0, 1, true);
+//        if (status > 0) {
+//            if (state.endpos - state.pos < string.__len__()) {
+//                return Py.None;
+//            }
+//        }
 
         PyObject ret = _pattern_new_match(state, string, status);
         if (ret == null) return Py.None;
@@ -113,7 +113,7 @@ public class PatternObject extends PyObject implements Traverseproc {
         ArgParser ap = new ArgParser("sub", args, kws,
                                      "repl", "string", "count");
         PyObject template = ap.getPyObject(0);
-        int count = ap.getInt(2, 1);
+        int count = ap.getInt(2, 0);
 
         return subx(template, ap.getPyObject(1), count, false);
     }
@@ -235,7 +235,6 @@ public class PatternObject extends PyObject implements Traverseproc {
                 throw Py.ValueError("split() requires a non-empty pattern match.");
             }
             Py.FutureWarning("split() requires a non-empty pattern match.");
-            return Py.None;
         }
         SRE_STATE state = new SRE_STATE(string, 0, Integer.MAX_VALUE, flags);
 

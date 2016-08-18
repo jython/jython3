@@ -20,6 +20,7 @@ import org.python.core.PySystemState;
 import org.python.core.PyTuple;
 import org.python.core.PyUnicode;
 import org.python.core.codecs;
+import org.python.modules.sys.SysModule;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -283,7 +284,7 @@ public class Encoding {
 
     /* pass in an int since this can be a UCS-4 character */
     private static boolean storeUnicodeCharacter(int value, StringBuilder partialDecode) {
-        if (value >= 0 && value <= PySystemState.maxunicode) {
+        if (value >= 0 && value <= SysModule.MAXUNICODE) {
             partialDecode.appendCodePoint(value);
             return true;
         }

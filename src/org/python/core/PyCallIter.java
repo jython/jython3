@@ -1,5 +1,8 @@
 package org.python.core;
 
+import org.python.expose.ExposedType;
+
+@ExposedType(name = "callable_iterator")
 public class PyCallIter extends PyIterator {
     //note: Already implements Traverseproc, inheriting it from PyIterator
 
@@ -17,23 +20,14 @@ public class PyCallIter extends PyIterator {
 
     public PyObject __next__() {
         if (callable == null) {
-            return null;
+            throw Py.StopIteration();
         }
 
         PyObject result;
-        try {
-            result = callable.__call__();
-        } catch (PyException exc) {
-            if (exc.match(Py.StopIteration)) {
-                callable = null;
-                stopException = exc;
-                return null;
-            }
-            throw exc;
-        }
-        if (result == null || result._eq(sentinel).__bool__()) {
+        result = callable.__call__();
+        if (result == null || sentinel._eq(result).__bool__()) {
             callable = null;
-            return null;
+            throw Py.StopIteration();
         }
         return result;
     }

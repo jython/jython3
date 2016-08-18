@@ -18,7 +18,7 @@ import java.util.concurrent.Callable;
 @ExposedModule(name = "sys")
 public class SysModule {
     @ExposedConst(name = "maxunicode")
-    public static final int MAXUNICODE = PySystemState.maxunicode;
+    public static final int MAXUNICODE = 0x10FFFF;
 
     @ModuleInit
     public static final void classDictInit(PyObject dict) {
