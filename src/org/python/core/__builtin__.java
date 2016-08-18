@@ -17,6 +17,7 @@ import org.python.core.stringlib.InternalFormat;
 import org.python.core.util.ExtraMath;
 import org.python.core.util.RelativeFile;
 import org.python.modules._io._io;
+import org.python.modules.sys.SysModule;
 
 @Untraversable
 class BuiltinFunctions extends PyBuiltinFunctionSet {
@@ -67,8 +68,8 @@ class BuiltinFunctions extends PyBuiltinFunctionSet {
                 return Py.newLong(__builtin__.ord(arg1));
             case 5:
                 return __builtin__.hash(arg1);
-            case 6:
-                return Py.newUnicode(__builtin__.unichr(arg1));
+//            case 6:
+//                return Py.newUnicode(__builtin__.unichr(arg1));
             case 7:
                 return __builtin__.abs(arg1);
             case 9:
@@ -317,7 +318,7 @@ public class __builtin__ {
         dict.__setitem__("ord", new BuiltinFunctions("ord", 3, 1));
 //        dict.__setitem__("range", new BuiltinFunctions("range", 2, 1, 3));
         dict.__setitem__("sum", new BuiltinFunctions("sum", 12, 1, 2));
-        dict.__setitem__("unichr", new BuiltinFunctions("unichr", 6, 1));
+//        dict.__setitem__("unichr", new BuiltinFunctions("unichr", 6, 1));
         dict.__setitem__("delattr", new BuiltinFunctions("delattr", 15, 2));
         dict.__setitem__("dir", new BuiltinFunctions("dir", 16, 0, 1));
         dict.__setitem__("divmod", new BuiltinFunctions("divmod", 17, 2));
@@ -411,28 +412,11 @@ public class __builtin__ {
         return obj.isCallable();
     }
 
-    public static int unichr(PyObject obj) {
-        long l = obj.asLong();
-        if (l < PySystemState.minint) {
-            throw Py.OverflowError("signed integer is less than minimum");
-        } else if (l > PySystemState.maxint) {
-            throw Py.OverflowError("signed integer is greater than maximum");
-        }
-        return unichr((int)l);
-    }
-
-    public static int unichr(int i) {
-        if (i < 0 || i > PySystemState.maxunicode) {
-            throw Py.ValueError("unichr() arg not in range(0x110000)");
-        }
-        if (i >= 0xD800 && i <= 0xDFFF) {
-            throw Py.ValueError("unichr() arg is a lone surrogate in range (0xD800, 0xDFFF) (Jython UTF-16 encoding)");
-        }
-        return i;
-    }
-
     public static String chr(int i) {
-        return String.valueOf((char) i);
+        if (i < 0 || i > SysModule.MAXUNICODE) {
+            throw Py.ValueError("chr() arg not in range(0x110000)");
+        }
+        return String.valueOf(Character.toChars(i));
     }
 
     public static void delattr(PyObject obj, PyObject name) {
