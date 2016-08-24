@@ -17,12 +17,14 @@
 package org.python.modules.sre;
 
 import java.util.*;
+
+import com.google.common.base.Joiner;
 import org.python.core.*;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedType;
 
-import static org.python.modules.sre.SRE_STATE.SRE_OP_INFO;
+import static org.python.modules.sre.SRE_STATE.*;
 
 @ExposedType(name = "_sre.SRE_Pattern", doc = BuiltinDocs.SRE_Pattern_doc)
 public class PatternObject extends PyObject implements Traverseproc {
@@ -35,8 +37,10 @@ public class PatternObject extends PyObject implements Traverseproc {
     public PyObject groupindex;
     @ExposedGet
     public int flags;
-    org.python.core.PyObject indexgroup;
+    PyObject indexgroup;
     public int codesize;
+
+    private boolean isBytes;
 
 
     public PatternObject(PyObject pattern, int flags, int[] code,
@@ -44,12 +48,16 @@ public class PatternObject extends PyObject implements Traverseproc {
 
         if (pattern != null)
             this.pattern = pattern;
+        this.isBytes = !(pattern instanceof PyUnicode);
         this.flags   = flags;
         this.code    = code;
         this.codesize = code.length;
         this.groups  = groups;
         this.groupindex = new PyDictProxy(groupindex);
         this.indexgroup = indexgroup;
+        if (!isBytes && (flags & (SRE_FLAG_ASCII)) != SRE_FLAG_ASCII) {
+            this.flags |= SRE_FLAG_UNICODE;
+        }
     }
 
     @ExposedMethod(doc = BuiltinDocs.SRE_Pattern_match_doc)
@@ -443,5 +451,56 @@ public class PatternObject extends PyObject implements Traverseproc {
     @Override
     public boolean refersDirectlyTo(PyObject ob) {
         return ob != null && (ob == pattern || ob == groupindex || ob == indexgroup);
+    }
+
+    @Override
+    public PyUnicode __repr__() {
+        return SRE_Pattern___repr__();
+    }
+
+    @ExposedMethod
+    public PyUnicode SRE_Pattern___repr__() {
+        int flags = this.flags;
+//        if (!isBytes && (flags & (SRE_FLAG_LOCALE|SRE_FLAG_UNICODE| SRE_FLAG_ASCII)) == SRE_FLAG_UNICODE) {
+//            flags &= ~SRE_FLAG_UNICODE;
+//        }
+        List<String> flagItems = new ArrayList<>();
+        for (FlagName flagName : flagNames) {
+            if ((flags & flagName.value) > 0) {
+                flagItems.add(flagName.name);
+                flags &= ~flagName.value;
+            }
+        }
+
+        if (flags > 0) {
+            flagItems.add(String.format("0x%x", flags));
+        }
+        if (flagItems.size() > 0) {
+            String flagsResult = Joiner.on("|").join(flagItems);
+            return new PyUnicode(String.format("re.compile(%.200s, %s)", pattern.__repr__(), flagsResult));
+        }
+        return new PyUnicode(String.format("re.compile(%.200s)", pattern.__repr__()));
+    }
+
+    private static FlagName[] flagNames = {
+            new FlagName("re.TEMPLATE", SRE_FLAG_TEMPLATE),
+            new FlagName("re.IGNORECASE", SRE_FLAG_IGNORECASE),
+            new FlagName("re.LOCALE", SRE_FLAG_LOCALE),
+            new FlagName("re.MULTILINE", SRE_FLAG_MULTILINE),
+            new FlagName("re.DOTALL", SRE_FLAG_DOTALL),
+            new FlagName("re.UNICODE", SRE_FLAG_UNICODE),
+            new FlagName("re.VERBOSE", SRE_FLAG_VERBOSE),
+            new FlagName("re.DEBUG", SRE_FLAG_DEBUG),
+            new FlagName("re.ASCII", SRE_FLAG_ASCII),
+    };
+
+    static class FlagName {
+        String name;
+        int value;
+
+        FlagName(String n, int v) {
+            name = n;
+            value = v;
+        }
     }
 }
