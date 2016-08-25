@@ -53,10 +53,13 @@ public class PyBytes extends PySequence implements BufferProtocol {
     }
 
     public PyBytes(byte[] buf) {
+        this(buf, 0, buf.length);
+    }
+    public PyBytes(byte[] buf, int off, int len) {
         super(TYPE);
         StringBuilder v = new StringBuilder(buf.length);
-        for (byte i: buf) {
-            v.appendCodePoint(i);
+        for (int i = off; i < len; i++) {
+            v.appendCodePoint(buf[i] & 0xFF);
         }
         string = v.toString();
     }

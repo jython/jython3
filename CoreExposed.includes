@@ -9,6 +9,7 @@ org/python/core/PyBoolean.class
 org/python/core/PyBuiltinCallable.class
 org/python/core/PyByteArray.class
 org/python/core/PyBytes.class
+org/python/core/PyCallIter.class
 org/python/core/PyCell.class
 org/python/core/PyClass.class
 org/python/core/PyClassMethod.class
@@ -118,9 +119,7 @@ org/python/modules/jffi/StringCData.class
 org/python/modules/jffi/StructLayout.class
 org/python/modules/jffi/StructLayout$Field.class
 org/python/modules/jffi/StructLayout$ScalarField.class
-org/python/modules/_threading/Condition.class
-org/python/modules/_threading/Lock.class
-org/python/modules/_threading/RLock.class
+org/python/modules/thread/PyLock.class
 org/python/modules/_weakref/CallableProxyType.class
 org/python/modules/_weakref/ProxyType.class
 org/python/modules/_weakref/ReferenceType.class
@@ -140,6 +139,8 @@ org/python/modules/thread/PyLocal.class
 org/python/modules/time/PyTimeTuple.class
 org/python/modules/unicodedata/UCD.class
 org/python/modules/zipimport/zipimporter.class
+org/python/modules/zlib/PyCompress.class
+org/python/modules/zlib/PyDecompress.class
 org/python/antlr/AST.class
 org/python/antlr/ast/alias.class
 org/python/antlr/ast/arguments.class

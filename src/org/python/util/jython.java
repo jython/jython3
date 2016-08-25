@@ -18,7 +18,7 @@ import org.python.core.imp;
 import org.python.core.util.RelativeFile;
 import org.python.modules._systemrestart;
 import org.python.modules.posix.PosixModule;
-import org.python.modules.thread.thread;
+import org.python.modules.thread._thread;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -428,7 +428,7 @@ public class jython {
      */
     public static void shutdownInterpreter() {
         // Stop all the active threads and signal the SystemRestart
-        thread.interruptAllThreads();
+        _thread.interruptAllThreads();
         Py.getSystemState()._systemRestart = true;
         // Close all sockets -- not all of their operations are stopped by
         // Thread.interrupt (in particular pre-nio sockets)

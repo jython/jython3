@@ -1963,6 +1963,17 @@ public final class Py {
         return letters[codepoint];
     }
 
+    public static final byte[] unwrapBuffer(PyObject bp) {
+        if (!(bp instanceof BufferProtocol)) {
+            throw Py.TypeError("a bytes-like object expected");
+        }
+        PyBuffer buffer = ((BufferProtocol) bp).getBuffer(PyBUF.SIMPLE);
+        byte[] buf = new byte[buffer.getLen()];
+        buffer.copyTo(buf, 0);
+        buffer.release();
+        return buf;
+    }
+
     /**
      * Uses the PyObjectAdapter passed to {@link PySystemState#initialize} to turn o into a PyObject.
      *

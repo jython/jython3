@@ -86,5 +86,6 @@ public class Setup {
             "subprocess:org.python.modules.subprocess.SubprocessModule",
             "sys:org.python.modules.sys.SysModule",
             "unicodedata:org.python.modules.unicodedata.unicodedata",
+            "zlib:org.python.modules.zlib.ZlibModule",
     };
 }
