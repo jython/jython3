@@ -10,6 +10,7 @@ package org.python.modules;
 
 
 import java.util.regex.Pattern;
+import java.util.zip.CRC32;
 
 import org.python.core.ArgParser;
 import org.python.core.BufferProtocol;
@@ -828,26 +829,11 @@ static long[] crc_32_tab = new long[] {
 };
 
     @ExposedFunction(defaults = {"0"})
-    public static int crc32(PyObject obj, long crc) {
-        PyBuffer bin_data = coerceParam(obj);
-        int len = bin_data.getLen();
-
-        crc &= 0xFFFFFFFFL;
-        crc = crc ^ 0xFFFFFFFFL;
-        try {
-            for (int i = 0; i < len; i++) {
-                char ch = (char) bin_data.intAt(i);
-                crc = (int)crc_32_tab[(int) ((crc ^ ch) & 0xffL)] ^ (crc >> 8);
-                /* Note:  (crc >> 8) MUST zero fill on left */
-                crc &= 0xFFFFFFFFL;
-            }
-        } finally {
-            bin_data.release();
-        }
-        if (crc >= 0x80000000)
-            return -(int)(crc+1 & 0xFFFFFFFF);
-        else
-            return (int)(crc & 0xFFFFFFFF);
+    public static final long crc32(PyObject obj, long crc) {
+        byte[] bin_data = Py.unwrapBuffer(obj);
+        CRC32 crc32 = new CRC32();
+        crc32.update(bin_data);
+        return crc32.getValue();
     }
 
 

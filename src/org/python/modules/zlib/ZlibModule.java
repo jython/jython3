@@ -4,8 +4,8 @@ import org.python.core.ArgParser;
 import org.python.core.BufferProtocol;
 import org.python.core.Py;
 import org.python.core.PyBUF;
-import org.python.core.PyBuffer;
 import org.python.core.PyBytes;
+import org.python.core.PyException;
 import org.python.core.PyLong;
 import org.python.core.PyObject;
 import org.python.core.PyStringMap;
@@ -15,13 +15,11 @@ import org.python.expose.ExposedModule;
 import org.python.expose.ModuleInit;
 import org.python.modules.binascii;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.zip.Adler32;
+import java.util.zip.CRC32;
+import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
-import java.util.zip.InflaterOutputStream;
 
 @ExposedModule(name = "zlib")
 public class ZlibModule {
@@ -61,6 +59,11 @@ public class ZlibModule {
     @ExposedConst
     public static final int Z_FINISH = 4;
 
+    @ExposedConst
+    public static final String ZLIB_VERSION = "1.2.8";
+    @ExposedConst
+    public static final String ZLIB_RUNTIME_VERSION = "1.2.8";
+
     public static final PyObject error = Py.makeClass("zlib.error", Py.BaseException, new PyStringMap());
 
     @ModuleInit
@@ -73,22 +76,25 @@ public class ZlibModule {
     @ExposedFunction
     public static final PyObject adler32(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("adler32", args, keywords, "data", "value");
-        int value = ap.getInt(1, 1); // not used, always 1
+//        int value = ap.getInt(1, 1);
         PyObject data = ap.getPyObject(0);
         if (data instanceof BufferProtocol) {
             Adler32 checksum = new Adler32();
-            checksum.update(((BufferProtocol) data).getBuffer(PyBUF.SIMPLE).getNIOByteBuffer());
+            checksum.update(Py.unwrapBuffer(data));
             return new PyLong(checksum.getValue());
         }
         throw Py.TypeError(String.format("a bytes-like object expected, not '%s'", data.getType().getName()));
     }
 
     @ExposedFunction
-    public static final int crc32(PyObject[] args, String[] keywords) {
+    public static final PyObject crc32(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("crc32", args, keywords, "data", "value");
         PyObject data = ap.getPyObject(0);
-        int value = ap.getInt(1, 1); // not used, always 1
-        return binascii.crc32(data, value);
+//        int value = ap.getInt(1, 0);
+        CRC32 crc32 = new CRC32();
+        crc32.update(Py.unwrapBuffer(data));
+        return new PyLong(crc32.getValue());
+//        return binascii.crc32(data, value);
     }
 
     @ExposedFunction
@@ -96,21 +102,12 @@ public class ZlibModule {
         ArgParser ap = new ArgParser("compress", args, keywords, "bytes", "level");
         PyObject bytes = ap.getPyObject(0);
         int level = ap.getInt(1, 6); // not used, always 1
-        Deflater deflater = new Deflater(level);
-        PyBuffer buffer = ((BufferProtocol) bytes).getBuffer(PyBUF.SIMPLE);
-        try {
-            byte[] buf = new byte[buffer.getLen()];
-            buffer.copyTo(buf, 0);
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            DeflaterOutputStream out = new DeflaterOutputStream(byteArrayOutputStream, deflater);
-            out.write(buf);
-            out.close();
-            return new PyBytes(byteArrayOutputStream.toByteArray());
-        } catch (IOException e) {
-            throw Py.IOError(e);
-        } finally {
-            buffer.release();
+        if (level > 9 || level < 0) {
+            throw new PyException(error, "Bad compress level");
         }
+        Deflater deflater = new Deflater(level);
+        deflater.setInput(Py.unwrapBuffer(bytes));
+        return deflate(deflater, Deflater.SYNC_FLUSH);
     }
 
     @ExposedFunction
@@ -120,20 +117,51 @@ public class ZlibModule {
         // unused
         int wbits = ap.getInt(1, 15);
         int bufsize = ap.getInt(2, 16384);
-        PyBuffer buffer = ((BufferProtocol) data).getBuffer(PyBUF.SIMPLE);
-        byte[] buf = new byte[buffer.getLen()];
-        buffer.copyTo(buf, 0);
         Inflater inflater = new Inflater();
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        InflaterOutputStream outputStream = new InflaterOutputStream(byteArrayOutputStream);
+        inflater.setInput(Py.unwrapBuffer(data));
+        return inflate(inflater);
+    }
+
+    protected static final PyBytes deflate(Deflater deflater, int mode) {
+        byte[] buf = new byte[DEF_BUF_SIZE];
+        deflater.finish();
+        int len = deflater.deflate(buf, 0, buf.length, mode);
+        int totalLen = len;
+        while (len == DEF_BUF_SIZE) {
+            byte[] tmp = buf;
+            buf = new byte[tmp.length + DEF_BUF_SIZE ];
+            System.arraycopy(tmp, 0, buf, 0, tmp.length);
+            len = deflater.deflate(buf, tmp.length, DEF_BUF_SIZE, mode);
+            totalLen += len;
+            if (len < DEF_BUF_SIZE) break;
+        }
+        deflater.end();
+        return new PyBytes(buf, 0, totalLen);
+    }
+
+    protected static final PyBytes inflate(Inflater inflater) {
+        byte[] buf = new byte[DEF_BUF_SIZE];
         try {
-            outputStream.write(buf);
-            outputStream.close();
-            return new PyBytes(byteArrayOutputStream.toByteArray());
-        } catch (IOException e) {
-            throw Py.IOError(e);
-        } finally {
-            buffer.release();
+            int len = inflater.inflate(buf);
+            int totalLen = len;
+            while (len == DEF_BUF_SIZE) {
+                byte[] tmp = buf;
+                buf = new byte[tmp.length + DEF_BUF_SIZE];
+                System.arraycopy(tmp, 0, buf, 0, tmp.length);
+                len = inflater.inflate(buf, tmp.length, DEF_BUF_SIZE);
+                totalLen += len;
+                if (len < DEF_BUF_SIZE) break;
+            }
+            inflater.end();
+            return new PyBytes(buf, 0, totalLen);
+        } catch (DataFormatException e) {
+            throw new PyException(error, e.getMessage());
+        }
+    }
+
+    protected static final void validateWbits(int wbits) {
+        if ((wbits > -9 && wbits < 0) || (wbits >= 0 && wbits < 9) || wbits > MAX_WBITS) {
+            throw Py.ValueError("Invalid initialization option");
         }
     }
 }

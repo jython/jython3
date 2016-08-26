@@ -16,6 +16,8 @@ import org.python.expose.ExposedType;
 
 import java.util.zip.Deflater;
 
+import static org.python.modules.zlib.ZlibModule.validateWbits;
+
 @ExposedType(name = "zlib.Compress")
 public class PyCompress extends PyObject {
     public static final PyType TYPE = PyType.fromClass(PyCompress.class);
@@ -25,12 +27,9 @@ public class PyCompress extends PyObject {
     protected PyCompress(int level, int strategy, PyObject dict) {
         deflater = new Deflater(level);
         deflater.setStrategy(strategy);
-        if (dict != Py.None && dict instanceof BufferProtocol) {
-            PyBuffer buffer = ((BufferProtocol) dict).getBuffer(PyBUF.SIMPLE);
-            byte[] buf = new byte[buffer.getLen()];
-            buffer.copyTo(buf, 0);
-            deflater.setDictionary(buf);
-            buffer.release();
+        if (dict != Py.None) {
+            byte[] bytes = Py.unwrapBuffer(dict);
+            deflater.setDictionary(bytes);
         }
     }
 
@@ -40,9 +39,13 @@ public class PyCompress extends PyObject {
         ArgParser ap = new ArgParser("compressobj", args, keywords, new String[]{ "level", "method",
                 "wbits", "memLevel", "strategy", "zdict"}, 0);
         int level = ap.getInt(0, 6);
+        if (level < 0 || level > 9) {
+            throw Py.ValueError("Invalid initialization option");
+        }
         int method = ap.getInt(1, ZlibModule.DEFLATED);
         int wbits = ap.getInt(2, ZlibModule.MAX_WBITS);
         int memLevel = ap.getInt(3, ZlibModule.DEF_MEM_LEVEL);
+        validateWbits(wbits);
         int strategy = ap.getInt(4, ZlibModule.Z_DEFAULT_STRATEGY);
         PyObject zdict = ap.getPyObject(5, Py.None);
         return new PyCompress(level, strategy, zdict);
@@ -73,7 +76,7 @@ public class PyCompress extends PyObject {
         int totalLen = len;
         while (len == ZlibModule.DEF_BUF_SIZE) {
             byte[] tmp = buf;
-            buf = new byte[tmp.length * 2];
+            buf = new byte[tmp.length + ZlibModule.DEF_BUF_SIZE];
             System.arraycopy(tmp, 0, buf, 0, tmp.length);
             len = deflater.deflate(buf, tmp.length, ZlibModule.DEF_BUF_SIZE, mode);
             totalLen += len;
