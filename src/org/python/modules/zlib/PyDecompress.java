@@ -1,7 +1,6 @@
 package org.python.modules.zlib;
 
 import org.python.core.ArgParser;
-import org.python.core.BufferProtocol;
 import org.python.core.Py;
 import org.python.core.PyBytes;
 import org.python.core.PyException;
@@ -46,9 +45,19 @@ public class PyDecompress extends PyObject {
     public PyObject Decompress_decompress(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("decompress", args, keywords, "data", "max_length");
         PyObject data = ap.getPyObject(0);
-        int maxLength = ap.getInt(1, -1);
-        inflater.setInput(Py.unwrapBuffer(data));
-        if (maxLength <= 0) {
+        PyObject maxLenObj = ap.getPyObject(1, Py.None);
+        int maxLength = maxLenObj == Py.None ? -1 : maxLenObj.asInt();
+        if (maxLenObj != Py.None) {
+            if (maxLength < 0) {
+                throw Py.ValueError("value must be positive");
+            }
+        }
+        byte[] input = Py.unwrapBuffer(data);
+        if (input.length > 0)
+            inflater.setInput(input);
+        if (maxLength == 0) {
+            return Py.EmptyByte;
+        } else if (maxLength == -1) {
             return Decompress_flush(Py.EmptyObjects, Py.NoKeywords);
         }
         byte[] buf = new byte[maxLength];
@@ -59,6 +68,11 @@ public class PyDecompress extends PyObject {
                     throw new PyException(ZlibModule.error, "Error 2 while decompressing data");
                 }
                 inflater.setDictionary(dict);
+                len = inflater.inflate(buf);
+            }
+
+            if (len == 0) {
+                return Py.EmptyByte;
             }
             return new PyBytes(buf, 0, len);
         } catch (DataFormatException e) {
