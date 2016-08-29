@@ -39,7 +39,7 @@ public class PyCompress extends PyObject {
         ArgParser ap = new ArgParser("compressobj", args, keywords, new String[]{ "level", "method",
                 "wbits", "memLevel", "strategy", "zdict"}, 0);
         int level = ap.getInt(0, 6);
-        if (level < 0 || level > 9) {
+        if (level < -1 || level > 9) {
             throw Py.ValueError("Invalid initialization option");
         }
         int method = ap.getInt(1, ZlibModule.DEFLATED);
