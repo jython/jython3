@@ -133,6 +133,14 @@ public class ArgParser {
         return getRequiredArg(pos).asLong();
     }
 
+    public long getLong(int pos, long def) {
+        PyObject value = getOptionalArg(pos);
+        if (value == null) {
+            return def;
+        }
+        return value.asLong();
+    }
+
     /**
      * Return a required argument as an int.
      * 
