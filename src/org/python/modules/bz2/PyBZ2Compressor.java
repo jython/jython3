@@ -54,11 +54,11 @@ public class PyBZ2Compressor extends PyObject {
         ArgParser ap = new ArgParser("compress", args, kwds,
                 new String[] { "data" }, 1);
 
-        PyBytes data = (PyBytes) ap.getPyObject(0);
+        byte[] buf = Py.unwrapBuffer(ap.getPyObject(0));
 
         PyBytes returnData = null;
         try {
-            compressStream.write(data.toBytes());
+            compressStream.write(buf);
 
             returnData = readData();
         } catch (IOException e) {

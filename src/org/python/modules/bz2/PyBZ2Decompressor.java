@@ -25,7 +25,9 @@ public class PyBZ2Decompressor extends PyObject implements Traverseproc {
     @ExposedGet
     public PyBytes unused_data = Py.EmptyByte;
 
-    private boolean eofReached = false;
+    @ExposedGet(name = "eof")
+    public boolean eofReached = false;
+
     private BZip2CompressorInputStream decompressStream = null;
 
     private byte[] accumulator = new byte[0];
