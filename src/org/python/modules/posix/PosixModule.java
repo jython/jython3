@@ -317,7 +317,11 @@ public class PosixModule implements ClassDictInit {
         "be used in a suid/sgid environment to test if the invoking user has the\n" +
         "specified access to the path.  The mode argument can be F_OK to test\n" +
         "existence, or the inclusive-OR of R_OK, W_OK, and X_OK.");
-    public static boolean access(PyObject path, int mode) {
+    public static boolean access(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("access", args, keywords, "path", "mode", "*",
+                "dir_fd", "effective_ids", "follow_symlinks");
+        PyObject path = ap.getPyObject(0);
+        int mode = ap.getInt(1);
         File file = absolutePath(path).toFile();
         boolean result = true;
 
