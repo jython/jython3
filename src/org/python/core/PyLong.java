@@ -225,6 +225,11 @@ public class PyLong extends PyObject {
     @ExposedMethod(defaults={"false"}, doc = BuiltinDocs.int_to_bytes_doc)
     final PyObject long_to_bytes(int length, String byteorder, boolean signed) {
         byte[] origin = value.toByteArray();
+        if (origin[0] == 0) {
+            byte[] tmp = origin;
+            origin = new byte[tmp.length - 1];
+            System.arraycopy(tmp, 1, origin, 0, origin.length);
+        }
         if (length < origin.length) {
             throw Py.OverflowError("int too big to convert");
         }
@@ -234,11 +239,9 @@ public class PyLong extends PyObject {
             for (int i = 0, j = origin.length - 1; j >= 0; i++, j--) {
                 result[i] = origin[j];
             }
-        } else {
-            System.arraycopy(origin, 0, result, length - origin.length, origin.length);
         }
 
-        return new PyByteArray(result);
+        return new PyBytes(result);
     }
 
     @ExposedGet(name = "real", doc = BuiltinDocs.int_real_doc)
