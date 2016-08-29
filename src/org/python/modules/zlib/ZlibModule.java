@@ -3,7 +3,6 @@ package org.python.modules.zlib;
 import org.python.core.ArgParser;
 import org.python.core.BufferProtocol;
 import org.python.core.Py;
-import org.python.core.PyBUF;
 import org.python.core.PyBytes;
 import org.python.core.PyException;
 import org.python.core.PyLong;
@@ -16,7 +15,6 @@ import org.python.expose.ModuleInit;
 import org.python.modules.binascii;
 
 import java.util.zip.Adler32;
-import java.util.zip.CRC32;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -41,10 +39,11 @@ public class ZlibModule {
 
     @ExposedConst
     public static final int Z_FILTERED = Deflater.FILTERED;
-
     @ExposedConst
     public static final int Z_HUFFMAN_ONLY = Deflater.HUFFMAN_ONLY;
 
+    @ExposedConst
+    public static final int Z_DEFAULT_COMPRESSION = Deflater.DEFAULT_COMPRESSION;
     @ExposedConst
     public static final int Z_BEST_COMPRESSION = Deflater.BEST_COMPRESSION;
     @ExposedConst
@@ -87,14 +86,11 @@ public class ZlibModule {
     }
 
     @ExposedFunction
-    public static final PyObject crc32(PyObject[] args, String[] keywords) {
+    public static final long crc32(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("crc32", args, keywords, "data", "value");
         PyObject data = ap.getPyObject(0);
-//        int value = ap.getInt(1, 0);
-        CRC32 crc32 = new CRC32();
-        crc32.update(Py.unwrapBuffer(data));
-        return new PyLong(crc32.getValue());
-//        return binascii.crc32(data, value);
+        long value = ap.getLong(1, 0);
+        return binascii.crc32(data, value);
     }
 
     @ExposedFunction

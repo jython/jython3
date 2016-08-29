@@ -9,9 +9,6 @@
 package org.python.modules;
 
 
-import java.util.regex.Pattern;
-import java.util.zip.CRC32;
-
 import org.python.core.ArgParser;
 import org.python.core.BufferProtocol;
 import org.python.core.Py;
@@ -26,6 +23,8 @@ import org.python.core.util.StringUtil;
 import org.python.expose.ExposedFunction;
 import org.python.expose.ExposedModule;
 import org.python.expose.ModuleInit;
+
+import java.util.regex.Pattern;
 
 /**
  * The <tt>binascii.java</tt> module contains a number of methods to convert
@@ -830,10 +829,14 @@ static long[] crc_32_tab = new long[] {
 
     @ExposedFunction(defaults = {"0"})
     public static final long crc32(PyObject obj, long crc) {
-        byte[] bin_data = Py.unwrapBuffer(obj);
-        CRC32 crc32 = new CRC32();
-        crc32.update(bin_data);
-        return crc32.getValue();
+        byte[] buf = Py.unwrapBuffer(obj);
+        int len = buf.length;
+        int c = (int) ~crc;
+        for (int i = 0; i < len; i++) {
+            c = (int) crc_32_tab[(c^buf[i])&0xff]^(c >>> 8);
+        }
+        crc = ~c;
+        return (long)crc & 0xFFFFFFFFL;
     }
 
 
