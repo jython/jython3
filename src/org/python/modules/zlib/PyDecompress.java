@@ -60,21 +60,26 @@ public class PyDecompress extends PyObject {
         } else if (maxLength == -1) {
             return Decompress_flush(Py.EmptyObjects, Py.NoKeywords);
         }
-        byte[] buf = new byte[maxLength];
+        byte[] buf = new byte[ZlibModule.DEF_BUF_SIZE];
         try {
-            int len = inflater.inflate(buf);
-            if (len == 0 && inflater.needsDictionary()) {
-                if (dict == null) {
-                    throw new PyException(ZlibModule.error, "Error 2 while decompressing data");
-                }
-                inflater.setDictionary(dict);
+            int len;
+            int totalLen = 0;
+            do {
                 len = inflater.inflate(buf);
-            }
+                if (len == 0 && inflater.needsDictionary()) {
+                    if (dict == null) {
+                        throw new PyException(ZlibModule.error, "Error 2 while decompressing data");
+                    }
+                    inflater.setDictionary(dict);
+                    len = inflater.inflate(buf);
+                }
+                totalLen += len;
 
-            if (len == 0) {
-                return Py.EmptyByte;
-            }
-            return new PyBytes(buf, 0, len);
+                if (totalLen == 0) {
+                    return Py.EmptyByte;
+                }
+            } while (len > 0 && totalLen < maxLength);
+            return new PyBytes(buf, 0, totalLen);
         } catch (DataFormatException e) {
             throw new PyException(ZlibModule.error, e.getMessage());
         }
