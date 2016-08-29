@@ -1663,7 +1663,7 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
     @ExposedSet(name = "__name__")
     public void pySetName(PyObject name) {
         // guarded by __setattr__ to prevent modification of builtins
-        if (!(name instanceof PyBytes)) {
+        if (!(name instanceof PyUnicode)) {
             throw Py.TypeError(String.format("can only assign string to %s.__name__, not '%s'",
                                              this.name, name.getType().fastGetName()));
         }

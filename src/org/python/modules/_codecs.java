@@ -251,7 +251,7 @@ public class _codecs {
      * @return decoded string and number of bytes consumed
      */
     @ExposedFunction(defaults = {"null", "null"})
-    private static PyObject charmap_decode(PyObject obj, PyObject errorsObj, PyObject mapping) {
+    public static PyObject charmap_decode(PyObject obj, PyObject errorsObj, PyObject mapping) {
         if (mapping == null || mapping == Py.None) {
             // Default to Latin-1
             return latin_1_decode(obj, errorsObj);
@@ -300,7 +300,7 @@ public class _codecs {
                     i = codecs.insertReplacementAndGetResume(v, errors, "charmap", bytes, //
                             i, i + 1, "character maps to <undefined>") - 1;
 
-                } else if (x instanceof PyBytes) {
+                } else if (x instanceof PyUnicode) {
                     String s = x.toString();
                     if (s.charAt(0) == 0xfffe) {
                         // Invalid indicates "undefined" see C-API PyUnicode_DecodeCharmap()
