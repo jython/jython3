@@ -259,7 +259,7 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
                         // behavior
                         // if (base != PyObject.TYPE) {
                         //     throw Py.TypeError("__dict__ slot disallowed: we already got one");
-                        // }
+                        // }rings
                     } else {
                         wantDict = true;
                         continue;

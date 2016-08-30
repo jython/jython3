@@ -31,6 +31,7 @@ public class PyDecompress extends PyObject {
             dict = Py.unwrapBuffer(zdict);
         }
     }
+
     @ExposedNew
     final static PyObject Decompress_new(PyNewWrapper new_, boolean init, PyType subtype,
                                        PyObject[] args, String[] keywords) {

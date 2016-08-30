@@ -34,6 +34,9 @@ public abstract class MethodExposer extends Exposer {
         this.typeName = typeName;
         this.doc = doc;
         String prefix = typeName;
+        if (prefix == null) {
+            System.out.println(methodName);
+        }
         int lastDot = prefix.lastIndexOf('.');
         if (lastDot != -1) {
             prefix = prefix.substring(lastDot + 1);

@@ -68,6 +68,7 @@ public class Setup {
             "_codecs_jp:org.python.modules.cjkcodecs._codecs_jp",
             "_collections:org.python.modules._collections.Collections",
             "_csv:org.python.modules._csv._csv",
+            "_datetime:org.python.modules._datetime.DatetimeModule",
             "_functools:org.python.modules._functools._functools",
             "_imp:org.python.modules._imp",
             "_multibytecodec:org.python.modules.cjkcodecs._multibytecodec",
