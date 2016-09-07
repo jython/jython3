@@ -1,12 +1,12 @@
 /* Copyright (c) 2005-2008 Jython Developers */
 package org.python.modules.time;
 
-import org.python.core.ArgParser;
 import org.python.core.CompareOp;
 import org.python.core.Py;
 import org.python.core.PyList;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
+import org.python.core.PySequence;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
 import org.python.core.Visitproc;
@@ -24,7 +24,7 @@ import org.python.expose.MethodType;
 public class PyTimeTuple extends PyTuple {
 
     @ExposedGet
-    public PyObject tm_year, tm_mon, tm_mday, tm_hour, tm_min, tm_sec, tm_wday, tm_yday, tm_isdst;
+    public PyObject tm_year, tm_mon, tm_mday, tm_hour, tm_min, tm_sec, tm_wday, tm_yday, tm_isdst, tm_zone;
 
     @ExposedGet
     public final int n_sequence_fields = 9, n_fields = 9, n_unnamed_fields = 0;
@@ -33,6 +33,12 @@ public class PyTimeTuple extends PyTuple {
 
     PyTimeTuple(PyObject... vals) {
         super(TYPE, vals);
+        if (vals.length == 1 && vals[0] instanceof PySequence) {
+            vals = (PyObject[]) vals[0].__tojava__(PyObject[].class);
+        }
+        if (vals.length != 9) {
+            throw Py.TypeError("time.struct_time() takes a 9-sequence");
+        }
         tm_year = vals[0];
         tm_mon =  vals[1];
         tm_mday = vals[2];
@@ -47,22 +53,7 @@ public class PyTimeTuple extends PyTuple {
     @ExposedNew
     static PyObject struct_time_new(PyNewWrapper wrapper, boolean init, PyType subtype,
                                     PyObject[] args, String[] keywords) {
-        ArgParser ap = new ArgParser("struct_time", args, keywords, new String[] {"tuple"}, 1);
-        PyObject obj = ap.getPyObject(0);
-        if (obj instanceof PyTuple) {
-            if (obj.__len__() != 9) {
-                throw Py.TypeError("time.struct_time() takes a 9-sequence (1-sequence given)");
-            }
-            // tuples are immutable, so we can just use its underlying array
-            return new PyTimeTuple(((PyTuple)obj).getArray());
-        }
-        else {
-            PyList seq = new PyList(obj);
-            if (seq.__len__() != 9) {
-                throw Py.TypeError("time.struct_time() takes a 9-sequence (1-sequence given)");
-            }        
-            return new PyTimeTuple((PyObject[])seq.__tojava__(PyObject[].class));            
-        }
+        return new PyTimeTuple(args);
     }
 
     public synchronized PyObject __eq__(PyObject o) {

@@ -52,7 +52,6 @@ public class Setup {
             "struct",
             "synchronize",
 //            "_thread:org.python.modules.thread.thread",
-            "time:org.python.modules.time.Time",
             "zipimport:org.python.modules.zipimport.zipimport",
 //            PosixModule.getOSName() + ":org.python.modules.posix.PosixModule"
             "posix:org.python.modules.posix.PosixModule"
@@ -86,6 +85,7 @@ public class Setup {
             "itertools:org.python.modules.itertools.itertools",
             "subprocess:org.python.modules.subprocess.SubprocessModule",
             "sys:org.python.modules.sys.SysModule",
+            "time:org.python.modules.time.TimeModule",
             "unicodedata:org.python.modules.unicodedata.unicodedata",
             "zlib:org.python.modules.zlib.ZlibModule",
     };

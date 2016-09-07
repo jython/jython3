@@ -1730,6 +1730,622 @@ public class BuiltinDocs {
         "overrides the normal algorithm (and the outcome is cached).\n" + 
         "";
 
+    // Docs for <module 'time' (built-in)>
+    public final static String time_CLOCK_MONOTONIC_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String time_CLOCK_MONOTONIC_RAW_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String time_CLOCK_PROCESS_CPUTIME_ID_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String time_CLOCK_REALTIME_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String time_CLOCK_THREAD_CPUTIME_ID_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String time__STRUCT_TM_ITEMS_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String time_doc = 
+        "This module provides various functions to manipulate time values.\n" + 
+        "\n" + 
+        "There are two standard representations of time.  One is the number\n" + 
+        "of seconds since the Epoch, in UTC (a.k.a. GMT).  It may be an integer\n" + 
+        "or a floating point number (to represent fractions of seconds).\n" + 
+        "The Epoch is system-defined; on Unix, it is generally January 1st, 1970.\n" + 
+        "The actual value can be retrieved by calling gmtime(0).\n" + 
+        "\n" + 
+        "The other representation is a tuple of 9 integers giving local time.\n" + 
+        "The tuple items are:\n" + 
+        "  year (including century, e.g. 1998)\n" + 
+        "  month (1-12)\n" + 
+        "  day (1-31)\n" + 
+        "  hours (0-23)\n" + 
+        "  minutes (0-59)\n" + 
+        "  seconds (0-59)\n" + 
+        "  weekday (0-6, Monday is 0)\n" + 
+        "  Julian day (day in the year, 1-366)\n" + 
+        "  DST (Daylight Savings Time) flag (-1, 0 or 1)\n" + 
+        "If the DST flag is 0, the time is given in the regular time zone;\n" + 
+        "if it is 1, the time is given in the DST time zone;\n" + 
+        "if it is -1, mktime() should guess based on the date and time.\n" + 
+        "\n" + 
+        "Variables:\n" + 
+        "\n" + 
+        "timezone -- difference in seconds between UTC and local standard time\n" + 
+        "altzone -- difference in  seconds between UTC and local DST time\n" + 
+        "daylight -- whether local time should reflect DST\n" + 
+        "tzname -- tuple of (standard time zone name, DST time zone name)\n" + 
+        "\n" + 
+        "Functions:\n" + 
+        "\n" + 
+        "time() -- return current time in seconds since the Epoch as a float\n" + 
+        "clock() -- return CPU time since process start as a float\n" + 
+        "sleep() -- delay for a number of seconds given as a float\n" + 
+        "gmtime() -- convert seconds since Epoch to UTC tuple\n" + 
+        "localtime() -- convert seconds since Epoch to local time tuple\n" + 
+        "asctime() -- convert time tuple to string\n" + 
+        "ctime() -- convert time in seconds to string\n" + 
+        "mktime() -- convert local time tuple to seconds since Epoch\n" + 
+        "strftime() -- convert time tuple to string according to format specification\n" + 
+        "strptime() -- parse string to time tuple according to format specification\n" + 
+        "tzset() -- change the local timezone";
+
+    public final static String time___loader___doc = 
+        "Meta path import for built-in modules.\n" + 
+        "\n" + 
+        "    All methods are either class or static methods to avoid the need to\n" + 
+        "    instantiate the class.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String time___name___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String time___package___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String time___spec___doc = 
+        "The specification for a module, used for loading.\n" + 
+        "\n" + 
+        "    A module's spec is the source for information about the module.  For\n" + 
+        "    data associated with the module, including source, use the spec's\n" + 
+        "    loader.\n" + 
+        "\n" + 
+        "    `name` is the absolute name of the module.  `loader` is the loader\n" + 
+        "    to use when loading the module.  `parent` is the name of the\n" + 
+        "    package the module is in.  The parent is derived from the name.\n" + 
+        "\n" + 
+        "    `is_package` determines if the module is considered a package or\n" + 
+        "    not.  On modules this is reflected by the `__path__` attribute.\n" + 
+        "\n" + 
+        "    `origin` is the specific location used by the loader from which to\n" + 
+        "    load the module, if that information is available.  When filename is\n" + 
+        "    set, origin will match.\n" + 
+        "\n" + 
+        "    `has_location` indicates that a spec's \"origin\" reflects a location.\n" + 
+        "    When this is True, `__file__` attribute of the module is set.\n" + 
+        "\n" + 
+        "    `cached` is the location of the cached bytecode file, if any.  It\n" + 
+        "    corresponds to the `__cached__` attribute.\n" + 
+        "\n" + 
+        "    `submodule_search_locations` is the sequence of path entries to\n" + 
+        "    search when importing submodules.  If set, is_package should be\n" + 
+        "    True--and False otherwise.\n" + 
+        "\n" + 
+        "    Packages are simply modules that (may) have submodules.  If a spec\n" + 
+        "    has a non-None value in `submodule_search_locations`, the import\n" + 
+        "    system will consider modules loaded from the spec as packages.\n" + 
+        "\n" + 
+        "    Only finders (see importlib.abc.MetaPathFinder and\n" + 
+        "    importlib.abc.PathEntryFinder) should modify ModuleSpec instances.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String time_altzone_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String time_asctime_doc = 
+        "asctime([tuple]) -> string\n" + 
+        "\n" + 
+        "Convert a time tuple to a string, e.g. 'Sat Jun 06 16:26:11 1998'.\n" + 
+        "When the time tuple is not present, current time as returned by localtime()\n" + 
+        "is used.";
+
+    public final static String time_clock_doc = 
+        "clock() -> floating point number\n" + 
+        "\n" + 
+        "Return the CPU time or real time since the start of the process or since\n" + 
+        "the first call to clock().  This has as much precision as the system\n" + 
+        "records.";
+
+    public final static String time_clock_getres_doc = 
+        "clock_getres(clk_id) -> floating point number\n" + 
+        "\n" + 
+        "Return the resolution (precision) of the specified clock clk_id.";
+
+    public final static String time_clock_gettime_doc = 
+        "clock_gettime(clk_id) -> floating point number\n" + 
+        "\n" + 
+        "Return the time of the specified clock clk_id.";
+
+    public final static String time_clock_settime_doc = 
+        "clock_settime(clk_id, time)\n" + 
+        "\n" + 
+        "Set the time of the specified clock clk_id.";
+
+    public final static String time_ctime_doc = 
+        "ctime(seconds) -> string\n" + 
+        "\n" + 
+        "Convert a time in seconds since the Epoch to a string in local time.\n" + 
+        "This is equivalent to asctime(localtime(seconds)). When the time tuple is\n" + 
+        "not present, current time as returned by localtime() is used.";
+
+    public final static String time_daylight_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String time_get_clock_info_doc = 
+        "get_clock_info(name: str) -> dict\n" + 
+        "\n" + 
+        "Get information of the specified clock.";
+
+    public final static String time_gmtime_doc = 
+        "gmtime([seconds]) -> (tm_year, tm_mon, tm_mday, tm_hour, tm_min,\n" + 
+        "                       tm_sec, tm_wday, tm_yday, tm_isdst)\n" + 
+        "\n" + 
+        "Convert seconds since the Epoch to a time tuple expressing UTC (a.k.a.\n" + 
+        "GMT).  When 'seconds' is not passed in, convert the current time instead.\n" + 
+        "\n" + 
+        "If the platform supports the tm_gmtoff and tm_zone, they are available as\n" + 
+        "attributes only.";
+
+    public final static String time_localtime_doc = 
+        "localtime([seconds]) -> (tm_year,tm_mon,tm_mday,tm_hour,tm_min,\n" + 
+        "                          tm_sec,tm_wday,tm_yday,tm_isdst)\n" + 
+        "\n" + 
+        "Convert seconds since the Epoch to a time tuple expressing local time.\n" + 
+        "When 'seconds' is not passed in, convert the current time instead.";
+
+    public final static String time_mktime_doc = 
+        "mktime(tuple) -> floating point number\n" + 
+        "\n" + 
+        "Convert a time tuple in local time to seconds since the Epoch.\n" + 
+        "Note that mktime(gmtime(0)) will not generally return zero for most\n" + 
+        "time zones; instead the returned value will either be equal to that\n" + 
+        "of the timezone or altzone attributes on the time module.";
+
+    public final static String time_monotonic_doc = 
+        "monotonic() -> float\n" + 
+        "\n" + 
+        "Monotonic clock, cannot go backward.";
+
+    public final static String time_perf_counter_doc = 
+        "perf_counter() -> float\n" + 
+        "\n" + 
+        "Performance counter for benchmarking.";
+
+    public final static String time_process_time_doc = 
+        "process_time() -> float\n" + 
+        "\n" + 
+        "Process time for profiling: sum of the kernel and user-space CPU time.";
+
+    public final static String time_sleep_doc = 
+        "sleep(seconds)\n" + 
+        "\n" + 
+        "Delay execution for a given number of seconds.  The argument may be\n" + 
+        "a floating point number for subsecond precision.";
+
+    public final static String time_strftime_doc = 
+        "strftime(format[, tuple]) -> string\n" + 
+        "\n" + 
+        "Convert a time tuple to a string according to a format specification.\n" + 
+        "See the library reference manual for formatting codes. When the time tuple\n" + 
+        "is not present, current time as returned by localtime() is used.\n" + 
+        "\n" + 
+        "Commonly used format codes:\n" + 
+        "\n" + 
+        "%Y  Year with century as a decimal number.\n" + 
+        "%m  Month as a decimal number [01,12].\n" + 
+        "%d  Day of the month as a decimal number [01,31].\n" + 
+        "%H  Hour (24-hour clock) as a decimal number [00,23].\n" + 
+        "%M  Minute as a decimal number [00,59].\n" + 
+        "%S  Second as a decimal number [00,61].\n" + 
+        "%z  Time zone offset from UTC.\n" + 
+        "%a  Locale's abbreviated weekday name.\n" + 
+        "%A  Locale's full weekday name.\n" + 
+        "%b  Locale's abbreviated month name.\n" + 
+        "%B  Locale's full month name.\n" + 
+        "%c  Locale's appropriate date and time representation.\n" + 
+        "%I  Hour (12-hour clock) as a decimal number [01,12].\n" + 
+        "%p  Locale's equivalent of either AM or PM.\n" + 
+        "\n" + 
+        "Other codes may be available on your platform.  See documentation for\n" + 
+        "the C library strftime function.\n" + 
+        "";
+
+    public final static String time_strptime_doc = 
+        "strptime(string, format) -> struct_time\n" + 
+        "\n" + 
+        "Parse a string to a time tuple according to a format specification.\n" + 
+        "See the library reference manual for formatting codes (same as\n" + 
+        "strftime()).\n" + 
+        "\n" + 
+        "Commonly used format codes:\n" + 
+        "\n" + 
+        "%Y  Year with century as a decimal number.\n" + 
+        "%m  Month as a decimal number [01,12].\n" + 
+        "%d  Day of the month as a decimal number [01,31].\n" + 
+        "%H  Hour (24-hour clock) as a decimal number [00,23].\n" + 
+        "%M  Minute as a decimal number [00,59].\n" + 
+        "%S  Second as a decimal number [00,61].\n" + 
+        "%z  Time zone offset from UTC.\n" + 
+        "%a  Locale's abbreviated weekday name.\n" + 
+        "%A  Locale's full weekday name.\n" + 
+        "%b  Locale's abbreviated month name.\n" + 
+        "%B  Locale's full month name.\n" + 
+        "%c  Locale's appropriate date and time representation.\n" + 
+        "%I  Hour (12-hour clock) as a decimal number [01,12].\n" + 
+        "%p  Locale's equivalent of either AM or PM.\n" + 
+        "\n" + 
+        "Other codes may be available on your platform.  See documentation for\n" + 
+        "the C library strftime function.\n" + 
+        "";
+
+    public final static String time_struct_time_doc = 
+        "The time value as returned by gmtime(), localtime(), and strptime(), and\n" + 
+        " accepted by asctime(), mktime() and strftime().  May be considered as a\n" + 
+        " sequence of 9 integers.\n" + 
+        "\n" + 
+        " Note that several fields' values are not the same as those defined by\n" + 
+        " the C language standard for struct tm.  For example, the value of the\n" + 
+        " field tm_year is the actual year, not year - 1900.  See individual\n" + 
+        " fields' descriptions for details.";
+
+    public final static String time_time_doc = 
+        "time() -> floating point number\n" + 
+        "\n" + 
+        "Return the current time in seconds since the Epoch.\n" + 
+        "Fractions of a second may be present if the system clock provides them.";
+
+    public final static String time_timezone_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String time_tzname_doc = 
+        "tuple() -> empty tuple\n" + 
+        "tuple(iterable) -> tuple initialized from iterable's items\n" + 
+        "\n" + 
+        "If the argument is a tuple, the return value is the same object.";
+
+    public final static String time_tzset_doc = 
+        "tzset()\n" + 
+        "\n" + 
+        "Initialize, or reinitialize, the local timezone to the value stored in\n" + 
+        "os.environ['TZ']. The TZ environment variable should be specified in\n" + 
+        "standard Unix timezone format as documented in the tzset man page\n" + 
+        "(eg. 'US/Eastern', 'Europe/Amsterdam'). Unknown timezones will silently\n" + 
+        "fall back to UTC. If the TZ environment variable is not set, the local\n" + 
+        "timezone is set to the systems best guess of wallclock time.\n" + 
+        "Changing the TZ environment variable without calling tzset *may* change\n" + 
+        "the local timezone used by methods such as localtime, but this behaviour\n" + 
+        "should not be relied on.";
+
+    // Docs for <module 'datetime' from '/usr/lib/python3.5/datetime.py'>
+    public final static String datetime_MAXYEAR_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String datetime_MINYEAR_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String datetime___builtins___doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String datetime___cached___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String datetime_doc = 
+        "Fast implementation of the datetime type.";
+
+    public final static String datetime___file___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String datetime___loader___doc = 
+        "Concrete implementation of SourceLoader using the file system.";
+
+    public final static String datetime___name___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String datetime___package___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String datetime___spec___doc = 
+        "The specification for a module, used for loading.\n" + 
+        "\n" + 
+        "    A module's spec is the source for information about the module.  For\n" + 
+        "    data associated with the module, including source, use the spec's\n" + 
+        "    loader.\n" + 
+        "\n" + 
+        "    `name` is the absolute name of the module.  `loader` is the loader\n" + 
+        "    to use when loading the module.  `parent` is the name of the\n" + 
+        "    package the module is in.  The parent is derived from the name.\n" + 
+        "\n" + 
+        "    `is_package` determines if the module is considered a package or\n" + 
+        "    not.  On modules this is reflected by the `__path__` attribute.\n" + 
+        "\n" + 
+        "    `origin` is the specific location used by the loader from which to\n" + 
+        "    load the module, if that information is available.  When filename is\n" + 
+        "    set, origin will match.\n" + 
+        "\n" + 
+        "    `has_location` indicates that a spec's \"origin\" reflects a location.\n" + 
+        "    When this is True, `__file__` attribute of the module is set.\n" + 
+        "\n" + 
+        "    `cached` is the location of the cached bytecode file, if any.  It\n" + 
+        "    corresponds to the `__cached__` attribute.\n" + 
+        "\n" + 
+        "    `submodule_search_locations` is the sequence of path entries to\n" + 
+        "    search when importing submodules.  If set, is_package should be\n" + 
+        "    True--and False otherwise.\n" + 
+        "\n" + 
+        "    Packages are simply modules that (may) have submodules.  If a spec\n" + 
+        "    has a non-None value in `submodule_search_locations`, the import\n" + 
+        "    system will consider modules loaded from the spec as packages.\n" + 
+        "\n" + 
+        "    Only finders (see importlib.abc.MetaPathFinder and\n" + 
+        "    importlib.abc.PathEntryFinder) should modify ModuleSpec instances.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String datetime__divide_and_round_doc = 
+        "divide a by b and round result to the nearest integer\n" + 
+        "\n" + 
+        "    When the ratio is exactly half-way between two integers,\n" + 
+        "    the even integer is returned.\n" + 
+        "    ";
+
+    public final static String datetime_date_doc = 
+        "date(year, month, day) --> date object";
+
+    public final static String datetime_datetime_doc = 
+        "datetime(year, month, day[, hour[, minute[, second[, microsecond[,tzinfo]]]]])\n" + 
+        "\n" + 
+        "The year, month and day arguments are required. tzinfo may be None, or an\n" + 
+        "instance of a tzinfo subclass. The remaining arguments may be ints.\n" + 
+        "";
+
+    public final static String datetime_datetime_CAPI_doc = 
+        "Capsule objects let you wrap a C \"void *\" pointer in a Python\n" + 
+        "object.  They're a way of passing data through the Python interpreter\n" + 
+        "without creating your own custom type.\n" + 
+        "\n" + 
+        "Capsules are used for communication between extension modules.\n" + 
+        "They provide a way for an extension module to export a C interface\n" + 
+        "to other extension modules, so that extension modules can use the\n" + 
+        "Python import mechanism to link to one another.\n" + 
+        "";
+
+    public final static String datetime_time_doc = 
+        "time([hour[, minute[, second[, microsecond[, tzinfo]]]]]) --> a time object\n" + 
+        "\n" + 
+        "All arguments are optional. tzinfo may be None, or an instance of\n" + 
+        "a tzinfo subclass. The remaining arguments may be ints.\n" + 
+        "";
+
+    public final static String datetime_timedelta_doc = 
+        "Difference between two datetime values.";
+
+    public final static String datetime_timezone_doc = 
+        "Fixed offset from UTC implementation of tzinfo.";
+
+    public final static String datetime_tzinfo_doc = 
+        "Abstract base class for time zone info objects.";
+
     // Docs for <class 'type'>
     public final static String type___abstractmethods___doc = 
         "";
