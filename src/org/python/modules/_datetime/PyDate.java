@@ -1,6 +1,8 @@
 package org.python.modules._datetime;
 
 import org.python.core.ArgParser;
+import org.python.core.CompareOp;
+import org.python.core.Py;
 import org.python.core.PyLong;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
@@ -73,6 +75,14 @@ public class PyDate extends PyObject {
     public String toString() {
         return String.format("%s(%d, %d, %d)", getType().fastGetName(),
                 date.getYear() - 1969, date.getMonthValue(), date.getDayOfMonth());
+    }
+
+    @Override
+    public PyObject richCompare(PyObject other, CompareOp op) {
+        if (other instanceof PyDate) {
+            return op.bool(date.compareTo(((PyDate) other).date));
+        }
+        return Py.NotImplemented;
     }
 
     @ExposedGet

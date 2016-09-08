@@ -12,24 +12,24 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 
 @ExposedType(name = "_datetime.datetime")
-public class PyDatetime extends PyDate {
-    public static final PyType TYPE = PyType.fromClass(PyDatetime.class);
+public class PyDateTime extends PyDate {
+    public static final PyType TYPE = PyType.fromClass(PyDateTime.class);
 
     private LocalTime time;
     private ZoneOffset timezone;
 
-    public PyDatetime(int year, int month, int day) {
-        super(TYPE, year, month, day);
+    public PyDateTime(PyType subType, int year, int month, int day) {
+        super(subType, year, month, day);
     }
 
     @ExposedNew
     final static PyObject datetime_new(PyNewWrapper new_, boolean init, PyType subtype,
                                        PyObject[] args, String[] keywords) {
-        ArgParser ap = new ArgParser("date", args, keywords, "year", "month", "day");
+        ArgParser ap = new ArgParser("datetime", args, keywords, "year", "month", "day");
         int year = ap.getInt(0);
         int month = ap.getInt(1);
         int day = ap.getInt(2);
-        return new PyDatetime(year, month, day);
+        return new PyDateTime(TYPE, year, month, day);
     }
 
     @ExposedMethod

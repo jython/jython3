@@ -22,7 +22,7 @@ public class DatetimeModule {
     @ModuleInit
     public static final void init(PyObject dict) {
         dict.__setitem__("date", PyDate.TYPE);
-        dict.__setitem__("datetime", PyDatetime.TYPE);
+        dict.__setitem__("datetime", PyDateTime.TYPE);
         dict.__setitem__("time", PyTime.TYPE);
         dict.__setitem__("timedelta", PyTimeDelta.TYPE);
         dict.__setitem__("timezone", PyTimezone.TYPE);
