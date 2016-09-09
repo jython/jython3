@@ -6,19 +6,25 @@ import org.python.core.Py;
 import org.python.core.PyLong;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
+import org.python.core.PyTuple;
 import org.python.core.PyType;
+import org.python.core.PyUnicode;
 import org.python.expose.ExposedClassMethod;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedModule;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
+import org.python.modules.time.TimeModule;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 
 @ExposedType(name = "datetime.date")
 public class PyDate extends PyObject {
@@ -31,8 +37,17 @@ public class PyDate extends PyObject {
         date = LocalDate.of(year, month, day);
     }
 
-    public PyDate(LocalDate date) {
+    public PyDate(PyType type, LocalDate date) {
+        super(type);
         this.date = date;
+    }
+
+    public PyDate(PyType type) {
+        super(type);
+    }
+
+    public PyDate(LocalDate date) {
+        this(TYPE, date);
     }
 
     @ExposedNew
@@ -42,7 +57,7 @@ public class PyDate extends PyObject {
         int year = ap.getInt(0);
         int month = ap.getInt(1);
         int day = ap.getInt(2);
-        return new PyDate(TYPE, year, month, day);
+        return new PyDate(subtype, year, month, day);
     }
 
     @ExposedMethod
@@ -61,14 +76,67 @@ public class PyDate extends PyObject {
     }
 
     @ExposedMethod
-    public final PyObject weekday() {
+    public final PyObject date_weekday() {
+        // A week starts from Monday in Python
+        return new PyLong((date.getDayOfWeek().getValue() - 1) % 7);
+    }
+
+    @ExposedMethod
+    public final PyObject date_isocalendar() {
+        return new PyTuple(new PyLong(date.getYear()),
+                new PyLong(date.getLong(ChronoField.ALIGNED_WEEK_OF_YEAR)), date_weekday());
+    }
+
+    @ExposedMethod
+    public final PyObject date_isoformat() {
+        return new PyUnicode(date.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+    }
+
+    @ExposedMethod
+    public final PyObject date_isoweekday() {
         return new PyLong(date.getDayOfWeek().getValue());
+    }
+
+    @ExposedMethod
+    public final PyObject date_replace(PyObject[] args, String[] keywords) {
+        ArgParser ap = new ArgParser("replace", args, keywords, "year", "month", "day");
+        int year = ap.getInt(0, date.getYear());
+        int month = ap.getInt(1, date.getMonthValue());
+        int day = ap.getInt(2, date.getDayOfMonth());
+        return new PyDate(getType(), year, month, day);
+    }
+
+    @ExposedMethod
+    public final PyObject date_ctime() {
+        return new PyUnicode(date.format(TimeModule.DEFAULT_FORMAT_PY));
     }
 
     @ExposedClassMethod
     public static final PyObject fromordinal(PyType type, long ordinal) {
         Instant instant = Instant.ofEpochMilli(ordinal * 86400 * 1000);
-        return new PyDate(LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate());
+        return new PyDate(type, LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate());
+    }
+
+    @ExposedClassMethod
+    public static final PyObject today(PyType type) {
+        return new PyDate(type, LocalDate.now());
+    }
+
+    @ExposedClassMethod
+    public static final PyObject fromtimestamp(PyType type, PyObject ts) {
+        return new PyDate(type, LocalDateTime.ofEpochSecond(ts.asLong(), 0, ZoneOffset.UTC).toLocalDate());
+    }
+
+    @Override
+    public PyObject __sub__(PyObject other) {
+        return date___sub__(other);
+    }
+
+    final PyObject date___sub__(PyObject other) {
+        if (other instanceof PyDate) {
+            return new PyTimeDelta(date.until(((PyDate) other).date));
+        }
+        return null;
     }
 
     @Override

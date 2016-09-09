@@ -36,7 +36,8 @@ public class InternalFormat {
         } else if (text instanceof PyUnicode) {
             return fromText(((PyUnicode)text).getString());
         } else {
-            throw Py.TypeError(method + " requires bytes or str");
+            throw Py.TypeError(String.format(
+                  "%s argument 1 must be str, not %s", method, text.getType().getName()));
         }
     }
 

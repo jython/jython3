@@ -49,6 +49,17 @@ public enum CompareOp {
         }
     }
 
+    public PyObject neq() {
+        switch (this) {
+            case EQ:
+                return Py.False;
+            case NE:
+                return Py.True;
+            default:
+                return Py.NotImplemented;
+        }
+    }
+
     public String toString() {
         return stringOps[n];
     }

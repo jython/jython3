@@ -35,6 +35,10 @@ public class DatetimeModule {
         d.__setitem__("max", new PyTimezone(ZoneOffset.MAX));
         d.__setitem__("min", new PyTimezone(ZoneOffset.MIN));
         d.__setitem__("utc", new PyTimezone(ZoneOffset.UTC));
+        d = PyDate.TYPE.fastGetDict();
+        d.__setitem__("max", new PyDate(LocalDate.MAX));
+        d.__setitem__("min", new PyDate(LocalDate.MIN));
+        d.__setitem__("resolution", new PyTimeDelta(1));
     }
 
     /** shared implementation between date, datetime and time */

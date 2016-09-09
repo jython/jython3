@@ -362,15 +362,14 @@ public class TimeModule {
         }
         StringBuilder s = new StringBuilder();
         int lastc = 0;
-        LocalDateTime localDateTime = _tupletocal(timeTuple);
-        ZoneId zone;
+        LocalDateTime cal = _tupletocal(timeTuple);
+        ZoneId zone = null;
         if (timeTuple instanceof PyTimeTuple) {
             PyObject tm_zone = ((PyTimeTuple) timeTuple).tm_zone;
-            zone = tm_zone == null ? ZoneId.systemDefault() : ZoneId.of(tm_zone.toString());
-        } else {
-            zone = ZoneId.systemDefault();
+            if (tm_zone != null) {
+                zone = ZoneId.of(tm_zone.toString());
+            }
         }
-        ZonedDateTime cal = ZonedDateTime.of(localDateTime, zone);
         int padding = 0;
         while (lastc < format.length()) {
             int i = format.indexOf("%", lastc);
@@ -420,6 +419,9 @@ public class TimeModule {
                 case 'd':
                     // day of month (01-31)
                     txt = cal.format(DateTimeFormatter.ofPattern("dd", locale));
+                    break;
+                case 'f':
+                    txt = cal.format(DateTimeFormatter.ofPattern("S", locale));
                     break;
                 case 'H':
                     // hour (00-23)
@@ -481,9 +483,19 @@ public class TimeModule {
                     // year w/o century (00-99)
                     txt = cal.format(DateTimeFormatter.ofPattern("u", locale)).substring(2);
                     break;
+                case 'z':
+                    if (zone == null) {
+                        txt = "";
+                    } else {
+                        txt = ZonedDateTime.of(cal, zone).format(DateTimeFormatter.ofPattern("ZZ", locale));
+                    }
                 case 'Z':
                     // timezone name
-                    txt = cal.format(DateTimeFormatter.ofPattern("z", locale));
+                    if (zone == null) {
+                        txt = "";
+                    } else {
+                        txt = ZonedDateTime.of(cal, zone).format(DateTimeFormatter.ofPattern("zz", locale));
+                    }
                     break;
                 case '%':
                     // %
@@ -525,5 +537,5 @@ public class TimeModule {
         return pystrptime(dataString, format);
     }
 
-    private static final DateTimeFormatter DEFAULT_FORMAT_PY = DateTimeFormatter.ofPattern("E MMM ppd HH:mm:ss y");
+    public static final DateTimeFormatter DEFAULT_FORMAT_PY = DateTimeFormatter.ofPattern("E MMM ppd HH:mm:ss y");
 }
