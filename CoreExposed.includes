@@ -76,7 +76,6 @@ org/python/modules/_csv/PyDialect.class
 org/python/modules/_csv/PyReader.class
 org/python/modules/_csv/PyWriter.class
 org/python/modules/_datetime/PyDate.class
-org/python/modules/_datetime/PyDate.class
 org/python/modules/_datetime/PyDateTime.class
 org/python/modules/_datetime/PyTime.class
 org/python/modules/_datetime/PyTimeDelta.class
