@@ -58,7 +58,7 @@
 
       # - option for javac (build.compiler=modern is a global option to use standard jdk 1.7/1.8)
       #build.compiler=modern
-      #jdk.target.version=1.7
+      #jdk.target.version=1.8
       #debug=false
       #deprecation=off
 
@@ -100,7 +100,7 @@
     <!-- Usually zero, only used for alpha, beta and candidate versions
              where it must be greater than zero. -->
         <property name="jython.release_serial" value="1"/>
-        <property name="jython.java.version" value="1.7"/>
+        <property name="jython.java.version" value="1.8"/>
 
         <condition property="do.snapshot.build">
           <isset property="snapshot.revision" />
@@ -536,9 +536,11 @@
         <compilerarg line="${javac.Xlint}"/>
         <classpath refid="test.classpath" />
       </javac>
+      <!--
       <copy file="${source.dir}/org/python/modules/ucnhash.dat"
         todir="${compile.dir}/org/python/modules"
         preservelastmodified="true" />
+        -->
 
       <copy todir="${compile.dir}" preservelastmodified="true">
         <fileset dir="${source.dir}">
@@ -638,11 +640,11 @@
         <zipfileset src="extlibs/jffi-x86_64-OpenBSD.jar"/>
         <zipfileset src="extlibs/jffi-x86_64-SunOS.jar"/>
         <zipfileset src="extlibs/jffi-x86_64-Windows.jar"/>
-        <zipfileset src="extlibs/jffi-1.2.7.jar"/>
-        <zipfileset src="${extlibs.dir}/jnr-ffi-2.0.1.jar"/>
-        <zipfileset src="${extlibs.dir}/jnr-netdb-1.1.4.jar"/>
-        <zipfileset src="${extlibs.dir}/jnr-posix-3.0.9.jar"/>
-        <zipfileset src="${extlibs.dir}/jnr-constants-0.8.6.jar"/>
+        <zipfileset src="extlibs/jffi-1.2.12.jar"/>
+        <zipfileset src="${extlibs.dir}/jnr-ffi-2.0.9.jar"/>
+        <zipfileset src="${extlibs.dir}/jnr-netdb-1.1.5.jar"/>
+        <zipfileset src="${extlibs.dir}/jnr-posix-3.0.29.jar"/>
+        <zipfileset src="${extlibs.dir}/jnr-constants-0.9.2.jar"/>
         <zipfileset src="extlibs/xml-apis-2.11.0.jar" excludes="META-INF/services/*"/>
         <zipfileset src="extlibs/xercesImpl-2.11.0.jar" excludes="META-INF/services/*"/>
         <rule pattern="org.apache.xml.**" result="org.python.apache.xml.@1"/>
