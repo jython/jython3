@@ -48,10 +48,8 @@ public class PyDecompress extends PyObject {
         PyObject data = ap.getPyObject(0);
         PyObject maxLenObj = ap.getPyObject(1, Py.None);
         int maxLength = maxLenObj == Py.None ? -1 : maxLenObj.asInt();
-        if (maxLenObj != Py.None) {
-            if (maxLength < 0) {
-                throw Py.ValueError("value must be positive");
-            }
+        if (maxLenObj != Py.None && maxLength < 0) {
+            throw Py.ValueError("value must be positive");
         }
         byte[] input = Py.unwrapBuffer(data);
         if (input.length > 0)
@@ -61,25 +59,29 @@ public class PyDecompress extends PyObject {
         } else if (maxLength == -1) {
             return Decompress_flush(Py.EmptyObjects, Py.NoKeywords);
         }
-        byte[] buf = new byte[ZlibModule.DEF_BUF_SIZE];
+        byte[] buf = new byte[Math.min(maxLength, ZlibModule.DEF_BUF_SIZE)];
         try {
-            int len;
-            int totalLen = 0;
-            do {
+            int len = inflater.inflate(buf);
+            if (len == 0 && inflater.needsDictionary()) {
+                if (dict == null) {
+                    throw new PyException(ZlibModule.error, "Error 2 while decompressing data");
+                }
+                inflater.setDictionary(dict);
                 len = inflater.inflate(buf);
-                if (len == 0 && inflater.needsDictionary()) {
-                    if (dict == null) {
-                        throw new PyException(ZlibModule.error, "Error 2 while decompressing data");
-                    }
-                    inflater.setDictionary(dict);
-                    len = inflater.inflate(buf);
-                }
+            }
+            int totalLen = len;
+            while (totalLen == buf.length && totalLen < maxLength) {
+                int length = Math.min(maxLength - totalLen, ZlibModule.DEF_BUF_SIZE);
+                byte[] tmp = buf;
+                buf = new byte[tmp.length + length];
+                System.arraycopy(tmp, 0, buf, 0, tmp.length);
+                len = inflater.inflate(buf, tmp.length, length);
                 totalLen += len;
-
-                if (totalLen == 0) {
-                    return Py.EmptyByte;
-                }
-            } while (len > 0 && totalLen < maxLength);
+                if (len < length) break;
+            }
+            if (totalLen == 0) {
+                return Py.EmptyByte;
+            }
             return new PyBytes(buf, 0, totalLen);
         } catch (DataFormatException e) {
             throw new PyException(ZlibModule.error, e.getMessage());
