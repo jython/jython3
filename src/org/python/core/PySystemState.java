@@ -13,6 +13,8 @@ import org.python.modules.PyNamespace;
 import org.python.modules.Setup;
 import org.python.modules.sys.SysModule;
 import org.python.modules._imp;
+import org.python.modules.zipimport.PyZipImporter;
+import org.python.modules.zipimport.ZipImportModule;
 import org.python.util.Generic;
 
 import java.io.BufferedReader;
@@ -49,8 +51,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class PySystemState extends PyObject implements AutoCloseable,
-        ClassDictInit, Closeable, Traverseproc {
+public class PySystemState extends PyObject implements AutoCloseable, Closeable, Traverseproc {
 
     public static final String PYTHON_CACHEDIR = "python.cachedir";
     public static final String PYTHON_CACHEDIR_SKIP = "python.cachedir.skip";
@@ -225,7 +226,7 @@ public class PySystemState extends PyObject implements AutoCloseable,
 
         meta_path = new PyList();
         path_hooks = new PyList();
-        path_hooks.append(org.python.modules.zipimport.zipimporter.TYPE);
+        path_hooks.append(PyZipImporter.TYPE);
 //        path_hooks.append(ClasspathPyImporter.TYPE);
 
         path_importer_cache = new PyDictionary();
@@ -250,12 +251,6 @@ public class PySystemState extends PyObject implements AutoCloseable,
         __dict__.__setitem__("displayhook", __displayhook__);
         __dict__.__setitem__("excepthook", __excepthook__);
 
-    }
-
-    public static void classDictInit(PyObject dict) {
-        // XXX: Remove bean accessors for settrace/profile that we don't want
-        dict.__setitem__("trace", null);
-        dict.__setitem__("profile", null);
     }
 
     void reload() throws PyIgnoreMethodTag {

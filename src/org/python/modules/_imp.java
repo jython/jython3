@@ -6,6 +6,7 @@ import org.python.core.BufferProtocol;
 import org.python.core.BytecodeLoader;
 import org.python.core.ClassDictInit;
 import org.python.core.PyBUF;
+import org.python.core.PyBuffer;
 import org.python.core.PyByteArray;
 import org.python.core.PyBytes;
 import org.python.core.PyCode;
@@ -215,13 +216,16 @@ public class _imp {
      */
     @ExposedFunction
     public static final PyObject _compile_source(PyObject name, PyObject data, PyObject path) {
+        byte[] source;
         if (data instanceof PyBytes) {
-            byte[] source = ((PyBytes) data).toBytes();
-            byte[] bytes = imp.compileSource(name.toString(), new ByteArrayInputStream(source), path.toString());
-            PyByteArray buf = new PyByteArray(bytes);
-            return new PyBytes(buf.getBuffer(PyBUF.FULL_RO).toString());
+            source = ((PyBytes) data).toBytes();
+        } else if (data instanceof PyUnicode) {
+            source = ((PyUnicode) data).getString().getBytes();
+        } else {
+            throw Py.TypeError("bytes object expected for data");
         }
-        throw Py.TypeError("bytes object expected for data");
+        byte[] bytes = imp.compileSource(name.toString(), new ByteArrayInputStream(source), path.toString());
+        return new PyBytes(bytes);
     }
 
     /**

@@ -1,7 +1,7 @@
 // Copyright 2001 Finn Bock
 package org.python.core;
 
-import org.python.modules.zipimport.zipimport;
+import org.python.modules.zipimport.ZipImportModule;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -172,7 +172,7 @@ public class Exceptions {
 
         // Initialize ZipImportError here, where it's safe to; it's
         // needed immediately
-        zipimport.initClassExceptions(dict);
+        ZipImportModule.initClassExceptions(dict);
     }
 
     public static PyObject ImportError() {

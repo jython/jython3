@@ -127,6 +127,10 @@ public class PyUnicode extends PySequence implements Iterable {
         this(TYPE, new String(Character.toChars(codepoint)));
     }
 
+    public PyUnicode(byte[] codepoints) {
+        this(new String(codepoints, 0, codepoints.length));
+    }
+
     public PyUnicode(int[] codepoints) {
         this(new String(codepoints, 0, codepoints.length));
     }

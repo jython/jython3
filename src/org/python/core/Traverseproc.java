@@ -545,9 +545,6 @@ import org.python.modules.gc;
  *   Time:<br>
  *     TimeFunctions                 - no refs, untraversable<br>
  * <br>
- * org.python.modules.zipimport:<br>
- *   zipimporter                     - Traverseproc<br>
- * <br>
  * org.python.util:<br>
  *   InteractiveInterpreter          - no PyObject<br>
  * <br>

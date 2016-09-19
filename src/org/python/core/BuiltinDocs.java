@@ -6494,6 +6494,271 @@ public class BuiltinDocs {
     public final static String memoryview_tolist_doc = 
         "Return the data in the buffer as a list of elements.";
 
+    // Docs for <module 'zipimport' (built-in)>
+    public final static String zipimport_ZipImportError_doc = 
+        "";
+
+    public final static String zipimport_doc = 
+        "zipimport provides support for importing Python modules from Zip archives.\n" + 
+        "\n" + 
+        "This module exports three objects:\n" + 
+        "- zipimporter: a class; its constructor takes a path to a Zip archive.\n" + 
+        "- ZipImportError: exception raised by zipimporter objects. It's a\n" + 
+        "  subclass of ImportError, so it can be caught as ImportError, too.\n" + 
+        "- _zip_directory_cache: a dict, mapping archive paths to zip directory\n" + 
+        "  info dicts, as used in zipimporter._files.\n" + 
+        "\n" + 
+        "It is usually not needed to use the zipimport module explicitly; it is\n" + 
+        "used by the builtin import mechanism for sys.path items that are paths\n" + 
+        "to Zip archives.";
+
+    public final static String zipimport___loader___doc = 
+        "Meta path import for built-in modules.\n" + 
+        "\n" + 
+        "    All methods are either class or static methods to avoid the need to\n" + 
+        "    instantiate the class.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String zipimport___name___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String zipimport___package___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String zipimport___spec___doc = 
+        "The specification for a module, used for loading.\n" + 
+        "\n" + 
+        "    A module's spec is the source for information about the module.  For\n" + 
+        "    data associated with the module, including source, use the spec's\n" + 
+        "    loader.\n" + 
+        "\n" + 
+        "    `name` is the absolute name of the module.  `loader` is the loader\n" + 
+        "    to use when loading the module.  `parent` is the name of the\n" + 
+        "    package the module is in.  The parent is derived from the name.\n" + 
+        "\n" + 
+        "    `is_package` determines if the module is considered a package or\n" + 
+        "    not.  On modules this is reflected by the `__path__` attribute.\n" + 
+        "\n" + 
+        "    `origin` is the specific location used by the loader from which to\n" + 
+        "    load the module, if that information is available.  When filename is\n" + 
+        "    set, origin will match.\n" + 
+        "\n" + 
+        "    `has_location` indicates that a spec's \"origin\" reflects a location.\n" + 
+        "    When this is True, `__file__` attribute of the module is set.\n" + 
+        "\n" + 
+        "    `cached` is the location of the cached bytecode file, if any.  It\n" + 
+        "    corresponds to the `__cached__` attribute.\n" + 
+        "\n" + 
+        "    `submodule_search_locations` is the sequence of path entries to\n" + 
+        "    search when importing submodules.  If set, is_package should be\n" + 
+        "    True--and False otherwise.\n" + 
+        "\n" + 
+        "    Packages are simply modules that (may) have submodules.  If a spec\n" + 
+        "    has a non-None value in `submodule_search_locations`, the import\n" + 
+        "    system will consider modules loaded from the spec as packages.\n" + 
+        "\n" + 
+        "    Only finders (see importlib.abc.MetaPathFinder and\n" + 
+        "    importlib.abc.PathEntryFinder) should modify ModuleSpec instances.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String zipimport__zip_directory_cache_doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String zipimport_zipimporter_doc = 
+        "zipimporter(archivepath) -> zipimporter object\n" + 
+        "\n" + 
+        "Create a new zipimporter instance. 'archivepath' must be a path to\n" + 
+        "a zipfile, or to a specific path inside a zipfile. For example, it can be\n" + 
+        "'/tmp/myimport.zip', or '/tmp/myimport.zip/mydirectory', if mydirectory is a\n" + 
+        "valid directory inside the archive.\n" + 
+        "\n" + 
+        "'ZipImportError is raised if 'archivepath' doesn't point to a valid Zip\n" + 
+        "archive.\n" + 
+        "\n" + 
+        "The 'archive' attribute of zipimporter objects contains the name of the\n" + 
+        "zipfile targeted.";
+
+    // Docs for <class 'zipimport.zipimporter'>
+    public final static String zipimporter___class___doc = 
+        "type(object_or_name, bases, dict)\n" + 
+        "type(object) -> the object's type\n" + 
+        "type(name, bases, dict) -> a new type";
+
+    public final static String zipimporter___delattr___doc = 
+        "Implement delattr(self, name).";
+
+    public final static String zipimporter___dir___doc = 
+        "__dir__() -> list\n" + 
+        "default dir() implementation";
+
+    public final static String zipimporter_doc = 
+        "zipimporter(archivepath) -> zipimporter object\n" + 
+        "\n" + 
+        "Create a new zipimporter instance. 'archivepath' must be a path to\n" + 
+        "a zipfile, or to a specific path inside a zipfile. For example, it can be\n" + 
+        "'/tmp/myimport.zip', or '/tmp/myimport.zip/mydirectory', if mydirectory is a\n" + 
+        "valid directory inside the archive.\n" + 
+        "\n" + 
+        "'ZipImportError is raised if 'archivepath' doesn't point to a valid Zip\n" + 
+        "archive.\n" + 
+        "\n" + 
+        "The 'archive' attribute of zipimporter objects contains the name of the\n" + 
+        "zipfile targeted.";
+
+    public final static String zipimporter___eq___doc = 
+        "Return self==value.";
+
+    public final static String zipimporter___format___doc = 
+        "default object formatter";
+
+    public final static String zipimporter___ge___doc = 
+        "Return self>=value.";
+
+    public final static String zipimporter___getattribute___doc = 
+        "Return getattr(self, name).";
+
+    public final static String zipimporter___gt___doc = 
+        "Return self>value.";
+
+    public final static String zipimporter___hash___doc = 
+        "Return hash(self).";
+
+    public final static String zipimporter___init___doc = 
+        "Initialize self.  See help(type(self)) for accurate signature.";
+
+    public final static String zipimporter___le___doc = 
+        "Return self<=value.";
+
+    public final static String zipimporter___lt___doc = 
+        "Return self<value.";
+
+    public final static String zipimporter___ne___doc = 
+        "Return self!=value.";
+
+    public final static String zipimporter___new___doc = 
+        "Create and return a new object.  See help(type) for accurate signature.";
+
+    public final static String zipimporter___reduce___doc = 
+        "helper for pickle";
+
+    public final static String zipimporter___reduce_ex___doc = 
+        "helper for pickle";
+
+    public final static String zipimporter___repr___doc = 
+        "Return repr(self).";
+
+    public final static String zipimporter___setattr___doc = 
+        "Implement setattr(self, name, value).";
+
+    public final static String zipimporter___sizeof___doc = 
+        "__sizeof__() -> int\n" + 
+        "size of object in memory, in bytes";
+
+    public final static String zipimporter___str___doc = 
+        "Return str(self).";
+
+    public final static String zipimporter___subclasshook___doc = 
+        "Abstract classes can override this to customize issubclass().\n" + 
+        "\n" + 
+        "This is invoked early on by abc.ABCMeta.__subclasscheck__().\n" + 
+        "It should return True, False or NotImplemented.  If it returns\n" + 
+        "NotImplemented, the normal algorithm is used.  Otherwise, it\n" + 
+        "overrides the normal algorithm (and the outcome is cached).\n" + 
+        "";
+
+    public final static String zipimporter__files_doc = 
+        "";
+
+    public final static String zipimporter_archive_doc = 
+        "";
+
+    public final static String zipimporter_find_loader_doc = 
+        "find_loader(fullname, path=None) -> self, str or None.\n" + 
+        "\n" + 
+        "Search for a module specified by 'fullname'. 'fullname' must be the\n" + 
+        "fully qualified (dotted) module name. It returns the zipimporter\n" + 
+        "instance itself if the module was found, a string containing the\n" + 
+        "full path name if it's possibly a portion of a namespace package,\n" + 
+        "or None otherwise. The optional 'path' argument is ignored -- it's\n" + 
+        " there for compatibility with the importer protocol.";
+
+    public final static String zipimporter_find_module_doc = 
+        "find_module(fullname, path=None) -> self or None.\n" + 
+        "\n" + 
+        "Search for a module specified by 'fullname'. 'fullname' must be the\n" + 
+        "fully qualified (dotted) module name. It returns the zipimporter\n" + 
+        "instance itself if the module was found, or None if it wasn't.\n" + 
+        "The optional 'path' argument is ignored -- it's there for compatibility\n" + 
+        "with the importer protocol.";
+
+    public final static String zipimporter_get_code_doc = 
+        "get_code(fullname) -> code object.\n" + 
+        "\n" + 
+        "Return the code object for the specified module. Raise ZipImportError\n" + 
+        "if the module couldn't be found.";
+
+    public final static String zipimporter_get_data_doc = 
+        "get_data(pathname) -> string with file data.\n" + 
+        "\n" + 
+        "Return the data associated with 'pathname'. Raise IOError if\n" + 
+        "the file wasn't found.";
+
+    public final static String zipimporter_get_filename_doc = 
+        "get_filename(fullname) -> filename string.\n" + 
+        "\n" + 
+        "Return the filename for the specified module.";
+
+    public final static String zipimporter_get_source_doc = 
+        "get_source(fullname) -> source string.\n" + 
+        "\n" + 
+        "Return the source code for the specified module. Raise ZipImportError\n" + 
+        "if the module couldn't be found, return None if the archive does\n" + 
+        "contain the module, but has no source for it.";
+
+    public final static String zipimporter_is_package_doc = 
+        "is_package(fullname) -> bool.\n" + 
+        "\n" + 
+        "Return True if the module specified by fullname is a package.\n" + 
+        "Raise ZipImportError if the module couldn't be found.";
+
+    public final static String zipimporter_load_module_doc = 
+        "load_module(fullname) -> module.\n" + 
+        "\n" + 
+        "Load the module specified by 'fullname'. 'fullname' must be the\n" + 
+        "fully qualified (dotted) module name. It returns the imported\n" + 
+        "module, or raises ZipImportError if it wasn't found.";
+
+    public final static String zipimporter_prefix_doc = 
+        "";
+
     // Docs for <class 'generator'>
     public final static String generator___class___doc = 
         "type(object_or_name, bases, dict)\n" + 

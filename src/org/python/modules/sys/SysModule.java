@@ -56,6 +56,16 @@ public class SysModule {
     }
 
     @ExposedFunction
+    public static void settrace(PyObject tracefunc) {
+        Py.getSystemState().settrace(tracefunc);
+    }
+
+    @ExposedFunction
+    public static final PyObject gettrace() {
+        return Py.getSystemState().gettrace();
+    }
+
+    @ExposedFunction
     public static PyObject registerCloser(final PyObject closer) {
         Callable<Void> resourceCloser = new Callable<Void>() {
             @Override

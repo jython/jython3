@@ -52,7 +52,6 @@ public class Setup {
             "struct",
             "synchronize",
 //            "_thread:org.python.modules.thread.thread",
-            "zipimport:org.python.modules.zipimport.zipimport",
 //            PosixModule.getOSName() + ":org.python.modules.posix.PosixModule"
             "posix:org.python.modules.posix.PosixModule"
     };
@@ -87,6 +86,7 @@ public class Setup {
             "sys:org.python.modules.sys.SysModule",
             "time:org.python.modules.time.TimeModule",
             "unicodedata:org.python.modules.unicodedata.unicodedata",
+            "zipimport:org.python.modules.zipimport.ZipImportModule",
             "zlib:org.python.modules.zlib.ZlibModule",
     };
 }

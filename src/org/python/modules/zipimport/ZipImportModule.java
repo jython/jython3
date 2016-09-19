@@ -1,6 +1,7 @@
 /* Copyright (c) 2007 Jython Developers */
 package org.python.modules.zipimport;
 
+import org.python.core.BuiltinDocs;
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
 import org.python.core.PyDictionary;
@@ -8,6 +9,8 @@ import org.python.core.PyException;
 import org.python.core.PyObject;
 import org.python.core.PyBytes;
 import org.python.core.PyStringMap;
+import org.python.expose.ExposedModule;
+import org.python.expose.ModuleInit;
 
 /**
  * This module adds the ability to import Python modules (*.py,
@@ -15,21 +18,8 @@ import org.python.core.PyStringMap;
  *
  * @author Philip Jenvey
  */
-public class zipimport implements ClassDictInit {
-
-    public static final PyBytes __doc__ = new PyBytes(
-        "zipimport provides support for importing Python modules from Zip archives.\n" +
-        "\n" +
-        "This module exports three objects:\n" +
-        "- zipimporter: a class; its constructor takes a path to a Zip archive.\n" +
-        "- ZipImportError: exception raised by zipimporter objects. It's a\n" +
-        "subclass of ImportError, so it can be caught as ImportError, too.\n" +
-        "- _zip_directory_cache: a dict, mapping archive paths to zip directory\n" +
-        "info dicts, as used in zipimporter._files.\n" +
-        "\n" +
-        "It is usually not needed to use the zipimport module explicitly; it is\n" +
-        "used by the builtin import mechanism for sys.path items that are paths\n" +
-        "to Zip archives.");
+@ExposedModule(name = "zipimport", doc = BuiltinDocs.zipimport_doc)
+public class ZipImportModule {
 
     public static PyObject ZipImportError;
     public static PyException ZipImportError(String message) {
@@ -40,16 +30,11 @@ public class zipimport implements ClassDictInit {
     // FIXME could also do this via a loading cache instead
     public static PyDictionary _zip_directory_cache = new PyDictionary();
 
-    public static void classDictInit(PyObject dict) {
-        dict.__setitem__("__name__", new PyBytes("zipimport"));
-        dict.__setitem__("__doc__", __doc__);
-        dict.__setitem__("zipimporter", zipimporter.TYPE);
+    @ModuleInit
+    public static void init(PyObject dict) {
+        dict.__setitem__("zipimporter", PyZipImporter.TYPE);
         dict.__setitem__("_zip_directory_cache", _zip_directory_cache);
         dict.__setitem__("ZipImportError", ZipImportError);
-
-        // Hide from Python
-        dict.__setitem__("classDictInit", null);
-        dict.__setitem__("initClassExceptions", null);
     }
 
     /**
