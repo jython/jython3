@@ -386,6 +386,12 @@ public class FileIO extends RawIOBase {
             default:
                 throw Py.IOError(Errno.EINVAL);
             }
+            if (pos < 0) {
+                pos += fileChannel.size();
+            }
+            if (pos < 0) {
+                throw Py.OSError(Errno.EBADMSG);
+            }
             fileChannel.position(pos);
             return pos;
         } catch (IOException ioe) {
