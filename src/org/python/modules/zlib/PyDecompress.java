@@ -25,8 +25,16 @@ public class PyDecompress extends PyObject {
     // the dict can only be used when input is not empty
     private byte[] dict = null;
 
+    @ExposedGet
+    public PyObject unused_data;
+
+    @ExposedGet
+    public PyObject unconsumed_tail;
+
     protected PyDecompress(PyObject zdict) {
         inflater = new Inflater();
+        unused_data = Py.EmptyByte;
+        unconsumed_tail = Py.EmptyByte;
         if (zdict != Py.None) {
             dict = Py.unwrapBuffer(zdict);
         }
@@ -49,7 +57,7 @@ public class PyDecompress extends PyObject {
         PyObject maxLenObj = ap.getPyObject(1, Py.None);
         int maxLength = maxLenObj == Py.None ? -1 : maxLenObj.asInt();
         if (maxLenObj != Py.None && maxLength < 0) {
-            throw Py.ValueError("value must be positive");
+            throw Py.ValueError("max_length must be positive");
         }
         byte[] input = Py.unwrapBuffer(data);
         if (input.length > 0)
@@ -81,6 +89,14 @@ public class PyDecompress extends PyObject {
             }
             if (totalLen == 0) {
                 return Py.EmptyByte;
+            }
+            int remaining = inflater.getRemaining();
+            if (remaining > 0) {
+                if (maxLength > 0 && !inflater.finished()) {
+                    unconsumed_tail = new PyBytes(input, input.length - remaining, remaining);
+                } else {
+                    unused_data = new PyBytes(input, input.length - remaining, remaining);
+                }
             }
             return new PyBytes(buf, 0, totalLen);
         } catch (DataFormatException e) {
@@ -119,17 +135,6 @@ public class PyDecompress extends PyObject {
         } catch (DataFormatException e) {
             throw new PyException(ZlibModule.error, e.getMessage());
         }
-    }
-
-    // both methods doesn't make much sense to support in java
-    @ExposedGet(name = "unused_data")
-    public PyObject Decompress_unused_data() {
-        return Py.EmptyByte;
-    }
-
-    @ExposedGet(name = "unconsumed_tail")
-    public PyObject Decompress_uncomsumed_tail() {
-        return Py.EmptyByte;
     }
 
     @ExposedGet(name = "eof")

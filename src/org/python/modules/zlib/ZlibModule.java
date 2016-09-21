@@ -1,5 +1,6 @@
 package org.python.modules.zlib;
 
+import com.jcraft.jzlib.JZlib;
 import org.python.core.ArgParser;
 import org.python.core.BufferProtocol;
 import org.python.core.Py;
@@ -75,12 +76,17 @@ public class ZlibModule {
     @ExposedFunction
     public static final PyObject adler32(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("adler32", args, keywords, "data", "value");
-//        int value = ap.getInt(1, 1);
+        long start = ap.getLong(1, 1);
         PyObject data = ap.getPyObject(0);
         if (data instanceof BufferProtocol) {
             Adler32 checksum = new Adler32();
-            checksum.update(Py.unwrapBuffer(data));
-            return new PyLong(checksum.getValue());
+            byte[] bytes = Py.unwrapBuffer(data);
+            checksum.update(bytes);
+            long result = checksum.getValue();
+            if (start != 1) {
+                result = JZlib.adler32_combine(start, result, bytes.length);
+            }
+            return new PyLong(result);
         }
         throw Py.TypeError(String.format("a bytes-like object expected, not '%s'", data.getType().getName()));
     }
