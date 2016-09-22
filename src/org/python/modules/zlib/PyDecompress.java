@@ -24,6 +24,7 @@ public class PyDecompress extends PyObject {
     private Inflater inflater;
     // the dict can only be used when input is not empty
     private byte[] dict = null;
+    private byte[] input;
 
     @ExposedGet
     public PyObject unused_data;
@@ -59,13 +60,14 @@ public class PyDecompress extends PyObject {
         if (maxLenObj != Py.None && maxLength < 0) {
             throw Py.ValueError("max_length must be positive");
         }
-        byte[] input = Py.unwrapBuffer(data);
+        unconsumed_tail = Py.EmptyByte;
+        input = Py.unwrapBuffer(data);
         if (input.length > 0)
             inflater.setInput(input);
         if (maxLength == 0) {
             return Py.EmptyByte;
         } else if (maxLength == -1) {
-            return Decompress_flush(Py.EmptyObjects, Py.NoKeywords);
+            return _flush(ZlibModule.DEF_BUF_SIZE);
         }
         byte[] buf = new byte[Math.min(maxLength, ZlibModule.DEF_BUF_SIZE)];
         try {
@@ -78,7 +80,7 @@ public class PyDecompress extends PyObject {
                 len = inflater.inflate(buf);
             }
             int totalLen = len;
-            while (totalLen == buf.length && totalLen < maxLength) {
+            while (totalLen < maxLength) {
                 int length = Math.min(maxLength - totalLen, ZlibModule.DEF_BUF_SIZE);
                 byte[] tmp = buf;
                 buf = new byte[tmp.length + length];
@@ -87,16 +89,18 @@ public class PyDecompress extends PyObject {
                 totalLen += len;
                 if (len < length) break;
             }
-            if (totalLen == 0) {
-                return Py.EmptyByte;
-            }
             int remaining = inflater.getRemaining();
             if (remaining > 0) {
                 if (maxLength > 0 && !inflater.finished()) {
-                    unconsumed_tail = new PyBytes(input, input.length - remaining, remaining);
+                    if (input.length > remaining) {
+                        unconsumed_tail = new PyBytes(input, input.length - remaining, input.length);
+                    }
                 } else {
-                    unused_data = new PyBytes(input, input.length - remaining, remaining);
+                    unused_data = unused_data.__add__(new PyBytes(input, input.length - remaining, input.length));
                 }
+            }
+            if (totalLen == 0) {
+                return Py.EmptyByte;
             }
             return new PyBytes(buf, 0, totalLen);
         } catch (DataFormatException e) {
@@ -107,10 +111,22 @@ public class PyDecompress extends PyObject {
     @ExposedMethod
     public PyObject Decompress_flush(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("flush", args, keywords, "length");
+        // clear the input buf, because the flush logic is shared with decompress
+        input = new byte[0];
         int length = ap.getInt(0, ZlibModule.DEF_BUF_SIZE);
         if (length <= 0) {
             throw Py.ValueError("length must be greater than zero");
         }
+        return _flush(length);
+    }
+
+
+    @ExposedGet(name = "eof")
+    public boolean Decompress_eof() {
+        return inflater.finished();
+    }
+
+    private PyObject _flush(int length) {
         byte[] buf = new byte[length];
 
         try {
@@ -131,14 +147,13 @@ public class PyDecompress extends PyObject {
                 totalLen += len;
                 if (len < length) break;
             }
+            int remaining = inflater.getRemaining();
+            if (input.length > 0 && remaining > 0) {
+                unused_data = unused_data.__add__(new PyBytes(input, input.length - remaining, input.length));
+            }
             return new PyBytes(buf, 0, totalLen);
         } catch (DataFormatException e) {
             throw new PyException(ZlibModule.error, e.getMessage());
         }
-    }
-
-    @ExposedGet(name = "eof")
-    public boolean Decompress_eof() {
-        return inflater.finished();
     }
 }
