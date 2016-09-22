@@ -1,9 +1,7 @@
 package org.python.modules.bz2;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.python.core.ArgParser;
@@ -16,20 +14,18 @@ import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
-import org.python.core.Traverseproc;
-import org.python.core.Visitproc;
 
 @ExposedType(name = "bz2.BZ2Decompressor")
-public class PyBZ2Decompressor extends PyObject implements Traverseproc {
+public class PyBZ2Decompressor extends PyObject {
     public static final PyType TYPE = PyType.fromClass(PyBZ2Decompressor.class);
 
+    private byte[] unusedData = new byte[0];
+
     @ExposedGet
-    public PyObject unused_data = Py.EmptyByte;
+    public boolean needs_input = false;
 
     @ExposedGet(name = "eof")
     public boolean eofReached = false;
-
-    private BZip2CompressorInputStream decompressStream = null;
 
     private byte[] accumulator = new byte[0];
 
@@ -53,72 +49,48 @@ public class PyBZ2Decompressor extends PyObject implements Traverseproc {
         ArgParser ap = new ArgParser("compress", args, kwds,
                 new String[] { "data", "max_length" }, 1);
         PyObject data = ap.getPyObject(0);
+        int maxLength = ap.getInt(1, -1);
         PyObject returnData;
         if (eofReached) {
             throw Py.EOFError("Data stream EOF reached");
         }
 
         byte[] indata = Py.unwrapBuffer(data);
-        if (indata.length > 0) {
-            ByteBuffer bytebuf = ByteBuffer.allocate(accumulator.length
-                    + indata.length);
-            bytebuf.put(accumulator);
-            bytebuf.put(indata);
-            accumulator = bytebuf.array();
+        if (unusedData.length > 0) {
+            byte[] tmp = indata;
+            indata = new byte[unusedData.length + tmp.length];
+            System.arraycopy(unusedData, 0, indata, 0, unusedData.length);
+            System.arraycopy(tmp, 0, indata, unusedData.length, tmp.length);
         }
-
-        ByteArrayOutputStream decodedStream = new ByteArrayOutputStream();
-        final byte[] buf = accumulator;
-        for (int i = 0; i < buf.length; i++) {
-            if (((i + 3) < buf.length) &&
-                (((char) buf[i] == '\\') && ((char) buf[i + 1] == 'x'))) {
-                int decodedByte = ((Character.digit((char) buf[i + 2], 16) << 4) + Character
-                        .digit((char) buf[i + 3], 16));
-                decodedStream.write(decodedByte);
-                i += 3;
-            } else {
-                decodedStream.write(buf[i]);
-            }
-        }
-
-        ByteArrayInputStream compressedData = new ByteArrayInputStream(
-                decodedStream.toByteArray());
-
-        try {
-            decompressStream = new BZip2CompressorInputStream(compressedData);
-        } catch (IOException e) {
-            return Py.EmptyByte;
-        }
-
+        ByteArrayInputStream compressedData = new ByteArrayInputStream(indata);
         PyByteArray databuf = new PyByteArray();
-        int currentByte = -1;
+        int currentByte;
         try {
-            while ((currentByte = decompressStream.read()) != -1) {
+            BZip2CompressorInputStream decompressStream = new BZip2CompressorInputStream(compressedData);
+            while ((currentByte = decompressStream.read()) != -1 && (maxLength < 0 || databuf.__len__() < maxLength)) {
                 databuf.append((byte)currentByte);
             }
             returnData = databuf;
             if (compressedData.available() > 0) {
-                byte[] unusedbuf = new byte[compressedData.available()];
-                compressedData.read(unusedbuf);
-                unused_data = unused_data.__add__(new PyBytes(unusedbuf));
+                unusedData = new byte[compressedData.available()];
+                compressedData.read(unusedData);
             }
-            eofReached = true;
+            if (databuf.__len__() == 0 && unusedData.length > 0) {
+                needs_input = true;
+            } else {
+                eofReached = true;
+            }
         } catch (IOException e) {
+            needs_input = true;
+//            eofReached = true;
             return Py.EmptyByte;
         }
 
         return returnData;
     }
 
-
-    /* Traverseproc implementation */
-    @Override
-    public int traverse(Visitproc visit, Object arg) {
-        return unused_data != null ? visit.visit(unused_data, arg) : 0;
-    }
-
-    @Override
-    public boolean refersDirectlyTo(PyObject ob) {
-        return ob != null && unused_data == ob;
+    @ExposedGet(name = "unused_data")
+    public PyObject getUnusedData() {
+        return new PyBytes(unusedData);
     }
 }

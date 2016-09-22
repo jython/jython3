@@ -54,6 +54,9 @@ public class SimpleBuffer extends BaseBuffer {
     public SimpleBuffer(byte[] storage, int index0, int size) throws PyException,
             ArrayIndexOutOfBoundsException {
         this();
+        // FIXME(isaiah) somewhere the messed up the size calculation, the last parameter is always confusing in similar
+        // APIs, it's the length/size, sometimes it's the stopping point
+        size = Math.min(size, storage.length - index0);
         this.storage = storage;         // Exported data
         this.index0 = index0;           // Index to be treated as item[0]
         this.shape[0] = size;           // Number of items in exported data

@@ -38,7 +38,6 @@ public class Setup {
             "_systemrestart",
 //            "_types",
 //            "_weakref:org.python.modules._weakref.WeakrefModule",
-            "bz2:org.python.modules.bz2.bz2",
             "_pickle",
             "cmath",
             "errno",
@@ -58,6 +57,7 @@ public class Setup {
 
     public static String[] newbuiltinModules = {
             "_ast:org.python.antlr.ast.AstModule",
+            "_bz2:org.python.modules.bz2.bz2",
             "_codecs",
             "_codecs_cn:org.python.modules.cjkcodecs._codecs_cn",
             "_codecs_tw:org.python.modules.cjkcodecs._codecs_tw",
