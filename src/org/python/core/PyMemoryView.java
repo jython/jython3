@@ -63,7 +63,7 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
          * are necessary for navigation, but only ask for read access. If the object is writable,
          * the PyBuffer will be writable.
          */
-        backing = pybuf.getBuffer(PyBUF.FULL_RO);
+        backing = pybuf.getBuffer(PyBUF.FULL);
         view = backing.getNIOByteBuffer();
     }
 
@@ -302,7 +302,8 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
     @Override
     public int __len__() {
         checkNotReleased();
-        return getView().limit();
+        Buffer buf = getView();
+        return buf.limit() - buf.position();
     }
 
     // this is very optimised, but the view.limit() is not very reliable
