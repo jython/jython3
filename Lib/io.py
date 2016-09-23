@@ -19,6 +19,13 @@ if sys.platform in {'win32', 'cygwin'}:
 else:
     _setmode = None
 
+__all__ = ["BlockingIOError", "open", "IOBase", "RawIOBase", "FileIO",
+           "BytesIO", "StringIO", "BufferedIOBase",
+           "BufferedReader", "BufferedWriter", "BufferedRWPair",
+           "BufferedRandom", "TextIOBase", "TextIOWrapper",
+           "UnsupportedOperation", "SEEK_SET", "SEEK_CUR", "SEEK_END"]
+
+
 # for seek()
 SEEK_SET = 0
 SEEK_CUR = 1
