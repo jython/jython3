@@ -220,7 +220,7 @@ public class Encoding {
                          * look for either the closing brace, or we exceed the maximum length of the
                          * unicode character names
                          */
-                        endBrace = str.indexOf('}');
+                        endBrace = str.indexOf('}', startName);
                         if (endBrace != -1) {
                             int value = UCharacter.getCharFromName(str.substring(startName, endBrace));
                             if (storeUnicodeCharacter(value, v)) {
