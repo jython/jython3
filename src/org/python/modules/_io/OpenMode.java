@@ -23,6 +23,9 @@ public class OpenMode {
     /** Whether this file is opened for writing ('w') */
     public boolean writing;
 
+    /** Wheather this file is created for writing ('x') */
+    public boolean creating;
+
     /** Whether this file is opened in appending mode ('a') */
     public boolean appending;
 
@@ -72,6 +75,10 @@ public class OpenMode {
                 case 'r':
                     duplicate = reading;
                     reading = true;
+                    break;
+                case 'x':
+                    duplicate = creating;
+                    creating = true;
                     break;
                 case 'w':
                     duplicate = writing;
@@ -145,17 +152,20 @@ public class OpenMode {
                 message = "can't have text and binary mode at once";
             } else {
                 // How many of r/U, w and a were given?
-                int rwa = 0;
+                int rwxa = 0;
                 if (reading) {
-                    rwa += 1;
+                    rwxa++;
+                }
+                if (creating) {
+                    rwxa++;
                 }
                 if (writing) {
-                    rwa += 1;
+                    rwxa++;
                 }
                 if (appending) {
-                    rwa += 1;
+                    rwxa++;
                 }
-                if (rwa != 1) {
+                if (rwxa != 1) {
                     message = "must have exactly one of read/write/append mode";
                 }
             }
@@ -226,6 +236,8 @@ public class OpenMode {
         StringBuilder m = new StringBuilder(2);
         if (appending) {
             m.append('a');
+        } else if (creating) {
+            m.append('x');
         } else if (writing) {
             m.append('w');
         } else {
@@ -255,6 +267,8 @@ public class OpenMode {
             m.append('a');
         } else if (writing) {
             m.append('w');
+        } else if (creating) {
+            m.append('x');
         } else {
             m.append('r');
         }

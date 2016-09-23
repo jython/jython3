@@ -222,6 +222,10 @@ public final class Py {
     }
 
     public static PyObject FileExistsError;
+    public static final PyException FileExistsError(String message) {
+        return new PyException(Py.FileExistsError, message);
+    }
+
     public static PyObject FileNotFoundError;
     public static PyObject IsADirectoryError;
     public static PyObject NotADirectoryError;

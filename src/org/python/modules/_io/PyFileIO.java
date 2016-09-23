@@ -64,12 +64,12 @@ public class PyFileIO extends PyRawIOBase {
     @ExposedGet(doc = "True if the file descriptor will be closed")
     public final boolean closefd;
 
-    /** The mode as a PyBytes based on readable and writable */
+    /** The mode as a PyUnicode based on readable and writable */
     @ExposedGet(doc = "String giving the file mode: 'rb', 'rb+', or 'wb'")
-    public final PyBytes mode;
+    public final PyUnicode mode;
 
     @ExposedSet(name = "mode")
-    public final void mode_readonly(PyBytes value) {
+    public final void mode_readonly(PyUnicode value) {
         readonlyAttributeError("mode");
     }
 
@@ -77,11 +77,11 @@ public class PyFileIO extends PyRawIOBase {
 
     public PyFileIO(RawIOBase ioBase, OpenMode mode) {
         readable = mode.reading | mode.updating;
-        writable = mode.writing | mode.updating | mode.appending;
+        writable = mode.writing | mode.updating | mode.appending | mode.creating;
 
         this.closefd = false;
         ioDelegate = ioBase;
-        this.mode = new PyBytes(mode.toString());
+        this.mode = new PyUnicode(mode.toString());
     }
     /**
      * Construct an open <code>_io.FileIO</code> starting with an object that may be a file name or
@@ -115,18 +115,12 @@ public class PyFileIO extends PyRawIOBase {
 
         // Establish the direction(s) of flow
         readable = mode.reading | mode.updating;
-        writable = mode.writing | mode.updating | mode.appending;
+        writable = mode.writing | mode.updating | mode.appending | mode.creating;
 
         // Assign a delegate according to the file argument
         this.closefd = closefd;
         setDelegate(file, mode);
-
-        // The mode string of a raw file always asserts it is binary: "rb", "rb+", or "wb".
-        if (readable) {
-            this.mode = new PyBytes(writable ? "rb+" : "rb");
-        } else {
-            this.mode = new PyBytes("wb");
-        }
+        this.mode = new PyUnicode(mode.toString());
     }
 
     /**
@@ -145,12 +139,16 @@ public class PyFileIO extends PyRawIOBase {
      */
     private void setDelegate(PyObject file, OpenMode mode) {
 
-        if (file instanceof PyUnicode) {
+        if (file instanceof PyUnicode || file instanceof PyBytes) {
             // Open a file by name
             if (!closefd) {
                 throw Py.ValueError("Cannot use closefd=False with file name");
             }
-            ioDelegate = new FileIO((PyUnicode)file, mode.forFileIO());
+            if (file instanceof PyUnicode) {
+                ioDelegate = new FileIO((PyUnicode) file, mode.forFileIO());
+            } else {
+                ioDelegate = new FileIO(((PyBytes) file).getString(), mode.forFileIO());
+            }
 
         } else {
             /*

@@ -13,6 +13,8 @@ import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
 
 import jnr.constants.platform.Errno;
 import jnr.posix.util.FieldAccess;
@@ -53,6 +55,9 @@ public class FileIO extends RawIOBase {
     /** true if the file is opened for writing ('w', 'a', or '+') */
     private boolean writing;
 
+    /** true if file is created for writing 'x' */
+    private boolean creating;
+
     /** true if the file is in appending mode ('a') */
     private boolean appending;
 
@@ -84,7 +89,7 @@ public class FileIO extends RawIOBase {
         File absPath = new RelativeFile(name.toString());
 
         try {
-            if ((appending && !(reading || plus)) || (writing && !reading && !plus)) {
+            if ((appending && !(reading || plus)) || (writing && !reading && !plus && !creating)) {
                 // Take advantage of FileOutputStream's append mode
                 fromFileOutputStream(absPath);
             } else {
@@ -141,6 +146,10 @@ public class FileIO extends RawIOBase {
                 }
                 reading = rwa = true;
                 break;
+            case 'x':
+                creating = rwa = true;
+                writing = true;
+                break;
             case 'w':
                 if (plus || rwa) {
                     badMode();
@@ -176,6 +185,15 @@ public class FileIO extends RawIOBase {
      */
     private void fromRandomAccessFile(File absPath) throws FileNotFoundException {
         String rafMode = "r" + (writing ? "w" : "");
+        if (creating) {
+            try {
+                Files.createFile(absPath.toPath());
+            } catch (FileAlreadyExistsException e) {
+                throw Py.FileExistsError(absPath.toString());
+            } catch (IOException e) {
+                throw Py.IOError(e);
+            }
+        }
         if (plus && reading && !absPath.isFile()) {
             // suppress "permission denied"
             writing = false;
@@ -199,11 +217,11 @@ public class FileIO extends RawIOBase {
 
     /**
      * Raise a value error due to a mode string not containing exactly
-     * one r/w/a/+ character.
+     * one r/w/a/x/+ character.
      *
      */
     private void badMode() {
-        throw Py.ValueError("Must have exactly one of read/write/append mode");
+        throw Py.ValueError("Must have exactly one of read/write/append/create mode");
     }
 
     /**

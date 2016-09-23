@@ -81,8 +81,11 @@ public class PyBZ2Decompressor extends PyObject {
                 eofReached = true;
             }
         } catch (IOException e) {
-            needs_input = true;
-//            eofReached = true;
+            if (databuf.__len__() == 0) {
+                needs_input = true;
+            } else {
+                eofReached = true;
+            }
             return Py.EmptyByte;
         }
 

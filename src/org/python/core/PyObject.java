@@ -1,6 +1,7 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.core;
 
+import com.google.common.base.Joiner;
 import org.python.core.stringlib.IntegerFormatter;
 import org.python.core.stringlib.InternalFormat;
 import org.python.expose.ExposedClassMethod;
@@ -120,11 +121,8 @@ public class PyObject implements Serializable {
 
         if (subtype.isAbstract()) {
             // Compute ", ".join(sorted(type.__abstractmethods__)) into methods
-            PyObject sorted =
-                    Py.getSystemState().getBuiltins().__getitem__(Py.newString("sorted"));
-            PyBytes methods =
-                    Py.newString(", ")
-                    .join(sorted.__call__(subtype.getAbstractmethods()));
+            PyObject sorted = Py.getSystemState().getBuiltins().__getitem__("sorted");
+            PyObject methods = Py.newUnicode(", ").join(sorted.__call__(subtype.getAbstractmethods()));
             throw Py.TypeError(String.format("Can't instantiate abstract class %s with abstract "
                                              + "methods %s", subtype.fastGetName(), methods));
         }

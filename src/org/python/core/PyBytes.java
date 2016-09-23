@@ -1506,47 +1506,24 @@ public class PyBytes extends PySequence implements BufferProtocol {
         PyObject item;
         if (seqLen == 1) {
             item = seq.pyget(0);
-            if (item.getType() == PyBytes.TYPE || item.getType() == PyUnicode.TYPE) {
-                return (PyBytes)item;
-            }
+            return new PyBytes(Py.unwrapBuffer(item));
         }
 
         // There are at least two things to join, or else we have a subclass of the
         // builtin types in the sequence. Do a pre-pass to figure out the total amount of
         // space we'll need, see whether any argument is absurd, and defer to the Unicode
         // join if appropriate
-        int i = 0;
-        long size = 0;
-        int sepLen = getString().length();
-        for (; i < seqLen; i++) {
-            item = seq.pyget(i);
-            if (!(item instanceof PyBytes) || item instanceof PyUnicode) {
-                throw Py.TypeError(String.format("sequence item %d: expected a bytes-like object, %.80s found",
-                        i, item.getType().fastGetName()));
-            }
-//            if (item instanceof PyUnicode) {
-//                // Defer to Unicode join. CAUTION: There's no gurantee that the original
-//                // sequence can be iterated over again, so we must pass seq here
-//                return unicodeJoin(seq);
-//            }
-
-            if (i != 0) {
-                size += sepLen;
-            }
-            size += ((PyBytes)item).getString().length();
-            if (size > Integer.MAX_VALUE) {
-                throw Py.OverflowError("join() result is too long for a Python string");
-            }
-        }
 
         // Catenate everything
-        StringBuilder buf = new StringBuilder((int)size);
-        for (i = 0; i < seqLen; i++) {
+        StringBuilder buf = new StringBuilder();
+        for (int i = 0; i < seqLen; i++) {
             item = seq.pyget(i);
             if (i != 0) {
                 buf.append(getString());
             }
-            buf.append(((PyBytes)item).getString());
+            for (byte b : Py.unwrapBuffer(item)) {
+                buf.appendCodePoint(b & 0xFF);
+            }
         }
         return new PyBytes(buf.toString(), true); // Guaranteed to be byte-like
     }

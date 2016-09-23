@@ -183,7 +183,7 @@ public class _io implements ClassDictInit {
 
             if (mode.updating) {
                 bufferType = io.__getattr__("BufferedRandom");
-            } else if (mode.writing || mode.appending) {
+            } else if (mode.writing || mode.appending || mode.creating) {
                 bufferType = io.__getattr__("BufferedWriter");
             } else {                        // = reading
                 bufferType = io.__getattr__("BufferedReader");
