@@ -84,13 +84,14 @@ public class PyLong extends PyObject {
         if (x != null && x.getJavaProxy() instanceof BigInteger) {
             return new PyLong((BigInteger)x.getJavaProxy());
         }
-        if (x == null) {
-            return new PyLong(0);
-        }
+
         PyObject baseObj = ap.getPyObject(1, null);
 
         if (baseObj == null) {
             return asPyLong(x);
+        }
+        if (x == null) {
+            throw Py.TypeError("int() missing string argument");
         }
         int base = baseObj.asInt();
         if (x instanceof PyUnicode) {
@@ -101,7 +102,7 @@ public class PyLong extends PyObject {
             return Encoding.atol(x.asString(), base);
         }
 
-        throw Py.TypeError("long: can't convert non-string with explicit base");
+        throw Py.TypeError("int: can't convert non-string with explicit base");
     }
 
     /**
@@ -109,6 +110,9 @@ public class PyLong extends PyObject {
      * @throws TypeError and AttributeError.
      */
     private static PyObject asPyLong(PyObject x) {
+        if (x == null) {
+            return Py.Zero;
+        }
         try {
             return x.__int__();
         } catch (PyException pye) {
