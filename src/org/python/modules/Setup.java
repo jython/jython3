@@ -52,7 +52,6 @@ public class Setup {
             "synchronize",
 //            "_thread:org.python.modules.thread.thread",
 //            PosixModule.getOSName() + ":org.python.modules.posix.PosixModule"
-            "posix:org.python.modules.posix.PosixModule"
     };
 
     public static String[] newbuiltinModules = {
@@ -82,6 +81,7 @@ public class Setup {
             "binascii",
             "faulthandler:org.python.modules.FaultHandler",
             "itertools:org.python.modules.itertools.itertools",
+            "posix:org.python.modules.posix.PosixModule",
             "subprocess:org.python.modules.subprocess.SubprocessModule",
             "sys:org.python.modules.sys.SysModule",
             "time:org.python.modules.time.TimeModule",

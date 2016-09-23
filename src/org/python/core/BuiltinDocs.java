@@ -2346,6 +2346,2673 @@ public class BuiltinDocs {
     public final static String datetime_tzinfo_doc = 
         "Abstract base class for time zone info objects.";
 
+    // Docs for <module 'posix' (built-in)>
+    public final static String posix_CLD_CONTINUED_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_CLD_DUMPED_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_CLD_EXITED_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_CLD_TRAPPED_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_EX_CANTCREAT_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_EX_CONFIG_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_EX_DATAERR_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_EX_IOERR_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_EX_NOHOST_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_EX_NOINPUT_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_EX_NOPERM_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_EX_NOUSER_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_EX_OK_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_EX_OSERR_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_EX_OSFILE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_EX_PROTOCOL_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_EX_SOFTWARE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_EX_TEMPFAIL_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_EX_UNAVAILABLE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_EX_USAGE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_F_LOCK_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_F_OK_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_F_TEST_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_F_TLOCK_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_F_ULOCK_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_NGROUPS_MAX_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_ACCMODE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_APPEND_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_ASYNC_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_CLOEXEC_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_CREAT_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_DIRECT_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_DIRECTORY_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_DSYNC_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_EXCL_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_LARGEFILE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_NDELAY_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_NOATIME_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_NOCTTY_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_NOFOLLOW_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_NONBLOCK_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_PATH_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_RDONLY_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_RDWR_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_RSYNC_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_SYNC_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_TMPFILE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_TRUNC_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_O_WRONLY_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_POSIX_FADV_DONTNEED_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_POSIX_FADV_NOREUSE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_POSIX_FADV_NORMAL_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_POSIX_FADV_RANDOM_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_POSIX_FADV_SEQUENTIAL_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_POSIX_FADV_WILLNEED_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_PRIO_PGRP_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_PRIO_PROCESS_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_PRIO_USER_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_P_ALL_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_P_PGID_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_P_PID_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_RTLD_DEEPBIND_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_RTLD_GLOBAL_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_RTLD_LAZY_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_RTLD_LOCAL_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_RTLD_NODELETE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_RTLD_NOLOAD_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_RTLD_NOW_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_R_OK_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_SCHED_BATCH_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_SCHED_FIFO_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_SCHED_IDLE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_SCHED_OTHER_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_SCHED_RESET_ON_FORK_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_SCHED_RR_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_SEEK_DATA_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_SEEK_HOLE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_ST_APPEND_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_ST_MANDLOCK_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_ST_NOATIME_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_ST_NODEV_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_ST_NODIRATIME_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_ST_NOEXEC_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_ST_NOSUID_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_ST_RDONLY_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_ST_RELATIME_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_ST_SYNCHRONOUS_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_ST_WRITE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_TMP_MAX_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_WCONTINUED_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_WCOREDUMP_doc = 
+        "Return True if the process returning status was dumped to a core file.";
+
+    public final static String posix_WEXITED_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_WEXITSTATUS_doc = 
+        "Return the process return code from status.";
+
+    public final static String posix_WIFCONTINUED_doc = 
+        "Return True if a particular process was continued from a job control stop.\n" + 
+        "\n" + 
+        "Return True if the process returning status was continued from a\n" + 
+        "job control stop.";
+
+    public final static String posix_WIFEXITED_doc = 
+        "Return True if the process returning status exited via the exit() system call.";
+
+    public final static String posix_WIFSIGNALED_doc = 
+        "Return True if the process returning status was terminated by a signal.";
+
+    public final static String posix_WIFSTOPPED_doc = 
+        "Return True if the process returning status was stopped.";
+
+    public final static String posix_WNOHANG_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_WNOWAIT_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_WSTOPPED_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_WSTOPSIG_doc = 
+        "Return the signal that stopped the process that provided the status value.";
+
+    public final static String posix_WTERMSIG_doc = 
+        "Return the signal that terminated the process that provided the status value.";
+
+    public final static String posix_WUNTRACED_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_W_OK_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_XATTR_CREATE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_XATTR_REPLACE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_XATTR_SIZE_MAX_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_X_OK_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String posix_doc = 
+        "This module provides access to operating system functionality that is\n" + 
+        "standardized by the C Standard and the POSIX standard (a thinly\n" + 
+        "disguised Unix interface).  Refer to the library manual and\n" + 
+        "corresponding Unix manual entries for more information on calls.";
+
+    public final static String posix___loader___doc = 
+        "Meta path import for built-in modules.\n" + 
+        "\n" + 
+        "    All methods are either class or static methods to avoid the need to\n" + 
+        "    instantiate the class.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String posix___name___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String posix___package___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String posix___spec___doc = 
+        "The specification for a module, used for loading.\n" + 
+        "\n" + 
+        "    A module's spec is the source for information about the module.  For\n" + 
+        "    data associated with the module, including source, use the spec's\n" + 
+        "    loader.\n" + 
+        "\n" + 
+        "    `name` is the absolute name of the module.  `loader` is the loader\n" + 
+        "    to use when loading the module.  `parent` is the name of the\n" + 
+        "    package the module is in.  The parent is derived from the name.\n" + 
+        "\n" + 
+        "    `is_package` determines if the module is considered a package or\n" + 
+        "    not.  On modules this is reflected by the `__path__` attribute.\n" + 
+        "\n" + 
+        "    `origin` is the specific location used by the loader from which to\n" + 
+        "    load the module, if that information is available.  When filename is\n" + 
+        "    set, origin will match.\n" + 
+        "\n" + 
+        "    `has_location` indicates that a spec's \"origin\" reflects a location.\n" + 
+        "    When this is True, `__file__` attribute of the module is set.\n" + 
+        "\n" + 
+        "    `cached` is the location of the cached bytecode file, if any.  It\n" + 
+        "    corresponds to the `__cached__` attribute.\n" + 
+        "\n" + 
+        "    `submodule_search_locations` is the sequence of path entries to\n" + 
+        "    search when importing submodules.  If set, is_package should be\n" + 
+        "    True--and False otherwise.\n" + 
+        "\n" + 
+        "    Packages are simply modules that (may) have submodules.  If a spec\n" + 
+        "    has a non-None value in `submodule_search_locations`, the import\n" + 
+        "    system will consider modules loaded from the spec as packages.\n" + 
+        "\n" + 
+        "    Only finders (see importlib.abc.MetaPathFinder and\n" + 
+        "    importlib.abc.PathEntryFinder) should modify ModuleSpec instances.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String posix__exit_doc = 
+        "Exit to the system with specified status, without normal exit processing.";
+
+    public final static String posix__have_functions_doc = 
+        "list() -> new empty list\n" + 
+        "list(iterable) -> new list initialized from iterable's items";
+
+    public final static String posix_abort_doc = 
+        "Abort the interpreter immediately.\n" + 
+        "\n" + 
+        "This function 'dumps core' or otherwise fails in the hardest way possible\n" + 
+        "on the hosting operating system.  This function never returns.";
+
+    public final static String posix_access_doc = 
+        "Use the real uid/gid to test for access to a path.\n" + 
+        "\n" + 
+        "  path\n" + 
+        "    Path to be tested; can be string, bytes, or open-file-descriptor int.\n" + 
+        "  mode\n" + 
+        "    Operating-system mode bitfield.  Can be F_OK to test existence,\n" + 
+        "    or the inclusive-OR of R_OK, W_OK, and X_OK.\n" + 
+        "  dir_fd\n" + 
+        "    If not None, it should be a file descriptor open to a directory,\n" + 
+        "    and path should be relative; path will then be relative to that\n" + 
+        "    directory.\n" + 
+        "  effective_ids\n" + 
+        "    If True, access will use the effective uid/gid instead of\n" + 
+        "    the real uid/gid.\n" + 
+        "  follow_symlinks\n" + 
+        "    If False, and the last element of the path is a symbolic link,\n" + 
+        "    access will examine the symbolic link itself instead of the file\n" + 
+        "    the link points to.\n" + 
+        "\n" + 
+        "dir_fd, effective_ids, and follow_symlinks may not be implemented\n" + 
+        "  on your platform.  If they are unavailable, using them will raise a\n" + 
+        "  NotImplementedError.\n" + 
+        "\n" + 
+        "Note that most operations will use the effective uid/gid, therefore this\n" + 
+        "  routine can be used in a suid/sgid environment to test if the invoking user\n" + 
+        "  has the specified access to the path.";
+
+    public final static String posix_chdir_doc = 
+        "Change the current working directory to the specified path.\n" + 
+        "\n" + 
+        "path may always be specified as a string.\n" + 
+        "On some platforms, path may also be specified as an open file descriptor.\n" + 
+        "  If this functionality is unavailable, using it raises an exception.";
+
+    public final static String posix_chmod_doc = 
+        "Change the access permissions of a file.\n" + 
+        "\n" + 
+        "  path\n" + 
+        "    Path to be modified.  May always be specified as a str or bytes.\n" + 
+        "    On some platforms, path may also be specified as an open file descriptor.\n" + 
+        "    If this functionality is unavailable, using it raises an exception.\n" + 
+        "  mode\n" + 
+        "    Operating-system mode bitfield.\n" + 
+        "  dir_fd\n" + 
+        "    If not None, it should be a file descriptor open to a directory,\n" + 
+        "    and path should be relative; path will then be relative to that\n" + 
+        "    directory.\n" + 
+        "  follow_symlinks\n" + 
+        "    If False, and the last element of the path is a symbolic link,\n" + 
+        "    chmod will modify the symbolic link itself instead of the file\n" + 
+        "    the link points to.\n" + 
+        "\n" + 
+        "It is an error to use dir_fd or follow_symlinks when specifying path as\n" + 
+        "  an open file descriptor.\n" + 
+        "dir_fd and follow_symlinks may not be implemented on your platform.\n" + 
+        "  If they are unavailable, using them will raise a NotImplementedError.";
+
+    public final static String posix_chown_doc = 
+        "Change the owner and group id of path to the numeric uid and gid.\\\n" + 
+        "\n" + 
+        "  path\n" + 
+        "    Path to be examined; can be string, bytes, or open-file-descriptor int.\n" + 
+        "  dir_fd\n" + 
+        "    If not None, it should be a file descriptor open to a directory,\n" + 
+        "    and path should be relative; path will then be relative to that\n" + 
+        "    directory.\n" + 
+        "  follow_symlinks\n" + 
+        "    If False, and the last element of the path is a symbolic link,\n" + 
+        "    stat will examine the symbolic link itself instead of the file\n" + 
+        "    the link points to.\n" + 
+        "\n" + 
+        "path may always be specified as a string.\n" + 
+        "On some platforms, path may also be specified as an open file descriptor.\n" + 
+        "  If this functionality is unavailable, using it raises an exception.\n" + 
+        "If dir_fd is not None, it should be a file descriptor open to a directory,\n" + 
+        "  and path should be relative; path will then be relative to that directory.\n" + 
+        "If follow_symlinks is False, and the last element of the path is a symbolic\n" + 
+        "  link, chown will modify the symbolic link itself instead of the file the\n" + 
+        "  link points to.\n" + 
+        "It is an error to use dir_fd or follow_symlinks when specifying path as\n" + 
+        "  an open file descriptor.\n" + 
+        "dir_fd and follow_symlinks may not be implemented on your platform.\n" + 
+        "  If they are unavailable, using them will raise a NotImplementedError.";
+
+    public final static String posix_chroot_doc = 
+        "Change root directory to path.";
+
+    public final static String posix_close_doc = 
+        "Close a file descriptor.";
+
+    public final static String posix_closerange_doc = 
+        "Closes all file descriptors in [fd_low, fd_high), ignoring errors.";
+
+    public final static String posix_confstr_doc = 
+        "Return a string-valued system configuration variable.";
+
+    public final static String posix_confstr_names_doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String posix_cpu_count_doc = 
+        "Return the number of CPUs in the system; return None if indeterminable.";
+
+    public final static String posix_ctermid_doc = 
+        "Return the name of the controlling terminal for this process.";
+
+    public final static String posix_device_encoding_doc = 
+        "Return a string describing the encoding of a terminal's file descriptor.\n" + 
+        "\n" + 
+        "The file descriptor must be attached to a terminal.\n" + 
+        "If the device is not a terminal, return None.";
+
+    public final static String posix_dup_doc = 
+        "Return a duplicate of a file descriptor.";
+
+    public final static String posix_dup2_doc = 
+        "Duplicate file descriptor.";
+
+    public final static String posix_environ_doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String posix_error_doc = 
+        "Base class for I/O related errors.";
+
+    public final static String posix_execv_doc = 
+        "Execute an executable path with arguments, replacing current process.\n" + 
+        "\n" + 
+        "  path\n" + 
+        "    Path of executable file.\n" + 
+        "  argv\n" + 
+        "    Tuple or list of strings.";
+
+    public final static String posix_execve_doc = 
+        "Execute an executable path with arguments, replacing current process.\n" + 
+        "\n" + 
+        "  path\n" + 
+        "    Path of executable file.\n" + 
+        "  argv\n" + 
+        "    Tuple or list of strings.\n" + 
+        "  env\n" + 
+        "    Dictionary of strings mapping to strings.";
+
+    public final static String posix_fchdir_doc = 
+        "Change to the directory of the given file descriptor.\n" + 
+        "\n" + 
+        "fd must be opened on a directory, not a file.\n" + 
+        "Equivalent to os.chdir(fd).";
+
+    public final static String posix_fchmod_doc = 
+        "Change the access permissions of the file given by file descriptor fd.\n" + 
+        "\n" + 
+        "Equivalent to os.chmod(fd, mode).";
+
+    public final static String posix_fchown_doc = 
+        "Change the owner and group id of the file specified by file descriptor.\n" + 
+        "\n" + 
+        "Equivalent to os.chown(fd, uid, gid).";
+
+    public final static String posix_fdatasync_doc = 
+        "Force write of fd to disk without forcing update of metadata.";
+
+    public final static String posix_fork_doc = 
+        "Fork a child process.\n" + 
+        "\n" + 
+        "Return 0 to child process and PID of child to parent process.";
+
+    public final static String posix_forkpty_doc = 
+        "Fork a new process with a new pseudo-terminal as controlling tty.\n" + 
+        "\n" + 
+        "Returns a tuple of (pid, master_fd).\n" + 
+        "Like fork(), return pid of 0 to the child process,\n" + 
+        "and pid of child to the parent process.\n" + 
+        "To both, return fd of newly opened pseudo-terminal.";
+
+    public final static String posix_fpathconf_doc = 
+        "Return the configuration limit name for the file descriptor fd.\n" + 
+        "\n" + 
+        "If there is no limit, return -1.";
+
+    public final static String posix_fstat_doc = 
+        "Perform a stat system call on the given file descriptor.\n" + 
+        "\n" + 
+        "Like stat(), but for an open file descriptor.\n" + 
+        "Equivalent to os.stat(fd).";
+
+    public final static String posix_fstatvfs_doc = 
+        "Perform an fstatvfs system call on the given fd.\n" + 
+        "\n" + 
+        "Equivalent to statvfs(fd).";
+
+    public final static String posix_fsync_doc = 
+        "Force write of fd to disk.";
+
+    public final static String posix_ftruncate_doc = 
+        "Truncate a file, specified by file descriptor, to a specific length.";
+
+    public final static String posix_get_blocking_doc = 
+        "get_blocking(fd) -> bool\n" + 
+        "\n" + 
+        "Get the blocking mode of the file descriptor:\n" + 
+        "False if the O_NONBLOCK flag is set, True if the flag is cleared.";
+
+    public final static String posix_get_inheritable_doc = 
+        "Get the close-on-exe flag of the specified file descriptor.";
+
+    public final static String posix_get_terminal_size_doc = 
+        "Return the size of the terminal window as (columns, lines).\n" + 
+        "\n" + 
+        "The optional argument fd (default standard output) specifies\n" + 
+        "which file descriptor should be queried.\n" + 
+        "\n" + 
+        "If the file descriptor is not connected to a terminal, an OSError\n" + 
+        "is thrown.\n" + 
+        "\n" + 
+        "This function will only be defined if an implementation is\n" + 
+        "available for this system.\n" + 
+        "\n" + 
+        "shutil.get_terminal_size is the high-level function which should \n" + 
+        "normally be used, os.get_terminal_size is the low-level implementation.";
+
+    public final static String posix_getcwd_doc = 
+        "Return a unicode string representing the current working directory.";
+
+    public final static String posix_getcwdb_doc = 
+        "Return a bytes string representing the current working directory.";
+
+    public final static String posix_getegid_doc = 
+        "Return the current process's effective group id.";
+
+    public final static String posix_geteuid_doc = 
+        "Return the current process's effective user id.";
+
+    public final static String posix_getgid_doc = 
+        "Return the current process's group id.";
+
+    public final static String posix_getgrouplist_doc = 
+        "getgrouplist(user, group) -> list of groups to which a user belongs\n" + 
+        "\n" + 
+        "Returns a list of groups to which a user belongs.\n" + 
+        "\n" + 
+        "    user: username to lookup\n" + 
+        "    group: base group id of the user";
+
+    public final static String posix_getgroups_doc = 
+        "Return list of supplemental group IDs for the process.";
+
+    public final static String posix_getloadavg_doc = 
+        "Return average recent system load information.\n" + 
+        "\n" + 
+        "Return the number of processes in the system run queue averaged over\n" + 
+        "the last 1, 5, and 15 minutes as a tuple of three floats.\n" + 
+        "Raises OSError if the load average was unobtainable.";
+
+    public final static String posix_getlogin_doc = 
+        "Return the actual login name.";
+
+    public final static String posix_getpgid_doc = 
+        "Call the system call getpgid(), and return the result.";
+
+    public final static String posix_getpgrp_doc = 
+        "Return the current process group id.";
+
+    public final static String posix_getpid_doc = 
+        "Return the current process id.";
+
+    public final static String posix_getppid_doc = 
+        "Return the parent's process id.\n" + 
+        "\n" + 
+        "If the parent process has already exited, Windows machines will still\n" + 
+        "return its id; others systems will return the id of the 'init' process (1).";
+
+    public final static String posix_getpriority_doc = 
+        "Return program scheduling priority.";
+
+    public final static String posix_getresgid_doc = 
+        "Return a tuple of the current process's real, effective, and saved group ids.";
+
+    public final static String posix_getresuid_doc = 
+        "Return a tuple of the current process's real, effective, and saved user ids.";
+
+    public final static String posix_getsid_doc = 
+        "Call the system call getsid(pid) and return the result.";
+
+    public final static String posix_getuid_doc = 
+        "Return the current process's user id.";
+
+    public final static String posix_getxattr_doc = 
+        "Return the value of extended attribute attribute on path.\n" + 
+        "\n" + 
+        "path may be either a string or an open file descriptor.\n" + 
+        "If follow_symlinks is False, and the last element of the path is a symbolic\n" + 
+        "  link, getxattr will examine the symbolic link itself instead of the file\n" + 
+        "  the link points to.";
+
+    public final static String posix_initgroups_doc = 
+        "initgroups(username, gid) -> None\n" + 
+        "\n" + 
+        "Call the system initgroups() to initialize the group access list with all of\n" + 
+        "the groups of which the specified username is a member, plus the specified\n" + 
+        "group id.";
+
+    public final static String posix_isatty_doc = 
+        "Return True if the fd is connected to a terminal.\n" + 
+        "\n" + 
+        "Return True if the file descriptor is an open file descriptor\n" + 
+        "connected to the slave end of a terminal.";
+
+    public final static String posix_kill_doc = 
+        "Kill a process with a signal.";
+
+    public final static String posix_killpg_doc = 
+        "Kill a process group with a signal.";
+
+    public final static String posix_lchown_doc = 
+        "Change the owner and group id of path to the numeric uid and gid.\n" + 
+        "\n" + 
+        "This function will not follow symbolic links.\n" + 
+        "Equivalent to os.chown(path, uid, gid, follow_symlinks=False).";
+
+    public final static String posix_link_doc = 
+        "Create a hard link to a file.\n" + 
+        "\n" + 
+        "If either src_dir_fd or dst_dir_fd is not None, it should be a file\n" + 
+        "  descriptor open to a directory, and the respective path string (src or dst)\n" + 
+        "  should be relative; the path will then be relative to that directory.\n" + 
+        "If follow_symlinks is False, and the last element of src is a symbolic\n" + 
+        "  link, link will create a link to the symbolic link itself instead of the\n" + 
+        "  file the link points to.\n" + 
+        "src_dir_fd, dst_dir_fd, and follow_symlinks may not be implemented on your\n" + 
+        "  platform.  If they are unavailable, using them will raise a\n" + 
+        "  NotImplementedError.";
+
+    public final static String posix_listdir_doc = 
+        "Return a list containing the names of the files in the directory.\n" + 
+        "\n" + 
+        "path can be specified as either str or bytes.  If path is bytes,\n" + 
+        "  the filenames returned will also be bytes; in all other circumstances\n" + 
+        "  the filenames returned will be str.\n" + 
+        "If path is None, uses the path='.'.\n" + 
+        "On some platforms, path may also be specified as an open file descriptor;\\\n" + 
+        "  the file descriptor must refer to a directory.\n" + 
+        "  If this functionality is unavailable, using it raises NotImplementedError.\n" + 
+        "\n" + 
+        "The list is in arbitrary order.  It does not include the special\n" + 
+        "entries '.' and '..' even if they are present in the directory.";
+
+    public final static String posix_listxattr_doc = 
+        "Return a list of extended attributes on path.\n" + 
+        "\n" + 
+        "path may be either None, a string, or an open file descriptor.\n" + 
+        "if path is None, listxattr will examine the current directory.\n" + 
+        "If follow_symlinks is False, and the last element of the path is a symbolic\n" + 
+        "  link, listxattr will examine the symbolic link itself instead of the file\n" + 
+        "  the link points to.";
+
+    public final static String posix_lockf_doc = 
+        "Apply, test or remove a POSIX lock on an open file descriptor.\n" + 
+        "\n" + 
+        "  fd\n" + 
+        "    An open file descriptor.\n" + 
+        "  command\n" + 
+        "    One of F_LOCK, F_TLOCK, F_ULOCK or F_TEST.\n" + 
+        "  length\n" + 
+        "    The number of bytes to lock, starting at the current position.";
+
+    public final static String posix_lseek_doc = 
+        "Set the position of a file descriptor.  Return the new position.\n" + 
+        "\n" + 
+        "Return the new cursor position in number of bytes\n" + 
+        "relative to the beginning of the file.";
+
+    public final static String posix_lstat_doc = 
+        "Perform a stat system call on the given path, without following symbolic links.\n" + 
+        "\n" + 
+        "Like stat(), but do not follow symbolic links.\n" + 
+        "Equivalent to stat(path, follow_symlinks=False).";
+
+    public final static String posix_major_doc = 
+        "Extracts a device major number from a raw device number.";
+
+    public final static String posix_makedev_doc = 
+        "Composes a raw device number from the major and minor device numbers.";
+
+    public final static String posix_minor_doc = 
+        "Extracts a device minor number from a raw device number.";
+
+    public final static String posix_mkdir_doc = 
+        "Create a directory.\n" + 
+        "\n" + 
+        "If dir_fd is not None, it should be a file descriptor open to a directory,\n" + 
+        "  and path should be relative; path will then be relative to that directory.\n" + 
+        "dir_fd may not be implemented on your platform.\n" + 
+        "  If it is unavailable, using it will raise a NotImplementedError.\n" + 
+        "\n" + 
+        "The mode argument is ignored on Windows.";
+
+    public final static String posix_mkfifo_doc = 
+        "Create a \"fifo\" (a POSIX named pipe).\n" + 
+        "\n" + 
+        "If dir_fd is not None, it should be a file descriptor open to a directory,\n" + 
+        "  and path should be relative; path will then be relative to that directory.\n" + 
+        "dir_fd may not be implemented on your platform.\n" + 
+        "  If it is unavailable, using it will raise a NotImplementedError.";
+
+    public final static String posix_mknod_doc = 
+        "Create a node in the file system.\n" + 
+        "\n" + 
+        "Create a node in the file system (file, device special file or named pipe)\n" + 
+        "at path.  mode specifies both the permissions to use and the\n" + 
+        "type of node to be created, being combined (bitwise OR) with one of\n" + 
+        "S_IFREG, S_IFCHR, S_IFBLK, and S_IFIFO.  If S_IFCHR or S_IFBLK is set on mode,\n" + 
+        "device defines the newly created device special file (probably using\n" + 
+        "os.makedev()).  Otherwise device is ignored.\n" + 
+        "\n" + 
+        "If dir_fd is not None, it should be a file descriptor open to a directory,\n" + 
+        "  and path should be relative; path will then be relative to that directory.\n" + 
+        "dir_fd may not be implemented on your platform.\n" + 
+        "  If it is unavailable, using it will raise a NotImplementedError.";
+
+    public final static String posix_nice_doc = 
+        "Add increment to the priority of process and return the new priority.";
+
+    public final static String posix_open_doc = 
+        "Open a file for low level IO.  Returns a file descriptor (integer).\n" + 
+        "\n" + 
+        "If dir_fd is not None, it should be a file descriptor open to a directory,\n" + 
+        "  and path should be relative; path will then be relative to that directory.\n" + 
+        "dir_fd may not be implemented on your platform.\n" + 
+        "  If it is unavailable, using it will raise a NotImplementedError.";
+
+    public final static String posix_openpty_doc = 
+        "Open a pseudo-terminal.\n" + 
+        "\n" + 
+        "Return a tuple of (master_fd, slave_fd) containing open file descriptors\n" + 
+        "for both the master and slave ends.";
+
+    public final static String posix_pathconf_doc = 
+        "Return the configuration limit name for the file or directory path.\n" + 
+        "\n" + 
+        "If there is no limit, return -1.\n" + 
+        "On some platforms, path may also be specified as an open file descriptor.\n" + 
+        "  If this functionality is unavailable, using it raises an exception.";
+
+    public final static String posix_pathconf_names_doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String posix_pipe_doc = 
+        "Create a pipe.\n" + 
+        "\n" + 
+        "Returns a tuple of two file descriptors:\n" + 
+        "  (read_fd, write_fd)";
+
+    public final static String posix_pipe2_doc = 
+        "Create a pipe with flags set atomically.\n" + 
+        "\n" + 
+        "Returns a tuple of two file descriptors:\n" + 
+        "  (read_fd, write_fd)\n" + 
+        "\n" + 
+        "flags can be constructed by ORing together one or more of these values:\n" + 
+        "O_NONBLOCK, O_CLOEXEC.";
+
+    public final static String posix_posix_fadvise_doc = 
+        "Announce an intention to access data in a specific pattern.\n" + 
+        "\n" + 
+        "Announce an intention to access data in a specific pattern, thus allowing\n" + 
+        "the kernel to make optimizations.\n" + 
+        "The advice applies to the region of the file specified by fd starting at\n" + 
+        "offset and continuing for length bytes.\n" + 
+        "advice is one of POSIX_FADV_NORMAL, POSIX_FADV_SEQUENTIAL,\n" + 
+        "POSIX_FADV_RANDOM, POSIX_FADV_NOREUSE, POSIX_FADV_WILLNEED, or\n" + 
+        "POSIX_FADV_DONTNEED.";
+
+    public final static String posix_posix_fallocate_doc = 
+        "Ensure a file has allocated at least a particular number of bytes on disk.\n" + 
+        "\n" + 
+        "Ensure that the file specified by fd encompasses a range of bytes\n" + 
+        "starting at offset bytes from the beginning and continuing for length bytes.";
+
+    public final static String posix_pread_doc = 
+        "Read a number of bytes from a file descriptor starting at a particular offset.\n" + 
+        "\n" + 
+        "Read length bytes from file descriptor fd, starting at offset bytes from\n" + 
+        "the beginning of the file.  The file offset remains unchanged.";
+
+    public final static String posix_putenv_doc = 
+        "Change or add an environment variable.";
+
+    public final static String posix_pwrite_doc = 
+        "Write bytes to a file descriptor starting at a particular offset.\n" + 
+        "\n" + 
+        "Write buffer to fd, starting at offset bytes from the beginning of\n" + 
+        "the file.  Returns the number of bytes writte.  Does not change the\n" + 
+        "current file offset.";
+
+    public final static String posix_read_doc = 
+        "Read from a file descriptor.  Returns a bytes object.";
+
+    public final static String posix_readlink_doc = 
+        "readlink(path, *, dir_fd=None) -> path\n" + 
+        "\n" + 
+        "Return a string representing the path to which the symbolic link points.\n" + 
+        "\n" + 
+        "If dir_fd is not None, it should be a file descriptor open to a directory,\n" + 
+        "  and path should be relative; path will then be relative to that directory.\n" + 
+        "dir_fd may not be implemented on your platform.\n" + 
+        "  If it is unavailable, using it will raise a NotImplementedError.";
+
+    public final static String posix_readv_doc = 
+        "Read from a file descriptor fd into an iterable of buffers.\n" + 
+        "\n" + 
+        "The buffers should be mutable buffers accepting bytes.\n" + 
+        "readv will transfer data into each buffer until it is full\n" + 
+        "and then move on to the next buffer in the sequence to hold\n" + 
+        "the rest of the data.\n" + 
+        "\n" + 
+        "readv returns the total number of bytes read,\n" + 
+        "which may be less than the total capacity of all the buffers.";
+
+    public final static String posix_remove_doc = 
+        "Remove a file (same as unlink()).\n" + 
+        "\n" + 
+        "If dir_fd is not None, it should be a file descriptor open to a directory,\n" + 
+        "  and path should be relative; path will then be relative to that directory.\n" + 
+        "dir_fd may not be implemented on your platform.\n" + 
+        "  If it is unavailable, using it will raise a NotImplementedError.";
+
+    public final static String posix_removexattr_doc = 
+        "Remove extended attribute attribute on path.\n" + 
+        "\n" + 
+        "path may be either a string or an open file descriptor.\n" + 
+        "If follow_symlinks is False, and the last element of the path is a symbolic\n" + 
+        "  link, removexattr will modify the symbolic link itself instead of the file\n" + 
+        "  the link points to.";
+
+    public final static String posix_rename_doc = 
+        "Rename a file or directory.\n" + 
+        "\n" + 
+        "If either src_dir_fd or dst_dir_fd is not None, it should be a file\n" + 
+        "  descriptor open to a directory, and the respective path string (src or dst)\n" + 
+        "  should be relative; the path will then be relative to that directory.\n" + 
+        "src_dir_fd and dst_dir_fd, may not be implemented on your platform.\n" + 
+        "  If they are unavailable, using them will raise a NotImplementedError.";
+
+    public final static String posix_replace_doc = 
+        "Rename a file or directory, overwriting the destination.\n" + 
+        "\n" + 
+        "If either src_dir_fd or dst_dir_fd is not None, it should be a file\n" + 
+        "  descriptor open to a directory, and the respective path string (src or dst)\n" + 
+        "  should be relative; the path will then be relative to that directory.\n" + 
+        "src_dir_fd and dst_dir_fd, may not be implemented on your platform.\n" + 
+        "  If they are unavailable, using them will raise a NotImplementedError.\"";
+
+    public final static String posix_rmdir_doc = 
+        "Remove a directory.\n" + 
+        "\n" + 
+        "If dir_fd is not None, it should be a file descriptor open to a directory,\n" + 
+        "  and path should be relative; path will then be relative to that directory.\n" + 
+        "dir_fd may not be implemented on your platform.\n" + 
+        "  If it is unavailable, using it will raise a NotImplementedError.";
+
+    public final static String posix_scandir_doc = 
+        "scandir(path='.') -> iterator of DirEntry objects for given path";
+
+    public final static String posix_sched_get_priority_max_doc = 
+        "Get the maximum scheduling priority for policy.";
+
+    public final static String posix_sched_get_priority_min_doc = 
+        "Get the minimum scheduling priority for policy.";
+
+    public final static String posix_sched_getaffinity_doc = 
+        "Return the affinity of the process identified by pid.\n" + 
+        "\n" + 
+        "The affinity is returned as a set of CPU identifiers.";
+
+    public final static String posix_sched_getparam_doc = 
+        "Returns scheduling parameters for the process identified by pid.\n" + 
+        "\n" + 
+        "If pid is 0, returns parameters for the calling process.\n" + 
+        "Return value is an instance of sched_param.";
+
+    public final static String posix_sched_getscheduler_doc = 
+        "Get the scheduling policy for the process identifiedy by pid.\n" + 
+        "\n" + 
+        "Passing 0 for pid returns the scheduling policy for the calling process.";
+
+    public final static String posix_sched_param_doc = 
+        "Current has only one field: sched_priority\");\n" + 
+        "\n" + 
+        "  sched_priority\n" + 
+        "    A scheduling parameter.";
+
+    public final static String posix_sched_rr_get_interval_doc = 
+        "Return the round-robin quantum for the process identified by pid, in seconds.\n" + 
+        "\n" + 
+        "Value returned is a float.";
+
+    public final static String posix_sched_setaffinity_doc = 
+        "Set the CPU affinity of the process identified by pid to mask.\n" + 
+        "\n" + 
+        "mask should be an iterable of integers identifying CPUs.";
+
+    public final static String posix_sched_setparam_doc = 
+        "Set scheduling parameters for the process identified by pid.\n" + 
+        "\n" + 
+        "If pid is 0, sets parameters for the calling process.\n" + 
+        "param should be an instance of sched_param.";
+
+    public final static String posix_sched_setscheduler_doc = 
+        "Set the scheduling policy for the process identified by pid.\n" + 
+        "\n" + 
+        "If pid is 0, the calling process is changed.\n" + 
+        "param is an instance of sched_param.";
+
+    public final static String posix_sched_yield_doc = 
+        "Voluntarily relinquish the CPU.";
+
+    public final static String posix_sendfile_doc = 
+        "sendfile(out, in, offset, count) -> byteswritten\n" + 
+        "sendfile(out, in, offset, count[, headers][, trailers], flags=0)\n" + 
+        "            -> byteswritten\n" + 
+        "Copy count bytes from file descriptor in to file descriptor out.";
+
+    public final static String posix_set_blocking_doc = 
+        "set_blocking(fd, blocking)\n" + 
+        "\n" + 
+        "Set the blocking mode of the specified file descriptor.\n" + 
+        "Set the O_NONBLOCK flag if blocking is False,\n" + 
+        "clear the O_NONBLOCK flag otherwise.";
+
+    public final static String posix_set_inheritable_doc = 
+        "Set the inheritable flag of the specified file descriptor.";
+
+    public final static String posix_setegid_doc = 
+        "Set the current process's effective group id.";
+
+    public final static String posix_seteuid_doc = 
+        "Set the current process's effective user id.";
+
+    public final static String posix_setgid_doc = 
+        "Set the current process's group id.";
+
+    public final static String posix_setgroups_doc = 
+        "Set the groups of the current process to list.";
+
+    public final static String posix_setpgid_doc = 
+        "Call the system call setpgid(pid, pgrp).";
+
+    public final static String posix_setpgrp_doc = 
+        "Make the current process the leader of its process group.";
+
+    public final static String posix_setpriority_doc = 
+        "Set program scheduling priority.";
+
+    public final static String posix_setregid_doc = 
+        "Set the current process's real and effective group ids.";
+
+    public final static String posix_setresgid_doc = 
+        "Set the current process's real, effective, and saved group ids.";
+
+    public final static String posix_setresuid_doc = 
+        "Set the current process's real, effective, and saved user ids.";
+
+    public final static String posix_setreuid_doc = 
+        "Set the current process's real and effective user ids.";
+
+    public final static String posix_setsid_doc = 
+        "Call the system call setsid().";
+
+    public final static String posix_setuid_doc = 
+        "Set the current process's user id.";
+
+    public final static String posix_setxattr_doc = 
+        "Set extended attribute attribute on path to value.\n" + 
+        "\n" + 
+        "path may be either a string or an open file descriptor.\n" + 
+        "If follow_symlinks is False, and the last element of the path is a symbolic\n" + 
+        "  link, setxattr will modify the symbolic link itself instead of the file\n" + 
+        "  the link points to.";
+
+    public final static String posix_stat_doc = 
+        "Perform a stat system call on the given path.\n" + 
+        "\n" + 
+        "  path\n" + 
+        "    Path to be examined; can be string, bytes, or open-file-descriptor int.\n" + 
+        "  dir_fd\n" + 
+        "    If not None, it should be a file descriptor open to a directory,\n" + 
+        "    and path should be a relative string; path will then be relative to\n" + 
+        "    that directory.\n" + 
+        "  follow_symlinks\n" + 
+        "    If False, and the last element of the path is a symbolic link,\n" + 
+        "    stat will examine the symbolic link itself instead of the file\n" + 
+        "    the link points to.\n" + 
+        "\n" + 
+        "dir_fd and follow_symlinks may not be implemented\n" + 
+        "  on your platform.  If they are unavailable, using them will raise a\n" + 
+        "  NotImplementedError.\n" + 
+        "\n" + 
+        "It's an error to use dir_fd or follow_symlinks when specifying path as\n" + 
+        "  an open file descriptor.";
+
+    public final static String posix_stat_float_times_doc = 
+        "stat_float_times([newval]) -> oldval\n" + 
+        "\n" + 
+        "Determine whether os.[lf]stat represents time stamps as float objects.\n" + 
+        "\n" + 
+        "If value is True, future calls to stat() return floats; if it is False,\n" + 
+        "future calls return ints.\n" + 
+        "If value is omitted, return the current setting.\n" + 
+        "";
+
+    public final static String posix_stat_result_doc = 
+        "stat_result: Result from stat, fstat, or lstat.\n" + 
+        "\n" + 
+        "This object may be accessed either as a tuple of\n" + 
+        "  (mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime)\n" + 
+        "or via the attributes st_mode, st_ino, st_dev, st_nlink, st_uid, and so on.\n" + 
+        "\n" + 
+        "Posix/windows: If your platform supports st_blksize, st_blocks, st_rdev,\n" + 
+        "or st_flags, they are available as attributes only.\n" + 
+        "\n" + 
+        "See os.stat for more information.";
+
+    public final static String posix_statvfs_doc = 
+        "Perform a statvfs system call on the given path.\n" + 
+        "\n" + 
+        "path may always be specified as a string.\n" + 
+        "On some platforms, path may also be specified as an open file descriptor.\n" + 
+        "  If this functionality is unavailable, using it raises an exception.";
+
+    public final static String posix_statvfs_result_doc = 
+        "statvfs_result: Result from statvfs or fstatvfs.\n" + 
+        "\n" + 
+        "This object may be accessed either as a tuple of\n" + 
+        "  (bsize, frsize, blocks, bfree, bavail, files, ffree, favail, flag, namemax),\n" + 
+        "or via the attributes f_bsize, f_frsize, f_blocks, f_bfree, and so on.\n" + 
+        "\n" + 
+        "See os.statvfs for more information.";
+
+    public final static String posix_strerror_doc = 
+        "Translate an error code to a message string.";
+
+    public final static String posix_symlink_doc = 
+        "Create a symbolic link pointing to src named dst.\n" + 
+        "\n" + 
+        "target_is_directory is required on Windows if the target is to be\n" + 
+        "  interpreted as a directory.  (On Windows, symlink requires\n" + 
+        "  Windows 6.0 or greater, and raises a NotImplementedError otherwise.)\n" + 
+        "  target_is_directory is ignored on non-Windows platforms.\n" + 
+        "\n" + 
+        "If dir_fd is not None, it should be a file descriptor open to a directory,\n" + 
+        "  and path should be relative; path will then be relative to that directory.\n" + 
+        "dir_fd may not be implemented on your platform.\n" + 
+        "  If it is unavailable, using it will raise a NotImplementedError.";
+
+    public final static String posix_sync_doc = 
+        "Force write of everything to disk.";
+
+    public final static String posix_sysconf_doc = 
+        "Return an integer-valued system configuration variable.";
+
+    public final static String posix_sysconf_names_doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String posix_system_doc = 
+        "Execute the command in a subshell.";
+
+    public final static String posix_tcgetpgrp_doc = 
+        "Return the process group associated with the terminal specified by fd.";
+
+    public final static String posix_tcsetpgrp_doc = 
+        "Set the process group associated with the terminal specified by fd.";
+
+    public final static String posix_terminal_size_doc = 
+        "A tuple of (columns, lines) for holding terminal window size";
+
+    public final static String posix_times_doc = 
+        "Return a collection containing process timing information.\n" + 
+        "\n" + 
+        "The object returned behaves like a named tuple with these fields:\n" + 
+        "  (utime, stime, cutime, cstime, elapsed_time)\n" + 
+        "All fields are floating point numbers.";
+
+    public final static String posix_times_result_doc = 
+        "times_result: Result from os.times().\n" + 
+        "\n" + 
+        "This object may be accessed either as a tuple of\n" + 
+        "  (user, system, children_user, children_system, elapsed),\n" + 
+        "or via the attributes user, system, children_user, children_system,\n" + 
+        "and elapsed.\n" + 
+        "\n" + 
+        "See os.times for more information.";
+
+    public final static String posix_truncate_doc = 
+        "Truncate a file, specified by path, to a specific length.\n" + 
+        "\n" + 
+        "On some platforms, path may also be specified as an open file descriptor.\n" + 
+        "  If this functionality is unavailable, using it raises an exception.";
+
+    public final static String posix_ttyname_doc = 
+        "Return the name of the terminal device connected to 'fd'.\n" + 
+        "\n" + 
+        "  fd\n" + 
+        "    Integer file descriptor handle.";
+
+    public final static String posix_umask_doc = 
+        "Set the current numeric umask and return the previous umask.";
+
+    public final static String posix_uname_doc = 
+        "Return an object identifying the current operating system.\n" + 
+        "\n" + 
+        "The object behaves like a named tuple with the following fields:\n" + 
+        "  (sysname, nodename, release, version, machine)";
+
+    public final static String posix_uname_result_doc = 
+        "uname_result: Result from os.uname().\n" + 
+        "\n" + 
+        "This object may be accessed either as a tuple of\n" + 
+        "  (sysname, nodename, release, version, machine),\n" + 
+        "or via the attributes sysname, nodename, release, version, and machine.\n" + 
+        "\n" + 
+        "See os.uname for more information.";
+
+    public final static String posix_unlink_doc = 
+        "Remove a file (same as remove()).\n" + 
+        "\n" + 
+        "If dir_fd is not None, it should be a file descriptor open to a directory,\n" + 
+        "  and path should be relative; path will then be relative to that directory.\n" + 
+        "dir_fd may not be implemented on your platform.\n" + 
+        "  If it is unavailable, using it will raise a NotImplementedError.";
+
+    public final static String posix_unsetenv_doc = 
+        "Delete an environment variable.";
+
+    public final static String posix_urandom_doc = 
+        "Return a bytes object containing random bytes suitable for cryptographic use.";
+
+    public final static String posix_utime_doc = 
+        "Set the access and modified time of path.\n" + 
+        "\n" + 
+        "path may always be specified as a string.\n" + 
+        "On some platforms, path may also be specified as an open file descriptor.\n" + 
+        "  If this functionality is unavailable, using it raises an exception.\n" + 
+        "\n" + 
+        "If times is not None, it must be a tuple (atime, mtime);\n" + 
+        "    atime and mtime should be expressed as float seconds since the epoch.\n" + 
+        "If ns is specified, it must be a tuple (atime_ns, mtime_ns);\n" + 
+        "    atime_ns and mtime_ns should be expressed as integer nanoseconds\n" + 
+        "    since the epoch.\n" + 
+        "If times is None and ns is unspecified, utime uses the current time.\n" + 
+        "Specifying tuples for both times and ns is an error.\n" + 
+        "\n" + 
+        "If dir_fd is not None, it should be a file descriptor open to a directory,\n" + 
+        "  and path should be relative; path will then be relative to that directory.\n" + 
+        "If follow_symlinks is False, and the last element of the path is a symbolic\n" + 
+        "  link, utime will modify the symbolic link itself instead of the file the\n" + 
+        "  link points to.\n" + 
+        "It is an error to use dir_fd or follow_symlinks when specifying path\n" + 
+        "  as an open file descriptor.\n" + 
+        "dir_fd and follow_symlinks may not be available on your platform.\n" + 
+        "  If they are unavailable, using them will raise a NotImplementedError.";
+
+    public final static String posix_wait_doc = 
+        "Wait for completion of a child process.\n" + 
+        "\n" + 
+        "Returns a tuple of information about the child process:\n" + 
+        "    (pid, status)";
+
+    public final static String posix_wait3_doc = 
+        "Wait for completion of a child process.\n" + 
+        "\n" + 
+        "Returns a tuple of information about the child process:\n" + 
+        "  (pid, status, rusage)";
+
+    public final static String posix_wait4_doc = 
+        "Wait for completion of a specific child process.\n" + 
+        "\n" + 
+        "Returns a tuple of information about the child process:\n" + 
+        "  (pid, status, rusage)";
+
+    public final static String posix_waitid_doc = 
+        "Returns the result of waiting for a process or processes.\n" + 
+        "\n" + 
+        "  idtype\n" + 
+        "    Must be one of be P_PID, P_PGID or P_ALL.\n" + 
+        "  id\n" + 
+        "    The id to wait on.\n" + 
+        "  options\n" + 
+        "    Constructed from the ORing of one or more of WEXITED, WSTOPPED\n" + 
+        "    or WCONTINUED and additionally may be ORed with WNOHANG or WNOWAIT.\n" + 
+        "\n" + 
+        "Returns either waitid_result or None if WNOHANG is specified and there are\n" + 
+        "no children in a waitable state.";
+
+    public final static String posix_waitid_result_doc = 
+        "waitid_result: Result from waitid.\n" + 
+        "\n" + 
+        "This object may be accessed either as a tuple of\n" + 
+        "  (si_pid, si_uid, si_signo, si_status, si_code),\n" + 
+        "or via the attributes si_pid, si_uid, and so on.\n" + 
+        "\n" + 
+        "See os.waitid for more information.";
+
+    public final static String posix_waitpid_doc = 
+        "Wait for completion of a given child process.\n" + 
+        "\n" + 
+        "Returns a tuple of information regarding the child process:\n" + 
+        "    (pid, status)\n" + 
+        "\n" + 
+        "The options argument is ignored on Windows.";
+
+    public final static String posix_write_doc = 
+        "Write a bytes object to a file descriptor.";
+
+    public final static String posix_writev_doc = 
+        "Iterate over buffers, and write the contents of each to a file descriptor.\n" + 
+        "\n" + 
+        "Returns the total number of bytes written.\n" + 
+        "buffers must be a sequence of bytes-like objects.";
+
     // Docs for <class 'type'>
     public final static String type___abstractmethods___doc = 
         "";
