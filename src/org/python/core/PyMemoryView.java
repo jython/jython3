@@ -311,8 +311,7 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
     @Override
     public int __len__() {
         checkNotReleased();
-        Buffer buf = getView();
-        return buf.limit() - buf.position();
+        return getView().remaining();
     }
 
     // this is very optimised, but the view.limit() is not very reliable
