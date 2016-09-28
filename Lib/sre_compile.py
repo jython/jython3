@@ -11,8 +11,9 @@
 """Internal support module for sre"""
 
 import _sre, sys
-
+import sre_parse
 from sre_constants import *
+from _sre import MAXREPEAT
 
 assert _sre.MAGIC == MAGIC, "SRE module mismatch"
 
@@ -24,16 +25,10 @@ else:
 def _identityfunction(x):
     return x
 
-def set(seq):
-    s = {}
-    for elem in seq:
-        s[elem] = 1
-    return s
-
-_LITERAL_CODES = {LITERAL, NOT_LITERAL}
-_REPEATING_CODES = {REPEAT, MIN_REPEAT, MAX_REPEAT}
-_SUCCESS_CODES = {SUCCESS, FAILURE}
-_ASSERT_CODES = {ASSERT, ASSERT_NOT}
+_LITERAL_CODES = set([LITERAL, NOT_LITERAL])
+_REPEATING_CODES = set([REPEAT, MIN_REPEAT, MAX_REPEAT])
+_SUCCESS_CODES = set([SUCCESS, FAILURE])
+_ASSERT_CODES = set([ASSERT, ASSERT_NOT])
 
 def _compile(code, pattern, flags):
     # internal: compile a (sub)pattern
@@ -305,9 +300,6 @@ def _mk_bitmap(bits):
 # bigcharsets.
 
 def _optimize_unicode(charset, fixup):
-    # problems with optimization in Jython, forget about it for now
-    return charset
-
     try:
         import array
     except ImportError:
@@ -350,14 +342,13 @@ def _optimize_unicode(charset, fixup):
     if _sre.CODESIZE == 2:
         code = 'H'
     else:
-        # change this for Jython from 'I', since that will expand to
-        # long, and cause needless complexity (or so it seems)
-        code = 'i'
+        code = 'I'
     # Convert block indices to byte array of 256 bytes
-    mapping = array.array('b', mapping).tostring()
+    mapping = array.array('b', mapping).tobytes()
     # Convert byte array to word array
     mapping = array.array(code, mapping)
     assert mapping.itemsize == _sre.CODESIZE
+    assert len(mapping) * mapping.itemsize == 256
     header = header + mapping.tolist()
     data[0:0] = header
     return [(BIGCHARSET, data)]
@@ -475,13 +466,8 @@ def _compile_info(code, pattern, flags):
         _compile_charset(charset, flags, code)
     code[skip] = len(code) - skip
 
-STRING_TYPES = (type(b""), type(""))
-
 def isstring(obj):
-    for tp in STRING_TYPES:
-        if isinstance(obj, tp):
-            return 1
-    return 0
+    return isinstance(obj, (str, bytes))
 
 def _code(p, flags):
 
@@ -502,7 +488,6 @@ def compile(p, flags=0):
     # internal: convert pattern list to internal format
 
     if isstring(p):
-        import sre_parse
         pattern = p
         p = sre_parse.parse(p, flags)
     else:
@@ -521,7 +506,7 @@ def compile(p, flags=0):
     # map in either direction
     groupindex = p.pattern.groupdict
     indexgroup = [None] * p.pattern.groups
-    for k, i in list(groupindex.items()):
+    for k, i in groupindex.items():
         indexgroup[i] = k
 
     return _sre.compile(
