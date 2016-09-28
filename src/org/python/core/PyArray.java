@@ -243,7 +243,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
     final PyObject array___imul__(PyObject o) {
 
         if (!o.isIndex()) {
-            return null;
+            throw Py.TypeError(String.format("can't multiply sequence by non-int of type '%s'", o.getType().getName()));
         }
 
         resizeCheck();  // Prohibited if exporting a buffer
@@ -271,7 +271,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
     @ExposedMethod(type = MethodType.BINARY)
     final PyObject array___mul__(PyObject o) {
         if (!o.isIndex()) {
-            return null;
+            throw Py.TypeError(String.format("can't multiply sequence by non-int of type '%s'", o.getType().getName()));
         }
         return repeat(o.asIndex(Py.OverflowError));
     }
@@ -284,7 +284,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
     @ExposedMethod(type = MethodType.BINARY)
     final PyObject array___rmul__(PyObject o) {
         if (!o.isIndex()) {
-            return null;
+            throw Py.TypeError(String.format("can't multiply sequence by non-int of type '%s'", o.getType().getName()));
         }
         return repeat(o.asIndex(Py.OverflowError));
     }
@@ -298,7 +298,8 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
     final PyObject array___iadd__(PyObject other) {
 
         if (!(other instanceof PyArray)) {
-            return null;
+            throw Py.TypeError(String.format("can only append array (not \"%s\") to array",
+                    other.getType().fastGetName()));
         }
 
         PyArray otherArr = (PyArray)other;
@@ -327,7 +328,8 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
     @ExposedMethod(type = MethodType.BINARY)
     final PyObject array___add__(PyObject other) {
         if (!(other instanceof PyArray)) {
-            return null;
+            throw Py.TypeError(String.format("can only append array (not \"%s\") to array",
+                    other.getType().fastGetName()));
         }
 
         PyArray otherArr = (PyArray)other;
@@ -367,10 +369,10 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
             dict = Py.None;
         }
         if (__len__() > 0) {
-            return new PyTuple(getType(), new PyTuple(Py.newString(typecode),
+            return new PyTuple(getType(), new PyTuple(Py.newUnicode(typecode),
                     Py.newString(tostring())), dict);
         } else {
-            return new PyTuple(getType(), new PyTuple(Py.newString(typecode)), dict);
+            return new PyTuple(getType(), new PyTuple(Py.newUnicode(typecode)), dict);
         }
     }
 
@@ -1624,8 +1626,13 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
         }
     }
 
+    @ExposedMethod(doc = "this is just a placeholder, don't use it")
+    public final PyObject array_buffer_info() {
+        return new PyTuple(Py.Zero, new PyLong(__len__()));
+    }
+
     private boolean isSigned() {
-        return typecode.length() == 1 && typecode.equals(typecode.toUpperCase());
+        return typecode.length() != 1 || !typecode.equals(typecode.toUpperCase());
     }
 
     /**
