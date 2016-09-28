@@ -581,15 +581,12 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
             case 'c':
                 return Character.TYPE;
             case 'h':
-                return Short.TYPE;
             case 'H':
-                return Integer.TYPE;
+                return Short.TYPE;
             case 'i':
-                return Integer.TYPE;
             case 'I':
-                return Long.TYPE;
+                return Integer.TYPE;
             case 'l':
-                return Long.TYPE;
             case 'L':
                 return Long.TYPE;
             case 'f':
@@ -985,25 +982,27 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
                         }
                         break;
                     case 'h':
+                    case 'H':
                         for (; index < limit; index++) {
                             Array.setShort(data, index, dis.readShort());
                         }
                         break;
-                    case 'H':
-                        for (; index < limit; index++) {
-                            Array.setInt(data, index, unsignedShort(dis.readShort()));
-                        }
-                        break;
+//                    case 'H':
+//                        for (; index < limit; index++) {
+//                            Array.setInt(data, index, unsignedShort(dis.readShort()));
+//                        }
+//                        break;
                     case 'i':
+                    case 'I':
                         for (; index < limit; index++) {
                             Array.setInt(data, index, dis.readInt());
                         }
                         break;
-                    case 'I':
-                        for (; index < limit; index++) {
-                            Array.setLong(data, index, unsignedInt(dis.readInt()));
-                        }
-                        break;
+//                    case 'I':
+//                        for (; index < limit; index++) {
+//                            Array.setLong(data, index, unsignedInt(dis.readInt()));
+//                        }
+//                        break;
                     case 'l':
                         for (; index < limit; index++) {
                             Array.setLong(data, index, dis.readLong());
@@ -1884,6 +1883,11 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
             return x;
         }
 
+    }
+
+    @Override
+    public PyObject __int__() {
+        return Encoding.atol(tostring(), 10);
     }
 
     @ExposedMethod
