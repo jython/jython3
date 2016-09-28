@@ -573,11 +573,9 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
             case 'z':
                 return Boolean.TYPE;
             case 'b':
-                return Byte.TYPE;
             case 'B':
-                return Short.TYPE;
-            case 'u':
-                return Integer.TYPE;
+                return Byte.TYPE;
+//                return Short.TYPE;
             case 'c':
                 return Character.TYPE;
             case 'h':
@@ -585,16 +583,19 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
                 return Short.TYPE;
             case 'i':
             case 'I':
+            case 'u':
                 return Integer.TYPE;
             case 'l':
             case 'L':
+            case 'q':
+            case 'Q':
                 return Long.TYPE;
             case 'f':
                 return Float.TYPE;
             case 'd':
                 return Double.TYPE;
             default:
-                throw Py.ValueError("bad typecode (must be c, b, B, u, h, H, i, I, l, L, f or d)");
+                throw Py.ValueError("bad typecode (must be c, b, B, u, h, H, i, I, l, L, q, Q, f or d)");
         }
     }
 
@@ -708,7 +709,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
             } else if ("c".equals(typecode)) {
                 throw Py.TypeError("array item must be char");
             } else {
-                throw Py.TypeError("an integer is required");
+                throw Py.TypeError("cannot use a str");
             }
 
 // } else if (iterable instanceof PyBytes) {
@@ -718,6 +719,9 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
         } else if (iterable instanceof PyArray) {
             PyArray source = (PyArray)iterable;
             if (!source.typecode.equals(typecode)) {
+                if ("u".equals(source.typecode)) {
+                    throw Py.TypeError("cannot use a unicode array");
+                }
                 throw Py.TypeError("can only extend with array of same kind");
             }
             resizeCheck();  // Prohibited if exporting a buffer
@@ -800,6 +804,11 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
             Array.set(data, last++, item);
             delegate.size++;
         }
+    }
+
+    @ExposedMethod
+    public final void array_frombytes(PyObject buf) {
+        frombytesInternal(Py.unwrapBuffer(buf));
     }
 
     @ExposedMethod
@@ -961,15 +970,16 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
                         }
                         break;
                     case 'b':
+                    case 'B':
                         for (; index < limit; index++) {
                             Array.setByte(data, index, dis.readByte());
                         }
                         break;
-                    case 'B':
-                        for (; index < limit; index++) {
-                            Array.setShort(data, index, unsignedByte(dis.readByte()));
-                        }
-                        break;
+//                    case 'B':
+//                        for (; index < limit; index++) {
+//                            Array.setShort(data, index, unsignedByte(dis.readByte()));
+//                        }
+//                        break;
                     case 'u':
                         // use 32-bit integers since we want UCS-4 storage
                         for (; index < limit; index++) {
@@ -1004,15 +1014,18 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
 //                        }
 //                        break;
                     case 'l':
-                        for (; index < limit; index++) {
-                            Array.setLong(data, index, dis.readLong());
-                        }
-                        break;
                     case 'L': // faking it
+                    case 'q':
+                    case 'Q':
                         for (; index < limit; index++) {
                             Array.setLong(data, index, dis.readLong());
                         }
                         break;
+//                    case 'L': // faking it
+//                        for (; index < limit; index++) {
+//                            Array.setLong(data, index, dis.readLong());
+//                        }
+//                        break;
                     case 'f':
                         for (; index < limit; index++) {
                             Array.setFloat(data, index, dis.readFloat());
@@ -1129,7 +1142,6 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
         resizeCheck();
 
         try {
-
             // Provide argument as stream of bytes for fromstream method
             InputStream is = new ByteBufferBackedInputStream(bytes);
             fromStream(is);
@@ -1163,14 +1175,33 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
     /**
      * Get the element at position <code>i</code> from the array
      *
-     * @param i index of the item to be retrieved from the array
+     * @param index index of the item to be retrieved from the array
      */
     @Override
-    protected PyObject pyget(int i) {
-        if ("u".equals(typecode)) {
-            return new PyUnicode(Array.getInt(data, i));
+    protected PyObject pyget(int index) {
+        // Prohibited operation if exporting a buffer
+        resizeCheck();
+
+        PyObject ret;
+        index = delegator.fixindex(index);
+        if (index == -1) {
+            throw Py.IndexError("index out of range");
         }
-        return Py.java2py(Array.get(data, i));
+
+        switch (typecode.charAt(0)) {
+            case 'B':
+                ret = new PyLong(((byte) Array.get(data, index)) & 0xFF);
+                break;
+            case 'I':
+                ret = new PyLong(((int) Array.get(data, index)) & 0xFFFF);
+                break;
+            case 'L':
+                ret = new PyLong(((long) Array.get(data, index)) & 0xFFFFFFFF);
+                break;
+            default:
+                ret = Py.java2py(Array.get(data, index));
+        }
+        return ret;
     }
 
     /**
@@ -1374,7 +1405,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
             }
         } else {
             for (int i = 0; i < len; i++) {
-                if (value.equals(Py.java2py(Array.get(data, i)))) {
+                if (value.equals(pyget(i))) {
                     return i;
                 }
             }
@@ -1422,13 +1453,6 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
     }
 
     /**
-     * Removes the last item from the array and return it.
-     */
-    public PyObject pop() {
-        return pop(-1);
-    }
-
-    /**
      * Removes the item with the index <code>index</code> from the array and returns it.
      *
      * @param index array location to be popped from the array
@@ -1438,16 +1462,9 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
         if (delegate.getSize() == 0) {
             throw Py.IndexError("pop from empty array");
         }
-        index = delegator.fixindex(index);
-        if (index == -1) {
-            throw Py.IndexError("pop index out of range");
-        }
 
-        // Prohibited operation if exporting a buffer
-        resizeCheck();
-
-        PyObject ret = Py.java2py(Array.get(data, index));
-        delegate.remove(index);
+        PyObject ret = pyget(index);
+        delegate.remove(delegator.fixindex(index));
         return ret;
     }
 
@@ -1537,7 +1554,7 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
             }
             if (val < (isSigned() ? 0 : Byte.MIN_VALUE)) {
                 throw Py.OverflowError("value too small for " + type.getName());
-            } else if (val > Byte.MAX_VALUE) {
+            } else if (val > 0xFF) {
                 throw Py.OverflowError("value too large for " + type.getName());
             }
         } else if (type == Short.TYPE) {
@@ -1766,15 +1783,16 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
                 }
                 break;
             case 'b':
+            case 'B':
                 for (int i = 0; i < delegate.getSize(); i++) {
                     dos.writeByte(Array.getByte(data, i));
                 }
                 break;
-            case 'B':
-                for (int i = 0; i < delegate.getSize(); i++) {
-                    dos.writeByte(signedByte(Array.getShort(data, i)));
-                }
-                break;
+//            case 'B':
+//                for (int i = 0; i < delegate.getSize(); i++) {
+//                    dos.writeByte(signedByte(Array.getByte(data, i)));
+//                }
+//                break;
             case 'u':
                 // use 32-bit integers since we want UCS-4 storage
                 for (int i = 0; i < delegate.getSize(); i++) {

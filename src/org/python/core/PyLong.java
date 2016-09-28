@@ -385,7 +385,7 @@ public class PyLong extends PyObject {
     public Object __tojava__(Class<?> c) {
         try {
             if (c == Byte.TYPE || c == Byte.class) {
-                return new Byte((byte)getLong(Byte.MIN_VALUE, Byte.MAX_VALUE));
+                return new Byte((byte)getLong(Byte.MIN_VALUE, 0xFF));
             }
             if (c == Short.TYPE || c == Short.class) {
                 return new Short((short)getLong(Short.MIN_VALUE, Short.MAX_VALUE));
