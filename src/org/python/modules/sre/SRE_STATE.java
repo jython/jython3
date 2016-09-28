@@ -207,8 +207,8 @@ for line in sys.stdin:
         }
     }
 
-    final boolean sre_category(int category, int ch) {
-        switch (category) {
+    final boolean sre_category(long category, int ch) {
+        switch ((int) category) {
 
             case SRE_CATEGORY_DIGIT:
                 return SRE_IS_DIGIT(ch);
@@ -377,13 +377,13 @@ for line in sys.stdin:
         return false;
     }
 
-    final boolean SRE_CHARSET(int[] set, int setidx, int ch) {
+    final boolean SRE_CHARSET(long[] set, int setidx, int ch) {
         /* check if character is a member of the given set.  */
 
         boolean ok = true;
 
         for (; ; ) {
-            switch (set[setidx++]) {
+            switch ((int) set[setidx++]) {
 
                 case SRE_OP_FAILURE:
 //                TRACE(setidx, ch, "CHARSET FAILURE");
@@ -436,21 +436,21 @@ for line in sys.stdin:
                 /* <BIGCHARSET> <blockcount> <256 blockindices> <blocks> */
 //                TRACE(setidx, ch, "CHARSET BIGCHARSET ");
 
-                    int count = set[setidx++];
+                    int count = (int) set[setidx++];
                     int block;
                     if (isBytes) {
-                        block = set[setidx + ch >> 8];
+                        block = (int) set[setidx + (ch >> 8)];
                         setidx += 128;
                         if ((set[setidx + block*16 + ((ch & 255)>>4)] & (1 << (ch & 15))) != 0)
                             return ok;
                         setidx += count*16;
                     } else {
                         if (ch < 65536)
-                            block = set[setidx + ch >> 8];
+                            block = (int) set[setidx + (ch >> 8)];
                         else
                             block = -1;
                         setidx += 64;
-                        if (block >= 0 && (set[setidx + block * 8 + ((ch & 255) >> 5)] & (1 << (ch & 31))) != 0)
+                        if (block >= 0 && (set[setidx + (block * 256 + (ch & 255)) / 32] & (1 << (ch & 31))) != 0)
                             return ok;
                         setidx += count * 8;
                     }
@@ -465,7 +465,7 @@ for line in sys.stdin:
         }
     }
 
-    private int SRE_COUNT(int[] pattern, int pidx, int maxcount, int level) {
+    private int SRE_COUNT(long[] pattern, int pidx, int maxcount, int level) {
         int chr;
         int ptr = this.ptr;
         int end = this.end;
@@ -475,7 +475,7 @@ for line in sys.stdin:
         if (maxcount < end - ptr && maxcount != 65535)
             end = ptr + maxcount;
 
-        switch (pattern[pidx]) {
+        switch ((int) pattern[pidx]) {
 
             case SRE_OP_IN:
             /* repeated set */
@@ -500,7 +500,7 @@ for line in sys.stdin:
 
             case SRE_OP_LITERAL:
             /* repeated literal */
-                chr = pattern[pidx + 1];
+                chr = (int) pattern[pidx + 1];
 //            TRACE(pidx, ptr, "COUNT LITERAL " + chr);
                 while (ptr < end && str[ptr] == chr)
                     ptr++;
@@ -508,7 +508,7 @@ for line in sys.stdin:
 
             case SRE_OP_LITERAL_IGNORE:
             /* repeated literal */
-                chr = pattern[pidx + 1];
+                chr = (int) pattern[pidx + 1];
 //            TRACE(pidx, ptr, "COUNT LITERAL_IGNORE " + chr);
                 while (ptr < end && lower(str[ptr]) == chr)
                     ptr++;
@@ -516,7 +516,7 @@ for line in sys.stdin:
 
             case SRE_OP_NOT_LITERAL:
             /* repeated non-literal */
-                chr = pattern[pidx + 1];
+                chr = (int) pattern[pidx + 1];
 //            TRACE(pidx, ptr, "COUNT NOT_LITERAL " + chr);
                 while (ptr < end && str[ptr] != chr)
                     ptr++;
@@ -524,7 +524,7 @@ for line in sys.stdin:
 
             case SRE_OP_NOT_LITERAL_IGNORE:
             /* repeated non-literal */
-                chr = pattern[pidx + 1];
+                chr = (int) pattern[pidx + 1];
 //            TRACE(pidx, ptr, "COUNT NOT_LITERAL_IGNORE " + chr);
                 while (ptr < end && lower(str[ptr]) != chr)
                     ptr++;
@@ -546,11 +546,11 @@ for line in sys.stdin:
         return ptr - this.ptr;
     }
 
-    final int SRE_MATCH(int[] pattern, int pidx, int level) {
+    final int SRE_MATCH(long[] pattern, int pidx, int level) {
         return SRE_MATCH(pattern, pidx, level, false);
     }
 
-    final int SRE_MATCH(int[] pattern, int pidx, int level, boolean fullmatch) {
+    final int SRE_MATCH(long[] pattern, int pidx, int level, boolean fullmatch) {
         /* check if string matches the given pattern.  returns <0 for
            error, 0 for failure, and 1 for success */
 
@@ -578,13 +578,13 @@ for line in sys.stdin:
 
         for (; ; ) {
 
-            switch (pattern[pidx++]) {
+            switch ((int) pattern[pidx++]) {
 
                 case SRE_OP_MARK:
                 /* set mark */
                 /* <MARK> <gid> */
 //                TRACE(pidx, ptr, "MARK " + pattern[pidx]);
-                    i = pattern[pidx];
+                    i = (int) pattern[pidx];
                     if ((i & 1) != 0)
                         this.lastindex = i / 2 + 1;
                     if (i > this.lastmark)
@@ -632,7 +632,7 @@ for line in sys.stdin:
                 /* match at given position */
                 /* <AT> <code> */
 //                TRACE(pidx, ptr, "AT " + pattern[pidx]);
-                    if (!SRE_AT(ptr, pattern[pidx]))
+                    if (!SRE_AT(ptr, (int) pattern[pidx]))
                         return 0;
                     pidx++;
                     break;
@@ -642,7 +642,7 @@ for line in sys.stdin:
                 /* <CATEGORY> <code> */
 //                TRACE(pidx, ptr, "CATEGORY " + pattern[pidx]);
 
-                    if (ptr >= end || !sre_category(pattern[pidx], str[ptr]))
+                    if (ptr >= end || !sre_category((int) pattern[pidx], str[ptr]))
                         return 0;
 
                     pidx++;
@@ -678,7 +678,7 @@ for line in sys.stdin:
 
                 case SRE_OP_LITERAL_IGNORE:
 //                TRACE(pidx, ptr, "LITERAL_IGNORE " + pattern[pidx]);
-                    if (ptr >= end || lower(str[ptr]) != lower(pattern[pidx]))
+                    if (ptr >= end || lower(str[ptr]) != lower((int)pattern[pidx]))
                         return 0;
                     pidx++;
                     ptr++;
@@ -686,7 +686,7 @@ for line in sys.stdin:
 
                 case SRE_OP_NOT_LITERAL_IGNORE:
 //                TRACE(pidx, ptr, "NOT_LITERAL_IGNORE " + pattern[pidx]);
-                    if (ptr >= end || lower(str[ptr]) == lower(pattern[pidx]))
+                    if (ptr >= end || lower(str[ptr]) == lower((int) pattern[pidx]))
                         return 0;
                     pidx++;
                     ptr++;
@@ -750,7 +750,7 @@ for line in sys.stdin:
 
                 /* <REPEAT_ONE> <skip> <1=min> <2=max> item <SUCCESS> tail */
 
-                    int mincount = pattern[pidx + 1];
+                    int mincount = (int) pattern[pidx + 1];
 
 //                TRACE(pidx, ptr, "REPEAT_ONE " + mincount + " " + pattern[pidx+2]);
                     if (ptr + mincount > end)
@@ -758,7 +758,7 @@ for line in sys.stdin:
 
                     this.ptr = ptr;
 
-                    count = SRE_COUNT(pattern, pidx + 3, pattern[pidx + 2],
+                    count = SRE_COUNT(pattern, pidx + 3, (int) pattern[pidx + 2],
                             level + 1);
                     if (count < 0)
                         return count;
@@ -773,7 +773,7 @@ for line in sys.stdin:
                     if (count < mincount)
                         return 0;
 
-                    if (pattern[pidx + pattern[pidx]] == SRE_OP_SUCCESS) {
+                    if (pattern[pidx + (int) pattern[pidx]] == SRE_OP_SUCCESS) {
                     /* tail is empty.  we're finished */
                         this.ptr = ptr;
                         if (fullmatch && ptr != end)
@@ -783,10 +783,10 @@ for line in sys.stdin:
                     lastmark = this.lastmark;
                     lastindex = this.lastindex;
 
-                    if (pattern[pidx + pattern[pidx]] == SRE_OP_LITERAL) {
+                    if (pattern[pidx + (int) pattern[pidx]] == SRE_OP_LITERAL) {
                     /* tail starts with a literal. skip positions where
                        the rest of the pattern cannot possibly match */
-                        chr = pattern[pidx + pattern[pidx] + 1];
+                        chr = (int) pattern[pidx + (int) pattern[pidx] + 1];
                         for (; ; ) {
                             while (count >= mincount &&
                                     (ptr >= end || str[ptr] != chr)) {
@@ -796,7 +796,7 @@ for line in sys.stdin:
                             if (count < mincount)
                                 break;
                             this.ptr = ptr;
-                            i = SRE_MATCH(pattern, pidx + pattern[pidx],
+                            i = SRE_MATCH(pattern, pidx + (int) pattern[pidx],
                                     level + 1, fullmatch);
                             if (i != 0) {
                                 if (fullmatch && ptr != end)
@@ -813,7 +813,7 @@ for line in sys.stdin:
                         lastmark = this.lastmark;
                         while (count >= mincount) {
                             this.ptr = ptr;
-                            i = SRE_MATCH(pattern, pidx + pattern[pidx],
+                            i = SRE_MATCH(pattern, pidx + (int) pattern[pidx],
                                     level + 1, fullmatch);
                             if (i != 0) {
                                 if (fullmatch && ptr != end)
@@ -849,7 +849,7 @@ for line in sys.stdin:
                         count = 0;
                     else {
 
-                        count = SRE_COUNT(pattern, pidx + 3, pattern[pidx + 1],
+                        count = SRE_COUNT(pattern, pidx + 3, (int) pattern[pidx + 1],
                                 level + 1);
 
                         if (count < 0)
@@ -859,7 +859,7 @@ for line in sys.stdin:
                         ptr += count;       /* advance past minimum matches of repeat */
                     }
 
-                    if (!fullmatch && pattern[pidx + pattern[pidx]] == SRE_OP_SUCCESS) {
+                    if (!fullmatch && pattern[pidx + (int) pattern[pidx]] == SRE_OP_SUCCESS) {
                     /* tail is empty.  we're finished */
                         this.ptr = ptr;
                         return 1;
@@ -871,7 +871,7 @@ for line in sys.stdin:
                         lastindex = this.lastindex;
                         while (matchmax || count <= pattern[pidx + 2]) {
                             this.ptr = ptr;
-                            i = SRE_MATCH(pattern, pidx + pattern[pidx], level + 1, fullmatch);
+                            i = SRE_MATCH(pattern, pidx + (int) pattern[pidx], level + 1, fullmatch);
                             if (i != 0)
                                 return i;
                             this.ptr = ptr;
@@ -903,7 +903,7 @@ for line in sys.stdin:
                     repeat = rep;
 
                     this.ptr = ptr;
-                    i = SRE_MATCH(pattern, pidx + pattern[pidx], level + 1, fullmatch);
+                    i = SRE_MATCH(pattern, pidx + (int) pattern[pidx], level + 1, fullmatch);
 
                     repeat = rep.prev;
 
@@ -1030,7 +1030,7 @@ for line in sys.stdin:
 
                 case SRE_OP_GROUPREF:
                 /* match backreference */
-                    i = pattern[pidx];
+                    i = (int) pattern[pidx];
 //                TRACE(pidx, ptr, "GROUPREF " + i);
                     int p = mark[i + i];
                     int e = mark[i + i + 1];
@@ -1047,7 +1047,7 @@ for line in sys.stdin:
 
                 case SRE_OP_GROUPREF_IGNORE:
                 /* match backreference */
-                    i = pattern[pidx];
+                    i = (int) pattern[pidx];
 //                TRACE(pidx, ptr, "GROUPREF_IGNORE " + i);
                     p = mark[i + i];
                     e = mark[i + i + 1];
@@ -1063,7 +1063,7 @@ for line in sys.stdin:
                     break;
 
                 case SRE_OP_GROUPREF_EXISTS:
-                    i = pattern[pidx];
+                    i = (int) pattern[pidx];
 //                TRACE(pidx, ptr, "GROUPREF_EXISTS " + i);
                     p = mark[i + i];
                     e = mark[i + i + 1];
@@ -1079,7 +1079,7 @@ for line in sys.stdin:
                 /* args: <skip> <back> <pattern> */
 //                TRACE(pidx, ptr, "ASSERT " + pattern[pidx+1]);
 
-                    this.ptr = ptr - pattern[pidx + 1];
+                    this.ptr = ptr - (int) pattern[pidx + 1];
                     if (this.ptr < this.beginning)
                         return 0;
                     // there is no such thing as full match in sub pattern
@@ -1093,7 +1093,7 @@ for line in sys.stdin:
                 /* assert not subpattern */
                 /* args: <skip> <pattern> */
 //                TRACE(pidx, ptr, "ASSERT_NOT " + pattern[pidx]);
-                    this.ptr = ptr - pattern[pidx + 1];
+                    this.ptr = ptr - (int) pattern[pidx + 1];
                     if (this.ptr >= this.beginning) {
                         i = SRE_MATCH(pattern, pidx + 2, level + 1, fullmatch);
                         if (i < 0)
@@ -1127,7 +1127,7 @@ for line in sys.stdin:
         }
     }
 
-    int SRE_SEARCH(int[] pattern, int pidx) {
+    int SRE_SEARCH(long[] pattern, int pidx) {
         int ptr = this.start;
         int end = this.end;
         int status = 0;
@@ -1142,7 +1142,7 @@ for line in sys.stdin:
             /* optimization info block */
             /* <INFO> <1=skip> <2=flags> <3=min> <4=max> <5=prefix info>  */
 
-            flags = pattern[pidx + 2];
+            flags = (int) pattern[pidx + 2];
 
             if (pattern[pidx + 3] > 1) {
                 /* adjust end point (but make sure we leave at least one
@@ -1155,8 +1155,8 @@ for line in sys.stdin:
             if ((flags & SRE_INFO_PREFIX) != 0) {
                 /* pattern starts with a known prefix */
                 /* <length> <skip> <prefix data> <overlap data> */
-                prefix_len = pattern[pidx + 5];
-                prefix_skip = pattern[pidx + 6];
+                prefix_len = (int) pattern[pidx + 5];
+                prefix_skip = (int) pattern[pidx + 6];
                 prefix = pidx + 7;
                 overlap = prefix + prefix_len - 1;
             } else if ((flags & SRE_INFO_CHARSET) != 0) {
@@ -1180,7 +1180,7 @@ for line in sys.stdin:
                         if (i == 0)
                             break;
                         else
-                            i = pattern[overlap + i];
+                            i = (int) pattern[overlap + i];
                     } else {
                         if (++i == prefix_len) {
                             /* found a potential match */
@@ -1194,7 +1194,7 @@ for line in sys.stdin:
                             if (status != 0)
                                 return status;
                             /* close but no cigar -- try again */
-                            i = pattern[overlap + i];
+                            i = (int) pattern[overlap + i];
                         }
                         break;
                     }
@@ -1207,7 +1207,7 @@ for line in sys.stdin:
 
         if (pattern[pidx] == SRE_OP_LITERAL) {
             /* pattern starts with a literal */
-            int chr = pattern[pidx + 1];
+            int chr = (int) pattern[pidx + 1];
             end = this.end;
             for (; ; ) {
                 while (ptr < end && str[ptr] != chr)

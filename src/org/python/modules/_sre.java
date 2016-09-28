@@ -50,10 +50,10 @@ public class _sre {
         int groups = ap.getInt(3);
         PyObject groupindex = ap.getPyObject(4);
         PyObject indexgroup = ap.getPyObject(5);
-        int[] ccode = new int[code.__len__()];
+        long[] ccode = new long[code.__len__()];
         int i = 0;
         for (PyObject item : code.asIterable()) {
-            ccode[i++] = (int)item.asLong();
+            ccode[i++] = item.asLong();
         }
         return new PatternObject(pattern, flags, ccode, groups, groupindex, indexgroup);
     }

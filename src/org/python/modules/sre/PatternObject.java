@@ -28,7 +28,7 @@ import static org.python.modules.sre.SRE_STATE.*;
 
 @ExposedType(name = "_sre.SRE_Pattern", doc = BuiltinDocs.SRE_Pattern_doc)
 public class PatternObject extends PyObject implements Traverseproc {
-    int[] code; /* link to the code string object */
+    long[] code; /* link to the code string object */
     @ExposedGet
     public PyObject pattern; /* link to the pattern source (or None) */
     @ExposedGet
@@ -43,7 +43,7 @@ public class PatternObject extends PyObject implements Traverseproc {
     private boolean isBytes;
 
 
-    public PatternObject(PyObject pattern, int flags, int[] code,
+    public PatternObject(PyObject pattern, int flags, long[] code,
             int groups, PyObject groupindex, PyObject indexgroup) {
 
         if (pattern != null)
