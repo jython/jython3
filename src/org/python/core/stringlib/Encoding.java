@@ -1501,17 +1501,17 @@ public class Encoding {
 
     public static PyLong atol(CharSequence s, int base) {
         if ((base != 0 && base < 2) || (base > 36)) {
-            throw Py.ValueError("invalid base for long literal:" + base);
+            throw Py.ValueError("invalid base for int literal:" + base);
         }
 
         try {
             BigInteger bi = Encoding.asciiToBigInteger(s, base, true);
             return new PyLong(bi);
         } catch (NumberFormatException exc) {
-            throw Py.ValueError("invalid literal for long() with base " + base + ": '"
+            throw Py.ValueError("invalid literal for int() with base " + base + ": '"
                     + s + "'");
         } catch (StringIndexOutOfBoundsException exc) {
-            throw Py.ValueError("invalid literal for long() with base " + base + ": '"
+            throw Py.ValueError("invalid literal for int() with base " + base + ": '"
                     + s + "'");
         }
     }

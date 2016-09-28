@@ -2,6 +2,7 @@
 package org.python.core;
 
 import org.python.core.buffer.BaseBuffer;
+import org.python.core.stringlib.Encoding;
 import org.python.core.util.StringUtil;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
@@ -11,6 +12,7 @@ import org.python.expose.MethodType;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.CharBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
@@ -56,6 +58,12 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
      *
      * @param pybuf buffer exported by some underlying object
      */
+    public PyMemoryView(PyBuffer pybuf) {
+        super(TYPE);
+        backing = pybuf;
+        view = backing.getNIOByteBuffer().order(ByteOrder.nativeOrder());
+    }
+
     public PyMemoryView(BufferProtocol pybuf) {
         super(TYPE);
         /*
@@ -63,8 +71,9 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
          * are necessary for navigation, but only ask for read access. If the object is writable,
          * the PyBuffer will be writable.
          */
-        backing = pybuf.getBuffer(PyBUF.FULL);
-        view = backing.getNIOByteBuffer();
+        int flag = pybuf instanceof PyBytes ? PyBUF.FULL_RO : PyBUF.FULL;
+        backing = pybuf.getBuffer(flag);
+        view = backing.getNIOByteBuffer().order(ByteOrder.nativeOrder());
     }
 
     @ExposedNew
@@ -220,7 +229,7 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
             case "B":
             case "b":
             case "c":
-                for (int i = 0; i < view.limit(); i++) {
+                for (int i = view.position(); i < view.limit(); i++) {
                     item = new PyLong(view.get(i));
                     list.add(item);
                 }
@@ -228,7 +237,7 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
             case "h":
             case "H":
                 ShortBuffer sbuf = view.asShortBuffer();
-                for (int i = 0; i < sbuf.limit(); i++) {
+                for (int i = sbuf.position(); i < sbuf.limit(); i++) {
                     item = new PyLong(sbuf.get(i));
                     list.add(item);
                 }
@@ -236,7 +245,7 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
             case "i":
             case "I":
                 IntBuffer ibuf = view.asIntBuffer();
-                for (int i = 0; i < ibuf.limit(); i++) {
+                for (int i = ibuf.position(); i < ibuf.limit(); i++) {
                     item = new PyLong(ibuf.get(i));
                     list.add(item);
                 }
@@ -244,7 +253,7 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
             case "l":
             case "L":
                 LongBuffer lbuf = view.asLongBuffer();
-                for (int i = 0; i < lbuf.limit(); i++) {
+                for (int i = lbuf.position(); i < lbuf.limit(); i++) {
                     item = new PyLong(lbuf.get(i));
                     list.add(item);
                 }
@@ -252,7 +261,7 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
             case "f":
             case "F":
                 FloatBuffer fbuf = view.asFloatBuffer();
-                for (int i = 0; i < fbuf.limit(); i++) {
+                for (int i = fbuf.position(); i < fbuf.limit(); i++) {
                     item = new PyFloat(fbuf.get(i));
                     list.add(item);
                 }
@@ -260,14 +269,14 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
             case "d":
             case "D":
                 DoubleBuffer dbuf = view.asDoubleBuffer();
-                for (int i = 0; i < dbuf.limit(); i++) {
+                for (int i = dbuf.position(); i < dbuf.limit(); i++) {
                     item = new PyFloat(dbuf.get(i));
                     list.add(item);
                 }
                 break;
             case "?":
                 CharBuffer cbuf = view.asCharBuffer();
-                for (int i = 0; i < cbuf.limit(); i++) {
+                for (int i = cbuf.position(); i < cbuf.limit(); i++) {
                     item = new PyLong(cbuf.get(i));
                     list.add(item);
                 }
@@ -834,13 +843,42 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
      * @return one-character string formed from the byte at the index
      */
     @Override
-    protected PyBytes pyget(int index) {
+    protected PyObject pyget(int index) {
         // Our chance to check the memoryview is still alive
         checkNotReleased();
         // Treat the byte at the index as a character code
-        return new PyBytes(String.valueOf((char)backing.intAt(index)));
-        // Originally implemented Python 3 semantics, returning a PyInteger (for byte-oriented) !
-        // return new PyInteger(backing.intAt(index));
+        long x;
+        Buffer buf = getView();
+        int pos = buf.position() + index;
+        switch(format) {
+            case "B":
+            case "b":
+            case "c":
+                x = ((ByteBuffer) buf).get(pos);
+                break;
+            case "h":
+            case "H":
+                x = ((ShortBuffer) buf).get(pos);
+                break;
+            case "i":
+            case "I":
+                x = ((IntBuffer) buf).get(pos);
+                break;
+            case "l":
+            case "L":
+                x = ((LongBuffer) buf).get(pos);
+                break;
+            case "f":
+            case "F":
+                return new PyFloat(((FloatBuffer) buf).get(pos));
+            case "d":
+            case "D":
+                return new PyFloat(((DoubleBuffer) buf).get(pos));
+            case "?":
+            default:
+                x = ((ByteBuffer) buf).get(pos);
+        }
+        return new PyLong(x);
     }
 
     /**
@@ -1029,5 +1067,10 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
         } else {
             return false;
         }
+    }
+
+    @Override
+    public PyObject __int__() {
+        return Encoding.atol(backing.toString(), 10);
     }
 }

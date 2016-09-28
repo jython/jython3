@@ -93,13 +93,15 @@ public class PyLong extends PyObject {
         if (x == null) {
             throw Py.TypeError("int() missing string argument");
         }
+        if (!(baseObj instanceof PyLong)) {
+            throw Py.TypeError(String.format("'%s' object cannot be interpreted as an integer",
+                    baseObj.getType().fastGetName()));
+        }
         int base = baseObj.asInt();
         if (x instanceof PyUnicode) {
             return ((PyUnicode)x).atol(base);
-        } else if (x instanceof PyBytes) {
-            return ((PyBytes) x).atol(base);
-        } else if (x instanceof PyByteArray) {
-            return Encoding.atol(x.asString(), base);
+        } else if (x instanceof PyByteArray || x instanceof PyBytes) {
+            return Encoding.atol(new String(Py.unwrapBuffer(x)), base);
         }
 
         throw Py.TypeError("int: can't convert non-string with explicit base");
@@ -127,7 +129,7 @@ public class PyLong extends PyObject {
                     throw pye2;
                 }
                 throw Py.TypeError(String.format(
-                        "long() argument must be a string or a number, not '%.200s'", x.getType()
+                        "long() argument must be a string a bytes-like object or a number, not '%.200s'", x.getType()
                                 .fastGetName()));
             }
         }
@@ -139,12 +141,17 @@ public class PyLong extends PyObject {
      */
     private static PyObject convertIntegralToLong(PyObject integral) {
         if (!(integral instanceof PyInteger) && !(integral instanceof PyLong)) {
-            PyObject i = integral.invoke("__int__");
-            if (!(i instanceof PyInteger) && !(i instanceof PyLong)) {
+            try {
+                PyObject i = integral.invoke("__int__");
+                if (!(i instanceof PyInteger) && !(i instanceof PyLong)) {
+                    throw Py.TypeError(String.format("__trunc__ returned non-Integral (type %.200s)",
+                            integral.getType().fastGetName()));
+                }
+                return i;
+            } catch (PyException e) {
                 throw Py.TypeError(String.format("__trunc__ returned non-Integral (type %.200s)",
                         integral.getType().fastGetName()));
             }
-            return i;
         }
         return integral;
     }

@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.python.core.buffer.BaseBuffer;
 import org.python.core.buffer.SimpleWritableBuffer;
+import org.python.core.stringlib.Encoding;
 import org.python.expose.ExposedClassMethod;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
@@ -2649,6 +2650,11 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
             setStorage(emptyStorage);
 
         }
+    }
+
+    @Override
+    public PyObject __int__() {
+        return Encoding.atol(asString(), 10);
     }
 
 }
