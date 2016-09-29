@@ -1186,8 +1186,8 @@ public class PosixModule {
         }
         for (Map.Entry<String, String> entry : env.entrySet()) {
             environ.__setitem__(
-                    Py.newUnicode(entry.getKey()),
-                    Py.newUnicode(entry.getValue()));
+                    new PyBytes(entry.getKey()),
+                    new PyBytes(entry.getValue()));
         }
         return environ;
     }
