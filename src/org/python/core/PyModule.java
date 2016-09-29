@@ -131,8 +131,10 @@ public class PyModule extends PyObject implements Traverseproc {
         } else {
             d = __dict__;
         }
-        if (d == null ||
-                !(d instanceof PyDictionary ||
+        if (d == null || d.__finditem__("__name__") == null) {
+            throw Py.SystemError("nameless module");
+        }
+        if (!(d instanceof PyDictionary ||
                   d instanceof PyStringMap ||
                   d instanceof PyDictProxy)) {
             throw Py.TypeError(String.format("%.200s.__dict__ is not a dictionary",
@@ -161,8 +163,11 @@ public class PyModule extends PyObject implements Traverseproc {
 
     @Override
     public void noAttributeError(String name) {
+        if (__dict__ == null) {
+            throw Py.AttributeError(String.format("module has no attribute '%.400s'", name));
+        }
         throw Py.AttributeError(String.format("module '%.50s' has no attribute '%.400s'",
-                __dict__.__finditem__("__name__") , name));
+                __dict__.__finditem__("__name__"), name));
     }
 
 }
