@@ -523,6 +523,19 @@ public class PyStringMap extends PyObject implements Traverseproc {
         return false;
     }
 
+    @Override
+    public PyObject richCompare(PyObject other, CompareOp op) {
+        if (op == CompareOp.EQ && other instanceof PyDictionary) {
+            for (PyObject key: ((PyDictionary) other).keys_as_list().asIterable()) {
+                if (!get(key).equals(((PyDictionary) other).get(key))) {
+                    return Py.False;
+                }
+            }
+            return Py.True;
+        }
+        return super.richCompare(other, op);
+    }
+
     private abstract class StringMapIter<T> extends PyIterator {
 
         protected final Iterator<T> iterator;
