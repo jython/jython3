@@ -1,8 +1,14 @@
 package org.python.core;
 
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Shorts;
+
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
+import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Abstract class that manages bulk structural and data operations
@@ -235,6 +241,38 @@ public abstract class AbstractArray implements Serializable{
 
     }
 
+    private Class<?> getItemType() {
+        Object base = getArray();
+        return base.getClass().getComponentType();
+    }
+
+    private int getItemSize() {
+        Class arrayType = getItemType();
+        if (arrayType.isPrimitive()) {
+            if (arrayType == Boolean.TYPE) {
+                return 1;
+            } else if (arrayType == Character.TYPE) {
+                return 2;
+            } else if (arrayType == Byte.TYPE) {
+                return 1;
+            } else if (arrayType == Short.TYPE) {
+                return 2;
+            } else if (arrayType == Integer.TYPE) {
+                return 4;
+            } else if (arrayType == Long.TYPE) {
+                return 8;
+            } else if (arrayType == Float.TYPE) {
+                return 8;
+            } else if (arrayType == Double.TYPE) {
+                return 8;
+            }
+        }
+        return 1; // let it fail
+    }
+
+    protected Object createArray(Class<?> baseType, int size) {
+        return Array.newInstance(baseType, size);
+    }
     /**
      * Constructs and returns a simple array containing the same data as held
      * in this growable array.
@@ -246,6 +284,44 @@ public abstract class AbstractArray implements Serializable{
         System.arraycopy(getArray(), 0, copy, 0, this.size);
         return copy;
     }
+
+    /**
+     * copy underline array into object format
+     * @param type the type of object array element
+     * @param itemsize the size of object array element
+     * @return an array of type
+     */
+    public Object copyArray(Class<?> type, int itemsize) {
+        Class<?> itemType = getItemType();
+        Object base = getArray();
+        if (type == itemType) return copyArray();
+        int ownItemSize = getItemSize();
+        int len = this.size * ownItemSize / itemsize;
+        Object copy = createArray(type, len);
+        ByteOrder order = ByteOrder.nativeOrder();
+        // TODO add other type conversions
+        if (itemType.isPrimitive()) {
+            if (itemType == Byte.TYPE || itemType == Boolean.TYPE) {
+                if (type == Short.TYPE) {
+                    for (int i = 0, j = 0; i < size; j++) {
+                        byte b1 = Array.getByte(base, i++);
+                        byte b2 = Array.getByte(base, i++);
+                        Array.setShort(copy, j, Shorts.fromBytes(b1, b2));
+                    }
+                } else if (type == Integer.TYPE) {
+                    for (int i = 0, j = 0; i < size; j++) {
+                        byte b1 = Array.getByte(base, i++);
+                        byte b2 = Array.getByte(base, i++);
+                        byte b3 = Array.getByte(base, i++);
+                        byte b4 = Array.getByte(base, i++);
+                        Array.setInt(copy, j, Ints.fromBytes(b1, b2, b3, b4));
+                    }
+                }
+            }
+        }
+        return copy;
+    }
+
 
     /**
      * Ensures that the base array has at least the specified

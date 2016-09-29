@@ -1194,7 +1194,7 @@ public class _pickle implements ClassDictInit {
 
             put(putMemo(get_id(object), object));
 
-            batch_setitems(object.invoke("iteritems"));
+            batch_setitems(object.invoke("items"));
         }
 
         private void batch_setitems(PyObject object) {
@@ -1719,10 +1719,9 @@ public class _pickle implements ClassDictInit {
             return (s.charAt(1)) << 8 | (s.charAt(0));
         }
 
-
         final private void load_long() {
             String line = file.readlineNoNl();
-            push(new PyLong(line.substring(0, line.length()-1)));
+            push(new PyLong(line));
         }
 
         private void load_bin_long(int length) {

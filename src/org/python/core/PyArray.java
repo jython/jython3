@@ -720,14 +720,19 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
 
         } else if (iterable instanceof PyArray) {
             PyArray source = (PyArray)iterable;
-            if (!source.typecode.equals(typecode)) {
-                if ("u".equals(source.typecode)) {
-                    throw Py.TypeError("cannot use a unicode array");
-                }
-                throw Py.TypeError("can only extend with array of same kind");
+            if (!source.typecode.equals(typecode) && "u".equals(source.typecode)) {
+                    throw Py.TypeError(String.format("cannot use a unicode array to initialize an array with typecode '%s'",
+                            typecode));
             }
+//                throw Py.TypeError("can only extend with array of same kind");
+//            if (!source.typecode.equals(typecode)) {
+//                if ("u".equals(source.typecode)) {
+//                    throw Py.TypeError("cannot use a unicode array");
+//                }
+//                throw Py.TypeError("can only extend with array of same kind");
+//            }
             resizeCheck();  // Prohibited if exporting a buffer
-            delegate.appendArray(source.delegate.copyArray());
+            delegate.appendArray(source.delegate.copyArray(type, getItemsize()));
 
         } else {
             extendInternalIter(iterable);
@@ -1315,13 +1320,15 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
                 case 'l':
                     return 8;
                 case 'L':
+                case 'q':
+                case 'Q':
                     return 8;
                 case 'f':
                     return 4;
                 case 'd':
                     return 8;
                 default:
-                    throw Py.ValueError("bad typecode (must be c, b, B, u, h, H, i, I, l, L, f or d)");
+                    throw Py.ValueError("bad typecode (must be c, b, B, u, h, H, i, I, l, L, q, Q, f or d)");
             }
         }
         // return something here... could be a calculated size?
