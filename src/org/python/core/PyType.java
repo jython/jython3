@@ -1653,7 +1653,10 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
 
     @ExposedGet(name = "__qualname__")
     public PyObject type___qualname__() {
-        return qualname;
+        if (qualname != null) {
+            return qualname;
+        }
+        return pyGetName();
     }
 
     @ExposedGet(name = "__name__")

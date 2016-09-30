@@ -90,7 +90,7 @@ public abstract class PyDataDescr extends PyDescriptor {
     }
 
     public void invokeSet(PyObject obj, Object converted) {
-        throw new UnsupportedOperationException("Must be overriden by a subclass");
+        throw Py.TypeError(String.format("can't set %s.%s", obj.__getattr__("__name__"), name));
     }
 
     @Override
@@ -107,7 +107,7 @@ public abstract class PyDataDescr extends PyDescriptor {
     }
 
     public void invokeDelete(PyObject obj) {
-        throw new UnsupportedOperationException("Must be overriden by a subclass");
+        throw Py.TypeError(String.format("can't delete %s.%s", obj.__getattr__("__name__"), name));
     }
 
     @Override
