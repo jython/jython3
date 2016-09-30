@@ -6,6 +6,14 @@ public abstract class PyDescriptor extends PyObject implements Traverseproc {
 
     protected String name;
 
+    @Override
+    public PyObject __findattr_ex__(String field) {
+        if (field.equals("__qualname__")) {
+            return new PyUnicode(String.format("%s.%s", dtype.getName(), name));
+        }
+        return super.__findattr_ex__(field);
+    }
+
     protected void checkCallerType(PyType type) {
         if (type == dtype || type.isSubType(dtype)) {
             return;
