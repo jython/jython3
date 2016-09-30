@@ -135,9 +135,11 @@ public class PyException extends RuntimeException implements Traverseproc
      *
      */
     public void normalize() {
-        if (normalized) {
-            return;
-        }
+        // FIXME sometimes it's not properly normalized, try to reproduce with this test
+        // test.test_descr.ClassPropertiesAndMethods.test_unsubclassable_types
+//        if (normalized) {
+//            return;
+//        }
         PyObject inClass = null;
         if (isExceptionInstance(value)) {
             inClass = value.fastGetClass();
@@ -174,8 +176,8 @@ public class PyException extends RuntimeException implements Traverseproc
             if (context != null) {
                 ((PyBaseException) value).__context__ = context;
             }
+            normalized = true;
         }
-        normalized = true;
     }
 
     /**
