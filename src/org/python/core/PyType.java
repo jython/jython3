@@ -40,6 +40,8 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
      */
     protected String name;
 
+    protected PyObject qualname;
+
     /** __base__, the direct base type or null. */
     protected PyType base;
 
@@ -202,6 +204,16 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
         type.name = name;
         type.bases = tmpBases.length == 0 ? new PyObject[] {PyObject.TYPE} : tmpBases;
         type.dict = dict;
+        type.qualname = dict.__finditem__("__qualname__");
+        if (type.qualname != null) {
+            if (!(type.qualname instanceof PyUnicode)) {
+                throw Py.TypeError(String.format("type __qualname__ must be a str, not %s", type.qualname.getType().fastGetName()));
+            }
+            dict.__delitem__("__qualname__");
+        } else {
+            type.qualname = new PyUnicode(name);
+        }
+
         type.tp_flags = Py.TPFLAGS_HEAPTYPE | Py.TPFLAGS_BASETYPE;
         // Enable defining a custom __dict__ via a property, method, or other descriptor
         boolean defines_dict = dict.__finditem__("__dict__") != null;
@@ -1641,7 +1653,7 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
 
     @ExposedGet(name = "__qualname__")
     public PyObject type___qualname__() {
-        return Py.newUnicode(name);
+        return qualname;
     }
 
     @ExposedGet(name = "__name__")
