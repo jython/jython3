@@ -127,10 +127,7 @@ public class StdoutWrapper extends OutputStream {
     }
 
     private void printToFileObject(PyObject file, PyObject o) {
-        if (!(o instanceof PyUnicode)) {
-            o = o.__str__();
-        }
-        file.invoke("write", o);
+        file.invoke("write", o.__str__());
     }
 
     /**
