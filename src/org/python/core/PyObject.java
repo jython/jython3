@@ -1408,15 +1408,9 @@ public class PyObject implements Serializable {
         if (res != Py.NotImplemented) {
             return res;
         }
-        try {
-            PyObject meth = __getattr__(op.meth());
-            return meth.__call__(other);
-        } catch (PyException pye) {
-            if (pye.match(Py.AttributeError)) {
-                return Py.NotImplemented;
-            }
-            throw pye;
-        }
+        PyType type = getType();
+        PyObject meth = type.lookup(op.meth());
+        return meth.__get__(this, type).__call__(other);
     }
 
     // Rich comparison entry for bytecode
@@ -1440,6 +1434,7 @@ public class PyObject implements Serializable {
                     return res;
                 }
             }
+
             res = richCompare(other, op);
             if (res != Py.NotImplemented) {
                 return res;
@@ -1530,66 +1525,6 @@ public class PyObject implements Serializable {
         PyDictionary stateDict = ts.getCompareStateDict();
 
         stateDict.__delitem__(token);
-    }
-
-    /**
-     * Implements the Python expression <code>this == other</code>.
-     *
-     * @param o the object to compare this with.
-     * @return the result of the comparison
-     **/
-    public final PyObject _eq(PyObject o) {
-        return richCompare(o, CompareOp.EQ);
-    }
-
-    /**
-     * Implements the Python expression <code>this != other</code>.
-     *
-     * @param o the object to compare this with.
-     * @return the result of the comparison
-     **/
-    public final PyObject _ne(PyObject o) {
-        return richCompare(o, CompareOp.NE);
-    }
-
-    /**
-     * Implements the Python expression <code>this &lt;= other</code>.
-     *
-     * @param o the object to compare this with.
-     * @return the result of the comparison
-     **/
-    public final PyObject _le(PyObject o) {
-        return richCompare(o, CompareOp.LE);
-    }
-
-    /**
-     * Implements the Python expression <code>this &lt; other</code>.
-     *
-     * @param o the object to compare this with.
-     * @return the result of the comparison
-     **/
-    public final PyObject _lt(PyObject o) {
-        return richCompare(o, CompareOp.LT);
-    }
-
-    /**
-     * Implements the Python expression <code>this &gt;= other</code>.
-     *
-     * @param o the object to compare this with.
-     * @return the result of the comparison
-     **/
-    public final PyObject _ge(PyObject o) {
-        return richCompare(o, CompareOp.GE);
-    }
-
-    /**
-     * Implements the Python expression <code>this &gt; other</code>.
-     *
-     * @param o the object to compare this with.
-     * @return the result of the comparison
-     **/
-    public final PyObject _gt(PyObject o) {
-        return richCompare(o, CompareOp.GT);
     }
 
     /**

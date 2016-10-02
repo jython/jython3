@@ -1,12 +1,12 @@
 /* Generated file, do not modify.  See jython/src/templates/gderived.py. */
-package org.python.antlr.op;
+package org.python.modules.zipimport;
 
 import java.io.Serializable;
 import org.python.core.*;
 import org.python.core.finalization.FinalizeTrigger;
 import org.python.core.finalization.FinalizablePyObjectDerived;
 
-public class UAddDerived extends UAdd implements Slotted,FinalizablePyObjectDerived,TraverseprocDerived {
+public class PyZipImporterDerived extends PyZipImporter implements Slotted,FinalizablePyObjectDerived,TraverseprocDerived {
 
     public PyObject getSlot(int index) {
         return slots[index];
@@ -73,7 +73,7 @@ public class UAddDerived extends UAdd implements Slotted,FinalizablePyObjectDeri
         dict=new PyStringMap();
     }
 
-    public UAddDerived(PyType subtype) {
+    public PyZipImporterDerived(PyType subtype) {
         super(subtype);
         slots=new PyObject[subtype.getNumSlots()];
         dict=subtype.instDict();

@@ -946,6 +946,16 @@ public class PyDictionaryDerived extends PyDictionary implements Slotted,Finaliz
         Deriveds.dispatch__init__(this,args,keywords);
     }
 
+    public PyObject richCompare(PyObject other,CompareOp op) {
+        PyType type=getType();
+        PyObject meth=type.lookup(op.meth());
+        PyObject res=meth.__get__(this,type).__call__(other);
+        if (res!=Py.NotImplemented) {
+            return res;
+        }
+        return super.richCompare(other,op);
+    }
+
     public PyObject __index__() {
         PyType self_type=getType();
         PyObject impl=self_type.lookup("__index__");

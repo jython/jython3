@@ -1,4 +1,4 @@
-base_class: zipimporter
+base_class: PyZipImporter
 want_dict: true
 ctr:
 incl: object

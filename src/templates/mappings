@@ -61,7 +61,7 @@ tuple.derived:org.python.core.PyTupleDerived
 type.derived:org.python.core.PyTypeDerived
 str.derived:org.python.core.PyUnicodeDerived
 weakref.derived:org.python.modules._weakref.ReferenceTypeDerived
-zipimporter.derived:org.python.modules.zipimport.zipimporterDerived
+zipimporter.derived:org.python.modules.zipimport.PyZipImporterDerived
 ast_AsyncFunctionDef.derived:org.python.antlr.ast.AsyncFunctionDefDerived
 ast_AsyncFor.derived:org.python.antlr.ast.AsyncForDerived
 ast_AsyncWith.derived:org.python.antlr.ast.AsyncWithDerived

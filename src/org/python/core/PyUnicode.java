@@ -39,8 +39,6 @@ import static org.python.core.stringlib.Encoding.encode_UnicodeEscape;
 public class PyUnicode extends PySequence implements Iterable {
     protected String string; // cannot make final because of Python intern support
     protected transient boolean interned = false;
-    /** Supports the buffer API, see {@link #getBuffer(int)}. */
-    private Reference<BaseBuffer> export;
 
     public String getString() {
         return string;

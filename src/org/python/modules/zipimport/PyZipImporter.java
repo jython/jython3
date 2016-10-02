@@ -48,7 +48,12 @@ public class PyZipImporter extends PyObject {
     @ExposedGet
     public PyObject files;
 
+    public PyZipImporter(PyType type) {
+        super(TYPE);
+    }
+
     public PyZipImporter(String archivePath, String prefix, PyObject files) {
+        this(TYPE);
         this.archive = archivePath;
         this.prefix = prefix;
         this.files = files;
