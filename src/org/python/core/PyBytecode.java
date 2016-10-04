@@ -910,22 +910,22 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                         switch (oparg) {
 
                             case Opcode.PyCmp_LT:
-                                stack.push(a._lt(b));
+                                stack.push(a.richCompare(b, CompareOp.LT));
                                 break;
                             case Opcode.PyCmp_LE:
-                                stack.push(a._le(b));
+                                stack.push(a.richCompare(b, CompareOp.LE));
                                 break;
                             case Opcode.PyCmp_EQ:
-                                stack.push(a._eq(b));
+                                stack.push(a.richCompare(b, CompareOp.EQ));
                                 break;
                             case Opcode.PyCmp_NE:
-                                stack.push(a._ne(b));
+                                stack.push(a.richCompare(b, CompareOp.NE));
                                 break;
                             case Opcode.PyCmp_GT:
-                                stack.push(a._gt(b));
+                                stack.push(a.richCompare(b, CompareOp.GT));
                                 break;
                             case Opcode.PyCmp_GE:
-                                stack.push(a._ge(b));
+                                stack.push(a.richCompare(b, CompareOp.GE));
                                 break;
                             case Opcode.PyCmp_IN:
                                 stack.push(a._in(b));

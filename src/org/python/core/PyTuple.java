@@ -518,7 +518,7 @@ public class PyTuple extends PySequenceList implements List {
         }
 
         if (other instanceof PyObject) {
-            return _eq((PyObject)other).__bool__();
+            return richCompare((PyObject) other, CompareOp.EQ).__bool__();
         }
         if (other instanceof List) {
             return other.equals(this);

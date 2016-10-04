@@ -25,7 +25,7 @@ public class PyCallIter extends PyIterator {
 
         PyObject result;
         result = callable.__call__();
-        if (result == null || sentinel._eq(result).__bool__()) {
+        if (result == null || sentinel.richCompare(result, CompareOp.EQ).__bool__()) {
             callable = null;
             throw Py.StopIteration();
         }

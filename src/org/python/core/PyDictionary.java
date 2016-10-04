@@ -289,7 +289,7 @@ public class PyDictionary extends PyObject implements ConcurrentMap, Traversepro
                 return Py.False;
             }
             PyObject avalue = __finditem__(akey);
-            if (!avalue._eq(bvalue).__bool__()) {
+            if (!avalue.richCompare(bvalue, CompareOp.EQ).__bool__()) {
                 return Py.False;
             }
         }

@@ -1,6 +1,7 @@
 package org.python.modules._collections;
 
 import org.python.core.ArgParser;
+import org.python.core.CompareOp;
 import org.python.core.PyIterator;
 import org.python.core.PyList;
 import org.python.core.PyObject;
@@ -514,7 +515,7 @@ public class PyDeque extends PyObject implements Traverseproc {
         if (i < 0) {
             return (i == -1) ? Py.True : Py.False;
         }
-        return __finditem__(i)._lt(o.__finditem__(i));
+        return __finditem__(i).richCompare(o.__finditem__(i), CompareOp.LT);
     }
 
     @Override
@@ -531,7 +532,7 @@ public class PyDeque extends PyObject implements Traverseproc {
         if (i < 0) {
             return (i == -1 || i == -2) ? Py.True : Py.False;
         }
-        return __finditem__(i)._le(o.__finditem__(i));
+        return __finditem__(i).richCompare(o.__finditem__(i), CompareOp.LE);
     }
 
     @Override
@@ -548,7 +549,7 @@ public class PyDeque extends PyObject implements Traverseproc {
         if (i < 0) {
             return (i == -3) ? Py.True : Py.False;
         }
-        return __finditem__(i)._gt(o.__finditem__(i));
+        return __finditem__(i).richCompare(o.__finditem__(i), CompareOp.GT);
     }
 
     @Override
@@ -565,7 +566,7 @@ public class PyDeque extends PyObject implements Traverseproc {
         if (i < 0) {
             return (i == -3 || i == -2) ? Py.True : Py.False;
         }
-        return __finditem__(i)._ge(o.__finditem__(i));
+        return __finditem__(i).richCompare(o.__finditem__(i), CompareOp.GE);
     }
 
     @Override

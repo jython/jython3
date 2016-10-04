@@ -1,6 +1,7 @@
 /* Copyright (c) Jython Developers */
 package org.python.modules._weakref;
 
+import org.python.core.CompareOp;
 import org.python.core.JyAttribute;
 import org.python.core.Py;
 import org.python.core.PyObject;
@@ -62,7 +63,7 @@ public abstract class AbstractReference extends PyObject implements Traverseproc
         if (pythis == null || pyother == null) {
             return this == other ? Py.True : Py.False;
         }
-        return pythis._eq(pyother);
+        return pythis.richCompare(pyother, CompareOp.EQ);
     }
 
     public PyObject __ne__(PyObject other) {
@@ -74,7 +75,7 @@ public abstract class AbstractReference extends PyObject implements Traverseproc
         if (pythis == null || pyother == null) {
             return this == other ? Py.False : Py.True;
         }
-        return pythis._eq(pyother).__not__();
+        return pythis.richCompare(pyother, CompareOp.NE);
     }
 
     protected PyObject get() {

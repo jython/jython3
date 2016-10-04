@@ -266,7 +266,7 @@ public class PyComplex extends PyObject {
                 } else {
                     // Delegate the logic to PyFloat
                     PyFloat f = new PyFloat(r);
-                    PyObject ret = f._eq(other);
+                    PyObject ret = f.richCompare(other, CompareOp.EQ);
                     if (ret != null) {
                         equal = ret.__bool__();
                     } else {

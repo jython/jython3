@@ -49,7 +49,7 @@ class JavaProxyMap {
                 if (oVal == null) {
                     return Py.False;
                 }
-                if (!Py.java2py(jval)._eq(oVal).__bool__()) {
+                if (!Py.java2py(jval).richCompare(oVal, CompareOp.EQ).__bool__()) {
                     return Py.False;
                 }
             }

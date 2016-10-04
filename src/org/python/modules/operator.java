@@ -3,6 +3,7 @@ package org.python.modules;
 
 import org.python.core.ArgParser;
 import org.python.core.ClassDictInit;
+import org.python.core.CompareOp;
 import org.python.core.Py;
 import org.python.core.PyBuiltinFunctionSet;
 import org.python.core.PyBytes;
@@ -77,13 +78,13 @@ class OperatorFunctions extends PyBuiltinFunctionSet
             arg1.__delitem__(arg2);
             return Py.None;
         case 23: return arg1.__getitem__(arg2);
-        case 27: return arg1._ge(arg2);
-        case 28: return arg1._le(arg2);
-        case 29: return arg1._eq(arg2);
+        case 27: return arg1.richCompare(arg2, CompareOp.GE);
+        case 28: return arg1.richCompare(arg2, CompareOp.LE);
+        case 29: return arg1.richCompare(arg2, CompareOp.EQ);
         case 30: return arg1._floordiv(arg2);
-        case 31: return arg1._gt(arg2);
-        case 33: return arg1._lt(arg2);
-        case 34: return arg1._ne(arg2);
+        case 31: return arg1.richCompare(arg2, CompareOp.GT);
+        case 33: return arg1.richCompare(arg2, CompareOp.LT);
+        case 34: return arg1.richCompare(arg2, CompareOp.NE);
         case 35: return arg1._truediv(arg2);
         case 36: return arg1._pow(arg2);
         case 37: return arg1._is(arg2);
@@ -267,7 +268,7 @@ public class operator extends PyObject implements ClassDictInit
         int count = 0;
 
         for (PyObject tmp : seq.asIterable()) {
-            if (item._eq(tmp).__bool__()) {
+            if (item.richCompare(tmp, CompareOp.EQ).__bool__()) {
                 count++;
             }
         }
@@ -278,7 +279,7 @@ public class operator extends PyObject implements ClassDictInit
         int i = 0;
         PyObject iter = seq.__iter__();
         for (PyObject tmp = null; (tmp = iter.__next__()) != null; i++) {
-            if (item._eq(tmp).__bool__()) {
+            if (item.richCompare(tmp, CompareOp.EQ).__bool__()) {
                 return i;
             }
         }
