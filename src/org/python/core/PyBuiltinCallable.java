@@ -37,10 +37,10 @@ public abstract class PyBuiltinCallable extends PyObject {
     public PyObject getQualname() {
         PyObject self = getSelf();
         String qualname;
-        if (self == null || self.__findattr__("__name__") == null) {
+        if (self == null || self.getType().__findattr__("__name__") == null) {
             qualname = info.getName();
         } else {
-            qualname = self.__getattr__("__name__") + "." + info.getName();
+            qualname = self.getType().__getattr__("__name__") + "." + info.getName();
         }
         return new PyUnicode(qualname);
     }
