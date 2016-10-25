@@ -2027,14 +2027,24 @@ public final class Py {
     // XXX: The following two makeClass overrides are *only* for the
     // old compiler, they should be removed when the newcompiler hits
     public static PyObject makeClass(String name, PyObject[] bases, PyObject metaclass, PyCode code) {
-        return makeClass(name, bases, metaclass, code, null);
+        return makeClass(name, name, bases, metaclass, code, null);
+    }
+
+    public static PyObject makeClass(String name, String qualname, PyObject[] bases, PyObject metaclass, PyCode code) {
+        return makeClass(name, qualname, bases, metaclass, code, null);
     }
 
     public static PyObject makeClass(String name, PyObject[] bases, PyObject metaclass, PyCode code,
                                      PyObject[] closure_cells) {
+        return makeClass(name, name, bases, metaclass, code, closure_cells);
+    }
+
+    public static PyObject makeClass(String name, String qualname, PyObject[] bases, PyObject metaclass, PyCode code,
+                                     PyObject[] closure_cells) {
         ThreadState state = getThreadState();
         PyObject dict = code.call(state, Py.EmptyObjects, Py.NoKeywords,
                 state.frame.f_globals, Py.EmptyObjects, new PyDictionary(), new PyTuple(closure_cells));
+        dict.__setitem__("__qualname__", new PyUnicode(qualname));
         return makeClass(name, bases, dict, metaclass);
     }
     public static PyObject makeClass(String name, PyObject base, PyObject dict) {

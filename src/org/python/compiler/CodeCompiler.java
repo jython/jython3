@@ -527,7 +527,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
                 sig(PyDictionary.class, String[].class, PyObject[].class));
 
         scope.setup_closure();
-        scope.dump();
+//        scope.dump();
         module.codeConstant(new Suite(node, body), name, true, className, false,
                 false, node.getLine(), scope, cflags).get(code);
 
@@ -537,7 +537,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         } else {
             code.aconst_null();
         }
-        code.ldc(className + "." + name);
+        code.ldc(scope.qualname);
 
         if (!makeClosure(scope)) {
             code.invokespecial(p(PyFunction.class), "<init>",
@@ -2536,6 +2536,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
                     "<init>",
                     sig(Void.TYPE, PyObject.class, PyObject[].class, PyDictionary.class, PyCode.class, PyObject[].class));
         }
+        code.dup();
+        code.ldc(scope.qualname);
+        code.putfield(p(PyFunction.class), "__qualname__", ci(String.class));
         return null;
     }
 
@@ -2590,7 +2593,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         if (scope.needs_class_closure) {
             scope.needs_class_closure = false;
 //            inner = "<inner" + clsName + ">";
-            String outer = "<outer" + clsName + ">";
+            String outer = scope.scope_name;
             code.new_(p(PyFunction.class));
             code.dup();
             loadFrame();
@@ -2678,6 +2681,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         int baseArray = makeArray(node.getInternalBases());
 
         code.ldc(inner);
+        code.ldc(scope.qualname);
 
         code.aload(baseArray);
         if (node.getInternalKeywords() != null && node.getInternalKeywords().size() > 0) {
@@ -2698,12 +2702,12 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         // Make class out of name, bases, and code
         if (!makeClosure(scope)) {
             code.invokestatic(p(Py.class), "makeClass",
-                    sig(PyObject.class, String.class, PyObject[].class, PyObject.class, PyCode.class));
+                    sig(PyObject.class, String.class, String.class, PyObject[].class, PyObject.class, PyCode.class));
         } else {
             code.invokestatic(
                     p(Py.class),
                     "makeClass",
-                    sig(PyObject.class, String.class, PyObject[].class, PyObject.class, PyCode.class,
+                    sig(PyObject.class, String.class, String.class, PyObject[].class, PyObject.class, PyCode.class,
                             PyObject[].class));
         }
 

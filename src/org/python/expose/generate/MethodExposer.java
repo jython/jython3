@@ -18,6 +18,22 @@ public abstract class MethodExposer extends Exposer {
 
     protected final String doc;
 
+    // whether it's a function or method
+    protected boolean isStatic;
+    public MethodExposer(Type onType,
+                         String methodName,
+                         Type[] args,
+                         Type returnType,
+                         String typeName,
+                         String[] asNames,
+                         String[] defaults,
+                         Class superClass,
+                         String doc,
+                         boolean isStatic) {
+        this(onType, methodName, args, returnType, typeName, asNames, defaults, superClass, doc);
+        this.isStatic = isStatic;
+    }
+
     public MethodExposer(Type onType,
                          String methodName,
                          Type[] args,
@@ -45,6 +61,7 @@ public abstract class MethodExposer extends Exposer {
         this.asNames = asNames;
         this.returnType = returnType;
         this.defaults = defaults;
+        this.isStatic = false;
         for(String name : getNames()) {
             if(name.equals("__new__")) {
                 throwInvalid("@ExposedNew must be used to create __new__, not @ExposedMethod");
@@ -97,6 +114,12 @@ public abstract class MethodExposer extends Exposer {
                           BUILTIN_FUNCTION.getInternalName(),
                           "doc",
                           STRING.getDescriptor());
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitLdcInsn(isStatic);
+        mv.visitFieldInsn(PUTFIELD,
+                BUILTIN_FUNCTION.getInternalName(),
+                "isStatic",
+                BOOLEAN.getDescriptor());
         endConstructor();
     }
 
@@ -117,6 +140,12 @@ public abstract class MethodExposer extends Exposer {
                           BUILTIN_FUNCTION.getInternalName(),
                           "doc",
                           STRING.getDescriptor());
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitLdcInsn(isStatic);
+        mv.visitFieldInsn(PUTFIELD,
+                BUILTIN_FUNCTION.getInternalName(),
+                "isStatic",
+                BOOLEAN.getDescriptor());
         endConstructor();
     }
 

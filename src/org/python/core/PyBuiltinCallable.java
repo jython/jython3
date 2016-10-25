@@ -14,6 +14,8 @@ public abstract class PyBuiltinCallable extends PyObject {
 
     protected String doc;
 
+    protected boolean isStatic;
+
     protected PyBuiltinCallable(PyType type, Info info) {
         super(type);
         this.info = info;
@@ -36,11 +38,15 @@ public abstract class PyBuiltinCallable extends PyObject {
     @ExposedGet(name = "__qualname__")
     public PyObject getQualname() {
         PyObject self = getSelf();
-        String qualname;
-        if (self == null || self.getType().__findattr__("__name__") == null) {
-            qualname = info.getName();
-        } else {
-            qualname = self.getType().__getattr__("__name__") + "." + info.getName();
+        String qualname = info.getName();
+        if (self != null && self != Py.None) {
+            if (!isStatic) {
+                self = self.getType();
+            }
+            PyObject name = self.__getattr__("__name__");
+            if (name != null) {
+                qualname = name + "." + info.getName();
+            }
         }
         return new PyUnicode(qualname);
     }

@@ -38,6 +38,19 @@ public class PyCell extends PyObject implements Traverseproc {
                              ob_ref.getType().getName(), Py.idstr(ob_ref));
     }
 
+    @Override
+    public PyObject richCompare(PyObject other, CompareOp op) {
+        if (!(other instanceof PyCell)) {
+            return Py.NotImplemented;
+        }
+        PyObject a = ob_ref;
+        PyObject b = ((PyCell) other).ob_ref;
+        if (a != null && b != null) {
+            return a.richCompare(b, op);
+        }
+        int result = (a == null ? 0 : 1) - (b == null ? 0 : 1);
+        return op.bool(result);
+    }
 
     /* Traverseproc implementation */
     @Override

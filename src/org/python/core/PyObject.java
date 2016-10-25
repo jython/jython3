@@ -240,7 +240,7 @@ public class PyObject implements Serializable {
     }
 
     public PyUnicode __repr__() {
-        return new PyUnicode(toString());
+        return object___repr__();
     }
 
     @ExposedMethod(names = "__repr__", doc = BuiltinDocs.object___repr___doc)
@@ -1000,7 +1000,7 @@ public class PyObject implements Serializable {
         // XXX: Should be an AttributeError but CPython throws TypeError for read only
         // member descriptors (in structmember.c::PyMember_SetOne), which is expected by a
         // few tests. fixed in py3k: http://bugs.python.org/issue1687163
-        throw Py.TypeError("readonly attribute");
+        throw Py.AttributeError("readonly attribute");
     }
 
     /**

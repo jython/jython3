@@ -23,7 +23,8 @@ public class ClassMethodExposer extends MethodExposer {
               asNames,
               defaults,
               PyBuiltinClassMethodNarrow.class,
-              doc);
+              doc,
+              true);
         actualArgs = Type.getArgumentTypes(desc);
     }
 

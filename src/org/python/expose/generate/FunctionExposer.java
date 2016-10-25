@@ -21,7 +21,8 @@ public class FunctionExposer extends MethodExposer {
               asNames,
               defaults,
               isWide(desc) ? PyBuiltinMethod.class : PyBuiltinClassMethodNarrow.class,
-              doc);
+              doc,
+              true);
         if ((access & ACC_STATIC) == 0) {
             throwInvalid("@ExposedFunction can't be applied to non-static methods");
         }

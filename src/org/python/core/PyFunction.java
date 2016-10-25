@@ -30,6 +30,7 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
 
     /** The qualified name */
     @ExposedGet
+    @ExposedSet
     public String __qualname__;
 
     /** The writable doc string. */
@@ -115,6 +116,8 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
     public PyFunction(PyObject globals, PyObject[] defaults, PyDictionary kw_defaults, PyCode code, PyObject doc) {
         this(globals, defaults, kw_defaults, code, doc, null);
     }
+
+    // used by visitLambda
     public PyFunction(PyObject globals, PyObject[] defaults, PyDictionary kw_defaults, PyCode code) {
         this(globals, defaults, kw_defaults, code, null, null);
     }
@@ -273,23 +276,23 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
 
     @ExposedSet(name = "__globals__")
     public void setGlobals(PyObject value) {
-        throw Py.TypeError("readonly attribute");
+        throw Py.AttributeError("readonly attribute");
     }
 
     @ExposedDelete(name = "__globals__")
     public void delGlobals() {
-        throw Py.TypeError("readonly attribute");
+        throw Py.AttributeError("readonly attribute");
     }
 
 
     @ExposedSet(name = "__closure__")
     public void setClosure(PyObject value) {
-        throw Py.TypeError("readonly attribute");
+        throw Py.AttributeError("readonly attribute");
     }
 
     @ExposedDelete(name = "__closure__")
     public void delClosure() {
-        throw Py.TypeError("readonly attribute");
+        throw Py.AttributeError("readonly attribute");
     }
 
     private void ensureDict() {
@@ -410,7 +413,12 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
 
     @Override
     public String toString() {
-        return String.format("<function %s at %s>", __name__, Py.idstr(this));
+        return String.format("<function %s at %s>", __qualname__, Py.idstr(this));
+    }
+
+    @ExposedDelete(name = "__qualname__")
+    public void deleteQualname() {
+        throw Py.TypeError("__qualname__ must be set to a string object");
     }
 
     @Override

@@ -41,7 +41,29 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
         if (kind == FUNCSCOPE) {
             func_level++;
         }
+        String qualname;
+        if ((cur != null && cur.isGlobal(name)) || level == 1) {
+            qualname = name;
+        } else if (level > 1) {
+            qualname = cur.qualname;
+            if (cur.kind == FUNCSCOPE && kind != CLASSSCOPE) { // ignore the __class__ closure
+                 qualname += ".<locals>";
+            }
+            if (kind == CLASSSCOPE) {
+                int dot = qualname.lastIndexOf(".");
+                if (dot != -1) {
+                    qualname = qualname.substring(0, dot + 1) + name; // remove the __class__ closure
+                } else {
+                    qualname = name;
+                }
+            } else {
+                qualname += "." + name;
+            }
+        } else {
+            qualname = "";
+        }
         cur = new ScopeInfo(name, node, level++, kind, func_level, ac);
+        cur.qualname = qualname;
         nodeScopes.put(node, cur);
     }
 

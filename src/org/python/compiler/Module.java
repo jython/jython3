@@ -425,6 +425,7 @@ public class Module implements Opcodes, ClassConstants, CompilationContext {
 
     ClassFile classfile;
     Constant filename;
+    String name;
     String sfilename;
     Constant mainCode;
     boolean linenumbers;
@@ -444,6 +445,7 @@ public class Module implements Opcodes, ClassConstants, CompilationContext {
     }
 
     public Module(String name, String filename, boolean linenumbers, long mtime) {
+        this.name = name;
         this.linenumbers = linenumbers;
         this.mtime = mtime;
         classfile =

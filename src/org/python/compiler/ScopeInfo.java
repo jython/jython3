@@ -2,11 +2,15 @@
 
 package org.python.compiler;
 
+import com.google.common.base.Joiner;
 import org.python.antlr.PythonTree;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -18,6 +22,7 @@ public class ScopeInfo extends Object implements ScopeConstants {
     public int func_level;
     public boolean needs_class_closure;
     public boolean async;
+    public String qualname;
 
     public void dump() { // for debugging
         if (org.python.core.Options.verbose < org.python.core.Py.DEBUG)
@@ -278,6 +283,12 @@ public class ScopeInfo extends Object implements ScopeConstants {
             }
         }
 
+    }
+
+    // check if specified name is defined as global
+    public boolean isGlobal(String name) {
+        SymInfo info = tbl.get(name);
+        return info != null && (info.flags & NGLOBAL) != 0;
     }
 
     @Override
