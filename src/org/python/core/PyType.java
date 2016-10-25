@@ -1794,18 +1794,26 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
     }
 
     @ExposedMethod(names = "__repr__", doc = BuiltinDocs.type___repr___doc)
-    final String type_toString() {
-        String kind;
-        if (!builtin) {
-            kind = "class";
-        } else {
-            kind = "type";
-        }
+    final String type___repr__() {
         PyObject module = getModule();
-        if (module instanceof PyBytes && !module.toString().equals("__builtin__")) {
-            return String.format("<%s '%s.%s'>", kind, module.toString(), getName());
+        if (module instanceof PyUnicode && !module.toString().equals("builtins")) {
+            return module.toString() + "." + getName();
         }
-        return String.format("<%s '%s'>", kind, getName());
+        return getName();
+    }
+
+    @Override
+    public PyUnicode __repr__() {
+        return new PyUnicode(type___repr__());
+    }
+
+    @ExposedMethod(names = "__str__", doc = BuiltinDocs.type___str___doc)
+    final String type_toString() {
+        PyObject module = getModule();
+        if (module instanceof PyUnicode && !module.toString().equals("builtins")) {
+            return String.format("<class '%s.%s'>", module.toString(), getName());
+        }
+        return String.format("<class '%s'>", getName());
     }
 
     public String toString() {
