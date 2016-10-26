@@ -226,6 +226,7 @@ public class PythonTokenSource implements TokenSource {
             }
 
             if (t.getType() == Token.EOF && inSingle) {
+
                 String newlines = newline.getText();
                 for(int i=1;i<newlines.length();i++) {
                     generateNewline(newline);
@@ -319,16 +320,14 @@ public class PythonTokenSource implements TokenSource {
         if (sp >= MAX_INDENTS) {
             throw new IllegalStateException("stack overflow");
         }
-        sp++;
-        indentStack[sp] = i;
+        indentStack[++sp] = i;
     }
 
     protected int pop() {
         if (sp<0) {
             throw new IllegalStateException("stack underflow");
         }
-        int top = indentStack[sp];
-        sp--;
+        int top = indentStack[sp--];
         return top;
     }
 
@@ -365,6 +364,9 @@ public class PythonTokenSource implements TokenSource {
         return filename;
     }
 
+    public boolean isIndented() {
+        return peek() > 0;
+    }
 }
 
 /* More example input / output pairs with code simplified to single chars

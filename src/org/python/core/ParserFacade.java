@@ -233,12 +233,13 @@ public class ParserFacade {
 
     private static boolean validPartialSentence(BufferedReader bufreader, CompileMode kind, String filename) {
         PythonPartialLexer lexer = null;
+        PythonTokenSource indentedSource = null;
         try {
             bufreader.reset();
             CharStream cs = new NoCloseReaderStream(bufreader);
             lexer = new PythonPartialLexer(cs);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
-            PythonTokenSource indentedSource = new PythonTokenSource(tokens, filename);
+            indentedSource = new PythonTokenSource(tokens, filename, kind == CompileMode.single);
             tokens = new CommonTokenStream(indentedSource);
             PythonPartialParser parser = new PythonPartialParser(tokens);
             switch (kind) {
@@ -252,7 +253,7 @@ public class ParserFacade {
                 return false;
             }
         } catch (Exception e) {
-            return lexer.eofWhileNested;
+            return indentedSource.isIndented() || lexer.eofWhileNested;
         }
         return true;
     }
