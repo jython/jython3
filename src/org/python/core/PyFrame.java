@@ -83,8 +83,6 @@ public class PyFrame extends PyObject implements Traverseproc {
 
     private static final String NAME_ERROR_MSG = "name '%.200s' is not defined";
 
-    private static final String GLOBAL_NAME_ERROR_MSG = "global name '%.200s' is not defined";
-
     private static final String UNBOUNDLOCAL_ERROR_MSG =
             "local variable '%.200s' referenced before assignment";
 
@@ -289,7 +287,7 @@ public class PyFrame extends PyObject implements Traverseproc {
         if (ret != null) {
             return ret;
         }
-        throw Py.NameError(String.format(GLOBAL_NAME_ERROR_MSG, index));
+        throw Py.NameError(String.format(NAME_ERROR_MSG, index));
     }
 
     private PyObject doGetglobal(String index) {
@@ -361,7 +359,7 @@ public class PyFrame extends PyObject implements Traverseproc {
             f_globals.__delitem__(index);
         } catch (PyException pye) {
             if (pye.match(Py.KeyError)) {
-                throw Py.NameError(String.format(GLOBAL_NAME_ERROR_MSG, index));
+                throw Py.NameError(String.format(NAME_ERROR_MSG, index));
             }
             throw pye;
         }
