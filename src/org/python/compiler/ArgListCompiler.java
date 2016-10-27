@@ -18,6 +18,7 @@ import org.python.antlr.ast.arguments;
 import org.python.antlr.ast.expr_contextType;
 import org.python.antlr.base.expr;
 import org.python.antlr.base.stmt;
+import org.python.core.Py;
 
 public class ArgListCompiler extends Visitor
 {
@@ -112,6 +113,9 @@ public class ArgListCompiler extends Visitor
             if (val != null) {
                 defaults.add(val);
             }
+        }
+        if (names.size() > 255) {
+            throw Py.SyntaxError("more than 255 arguments");
         }
     }
 
