@@ -104,7 +104,7 @@ package org.python.antlr;
 public boolean eofWhileNested = false;
 public boolean partial = false;
 
-int implicitLineJoiningLevel = 0;
+public int implicitLineJoiningLevel = 0;
 int startPos=-1;
 
 //If you want to use another error recovery mechanism change this

@@ -162,6 +162,14 @@ public class GrammarActions {
         errorHandler.error("Generator expression must be parenthesized if not sole argument", t);
     }
 
+    void errorPositionalArgFollowsKeywordArg(PythonTree t) {
+        errorHandler.error("positional argument follows keyword argument", t);
+    }
+
+    void errorNoNamedArguments(PythonTree t) {
+        errorHandler.error("named arguments must follow bare *", t);
+    }
+
     arg castArg(Object o) {
         if (o instanceof arg) {
             return (arg)o;

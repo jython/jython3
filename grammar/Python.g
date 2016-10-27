@@ -635,6 +635,10 @@ typedargslist
           )?
       )?
       {
+          //if ($STAR.tree != null && $vararg.tree == null && $kw.isEmpty()) {
+          //    actions.errorNoNamedArguments($STAR.tree);
+          //}
+
           $args = new arguments($typedargslist.start, actions.castArgs($d),
           actions.castArg($vararg.tree), actions.castArgs($kw),
           kw_defaults, actions.castArg($kwarg.tree), defaults);
@@ -2299,6 +2303,9 @@ argument
         }
       |
         {
+            if (!$keywords.isEmpty()) {
+              actions.errorPositionalArgFollowsKeywordArg($t1.tree);
+            }
             $args.add($t1.tree);
         }
       )
