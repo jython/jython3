@@ -4,20 +4,19 @@
  */
 package org.python.core;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 import org.python.expose.ExposedClassMethod;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
-import org.python.expose.MethodType;
 import org.python.util.Generic;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Special fast dict implementation for __dict__ instances. Allows interned String keys in addition
@@ -526,12 +525,20 @@ public class PyStringMap extends PyObject implements Traverseproc {
     @Override
     public PyObject richCompare(PyObject other, CompareOp op) {
         if (op == CompareOp.EQ && other instanceof PyDictionary) {
-            for (PyObject key: ((PyDictionary) other).keys_as_list().asIterable()) {
-                if (!get(key).equals(((PyDictionary) other).get(key))) {
+            PyDictionary otherDict = (PyDictionary) other;
+            if (!keys().__eq__(otherDict.dict_keys()).__bool__()) {
+                return Py.False;
+            }
+            for (PyObject key: otherDict.keys_as_list().asIterable()) {
+                if (!get(key).equals(otherDict.get(key))) {
                     return Py.False;
                 }
             }
             return Py.True;
+        }
+        if (op == CompareOp.EQ && other instanceof PyStringMap) {
+            PyStringMap otherDict = (PyStringMap) other;
+            return otherDict.table.equals(table) ? Py.True : Py.False;
         }
         return super.richCompare(other, op);
     }

@@ -96,8 +96,8 @@ final class StringFormatter {
         char c = pop();
         if (c == '*') {
             PyObject o = getarg();
-            if (o instanceof PyInteger) {
-                return ((PyInteger)o).getValue();
+            if (o instanceof PyLong) {
+                return ((PyLong)o).asInt();
             }
             throw Py.TypeError("* wants int");
         } else {
