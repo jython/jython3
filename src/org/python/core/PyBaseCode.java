@@ -232,13 +232,13 @@ public abstract class PyBaseCode extends PyCode {
             if (argcount > co_argcount) {
                 if (!varargs) {
                     int defcount = defs != null ? defs.length : 0;
-                    String msg = String.format("%.200s() takes %s %d %sargument%s (%d given)",
-                                               co_name,
-                                               defcount > 0 ? "at most" : "exactly",
-                                               co_argcount,
-                                               kws.length > 0 ? "" : "",
-                                               co_argcount == 1 ? "" : "s",
-                                               args.length);
+                    String msg;
+                    if (defcount > 0) {
+                        msg = positionalArgErrorMessage(defcount, args.length);
+                    } else {
+                        msg = String.format("%.200s() takes %d positional argument but %d were given",
+                                co_name, co_argcount, args.length);
+                    }
                     throw Py.TypeError(msg);
                 }
                 n = co_argcount;
@@ -360,5 +360,10 @@ public abstract class PyBaseCode extends PyCode {
     // returns the augmented version of CompilerFlags (instead of just as a bit vector int)
     public CompilerFlags getCompilerFlags() {
         return co_flags;
+    }
+
+    private String positionalArgErrorMessage(int defcount, int argLength) {
+        return String.format("%.200s() takes from %d to %d positional arguments but %d were given",
+                co_name, co_argcount - defcount, co_argcount, argLength);
     }
 }
