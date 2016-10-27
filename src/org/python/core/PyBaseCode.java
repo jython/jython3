@@ -211,11 +211,11 @@ public abstract class PyBaseCode extends PyCode {
                          PyObject[] defs, PyDictionary kw_defaults, PyObject closure) {
         final PyFrame frame = new PyFrame(this, globals);
         int paramCount = co_argcount + co_kwonlyargcount;
-        if (varargs) paramCount += 1;
-        if (varkwargs) paramCount += 1;
+        if (varargs) paramCount++;
+        if (varkwargs) paramCount++;
         final int argcount = args.length - kws.length;
 
-        if ((co_argcount > 0) || varargs || varkwargs) {
+        if ((paramCount > 0) || varargs || varkwargs) {
             int i;
             int n = argcount;
             PyObject kwdict = null;
@@ -333,7 +333,7 @@ public abstract class PyBaseCode extends PyCode {
                     }
                 }
             }
-        } else if ((argcount > 0) || (args.length > 0 && (co_argcount == 0 && !varargs && !varkwargs))) {
+        } else if ((argcount > 0) || (args.length > 0 && (paramCount == 0 && !varargs && !varkwargs))) {
             throw Py.TypeError(String.format("%.200s() takes no arguments (%d given)",
                                              co_name, args.length));
         }

@@ -53,6 +53,7 @@ public class PyFunction extends PyObject implements InvocationHandler, Traversep
      * a dict to Python.
      */
     @ExposedGet
+    @ExposedSet
     public PyDictionary __kwdefaults__;
 
     /** The actual function's code, writable. */
