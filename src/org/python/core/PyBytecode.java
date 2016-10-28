@@ -1166,8 +1166,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                         break;
 
                     default:
-                        Py.print(Py.getSystemState().stderr,
-                                Py.newString(
+                        Py.stderr.print(Py.newUnicode(
                                 String.format("XXX lineno: %d, opcode: %d\n",
                                 f.f_lasti, opcode)));
                         throw Py.SystemError("unknown opcode");

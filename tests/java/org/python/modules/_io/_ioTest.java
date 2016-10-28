@@ -127,21 +127,21 @@ public class _ioTest {
     @Test
     public void openStdinByFileno() throws IOException {
         PySystemState sys = Py.getSystemState();
-        openByFilenoTest(sys.stdin, "rb");
+        openByFilenoTest(sys.getStdin(), "rb");
     }
 
     /** Check <code>sys.stdout.fileno()</code> is acceptable to <code>_io.open()</code> */
     @Test
     public void openStdoutByFileno() throws IOException {
         PySystemState sys = Py.getSystemState();
-        openByFilenoTest(sys.stdout, "wb");
+        openByFilenoTest(sys.getStdout(), "wb");
     }
 
     /** Check <code>sys.stderr.fileno()</code> is acceptable to <code>_io.open()</code> */
     @Test
     public void openStderrByFileno() throws IOException {
         PySystemState sys = Py.getSystemState();
-        openByFilenoTest(sys.stderr, "wb");
+        openByFilenoTest(sys.getStderr(), "wb");
     }
 
     /**

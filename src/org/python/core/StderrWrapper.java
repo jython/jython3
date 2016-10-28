@@ -7,10 +7,10 @@ public class StderrWrapper extends StdoutWrapper {
     }
 
     protected PyObject getObject(PySystemState ss) {
-        return ss.stderr;
+        return ss.getStderr();
     }
 
     protected void setObject(PySystemState ss, PyObject obj) {
-        ss.stderr = obj;
+        ss.setStderr(obj);
     }
 }

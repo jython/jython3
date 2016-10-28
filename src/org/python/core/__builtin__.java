@@ -992,7 +992,7 @@ public class __builtin__ {
      * @return line of text from the file (encoded as bytes values compatible with PyBytes)
      */
     public static String raw_input(PyObject prompt, PyObject file) {
-        PyObject stdout = Py.getSystemState().stdout;
+        PyObject stdout = Py.getSystemState().getStdout();
         if (stdout instanceof PyAttributeDeleted) {
             throw Py.RuntimeError("[raw_]input: lost sys.stdout");
         }
@@ -1016,7 +1016,7 @@ public class __builtin__ {
      * @return line of text from console (encoded as bytes values compatible with PyBytes)
      */
     public static String raw_input(PyObject prompt) {
-        PyObject stdin = Py.getSystemState().stdin;
+        PyObject stdin = Py.getSystemState().getStdin();
         if (stdin instanceof PyAttributeDeleted) {
             throw Py.RuntimeError("[raw_]input: lost sys.stdin");
         }

@@ -13,11 +13,11 @@ public class StdoutWrapper extends OutputStream {
     }
 
     protected PyObject getObject(PySystemState ss) {
-        return ss.stdout;
+        return ss.getStdout();
     }
 
     protected void setObject(PySystemState ss, PyObject out) {
-        ss.stdout = out;
+        ss.sysdict.__setitem__("stdout", out);
     }
 
     protected PyObject myFile() {

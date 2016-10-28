@@ -217,7 +217,7 @@ public class PyGenerator extends PyIterator implements FinalizableBuiltin {
             }
             String msg = String.format("Exception %s: %s in %s", className, pye.value.__repr__(),
                                        __repr__());
-            Py.println(Py.getSystemState().stderr, Py.newString(msg));
+            Py.stdout.println(new PyUnicode(msg));
         } catch (Throwable t) {
             // but we currently ignore any Java exception completely. perhaps we
             // can also output something meaningful too?

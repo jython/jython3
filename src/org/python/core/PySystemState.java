@@ -162,9 +162,6 @@ public class PySystemState extends PyObject implements AutoCloseable, Closeable,
 
     private ClassLoader classLoader = null;
 
-    public PyObject stdout, stderr, stdin;
-    public PyObject __stdout__, __stderr__, __stdin__;
-
     public PyObject __displayhook__, __excepthook__;
 
     public PyObject last_value = Py.None;
@@ -288,9 +285,9 @@ public class PySystemState extends PyObject implements AutoCloseable, Closeable,
             encoding = Py.getConsole().getEncoding();
         }
 
-        ((PyFile)stdin).setEncoding(encoding, errors);
-        ((PyFile)stdout).setEncoding(encoding, errors);
-        ((PyFile)stderr).setEncoding(encoding, "backslashreplace");
+        ((PyFile)getStdin()).setEncoding(encoding, errors);
+        ((PyFile)getStdout()).setEncoding(encoding, errors);
+        ((PyFile)getStderr()).setEncoding(encoding, "backslashreplace");
     }
 
     private void initImplementation() {
@@ -327,6 +324,26 @@ public class PySystemState extends PyObject implements AutoCloseable, Closeable,
 
     public PyObject getBuiltins() {
         return builtins;
+    }
+
+    public PyObject getStdout() {
+        return sysdict.__getitem__("stdout");
+    }
+
+    public PyObject getStderr() {
+        return sysdict.__getitem__("stderr");
+    }
+
+    public PyObject getStdin() {
+        return sysdict.__getitem__("stdin");
+    }
+
+    public void setStdout(PyObject stdout) {
+        sysdict.__setitem__("stdout", stdout);
+    }
+
+    public void setStderr(PyObject stderr) {
+        sysdict.__setitem__("stderr", stderr);
     }
 
     public void setBuiltins(PyObject value) {
@@ -703,7 +720,7 @@ public class PySystemState extends PyObject implements AutoCloseable, Closeable,
                 exitfunc.__call__();
             } catch (PyException exc) {
                 if (!exc.match(Py.SystemExit)) {
-                    Py.println(stderr, Py.newUnicode("Error in sys.exitfunc:"));
+                    Py.println(getStderr(), Py.newUnicode("Error in sys.exitfunc:"));
                 }
                 Py.printException(exc);
             }
@@ -1583,9 +1600,9 @@ public class PySystemState extends PyObject implements AutoCloseable, Closeable,
     private void initstdio() {
         String mode = Options.unbuffered ? "b" : "";
         int buffering = Options.unbuffered ? 0 : 1;
-        stdin = __stdin__ = new PyFile(System.in, "<stdin>", "r" + mode, buffering, false);
-        stdout = __stdout__ = new PyFile(System.out, "<stdout>", "w" + mode, buffering, false);
-        stderr = __stderr__ = new PyFile(System.err, "<stderr>", "w" + mode, 0, false);
+        PyObject stdin = new PyFile(System.in, "<stdin>", "r" + mode, buffering, false);
+        PyObject stdout = new PyFile(System.out, "<stdout>", "w" + mode, buffering, false);
+        PyObject stderr = new PyFile(System.err, "<stderr>", "w" + mode, 0, false);
 
         SysModule.setObject("stdin", stdin);
         SysModule.setObject("__stdin__", stdin);
@@ -1819,42 +1836,7 @@ public class PySystemState extends PyObject implements AutoCloseable, Closeable,
                 return retVal;
             }
         }
-        if (stdout != null) {
-            retVal = visit.visit(stdout, arg);
-            if (retVal != 0) {
-                return retVal;
-            }
-        }
-        if (stderr != null) {
-            retVal = visit.visit(stderr, arg);
-            if (retVal != 0) {
-                return retVal;
-            }
-        }
-        if (stdin != null) {
-            retVal = visit.visit(stdin, arg);
-            if (retVal != 0) {
-                return retVal;
-            }
-        }
-        if (__stdout__ != null) {
-            retVal = visit.visit(__stdout__, arg);
-            if (retVal != 0) {
-                return retVal;
-            }
-        }
-        if (__stderr__ != null) {
-            retVal = visit.visit(__stderr__, arg);
-            if (retVal != 0) {
-                return retVal;
-            }
-        }
-        if (__stdin__ != null) {
-            retVal = visit.visit(__stdin__, arg);
-            if (retVal != 0) {
-                return retVal;
-            }
-        }
+
         if (__displayhook__ != null) {
             retVal = visit.visit(__displayhook__, arg);
             if (retVal != 0) {
@@ -1899,9 +1881,8 @@ public class PySystemState extends PyObject implements AutoCloseable, Closeable,
         return ob != null && (ob == argv || ob ==  modules || ob == path
             || ob == warnoptions || ob == builtins || ob == platform
             || ob == meta_path || ob == path_hooks || ob == path_importer_cache
-            || ob == ps1 || ob == ps2 || ob == executable || ob == stdout
-            || ob == stderr || ob == stdin || ob == __stdout__ || ob == __stderr__
-            || ob == __stdin__ || ob == __displayhook__ || ob == __excepthook__
+            || ob == ps1 || ob == ps2 || ob == executable
+            || ob == __displayhook__ || ob == __excepthook__
             || ob ==  last_value || ob == last_type || ob == last_traceback
             || ob ==__name__ || ob == __dict__);
     }

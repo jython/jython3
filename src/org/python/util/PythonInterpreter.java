@@ -15,6 +15,7 @@ import org.python.core.PyModule;
 import org.python.core.PyObject;
 import org.python.core.PySystemState;
 import org.python.core.__builtin__;
+import org.python.modules.sys.SysModule;
 
 import java.io.Closeable;
 import java.io.Reader;
@@ -129,7 +130,7 @@ public class PythonInterpreter implements AutoCloseable, Closeable {
      * @param inStream a Python file-like object to use as the input stream
      */
     public void setIn(PyObject inStream) {
-        getSystemState().stdin = inStream;
+        SysModule.setObject("stdin", inStream);
     }
 
     /**
@@ -191,7 +192,7 @@ public class PythonInterpreter implements AutoCloseable, Closeable {
      * @param outStream Python file-like object to use as the output stream
      */
     public void setOut(PyObject outStream) {
-        getSystemState().stdout = outStream;
+        SysModule.setObject("stdout", outStream);
     }
 
     /**
@@ -222,7 +223,7 @@ public class PythonInterpreter implements AutoCloseable, Closeable {
      * @param outStream Python file-like object to use as the error output stream
      */
     public void setErr(PyObject outStream) {
-        getSystemState().stderr = outStream;
+        SysModule.setObject("stderr", outStream);
     }
 
     /**
@@ -393,12 +394,12 @@ public class PythonInterpreter implements AutoCloseable, Closeable {
         PySystemState sys = Py.getSystemState();
         sys.callExitFunc();
         try {
-            sys.stdout.invoke("flush");
+            sys.getStdout().invoke("flush");
         } catch (PyException pye) {
             // fall through
         }
         try {
-            sys.stderr.invoke("flush");
+            sys.getStderr().invoke("flush");
         } catch (PyException pye) {
             // fall through
         }
