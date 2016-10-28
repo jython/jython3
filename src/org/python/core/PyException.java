@@ -73,7 +73,7 @@ public class PyException extends RuntimeException implements Traverseproc
             isReRaise = true;
         }
         if (value != null && !isExceptionInstance(value)) {
-            PyException pye = Py.getThreadState().exceptions.peekFirst();
+            PyException pye = Py.getThreadState().exceptions.pollFirst();
             if (pye != null && pye.value instanceof PyBaseException) {
                 context = (PyBaseException) pye.value;
             }
@@ -244,7 +244,7 @@ public class PyException extends RuntimeException implements Traverseproc
             type = value;
             // null flags context has been take care of
             pye = new PyException(type, null, cause);
-            PyException context = state.exceptions.peekFirst();
+            PyException context = state.exceptions.pollFirst();
             if (context != null) {
                 if (context.value instanceof PyBaseException) {
                     pye.context = (PyBaseException) context.value;
