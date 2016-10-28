@@ -160,7 +160,7 @@ public class PyTableCode extends PyBaseCode
             if (frame.f_back != null) {
                 frame.f_builtins = frame.f_back.f_builtins;
             } else {
-                frame.f_builtins = ts.systemState.builtins;;
+                frame.f_builtins = ts.systemState.builtins;
             }
         }
         // nested scopes: setup env with closure

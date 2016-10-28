@@ -108,7 +108,7 @@ public abstract class PyBaseCode extends PyCode {
     public PyObject call(ThreadState state, PyObject globals, PyObject[] defaults,
                          PyDictionary kw_defaults, PyObject closure)
     {
-        if (co_argcount != 0 || varargs || varkwargs || !kw_defaults.isEmpty())
+        if (co_argcount != 0 || co_kwonlyargcount != 0 || varargs || varkwargs || !kw_defaults.isEmpty())
             return call(state, Py.EmptyObjects, Py.NoKeywords, globals, defaults,
                         kw_defaults, closure);
         PyFrame frame = new PyFrame(this, globals);
@@ -302,7 +302,7 @@ public abstract class PyBaseCode extends PyCode {
                 }
             }
             if (!missingKwArg.isEmpty()) {
-                throw Py.TypeError(String.format("%.200s() missing %d keyword-only %s: %s", co_name, missingKwArg.size(),
+                throw Py.TypeError(String.format("%.200s() missing %d keyword-only %s: '%s'", co_name, missingKwArg.size(),
                         missingKwArg.size() > 1 ? "arguments" : "argument", Joiner.on(',').join(missingKwArg)));
             }
 
