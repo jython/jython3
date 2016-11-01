@@ -162,7 +162,7 @@ public class PySystemState extends PyObject implements AutoCloseable, Closeable,
 
     private ClassLoader classLoader = null;
 
-    public PyObject __displayhook__, __excepthook__;
+    private PyObject __displayhook__, __excepthook__;
 
     public PyObject last_value = Py.None;
     public PyObject last_type = Py.None;
@@ -1574,7 +1574,9 @@ public class PySystemState extends PyObject implements AutoCloseable, Closeable,
     }
 
     static void excepthook(PyObject type, PyObject val, PyObject tb) {
-        Py.displayException(type, val, tb, null);
+        PyBaseException value = null;
+        if (val != Py.None) value = (PyBaseException) val;
+        Py.PyErr_Display(type, value, tb);
     }
 
     public static PyTuple exc_info() {

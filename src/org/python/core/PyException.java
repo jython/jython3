@@ -84,6 +84,9 @@ public class PyException extends RuntimeException implements Traverseproc
         } else {
             this.value = value;
         }
+        if (value instanceof PyBaseException) {
+            ((PyBaseException) value).wrapper = this;
+        }
     }
 
     public PyException(PyObject type, String value) {
@@ -134,50 +137,46 @@ public class PyException extends RuntimeException implements Traverseproc
      * instance.
      *
      */
-    public void normalize() {
-        // FIXME sometimes it's not properly normalized, try to reproduce with this test
-        // test.test_descr.ClassPropertiesAndMethods.test_unsubclassable_types
+    public PyException normalize() {
 //        if (normalized) {
-//            return;
+//            return this;
 //        }
         PyObject inClass = null;
         if (isExceptionInstance(value)) {
             inClass = value.fastGetClass();
         }
 
-        if (type instanceof PyJavaType) {
-            // if this is a java exception, get it's string repr
-            value = new PyUnicode(value.toString());
-        }
-        if (isExceptionClass(type)) {
-            if (inClass == null || !Py.isSubClass(inClass, type)) {
-                PyObject[] args;
+//        if (type instanceof PyJavaType) {
+//            type = Py.JavaException;
+//        }
+        if (inClass == null || !Py.isSubClass(inClass, type)) {
+            PyObject[] args;
 
-                // Don't decouple a tuple into args when it's a
-                // KeyError, pass it on through below
-                if (value == Py.None) {
-                    args = Py.EmptyObjects;
-                } else if (value instanceof PyTuple && type != Py.KeyError) {
-                    args = ((PyTuple)value).getArray();
-                } else {
-                    args = new PyObject[] {value};
-                }
-
-                value = type.__call__(args);
-            } else if (inClass != type) {
-                type = inClass;
+            // Don't decouple a tuple into args when it's a
+            // KeyError, pass it on through below
+            if (value == Py.None) {
+                args = Py.EmptyObjects;
+            } else if (value instanceof PyTuple && type != Py.KeyError) {
+                args = ((PyTuple)value).getArray();
+            } else {
+                args = new PyObject[] {value};
             }
+
+            value = type.__call__(args);
+        } else if (inClass != type) {
+            type = inClass;
         }
         // FIXME: all exceptions thrown into Python should compliant to PEP-3134
-        if (value instanceof PyBaseException) {
+//        if (value instanceof PyBaseException) {
             if (cause != null) {
                 ((PyBaseException) value).setCause(cause);
             }
             if (context != null) {
-                ((PyBaseException) value).__context__ = context;
+                ((PyBaseException) value).setContext(context);
             }
             normalized = true;
-        }
+//        }
+        return this;
     }
 
     /**
@@ -204,6 +203,8 @@ public class PyException extends RuntimeException implements Traverseproc
             if (value instanceof PyBaseException) {
                 traceback.tb_next = ((PyBaseException) value).__traceback__;
                 ((PyBaseException) value).__traceback__ = traceback;
+            } else {
+                System.out.println("foo");
             }
         }
         // finally blocks immediately tracebackHere: so they toggle isReRaise to skip the

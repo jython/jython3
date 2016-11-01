@@ -26,6 +26,9 @@ public class PyBaseException extends PyObject implements Traverseproc {
     /** Exception's underlying dictionary, lazily created. */
     public PyObject __dict__;
 
+    /** The reference to the wrapping PyException instance */
+    protected PyException wrapper;
+
     @ExposedGet(doc = BuiltinDocs.BaseException___cause___doc)
     public PyObject __cause__;
 

@@ -107,10 +107,12 @@ public class PyTraceback extends PyObject implements Traverseproc {
 
     public void dumpStack(StringBuilder buf) {
         buf.append(tracebackInfo());
-        if (tb_next != null && tb_next != this) {
-            ((PyTraceback)tb_next).dumpStack(buf);
-        } else if (tb_next == this) {
-            buf.append("circularity detected!"+this+tb_next);
+        if (tb_next != null) {
+            if (tb_next == this) {
+                buf.append("circularity detected!"+this+tb_next);
+                return;
+            }
+            ((PyTraceback) tb_next).dumpStack(buf);
         }
     }
 

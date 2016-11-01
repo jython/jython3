@@ -27,6 +27,9 @@ public class Exceptions {
         buildClass(dict, "Exception", "BaseException",
                 "Common base class for all non-exit Exceptions.");
 
+        buildClass(dict, "JavaException", "BaseException",
+                "Base class for all standard Java Exceptions");
+
         buildClass(dict, "StandardError", "Exception",
                 "Base class for all standard Python Exceptions that do not represent\n"
                         + "interpreter exiting.");
@@ -400,7 +403,7 @@ public class Exceptions {
 
     public static PyObject KeyError() {
         PyObject dict = new PyStringMap();
-        dict.__setitem__("__str__", bindStaticJavaMethod("__str__", "KeyError__str__"));
+//        dict.__setitem__("__str__", bindStaticJavaMethod("__str__", "KeyError__str__"));
         return dict;
     }
 
@@ -413,10 +416,10 @@ public class Exceptions {
         // KeyError
         // alone.  The downside is that if KeyError is raised with an explanatory
         // string, that string will be displayed in quotes.  Too bad.
-        if (selfBase.args.__len__() == 1) {
-            return selfBase.args.__getitem__(0).__repr__();
-        }
-        return PyBaseException.TYPE.invoke("__str__", self, args, kwargs);
+//        if (selfBase.args.__len__() == 1) {
+        return selfBase.args.__getitem__(0).__repr__();
+//        }
+//        return PyBaseException.TYPE.invoke("__str__", self, args, kwargs);
     }
 
     public static PyObject UnicodeError() {

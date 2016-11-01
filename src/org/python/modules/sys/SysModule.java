@@ -5,7 +5,6 @@ import org.python.core.Py;
 import org.python.core.PyException;
 import org.python.core.PyFrame;
 import org.python.core.PyObject;
-import org.python.core.PySystemState;
 import org.python.core.PyTuple;
 import org.python.core.PyUnicode;
 import org.python.expose.ExposedConst;
@@ -99,6 +98,11 @@ public class SysModule {
     public static void setObject(String name, PyObject value) {
         PyObject sysdict = Py.getSystemState().sysdict;
         sysdict.__setitem__(name, value);
+    }
+
+    public static PyObject getObject(String name) {
+        PyObject sysdict = Py.getSystemState().sysdict;
+        return sysdict.__getitem__(name);
     }
 
     @ExposedFunction

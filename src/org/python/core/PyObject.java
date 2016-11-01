@@ -236,8 +236,8 @@ public class PyObject implements Serializable {
     // is needed.
     @ExposedMethod(names = "__str__", doc = BuiltinDocs.object___str___doc)
     final PyUnicode object__str__() {
-        return __repr__();
-//        return new PyUnicode(toString());
+//        return __repr__();
+        return new PyUnicode(toString());
     }
 
     public PyUnicode __repr__() {
@@ -274,8 +274,8 @@ public class PyObject implements Serializable {
      * override the standard Java <code>toString</code> method.
      **/
     public PyUnicode __str__() {
-        return (PyUnicode) invoke("__repr__");
-//        return object__str__();
+//        return (PyUnicode) invoke("__repr__");
+        return object__str__();
     }
 
     /**

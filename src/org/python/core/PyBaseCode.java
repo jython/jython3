@@ -69,6 +69,7 @@ public abstract class PyBaseCode extends PyCode {
         } catch (Throwable t) {
             // Convert Exceptions that occurred in Java code to PyExceptions
             PyException pye = Py.JavaError(t);
+            pye.normalize();
             pye.tracebackHere(frame);
 
             frame.f_lasti = -1;

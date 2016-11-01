@@ -187,6 +187,7 @@ public class PyTableCode extends PyBaseCode
         } catch (Throwable t) {
             // Convert Exceptions that occurred in Java code to PyExceptions
             PyException pye = Py.JavaError(t);
+            pye.normalize();
             pye.tracebackHere(frame);
 
             frame.f_lasti = -1;

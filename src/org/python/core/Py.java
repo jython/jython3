@@ -34,6 +34,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -290,6 +291,8 @@ public final class Py {
     }
     public static PyObject IndentationError;
     public static PyObject TabError;
+
+    public static PyObject JavaException;
     public static PyObject AttributeError;
 
     public static PyException AttributeError(String message) {
@@ -924,6 +927,7 @@ public final class Py {
 
         BaseException = initExc("BaseException", exc, dict);
         Exception = initExc("Exception", exc, dict);
+        JavaException = initExc("JavaException", exc, dict);
         SystemExit = initExc("SystemExit", exc, dict);
         StopAsyncIteration = initExc("StopAsyncIteration", exc, dict);
         StopIteration = initExc("StopIteration", exc, dict);
@@ -1302,6 +1306,43 @@ public final class Py {
         return str;
     }
 
+    private static final String CAUSE_MESSAGE = "\nThe above exception was the direct cause of the following exception:\n\n";
+
+    private static final String CONTEXT_MESSAGE = "\nDuring handling of the above exception, another exception occurred:\n\n";
+
+    /**
+     * see Python/pythonrun.c
+     * print_exception_recursive
+     */
+    private static void printExceptionRecursive(PyObject f, PyBaseException value, Set<PyBaseException> seen) {
+        if (value == null) {
+            return;
+        }
+        StdoutWrapper stderr = Py.stderr;
+        if (f != null) {
+            stderr = new FixedFileWrapper(f);
+        }
+
+        if (seen != null) {
+            /* exception chaining */
+            seen.add(value);
+            PyObject cause = value.__cause__;
+            PyObject context = value.__context__;
+            if (cause != null && cause != Py.None) {
+//                if (seen.contains(cause)) {
+                    printExceptionRecursive(f, (PyBaseException) cause, seen);
+                    stderr.print(CAUSE_MESSAGE);
+//                }
+            } else if (context != null && context != Py.None && !value.__suppress_context__.__bool__()) {
+//                if (seen.contains(context)) {
+                    printExceptionRecursive(f, (PyBaseException) context, seen);
+                    stderr.print(CONTEXT_MESSAGE);
+//                }
+            }
+        }
+        displayException(value.getType(), value, value.__traceback__, f);
+    }
+
     /* Display a PyException and stack trace */
     public static void printException(Throwable t) {
         printException(t, null, null);
@@ -1311,6 +1352,8 @@ public final class Py {
         printException(t, f, null);
     }
 
+    // TODO start from Python/pythonrun.c print_exception_recursive, the logic is not the same
+    // PyErr_PrintEx
     public static synchronized void printException(Throwable t, PyFrame f,
             PyObject file) {
         StdoutWrapper stderr = Py.stderr;
@@ -1338,11 +1381,11 @@ public final class Py {
 
         ThreadState ts = getThreadState();
 
-        ts.systemState.last_value = exc.value;
-        ts.systemState.last_type = exc.type;
-        ts.systemState.last_traceback = exc.traceback;
+//        ts.systemState.last_value = exc.value;
+//        ts.systemState.last_type = exc.type;
+//        ts.systemState.last_traceback = exc.traceback;
 
-        PyObject exceptHook = ts.systemState.__findattr__("excepthook");
+        PyObject exceptHook = SysModule.getObject("excepthook");
         if (exceptHook != null) {
             try {
                 exceptHook.__call__(exc.type, exc.value, exc.traceback);
@@ -1363,6 +1406,16 @@ public final class Py {
         ts.exceptions.pop();
     }
 
+    // PyErr_Display
+    public static void PyErr_Display(PyObject exception, PyBaseException value, PyObject tb) {
+        Set<PyBaseException> seen = new HashSet<>();
+        if (value != null && tb != null && tb != Py.None && value.__traceback__ == null) {
+            value.setTraceback(tb);
+        }
+        printExceptionRecursive(SysModule.getObject("stderr"), value, seen);
+    }
+
+    // print_exception
     public static void displayException(PyObject type, PyObject value, PyObject tb,
                                         PyObject file) {
         StdoutWrapper stderr = Py.stderr;
@@ -1476,7 +1529,7 @@ public final class Py {
                 buf.append("<unknown>");
             } else {
                 String moduleStr = moduleName.toString();
-                if (!moduleStr.equals("Exceptions")) {
+                if (!moduleStr.equals("builtins")) {
                     buf.append(moduleStr);
                     buf.append(".");
                 }

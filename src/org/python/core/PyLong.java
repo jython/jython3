@@ -530,7 +530,7 @@ public class PyLong extends PyObject {
     private BigInteger divide(BigInteger x, BigInteger y) {
         BigInteger zero = BigInteger.valueOf(0);
         if (y.equals(zero)) {
-            throw Py.ZeroDivisionError("long division or modulo");
+            throw Py.ZeroDivisionError("division by zero");
         }
 
         if (y.compareTo(zero) < 0) {
@@ -580,7 +580,7 @@ public class PyLong extends PyObject {
         bd = scaledDoubleValue(b, be);
 
         if (bd == 0) {
-            throw Py.ZeroDivisionError("long division or modulo");
+            throw Py.ZeroDivisionError("division by zero");
         }
 
         ad /= bd;
