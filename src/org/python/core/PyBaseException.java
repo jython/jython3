@@ -173,7 +173,6 @@ public class PyBaseException extends PyObject implements Traverseproc {
     public void setContext(PyObject val) {
         ensureException(val);
         __context__ = val;
-        __suppress_context__ = Py.True;
     }
 
     @ExposedSet(name = "__cause__")
@@ -184,7 +183,9 @@ public class PyBaseException extends PyObject implements Traverseproc {
         } else {
             __cause__ = val;
         }
-        __suppress_context__ = Py.True;
+        if (val != null) {
+            __suppress_context__ = Py.True;
+        }
     }
 
     private void ensureDict() {

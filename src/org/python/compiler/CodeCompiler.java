@@ -970,6 +970,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             code.invokestatic(p(PyException.class), "doRaise",
                     sig(PyException.class, PyObject.class, PyObject.class));
         }
+        code.dup();
+        loadFrame();
+        code.invokevirtual(p(PyException.class), "tracebackHere", sig(Void.TYPE, PyFrame.class));
         code.athrow();
         return Exit;
     }
@@ -3351,7 +3354,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
         // raise
         // # The exception is swallowed if __exit__() returns true
         doRaise();
-        code.checkcast(p(Throwable.class));
+        code.dup();
+        loadFrame();
+        code.invokevirtual(p(PyException.class), "tracebackHere", sig(Void.TYPE, PyFrame.class));
         code.athrow();
 
         code.label(label_catch_end);

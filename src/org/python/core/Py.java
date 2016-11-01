@@ -1329,15 +1329,15 @@ public final class Py {
             PyObject cause = value.__cause__;
             PyObject context = value.__context__;
             if (cause != null && cause != Py.None) {
-//                if (seen.contains(cause)) {
+                if (!seen.contains(cause)) {
                     printExceptionRecursive(f, (PyBaseException) cause, seen);
                     stderr.print(CAUSE_MESSAGE);
-//                }
+                }
             } else if (context != null && context != Py.None && !value.__suppress_context__.__bool__()) {
-//                if (seen.contains(context)) {
+                if (!seen.contains(context)) {
                     printExceptionRecursive(f, (PyBaseException) context, seen);
                     stderr.print(CONTEXT_MESSAGE);
-//                }
+                }
             }
         }
         displayException(value.getType(), value, value.__traceback__, f);
