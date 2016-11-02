@@ -857,12 +857,12 @@ public final class Py {
             String filename, String name,
             boolean args, boolean keywords,
             PyFunctionTable funcs, int func_id,
-            String[] cellvars, String[] freevars,
+            String[] cellvars, String[] freevars, String[] names,
             int npurecell, int kwonlyargcount, int moreflags) {
         return new PyTableCode(argcount, varnames,
                 filename, name, 0, args, keywords, funcs,
-                func_id, cellvars, freevars, npurecell,
-                kwonlyargcount, moreflags);
+                func_id, cellvars, freevars, names, null,
+                npurecell, kwonlyargcount, moreflags);
     }
 
     public static PyCode newCode(int argcount, String varnames[],
@@ -870,13 +870,27 @@ public final class Py {
             int firstlineno,
             boolean args, boolean keywords,
             PyFunctionTable funcs, int func_id,
-            String[] cellvars, String[] freevars,
+            String[] cellvars, String[] freevars, String[] names,
             int npurecell, int kwonlyargcount, int moreflags) {
         return new PyTableCode(argcount, varnames,
                 filename, name, firstlineno, args, keywords,
-                funcs, func_id, cellvars, freevars, npurecell,
+                funcs, func_id, cellvars, freevars, names, null,
+                npurecell, kwonlyargcount, moreflags);
+    }
+
+    public static PyCode newCode(int argcount, String varnames[],
+            String filename, String name,
+            int firstlineno,
+            boolean args, boolean keywords,
+            PyFunctionTable funcs, int func_id,
+            String[] cellvars, String[] freevars, String[] names, PyObject[] consts,
+            int npurecell, int kwonlyargcount, int moreflags) {
+        return new PyTableCode(argcount, varnames,
+                filename, name, firstlineno, args, keywords,
+                funcs, func_id, cellvars, freevars, names, consts, npurecell,
                 kwonlyargcount, moreflags);
     }
+
 
     // --
     public static PyCode newCode(int argcount, String varnames[],

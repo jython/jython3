@@ -323,6 +323,25 @@ public class ScopesCompiler extends Visitor implements ScopeConstants {
     }
 
     @Override
+    public Object visitNum(Num num) throws Exception {
+        cur.addConst(num);
+        return null;
+    }
+
+    @Override
+    public Object visitStr(Str s) throws Exception {
+        cur.addConst(s);
+        return null;
+    }
+
+    @Override
+    public Object visitBytes(Bytes b) throws Exception {
+        cur.addConst(b);
+        return null;
+    }
+
+
+    @Override
     public Object visitName(Name node) throws Exception {
         String name = node.getInternalId();
         if (cur.async && name.equals("await"))

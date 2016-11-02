@@ -26,19 +26,22 @@ public class PyTableCode extends PyBaseCode
                        PyFunctionTable funcs, int func_id)
     {
         this(argcount, varnames, filename, name, firstlineno, varargs,
-             varkwargs, funcs, func_id, null, null, 0, 0, 0);
+             varkwargs, funcs, func_id, null, null, null, null, 0, 0, 0);
     }
 
-    public PyTableCode(int argcount, String varnames[],
+    public PyTableCode(int argcount, String[] varnames,
                        String filename, String name,
                        int firstlineno,
                        boolean varargs, boolean varkwargs,
                        PyFunctionTable funcs, int func_id,
-                       String[] cellvars, String[] freevars, int npurecell,
+                       String[] cellvars, String[] freevars, String[] names,
+                       PyObject[] consts, int npurecell,
                        int kwonlyargcount, int moreflags) // may change
     {
         co_argcount = nargs = argcount;
         co_varnames = varnames;
+        co_names = names;
+        co_consts = consts;
         co_nlocals = varnames.length;
         co_filename = filename;
         co_firstlineno = firstlineno;
@@ -65,7 +68,7 @@ public class PyTableCode extends PyBaseCode
     private static final String[] __members__ = {
         "co_name", "co_argcount",
         "co_varnames", "co_filename", "co_firstlineno",
-        "co_flags","co_cellvars","co_freevars","co_nlocals",
+        "co_flags","co_cellvars","co_freevars", "co_nlocals",
         "co_kwonlyargcount"
         // not supported: co_code, co_consts, co_names,
         // co_lnotab, co_stacksize
@@ -105,8 +108,18 @@ public class PyTableCode extends PyBaseCode
     }
 
     @ExposedGet
+    final PyObject co_argcount() {
+        return new PyLong(co_argcount);
+    }
+
+    @ExposedGet
     final PyObject co_varnames() {
         return toPyStringTuple(co_varnames);
+    }
+
+    @ExposedGet
+    final PyObject co_names() {
+        return toPyStringTuple(co_names);
     }
 
     @ExposedGet
@@ -120,8 +133,17 @@ public class PyTableCode extends PyBaseCode
     }
 
     @ExposedGet
+    final PyObject co_consts() {
+        return new PyTuple(co_consts);
+    }
+    @ExposedGet
     final PyObject co_filename() {
         return new PyUnicode(co_filename);
+    }
+
+    @ExposedGet
+    final PyObject co_nlocals() {
+        return new PyLong(co_nlocals);
     }
 
     @ExposedGet

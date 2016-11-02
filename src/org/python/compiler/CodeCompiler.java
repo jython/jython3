@@ -2724,13 +2724,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
     @Override
     public Object visitNum(Num node) throws Exception {
-        if (node.getInternalN() instanceof PyInteger || node.getInternalN() instanceof PyLong) {
-            module.longConstant(((PyObject)node.getInternalN()).__str__().toString()).get(code);
-        } else if (node.getInternalN() instanceof PyFloat) {
-            module.floatConstant(((PyFloat)node.getInternalN()).getValue()).get(code);
-        } else if (node.getInternalN() instanceof PyComplex) {
-            module.complexConstant(((PyComplex)node.getInternalN()).imag).get(code);
-        }
+        module.constant(node).get(code);
         return null;
     }
 
@@ -2884,15 +2878,13 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
 
     @Override
     public Object visitBytes(Bytes node) throws Exception {
-        String s = node.getInternalS();
-        module.stringConstant(s).get(code);
+        module.constant(node).get(code);
         return null;
     }
 
     @Override
     public Object visitStr(Str node) throws Exception {
-        PyUnicode s = (PyUnicode)node.getInternalS();
-        module.unicodeConstant(s.asString()).get(code);
+        module.constant(node).get(code);
         return null;
     }
 

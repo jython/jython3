@@ -1,22 +1,12 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.compiler;
 
-import static org.python.util.CodegenUtils.ci;
-import static org.python.util.CodegenUtils.p;
-import static org.python.util.CodegenUtils.sig;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.python.antlr.ParseException;
 import org.python.antlr.PythonTree;
+import org.python.antlr.ast.Bytes;
 import org.python.antlr.ast.Num;
 import org.python.antlr.ast.Str;
 import org.python.antlr.ast.Suite;
@@ -40,6 +30,15 @@ import org.python.core.PyRunnable;
 import org.python.core.PyRunnableBootstrap;
 import org.python.core.PyUnicode;
 import org.python.core.ThreadState;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
+
+import static org.python.util.CodegenUtils.*;
 
 class PyIntegerConstant extends Constant implements ClassConstants, Opcodes {
 
@@ -250,7 +249,9 @@ class PyCodeConstant extends Constant implements ClassConstants, Opcodes {
     final String co_name;
     final int argcount;
     final int kwonlyargcount;
+    final List<String> varnames;
     final List<String> names;
+    final List<PythonTree> constants;
     final int id;
     final int co_firstlineno;
     final boolean arglist, keywordlist;
@@ -304,11 +305,13 @@ class PyCodeConstant extends Constant implements ClassConstants, Opcodes {
 
         // !classdef only
         if (!classBody) {
-            names = toNameAr(scope.names, false);
+            varnames = toNameAr(scope.names, false);
         } else {
-            names = null;
+            varnames = null;
         }
 
+        constants = scope.constants;
+        names = toNameAr(scope.globalNames, true);
         cellvars = toNameAr(scope.cellvars, true);
         freevars = toNameAr(scope.freevars, true);
         jy_npurecell = scope.jy_npurecell;
@@ -371,15 +374,15 @@ class PyCodeConstant extends Constant implements ClassConstants, Opcodes {
         module.classfile.addField(name, ci(PyCode.class), access);
         c.iconst(argcount);
 
-        // Make all names
-        int nameArray;
-        if (names != null) {
-            nameArray = CodeCompiler.makeStrings(c, names);
+        // Make all var names
+        int varNameArr;
+        if (varnames != null) {
+            varNameArr = CodeCompiler.makeStrings(c, varnames);
         } else { // classdef
-            nameArray = CodeCompiler.makeStrings(c, null);
+            varNameArr = CodeCompiler.makeStrings(c, null);
         }
-        c.aload(nameArray);
-        c.freeLocal(nameArray);
+        c.aload(varNameArr);
+        c.freeLocal(varNameArr);
         c.aload(1);
         c.ldc(co_name);
         c.iconst(co_firstlineno);
@@ -406,6 +409,19 @@ class PyCodeConstant extends Constant implements ClassConstants, Opcodes {
             c.aconst_null();
         }
 
+        if (names != null) {
+            int strArray = CodeCompiler.makeStrings(c, names);
+            c.aload(strArray);
+            c.freeLocal(strArray);
+        } else {
+            c.aconst_null();
+        }
+        if (constants != null) {
+            int constArr = module.makeConstArray(c, constants);
+            c.aload(constArr);
+            c.freeLocal(constArr);
+        }
+
         c.iconst(jy_npurecell);
         c.iconst(kwonlyargcount);
         c.iconst(moreflags);
@@ -415,7 +431,8 @@ class PyCodeConstant extends Constant implements ClassConstants, Opcodes {
                 "newCode",
                 sig(PyCode.class, Integer.TYPE, String[].class, String.class, String.class,
                         Integer.TYPE, Boolean.TYPE, Boolean.TYPE, PyFunctionTable.class,
-                        Integer.TYPE, String[].class, String[].class, Integer.TYPE, Integer.TYPE, Integer.TYPE));
+                        Integer.TYPE, String[].class, String[].class, String[].class, PyObject[].class,
+                        Integer.TYPE, Integer.TYPE, Integer.TYPE));
         c.putstatic(module.classfile.name, name, ci(PyCode.class));
     }
 }
@@ -477,6 +494,26 @@ public class Module implements Opcodes, ClassConstants, CompilationContext {
         c.name = "_" + constants.size();
         constants.put(ret, ret);
         return ret;
+    }
+
+    Constant constant(PythonTree node) {
+        if (node instanceof Num) {
+            PyObject n = (PyObject) ((Num) node).getInternalN();
+            if (n instanceof PyLong) {
+                return longConstant(n.__str__().toString());
+            } else if (n instanceof PyFloat) {
+                return floatConstant(((PyFloat) n).getValue());
+            } else if (n instanceof PyComplex) {
+                return complexConstant(((PyComplex)n).imag);
+            }
+        } else if (node instanceof Str) {
+            PyUnicode s = (PyUnicode)((Str) node).getInternalS();
+            return unicodeConstant(s.asString());
+        } else if (node instanceof Bytes) {
+            String s = ((Bytes) node).getInternalS();
+            return stringConstant(s);
+        }
+        throw new RuntimeException("unexpected constant: " + node.toString());
     }
 
     Constant integerConstant(int value) {
@@ -659,6 +696,37 @@ public class Module implements Opcodes, ClassConstants, CompilationContext {
         }
         throw new ParseException(msg, node);
     }
+
+    public int makeConstArray(Code code, java.util.List<? extends PythonTree> nodes) throws IOException {
+        final int n;
+
+        if (nodes == null) {
+            n = 0;
+        } else {
+            n = nodes.size();
+        }
+
+        int array = code.getLocal(ci(PyObject[].class));
+        if (n == 0) {
+            code.getstatic(p(Py.class), "EmptyObjects", ci(PyObject[].class));
+            code.astore(array);
+        } else {
+            code.iconst(n);
+            code.anewarray(p(PyObject.class));
+            code.astore(array);
+
+            for (int i = 0; i < n; i++) {
+                constant(nodes.get(i)).get(code);
+                code.aload(array);
+                code.swap();
+                code.iconst(i);
+                code.swap();
+                code.aastore();
+            }
+        }
+        return array;
+    }
+
 
     public static void compile(mod node, OutputStream ostream, String name, String filename,
             boolean linenumbers, boolean printResults, CompilerFlags cflags) throws Exception {

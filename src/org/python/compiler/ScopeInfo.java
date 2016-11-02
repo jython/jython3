@@ -2,17 +2,14 @@
 
 package org.python.compiler;
 
-import com.google.common.base.Joiner;
 import org.python.antlr.PythonTree;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 public class ScopeInfo extends Object implements ScopeConstants {
 
@@ -74,7 +71,7 @@ public class ScopeInfo extends Object implements ScopeConstants {
     public ArgListCompiler ac;
 
     public Map<String, SymInfo> tbl = new LinkedHashMap<String, SymInfo>();
-    public Vector<String> names = new Vector<String>();
+    public List<String> names = new ArrayList<>();
 
     public int addNonlocal(String name) {
         SymInfo info = tbl.get(name);
@@ -105,7 +102,7 @@ public class ScopeInfo extends Object implements ScopeConstants {
     public void addParam(String name) {
 //System.out.println("addParam " + name);
         tbl.put(name, new SymInfo(PARAM|BOUND,local++));
-        names.addElement(name);
+        names.add(name);
     }
 
     public void markFromParam() {
@@ -132,13 +129,20 @@ public class ScopeInfo extends Object implements ScopeConstants {
         }
     }
 
+    public void addConst(PythonTree node) {
+        constants.add(node);
+    }
+
     private final static Object PRESENT = new Object();
 
     public Hashtable<String,Object> inner_free = new Hashtable<String,Object>();
 
-    public Vector<String> cellvars = new Vector<String>();
-
-    public Vector<String> jy_paramcells = new Vector<String>();
+    // FIXME: names should be varnames, globalNames is names, for corresponding fields in code object
+    public List<String> globalNames = new ArrayList<>();
+    public List<PythonTree> constants = new ArrayList<>(); // co_consts
+    public List<String> freevars = new ArrayList<>();
+    public List<String> cellvars = new ArrayList<>();
+    public List<String> jy_paramcells = new ArrayList<>();
 
     public int jy_npurecell;
 
@@ -153,7 +157,7 @@ public class ScopeInfo extends Object implements ScopeConstants {
         this.up = up;
         this.distance = distance;
         boolean func = kind == FUNCSCOPE;
-        Vector<String> purecells = new Vector<String>();
+        List<String> purecells = new ArrayList<>();
         cell = 0;
         boolean some_inner_free = inner_free.size() > 0;
 
@@ -170,10 +174,10 @@ public class ScopeInfo extends Object implements ScopeConstants {
                 if ((flags&NGLOBAL) == 0 && (flags&BOUND) != 0) {
                     info.flags |= CELL;
                     if ((info.flags&PARAM) != 0)
-                        jy_paramcells.addElement(name);
-                    cellvars.addElement(name);
+                        jy_paramcells.add(name);
+                    cellvars.add(name);
                     info.env_index = cell++;
-                    if ((flags&PARAM) == 0) purecells.addElement(name);
+                    if ((flags&PARAM) == 0) purecells.add(name);
                     continue;
                 }
             } else {
@@ -191,7 +195,7 @@ public class ScopeInfo extends Object implements ScopeConstants {
             if ((flags&(GLOBAL|PARAM|CELL)) == 0) {
                 if ((flags&BOUND) != 0) { // ?? only func
                     // System.err.println("local: "+name);
-                    names.addElement(name);
+                    names.add(name);
                     info.locals_index = local++;
                     continue;
                 }
@@ -203,7 +207,7 @@ public class ScopeInfo extends Object implements ScopeConstants {
         if ((jy_npurecell = purecells.size()) > 0) {
             int sz = purecells.size();
             for (int i = 0; i < sz; i++) {
-                names.addElement(purecells.elementAt(i));
+                names.add(purecells.elementAt(i));
             }
         }
 
@@ -241,8 +245,6 @@ public class ScopeInfo extends Object implements ScopeConstants {
         ctxt.error(illegal.toString(), true, scope_node);
     }
 
-    public Vector<String> freevars = new Vector<String>();
-
     /**
      * setup the closure on this scope using the scope passed into cook as up as
      * the containing scope
@@ -270,7 +272,7 @@ public class ScopeInfo extends Object implements ScopeConstants {
                     int up_flags = up_info.flags;
                     if ((up_flags&(CELL|FREE)) != 0) {
                         info.env_index = free++;
-                        freevars.addElement(name);
+                        freevars.add(name);
                         continue;
                     }
                     // ! func global affect nested scopes
@@ -279,6 +281,7 @@ public class ScopeInfo extends Object implements ScopeConstants {
                         continue;
                     }
                 }
+                globalNames.add(name);
                 info.flags &= ~FREE;
             }
         }

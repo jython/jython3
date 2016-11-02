@@ -16,11 +16,13 @@ public abstract class PyBaseCode extends PyCode {
     public int co_kwonlyargcount;
     int nargs;
     public int co_firstlineno = -1;
-    public String co_varnames[];
-    public String co_cellvars[];
-    public int jy_npurecell; // internal: jython specific
-    public String co_freevars[];
+    public String[] co_varnames;
+    public String[] co_names;
+    public String[] co_cellvars;
+    public String[] co_freevars;
+    public PyObject[] co_consts;
     public String co_filename;
+    public int jy_npurecell; // internal: jython specific
     public CompilerFlags co_flags = new CompilerFlags();
     public int co_nlocals;
     public boolean varargs,  varkwargs;
