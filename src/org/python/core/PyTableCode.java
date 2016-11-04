@@ -10,6 +10,8 @@ import org.python.expose.ExposedGet;
 import org.python.expose.ExposedType;
 import org.python.modules._systemrestart;
 
+import java.util.ArrayList;
+
 @Untraversable
 @ExposedType(name = "code", base = PyObject.class, doc = BuiltinDocs.code_doc)
 public class PyTableCode extends PyBaseCode

@@ -71,7 +71,7 @@ public class ScopeInfo extends Object implements ScopeConstants {
     public ArgListCompiler ac;
 
     public Map<String, SymInfo> tbl = new LinkedHashMap<String, SymInfo>();
-    public List<String> names = new ArrayList<>();
+    public List<String> varNames = new ArrayList<>();
 
     public int addNonlocal(String name) {
         SymInfo info = tbl.get(name);
@@ -102,7 +102,7 @@ public class ScopeInfo extends Object implements ScopeConstants {
     public void addParam(String name) {
 //System.out.println("addParam " + name);
         tbl.put(name, new SymInfo(PARAM|BOUND,local++));
-        names.add(name);
+        varNames.add(name);
     }
 
     public void markFromParam() {
@@ -137,11 +137,10 @@ public class ScopeInfo extends Object implements ScopeConstants {
 
     public Hashtable<String,Object> inner_free = new Hashtable<String,Object>();
 
-    // FIXME: names should be varnames, globalNames is names, for corresponding fields in code object
-    public List<String> globalNames = new ArrayList<>();
+    public List<String> globalNames = new ArrayList<>(); // co_names
     public List<PythonTree> constants = new ArrayList<>(); // co_consts
-    public List<String> freevars = new ArrayList<>();
-    public List<String> cellvars = new ArrayList<>();
+    public List<String> freevars = new ArrayList<>(); // co_freevars
+    public List<String> cellvars = new ArrayList<>(); // co_cellvars
     public List<String> jy_paramcells = new ArrayList<>();
 
     public int jy_npurecell;
@@ -195,7 +194,7 @@ public class ScopeInfo extends Object implements ScopeConstants {
             if ((flags&(GLOBAL|PARAM|CELL)) == 0) {
                 if ((flags&BOUND) != 0) { // ?? only func
                     // System.err.println("local: "+name);
-                    names.add(name);
+                    varNames.add(name);
                     info.locals_index = local++;
                     continue;
                 }
@@ -207,7 +206,7 @@ public class ScopeInfo extends Object implements ScopeConstants {
         if ((jy_npurecell = purecells.size()) > 0) {
             int sz = purecells.size();
             for (int i = 0; i < sz; i++) {
-                names.add(purecells.elementAt(i));
+                varNames.add(purecells.get(i));
             }
         }
 

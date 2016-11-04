@@ -460,7 +460,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
             for (int j = 1; j < scope.distance; j++) {
                 loadf_back();
             }
-            SymInfo symInfo = upTbl.get(scope.freevars.elementAt(i));
+            SymInfo symInfo = upTbl.get(scope.freevars.get(i));
             code.iconst(symInfo.env_index);
             code.invokevirtual(p(PyFrame.class), "getclosure", sig(PyObject.class, Integer.TYPE));
             code.aastore();

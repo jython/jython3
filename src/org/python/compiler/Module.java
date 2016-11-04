@@ -305,7 +305,7 @@ class PyCodeConstant extends Constant implements ClassConstants, Opcodes {
 
         // !classdef only
         if (!classBody) {
-            varnames = toNameAr(scope.names, false);
+            varnames = toNameAr(scope.varNames, false);
         } else {
             varnames = null;
         }
@@ -698,31 +698,27 @@ public class Module implements Opcodes, ClassConstants, CompilationContext {
     }
 
     public int makeConstArray(Code code, java.util.List<? extends PythonTree> nodes) throws IOException {
-        final int n;
+        int n = 1;
 
-        if (nodes == null) {
-            n = 0;
-        } else {
-            n = nodes.size();
+        if (nodes != null) {
+            n += nodes.size();
         }
 
         int array = code.getLocal(ci(PyObject[].class));
-        if (n == 0) {
-            code.getstatic(p(Py.class), "EmptyObjects", ci(PyObject[].class));
-            code.astore(array);
-        } else {
-            code.iconst(n);
-            code.anewarray(p(PyObject.class));
-            code.astore(array);
 
-            for (int i = 0; i < n; i++) {
-                constant(nodes.get(i)).get(code);
-                code.aload(array);
-                code.swap();
-                code.iconst(i);
-                code.swap();
-                code.aastore();
-            }
+        code.iconst(n);
+        code.anewarray(p(PyObject.class));
+        code.astore(array);
+        code.aload(array);
+        code.iconst(0);
+        code.getstatic(p(Py.class), "None", ci(PyObject.class));
+        code.aastore();
+
+        for (int i = 1; i < n; i++) {
+            code.aload(array);
+            code.iconst(i);
+            constant(nodes.get(i - 1)).get(code);
+            code.aastore();
         }
         return array;
     }
