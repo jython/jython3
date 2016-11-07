@@ -54,16 +54,16 @@ public class Future {
     public void preprocessFutures(mod node, org.python.core.CompilerFlags cflags)
             throws Exception {
         if (cflags != null) {
-            if (cflags.isFlagSet(CodeFlag.CO_FUTURE_DIVISION))
-                FutureFeature.division.addTo(features);
-            if (cflags.isFlagSet(CodeFlag.CO_FUTURE_WITH_STATEMENT))
-                FutureFeature.with_statement.addTo(features);
-            if (cflags.isFlagSet(CodeFlag.CO_FUTURE_ABSOLUTE_IMPORT))
-                FutureFeature.absolute_import.addTo(features);
-            if (cflags.isFlagSet(CodeFlag.CO_FUTURE_PRINT_FUNCTION))
-                FutureFeature.print_function.addTo(features);
-            if (cflags.isFlagSet(CodeFlag.CO_FUTURE_UNICODE_LITERALS))
-                FutureFeature.unicode_literals.addTo(features);
+//            if (cflags.isFlagSet(CodeFlag.CO_FUTURE_DIVISION))
+//                FutureFeature.division.addTo(features);
+//            if (cflags.isFlagSet(CodeFlag.CO_FUTURE_WITH_STATEMENT))
+//                FutureFeature.with_statement.addTo(features);
+//            if (cflags.isFlagSet(CodeFlag.CO_FUTURE_ABSOLUTE_IMPORT))
+//                FutureFeature.absolute_import.addTo(features);
+//            if (cflags.isFlagSet(CodeFlag.CO_FUTURE_PRINT_FUNCTION))
+//                FutureFeature.print_function.addTo(features);
+//            if (cflags.isFlagSet(CodeFlag.CO_FUTURE_UNICODE_LITERALS))
+//                FutureFeature.unicode_literals.addTo(features);
         }
         int beg = 0;
         List<stmt> suite = null;
@@ -102,15 +102,15 @@ public class Future {
         node.from_future_checked = true;
     }
 
-    public boolean areDivisionOn() {
-        return featureSet.contains(FutureFeature.division);
-    }
+//    public boolean areDivisionOn() {
+//        return featureSet.contains(FutureFeature.division);
+//    }
 
-    public boolean withStatementSupported() {
-        return featureSet.contains(FutureFeature.with_statement);
-    }
-
-    public boolean isAbsoluteImportOn() {
-        return featureSet.contains(FutureFeature.absolute_import);
-    }
+//    public boolean withStatementSupported() {
+//        return featureSet.contains(FutureFeature.with_statement);
+//    }
+//
+//    public boolean isAbsoluteImportOn() {
+//        return featureSet.contains(FutureFeature.absolute_import);
+//    }
 }

@@ -46,13 +46,13 @@ public class Version {
 
     /** The flags that are set by default in a code object. */
     private static final Collection<CodeFlag> defaultCodeFlags = Arrays.asList(
-            CodeFlag.CO_NESTED,
-            CodeFlag.CO_GENERATOR_ALLOWED,
-            CodeFlag.CO_FUTURE_WITH_STATEMENT,
-            CodeFlag.CO_FUTURE_ABSOLUTE_IMPORT,
-            CodeFlag.CO_FUTURE_DIVISION,
-            CodeFlag.CO_FUTURE_PRINT_FUNCTION,
-            CodeFlag.CO_FUTURE_UNICODE_LITERALS
+            CodeFlag.CO_NESTED
+//            CodeFlag.CO_GENERATOR_ALLOWED,
+//            CodeFlag.CO_FUTURE_WITH_STATEMENT,
+//            CodeFlag.CO_FUTURE_ABSOLUTE_IMPORT,
+//            CodeFlag.CO_FUTURE_DIVISION,
+//            CodeFlag.CO_FUTURE_PRINT_FUNCTION,
+//            CodeFlag.CO_FUTURE_UNICODE_LITERALS
     );
 
     static {

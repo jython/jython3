@@ -432,12 +432,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                     case Opcode.BINARY_DIVIDE: {
                         PyObject b = stack.pop();
                         PyObject a = stack.pop();
-
-                        if (!co_flags.isFlagSet(CodeFlag.CO_FUTURE_DIVISION)) {
-                            stack.push(a._div(b));
-                        } else {
-                            stack.push(a._truediv(b));
-                        }
+                        stack.push(a._truediv(b));
                         break;
                     }
 
@@ -543,11 +538,7 @@ public class PyBytecode extends PyBaseCode implements Traverseproc {
                     case Opcode.INPLACE_DIVIDE: {
                         PyObject b = stack.pop();
                         PyObject a = stack.pop();
-                        if (!co_flags.isFlagSet(CodeFlag.CO_FUTURE_DIVISION)) {
-                            stack.push(a._idiv(b));
-                        } else {
-                            stack.push(a._itruediv(b));
-                        }
+                        stack.push(a._itruediv(b));
                         break;
                     }
 

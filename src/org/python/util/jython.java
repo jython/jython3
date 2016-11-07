@@ -294,7 +294,7 @@ public class jython {
                 Options.division_warning = 2;
             } else if ("new".equals(opts.division)) {
                 Options.Qnew = true;
-                interp.cflags.setFlag(CodeFlag.CO_FUTURE_DIVISION);
+//                interp.cflags.setFlag(CodeFlag.CO_FUTURE_DIVISION);
             }
         }
 

@@ -6,31 +6,31 @@ public enum FutureFeature implements Pragma {
     /**
      * Enables nested scopes.
      */
-    nested_scopes(CodeFlag.CO_NESTED),
+//    nested_scopes(CodeFlag.CO_NESTED),
     /**
      * Makes integer / integer division return float.
      */
-    division(CodeFlag.CO_FUTURE_DIVISION),
+//    division(CodeFlag.CO_FUTURE_DIVISION),
     /**
      * Enables generators.
      */
-    generators(CodeFlag.CO_GENERATOR_ALLOWED),
+//    generators(CodeFlag.CO_GENERATOR_ALLOWED),
     /**
      * Enables absolute imports.
      */
-    absolute_import(CodeFlag.CO_FUTURE_ABSOLUTE_IMPORT),
+//    absolute_import(CodeFlag.CO_FUTURE_ABSOLUTE_IMPORT),
     /**
      * Enables the with statement.
      */
-    with_statement(CodeFlag.CO_FUTURE_WITH_STATEMENT),
+//    with_statement(CodeFlag.CO_FUTURE_WITH_STATEMENT),
     /**
      * Enables the print function.
      */
-    print_function(CodeFlag.CO_FUTURE_PRINT_FUNCTION),
+//    print_function(CodeFlag.CO_FUTURE_PRINT_FUNCTION),
     /**
      * Enables unicode literals.
      */
-    unicode_literals(CodeFlag.CO_FUTURE_UNICODE_LITERALS),
+//    unicode_literals(CodeFlag.CO_FUTURE_UNICODE_LITERALS),
     /**
      * Use braces for block delimiters instead of indentation.
      */

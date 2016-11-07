@@ -314,4 +314,8 @@ public class ScopeInfo extends Object implements ScopeConstants {
     public boolean isFunction() {
         return kind == FUNCSCOPE;
     }
+
+    public boolean isNested() {
+        return isFunction() && up.isFunction();
+    }
 }

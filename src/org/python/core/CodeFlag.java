@@ -34,6 +34,11 @@ public enum CodeFlag {
      * Denotes that nested scopes are enabled in the code block.
      */
     CO_NESTED(0x0010),
+
+    /**
+     * The flag is set if there are no free or cell variables.
+     */
+    CO_NOFREE(0x0040),
     /**
      *  The CO_COROUTINE flag is set for coroutine functions (defined with
      *  ``async def`` keywords)

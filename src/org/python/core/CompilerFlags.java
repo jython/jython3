@@ -7,6 +7,7 @@
 package org.python.core;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.python.Version;
@@ -21,7 +22,8 @@ public class CompilerFlags implements Serializable {
     public boolean source_is_utf8;
 
     public String encoding;
-    private final Set<CodeFlag> flags = Version.getDefaultCodeFlags();
+//    private final Set<CodeFlag> flags = Version.getDefaultCodeFlags();
+    private final Set<CodeFlag> flags = new HashSet<>();
 
     public CompilerFlags() {
     }
@@ -60,16 +62,17 @@ public class CompilerFlags implements Serializable {
     @Override
     public String toString() {
         return String.format(
-                "CompilerFlags[division=%s nested_scopes=%s generators=%s "
-                        + "with_statement=%s absolute_import=%s only_ast=%s "
-                        + "dont_imply_dedent=%s  source_is_utf8=%s]",
-                isFlagSet(CodeFlag.CO_FUTURE_DIVISION),
+                "CompilerFlags[nested_scopes=%s only_ast=%s dont_imply_dedent=%s source_is_utf8=%s]",
+//                "CompilerFlags[division=%s nested_scopes=%s generators=%s "
+//                        + "with_statement=%s absolute_import=%s only_ast=%s "
+//                        + "dont_imply_dedent=%s  source_is_utf8=%s]",
+//                isFlagSet(CodeFlag.CO_FUTURE_DIVISION),
                 isFlagSet(CodeFlag.CO_NESTED),
-                isFlagSet(CodeFlag.CO_GENERATOR_ALLOWED),
-                isFlagSet(CodeFlag.CO_FUTURE_WITH_STATEMENT),
-                isFlagSet(CodeFlag.CO_FUTURE_ABSOLUTE_IMPORT),
-                isFlagSet(CodeFlag.CO_FUTURE_PRINT_FUNCTION),
-                isFlagSet(CodeFlag.CO_FUTURE_UNICODE_LITERALS),
+//                isFlagSet(CodeFlag.CO_GENERATOR_ALLOWED),
+//                isFlagSet(CodeFlag.CO_FUTURE_WITH_STATEMENT),
+//                isFlagSet(CodeFlag.CO_FUTURE_ABSOLUTE_IMPORT),
+//                isFlagSet(CodeFlag.CO_FUTURE_PRINT_FUNCTION),
+//                isFlagSet(CodeFlag.CO_FUTURE_UNICODE_LITERALS),
                 only_ast,
                 dont_imply_dedent,
                 source_is_utf8);
@@ -82,13 +85,13 @@ public class CompilerFlags implements Serializable {
     private static final int CO_ALL_FEATURES = CompilerFlags.PyCF_DONT_IMPLY_DEDENT
             | CompilerFlags.PyCF_ONLY_AST
             | CompilerFlags.PyCF_SOURCE_IS_UTF8
-            | CodeFlag.CO_NESTED.flag
-            | CodeFlag.CO_GENERATOR_ALLOWED.flag
-            | CodeFlag.CO_FUTURE_DIVISION.flag
-            | CodeFlag.CO_FUTURE_ABSOLUTE_IMPORT.flag
-            | CodeFlag.CO_FUTURE_WITH_STATEMENT.flag
-            | CodeFlag.CO_FUTURE_PRINT_FUNCTION.flag
-            | CodeFlag.CO_FUTURE_UNICODE_LITERALS.flag;
+            | CodeFlag.CO_NESTED.flag;
+//            | CodeFlag.CO_GENERATOR_ALLOWED.flag
+//            | CodeFlag.CO_FUTURE_DIVISION.flag
+//            | CodeFlag.CO_FUTURE_ABSOLUTE_IMPORT.flag
+//            | CodeFlag.CO_FUTURE_WITH_STATEMENT.flag
+//            | CodeFlag.CO_FUTURE_PRINT_FUNCTION.flag
+//            | CodeFlag.CO_FUTURE_UNICODE_LITERALS.flag;
 
     public static CompilerFlags getCompilerFlags(int flags, PyFrame frame) {
         if ((flags & ~CO_ALL_FEATURES) != 0) {

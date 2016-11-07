@@ -1761,7 +1761,7 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
                 name = "_matmul";
                 break;
             case Div:
-                name = "_div";
+                name = "_truediv";
                 break;
             case Mod:
                 name = "_mod";
@@ -1789,9 +1789,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
                 break;
         }
 
-        if (node.getInternalOp() == operatorType.Div && module.getFutures().areDivisionOn()) {
-            name = "_truediv";
-        }
+//        if (node.getInternalOp() == operatorType.Div && module.getFutures().areDivisionOn()) {
+//            name = "_truediv";
+//        }
         code.invokevirtual(p(PyObject.class), name, sig(PyObject.class, PyObject.class));
         return null;
     }
@@ -1872,9 +1872,9 @@ public class CodeCompiler extends Visitor implements Opcodes, ClassConstants {
                 name = "_ifloordiv";
                 break;
         }
-        if (node.getInternalOp() == operatorType.Div && module.getFutures().areDivisionOn()) {
-            name = "_itruediv";
-        }
+//        if (node.getInternalOp() == operatorType.Div && module.getFutures().areDivisionOn()) {
+//            name = "_itruediv";
+//        }
         code.invokevirtual(p(PyObject.class), name, sig(PyObject.class, PyObject.class));
         code.freeLocal(target);
 

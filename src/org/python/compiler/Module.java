@@ -265,7 +265,6 @@ class PyCodeConstant extends Constant implements ClassConstants, Opcodes {
     PyCodeConstant(mod tree, String name, boolean fast_locals, String className, boolean classBody,
             boolean printResults, int firstlineno, ScopeInfo scope, CompilerFlags cflags,
             Module module) throws Exception {
-
         this.co_name = name;
         this.co_firstlineno = firstlineno;
         this.module = module;
@@ -317,7 +316,15 @@ class PyCodeConstant extends Constant implements ClassConstants, Opcodes {
         jy_npurecell = scope.jy_npurecell;
 
         if (CodeCompiler.checkOptimizeGlobals(fast_locals, scope)) {
-            _moreflags |= CodeFlag.CO_OPTIMIZED.flag;
+            _moreflags |= CodeFlag.CO_OPTIMIZED.flag | CodeFlag.CO_NEWLOCALS.flag;
+        }
+
+        if (scope.isNested()) {
+            _moreflags |= CodeFlag.CO_NESTED.flag;
+        }
+
+        if (scope.freevars.isEmpty() && scope.cellvars.isEmpty()) {
+            _moreflags |= CodeFlag.CO_NOFREE.flag;
         }
 
         if (scope.async) {
@@ -325,14 +332,14 @@ class PyCodeConstant extends Constant implements ClassConstants, Opcodes {
         } else if (scope.generator) {
             _moreflags |= CodeFlag.CO_GENERATOR.flag;
         }
-        if (cflags != null) {
-            if (cflags.isFlagSet(CodeFlag.CO_GENERATOR_ALLOWED)) {
-                _moreflags |= CodeFlag.CO_GENERATOR_ALLOWED.flag;
-            }
-            if (cflags.isFlagSet(CodeFlag.CO_FUTURE_DIVISION)) {
-                _moreflags |= CodeFlag.CO_FUTURE_DIVISION.flag;
-            }
-        }
+//        if (cflags != null) {
+//            if (cflags.isFlagSet(CodeFlag.CO_GENERATOR_ALLOWED)) {
+//                _moreflags |= CodeFlag.CO_GENERATOR_ALLOWED.flag;
+//            }
+//            if (cflags.isFlagSet(CodeFlag.CO_FUTURE_DIVISION)) {
+//                _moreflags |= CodeFlag.CO_FUTURE_DIVISION.flag;
+//            }
+//        }
         moreflags = _moreflags;
     }
 
@@ -436,7 +443,6 @@ class PyCodeConstant extends Constant implements ClassConstants, Opcodes {
         c.putstatic(module.classfile.name, name, ci(PyCode.class));
     }
 }
-
 
 public class Module implements Opcodes, ClassConstants, CompilationContext {
 
