@@ -11315,6 +11315,2246 @@ public class BuiltinDocs {
     public final static String SemLock_release_doc = 
         "release the semaphore/lock";
 
+    // Docs for <module 'pickle' from '/usr/lib/python3.5/pickle.py'>
+    public final static String pickle_ADDITEMS_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_APPEND_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_APPENDS_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_BINBYTES_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_BINBYTES8_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_BINFLOAT_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_BINGET_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_BININT_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_BININT1_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_BININT2_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_BINPERSID_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_BINPUT_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_BINSTRING_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_BINUNICODE_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_BINUNICODE8_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_BUILD_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_DEFAULT_PROTOCOL_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String pickle_DICT_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_DUP_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_EMPTY_DICT_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_EMPTY_LIST_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_EMPTY_SET_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_EMPTY_TUPLE_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_EXT1_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_EXT2_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_EXT4_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_FALSE_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_FLOAT_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_FRAME_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_FROZENSET_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_FunctionType_doc = 
+        "function(code, globals[, name[, argdefs[, closure]]])\n" + 
+        "\n" + 
+        "Create a function object from a code object and a dictionary.\n" + 
+        "The optional name string overrides the name from the code object.\n" + 
+        "The optional argdefs tuple specifies the default argument values.\n" + 
+        "The optional closure tuple supplies the bindings for free variables.";
+
+    public final static String pickle_GET_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_GLOBAL_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_HIGHEST_PROTOCOL_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String pickle_INST_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_INT_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_LIST_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_LONG_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_LONG1_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_LONG4_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_LONG_BINGET_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_LONG_BINPUT_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_MARK_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_MEMOIZE_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_NEWFALSE_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_NEWOBJ_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_NEWOBJ_EX_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_NEWTRUE_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_NONE_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_OBJ_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_PERSID_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_POP_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_POP_MARK_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_PROTO_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_PUT_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_PickleError_doc = 
+        "";
+
+    public final static String pickle_Pickler_doc = 
+        "This takes a binary file for writing a pickle data stream.\n" + 
+        "\n" + 
+        "The optional *protocol* argument tells the pickler to use the given\n" + 
+        "protocol; supported protocols are 0, 1, 2, 3 and 4.  The default\n" + 
+        "protocol is 3; a backward-incompatible protocol designed for Python 3.\n" + 
+        "\n" + 
+        "Specifying a negative protocol version selects the highest protocol\n" + 
+        "version supported.  The higher the protocol used, the more recent the\n" + 
+        "version of Python needed to read the pickle produced.\n" + 
+        "\n" + 
+        "The *file* argument must have a write() method that accepts a single\n" + 
+        "bytes argument. It can thus be a file object opened for binary\n" + 
+        "writing, an io.BytesIO instance, or any other custom object that meets\n" + 
+        "this interface.\n" + 
+        "\n" + 
+        "If *fix_imports* is True and protocol is less than 3, pickle will try\n" + 
+        "to map the new Python 3 names to the old module names used in Python\n" + 
+        "2, so that the pickle data stream is readable with Python 2.";
+
+    public final static String pickle_PicklingError_doc = 
+        "";
+
+    public final static String pickle_PyStringMap_doc = 
+        "";
+
+    public final static String pickle_REDUCE_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_SETITEM_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_SETITEMS_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_SHORT_BINBYTES_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_SHORT_BINSTRING_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_SHORT_BINUNICODE_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_STACK_GLOBAL_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_STOP_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_STRING_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_TRUE_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_TUPLE_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_TUPLE1_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_TUPLE2_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_TUPLE3_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_UNICODE_doc = 
+        "bytes(iterable_of_ints) -> bytes\n" + 
+        "bytes(string, encoding[, errors]) -> bytes\n" + 
+        "bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer\n" + 
+        "bytes(int) -> bytes object of size given by the parameter initialized with null bytes\n" + 
+        "bytes() -> empty bytes object\n" + 
+        "\n" + 
+        "Construct an immutable array of bytes from:\n" + 
+        "  - an iterable yielding integers in range(256)\n" + 
+        "  - a text string encoded using the specified encoding\n" + 
+        "  - any object implementing the buffer API.\n" + 
+        "  - an integer";
+
+    public final static String pickle_Unpickler_doc = 
+        "This takes a binary file for reading a pickle data stream.\n" + 
+        "\n" + 
+        "The protocol version of the pickle is detected automatically, so no\n" + 
+        "protocol argument is needed.  Bytes past the pickled object's\n" + 
+        "representation are ignored.\n" + 
+        "\n" + 
+        "The argument *file* must have two methods, a read() method that takes\n" + 
+        "an integer argument, and a readline() method that requires no\n" + 
+        "arguments.  Both methods should return bytes.  Thus *file* can be a\n" + 
+        "binary file object opened for reading, an io.BytesIO object, or any\n" + 
+        "other custom object that meets this interface.\n" + 
+        "\n" + 
+        "Optional keyword arguments are *fix_imports*, *encoding* and *errors*,\n" + 
+        "which are used to control compatibility support for pickle stream\n" + 
+        "generated by Python 2.  If *fix_imports* is True, pickle will try to\n" + 
+        "map the old Python 2 names to the new names used in Python 3.  The\n" + 
+        "*encoding* and *errors* tell pickle how to decode 8-bit string\n" + 
+        "instances pickled by Python 2; these default to 'ASCII' and 'strict',\n" + 
+        "respectively.  The *encoding* can be 'bytes' to read these 8-bit\n" + 
+        "string instances as bytes objects.";
+
+    public final static String pickle_UnpicklingError_doc = 
+        "";
+
+    public final static String pickle__Framer_doc = 
+        "";
+
+    public final static String pickle__Pickler_doc = 
+        "";
+
+    public final static String pickle__Stop_doc = 
+        "";
+
+    public final static String pickle__Unframer_doc = 
+        "";
+
+    public final static String pickle__Unpickler_doc = 
+        "";
+
+    public final static String pickle___all___doc = 
+        "list() -> new empty list\n" + 
+        "list(iterable) -> new list initialized from iterable's items";
+
+    public final static String pickle___builtins___doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String pickle___cached___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String pickle_doc = 
+        "Create portable serialized representations of Python objects.\n" + 
+        "\n" + 
+        "See module copyreg for a mechanism for registering custom picklers.\n" + 
+        "See module pickletools source for extensive comments.\n" + 
+        "\n" + 
+        "Classes:\n" + 
+        "\n" + 
+        "    Pickler\n" + 
+        "    Unpickler\n" + 
+        "\n" + 
+        "Functions:\n" + 
+        "\n" + 
+        "    dump(object, file)\n" + 
+        "    dumps(object) -> string\n" + 
+        "    load(file) -> object\n" + 
+        "    loads(string) -> object\n" + 
+        "\n" + 
+        "Misc variables:\n" + 
+        "\n" + 
+        "    __version__\n" + 
+        "    format_version\n" + 
+        "    compatible_formats\n" + 
+        "\n" + 
+        "";
+
+    public final static String pickle___file___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String pickle___loader___doc = 
+        "Concrete implementation of SourceLoader using the file system.";
+
+    public final static String pickle___name___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String pickle___package___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String pickle___spec___doc = 
+        "The specification for a module, used for loading.\n" + 
+        "\n" + 
+        "    A module's spec is the source for information about the module.  For\n" + 
+        "    data associated with the module, including source, use the spec's\n" + 
+        "    loader.\n" + 
+        "\n" + 
+        "    `name` is the absolute name of the module.  `loader` is the loader\n" + 
+        "    to use when loading the module.  `parent` is the name of the\n" + 
+        "    package the module is in.  The parent is derived from the name.\n" + 
+        "\n" + 
+        "    `is_package` determines if the module is considered a package or\n" + 
+        "    not.  On modules this is reflected by the `__path__` attribute.\n" + 
+        "\n" + 
+        "    `origin` is the specific location used by the loader from which to\n" + 
+        "    load the module, if that information is available.  When filename is\n" + 
+        "    set, origin will match.\n" + 
+        "\n" + 
+        "    `has_location` indicates that a spec's \"origin\" reflects a location.\n" + 
+        "    When this is True, `__file__` attribute of the module is set.\n" + 
+        "\n" + 
+        "    `cached` is the location of the cached bytecode file, if any.  It\n" + 
+        "    corresponds to the `__cached__` attribute.\n" + 
+        "\n" + 
+        "    `submodule_search_locations` is the sequence of path entries to\n" + 
+        "    search when importing submodules.  If set, is_package should be\n" + 
+        "    True--and False otherwise.\n" + 
+        "\n" + 
+        "    Packages are simply modules that (may) have submodules.  If a spec\n" + 
+        "    has a non-None value in `submodule_search_locations`, the import\n" + 
+        "    system will consider modules loaded from the spec as packages.\n" + 
+        "\n" + 
+        "    Only finders (see importlib.abc.MetaPathFinder and\n" + 
+        "    importlib.abc.PathEntryFinder) should modify ModuleSpec instances.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String pickle__compat_pickle_doc = 
+        "";
+
+    public final static String pickle__dump_doc = 
+        "";
+
+    public final static String pickle__dumps_doc = 
+        "";
+
+    public final static String pickle__extension_cache_doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String pickle__extension_registry_doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String pickle__getattribute_doc = 
+        "";
+
+    public final static String pickle__inverted_registry_doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String pickle__load_doc = 
+        "";
+
+    public final static String pickle__loads_doc = 
+        "";
+
+    public final static String pickle__test_doc = 
+        "";
+
+    public final static String pickle__tuplesize2code_doc = 
+        "list() -> new empty list\n" + 
+        "list(iterable) -> new list initialized from iterable's items";
+
+    public final static String pickle_bytes_types_doc = 
+        "tuple() -> empty tuple\n" + 
+        "tuple(iterable) -> tuple initialized from iterable's items\n" + 
+        "\n" + 
+        "If the argument is a tuple, the return value is the same object.";
+
+    public final static String pickle_codecs_doc = 
+        " codecs -- Python Codec Registry, API and helpers.\n" + 
+        "\n" + 
+        "\n" + 
+        "Written by Marc-Andre Lemburg (mal@lemburg.com).\n" + 
+        "\n" + 
+        "(c) Copyright CNRI, All Rights Reserved. NO WARRANTY.\n" + 
+        "\n" + 
+        "";
+
+    public final static String pickle_compatible_formats_doc = 
+        "list() -> new empty list\n" + 
+        "list(iterable) -> new list initialized from iterable's items";
+
+    public final static String pickle_decode_long_doc = 
+        "Decode a long from a two's complement little-endian binary string.\n" + 
+        "\n" + 
+        "    >>> decode_long(b'')\n" + 
+        "    0\n" + 
+        "    >>> decode_long(b\"\\xff\\x00\")\n" + 
+        "    255\n" + 
+        "    >>> decode_long(b\"\\xff\\x7f\")\n" + 
+        "    32767\n" + 
+        "    >>> decode_long(b\"\\x00\\xff\")\n" + 
+        "    -256\n" + 
+        "    >>> decode_long(b\"\\x00\\x80\")\n" + 
+        "    -32768\n" + 
+        "    >>> decode_long(b\"\\x80\")\n" + 
+        "    -128\n" + 
+        "    >>> decode_long(b\"\\x7f\")\n" + 
+        "    127\n" + 
+        "    ";
+
+    public final static String pickle_dispatch_table_doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String pickle_dump_doc = 
+        "Write a pickled representation of obj to the open file object file.\n" + 
+        "\n" + 
+        "This is equivalent to ``Pickler(file, protocol).dump(obj)``, but may\n" + 
+        "be more efficient.\n" + 
+        "\n" + 
+        "The optional *protocol* argument tells the pickler to use the given\n" + 
+        "protocol supported protocols are 0, 1, 2, 3 and 4.  The default\n" + 
+        "protocol is 3; a backward-incompatible protocol designed for Python 3.\n" + 
+        "\n" + 
+        "Specifying a negative protocol version selects the highest protocol\n" + 
+        "version supported.  The higher the protocol used, the more recent the\n" + 
+        "version of Python needed to read the pickle produced.\n" + 
+        "\n" + 
+        "The *file* argument must have a write() method that accepts a single\n" + 
+        "bytes argument.  It can thus be a file object opened for binary\n" + 
+        "writing, an io.BytesIO instance, or any other custom object that meets\n" + 
+        "this interface.\n" + 
+        "\n" + 
+        "If *fix_imports* is True and protocol is less than 3, pickle will try\n" + 
+        "to map the new Python 3 names to the old module names used in Python\n" + 
+        "2, so that the pickle data stream is readable with Python 2.";
+
+    public final static String pickle_dumps_doc = 
+        "Return the pickled representation of the object as a bytes object.\n" + 
+        "\n" + 
+        "The optional *protocol* argument tells the pickler to use the given\n" + 
+        "protocol; supported protocols are 0, 1, 2, 3 and 4.  The default\n" + 
+        "protocol is 3; a backward-incompatible protocol designed for Python 3.\n" + 
+        "\n" + 
+        "Specifying a negative protocol version selects the highest protocol\n" + 
+        "version supported.  The higher the protocol used, the more recent the\n" + 
+        "version of Python needed to read the pickle produced.\n" + 
+        "\n" + 
+        "If *fix_imports* is True and *protocol* is less than 3, pickle will\n" + 
+        "try to map the new Python 3 names to the old module names used in\n" + 
+        "Python 2, so that the pickle data stream is readable with Python 2.";
+
+    public final static String pickle_encode_long_doc = 
+        "Encode a long to a two's complement little-endian binary string.\n" + 
+        "    Note that 0 is a special case, returning an empty string, to save a\n" + 
+        "    byte in the LONG1 pickling context.\n" + 
+        "\n" + 
+        "    >>> encode_long(0)\n" + 
+        "    b''\n" + 
+        "    >>> encode_long(255)\n" + 
+        "    b'\\xff\\x00'\n" + 
+        "    >>> encode_long(32767)\n" + 
+        "    b'\\xff\\x7f'\n" + 
+        "    >>> encode_long(-256)\n" + 
+        "    b'\\x00\\xff'\n" + 
+        "    >>> encode_long(-32768)\n" + 
+        "    b'\\x00\\x80'\n" + 
+        "    >>> encode_long(-128)\n" + 
+        "    b'\\x80'\n" + 
+        "    >>> encode_long(127)\n" + 
+        "    b'\\x7f'\n" + 
+        "    >>>\n" + 
+        "    ";
+
+    public final static String pickle_format_version_doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String pickle_io_doc = 
+        "The io module provides the Python interfaces to stream handling. The\n" + 
+        "builtin open function is defined in this module.\n" + 
+        "\n" + 
+        "At the top of the I/O hierarchy is the abstract base class IOBase. It\n" + 
+        "defines the basic interface to a stream. Note, however, that there is no\n" + 
+        "separation between reading and writing to streams; implementations are\n" + 
+        "allowed to raise an OSError if they do not support a given operation.\n" + 
+        "\n" + 
+        "Extending IOBase is RawIOBase which deals simply with the reading and\n" + 
+        "writing of raw bytes to a stream. FileIO subclasses RawIOBase to provide\n" + 
+        "an interface to OS files.\n" + 
+        "\n" + 
+        "BufferedIOBase deals with buffering on a raw byte stream (RawIOBase). Its\n" + 
+        "subclasses, BufferedWriter, BufferedReader, and BufferedRWPair buffer\n" + 
+        "streams that are readable, writable, and both respectively.\n" + 
+        "BufferedRandom provides a buffered interface to random access\n" + 
+        "streams. BytesIO is a simple stream of in-memory bytes.\n" + 
+        "\n" + 
+        "Another IOBase subclass, TextIOBase, deals with the encoding and decoding\n" + 
+        "of streams into text. TextIOWrapper, which extends it, is a buffered text\n" + 
+        "interface to a buffered raw stream (`BufferedIOBase`). Finally, StringIO\n" + 
+        "is an in-memory stream for text.\n" + 
+        "\n" + 
+        "Argument names are not part of the specification, and only the arguments\n" + 
+        "of open() are intended to be used as keyword arguments.\n" + 
+        "\n" + 
+        "data:\n" + 
+        "\n" + 
+        "DEFAULT_BUFFER_SIZE\n" + 
+        "\n" + 
+        "   An int containing the default buffer size used by the module's buffered\n" + 
+        "   I/O classes. open() uses the file's blksize (as obtained by os.stat) if\n" + 
+        "   possible.\n" + 
+        "";
+
+    public final static String pickle_islice_doc = 
+        "islice(iterable, stop) --> islice object\n" + 
+        "islice(iterable, start, stop[, step]) --> islice object\n" + 
+        "\n" + 
+        "Return an iterator whose next() method returns selected values from an\n" + 
+        "iterable.  If start is specified, will skip all preceding elements;\n" + 
+        "otherwise, start defaults to zero.  Step defaults to one.  If\n" + 
+        "specified as another value, step determines how many values are \n" + 
+        "skipped between successive calls.  Works like a slice() on a list\n" + 
+        "but returns an iterator.";
+
+    public final static String pickle_load_doc = 
+        "Read and return an object from the pickle data stored in a file.\n" + 
+        "\n" + 
+        "This is equivalent to ``Unpickler(file).load()``, but may be more\n" + 
+        "efficient.\n" + 
+        "\n" + 
+        "The protocol version of the pickle is detected automatically, so no\n" + 
+        "protocol argument is needed.  Bytes past the pickled object's\n" + 
+        "representation are ignored.\n" + 
+        "\n" + 
+        "The argument *file* must have two methods, a read() method that takes\n" + 
+        "an integer argument, and a readline() method that requires no\n" + 
+        "arguments.  Both methods should return bytes.  Thus *file* can be a\n" + 
+        "binary file object opened for reading, an io.BytesIO object, or any\n" + 
+        "other custom object that meets this interface.\n" + 
+        "\n" + 
+        "Optional keyword arguments are *fix_imports*, *encoding* and *errors*,\n" + 
+        "which are used to control compatibility support for pickle stream\n" + 
+        "generated by Python 2.  If *fix_imports* is True, pickle will try to\n" + 
+        "map the old Python 2 names to the new names used in Python 3.  The\n" + 
+        "*encoding* and *errors* tell pickle how to decode 8-bit string\n" + 
+        "instances pickled by Python 2; these default to 'ASCII' and 'strict',\n" + 
+        "respectively.  The *encoding* can be 'bytes' to read these 8-bit\n" + 
+        "string instances as bytes objects.";
+
+    public final static String pickle_loads_doc = 
+        "Read and return an object from the given pickle data.\n" + 
+        "\n" + 
+        "The protocol version of the pickle is detected automatically, so no\n" + 
+        "protocol argument is needed.  Bytes past the pickled object's\n" + 
+        "representation are ignored.\n" + 
+        "\n" + 
+        "Optional keyword arguments are *fix_imports*, *encoding* and *errors*,\n" + 
+        "which are used to control compatibility support for pickle stream\n" + 
+        "generated by Python 2.  If *fix_imports* is True, pickle will try to\n" + 
+        "map the old Python 2 names to the new names used in Python 3.  The\n" + 
+        "*encoding* and *errors* tell pickle how to decode 8-bit string\n" + 
+        "instances pickled by Python 2; these default to 'ASCII' and 'strict',\n" + 
+        "respectively.  The *encoding* can be 'bytes' to read these 8-bit\n" + 
+        "string instances as bytes objects.";
+
+    public final static String pickle_maxsize_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String pickle_pack_doc = 
+        "pack(fmt, v1, v2, ...) -> bytes\n" + 
+        "\n" + 
+        "Return a bytes object containing the values v1, v2, ... packed according\n" + 
+        "to the format string fmt.  See help(struct) for more on format strings.";
+
+    public final static String pickle_re_doc = 
+        "Support for regular expressions (RE).\n" + 
+        "\n" + 
+        "This module provides regular expression matching operations similar to\n" + 
+        "those found in Perl.  It supports both 8-bit and Unicode strings; both\n" + 
+        "the pattern and the strings being processed can contain null bytes and\n" + 
+        "characters outside the US ASCII range.\n" + 
+        "\n" + 
+        "Regular expressions can contain both special and ordinary characters.\n" + 
+        "Most ordinary characters, like \"A\", \"a\", or \"0\", are the simplest\n" + 
+        "regular expressions; they simply match themselves.  You can\n" + 
+        "concatenate ordinary characters, so last matches the string 'last'.\n" + 
+        "\n" + 
+        "The special characters are:\n" + 
+        "    \".\"      Matches any character except a newline.\n" + 
+        "    \"^\"      Matches the start of the string.\n" + 
+        "    \"$\"      Matches the end of the string or just before the newline at\n" + 
+        "             the end of the string.\n" + 
+        "    \"*\"      Matches 0 or more (greedy) repetitions of the preceding RE.\n" + 
+        "             Greedy means that it will match as many repetitions as possible.\n" + 
+        "    \"+\"      Matches 1 or more (greedy) repetitions of the preceding RE.\n" + 
+        "    \"?\"      Matches 0 or 1 (greedy) of the preceding RE.\n" + 
+        "    *?,+?,?? Non-greedy versions of the previous three special characters.\n" + 
+        "    {m,n}    Matches from m to n repetitions of the preceding RE.\n" + 
+        "    {m,n}?   Non-greedy version of the above.\n" + 
+        "    \"\\\\\"     Either escapes special characters or signals a special sequence.\n" + 
+        "    []       Indicates a set of characters.\n" + 
+        "             A \"^\" as the first character indicates a complementing set.\n" + 
+        "    \"|\"      A|B, creates an RE that will match either A or B.\n" + 
+        "    (...)    Matches the RE inside the parentheses.\n" + 
+        "             The contents can be retrieved or matched later in the string.\n" + 
+        "    (?aiLmsux) Set the A, I, L, M, S, U, or X flag for the RE (see below).\n" + 
+        "    (?:...)  Non-grouping version of regular parentheses.\n" + 
+        "    (?P<name>...) The substring matched by the group is accessible by name.\n" + 
+        "    (?P=name)     Matches the text matched earlier by the group named name.\n" + 
+        "    (?#...)  A comment; ignored.\n" + 
+        "    (?=...)  Matches if ... matches next, but doesn't consume the string.\n" + 
+        "    (?!...)  Matches if ... doesn't match next.\n" + 
+        "    (?<=...) Matches if preceded by ... (must be fixed length).\n" + 
+        "    (?<!...) Matches if not preceded by ... (must be fixed length).\n" + 
+        "    (?(id/name)yes|no) Matches yes pattern if the group with id/name matched,\n" + 
+        "                       the (optional) no pattern otherwise.\n" + 
+        "\n" + 
+        "The special sequences consist of \"\\\\\" and a character from the list\n" + 
+        "below.  If the ordinary character is not on the list, then the\n" + 
+        "resulting RE will match the second character.\n" + 
+        "    \\number  Matches the contents of the group of the same number.\n" + 
+        "    \\A       Matches only at the start of the string.\n" + 
+        "    \\Z       Matches only at the end of the string.\n" + 
+        "    \\b       Matches the empty string, but only at the start or end of a word.\n" + 
+        "    \\B       Matches the empty string, but not at the start or end of a word.\n" + 
+        "    \\d       Matches any decimal digit; equivalent to the set [0-9] in\n" + 
+        "             bytes patterns or string patterns with the ASCII flag.\n" + 
+        "             In string patterns without the ASCII flag, it will match the whole\n" + 
+        "             range of Unicode digits.\n" + 
+        "    \\D       Matches any non-digit character; equivalent to [^\\d].\n" + 
+        "    \\s       Matches any whitespace character; equivalent to [ \\t\\n\\r\\f\\v] in\n" + 
+        "             bytes patterns or string patterns with the ASCII flag.\n" + 
+        "             In string patterns without the ASCII flag, it will match the whole\n" + 
+        "             range of Unicode whitespace characters.\n" + 
+        "    \\S       Matches any non-whitespace character; equivalent to [^\\s].\n" + 
+        "    \\w       Matches any alphanumeric character; equivalent to [a-zA-Z0-9_]\n" + 
+        "             in bytes patterns or string patterns with the ASCII flag.\n" + 
+        "             In string patterns without the ASCII flag, it will match the\n" + 
+        "             range of Unicode alphanumeric characters (letters plus digits\n" + 
+        "             plus underscore).\n" + 
+        "             With LOCALE, it will match the set [0-9_] plus characters defined\n" + 
+        "             as letters for the current locale.\n" + 
+        "    \\W       Matches the complement of \\w.\n" + 
+        "    \\\\       Matches a literal backslash.\n" + 
+        "\n" + 
+        "This module exports the following functions:\n" + 
+        "    match     Match a regular expression pattern to the beginning of a string.\n" + 
+        "    fullmatch Match a regular expression pattern to all of a string.\n" + 
+        "    search    Search a string for the presence of a pattern.\n" + 
+        "    sub       Substitute occurrences of a pattern found in a string.\n" + 
+        "    subn      Same as sub, but also return the number of substitutions made.\n" + 
+        "    split     Split a string by the occurrences of a pattern.\n" + 
+        "    findall   Find all occurrences of a pattern in a string.\n" + 
+        "    finditer  Return an iterator yielding a match object for each match.\n" + 
+        "    compile   Compile a pattern into a RegexObject.\n" + 
+        "    purge     Clear the regular expression cache.\n" + 
+        "    escape    Backslash all non-alphanumerics in a string.\n" + 
+        "\n" + 
+        "Some of the functions in this module takes flags as optional parameters:\n" + 
+        "    A  ASCII       For string patterns, make \\w, \\W, \\b, \\B, \\d, \\D\n" + 
+        "                   match the corresponding ASCII character categories\n" + 
+        "                   (rather than the whole Unicode categories, which is the\n" + 
+        "                   default).\n" + 
+        "                   For bytes patterns, this flag is the only available\n" + 
+        "                   behaviour and needn't be specified.\n" + 
+        "    I  IGNORECASE  Perform case-insensitive matching.\n" + 
+        "    L  LOCALE      Make \\w, \\W, \\b, \\B, dependent on the current locale.\n" + 
+        "    M  MULTILINE   \"^\" matches the beginning of lines (after a newline)\n" + 
+        "                   as well as the string.\n" + 
+        "                   \"$\" matches the end of lines (before a newline) as well\n" + 
+        "                   as the end of the string.\n" + 
+        "    S  DOTALL      \".\" matches any character at all, including the newline.\n" + 
+        "    X  VERBOSE     Ignore whitespace and comments for nicer looking RE's.\n" + 
+        "    U  UNICODE     For compatibility only. Ignored for string patterns (it\n" + 
+        "                   is the default), and forbidden for bytes patterns.\n" + 
+        "\n" + 
+        "This module also defines an exception 'error'.\n" + 
+        "\n" + 
+        "";
+
+    public final static String pickle_sys_doc = 
+        "This module provides access to some objects used or maintained by the\n" + 
+        "interpreter and to functions that interact strongly with the interpreter.\n" + 
+        "\n" + 
+        "Dynamic objects:\n" + 
+        "\n" + 
+        "argv -- command line arguments; argv[0] is the script pathname if known\n" + 
+        "path -- module search path; path[0] is the script directory, else ''\n" + 
+        "modules -- dictionary of loaded modules\n" + 
+        "\n" + 
+        "displayhook -- called to show results in an interactive session\n" + 
+        "excepthook -- called to handle any uncaught exception other than SystemExit\n" + 
+        "  To customize printing in an interactive session or to install a custom\n" + 
+        "  top-level exception handler, assign other functions to replace these.\n" + 
+        "\n" + 
+        "stdin -- standard input file object; used by input()\n" + 
+        "stdout -- standard output file object; used by print()\n" + 
+        "stderr -- standard error object; used for error messages\n" + 
+        "  By assigning other file objects (or objects that behave like files)\n" + 
+        "  to these, it is possible to redirect all of the interpreter's I/O.\n" + 
+        "\n" + 
+        "last_type -- type of last uncaught exception\n" + 
+        "last_value -- value of last uncaught exception\n" + 
+        "last_traceback -- traceback of last uncaught exception\n" + 
+        "  These three are only available in an interactive session after a\n" + 
+        "  traceback has been printed.\n" + 
+        "\n" + 
+        "Static objects:\n" + 
+        "\n" + 
+        "builtin_module_names -- tuple of module names built into this interpreter\n" + 
+        "copyright -- copyright notice pertaining to this interpreter\n" + 
+        "exec_prefix -- prefix used to find the machine-specific Python library\n" + 
+        "executable -- absolute path of the executable binary of the Python interpreter\n" + 
+        "float_info -- a struct sequence with information about the float implementation.\n" + 
+        "float_repr_style -- string indicating the style of repr() output for floats\n" + 
+        "hash_info -- a struct sequence with information about the hash algorithm.\n" + 
+        "hexversion -- version information encoded as a single integer\n" + 
+        "implementation -- Python implementation information.\n" + 
+        "int_info -- a struct sequence with information about the int implementation.\n" + 
+        "maxsize -- the largest supported length of containers.\n" + 
+        "maxunicode -- the value of the largest Unicode code point\n" + 
+        "platform -- platform identifier\n" + 
+        "prefix -- prefix used to find the Python library\n" + 
+        "thread_info -- a struct sequence with information about the thread implementation.\n" + 
+        "version -- the version of this interpreter as a string\n" + 
+        "version_info -- version information as a named tuple\n" + 
+        "__stdin__ -- the original stdin; don't touch!\n" + 
+        "__stdout__ -- the original stdout; don't touch!\n" + 
+        "__stderr__ -- the original stderr; don't touch!\n" + 
+        "__displayhook__ -- the original displayhook; don't touch!\n" + 
+        "__excepthook__ -- the original excepthook; don't touch!\n" + 
+        "\n" + 
+        "Functions:\n" + 
+        "\n" + 
+        "displayhook() -- print an object to the screen, and save it in builtins._\n" + 
+        "excepthook() -- print an exception and its traceback to sys.stderr\n" + 
+        "exc_info() -- return thread-safe information about the current exception\n" + 
+        "exit() -- exit the interpreter by raising SystemExit\n" + 
+        "getdlopenflags() -- returns flags to be used for dlopen() calls\n" + 
+        "getprofile() -- get the global profiling function\n" + 
+        "getrefcount() -- return the reference count for an object (plus one :-)\n" + 
+        "getrecursionlimit() -- return the max recursion depth for the interpreter\n" + 
+        "getsizeof() -- return the size of an object in bytes\n" + 
+        "gettrace() -- get the global debug tracing function\n" + 
+        "setcheckinterval() -- control how often the interpreter checks for events\n" + 
+        "setdlopenflags() -- set the flags to be used for dlopen() calls\n" + 
+        "setprofile() -- set the global profiling function\n" + 
+        "setrecursionlimit() -- set the max recursion depth for the interpreter\n" + 
+        "settrace() -- set the global debug tracing function\n" + 
+        "";
+
+    public final static String pickle_unpack_doc = 
+        "unpack(fmt, buffer) -> (v1, v2, ...)\n" + 
+        "\n" + 
+        "Return a tuple containing values unpacked according to the format string\n" + 
+        "fmt.  The buffer's size in bytes must be calcsize(fmt). See help(struct)\n" + 
+        "for more on format strings.";
+
+    public final static String pickle_whichmodule_doc = 
+        "Find the module an object belong to.";
+
+    // Docs for <module 'io' from '/usr/lib/python3.5/io.py'>
+    public final static String io_BlockingIOError_doc = 
+        "I/O operation would block.";
+
+    public final static String io_BufferedIOBase_doc = 
+        "Base class for buffered IO objects.\n" + 
+        "\n" + 
+        "The main difference with RawIOBase is that the read() method\n" + 
+        "supports omitting the size argument, and does not have a default\n" + 
+        "implementation that defers to readinto().\n" + 
+        "\n" + 
+        "In addition, read(), readinto() and write() may raise\n" + 
+        "BlockingIOError if the underlying raw stream is in non-blocking\n" + 
+        "mode and not ready; unlike their raw counterparts, they will never\n" + 
+        "return None.\n" + 
+        "\n" + 
+        "A typical implementation should not inherit from a RawIOBase\n" + 
+        "implementation, but wrap one.\n" + 
+        "";
+
+    public final static String io_BufferedRWPair_doc = 
+        "A buffered reader and writer object together.\n" + 
+        "\n" + 
+        "A buffered reader object and buffered writer object put together to\n" + 
+        "form a sequential IO object that can read and write. This is typically\n" + 
+        "used with a socket or two-way pipe.\n" + 
+        "\n" + 
+        "reader and writer are RawIOBase objects that are readable and\n" + 
+        "writeable respectively. If the buffer_size is omitted it defaults to\n" + 
+        "DEFAULT_BUFFER_SIZE.";
+
+    public final static String io_BufferedRandom_doc = 
+        "A buffered interface to random access streams.\n" + 
+        "\n" + 
+        "The constructor creates a reader and writer for a seekable stream,\n" + 
+        "raw, given in the first argument. If the buffer_size is omitted it\n" + 
+        "defaults to DEFAULT_BUFFER_SIZE.";
+
+    public final static String io_BufferedReader_doc = 
+        "Create a new buffered reader using the given readable raw IO object.";
+
+    public final static String io_BufferedWriter_doc = 
+        "A buffer for a writeable sequential RawIO object.\n" + 
+        "\n" + 
+        "The constructor creates a BufferedWriter for the given writeable raw\n" + 
+        "stream. If the buffer_size is not given, it defaults to\n" + 
+        "DEFAULT_BUFFER_SIZE.";
+
+    public final static String io_BytesIO_doc = 
+        "Buffered I/O implementation using an in-memory bytes buffer.";
+
+    public final static String io_DEFAULT_BUFFER_SIZE_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String io_FileIO_doc = 
+        "Open a file.\n" + 
+        "\n" + 
+        "The mode can be 'r' (default), 'w', 'x' or 'a' for reading,\n" + 
+        "writing, exclusive creation or appending.  The file will be created if it\n" + 
+        "doesn't exist when opened for writing or appending; it will be truncated\n" + 
+        "when opened for writing.  A FileExistsError will be raised if it already\n" + 
+        "exists when opened for creating. Opening a file for creating implies\n" + 
+        "writing so this mode behaves in a similar way to 'w'.Add a '+' to the mode\n" + 
+        "to allow simultaneous reading and writing. A custom opener can be used by\n" + 
+        "passing a callable as *opener*. The underlying file descriptor for the file\n" + 
+        "object is then obtained by calling opener with (*name*, *flags*).\n" + 
+        "*opener* must return an open file descriptor (passing os.open as *opener*\n" + 
+        "results in functionality similar to passing None).";
+
+    public final static String io_IOBase_doc = 
+        "The abstract base class for all I/O classes, acting on streams of\n" + 
+        "bytes. There is no public constructor.\n" + 
+        "\n" + 
+        "This class provides dummy implementations for many methods that\n" + 
+        "derived classes can override selectively; the default implementations\n" + 
+        "represent a file that cannot be read, written or seeked.\n" + 
+        "\n" + 
+        "Even though IOBase does not declare read, readinto, or write because\n" + 
+        "their signatures will vary, implementations and clients should\n" + 
+        "consider those methods part of the interface. Also, implementations\n" + 
+        "may raise UnsupportedOperation when operations they do not support are\n" + 
+        "called.\n" + 
+        "\n" + 
+        "The basic type used for binary data read from or written to a file is\n" + 
+        "bytes. Other bytes-like objects are accepted as method arguments too.\n" + 
+        "In some cases (such as readinto), a writable object is required. Text\n" + 
+        "I/O classes work with str data.\n" + 
+        "\n" + 
+        "Note that calling any method (except additional calls to close(),\n" + 
+        "which are ignored) on a closed stream should raise a ValueError.\n" + 
+        "\n" + 
+        "IOBase (and its subclasses) support the iterator protocol, meaning\n" + 
+        "that an IOBase object can be iterated over yielding the lines in a\n" + 
+        "stream.\n" + 
+        "\n" + 
+        "IOBase also supports the :keyword:`with` statement. In this example,\n" + 
+        "fp is closed after the suite of the with statement is complete:\n" + 
+        "\n" + 
+        "with open('spam.txt', 'r') as fp:\n" + 
+        "    fp.write('Spam and eggs!')\n" + 
+        "";
+
+    public final static String io_IncrementalNewlineDecoder_doc = 
+        "Codec used when reading a file in universal newlines mode.\n" + 
+        "\n" + 
+        "It wraps another incremental decoder, translating \\r\\n and \\r into \\n.\n" + 
+        "It also records the types of newlines encountered.  When used with\n" + 
+        "translate=False, it ensures that the newline sequence is returned in\n" + 
+        "one piece. When used with decoder=None, it expects unicode strings as\n" + 
+        "decode input and translates newlines without first invoking an external\n" + 
+        "decoder.";
+
+    public final static String io_OpenWrapper_doc = 
+        "Open file and return a stream.  Raise IOError upon failure.\n" + 
+        "\n" + 
+        "file is either a text or byte string giving the name (and the path\n" + 
+        "if the file isn't in the current working directory) of the file to\n" + 
+        "be opened or an integer file descriptor of the file to be\n" + 
+        "wrapped. (If a file descriptor is given, it is closed when the\n" + 
+        "returned I/O object is closed, unless closefd is set to False.)\n" + 
+        "\n" + 
+        "mode is an optional string that specifies the mode in which the file\n" + 
+        "is opened. It defaults to 'r' which means open for reading in text\n" + 
+        "mode.  Other common values are 'w' for writing (truncating the file if\n" + 
+        "it already exists), 'x' for creating and writing to a new file, and\n" + 
+        "'a' for appending (which on some Unix systems, means that all writes\n" + 
+        "append to the end of the file regardless of the current seek position).\n" + 
+        "In text mode, if encoding is not specified the encoding used is platform\n" + 
+        "dependent: locale.getpreferredencoding(False) is called to get the\n" + 
+        "current locale encoding. (For reading and writing raw bytes use binary\n" + 
+        "mode and leave encoding unspecified.) The available modes are:\n" + 
+        "\n" + 
+        "========= ===============================================================\n" + 
+        "Character Meaning\n" + 
+        "--------- ---------------------------------------------------------------\n" + 
+        "'r'       open for reading (default)\n" + 
+        "'w'       open for writing, truncating the file first\n" + 
+        "'x'       create a new file and open it for writing\n" + 
+        "'a'       open for writing, appending to the end of the file if it exists\n" + 
+        "'b'       binary mode\n" + 
+        "'t'       text mode (default)\n" + 
+        "'+'       open a disk file for updating (reading and writing)\n" + 
+        "'U'       universal newline mode (deprecated)\n" + 
+        "========= ===============================================================\n" + 
+        "\n" + 
+        "The default mode is 'rt' (open for reading text). For binary random\n" + 
+        "access, the mode 'w+b' opens and truncates the file to 0 bytes, while\n" + 
+        "'r+b' opens the file without truncation. The 'x' mode implies 'w' and\n" + 
+        "raises an `FileExistsError` if the file already exists.\n" + 
+        "\n" + 
+        "Python distinguishes between files opened in binary and text modes,\n" + 
+        "even when the underlying operating system doesn't. Files opened in\n" + 
+        "binary mode (appending 'b' to the mode argument) return contents as\n" + 
+        "bytes objects without any decoding. In text mode (the default, or when\n" + 
+        "'t' is appended to the mode argument), the contents of the file are\n" + 
+        "returned as strings, the bytes having been first decoded using a\n" + 
+        "platform-dependent encoding or using the specified encoding if given.\n" + 
+        "\n" + 
+        "'U' mode is deprecated and will raise an exception in future versions\n" + 
+        "of Python.  It has no effect in Python 3.  Use newline to control\n" + 
+        "universal newlines mode.\n" + 
+        "\n" + 
+        "buffering is an optional integer used to set the buffering policy.\n" + 
+        "Pass 0 to switch buffering off (only allowed in binary mode), 1 to select\n" + 
+        "line buffering (only usable in text mode), and an integer > 1 to indicate\n" + 
+        "the size of a fixed-size chunk buffer.  When no buffering argument is\n" + 
+        "given, the default buffering policy works as follows:\n" + 
+        "\n" + 
+        "* Binary files are buffered in fixed-size chunks; the size of the buffer\n" + 
+        "  is chosen using a heuristic trying to determine the underlying device's\n" + 
+        "  \"block size\" and falling back on `io.DEFAULT_BUFFER_SIZE`.\n" + 
+        "  On many systems, the buffer will typically be 4096 or 8192 bytes long.\n" + 
+        "\n" + 
+        "* \"Interactive\" text files (files for which isatty() returns True)\n" + 
+        "  use line buffering.  Other text files use the policy described above\n" + 
+        "  for binary files.\n" + 
+        "\n" + 
+        "encoding is the name of the encoding used to decode or encode the\n" + 
+        "file. This should only be used in text mode. The default encoding is\n" + 
+        "platform dependent, but any encoding supported by Python can be\n" + 
+        "passed.  See the codecs module for the list of supported encodings.\n" + 
+        "\n" + 
+        "errors is an optional string that specifies how encoding errors are to\n" + 
+        "be handled---this argument should not be used in binary mode. Pass\n" + 
+        "'strict' to raise a ValueError exception if there is an encoding error\n" + 
+        "(the default of None has the same effect), or pass 'ignore' to ignore\n" + 
+        "errors. (Note that ignoring encoding errors can lead to data loss.)\n" + 
+        "See the documentation for codecs.register or run 'help(codecs.Codec)'\n" + 
+        "for a list of the permitted encoding error strings.\n" + 
+        "\n" + 
+        "newline controls how universal newlines works (it only applies to text\n" + 
+        "mode). It can be None, '', '\\n', '\\r', and '\\r\\n'.  It works as\n" + 
+        "follows:\n" + 
+        "\n" + 
+        "* On input, if newline is None, universal newlines mode is\n" + 
+        "  enabled. Lines in the input can end in '\\n', '\\r', or '\\r\\n', and\n" + 
+        "  these are translated into '\\n' before being returned to the\n" + 
+        "  caller. If it is '', universal newline mode is enabled, but line\n" + 
+        "  endings are returned to the caller untranslated. If it has any of\n" + 
+        "  the other legal values, input lines are only terminated by the given\n" + 
+        "  string, and the line ending is returned to the caller untranslated.\n" + 
+        "\n" + 
+        "* On output, if newline is None, any '\\n' characters written are\n" + 
+        "  translated to the system default line separator, os.linesep. If\n" + 
+        "  newline is '' or '\\n', no translation takes place. If newline is any\n" + 
+        "  of the other legal values, any '\\n' characters written are translated\n" + 
+        "  to the given string.\n" + 
+        "\n" + 
+        "If closefd is False, the underlying file descriptor will be kept open\n" + 
+        "when the file is closed. This does not work when a file name is given\n" + 
+        "and must be True in that case.\n" + 
+        "\n" + 
+        "A custom opener can be used by passing a callable as *opener*. The\n" + 
+        "underlying file descriptor for the file object is then obtained by\n" + 
+        "calling *opener* with (*file*, *flags*). *opener* must return an open\n" + 
+        "file descriptor (passing os.open as *opener* results in functionality\n" + 
+        "similar to passing None).\n" + 
+        "\n" + 
+        "open() returns a file object whose type depends on the mode, and\n" + 
+        "through which the standard file operations such as reading and writing\n" + 
+        "are performed. When open() is used to open a file in a text mode ('w',\n" + 
+        "'r', 'wt', 'rt', etc.), it returns a TextIOWrapper. When used to open\n" + 
+        "a file in a binary mode, the returned class varies: in read binary\n" + 
+        "mode, it returns a BufferedReader; in write binary and append binary\n" + 
+        "modes, it returns a BufferedWriter, and in read/write mode, it returns\n" + 
+        "a BufferedRandom.\n" + 
+        "\n" + 
+        "It is also possible to use a string or bytearray as a file for both\n" + 
+        "reading and writing. For strings StringIO can be used like a file\n" + 
+        "opened in a text mode, and for bytes a BytesIO can be used like a file\n" + 
+        "opened in a binary mode.";
+
+    public final static String io_RawIOBase_doc = 
+        "Base class for raw binary I/O.";
+
+    public final static String io_SEEK_CUR_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String io_SEEK_END_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String io_SEEK_SET_doc = 
+        "int(x=0) -> integer\n" + 
+        "int(x, base=10) -> integer\n" + 
+        "\n" + 
+        "Convert a number or string to an integer, or return 0 if no arguments\n" + 
+        "are given.  If x is a number, return x.__int__().  For floating point\n" + 
+        "numbers, this truncates towards zero.\n" + 
+        "\n" + 
+        "If x is not a number or if base is given, then x must be a string,\n" + 
+        "bytes, or bytearray instance representing an integer literal in the\n" + 
+        "given base.  The literal can be preceded by '+' or '-' and be surrounded\n" + 
+        "by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.\n" + 
+        "Base 0 means to interpret the base from the string as an integer literal.\n" + 
+        ">>> int('0b100', base=0)\n" + 
+        "4";
+
+    public final static String io_StringIO_doc = 
+        "Text I/O implementation using an in-memory buffer.\n" + 
+        "\n" + 
+        "The initial_value argument sets the value of object.  The newline\n" + 
+        "argument is like the one of TextIOWrapper's constructor.";
+
+    public final static String io_TextIOBase_doc = 
+        "Base class for text I/O.\n" + 
+        "\n" + 
+        "This class provides a character and line based interface to stream\n" + 
+        "I/O. There is no readinto method because Python's character strings\n" + 
+        "are immutable. There is no public constructor.\n" + 
+        "";
+
+    public final static String io_TextIOWrapper_doc = 
+        "Character and line based layer over a BufferedIOBase object, buffer.\n" + 
+        "\n" + 
+        "encoding gives the name of the encoding that the stream will be\n" + 
+        "decoded or encoded with. It defaults to locale.getpreferredencoding(False).\n" + 
+        "\n" + 
+        "errors determines the strictness of encoding and decoding (see\n" + 
+        "help(codecs.Codec) or the documentation for codecs.register) and\n" + 
+        "defaults to \"strict\".\n" + 
+        "\n" + 
+        "newline controls how line endings are handled. It can be None, '',\n" + 
+        "'\\n', '\\r', and '\\r\\n'.  It works as follows:\n" + 
+        "\n" + 
+        "* On input, if newline is None, universal newlines mode is\n" + 
+        "  enabled. Lines in the input can end in '\\n', '\\r', or '\\r\\n', and\n" + 
+        "  these are translated into '\\n' before being returned to the\n" + 
+        "  caller. If it is '', universal newline mode is enabled, but line\n" + 
+        "  endings are returned to the caller untranslated. If it has any of\n" + 
+        "  the other legal values, input lines are only terminated by the given\n" + 
+        "  string, and the line ending is returned to the caller untranslated.\n" + 
+        "\n" + 
+        "* On output, if newline is None, any '\\n' characters written are\n" + 
+        "  translated to the system default line separator, os.linesep. If\n" + 
+        "  newline is '' or '\\n', no translation takes place. If newline is any\n" + 
+        "  of the other legal values, any '\\n' characters written are translated\n" + 
+        "  to the given string.\n" + 
+        "\n" + 
+        "If line_buffering is True, a call to flush is implied when a call to\n" + 
+        "write contains a newline character.";
+
+    public final static String io_UnsupportedOperation_doc = 
+        "";
+
+    public final static String io___all___doc = 
+        "list() -> new empty list\n" + 
+        "list(iterable) -> new list initialized from iterable's items";
+
+    public final static String io___author___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String io___builtins___doc = 
+        "dict() -> new empty dictionary\n" + 
+        "dict(mapping) -> new dictionary initialized from a mapping object's\n" + 
+        "    (key, value) pairs\n" + 
+        "dict(iterable) -> new dictionary initialized as if via:\n" + 
+        "    d = {}\n" + 
+        "    for k, v in iterable:\n" + 
+        "        d[k] = v\n" + 
+        "dict(**kwargs) -> new dictionary initialized with the name=value pairs\n" + 
+        "    in the keyword argument list.  For example:  dict(one=1, two=2)";
+
+    public final static String io___cached___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String io_doc = 
+        "The io module provides the Python interfaces to stream handling. The\n" + 
+        "builtin open function is defined in this module.\n" + 
+        "\n" + 
+        "At the top of the I/O hierarchy is the abstract base class IOBase. It\n" + 
+        "defines the basic interface to a stream. Note, however, that there is no\n" + 
+        "separation between reading and writing to streams; implementations are\n" + 
+        "allowed to raise an OSError if they do not support a given operation.\n" + 
+        "\n" + 
+        "Extending IOBase is RawIOBase which deals simply with the reading and\n" + 
+        "writing of raw bytes to a stream. FileIO subclasses RawIOBase to provide\n" + 
+        "an interface to OS files.\n" + 
+        "\n" + 
+        "BufferedIOBase deals with buffering on a raw byte stream (RawIOBase). Its\n" + 
+        "subclasses, BufferedWriter, BufferedReader, and BufferedRWPair buffer\n" + 
+        "streams that are readable, writable, and both respectively.\n" + 
+        "BufferedRandom provides a buffered interface to random access\n" + 
+        "streams. BytesIO is a simple stream of in-memory bytes.\n" + 
+        "\n" + 
+        "Another IOBase subclass, TextIOBase, deals with the encoding and decoding\n" + 
+        "of streams into text. TextIOWrapper, which extends it, is a buffered text\n" + 
+        "interface to a buffered raw stream (`BufferedIOBase`). Finally, StringIO\n" + 
+        "is an in-memory stream for text.\n" + 
+        "\n" + 
+        "Argument names are not part of the specification, and only the arguments\n" + 
+        "of open() are intended to be used as keyword arguments.\n" + 
+        "\n" + 
+        "data:\n" + 
+        "\n" + 
+        "DEFAULT_BUFFER_SIZE\n" + 
+        "\n" + 
+        "   An int containing the default buffer size used by the module's buffered\n" + 
+        "   I/O classes. open() uses the file's blksize (as obtained by os.stat) if\n" + 
+        "   possible.\n" + 
+        "";
+
+    public final static String io___file___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String io___loader___doc = 
+        "Concrete implementation of SourceLoader using the file system.";
+
+    public final static String io___name___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String io___package___doc = 
+        "str(object='') -> str\n" + 
+        "str(bytes_or_buffer[, encoding[, errors]]) -> str\n" + 
+        "\n" + 
+        "Create a new string object from the given object. If encoding or\n" + 
+        "errors is specified, then the object must expose a data buffer\n" + 
+        "that will be decoded using the given encoding and error handler.\n" + 
+        "Otherwise, returns the result of object.__str__() (if defined)\n" + 
+        "or repr(object).\n" + 
+        "encoding defaults to sys.getdefaultencoding().\n" + 
+        "errors defaults to 'strict'.";
+
+    public final static String io___spec___doc = 
+        "The specification for a module, used for loading.\n" + 
+        "\n" + 
+        "    A module's spec is the source for information about the module.  For\n" + 
+        "    data associated with the module, including source, use the spec's\n" + 
+        "    loader.\n" + 
+        "\n" + 
+        "    `name` is the absolute name of the module.  `loader` is the loader\n" + 
+        "    to use when loading the module.  `parent` is the name of the\n" + 
+        "    package the module is in.  The parent is derived from the name.\n" + 
+        "\n" + 
+        "    `is_package` determines if the module is considered a package or\n" + 
+        "    not.  On modules this is reflected by the `__path__` attribute.\n" + 
+        "\n" + 
+        "    `origin` is the specific location used by the loader from which to\n" + 
+        "    load the module, if that information is available.  When filename is\n" + 
+        "    set, origin will match.\n" + 
+        "\n" + 
+        "    `has_location` indicates that a spec's \"origin\" reflects a location.\n" + 
+        "    When this is True, `__file__` attribute of the module is set.\n" + 
+        "\n" + 
+        "    `cached` is the location of the cached bytecode file, if any.  It\n" + 
+        "    corresponds to the `__cached__` attribute.\n" + 
+        "\n" + 
+        "    `submodule_search_locations` is the sequence of path entries to\n" + 
+        "    search when importing submodules.  If set, is_package should be\n" + 
+        "    True--and False otherwise.\n" + 
+        "\n" + 
+        "    Packages are simply modules that (may) have submodules.  If a spec\n" + 
+        "    has a non-None value in `submodule_search_locations`, the import\n" + 
+        "    system will consider modules loaded from the spec as packages.\n" + 
+        "\n" + 
+        "    Only finders (see importlib.abc.MetaPathFinder and\n" + 
+        "    importlib.abc.PathEntryFinder) should modify ModuleSpec instances.\n" + 
+        "\n" + 
+        "    ";
+
+    public final static String io__io_doc = 
+        "The io module provides the Python interfaces to stream handling. The\n" + 
+        "builtin open function is defined in this module.\n" + 
+        "\n" + 
+        "At the top of the I/O hierarchy is the abstract base class IOBase. It\n" + 
+        "defines the basic interface to a stream. Note, however, that there is no\n" + 
+        "separation between reading and writing to streams; implementations are\n" + 
+        "allowed to raise an IOError if they do not support a given operation.\n" + 
+        "\n" + 
+        "Extending IOBase is RawIOBase which deals simply with the reading and\n" + 
+        "writing of raw bytes to a stream. FileIO subclasses RawIOBase to provide\n" + 
+        "an interface to OS files.\n" + 
+        "\n" + 
+        "BufferedIOBase deals with buffering on a raw byte stream (RawIOBase). Its\n" + 
+        "subclasses, BufferedWriter, BufferedReader, and BufferedRWPair buffer\n" + 
+        "streams that are readable, writable, and both respectively.\n" + 
+        "BufferedRandom provides a buffered interface to random access\n" + 
+        "streams. BytesIO is a simple stream of in-memory bytes.\n" + 
+        "\n" + 
+        "Another IOBase subclass, TextIOBase, deals with the encoding and decoding\n" + 
+        "of streams into text. TextIOWrapper, which extends it, is a buffered text\n" + 
+        "interface to a buffered raw stream (`BufferedIOBase`). Finally, StringIO\n" + 
+        "is an in-memory stream for text.\n" + 
+        "\n" + 
+        "Argument names are not part of the specification, and only the arguments\n" + 
+        "of open() are intended to be used as keyword arguments.\n" + 
+        "\n" + 
+        "data:\n" + 
+        "\n" + 
+        "DEFAULT_BUFFER_SIZE\n" + 
+        "\n" + 
+        "   An int containing the default buffer size used by the module's buffered\n" + 
+        "   I/O classes. open() uses the file's blksize (as obtained by os.stat) if\n" + 
+        "   possible.\n" + 
+        "";
+
+    public final static String io_abc_doc = 
+        "Abstract Base Classes (ABCs) according to PEP 3119.";
+
+    public final static String io_open_doc = 
+        "Open file and return a stream.  Raise IOError upon failure.\n" + 
+        "\n" + 
+        "file is either a text or byte string giving the name (and the path\n" + 
+        "if the file isn't in the current working directory) of the file to\n" + 
+        "be opened or an integer file descriptor of the file to be\n" + 
+        "wrapped. (If a file descriptor is given, it is closed when the\n" + 
+        "returned I/O object is closed, unless closefd is set to False.)\n" + 
+        "\n" + 
+        "mode is an optional string that specifies the mode in which the file\n" + 
+        "is opened. It defaults to 'r' which means open for reading in text\n" + 
+        "mode.  Other common values are 'w' for writing (truncating the file if\n" + 
+        "it already exists), 'x' for creating and writing to a new file, and\n" + 
+        "'a' for appending (which on some Unix systems, means that all writes\n" + 
+        "append to the end of the file regardless of the current seek position).\n" + 
+        "In text mode, if encoding is not specified the encoding used is platform\n" + 
+        "dependent: locale.getpreferredencoding(False) is called to get the\n" + 
+        "current locale encoding. (For reading and writing raw bytes use binary\n" + 
+        "mode and leave encoding unspecified.) The available modes are:\n" + 
+        "\n" + 
+        "========= ===============================================================\n" + 
+        "Character Meaning\n" + 
+        "--------- ---------------------------------------------------------------\n" + 
+        "'r'       open for reading (default)\n" + 
+        "'w'       open for writing, truncating the file first\n" + 
+        "'x'       create a new file and open it for writing\n" + 
+        "'a'       open for writing, appending to the end of the file if it exists\n" + 
+        "'b'       binary mode\n" + 
+        "'t'       text mode (default)\n" + 
+        "'+'       open a disk file for updating (reading and writing)\n" + 
+        "'U'       universal newline mode (deprecated)\n" + 
+        "========= ===============================================================\n" + 
+        "\n" + 
+        "The default mode is 'rt' (open for reading text). For binary random\n" + 
+        "access, the mode 'w+b' opens and truncates the file to 0 bytes, while\n" + 
+        "'r+b' opens the file without truncation. The 'x' mode implies 'w' and\n" + 
+        "raises an `FileExistsError` if the file already exists.\n" + 
+        "\n" + 
+        "Python distinguishes between files opened in binary and text modes,\n" + 
+        "even when the underlying operating system doesn't. Files opened in\n" + 
+        "binary mode (appending 'b' to the mode argument) return contents as\n" + 
+        "bytes objects without any decoding. In text mode (the default, or when\n" + 
+        "'t' is appended to the mode argument), the contents of the file are\n" + 
+        "returned as strings, the bytes having been first decoded using a\n" + 
+        "platform-dependent encoding or using the specified encoding if given.\n" + 
+        "\n" + 
+        "'U' mode is deprecated and will raise an exception in future versions\n" + 
+        "of Python.  It has no effect in Python 3.  Use newline to control\n" + 
+        "universal newlines mode.\n" + 
+        "\n" + 
+        "buffering is an optional integer used to set the buffering policy.\n" + 
+        "Pass 0 to switch buffering off (only allowed in binary mode), 1 to select\n" + 
+        "line buffering (only usable in text mode), and an integer > 1 to indicate\n" + 
+        "the size of a fixed-size chunk buffer.  When no buffering argument is\n" + 
+        "given, the default buffering policy works as follows:\n" + 
+        "\n" + 
+        "* Binary files are buffered in fixed-size chunks; the size of the buffer\n" + 
+        "  is chosen using a heuristic trying to determine the underlying device's\n" + 
+        "  \"block size\" and falling back on `io.DEFAULT_BUFFER_SIZE`.\n" + 
+        "  On many systems, the buffer will typically be 4096 or 8192 bytes long.\n" + 
+        "\n" + 
+        "* \"Interactive\" text files (files for which isatty() returns True)\n" + 
+        "  use line buffering.  Other text files use the policy described above\n" + 
+        "  for binary files.\n" + 
+        "\n" + 
+        "encoding is the name of the encoding used to decode or encode the\n" + 
+        "file. This should only be used in text mode. The default encoding is\n" + 
+        "platform dependent, but any encoding supported by Python can be\n" + 
+        "passed.  See the codecs module for the list of supported encodings.\n" + 
+        "\n" + 
+        "errors is an optional string that specifies how encoding errors are to\n" + 
+        "be handled---this argument should not be used in binary mode. Pass\n" + 
+        "'strict' to raise a ValueError exception if there is an encoding error\n" + 
+        "(the default of None has the same effect), or pass 'ignore' to ignore\n" + 
+        "errors. (Note that ignoring encoding errors can lead to data loss.)\n" + 
+        "See the documentation for codecs.register or run 'help(codecs.Codec)'\n" + 
+        "for a list of the permitted encoding error strings.\n" + 
+        "\n" + 
+        "newline controls how universal newlines works (it only applies to text\n" + 
+        "mode). It can be None, '', '\\n', '\\r', and '\\r\\n'.  It works as\n" + 
+        "follows:\n" + 
+        "\n" + 
+        "* On input, if newline is None, universal newlines mode is\n" + 
+        "  enabled. Lines in the input can end in '\\n', '\\r', or '\\r\\n', and\n" + 
+        "  these are translated into '\\n' before being returned to the\n" + 
+        "  caller. If it is '', universal newline mode is enabled, but line\n" + 
+        "  endings are returned to the caller untranslated. If it has any of\n" + 
+        "  the other legal values, input lines are only terminated by the given\n" + 
+        "  string, and the line ending is returned to the caller untranslated.\n" + 
+        "\n" + 
+        "* On output, if newline is None, any '\\n' characters written are\n" + 
+        "  translated to the system default line separator, os.linesep. If\n" + 
+        "  newline is '' or '\\n', no translation takes place. If newline is any\n" + 
+        "  of the other legal values, any '\\n' characters written are translated\n" + 
+        "  to the given string.\n" + 
+        "\n" + 
+        "If closefd is False, the underlying file descriptor will be kept open\n" + 
+        "when the file is closed. This does not work when a file name is given\n" + 
+        "and must be True in that case.\n" + 
+        "\n" + 
+        "A custom opener can be used by passing a callable as *opener*. The\n" + 
+        "underlying file descriptor for the file object is then obtained by\n" + 
+        "calling *opener* with (*file*, *flags*). *opener* must return an open\n" + 
+        "file descriptor (passing os.open as *opener* results in functionality\n" + 
+        "similar to passing None).\n" + 
+        "\n" + 
+        "open() returns a file object whose type depends on the mode, and\n" + 
+        "through which the standard file operations such as reading and writing\n" + 
+        "are performed. When open() is used to open a file in a text mode ('w',\n" + 
+        "'r', 'wt', 'rt', etc.), it returns a TextIOWrapper. When used to open\n" + 
+        "a file in a binary mode, the returned class varies: in read binary\n" + 
+        "mode, it returns a BufferedReader; in write binary and append binary\n" + 
+        "modes, it returns a BufferedWriter, and in read/write mode, it returns\n" + 
+        "a BufferedRandom.\n" + 
+        "\n" + 
+        "It is also possible to use a string or bytearray as a file for both\n" + 
+        "reading and writing. For strings StringIO can be used like a file\n" + 
+        "opened in a text mode, and for bytes a BytesIO can be used like a file\n" + 
+        "opened in a binary mode.";
+
     // Docs for <class 'io.IOBase'>
     public final static String IOBase___abstractmethods___doc = 
         "";

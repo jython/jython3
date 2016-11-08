@@ -169,9 +169,12 @@ public final class Py {
 
 
 
-    /** A unique object to indicate no conversion is possible
-    in __tojava__ methods **/
+    /** A unique object to indicate no conversion is possible in __tojava__ methods **/
     public final static Object NoConversion = new PySingleton("Error");
+    /** PyErr_Format */
+    public static PyException ErrFormat(PyObject excType, String format, String... vars) {
+        return new PyException(excType, String.format(format, vars));
+    }
     public static PyObject OSError;
     public static PyException OSError(String message) {
         return new PyException(Py.OSError, message);

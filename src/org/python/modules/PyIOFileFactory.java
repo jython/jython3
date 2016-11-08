@@ -5,10 +5,10 @@ import org.python.core.PyBytes;
 import org.python.core.PyFile;
 import org.python.core.PyInteger;
 import org.python.core.PyObject;
-import org.python.core.PyType;
 import org.python.core.__builtin__;
 import org.python.core.Traverseproc;
 import org.python.core.Visitproc;
+import org.python.modules._io.PyStringIO;
 
 // XXX - add support for StringIO, not just cStringIO
 
@@ -18,7 +18,7 @@ public class PyIOFileFactory {
     }
 
     public static PyIOFile createIOFile(PyObject file) {
-        Object f = file.__tojava__(cStringIO.StringIO.class);
+        Object f = file.__tojava__(PyStringIO.class);
         if (f != Py.NoConversion) {
             return new cStringIOFile(file);
         } else if (__builtin__.isinstance(file, PyFile.TYPE)) {
@@ -31,10 +31,10 @@ public class PyIOFileFactory {
     // Use a cStringIO as a file.
     static class cStringIOFile implements PyIOFile {
 
-        cStringIO.StringIO file;
+        PyStringIO file;
 
         cStringIOFile(PyObject file) {
-            this.file = (cStringIO.StringIO) file.__tojava__(Object.class);
+            this.file = (PyStringIO) file.__tojava__(Object.class);
         }
 
         public void write(String str) {
