@@ -37,3 +37,7 @@ cachedir
 dist
 target
 profile.txt
+tags
+extlibs/ant.jar
+extlibs/ifxjdbc.jar
+extlibs/ojdbc6.jar

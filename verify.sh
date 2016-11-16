@@ -1,0 +1,1 @@
+java -cp "./dist/jython-dev.jar:./asm/asm-5.1/lib/asm-5.1.jar:./asm/asm-5.1/lib/asm-tree-5.1.jar:./asm/asm-5.1/lib/asm-analysis-5.1.jar:./asm/asm-5.1/lib/asm-util-5.1.jar" org.objectweb.asm.util.CheckClassAdapter $1

@@ -5,6 +5,7 @@ import importlib.util
 import struct
 import time
 import unittest
+import _imp
 
 from test import support
 
@@ -23,7 +24,6 @@ def get_name():
 def get_file():
     return __file__
 """
-test_co = compile(test_src, "<???>", "exec")
 raise_src = 'def do_raise(): raise TypeError\n'
 
 def make_pyc(co, mtime, size):
@@ -42,7 +42,7 @@ def module_path_to_dotted_name(path):
     return path.replace(os.sep, '.')
 
 NOW = time.time()
-test_pyc = make_pyc(test_co, NOW, len(test_src))
+test_pyc = _imp._compile_source("<???>", test_src, "test_src")
 
 
 TESTMOD = "ziptestmodule"
@@ -51,7 +51,7 @@ TESTPACK2 = "ziptestpackage2"
 TEMP_ZIP = os.path.abspath("junk95142.zip")
 
 pyc_file = importlib.util.cache_from_source(TESTMOD + '.py')
-pyc_ext = '.pyc'
+pyc_ext = '.class'
 
 
 class ImportHooksBaseTestCase(unittest.TestCase):
@@ -112,7 +112,7 @@ class UncompressedZipImportTestCase(ImportHooksBaseTestCase):
             if expected_ext:
                 file = mod.get_file()
                 self.assertEqual(file, os.path.join(TEMP_ZIP,
-                                 *modules) + expected_ext)
+                                 *modules) + ".py")
         finally:
             z.close()
             os.remove(TEMP_ZIP)
@@ -324,7 +324,7 @@ class UncompressedZipImportTestCase(ImportHooksBaseTestCase):
             return __file__
         if __loader__.get_data("some.data") != b"some data":
             raise AssertionError("bad data")\n"""
-        pyc = make_pyc(compile(src, "<???>", "exec"), NOW, len(src))
+        pyc = _imp._compile_source("<???>", src, "test_src")
         files = {TESTMOD + pyc_ext: (NOW, pyc),
                  "some.data": (NOW, "some data")}
         self.doTest(pyc_ext, files, TESTMOD)
@@ -344,7 +344,8 @@ class UncompressedZipImportTestCase(ImportHooksBaseTestCase):
         self.doTest(".py", files, TESTMOD, call=self.assertModuleSource)
 
     def testGetCompiledSource(self):
-        pyc = make_pyc(compile(test_src, "<???>", "exec"), NOW, len(test_src))
+        #pyc = make_pyc(compile(test_src, "<???>", "exec"), NOW, len(test_src))
+        pyc = _imp._compile_source("<???>", test_src, "test_src")
         files = {TESTMOD + ".py": (NOW, test_src),
                  TESTMOD + pyc_ext: (NOW, pyc)}
         self.doTest(pyc_ext, files, TESTMOD, call=self.assertModuleSource)

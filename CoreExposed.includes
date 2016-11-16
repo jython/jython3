@@ -83,7 +83,9 @@ org/python/modules/_datetime/PyTimezone.class
 org/python/modules/_datetime/PyTZInfo.class
 org/python/modules/_io/PyIOBase.class
 org/python/modules/_io/PyRawIOBase.class
+org/python/modules/_io/PyBytesIO.class
 org/python/modules/_io/PyFileIO.class
+org/python/modules/_io/PyStringIO.class
 org/python/modules/_multiprocessing/PySemLock.class
 org/python/modules/_functools/PyPartial.class
 org/python/modules/_hashlib$Hash.class
@@ -132,6 +134,8 @@ org/python/modules/_weakref/ReferenceType.class
 org/python/modules/operator$PyAttrGetter.class
 org/python/modules/operator$PyItemGetter.class
 org/python/modules/operator$PyMethodCaller.class
+org/python/modules/_pickle/PyPickler.class
+org/python/modules/_pickle/PyUnpickler.class
 org/python/modules/posix/PyDirEntry.class
 org/python/modules/posix/PyScandirIterator.class
 org/python/modules/posix/PyStatResult.class
@@ -144,7 +148,7 @@ org/python/modules/subprocess/PyPopen.class
 org/python/modules/thread/PyLocal.class
 org/python/modules/time/PyTimeTuple.class
 org/python/modules/unicodedata/UCD.class
-org/python/modules/zipimport/zipimporter.class
+org/python/modules/zipimport/PyZipImporter.class
 org/python/modules/zlib/PyCompress.class
 org/python/modules/zlib/PyDecompress.class
 org/python/antlr/AST.class

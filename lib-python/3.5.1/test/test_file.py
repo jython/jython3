@@ -5,7 +5,7 @@ from array import array
 from weakref import proxy
 
 import io
-import _pyio as pyio
+import _jyio as pyio
 
 from test.support import TESTFN, run_unittest
 from collections import UserList
@@ -129,7 +129,7 @@ class AutoFileTests:
         self.assertRaises(OSError, self.f.read)
 
 class CAutoFileTests(AutoFileTests, unittest.TestCase):
-    open = io.open
+    open = staticmethod(io.open)
 
 class PyAutoFileTests(AutoFileTests, unittest.TestCase):
     open = staticmethod(pyio.open)
@@ -313,7 +313,7 @@ class OtherFileTests:
             os.unlink(TESTFN)
 
 class COtherFileTests(OtherFileTests, unittest.TestCase):
-    open = io.open
+    open = staticmethod(io.open)
 
 class PyOtherFileTests(OtherFileTests, unittest.TestCase):
     open = staticmethod(pyio.open)

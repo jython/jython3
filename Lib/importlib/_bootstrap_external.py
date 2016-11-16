@@ -1382,8 +1382,7 @@ def _setup(_bootstrap_module):
     # Directly load built-in modules needed during bootstrap.
     self_module = sys.modules[__name__]
     for builtin_name in ('_io', '_warnings', 'builtins', 'marshal'):
-        if builtin_name not in sys.modules:
-            builtin_module = _bootstrap._builtin_from_name(builtin_name)
+        if builtin_name not in sys.modules: builtin_module = _bootstrap._builtin_from_name(builtin_name)
         else:
             builtin_module = sys.modules[builtin_name]
         setattr(self_module, builtin_name, builtin_module)

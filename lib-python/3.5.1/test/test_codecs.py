@@ -14,13 +14,18 @@ if sys.platform == 'win32':
 else:
     VISTA_OR_LATER = False
 
-try:
-    import ctypes
-except ImportError:
-    ctypes = None
-    SIZEOF_WCHAR_T = -1
-else:
-    SIZEOF_WCHAR_T = ctypes.sizeof(ctypes.c_wchar)
+#try:
+#    import ctypes
+#except ImportError:
+ctypes = None
+SIZEOF_WCHAR_T = -1
+#else:
+#    try:
+#        SIZEOF_WCHAR_T = ctypes.sizeof(ctypes.c_wchar)
+#    except TypeError:
+#        ctypes = None
+#        SIZEOF_WCHAR_T = -1
+#
 
 def coding_checker(self, coder):
     def check(input, expect):

@@ -1,10 +1,18 @@
 import io
+import pickle
 import types
 import re
 import itertools
 import builtins
 import _multiprocessing
 import sys
+import subprocess
+import array
+import csv
+import time
+import datetime
+import zipimport
+import posix
 
 def print_doc(out, obj, meth):
     if meth == '__doc__':
@@ -35,8 +43,13 @@ coro = foo()
 coro.close()
 
 types_list = [
+array,
+csv,
 builtins,
 object,
+time,
+datetime,
+posix,
 type,
 bytes,
 dict,
@@ -59,6 +72,8 @@ frozenset,
 BaseException,
 bytearray,
 memoryview,
+zipimport,
+zipimport.zipimporter,
 types.GeneratorType,
 types.CoroutineType,
 type(coro.__await__()),
@@ -78,9 +93,22 @@ type(None),
 type(NotImplemented),
 type(Ellipsis),
 _multiprocessing.SemLock,
+pickle,
+io,
+io.IOBase,
+io.RawIOBase,
+io.FileIO,
+io.BufferedReader,
+io.BufferedWriter,
+io.BufferedRWPair,
+io.BufferedRandom,
 io.TextIOBase,
+io.TextIOWrapper,
+io.StringIO,
+io.BytesIO,
 # modules
-sys
+sys,
+subprocess
 ]
 
 outfile = open("BuiltinDocs.java", "w")

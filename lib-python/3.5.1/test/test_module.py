@@ -3,9 +3,9 @@ import unittest
 import weakref
 from test.support import gc_collect
 from test.support.script_helper import assert_python_ok
-
 import sys
-ModuleType = type(sys)
+
+from types import ModuleType
 
 class FullLoader:
     @classmethod

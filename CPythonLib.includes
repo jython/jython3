@@ -6,6 +6,7 @@ asyncio/*
 collections/**
 compiler/**
 concurrent/**
+dbm/**
 distutils/**
 email/**
 encodings/**
@@ -24,17 +25,16 @@ json/**
 __future__.py
 _collections_abc.py
 _compat_pickle.py
+_compression.py
 _dummy_thread.py
 _LWPCookieJar.py
 _MozillaCookieJar.py
-_pyio.py
 _strptime.py
 _sitebuiltins.py
 _threading_local.py
 _weakrefset.py
 abc.py
 aifc.py
-anydbm.py
 argparse.py
 ast.py
 atexit.py
@@ -45,6 +45,7 @@ base64.py
 bdb.py
 binhex.py
 bisect.py
+bz2.py
 calendar.py
 cgi.py
 cgitb.py
@@ -66,6 +67,7 @@ copy.py
 copyreg.py
 Cookie.py
 csv.py
+datetime.py
 difflib.py
 dircache.py
 dircmp.py
@@ -73,7 +75,6 @@ dis.py
 doctest.py
 DocXMLRPCServer.py
 dospath.py
-dumbdbm.py
 dummy_threading.py
 enum.py
 filecmp.py
@@ -114,6 +115,7 @@ mimetools.py
 mimetypes.py
 MimeWriter.py
 mimify.py
+modulefinder.py
 multifile.py
 mutex.py
 netrc.py
@@ -172,7 +174,7 @@ sre_parse.py
 stat.py
 string.py
 stringprep.py
-subprocess.py
+#subprocess.py implemented natively
 symbol.py
 sysconfig.py
 tabnanny.py
@@ -180,11 +182,13 @@ telnetlib.py
 this.py
 textwrap.py
 tempfile.py
+threading.py
 token.py
 tokenize.py
 trace.py
 traceback.py
 tty.py
+typing.py
 types.py
 tzparse.py
 unicodedata.py

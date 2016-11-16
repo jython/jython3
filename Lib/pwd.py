@@ -12,7 +12,7 @@ __all__ = ['getpwuid', 'getpwnam', 'getpwall']
 
 try:
     from os import _name, _posix_impl
-    from org.python.core.Py import newStringOrUnicode
+    from org.python.core.Py import newUnicode as newStringOrUnicode
 except:
     raise ImportError
 import sys

@@ -118,7 +118,7 @@ import sys,string,os,re
 ### Globals & Constants
 if sys.platform.startswith("java"):
     from java.lang import System
-    from org.python.core.Py import newString
+    from org.python.core.Py import newUnicode
 
 # Determine the platform's /dev/null device
 try:
@@ -829,7 +829,7 @@ def _java_getprop(name,default):
         value = System.getProperty(name)
         if value is None:
             return default
-        return newString(value)
+        return newUnicode(value)
     except AttributeError:
         return default
 

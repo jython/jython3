@@ -7,7 +7,7 @@ import unittest
 from test import support
 
 import io
-import _pyio as pyio
+import _jyio as pyio
 import pickle
 import sys
 

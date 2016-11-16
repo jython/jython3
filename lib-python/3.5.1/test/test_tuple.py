@@ -2,6 +2,7 @@ from test import support, seq_tests
 
 import gc
 import pickle
+import unittest
 
 class TupleTest(seq_tests.CommonTest):
     type2test = tuple

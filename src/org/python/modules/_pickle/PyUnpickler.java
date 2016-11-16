@@ -23,7 +23,7 @@ import java.math.BigInteger;
 import java.util.Map;
 
 @ExposedType(name = "_pickle.Unpickler")
-public class PyUnpickler {
+public class PyUnpickler extends PyObject {
     public static final PyType TYPE = PyType.fromClass(PyUnpickler.class);
     private PyIOFile file;
 

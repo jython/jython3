@@ -780,6 +780,7 @@ public class PyUnicode extends PySequence implements Iterable {
             } else if (op == CompareOp.NE) {
                 return Py.True;
             }
+            return Py.NotImplemented;
         }
         String s = ((PyUnicode) other).getString();
         int ret = getString().compareTo(s);

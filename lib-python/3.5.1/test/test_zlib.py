@@ -504,6 +504,7 @@ class CompressObjectTestCase(BaseCompressTestCase, unittest.TestCase):
         x = b'x\x9cK\xcb\xcf\x07\x00\x02\x82\x01E'
         # For the record
         self.assertEqual(zlib.decompress(x), b'foo')
+        print(zlib.decompress(x[:-5]))
         self.assertRaises(zlib.error, zlib.decompress, x[:-5])
         # Omitting the stream end works with decompressor objects
         # (see issue #8672).

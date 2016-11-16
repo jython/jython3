@@ -294,7 +294,7 @@ public class PickleModule {
      * @return         a new object.
      */
     @ExposedFunction
-    public static Object load(PyObject file) {
+    public static PyObject load(PyObject file) {
         try {
             return new PyUnpickler(file).load();
         }
@@ -316,7 +316,7 @@ public class PickleModule {
      * @return         a new object.
      */
     @ExposedFunction
-    public static Object loads(PyObject str) {
+    public static PyObject loads(PyObject str) {
         PyStringIO file = new PyStringIO(str.toString());
         return load(file);
     }

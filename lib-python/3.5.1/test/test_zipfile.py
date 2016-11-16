@@ -696,7 +696,7 @@ class PyZipFileTests(unittest.TestCase):
         self.requiresWriteAccess(os.path.dirname(__file__))
         with TemporaryFile() as t, zipfile.PyZipFile(t, "w") as zipfp:
             fn = __file__
-            if fn.endswith('.pyc'):
+            if fn.endswith('.class'):
                 path_split = fn.split(os.sep)
                 if os.altsep is not None:
                     path_split.extend(fn.split(os.altsep))
@@ -713,7 +713,7 @@ class PyZipFileTests(unittest.TestCase):
 
         with TemporaryFile() as t, zipfile.PyZipFile(t, "w") as zipfp:
             fn = __file__
-            if fn.endswith('.pyc'):
+            if fn.endswith('.class'):
                 fn = fn[:-1]
 
             zipfp.writepy(fn, "testpackage")
@@ -771,7 +771,7 @@ class PyZipFileTests(unittest.TestCase):
         packagedir = os.path.dirname(email.__file__)
         self.requiresWriteAccess(packagedir)
         optlevel = 1 if __debug__ else 0
-        ext = '.pyc'
+        ext = '.class'
 
         with TemporaryFile() as t, \
              zipfile.PyZipFile(t, "w", optimize=optlevel) as zipfp:

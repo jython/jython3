@@ -67,6 +67,8 @@ class NS(object):
         return '%s(%s)' % (type(self).__name__, kwarg_str)
 
     def __eq__(self, other):
+        print(vars(self))
+        print(vars(other))
         return vars(self) == vars(other)
 
 

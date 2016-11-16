@@ -5,8 +5,14 @@ import org.python.core.PyArray;
 import org.python.core.PyBytes;
 import org.python.core.PyIterator;
 import org.python.core.PyList;
+import org.python.core.PyLong;
+import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
+import org.python.core.PyTuple;
 import org.python.core.PyType;
+import org.python.core.PyUnicode;
+import org.python.expose.ExposedMethod;
+import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
 import org.python.modules.cStringIO;
 
@@ -17,6 +23,8 @@ public class PyStringIO extends PyIterator {
     public boolean softspace = false;
     public boolean closed = false;
     public int pos = 0;
+    public PyObject dict = null;
+    public PyObject readnl = new PyUnicode('\n');
 
     private final StringBuilder buf;
 
@@ -24,13 +32,22 @@ public class PyStringIO extends PyIterator {
         buf = new StringBuilder();
     }
 
-
     public PyStringIO(String buffer) {
         buf = new StringBuilder(buffer);
     }
 
     public PyStringIO(PyArray array) {
         buf = new StringBuilder(array.tostring());
+    }
+
+    @ExposedNew
+
+    static PyObject StringIO___new__(PyNewWrapper new_, boolean init, PyType subtype,
+                                     PyObject[] args, String[] keywords) {
+        if (args.length > 0) {
+            return new PyStringIO(args[0].toString());
+        }
+        return new PyStringIO();
     }
 
     private void _complain_ifclosed() {
@@ -45,7 +62,8 @@ public class PyStringIO extends PyIterator {
         return (int)val;
     }
 
-    public void __setattr__(String name, PyObject value) {
+    @ExposedMethod
+    public void StringIO__setattr__(String name, PyObject value) {
         if (name == "softspace") {
             softspace = value.__bool__();
             return;
@@ -133,17 +151,14 @@ public class PyStringIO extends PyIterator {
         return pos;
     }
 
-
-
     /**
      * Read all data until EOF is reached.
      * An empty string is returned when EOF is encountered immediately.
      * @return     A string containing the data.
      */
     public PyBytes read() {
-        return read(-1);
+        return StringIO_read(-1);
     }
-
 
     /**
      * Read at most size bytes from the file (less if the read hits EOF).
@@ -153,8 +168,8 @@ public class PyStringIO extends PyIterator {
      * @param size  the number of characters to read.
      * @return     A string containing the data read.
      */
-
-    public synchronized PyBytes read(long size) {
+    @ExposedMethod
+    public synchronized PyBytes StringIO_read(long size) {
         _complain_ifclosed();
         _convert_to_int(size);
         int len = buf.length();
@@ -179,7 +194,7 @@ public class PyStringIO extends PyIterator {
      * @return data from the file up to and including the newline.
      */
     public PyBytes readline() {
-        return readline(-1);
+        return StringIO_readline(-1);
     }
 
 
@@ -192,7 +207,8 @@ public class PyStringIO extends PyIterator {
      * returned.
      * @return data from the file up to and including the newline.
      */
-    public synchronized PyBytes readline(long size) {
+    @ExposedMethod
+    public synchronized PyBytes StringIO_readline(long size) {
         _complain_ifclosed();
         _convert_to_int(size);
         int len = buf.length();
@@ -234,7 +250,7 @@ public class PyStringIO extends PyIterator {
      * @return      a list of the lines.
      */
     public PyObject readlines() {
-        return readlines(0);
+        return StringIO_readlines(0);
     }
 
 
@@ -243,7 +259,8 @@ public class PyStringIO extends PyIterator {
      * the lines thus read.
      * @return      a list of the lines.
      */
-    public PyObject readlines(long sizehint) {
+    @ExposedMethod
+    public PyObject StringIO_readlines(long sizehint) {
         _complain_ifclosed();
 
         int sizehint_int = (int)sizehint;
@@ -270,7 +287,8 @@ public class PyStringIO extends PyIterator {
     /**
      * truncate the file at the position pos.
      */
-    public synchronized void truncate(long pos) {
+    @ExposedMethod
+    public synchronized void StringIO_truncate(long pos) {
         if (pos < 0) {
             throw Py.IOError("Negative size not allowed");
         }
@@ -371,6 +389,23 @@ public class PyStringIO extends PyIterator {
     public synchronized PyBytes getvalue() {
         _complain_ifclosed();
         return new PyBytes(buf.toString());
+    }
+
+    /** pickling support */
+    @ExposedMethod
+    public PyObject StringIO___setstate__(PyObject state) {
+        if (!(state instanceof PyTuple) || state.__len__() < 4) {
+            throw Py.ErrFormat(Py.TypeError, "%.200s.__setstate__ argument should be 4-tuple, got %.200s",
+                    getType().fastGetName(), state.getType().fastGetName());
+        }
+        return this;
+    }
+
+    @ExposedMethod
+    public PyObject StringIO___getstate__() {
+        PyObject d = dict;
+        if (d == null) d = Py.None;
+        return new PyTuple(new PyUnicode(buf), readnl, new PyLong(pos), d);
     }
 
 

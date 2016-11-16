@@ -1608,6 +1608,10 @@ if __name__ == '__main__':
     # absolute before changing the working directory.
     # For example __file__ may be relative when running trace or profile.
     # See issue #9323.
+    print("================")
+    print("__file__ is %s" % __file__)
+    print(__file__ is None)
+    print("================")
     __file__ = os.path.abspath(__file__)
 
     # sanity check
