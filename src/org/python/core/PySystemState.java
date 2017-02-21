@@ -223,7 +223,7 @@ public class PySystemState extends PyObject implements AutoCloseable, Closeable,
 
         meta_path = new PyList();
         path_hooks = new PyList();
-        path_hooks.append(PyZipImporter.TYPE);
+        //path_hooks.append(PyZipImporter.TYPE);
 //        path_hooks.append(ClasspathPyImporter.TYPE);
 
         path_importer_cache = new PyDictionary();
