@@ -187,6 +187,7 @@
           <pathelement path="${extlibs.dir}/jnr-constants-0.9.2.jar"/>
           <pathelement path="${extlibs.dir}/jnr-unixsocket-0.12.jar"/>
           <pathelement path="${extlibs.dir}/jline-2.12.1.jar"/>
+          <pathelement path="${extlibs.dir}/jzlib-1.1.3.jar"/>
           <pathelement path="${extlibs.dir}/netty-buffer-4.0.25.Final.jar"/>
           <pathelement path="${extlibs.dir}/netty-codec-4.0.25.Final.jar"/>
           <pathelement path="${extlibs.dir}/netty-common-4.0.25.Final.jar"/>
