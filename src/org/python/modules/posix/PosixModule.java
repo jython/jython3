@@ -2,7 +2,6 @@
 package org.python.modules.posix;
 
 import com.kenai.jffi.Library;
-import com.sun.security.auth.module.UnixSystem;
 import jnr.constants.Constant;
 import jnr.constants.platform.Errno;
 import jnr.constants.platform.Sysconf;
@@ -50,6 +49,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channel;
 import java.nio.channels.ClosedChannelException;
@@ -130,6 +130,49 @@ public class PosixModule {
     /** Lazily initialized singleton source for urandom. */
     private static class UrandomSource {
         static final SecureRandom INSTANCE = new SecureRandom();
+    }
+
+    /** Lazily initialised singleton representing some Unix-only features. */
+    private static class UnixSystem {
+
+        /*
+         * The reason for this rather elaborate device is that simply importing
+         * com.sun.security.auth.module.UnixSystem will prevent Jython compiling on Windows, where
+         * it is not supplied. We therefore take a reflective approach where creation of a singleton
+         * instance is allowed to fail, and looks like the non-availability of the function sought.
+         * This shouldn't arise if we've used the @Hide(OS.NT) annotation to avoid exposure of
+         * functions we don't have.
+         */
+        private static Class<?> UNIX_SYSTEM = null;
+        private static Object INSTANCE = null;
+        private static Method GET_GROUPS = null;
+
+        static {
+            try {
+                UNIX_SYSTEM = Class.forName("com.sun.security.auth.module.UnixSystem");
+                INSTANCE = UNIX_SYSTEM.newInstance();
+                // long[] com.sun.security.auth.module.UnixSystem.getGroups()
+                GET_GROUPS = UNIX_SYSTEM.getMethod("getGroups");
+            } catch (Exception e) {}
+        }
+
+        /** Core of the function <code>os.getgroups</code>. */
+        static long[] getgroups() {
+            if (GET_GROUPS != null) {
+                try {
+                    return (long[])GET_GROUPS.invoke(INSTANCE);
+                } catch (ReflectiveOperationException | IllegalArgumentException e) {
+                    // and throw ...
+                }
+            }
+            throw notAvailable("getgroups");
+        }
+
+        /** Create an exception to report that the desired function is not available. */
+        private static PyException notAvailable(String name) {
+            String msg = String.format("module 'os' has no attribute '%s'", name);
+            return Py.AttributeError(msg);
+        }
     }
 
     @ModuleInit
@@ -508,7 +551,7 @@ public class PosixModule {
     @ExposedFunction(doc = BuiltinDocs.posix_getgroups_doc)
     @Hide(value=OS.NT, posixImpl = PosixImpl.JAVA)
     public static PyObject getgroups() {
-        long[] groups = new UnixSystem().getGroups();
+        long[] groups = UnixSystem.getgroups();
         PyObject[] list = new PyObject[groups.length];
         for (int i = 0; i < groups.length; i++) {
             list[i] = new PyLong(groups[i]);

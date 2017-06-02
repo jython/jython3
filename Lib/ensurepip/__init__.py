@@ -1,5 +1,6 @@
-#!/usr/bin/env python2
-from __future__ import print_function
+## Still the Jython 2 version: likely should revert to standard library copy.
+## #!/usr/bin/env python2
+## from __future__ import print_function
 
 import os
 import os.path
