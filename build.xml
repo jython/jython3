@@ -193,6 +193,7 @@
           <pathelement path="${extlibs.dir}/netty-common-4.0.25.Final.jar"/>
           <pathelement path="${extlibs.dir}/netty-handler--4.0.25.Final.jar"/>
           <pathelement path="${extlibs.dir}/netty-transport-4.0.25.Final.jar"/>
+          <pathelement path="${extlibs.dir}/jzlib-1.1.3.jar"/>
         </path>
 
         <available property="informix.present" classname="com.informix.jdbc.IfxDriver" classpath="${informix.jar}" />
