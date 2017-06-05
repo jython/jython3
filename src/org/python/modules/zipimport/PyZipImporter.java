@@ -1,3 +1,4 @@
+/* Copyright (c) 2017 Jython Developers */
 package org.python.modules.zipimport;
 
 import org.python.Version;
@@ -37,15 +38,19 @@ import java.util.zip.ZipFile;
 
 @ExposedType(name = "zipimporter")
 public class PyZipImporter extends PyObject {
+
     public static final PyType TYPE = PyType.fromClass(PyZipImporter.class);
 
+    /** Path to the Zip archive */
     @ExposedGet
     public String archive;
 
+    /** File prefix: "a/sub/directory/" */
     @ExposedGet
     public String prefix;
 
-    @ExposedGet
+    /** Dict with file info {path: tocEntry} */
+    @ExposedGet(name = "_files")
     public PyObject files;
 
     public PyZipImporter(PyType type) {
@@ -61,9 +66,14 @@ public class PyZipImporter extends PyObject {
 
     @ExposedNew
     final static PyObject zipimporter_new(PyNewWrapper new_, boolean init, PyType subtype,
-                                          PyObject[] args, String[] keywords) {
+            PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("zipimporter", args, keywords, "archivepath");
         String archivePath = ap.getString(0);
+        /*
+         * archivepath may be e.g. foo/bar.zip/lib, meaning to look for modules in the lib directory
+         * inside the ZIP file foo/bar.zip (provided that it exists). We must separate the archive
+         * (ZIP file) proper from the starting path within it, which is known as the "prefix".
+         */
         Path archive = Paths.get(archivePath);
         while (archive != null) {
             if (Files.isRegularFile(archive)) {
@@ -74,12 +84,17 @@ public class PyZipImporter extends PyObject {
         if (archive == null) {
             throw Py.ImportError(String.format("cannot handle %s", archivePath));
         }
+
+        // Expand to absolute path of ZIP as key to cache of files within it
         String filename = archive.toAbsolutePath().toString();
         PyObject files = ZipImportModule._zip_directory_cache.__finditem__(filename);
         if (files == null) {
             files = readDirectory(filename);
             ZipImportModule._zip_directory_cache.__setitem__(filename, files);
         }
+
+        // Recover the path within the archive from the original archivepath.
+        // XXX: possible bug: filename is absolute but archivePath might not be. Path.relativize?
         String prefix = "";
         if (!filename.equals(archivePath)) {
             prefix = archivePath.substring(filename.length() + 1);
@@ -98,8 +113,10 @@ public class PyZipImporter extends PyObject {
     }
 
     /**
-     * CPython zipimport module is very outdated, it's not yet compliant with PEP-451, the specs are checking the old behaviour
-     * this method and a few others that are deprecated a simply implemented to satisfy the test suite
+     * CPython zipimport module is very outdated, it's not yet compliant with PEP-451, the specs are
+     * checking the old behaviour this method and a few others that are deprecated a simply
+     * implemented to satisfy the test suite
+     *
      * @param fullname
      * @return a python module
      */
@@ -122,7 +139,6 @@ public class PyZipImporter extends PyObject {
             return mod;
         });
     }
-
 
     @ExposedMethod
     public final PyObject zipimporter_is_package(String fullname) {
@@ -162,16 +178,15 @@ public class PyZipImporter extends PyObject {
             if (zipFile != null) {
                 try {
                     zipFile.close();
-                } catch (IOException e) {
-                }
+                } catch (IOException e) {}
             }
         }
     }
 
-//    @ExposedMethod
-//    public final PyObject zipimporter_get_data(String fullname) {
-//        throw ZipImportModule.ZipImportError(fullname);
-//    }
+// @ExposedMethod
+// public final PyObject zipimporter_get_data(String fullname) {
+// throw ZipImportModule.ZipImportError(fullname);
+// }
 
     @ExposedMethod
     public final PyObject zipimporter_get_filename(String fullname) {
@@ -190,17 +205,20 @@ public class PyZipImporter extends PyObject {
                     try {
                         codeBytes = imp.readCode(fullname, inputStream, false, mtime);
                     } catch (IOException ioe) {
-                        throw Py.ImportError(ioe.getMessage() + "[path=" + entry.path(fullname) + "]");
+                        throw Py.ImportError(
+                                ioe.getMessage() + "[path=" + entry.path(fullname) + "]");
                     }
                 } else {
                     try {
                         byte[] bytes = FileUtil.readBytes(inputStream);
-                        codeBytes = imp.compileSource(fullname, new ByteArrayInputStream(bytes), entry.path(fullname));
+                        codeBytes = imp.compileSource(fullname, new ByteArrayInputStream(bytes),
+                                entry.path(fullname));
                     } catch (IOException e) {
                         throw ZipImportModule.ZipImportError(e.getMessage());
                     }
                 }
-                return BytecodeLoader.makeCode(fullname + Version.PY_CACHE_TAG, codeBytes, entry.path(fullname));
+                return BytecodeLoader.makeCode(fullname + Version.PY_CACHE_TAG, codeBytes,
+                        entry.path(fullname));
             });
         } catch (IOException e) {
             throw ZipImportModule.ZipImportError(e.getMessage());
@@ -249,8 +267,7 @@ public class PyZipImporter extends PyObject {
             if (zipFile != null) {
                 try {
                     zipFile.close();
-                } catch (IOException e) {
-                }
+                } catch (IOException e) {}
             }
         }
     }
@@ -272,14 +289,16 @@ public class PyZipImporter extends PyObject {
         PySystemState sys = Py.getSystemState();
         File file = new File(sys.getPath(archive));
         if (!file.canRead()) {
-            throw ZipImportModule.ZipImportError(String.format("can't open Zip file: '%s'", archive));
+            throw ZipImportModule
+                    .ZipImportError(String.format("can't open Zip file: '%s'", archive));
         }
 
         ZipFile zipFile;
         try {
             zipFile = new ZipFile(file);
         } catch (IOException ioe) {
-            throw ZipImportModule.ZipImportError(String.format("can't read Zip file: '%s'", archive));
+            throw ZipImportModule
+                    .ZipImportError(String.format("can't read Zip file: '%s'", archive));
         }
 
         PyObject files = new PyDictionary();
@@ -300,6 +319,7 @@ public class PyZipImporter extends PyObject {
      *
      * A tocEntry is a tuple:
      *
+     * <pre>
      *     (__file__,     # value to use for __file__, available for all files
      *     compress,      # compression kind; 0 for uncompressed
      *     data_size,     # size of compressed data on disk
@@ -309,16 +329,17 @@ public class PyZipImporter extends PyObject {
      *     date,          # mod data of file (in dos format)
      *     crc,           # crc checksum of the data
      *     )
+     *</pre>
      *
-     * Directories can be recognized by the trailing SEP in the name, data_size and
-     * file_offset are 0.
+     * Directories can be recognized by the trailing <code>os.sep</code> in the name,
+     * <code>data_size</code> and <code>file_offset</code> are 0.
      *
      * @param zipFile ZipFile to read
      * @param files a dict-like PyObject
      */
     private static void readZipFile(ZipFile zipFile, PyObject files) {
-        for (Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
-             zipEntries.hasMoreElements();) {
+        for (Enumeration<? extends ZipEntry> zipEntries = zipFile.entries(); zipEntries
+                .hasMoreElements();) {
             ZipEntry zipEntry = zipEntries.nextElement();
             String name = zipEntry.getName().replace('/', File.separatorChar);
 
@@ -334,13 +355,14 @@ public class PyZipImporter extends PyObject {
             PyObject date = new PyLong(zipEntry.getTime());
             PyObject crc = new PyLong(zipEntry.getCrc());
 
-            PyTuple entry = new PyTuple(file, compress, data_size, file_size, file_offset,
-                    time, date, crc);
+            PyTuple entry =
+                    new PyTuple(file, compress, data_size, file_size, file_offset, time, date, crc);
             files.__setitem__(new PyUnicode(name), entry);
         }
     }
 
     class ModuleEntry {
+
         private boolean _package;
         private boolean binary;
 
