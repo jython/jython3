@@ -3,6 +3,7 @@ package org.python.modules.zipimport;
 
 import org.python.Version;
 import org.python.core.ArgParser;
+import org.python.core.BuiltinDocs;
 import org.python.core.BytecodeLoader;
 import org.python.core.Py;
 import org.python.core.PyBytes;
@@ -36,20 +37,23 @@ import java.util.function.BiFunction;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-@ExposedType(name = "zipimporter")
+@ExposedType(name = "zipimport.zipimporter", doc = BuiltinDocs.zipimport_zipimporter_doc)
 public class PyZipImporter extends PyObject {
 
     public static final PyType TYPE = PyType.fromClass(PyZipImporter.class);
 
-    /** Path to the Zip archive */
+    /**
+     * Path to the ZIP archive: "path/to/archive.zip" if constructed from
+     * "path/to/archive.zip/a/subdir".
+     */
     @ExposedGet
     public String archive;
 
-    /** File prefix: "a/sub/directory/" */
+    /** File prefix: "a/subdir/" if constructed from "path/to/archive.zip/a/subdir". */
     @ExposedGet
     public String prefix;
 
-    /** Dict with file info {path: tocEntry} */
+    /** Dictionary with file information <code>{path: tocEntry}</code> */
     @ExposedGet(name = "_files")
     public PyObject files;
 
