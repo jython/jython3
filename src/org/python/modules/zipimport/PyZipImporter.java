@@ -14,7 +14,6 @@ import org.python.core.PyLong;
 import org.python.core.PyModule;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
-import org.python.core.PySystemState;
 import org.python.core.PyTuple;
 import org.python.core.PyType;
 import org.python.core.PyUnicode;
@@ -44,69 +43,119 @@ public class PyZipImporter extends PyObject {
 
     /**
      * Path to the ZIP archive: "path/to/archive.zip" if constructed from
-     * "path/to/archive.zip/a/subdir".
+     * "path/to/archive.zip/a/sub/directory".
      */
+    // XXX In CPython it is "decoded from the FS encoding" (by PyUnicode_FSDecoder, during __init__)
     @ExposedGet
-    public String archive;
+    public final String archive;
 
-    /** File prefix: "a/subdir/" if constructed from "path/to/archive.zip/a/subdir". */
+    /**
+     * File prefix: "a/sub/directory/", if constructed from "path/to/archive.zip/a/sub/directory".
+     */
+    // XXX here CPython says "encoded to the FS encoding" but that doesn't seem to be accurate
     @ExposedGet
-    public String prefix;
+    public final String prefix;
 
-    /** Dictionary with file information <code>{path: tocEntry}</code> */
+    /** Dictionary with information on each file in the ZIP <code>{path: tocEntry}</code> */
     @ExposedGet(name = "_files")
-    public PyObject files;
+    public final PyObject files;
 
-    public PyZipImporter(PyType type) {
-        super(TYPE);
+    /**
+     * Construct a <code>PyZipImporter</code> for the given path, which may include sub-directories
+     * within the ZIP file, for example <code>path/to/archive.zip/a/sub/directory</code>. Because
+     * equivalence between ZIP files and sub-directories in Python import (see
+     * <a href="https://www.python.org/dev/peps/pep-0273/#subdirectory-equivalence"> PEP 273</a>), a
+     * <code>PyZipImporter</code> operates using the platform-specific file separator ("\" on
+     * Windows) at all public interfaces, so on that platform a path like
+     * <code>path\to\archive.zip\a\sub\directory</code> will normally be supplied. However, we
+     * follow CPython in tolerating either "/" or the platform-specific file separator in the
+     * <code>archivePath</code>, or indeed any mixture of the two.
+     *
+     * @param archivePath path to archive and optionally a sub-directory within it
+     */
+    public PyZipImporter(String archivePath) {
+        this(TYPE, archivePath);
     }
 
-    public PyZipImporter(String archivePath, String prefix, PyObject files) {
-        this(TYPE);
-        this.archive = archivePath;
-        this.prefix = prefix;
+    /**
+     * Equivalent to {@link PyZipImporter#PyZipImporter(String)} when sub-class required.
+     *
+     * @param type of sub-class
+     * @param archivePath path to archive and optionally a sub-directory within it
+     */
+    public PyZipImporter(PyType type, String archivePath) {
+        super(type);
+
+        if (archivePath == null || archivePath.length() == 0) {
+            throw ZipImportModule.ZipImportError("archive path is empty");
+        }
+        archivePath = toPlatformSeparator(archivePath);
+
+        /*
+         * archivepath may be e.g. "path/to/archive.zip/a/sub/directory", meaning we must look for
+         * modules in the lib directory inside the ZIP file path/to/archive.zip (provided that it
+         * exists). We must separate the archive (ZIP file) proper from the starting path within it,
+         * which is known as the "prefix".
+         */
+        Path fullPath = Paths.get(archivePath), archive = fullPath;
+        int prefixEnd = archive.getNameCount();
+        int prefixStart = prefixEnd;
+
+        // Strip elements from end of path until empty, a file or a directory
+        for (archive = fullPath; prefixStart > 1; archive = archive.getParent(), prefixStart--) {
+            if (Files.isRegularFile(archive)) {
+                break;
+            } else if (Files.isDirectory(archive)) {
+                // Stripping names got us to a directory: no ZIP file here
+                archive = null;
+                break;
+            }
+        }
+
+        if (archive == null || archive.getNameCount() == 0) {
+            throw ZipImportModule.ZipImportError(String.format("not a Zip file: %s", archivePath));
+        }
+
+        // Look up, or add if necessary, an entry in the cache for the files.
+        this.archive = archive.toString();
+        PyObject files = ZipImportModule._zip_directory_cache.__finditem__(this.archive);
+        if (files == null) {
+            /*
+             * This is new. Make a cache entry that enumerates the files in the ZIP. This is also
+             * where we throw if we can't read it as a ZIP.
+             */
+            files = readDirectory(archive);
+            ZipImportModule._zip_directory_cache.__setitem__(this.archive, files);
+        }
         this.files = files;
+
+        // The prefix is that part of the original archivePath that is not in archive.
+        if (prefixStart < prefixEnd) {
+            // There was a prefix
+            Path prefix = fullPath.subpath(prefixStart, prefixEnd);
+            this.prefix = prefix.toString() + File.separator;
+        } else {
+            this.prefix = "";
+        }
     }
 
+    /**
+     * __new__ method equivalent to {@link PyZipImporter#PyZipImporter(String)}.
+     */
     @ExposedNew
     final static PyObject zipimporter_new(PyNewWrapper new_, boolean init, PyType subtype,
             PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("zipimporter", args, keywords, "archivepath");
         String archivePath = ap.getString(0);
-        /*
-         * archivepath may be e.g. foo/bar.zip/lib, meaning to look for modules in the lib directory
-         * inside the ZIP file foo/bar.zip (provided that it exists). We must separate the archive
-         * (ZIP file) proper from the starting path within it, which is known as the "prefix".
-         */
-        Path archive = Paths.get(archivePath);
-        while (archive != null) {
-            if (Files.isRegularFile(archive)) {
-                break;
-            }
-            archive = archive.getParent();
-        }
-        if (archive == null) {
-            throw Py.ImportError(String.format("cannot handle %s", archivePath));
-        }
+        // XXX Should FS-decode args[0] here. CPython uses PyUnicode_FSDecoder, during __init__
+        return new PyZipImporter(archivePath);
+    }
 
-        // Expand to absolute path of ZIP as key to cache of files within it
-        String filename = archive.toAbsolutePath().toString();
-        PyObject files = ZipImportModule._zip_directory_cache.__finditem__(filename);
-        if (files == null) {
-            files = readDirectory(filename);
-            ZipImportModule._zip_directory_cache.__setitem__(filename, files);
-        }
 
-        // Recover the path within the archive from the original archivepath.
-        // XXX: possible bug: filename is absolute but archivePath might not be. Path.relativize?
-        String prefix = "";
-        if (!filename.equals(archivePath)) {
-            prefix = archivePath.substring(filename.length() + 1);
-            if (!prefix.endsWith(File.separator)) {
-                prefix += File.separator;
-            }
-        }
-        return new PyZipImporter(filename, prefix, files);
+    @Override
+    public String toString() {
+        Path archivePath = Paths.get(archive, prefix);
+        return String.format("<zipimporter object \"%s\">",  archivePath);
     }
 
     @ExposedMethod
@@ -254,6 +303,32 @@ public class PyZipImporter extends PyObject {
         });
     }
 
+    /**
+     * Return path with every `\`character replaced by {@link File#pathSeparatorChar}, if that's
+     * different.
+     */
+    private static String toPlatformSeparator(String path) {
+        if (File.separatorChar == '/') {
+            return path;
+        } else {
+            return path.replace('/', File.separatorChar);
+        }
+    }
+
+    /**
+     * Return path with every {@link File#pathSeparatorChar} character replaced by `\`, if that's
+     * different. We need this because Python treats paths into zip files as equivalent to paths in
+     * the file system, hence localises the separator to the platform, while zip files themselves
+     * use '/' consistently internally.
+     */
+    private static String fromPlatformSeparator(String path) {
+        if (File.separatorChar == '/') {
+            return path;
+        } else {
+            return path.replace(File.separatorChar, '/');
+        }
+    }
+
     private <T> T getEntry(String fullname, BiFunction<ModuleEntry, InputStream, T> func) {
         ZipFile zipFile = null;
         try {
@@ -289,33 +364,21 @@ public class PyZipImporter extends PyObject {
         return res;
     }
 
-    private static PyObject readDirectory(String archive) {
-        PySystemState sys = Py.getSystemState();
-        File file = new File(sys.getPath(archive));
-        if (!file.canRead()) {
+    private static PyObject readDirectory(Path archive) {
+
+        if (!Files.isReadable(archive)) {
             throw ZipImportModule
                     .ZipImportError(String.format("can't open Zip file: '%s'", archive));
         }
 
-        ZipFile zipFile;
-        try {
-            zipFile = new ZipFile(file);
+        try (ZipFile zipFile = new ZipFile(archive.toFile())) {
+            PyObject files = new PyDictionary();
+            readZipFile(zipFile, files);
+            return files;
         } catch (IOException ioe) {
             throw ZipImportModule
                     .ZipImportError(String.format("can't read Zip file: '%s'", archive));
         }
-
-        PyObject files = new PyDictionary();
-        try {
-            readZipFile(zipFile, files);
-        } finally {
-            try {
-                zipFile.close();
-            } catch (IOException ioe) {
-                throw Py.IOError(ioe);
-            }
-        }
-        return files;
     }
 
     /**
@@ -342,18 +405,23 @@ public class PyZipImporter extends PyObject {
      * @param files a dict-like PyObject
      */
     private static void readZipFile(ZipFile zipFile, PyObject files) {
+        // Iterate over the entries and build an informational tuple for each
+        final String zipNameAndSep = zipFile.getName() + File.separator;
         for (Enumeration<? extends ZipEntry> zipEntries = zipFile.entries(); zipEntries
                 .hasMoreElements();) {
+            // Oh for Java 9 and Enumeration.asIterator()
             ZipEntry zipEntry = zipEntries.nextElement();
-            String name = zipEntry.getName().replace('/', File.separatorChar);
+            String name = toPlatformSeparator(zipEntry.getName());
+            // XXX: Java zip file uses UTF-8 internally. Is there an encoding issue here?
+            PyObject file = new PyUnicode(zipNameAndSep + name);
 
-            PyObject file = new PyUnicode(zipFile.getName() + File.separator + name);
             PyObject compress = new PyLong(zipEntry.getMethod());
             PyObject data_size = new PyLong(zipEntry.getCompressedSize());
             PyObject file_size = new PyLong(zipEntry.getSize());
-            // file_offset is a CPython optimization; it's used to seek directly to the
-            // file when reading it later. Jython doesn't do this nor is the offset
-            // available
+            /*
+             * file_offset is a CPython optimization; it's used to seek directly to the file when
+             * reading it later. Jython doesn't do this nor is the offset available
+             */
             PyObject file_offset = new PyLong(-1);
             PyObject time = new PyLong(zipEntry.getTime());
             PyObject date = new PyLong(zipEntry.getTime());
@@ -361,6 +429,7 @@ public class PyZipImporter extends PyObject {
 
             PyTuple entry =
                     new PyTuple(file, compress, data_size, file_size, file_offset, time, date, crc);
+
             files.__setitem__(new PyUnicode(name), entry);
         }
     }

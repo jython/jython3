@@ -1,4 +1,4 @@
 base_class: PyZipImporter
 want_dict: true
-ctr:
+ctr: String archivePath
 incl: object
