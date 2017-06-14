@@ -212,8 +212,35 @@ public class PyZipImporter extends PyObject {
         });
     }
 
+    /**
+     * Given a path to a file within this archive, retrieve the contents of that file as bytes. By
+     * "a path to a file within this archive" we mean either that the path begins with the archive
+     * name (and the rest of it identifies a file within the archive), or that it identifies a file
+     * within the archive (i.e. is relative to this archive). Note that even when the zipimporter
+     * was constructed with a sub-directory as target, a path not beginning with the archive path is
+     * interpreted relative to the base archive, not to the sub-directory:
+     *
+     * <pre>
+     * >>> zf = zi(archive+"/foo")
+     * >>> zf.get_data(archive + "/foo/one.py")
+     * b"attr = 'portion1 foo one'\n"
+     * >>> zf.get_data("foo/one.py")
+     * b"attr = 'portion1 foo one'\n"
+     * >>> zf.get_data("one.py")
+     * Traceback (most recent call last):
+     * File "<stdin>", line 1, in <module>
+     * OSError: [Errno 0] Error: 'one.py'
+     * </pre>
+     *
+     * Note also that even where the platform file path separator differs from '/' (i.e. on
+     * Windows), either that or '/' is acceptable in this context.
+     *
+     * @param filename to the file within the archive
+     * @return the contents
+     */
     @ExposedMethod
     public final PyObject zipimporter_get_data(String filename) {
+        // XXX Possibly filename should be an object and if byte-like FS-decoded.
         ZipFile zipFile = null;
         if (filename.startsWith(archive)) {
             filename = filename.substring(archive.length() + 1);
@@ -235,11 +262,6 @@ public class PyZipImporter extends PyObject {
             }
         }
     }
-
-// @ExposedMethod
-// public final PyObject zipimporter_get_data(String fullname) {
-// throw ZipImportModule.ZipImportError(fullname);
-// }
 
     @ExposedMethod
     public final PyObject zipimporter_get_filename(String fullname) {

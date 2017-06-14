@@ -5,13 +5,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.python.core.PyBytes;
 import org.python.core.PyDictionary;
 import org.python.core.PyObject;
 import org.python.core.PyTuple;
@@ -40,6 +44,11 @@ public class ZipImportTest {
     /** Swap '/' for platform file name separator if different. */
     private static String platform(String path) {
         return (SEP == '/') ? path : path.replace('/', SEP);
+    }
+
+    /** Swap platform file name separator for '/' if different. */
+    private static String unplatform(String path) {
+        return (SEP == '/') ? path : path.replace(SEP, '/');
     }
 
     @After
@@ -91,19 +100,19 @@ public class ZipImportTest {
         // If the platform is not Unix-like, check that a Unix-like path has the same result
         if (SEP != '/') {
             // Turn platform-specific archive path to Unix-like
-            String archiveAlt = archive.replace(SEP, '/');
+            String archiveAlt = unplatform(archive);
             // Expected result still uses platform-specific separators (in API though not in ZIP).
             PyZipImporter za2 = testPyZipImporterHelper(archiveAlt, archive, "");
             assertEquals("cache entry not re-used", za.files, za2.files);
-            String fooPathAlt = fooPath.replace(SEP, '/');
+            String fooPathAlt = unplatform(fooPath);
             PyZipImporter zf2 = testPyZipImporterHelper(fooPathAlt, archive, FOOKEY);
             assertEquals("cache entry not re-used", za.files, zf2.files);
         }
 
         // Check that an extra SEP on the end does not upset the constructor
-        PyZipImporter zax = testPyZipImporterHelper(archive+SEP, archive, "");
+        PyZipImporter zax = testPyZipImporterHelper(archive + SEP, archive, "");
         assertEquals("cache entry not re-used", za.files, zax.files);
-        PyZipImporter zfx = testPyZipImporterHelper(fooPath+SEP, archive, FOOKEY);
+        PyZipImporter zfx = testPyZipImporterHelper(fooPath + SEP, archive, FOOKEY);
         assertEquals("cache entry not re-used", za.files, zfx.files);
 
     }
@@ -128,9 +137,9 @@ public class ZipImportTest {
 
         // Check in the map that we got what we should
         assertEquals(2, map.size());
-        String fooPath = Paths.get(archive,FOOKEY).toString() + SEP; // subdir gets SEP
+        String fooPath = Paths.get(archive, FOOKEY).toString() + SEP; // subdir gets SEP
         assertEquals(fooPath, map.get(FOOKEY).__getitem__(0).toString());
-        String onePath = Paths.get(archive,ONEKEY).toString(); // file gets no SEP
+        String onePath = Paths.get(archive, ONEKEY).toString(); // file gets no SEP
         assertEquals(onePath, map.get(ONEKEY).__getitem__(0).toString());
 
         return z;
@@ -187,9 +196,43 @@ public class ZipImportTest {
      * Test method for
      * {@link org.python.modules.zipimport.PyZipImporter#zipimporter_get_data(java.lang.String)}.
      */
+    // Fails at present
     // @Test
     public void testZipimporter_get_data() {
-        fail("Not yet implemented");
+
+        // Compose a reference result (long-windedly: PyBytes(ByteBuffer) required!)
+        String ONE_TEXT = "attr = 'portion1 foo one'\n";
+        ByteBuffer buf = Charset.forName("UTF-8").encode(ONE_TEXT);
+        byte[] bytes = new byte[buf.remaining()];
+        buf.get(bytes);
+        PyBytes expected = new PyBytes(bytes);
+
+        // Test with construction from base archive and access by path within
+        check_get_data(ARCHIVE, ONEKEY, expected);
+
+        // Test with construction from base archive and access by path including archive
+        String onePath = Paths.get(ARCHIVE).resolve(Paths.get(ONEKEY)).toString();
+        check_get_data(ARCHIVE, onePath, expected);
+
+        // Test with construction from sub-directory archive and access by path within
+        String fooPath = Paths.get(ARCHIVE, FOOKEY).toString();
+        check_get_data(fooPath, ONEKEY, expected);
+
+        // Test with construction from sub-directory archive and access by path including archive
+        check_get_data(fooPath, onePath, expected);
+
+        if (SEP != '/') {
+            // Test again, but with '/' in place of SEP in the path presented to get_data
+            check_get_data(ARCHIVE, unplatform(onePath), expected);
+            check_get_data(fooPath, unplatform(ONEKEY), expected);
+        }
+    }
+
+    /** Helper for {@link #testZipimporter_get_data()} **/
+    private void check_get_data(String archivePath, String name, PyBytes expected) {
+        PyZipImporter z = new PyZipImporter(archivePath);
+        PyBytes actual = (PyBytes) z.zipimporter_get_data(name);
+        assertEquals(expected, actual);
     }
 
     /**
