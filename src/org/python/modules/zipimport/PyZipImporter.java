@@ -1,6 +1,19 @@
 /* Copyright (c) 2017 Jython Developers */
 package org.python.modules.zipimport;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Enumeration;
+import java.util.function.BiFunction;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 import org.python.Version;
 import org.python.core.ArgParser;
 import org.python.core.BuiltinDocs;
@@ -23,18 +36,6 @@ import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Enumeration;
-import java.util.function.BiFunction;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 @ExposedType(name = "zipimport.zipimporter", doc = BuiltinDocs.zipimport_zipimporter_doc)
 public class PyZipImporter extends PyObject {
@@ -235,31 +236,25 @@ public class PyZipImporter extends PyObject {
      * Note also that even where the platform file path separator differs from '/' (i.e. on
      * Windows), either that or '/' is acceptable in this context.
      *
-     * @param filename to the file within the archive
+     * @param path to the file within the archive
      * @return the contents
      */
     @ExposedMethod
-    public final PyObject zipimporter_get_data(String filename) {
+    public final PyObject zipimporter_get_data(String path) {
         // XXX Possibly filename should be an object and if byte-like FS-decoded.
-        ZipFile zipFile = null;
-        if (filename.startsWith(archive)) {
-            filename = filename.substring(archive.length() + 1);
+        // The path may begin with the archive name as stored, in which case discard it.
+        if (toPlatformSeparator(path).startsWith(archive)) {
+            path = path.substring(archive.length() + 1);
         }
-        try {
-            zipFile = new ZipFile(new File(archive));
-            ZipEntry zipEntry = zipFile.getEntry(prefix + filename);
-            if (zipEntry != null) {
-                return new PyBytes(FileUtil.readBytes(zipFile.getInputStream(zipEntry)));
+        try (ZipFile zipFile = new ZipFile(new File(archive))) {
+            // path is now definitely relative to the archive but may not use / as separator.
+            ZipEntry zipEntry = zipFile.getEntry(fromPlatformSeparator(path));
+            if (zipEntry == null) {
+                throw new FileNotFoundException(path);
             }
-            throw ZipImportModule.ZipImportError(filename);
-        } catch (IOException e) {
-            throw ZipImportModule.ZipImportError(e.getMessage());
-        } finally {
-            if (zipFile != null) {
-                try {
-                    zipFile.close();
-                } catch (IOException e) {}
-            }
+            return new PyBytes(FileUtil.readBytes(zipFile.getInputStream(zipEntry)));
+        } catch (IOException ioe) {
+            throw Py.IOError(ioe);
         }
     }
 
@@ -330,10 +325,11 @@ public class PyZipImporter extends PyObject {
      * different.
      */
     private static String toPlatformSeparator(String path) {
-        if (File.separatorChar == '/') {
-            return path;
-        } else {
+        // Cunningly avoid making a new String if possible.
+        if (File.separatorChar != '/' && path.contains("/")) {
             return path.replace('/', File.separatorChar);
+        } else {
+            return path;
         }
     }
 
@@ -344,10 +340,11 @@ public class PyZipImporter extends PyObject {
      * use '/' consistently internally.
      */
     private static String fromPlatformSeparator(String path) {
-        if (File.separatorChar == '/') {
-            return path;
-        } else {
+        // Cunningly avoid making a new String if possible.
+        if (File.separatorChar != '/' && path.contains(File.separator)) {
             return path.replace(File.separatorChar, '/');
+        } else {
+            return path;
         }
     }
 
@@ -434,7 +431,6 @@ public class PyZipImporter extends PyObject {
             // Oh for Java 9 and Enumeration.asIterator()
             ZipEntry zipEntry = zipEntries.nextElement();
             String name = toPlatformSeparator(zipEntry.getName());
-            // XXX: Java zip file uses UTF-8 internally. Is there an encoding issue here?
             PyObject file = new PyUnicode(zipNameAndSep + name);
 
             PyObject compress = new PyLong(zipEntry.getMethod());

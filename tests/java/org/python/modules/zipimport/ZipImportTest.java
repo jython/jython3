@@ -24,6 +24,10 @@ import org.python.core.PyUnicode;
 /**
  * Java level tests for {@link PyZipImporter}. If this module does not meet its expected behaviours,
  * Jython pretty much won't start, so a test independent of the interpreter seems a good idea.
+ *
+ * Python exceptions are not handled correctly in this test because the Python classes involved are
+ * not initialised. So where a PyException might have been raised, a Java NullPointerException tends
+ * to result.
  */
 public class ZipImportTest {
 
@@ -196,8 +200,7 @@ public class ZipImportTest {
      * Test method for
      * {@link org.python.modules.zipimport.PyZipImporter#zipimporter_get_data(java.lang.String)}.
      */
-    // Fails at present
-    // @Test
+    @Test
     public void testZipimporter_get_data() {
 
         // Compose a reference result (long-windedly: PyBytes(ByteBuffer) required!)
