@@ -4,16 +4,26 @@ package org.python.modules.zipimport;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.python.core.PyBytes;
 import org.python.core.PyDictionary;
@@ -35,15 +45,96 @@ public class ZipImportTest {
     static final char SEP = File.separatorChar;
 
     /** In the standard library is a ZIP file at this (Unix-style) location: */
-    static final String ARCHIVE =
-            platform("dist/Lib/test/test_importlib/namespace_pkgs/top_level_portion1.zip");
+    static final String ARCHIVE = platform("tmpdir_ZipImportTest/sub/test.zip");
+    static final Path ARCHIVE_PATH = Paths.get(ARCHIVE);
+
+    /** The file structure in the zip. Separators are '/', irrespective of platform. */
+    // @formatter:off
+    static final String[] STRUCTURE = {
+            "sub/dir/foo/",             // FOO
+            "sub/dir/foo/x/one.py",     // ONE
+            "a/b/c/",
+            "a/b/c/__init__.py",
+            "a/b/c/two.py",
+            "a/b/three.py",
+            "four.py"
+    };
+    static final int FOO = 0, ONE = 1; // Where they are in STRUCTURE
+    // @formatter:on
 
     // (Relative) paths of sub-directories to the ZIP file and files within them.
-    static final String FOOKEY = platform("foo/");
-    static final String ONEKEY = platform("foo/one.py");
+    static final String FOOKEY = platform(STRUCTURE[FOO]);
+    static final String ONEKEY = platform(STRUCTURE[ONE]);
+
+    static final Charset UTF8 = Charset.forName("UTF-8");
+
+    /** The file contents in the zip. */
+    static final String[] CONTENT = new String[STRUCTURE.length];
+
+    @BeforeClass
+    public static void createTestZip() throws IOException {
+
+        // Ensure directories exist to the archive location
+        if (ARCHIVE_PATH.getNameCount() > 1) {
+            Files.createDirectories(ARCHIVE_PATH.getParent());
+        }
+
+        // Create (or overwrite) the raw archive file itself
+        OutputStream out = new BufferedOutputStream(Files.newOutputStream(ARCHIVE_PATH));
+
+        // Wrap it so there are two inputs: one for ZipEntry objects and one for text to encode
+        try (ZipOutputStream zip = new ZipOutputStream(out);
+             Writer text = Channels.newWriter(Channels.newChannel(zip), "UTF-8")) {
+
+            // Make an entry for each path mentioned in STRUCTURE
+            for (int i = 0; i < STRUCTURE.length; i++) {
+
+                // The structure table gives us names for the entries
+                String name = STRUCTURE[i];
+                ZipEntry entry = new ZipEntry(name);
+                zip.putNextEntry(entry);
+
+                // And we make up some content like this ...
+                String content = null;
+                if (name.endsWith("/")) {
+                    // Directory entry: no content
+                    // XXX What happens about intermediate directories?
+                } else {
+                    if (name.endsWith(".py")) {
+                        // Content is Python source
+                        content = String.format("# %s\n", name);
+                    } else {
+                        content = String.format("Contents of %s\n", name);
+                    }
+                    CONTENT[i] = content;
+                    text.write(content);
+                    text.flush();
+                }
+            }
+        }
+    }
+
+    @AfterClass
+    public static void deleteTestZip() {
+        try {
+            // Useful to look at from Python!
+            Files.deleteIfExists(ARCHIVE_PATH);
+        } catch (IOException e) {
+            // Meh!
+        }
+    }
 
     @Before
     public void setUp() throws Exception {}
+
+    @After
+    public void tearDown() throws Exception {
+        // Empty the cache for a clean start next time
+        PyDictionary cache = ZipImportModule._zip_directory_cache;
+        for (PyObject item : cache.asIterable()) {
+            cache.__delitem__(item);
+        }
+    }
 
     /** Swap '/' for platform file name separator if different. */
     private static String platform(String path) {
@@ -53,15 +144,6 @@ public class ZipImportTest {
     /** Swap platform file name separator for '/' if different. */
     private static String unplatform(String path) {
         return (SEP == '/') ? path : path.replace(SEP, '/');
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        // Empty the cache for a clean start next time
-        PyDictionary cache = ZipImportModule._zip_directory_cache;
-        for (PyObject item : cache.asIterable()) {
-            cache.__delitem__(item);
-        }
     }
 
     /**
@@ -96,7 +178,7 @@ public class ZipImportTest {
         // Test where the archive path is just the zip file location
         PyZipImporter za = testPyZipImporterHelper(archive, archive, "");
 
-        // Test where the archive path is extended with a sub-directory within the zip
+        // Test where the archive path is extended with a sub-directory "foo" within the zip
         String fooPath = Paths.get(archive, FOOKEY).toString();
         PyZipImporter zf = testPyZipImporterHelper(fooPath, archive, FOOKEY);
         assertEquals("cache entry not re-used", za.files, zf.files);
@@ -140,7 +222,7 @@ public class ZipImportTest {
         Map<String, PyTuple> map = mapFromFiles(z.files);
 
         // Check in the map that we got what we should
-        assertEquals(2, map.size());
+        assertEquals(STRUCTURE.length, map.size());
         String fooPath = Paths.get(archive, FOOKEY).toString() + SEP; // subdir gets SEP
         assertEquals(fooPath, map.get(FOOKEY).__getitem__(0).toString());
         String onePath = Paths.get(archive, ONEKEY).toString(); // file gets no SEP
@@ -195,8 +277,7 @@ public class ZipImportTest {
     public void testZipimporter_get_data() {
 
         // Compose a reference result (long-windedly: PyBytes(ByteBuffer) required!)
-        String ONE_TEXT = "attr = 'portion1 foo one'\n";
-        ByteBuffer buf = Charset.forName("UTF-8").encode(ONE_TEXT);
+        ByteBuffer buf = UTF8.encode(CONTENT[ONE]);
         byte[] bytes = new byte[buf.remaining()];
         buf.get(bytes);
         PyBytes expected = new PyBytes(bytes);
@@ -278,12 +359,13 @@ public class ZipImportTest {
      * Test method for
      * {@link org.python.modules.zipimport.PyZipImporter#zipimporter_find_spec(org.python.core.PyObject[], java.lang.String[])}.
      *
-     * Disabled test. <code>find_spec</code> is not implemented in <code>zipimport.zipimporter</code> in CPython 3.5 as far as we can tell,
-     * and by not having it exposed, we should get fall-back behaviour depending on <code>find_module</code>.
+     * Disabled test. <code>find_spec</code> is not implemented in
+     * <code>zipimport.zipimporter</code> in CPython 3.5 as far as we can tell, and by not having it
+     * exposed, we should get fall-back behaviour depending on <code>find_module</code>.
      */
     // @Test
     public void testZipimporter_find_spec() {
-        //fail("Not yet implemented");
+        // fail("Not yet implemented");
     }
 
 }
