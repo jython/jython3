@@ -161,39 +161,30 @@ public class ZipImportTest {
     }
 
     /**
-     * Test method for
-     * {@link org.python.modules.zipimport.PyZipImporter#zipimporter_exec_module(org.python.core.PyObject)}.
+     * Test method for {@link java.lang.Object#toString()}.
      */
-    // @Test
-    public void testZipimporter_exec_module() {
-        fail("Not yet implemented");
-    }
+    @Test
+    public void test__repr__() {
 
-    /**
-     * Test method for
-     * {@link org.python.modules.zipimport.PyZipImporter#zipimporter_load_module(java.lang.String)}.
-     */
-    // @Test
-    public void testZipimporter_load_module() {
-        fail("Not yet implemented");
-    }
+        // Test relative path
+        PyZipImporter z = new PyZipImporter(ARCHIVE);
+        String expected = String.format("<zipimporter object \"%s\">", ARCHIVE);
+        PyUnicode actual = z.__repr__();
+        assertEquals(expected, actual.getString());
 
-    /**
-     * Test method for
-     * {@link org.python.modules.zipimport.PyZipImporter#zipimporter_is_package(java.lang.String)}.
-     */
-    // @Test
-    public void testZipimporter_is_package() {
-        fail("Not yet implemented");
-    }
+        // Test absolute path
+        String abspath = Paths.get(ARCHIVE).toAbsolutePath().toString();
+        z = new PyZipImporter(abspath);
+        expected = String.format("<zipimporter object \"%s\">", abspath);
+        actual = z.__repr__();
+        assertEquals(expected, actual.getString());
 
-    /**
-     * Test method for
-     * {@link org.python.modules.zipimport.PyZipImporter#zipimporter_get_source(java.lang.String)}.
-     */
-    // @Test
-    public void testZipimporter_get_source() {
-        fail("Not yet implemented");
+        // Test path with subfolder
+        String fooPath = Paths.get(ARCHIVE, FOOKEY).toString(); // Strips trailing SEP in FOOKEY
+        z = new PyZipImporter(fooPath);
+        expected = String.format("<zipimporter object \"%s\">", fooPath);
+        actual = z.__repr__();
+        assertEquals(expected, actual.getString());
     }
 
     /**
@@ -240,6 +231,33 @@ public class ZipImportTest {
 
     /**
      * Test method for
+     * {@link org.python.modules.zipimport.PyZipImporter#zipimporter_load_module(java.lang.String)}.
+     */
+    // @Test
+    public void testZipimporter_load_module() {
+        fail("Not yet implemented");
+    }
+
+    /**
+     * Test method for
+     * {@link org.python.modules.zipimport.PyZipImporter#zipimporter_is_package(java.lang.String)}.
+     */
+    // @Test
+    public void testZipimporter_is_package() {
+        fail("Not yet implemented");
+    }
+
+    /**
+     * Test method for
+     * {@link org.python.modules.zipimport.PyZipImporter#zipimporter_get_source(java.lang.String)}.
+     */
+    // @Test
+    public void testZipimporter_get_source() {
+        fail("Not yet implemented");
+    }
+
+    /**
+     * Test method for
      * {@link org.python.modules.zipimport.PyZipImporter#zipimporter_get_filename(java.lang.String)}.
      */
     // @Test
@@ -259,37 +277,13 @@ public class ZipImportTest {
     /**
      * Test method for
      * {@link org.python.modules.zipimport.PyZipImporter#zipimporter_find_spec(org.python.core.PyObject[], java.lang.String[])}.
+     *
+     * Disabled test. <code>find_spec</code> is not implemented in <code>zipimport.zipimporter</code> in CPython 3.5 as far as we can tell,
+     * and by not having it exposed, we should get fall-back behaviour depending on <code>find_module</code>.
      */
     // @Test
     public void testZipimporter_find_spec() {
-        fail("Not yet implemented");
-    }
-
-    /**
-     * Test method for {@link java.lang.Object#toString()}.
-     */
-    @Test
-    public void test__repr__() {
-
-        // Test relative path
-        PyZipImporter z = new PyZipImporter(ARCHIVE);
-        String expected = String.format("<zipimporter object \"%s\">", ARCHIVE);
-        PyUnicode actual = z.__repr__();
-        assertEquals(expected, actual.getString());
-
-        // Test absolute path
-        String abspath = Paths.get(ARCHIVE).toAbsolutePath().toString();
-        z = new PyZipImporter(abspath);
-        expected = String.format("<zipimporter object \"%s\">", abspath);
-        actual = z.__repr__();
-        assertEquals(expected, actual.getString());
-
-        // Test path with subfolder
-        String fooPath = Paths.get(ARCHIVE, FOOKEY).toString(); // Strips trailing SEP in FOOKEY
-        z = new PyZipImporter(fooPath);
-        expected = String.format("<zipimporter object \"%s\">", fooPath);
-        actual = z.__repr__();
-        assertEquals(expected, actual.getString());
+        //fail("Not yet implemented");
     }
 
 }

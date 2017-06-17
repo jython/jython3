@@ -63,11 +63,11 @@ public class PyZipImporter extends PyObject {
 
     /**
      * Construct a <code>PyZipImporter</code> for the given path, which may include sub-directories
-     * within the ZIP file, for example <code>path/to/archive.zip/a/sub/directory</code>. Because
-     * equivalence between ZIP files and sub-directories in Python import (see
+     * within the ZIP file, for example <code>path/to/archive.zip/a/sub/directory</code>. Because of
+     * the equivalence between ZIP files and sub-directories in Python import (see
      * <a href="https://www.python.org/dev/peps/pep-0273/#subdirectory-equivalence"> PEP 273</a>), a
      * <code>PyZipImporter</code> operates using the platform-specific file separator ("\" on
-     * Windows) at all public interfaces, so on that platform a path like
+     * Windows) at all public interfaces. On Windows, a path like
      * <code>path\to\archive.zip\a\sub\directory</code> will normally be supplied. However, we
      * follow CPython in tolerating either "/" or the platform-specific file separator in the
      * <code>archivePath</code>, or indeed any mixture of the two.
@@ -152,14 +152,14 @@ public class PyZipImporter extends PyObject {
         return new PyZipImporter(archivePath);
     }
 
-
     @Override
     public String toString() {
         Path archivePath = Paths.get(archive, prefix);
-        return String.format("<zipimporter object \"%s\">",  archivePath);
+        return String.format("<zipimporter object \"%s\">", archivePath);
     }
 
-    @ExposedMethod
+    /** There's no <code>exec_module</code> in CPython <code>zipimporter</code>. */
+    @Deprecated // @ExposedMethod
     public final PyObject zipimporter_exec_module(PyObject module) {
         PyModule mod = (PyModule) module;
         String fullname = mod.__findattr__("__name__").asString();
@@ -167,11 +167,14 @@ public class PyZipImporter extends PyObject {
     }
 
     /**
+     * Load the module specified by <code>fullname</code>, |a fully qualified (dotted) module name.
+     * Return the imported module, or raise <code>ZipImportError</code> if it wasn’t found.
+     * <p>
      * CPython zipimport module is very outdated, it's not yet compliant with PEP-451, the specs are
      * checking the old behaviour this method and a few others that are deprecated a simply
      * implemented to satisfy the test suite
      *
-     * @param fullname
+     * @param fullname fully qualified (dotted) module name.
      * @return a python module
      */
     @Deprecated
@@ -181,12 +184,12 @@ public class PyZipImporter extends PyObject {
             PyModule mod = imp.addModule(fullname);
             imp.createFromCode(fullname, (PyCode) zipimporter_get_code(fullname));
             String folder = archive + File.separator + prefix;
-            if (entry._package) {
+            if (entry.isPackage) {
                 PyList pkgPath = new PyList();
                 pkgPath.append(new PyUnicode(folder + entry.dir(fullname)));
                 mod.__setattr__("__path__", pkgPath);
             }
-            if (entry.binary) {
+            if (entry.isBinary) {
                 mod.__setattr__("__cached__", new PyUnicode(folder + entry.path(fullname)));
             }
             mod.__setattr__("__file__", new PyUnicode(folder + entry.sourcePath(fullname)));
@@ -194,18 +197,34 @@ public class PyZipImporter extends PyObject {
         });
     }
 
+    /**
+     * Return <code>True</code> if the module specified by <code>fullname</code> is a package. Raise
+     * <code>ZipImportError</code> if the module couldn't be found.
+     *
+     * @param fullname fully qualified (dotted) module name.
+     * @return Python <code>True</code> if a package or <code>False</code>
+     */
     @ExposedMethod
     public final PyObject zipimporter_is_package(String fullname) {
-        return getEntry(fullname, (entry, input) -> Py.newBoolean(entry._package));
+        return getEntry(fullname, (entry, input) -> Py.newBoolean(entry.isPackage));
     }
 
+    /**
+     * Return the source code for the specified module. Raise <code>ZipImportError</code> if the
+     * module couldn't be found, and return None if the archive does contain the module, but has no
+     * source for it.
+     *
+     * @param fullname fully qualified (dotted) module name.
+     * @return the source as a <code>unicode</code>
+     */
     @ExposedMethod
     public final PyObject zipimporter_get_source(String fullname) {
         return getEntry(fullname, (entry, inputStream) -> {
             try {
-                if (entry.binary) {
+                if (entry.isBinary) {
                     return Py.None;
                 }
+                // FIXME: encoding? Is there a utility the compiler uses?
                 return new PyUnicode(FileUtil.readBytes(inputStream));
             } catch (IOException e) {
                 throw ZipImportModule.ZipImportError(e.getMessage());
@@ -258,6 +277,14 @@ public class PyZipImporter extends PyObject {
         }
     }
 
+    /**
+     * Return the value <code>__file__</code> would be set to if the specified module were imported.
+     * Raise <code>ZipImportError</code> if the module couldn't be found.
+     *
+     * @param fullname fully qualified (dotted) module name.
+     * @return file name as Python <code>unicode</code>
+     */
+    // XXX Should the return be FS-encoded bytes?
     @ExposedMethod
     public final PyObject zipimporter_get_filename(String fullname) {
         return getEntry(fullname, (entry, inputStream) -> {
@@ -265,13 +292,20 @@ public class PyZipImporter extends PyObject {
         });
     }
 
+    /**
+     * Return the <code>code</code> object for the specified module. Raise
+     * <code>ZipImportError</code> if the module couldn't be found.
+     *
+     * @param fullname fully qualified (dotted) module name.
+     * @return corresponding code object
+     */
     @ExposedMethod
     public final PyObject zipimporter_get_code(String fullname) {
         try {
             long mtime = Files.getLastModifiedTime(new File(archive).toPath()).toMillis();
             return getEntry(fullname, (entry, inputStream) -> {
                 byte[] codeBytes;
-                if (entry.binary) {
+                if (entry.isBinary) {
                     try {
                         codeBytes = imp.readCode(fullname, inputStream, false, mtime);
                     } catch (IOException ioe) {
@@ -295,7 +329,17 @@ public class PyZipImporter extends PyObject {
         }
     }
 
-    @ExposedMethod
+    /**
+     * Find a <code>spec</code> for the specified module within the the archive. If a
+     * <code>spec</code> cannot be found, <code>None</code> is returned. When passed in,
+     * <code>target</code> is a module object that the finder may use to make a decision about what
+     * <code>ModuleSpec</code> to return.
+     * <p>
+     * Disabled: <code>find_spec</code> is not implemented in <code>zipimport.zipimporter</code> in
+     * CPython 3.5 as far as we can tell, and by not having it exposed, we should get fall-back
+     * behaviour depending on <code>find_module</code>.
+     */
+    @Deprecated // @ExposedMethod
     final PyObject zipimporter_find_spec(PyObject[] args, String[] keywords) {
         ArgParser ap = new ArgParser("find_spec", args, keywords, "fullname", "path", "target");
         String fullname = ap.getString(0);
@@ -305,13 +349,13 @@ public class PyZipImporter extends PyObject {
         PyObject spec = moduleSpec.__call__(new PyUnicode(fullname), this);
         return getEntry(fullname, (entry, inputStream) -> {
             String folder = archive + File.separatorChar + prefix;
-            if (entry._package) {
+            if (entry.isPackage) {
                 PyList pkgpath = new PyList();
                 pkgpath.add(new PyUnicode(folder + entry.dir(fullname)));
                 spec.__setattr__("submodule_search_locations", pkgpath);
                 spec.__setattr__("is_package", Py.True);
             }
-            if (entry.binary) {
+            if (entry.isBinary) {
                 spec.__setattr__("cached", new PyUnicode(folder + entry.path(fullname)));
             }
             spec.__setattr__("origin", new PyUnicode(folder + entry.sourcePath(fullname)));
@@ -348,16 +392,29 @@ public class PyZipImporter extends PyObject {
         }
     }
 
+    /**
+     * Try to find a ZipEntry in this {@link #archive} corresponding to the given fully-qualified
+     * (dotted) module name, amongst the four search possibilities in order. For the first entry
+     * with a name that fits, open the content as a stream of bytes, and return the result of
+     * applying a supplied function to the ModuleEntry type constant and that stream.
+     *
+     * @param fullname fully qualified (dotted) module name.
+     * @param func to perform on first match
+     * @return return from application of <code>func</code>
+     */
     private <T> T getEntry(String fullname, BiFunction<ModuleEntry, InputStream, T> func) {
         ZipFile zipFile = null;
         try {
             zipFile = new ZipFile(new File(archive));
             for (ModuleEntry entry : entries()) {
+                // FIXME (?) entry.path (nor prefix) contains no parent module names.
+                // FIXME ZipFile responds to paths with / not platform separator
                 ZipEntry zipEntry = zipFile.getEntry(prefix + entry.path(fullname));
                 if (zipEntry != null) {
                     return func.apply(entry, zipFile.getInputStream(zipEntry));
                 }
             }
+            // No name matches the module
             throw ZipImportModule.ZipImportError(fullname);
         } catch (IOException e) {
             throw ZipImportModule.ZipImportError(e.getMessage());
@@ -370,6 +427,12 @@ public class PyZipImporter extends PyObject {
         }
     }
 
+    /**
+     * Return an array of four (newly-created) instances of nested class {@link ModuleEntry}, in the
+     * sequence: <code>ModuleEntry(true, true)</code>, <code>ModuleEntry(true, false)</code>,
+     * <code>ModuleEntry(false, true)</code>, <code>ModuleEntry(false, false)</code>. This is the
+     * order in which we try to identify something to load corresponding to a module name.
+     */
     private ModuleEntry[] entries() {
         boolean[] options = {true, false};
         ModuleEntry[] res = new ModuleEntry[4];
@@ -379,10 +442,12 @@ public class PyZipImporter extends PyObject {
                 res[i++] = new ModuleEntry(pack, bin);
             }
         }
-
         return res;
     }
 
+    /**
+     * Create a dictionary of the "files" within the archive at the given <code>Path</code>.
+     */
     private static PyObject readDirectory(Path archive) {
 
         if (!Files.isReadable(archive)) {
@@ -452,23 +517,36 @@ public class PyZipImporter extends PyObject {
         }
     }
 
+    /**
+     * A class having 4 possible values representing package-or-not and binary-or-not, which are the
+     * 4 ways to find the form of a module we can load.
+     */
     class ModuleEntry {
 
-        private boolean _package;
-        private boolean binary;
+        private boolean isPackage;
+        private boolean isBinary;
 
-        ModuleEntry(boolean pack, boolean bin) {
-            _package = pack;
-            binary = bin;
+        ModuleEntry(boolean isPackage, boolean isBinary) {
+            this.isPackage = isPackage;
+            this.isBinary = isBinary;
         }
 
+        /**
+         * Given a simple module name, or the (last element of a dotted) module name, into a file
+         * name for the corresponding binary or source, calculate what file we're looking for,
+         * according to the settings of <code>isPackage</code> or <code>isBinary</code>.
+         *
+         * @param fullname fully qualified (dotted) module name (e.g. "path.to.mymodule")
+         * @return one of the four strings mymodule(/__init__|).(py|class)
+         */
         String path(String name) {
             StringBuilder res = new StringBuilder();
+            // Append the last element of the module
             res.append(name.substring(name.lastIndexOf('.') + 1));
-            if (_package) {
+            if (isPackage) {
                 res.append(File.separatorChar + "__init__");
             }
-            if (binary) {
+            if (isBinary) {
                 res.append(".class");
             } else {
                 res.append(".py");
@@ -476,12 +554,23 @@ public class PyZipImporter extends PyObject {
             return res.toString();
         }
 
+        /**
+         * Directory of package or "" if not <code>this.isPackage</code>.
+         *
+         * @param fullname fully qualified (dotted) module name (e.g. "path.to.mymodule")
+         * @return <code>"mymodule"</code> or <code>""</code>
+         */
         String dir(String name) {
             return path(name).replaceFirst("/__init__\\.(py|class)$", "");
         }
 
+        /**
+         * Return the same as {@link #path(String)} but as if <code>isBinary==false</code>.
+         *
+         * @return <code>"module/__init__.py"</code> or <code>"module.py"</code>.
+         */
         String sourcePath(String name) {
-            return new ModuleEntry(_package, false).path(name);
+            return new ModuleEntry(isPackage, false).path(name);
         }
     }
 }
