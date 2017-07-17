@@ -215,7 +215,7 @@ public class PyZipImporter extends PyObject {
      * source for it.
      *
      * @param fullname fully qualified (dotted) module name.
-     * @return the source as a <code>unicode</code>
+     * @return the source as a <code>str</code>
      */
     @ExposedMethod
     public final PyObject zipimporter_get_source(String fullname) {
@@ -282,12 +282,12 @@ public class PyZipImporter extends PyObject {
      * Raise <code>ZipImportError</code> if the module couldn't be found.
      *
      * @param fullname fully qualified (dotted) module name.
-     * @return file name as Python <code>unicode</code>
+     * @return file name as Python <code>str</code>
      */
-    // XXX Should the return be FS-encoded bytes?
     @ExposedMethod
     public final PyObject zipimporter_get_filename(String fullname) {
         return getEntry(fullname, (entry, inputStream) -> {
+            // FIXME: this is the name in theory, but what if it isn't present in the ZIP?
             return new PyUnicode(archive + File.separator + prefix + entry.sourcePath(fullname));
         });
     }
@@ -407,9 +407,8 @@ public class PyZipImporter extends PyObject {
         try {
             zipFile = new ZipFile(new File(archive));
             for (ModuleEntry entry : entries()) {
-                // FIXME (?) entry.path (nor prefix) contains no parent module names.
-                // FIXME ZipFile responds to paths with / not platform separator
-                ZipEntry zipEntry = zipFile.getEntry(prefix + entry.path(fullname));
+                // ZipFile responds to paths with / not platform separator
+                ZipEntry zipEntry = zipFile.getEntry(fromPlatformSeparator(prefix) + entry.path(fullname));
                 if (zipEntry != null) {
                     return func.apply(entry, zipFile.getInputStream(zipEntry));
                 }
@@ -532,19 +531,18 @@ public class PyZipImporter extends PyObject {
         }
 
         /**
-         * Given a simple module name, or the (last element of a dotted) module name, into a file
-         * name for the corresponding binary or source, calculate what file we're looking for,
+         * Given a simple or fully-qualified (dotted) module name, take the last element as the
+         * name for the corresponding binary or source, and calculate what file we're looking for,
          * according to the settings of <code>isPackage</code> or <code>isBinary</code>.
          *
          * @param fullname fully qualified (dotted) module name (e.g. "path.to.mymodule")
          * @return one of the four strings mymodule(/__init__|).(py|class)
          */
         String path(String name) {
-            StringBuilder res = new StringBuilder();
-            // Append the last element of the module
-            res.append(name.substring(name.lastIndexOf('.') + 1));
+            // Start with the last element of the module
+            StringBuilder res = new StringBuilder(name.substring(name.lastIndexOf('.') + 1));
             if (isPackage) {
-                res.append(File.separatorChar + "__init__");
+                res.append("/__init__");
             }
             if (isBinary) {
                 res.append(".class");
@@ -565,12 +563,14 @@ public class PyZipImporter extends PyObject {
         }
 
         /**
-         * Return the same as {@link #path(String)} but as if <code>isBinary==false</code>.
+         * Return the same as {@link #path(String)} but as if <code>isBinary==false</code>,
+         * so we have the (expected) file name attribute of the module.
          *
          * @return <code>"module/__init__.py"</code> or <code>"module.py"</code>.
          */
         String sourcePath(String name) {
-            return new ModuleEntry(isPackage, false).path(name);
+            String file = new ModuleEntry(isPackage, false).path(name);
+            return toPlatformSeparator(file);
         }
     }
 }
