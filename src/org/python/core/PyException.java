@@ -3,7 +3,7 @@ package org.python.core;
 import java.io.*;
 
 /**
- * A wrapper for all python exception. Note that the well-known python Exceptions are <b>not</b>
+ * A wrapper for all python exception. Note that the well-known python exceptions are <b>not</b>
  * subclasses of PyException. Instead the python exception class is stored in the <code>type</code>
  * field and value or class instance is stored in the <code>value</code> field.
  */
@@ -94,14 +94,17 @@ public class PyException extends RuntimeException implements Traverseproc
     }
 
     private boolean printingStackTrace = false;
+    @Override
     public void printStackTrace() {
         Py.printException(this);
     }
 
+    @Override
     public Throwable fillInStackTrace() {
         return Options.includeJavaStackInExceptions ? super.fillInStackTrace() : this;
     }
 
+    @Override
     public synchronized void printStackTrace(PrintStream s) {
         if (printingStackTrace) {
             super.printStackTrace(s);
@@ -124,12 +127,9 @@ public class PyException extends RuntimeException implements Traverseproc
         }
     }
 
+    @Override
     public synchronized String toString() {
-        ByteArrayOutputStream buf = new ByteArrayOutputStream();
-        if (!printingStackTrace) {
-            printStackTrace(new PrintStream(buf));
-        }
-        return buf.toString();
+        return Py.exceptionToString(type, value, traceback);
     }
 
     /**
@@ -357,10 +357,11 @@ public class PyException extends RuntimeException implements Traverseproc
     public static String exceptionClassName(PyObject obj) {
         return ((PyType)obj).fastGetName();
     }
-    
-    
+
+
     /* Traverseproc support */
 
+    @Override
     public int traverse(Visitproc visit, Object arg) {
         int retValue;
         if (type != null) {
@@ -382,6 +383,7 @@ public class PyException extends RuntimeException implements Traverseproc
         return 0;
     }
 
+    @Override
     public boolean refersDirectlyTo(PyObject ob) {
     	return ob != null && (type == ob || value == ob || traceback == ob);
     }

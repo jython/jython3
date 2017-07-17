@@ -6,7 +6,6 @@ import jline.console.UserInterruptException;
 import jnr.constants.Constant;
 import jnr.constants.platform.Errno;
 import jnr.posix.POSIX;
-import jnr.posix.POSIXFactory;
 import jnr.posix.util.Platform;
 import org.python.antlr.base.mod;
 import org.python.core.adapter.ClassicPyObjectAdapter;
@@ -16,15 +15,15 @@ import org.python.modules.posix.PosixModule;
 import org.python.util.Generic;
 
 import java.io.ByteArrayOutputStream;
+import java.io.CharArrayWriter;
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectStreamException;
 import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
 import java.lang.reflect.InvocationTargetException;
@@ -258,7 +257,7 @@ public final class Py {
         return new PyException(Py.EnvironmentError, message);
     }
 
-    /* The standard Python Exceptions */
+    /* The standard Python exceptions */
     public static PyObject OverflowError;
 
     public static PyException OverflowError(String message) {
@@ -575,7 +574,7 @@ public final class Py {
     public static void UnicodeWarning(String message) {
         warning(UnicodeWarning, message);
     }
-    
+
     public static PyObject BytesWarning;
     public static void BytesWarning(String message) {
         warning(BytesWarning, message);
@@ -1038,36 +1037,36 @@ public final class Py {
                           " in sys.classLoader");
             }
             return loadAndInitClass(name, classLoader);
-        } 
+        }
         if (!syspathJavaLoaderRestricted) {
             try {
                 classLoader = imp.getSyspathJavaLoader();
                 if (classLoader != null && reason != null) {
                     writeDebug("import", "trying " + name + " as " + reason +
                             " in SysPathJavaLoader");
-                }                
+                }
             } catch (SecurityException e) {
                 syspathJavaLoaderRestricted = true;
             }
-        }        
+        }
         if (syspathJavaLoaderRestricted) {
             classLoader = imp.getParentClassLoader();
             if (classLoader != null && reason != null) {
                 writeDebug("import", "trying " + name + " as " + reason +
-                        " in Jython's parent class loader");     
+                        " in Jython's parent class loader");
             }
-        } 
+        }
         if (classLoader != null) {
             try {
                 return loadAndInitClass(name, classLoader);
             } catch (ClassNotFoundException cnfe) {
                 // let the default classloader try
                 // XXX: by trying another classloader that may not be on a
-                //      parent/child relationship with the Jython's parent 
+                //      parent/child relationship with the Jython's parent
                 //      classsloader we are risking some nasty class loading
-                //      problems (such as having two incompatible copies for 
-                //      the same class that is itself a dependency of two 
-                //      classes loaded from these two different class loaders) 
+                //      problems (such as having two incompatible copies for
+                //      the same class that is itself a dependency of two
+                //      classes loaded from these two different class loaders)
             }
         }
         if (reason != null) {
@@ -1076,7 +1075,7 @@ public final class Py {
         }
         return loadAndInitClass(name, Thread.currentThread().getContextClassLoader());
     }
-    
+
     /**
      * Tries to find a Java class.
      * @param name Name of the Java class.
@@ -1098,18 +1097,18 @@ public final class Py {
     }
 
     /**
-     * Tries to find a Java class. 
-     * 
-     * Unless {@link #findClass(String)}, it raises a JavaError 
+     * Tries to find a Java class.
+     *
+     * Unless {@link #findClass(String)}, it raises a JavaError
      * if the class was found but there were problems loading it.
      * @param name Name of the Java class.
      * @param reason Reason for finding the class. Used for debugging messages.
      * @return The class, or null if it wasn't found
-     * @throws JavaError wrapping LinkageErrors/IllegalArgumentExceptions 
+     * @throws JavaError wrapping LinkageErrors/IllegalArgumentExceptions
      * occurred when the class is found but can't be loaded.
      */
     public static Class<?> findClassEx(String name, String reason) {
-        try {            
+        try {
             return findClassInternal(name, reason);
         } catch (ClassNotFoundException e) {
             return null;
@@ -1121,7 +1120,7 @@ public final class Py {
     }
 
     // An alias to express intent (since boolean flags aren't exactly obvious).
-    // We *need* to initialize classes on findClass/findClassEx, so that import 
+    // We *need* to initialize classes on findClass/findClassEx, so that import
     // statements can trigger static initializers
     private static Class<?> loadAndInitClass(String name, ClassLoader loader) throws ClassNotFoundException {
         return Class.forName(name, true, loader);
@@ -1284,11 +1283,11 @@ public final class Py {
         }
         Py.getSystemState().callExitFunc();
     }
-    //XXX: this needs review to make sure we are cutting out all of the Java
-    //     Exceptions.
+
+    //XXX: this needs review to make sure we are cutting out all of the Java exceptions.
     private static String getStackTrace(Throwable javaError) {
-        ByteArrayOutputStream buf = new ByteArrayOutputStream();
-        javaError.printStackTrace(new PrintStream(buf));
+        CharArrayWriter buf = new CharArrayWriter();
+        javaError.printStackTrace(new PrintWriter(buf));
 
         String str = buf.toString();
         int index = -1;
@@ -1429,32 +1428,69 @@ public final class Py {
         printExceptionRecursive(SysModule.getObject("stderr"), value, seen);
     }
 
-    // print_exception
-    public static void displayException(PyObject type, PyObject value, PyObject tb,
-                                        PyObject file) {
+    /**
+     * Print the description of an exception as a big string, on standard error or a given
+     * text-oriented file. The arguments are closely equivalent to the tuple returned by Python
+     * <code>sys.exc_info</code>. Compare with Python <code>traceback.format_exception</code>, and
+     * CPython <code>pythonrun.c:print_exception</code>.
+     *
+     * @param type of exception
+     * @param value the exception parameter (second argument to <code>raise</code>)
+     * @param tb traceback of the call stack where the exception originally occurred
+     * @param file to print encoded string to, or null meaning standard error
+     */
+    public static void displayException(PyObject type, PyObject value, PyObject tb, PyObject file) {
+
+        // Output is to standard error, unless a file object has been given.
         StdoutWrapper stderr = Py.stderr;
+
         if (file != null) {
             stderr = new FixedFileWrapper(file);
         }
-        stderr.flushLine();
+
+        flushLine(); // stdout
+
+        // The creation of the report operates entirely in Java String (Unicode).
+        String s = exceptionToString(type, value, tb);
+        try {
+            // Be prepared for formatting or printing to fail
+            stderr.print(s);
+        } catch (Exception ex) {
+            // That exception just won't print (possibly missing codec). Wash it to ascii.
+            String bytes = codecs.encode(Py.newUnicode(s), "ascii", codecs.BACKSLASHREPLACE);
+            // bytes shouldn't really be a String, but for now go along with the Jython 2-ism.
+            System.err.println("Py.displayException failed. Falling back to System.err.");
+            System.err.println(bytes);
+        }
+    }
+
+    /**
+     * Format the description of an exception as a big string. The arguments are closely equivalent
+     * to the tuple returned by Python <code>sys.exc_info</code>. Compare with Python
+     * <code>traceback.format_exception</code>, and most of CPython
+     * <code>pythonrun.c:print_exception</code>.
+     *
+     * @param type of exception
+     * @param value the exception parameter (second argument to <code>raise</code>)
+     * @param tb traceback of the call stack where the exception originally occurred
+     * @return string representation of the traceback and exception
+     */
+    // NB This is also the implementation of PyException.toString (until each type has a __str__).
+    static String exceptionToString(PyObject type, PyObject value, PyObject tb) {
+
+        // Compose the stack dump, syntax error, and actual exception in this buffer:
+        StringBuilder buf;
 
         if (tb instanceof PyTraceback) {
-            stderr.print(((PyTraceback) tb).dumpStack());
+            buf = new StringBuilder(((PyTraceback)tb).dumpStack());
+        } else {
+            buf = new StringBuilder();
         }
-        if (Py.SyntaxError != null && __builtin__.isinstance(value, Py.SyntaxError)) {
-            PyObject filename = value.__findattr__("filename");
-            PyObject text = value.__findattr__("text");
-            PyObject lineno = value.__findattr__("lineno");
-            stderr.print("  File \"");
-            stderr.print(filename == Py.None || filename == null ?
-                         "<string>" : filename.toString());
-            stderr.print("\", line ");
-            stderr.print(lineno == null ? Py.newUnicode("0") : lineno);
-            stderr.print("\n");
-            if (text != Py.None && text != null && text.__len__() != 0) {
-                printSyntaxErrorText(stderr, value.__findattr__("offset").asInt(),
-                                     text.toString());
-            }
+
+        if (__builtin__.isinstance(value, Py.SyntaxError)) {
+            // The value part of the exception is a syntax error: first emit that.
+            appendSyntaxError(buf, value);
+            // Now supersede it with just the syntax error message for the next phase.
             value = value.__findattr__("msg");
             if (value == null) {
                 value = Py.None;
@@ -1465,24 +1501,46 @@ public final class Py {
             Object javaError = value.__tojava__(Throwable.class);
 
             if (javaError != null && javaError != Py.NoConversion) {
-                stderr.println(getStackTrace((Throwable) javaError));
+                // The value is some Java Throwable: append that too
+                buf.append(getStackTrace((Throwable)javaError));
             }
         }
-        try {
-            stderr.println(formatException(type, value));
-        } catch (Exception ex) {
-            stderr.println(formatException(type, Py.None));
+
+        // Formatting the value may raise UnicodeEncodeError: client must deal
+        appendException(buf, type, value, false);
+        buf.append('\n');
+        return buf.toString();
+    }
+
+    /**
+     * Helper to {@link #tracebackToString(PyObject, PyObject)} when the value in an exception turns
+     * out to be a syntax error.
+     */
+    private static void appendSyntaxError(StringBuilder buf, PyObject value) {
+
+        PyObject filename = value.__findattr__("filename");
+        PyObject text = value.__findattr__("text");
+        PyObject lineno = value.__findattr__("lineno");
+
+        buf.append("  File \"");
+        buf.append(filename == Py.None || filename == null ? "<string>" : filename.toString());
+        buf.append("\", line ");
+        buf.append(lineno == null ? Py.newString('0') : lineno);
+        buf.append('\n');
+
+        if (text != Py.None && text != null && text.__len__() != 0) {
+            appendSyntaxErrorText(buf, value.__findattr__("offset").asInt(), text.toString());
         }
     }
 
     /**
-     * Print the two lines showing where a SyntaxError was caused.
+     * Generate two lines showing where a SyntaxError was caused.
      *
-     * @param out StdoutWrapper to print to
+     * @param buf to append with generated message text
      * @param offset the offset into text
-     * @param text a source code String line
+     * @param text a source code line
      */
-    private static void printSyntaxErrorText(StdoutWrapper out, int offset, String text) {
+    private static void appendSyntaxErrorText(StringBuilder buf, int offset, String text) {
         if (offset >= 0) {
             if (offset > 0 && offset == text.length()) {
                 offset--;
@@ -1510,63 +1568,104 @@ public final class Py {
             text = text.substring(i, text.length());
         }
 
-        out.print("    ");
-        out.print(text);
+        buf.append("    ");
+        buf.append(text);
         if (text.length() == 0 || !text.endsWith("\n")) {
-            out.print("\n");
+            buf.append('\n');
         }
         if (offset == -1) {
             return;
         }
-        out.print("    ");
+
+        // The indicator line " ^"
+        buf.append("    ");
         for (offset--; offset > 0; offset--) {
-            out.print(" ");
+            buf.append(' ');
         }
-        out.print("^\n");
+        buf.append("^\n");
     }
 
     public static String formatException(PyObject type, PyObject value) {
         return formatException(type, value, false);
     }
 
+    /**
+     * Convert exception to string, showing type and message. (The builtins module is not shown when
+     * naming the type of built-in exceptions).
+     *
+     * @param type of exception
+     * @param value the exception parameter (second argument to <code>raise</code>)
+     * @param useRepr convert value with <code>repr()</code> not <code>str()</code>
+     */
     public static String formatException(PyObject type, PyObject value, boolean useRepr) {
         StringBuilder buf = new StringBuilder();
+        appendException(buf, type, value, useRepr);
+        return buf.toString();
+    }
+
+    /**
+     * Helper to {@link #formatException(PyObject, PyObject, boolean)} and
+     * {@link #displayException(PyObject, PyObject, PyObject, PyObject)}. Compare with Python
+     * <code>traceback.format_exception</code>, and "__module__" section of CPython
+     * <code>pythonrun.c:print_exception</code>.
+     *
+     * @param buf to append with generated message text
+     * @param type of exception
+     * @param value the exception parameter (second argument to <code>raise</code>)
+     * @param useRepr convert value with <code>repr()</code> not <code>str()</code>
+     */
+    private static void appendException(StringBuilder buf, PyObject type, PyObject value,
+            boolean useRepr) {
 
         if (PyException.isExceptionClass(type)) {
+
             String className = PyException.exceptionClassName(type);
             int lastDot = className.lastIndexOf('.');
             if (lastDot != -1) {
                 className = className.substring(lastDot + 1);
             }
+
             PyObject moduleName = type.__findattr__("__module__");
             if (moduleName == null) {
                 buf.append("<unknown>");
             } else {
                 String moduleStr = moduleName.toString();
                 if (!moduleStr.equals("builtins")) {
-                    buf.append(moduleStr);
-                    buf.append(".");
+                    buf.append(moduleStr).append(".");
                 }
             }
             buf.append(className);
         } else {
-            buf.append(useRepr ? type.__repr__() : type.__str__());
+            // Never happens since Python 2.7? Do something sensible anyway.
+            buf.append(asMessageString(type, useRepr));
         }
+
         if (value != null && value != Py.None) {
-            // only print colon if the str() of the object is not the empty string
-            PyObject s = useRepr ? value.__repr__() : value.__str__();
-            if (!(s instanceof PyUnicode) || s.__len__() != 0) {
-                buf.append(": ");
+            String s = asMessageString(value, useRepr);
+            // Print colon and object (unless it renders as "")
+            if (s.length() > 0) {
+                buf.append(": ").append(s);
             }
-            buf.append(s);
         }
-        return buf.toString();
+    }
+
+    /** Defensive method to avoid exceptions from decoding (or import encodings) */
+    private static String asMessageString(PyObject value, boolean useRepr) {
+        if (useRepr)
+            value = value.__repr__();
+        if (value instanceof PyUnicode) {
+            return value.asString();
+        } else {
+            // XXX: Might this produce decoding errors that would swallow the intended message?
+            // Or is that only a problem in 2.7 and whilst we still have the hang-over?
+            return value.__str__().getString();
+        }
     }
 
     public static void writeUnraisable(Throwable unraisable, PyObject obj) {
         PyException pye = JavaError(unraisable);
         stderr.println(String.format("Exception %s in %s ignored",
-                                     formatException(pye.type, pye.value, true), obj.toString()));
+                                     formatException(pye.type, pye.value, true), obj));
     }
 
 
@@ -1806,6 +1905,16 @@ public final class Py {
 //        }
     }
 
+    private static final String IMPORT_SITE_ERROR = ""
+            + "Cannot import site module and its dependencies: %s\n"
+            + "Determine if the following attributes are correct:\n" //
+            + "  * sys.path: %s\n"
+            + "    This attribute might be including the wrong directories, such as from CPython\n"
+            + "  * sys.prefix: %s\n"
+            + "    This attribute is set by the system property python.home, although it can\n"
+            + "    be often automatically determined by the location of the Jython jar file\n\n"
+            + "You can use the -S option or python.import.site=false to not import the site module";
+
     public static boolean importSiteIfSelected() {
         if (Options.importSite) {
             try {
@@ -1815,18 +1924,9 @@ public final class Py {
             } catch (PyException pye) {
                 if (pye.match(Py.ImportError)) {
                     PySystemState sys = Py.getSystemState();
-                    throw Py.ImportError(String.format(""
-                                    + "Cannot import site module and its dependencies: %s\n"
-                                    + "Determine if the following attributes are correct:\n"
-                                    + "  * sys.path: %s\n"
-                                    + "    This attribute might be including the wrong directories, such as from CPython\n"
-                                    + "  * sys.prefix: %s\n"
-                                    + "    This attribute is set by the system property python.home, although it can\n"
-                                    + "    be often automatically determined by the location of the Jython jar file\n\n"
-                                    + "You can use the -S option or python.import.site=false to not import the site module",
-                            ((PyBaseException) pye.value).args.__getitem__(0),
-                            sys.path,
-                            sys.prefix), "site");
+                    String value = pye.value.__getattr__("args").__getitem__(0).toString();
+                    throw Py.ImportError(String.format(IMPORT_SITE_ERROR, value, sys.path,
+                            PySystemState.prefix));
                 } else {
                     throw pye;
                 }
@@ -2498,7 +2598,7 @@ public final class Py {
             }
             return false;
         }
-        
+
         checkClass(cls, "isinstance() arg 2 must be a class, type, or tuple of classes and types");
         PyObject instCls = inst.__findattr__("__class__");
         if (instCls == null) {
