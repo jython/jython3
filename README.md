@@ -1,10 +1,21 @@
-This is not where Jython 3 is developing.
+## This is not where Jython 3 is developing.
 
-The latest version of Jython remains 2.7.x
+The latest released version of Jython remains 2.7.x
 (see [Jython](https://github.com/jython/jython) for that).
-A Jython 3.x should appear there,
-but exploratory work towards it is not stable at the time of writing.
-Please watch the jython-dev mailing list for developements.
+
+This doesn't mean that there isn't any progress on a Jython 3.
+A lot of exploration has taken place away from the official repository,
+in order not to pollute it with false starts and dead-ends.
+
+Since the beginning of 2021, Jython 3 exploratory work reached a form
+that merited porting from the experiment to the `main` of the official repo.
+Risky design concepts still begin life in the exploratory environment,
+then arrive as a PR to the official `main` branch.
+Please watch the jython-dev mailing list for developements,
+or the [`main` branch](https://github.com/jython/jython/tree/main)
+(not `master`) of the official Jython repo.
+
+## If this is not the real thing, what is it?
 
 This repo represents an attempt made in 2016 to implement a Jython 3.5,
 that is, with language and runtime compatibility with
