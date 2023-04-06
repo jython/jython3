@@ -144,7 +144,7 @@ org/python/modules/subprocess/PyPopen.class
 org/python/modules/thread/PyLocal.class
 org/python/modules/time/PyTimeTuple.class
 org/python/modules/unicodedata/UCD.class
-org/python/modules/zipimport/zipimporter.class
+org/python/modules/zipimport/PyZipImporter.class
 org/python/modules/zlib/PyCompress.class
 org/python/modules/zlib/PyDecompress.class
 org/python/antlr/AST.class

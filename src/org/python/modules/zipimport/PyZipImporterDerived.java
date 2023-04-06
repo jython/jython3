@@ -73,8 +73,8 @@ public class PyZipImporterDerived extends PyZipImporter implements Slotted,Final
         dict=new PyStringMap();
     }
 
-    public PyZipImporterDerived(PyType subtype) {
-        super(subtype);
+    public PyZipImporterDerived(PyType subtype,String archivePath) {
+        super(subtype,archivePath);
         slots=new PyObject[subtype.getNumSlots()];
         dict=subtype.instDict();
         if (subtype.needsFinalizer()) {
